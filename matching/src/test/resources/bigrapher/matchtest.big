@@ -1,0 +1,31 @@
+# Signature
+ctrl Nil = 0;
+
+ctrl Computer = 1;
+ctrl Printer = 2;
+ctrl Spool = 1;
+ctrl Room = 1;
+ctrl User = 1;
+ctrl Job = 0;
+
+# Tests
+react nil = Nil -> Nil;
+#big v = (id{y} || K{x,y,z});
+#big v2 = /x ((id{y} || K{x,y,z}) | x/{q});
+#big z = /x (Pc{x} | y/{z});
+
+big b = User{jeff};
+big a = User{jeff}.(Job.1 | id(1));
+
+react blub = 
+  b --> a;
+
+big s1 = /{e1,e2,e3} (Room{e2}.(Computer{e3}.1|Printer{e3,e1}.1) | Spool{e1}.1 | Room{e2}.(User{jeff}.Job.1));
+
+big s0 = s1;
+
+# Reactive system
+begin brs
+  init s0;
+  rules = [ {nil} ];
+end

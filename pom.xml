@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.tudresden.inf.st.bigraphs</groupId>
+    <artifactId>framework-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Bigraph Parent Project</name>
+    <description>A bigraphical framework for manipulating bigraphical reactive systems.</description>
+
+    <modules>
+        <module>core</module>
+        <module>matching</module>
+        <module>visualization</module>
+    </modules>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--<maven.compiler.source>1.8</maven.compiler.source>-->
+        <!--<maven.compiler.target>1.8</maven.compiler.target>-->
+        <guava.version>27.0.1-jre</guava.version>
+        <jgrapht.version>1.3.0</jgrapht.version>
+        <emf-version>2.15.0</emf-version>
+        <emf-common-version>2.15.0</emf-common-version>
+        <emf-ecore-version2>2.15.0</emf-ecore-version2>
+        <emf-ecore-version>2.3.0-v200706262000</emf-ecore-version>
+        <eclipse.mirror>http://mirror.ibcp.fr/pub/eclipse/</eclipse.mirror>
+        <junit.version>5.4.0</junit.version>
+        <log4j.version>2.11.1</log4j.version>
+        <graphviz.version>0.8.3</graphviz.version>
+    </properties>
+
+    <repositories>
+        <!--<repository>-->
+        <!--<id>local-maven-repo</id>-->
+        <!--&lt;!&ndash;<layout>m2</layout>&ndash;&gt;-->
+        <!--<url>file:///${project.basedir}/local-maven-repo</url>-->
+        <!--</repository>-->
+        <!-- add Eclipse repository to resolve dependencies -->
+        <repository>
+            <id>Eclipse</id>
+            <layout>p2</layout>
+            <url>${eclipse.mirror}/releases/photon/</url>
+        </repository>
+        <!-- add TMF repository for latest Xtend -->
+        <repository>
+            <id>TMF Repo</id>
+            <layout>p2</layout>
+            <!--<url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>-->
+            <url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
+                <artifactId>bigraph-ecore-model</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <!-- EMF -->
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.common</artifactId>
+                <version>${emf-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.ecore</artifactId>
+                <version>${emf-version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore.xmi -->
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                <version>${emf-version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.codegen -->
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.codegen</artifactId>
+                <version>2.14.0</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.checkerframework/checker -->
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker</artifactId>
+                <version>2.6.0</version>
+            </dependency>
+            <!-- Graph-related -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jgrapht</groupId>
+                <artifactId>jgrapht-core</artifactId>
+                <version>${jgrapht.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jgrapht</groupId>
+                <artifactId>jgrapht-ext</artifactId>
+                <version>${jgrapht.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>guru.nidi</groupId>
+                <artifactId>graphviz-java</artifactId>
+                <version>${graphviz.version}</version>
+            </dependency>
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <!-- Test -->
+            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!--<dependency>-->
+            <!--<groupId>junit</groupId>-->
+            <!--<artifactId>junit</artifactId>-->
+            <!--<version>4.12</version>-->
+            <!--<scope>test</scope>-->
+            <!--</dependency>-->
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>

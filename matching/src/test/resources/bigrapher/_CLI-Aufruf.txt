@@ -1,0 +1,4 @@
+bigrapher full -d ./ -f svg -s ./ -M 10 -t trans.svg -v matchtest.big 
+
+bigrapher sim -T 4 -s -t ./0_transition -f svg matchtest.big
+bigrapher full -d ./states -f svg -s states -M 10 -t trans.svg -v matchtest.big

@@ -1,0 +1,19 @@
+package de.tudresden.inf.st.bigraphs.core.impl.factory;
+
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
+
+//TODO extra class which provides functions to createNodeOfEClass a bigraph EMOF model with signature
+public class EcoreBigraphFactory extends AbstractBigraphFactory {
+    EcoreBigraphBuilder builder;
+
+    @Override
+    Bigraph createEmptyBigraph(Signature signature) {
+//        builder = EcoreBigraphBuilder.start(signature);
+        //TODO ecore model laden, signature erweitern und epackage in ecorebigraph einsetzen
+//        new DefaultEcoreBigraph(epackage);
+        return null;
+    }
+
+}
