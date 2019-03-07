@@ -1,30 +1,30 @@
 package de.tudresden.inf.st.bigraphs.core.impl.ecore;
 
 import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.model2.Root;
-import de.tudresden.inf.st.bigraphs.model.BigraphBaseModel.*;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.*;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 
 //TODO immutable? besser, das erstellen wird separat erledigt, entweder über M2M und sowieso über ecore
 //the signature etc are all ecore things
 //kapselt das ecore model
 //als decorator?
-public class DefaultEcoreBigraph implements Bigraph<Signature> {
-    private BigraphMetaModelPackage modelPackage; //TODO wirklich diese package?
+public class DynamicEcoreBigraph implements Bigraph<Signature> {
+    private BigraphBaseModelPackage modelPackage; //TODO wirklich diese package?
 
-    private Root root = null;
+    private EObject root = null;
 
     //Fertig gebaute bigraph model
     //TODO see ecorebuilder....
-    public DefaultEcoreBigraph(BigraphMetaModelPackage modelPackage) {
+    public DynamicEcoreBigraph(BigraphBaseModelPackage modelPackage) {
         this.modelPackage = modelPackage;
     }
 
-    public Root getRoot() {
+    public EObject getRoot() {
         return root;
     }
 
-    public void setRoot(Root root) {
+    public void setRoot(EObject root) {
         this.root = root;
     }
 
@@ -34,39 +34,39 @@ public class DefaultEcoreBigraph implements Bigraph<Signature> {
     }
 
     @Override
-    public Iterable<Root> getRoots() {
+    public Iterable<EObject> getRoots() {
         return null;
     }
 
     @Override
-    public Iterable<BSite> getSites() {
+    public Iterable<EObject> getSites() {
         return null;
     }
 
     @Override
-    public Iterable<BOuterName> getOuterNames() {
+    public Iterable<EObject> getOuterNames() {
         return null;
     }
 
     @Override
-    public Iterable<BInnerName> getInnerNames() {
+    public Iterable<EObject> getInnerNames() {
         return null;
     }
 
     @Override
-    public <T extends BNode> boolean areConnected(T place1, T place2) {
-        EList<BPort> bPorts = place1.getBPorts();
-        for (BPort bPort : bPorts) {
-            EList<BPoint> bPoints = bPort.getBLink().getBPoints();
-            for (BPoint bPoint : bPoints) {
-                if (bPoint instanceof BPort) {
-                    if (((BPort) bPoint).getBNode().equals(place2)) {
-                        System.out.println("connected");
-                        return true;
-                    }
-                }
-            }
-        }
+    public <T extends EObject> boolean areConnected(T place1, T place2) {
+//        EList<BPort> bPorts = place1.getBPorts();
+//        for (BPort bPort : bPorts) {
+//            EList<BPoint> bPoints = bPort.getBLink().getBPoints();
+//            for (BPoint bPoint : bPoints) {
+//                if (bPoint instanceof BPort) {
+//                    if (((BPort) bPoint).getBNode().equals(place2)) {
+//                        System.out.println("connected");
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
         return false;
     }
 

@@ -12,7 +12,7 @@ public class EcoreBigraphFactory extends AbstractBigraphFactory {
     Bigraph createEmptyBigraph(Signature signature) {
 //        builder = EcoreBigraphBuilder.start(signature);
         //TODO ecore model laden, signature erweitern und epackage in ecorebigraph einsetzen
-//        new DefaultEcoreBigraph(epackage);
+//        new DynamicEcoreBigraph(epackage);
         return null;
     }
 

@@ -1,6 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.model.BigraphBaseModel.*;
+
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.*;
+import org.eclipse.emf.ecore.EObject;
 
 //TODO think about the return types ...
 public interface Bigraph<S extends Signature> {
@@ -11,13 +13,13 @@ public interface Bigraph<S extends Signature> {
      */
     S getSignature();
 
-    Iterable<? extends BRoot> getRoots();
+    Iterable<? extends EObject> getRoots();
 
-    Iterable<? extends BSite> getSites();
+    Iterable<? extends EObject> getSites();
 
-    Iterable<? extends BOuterName> getOuterNames();
+    Iterable<? extends EObject> getOuterNames();
 
-    Iterable<? extends BInnerName> getInnerNames();
+    Iterable<? extends EObject> getInnerNames();
 
-    <T extends BNode> boolean areConnected(T place1, T place2);
+    <T extends EObject> boolean areConnected(T place1, T place2);
 }

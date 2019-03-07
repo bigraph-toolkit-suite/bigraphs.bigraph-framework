@@ -16,6 +16,8 @@ mvn install:install-file -Dfile=./libs/bigraphModel.jar -DgroupId=de.tudresden.i
 Do this only once or when the model changes.
 This will install the bigraph model in your local Maven repository.
 
+mvn install:install-file -Dfile=./libs/bigraphModel_v2.jar -DgroupId=de.tudresden.inf.st.bigraphs.model -DartifactId=bigraph-ecore-model -Dversion=2.0 -Dpackaging=jar
+
 <!--
 ```
 mvn deploy:deploy-file -DgroupId=de.tudresden.inf.st.bigraphs.model -DartifactId=bigraph-ecore-model -Dversion=1.0 -Durl=file:./local-maven-repo/ -DrepositoryId=local-maven-repo -DupdateReleaseInfo=true -Dfile=./libs/bigraphModel.jar

@@ -2,8 +2,11 @@ package de.tudresden.inf.st.bigraphs.core;
 
 public final class BigraphMetaModelConstants {
 
+    public final static String BIGRAPH_BASE_MODEL = "/model/bigraphBaseModel.ecore";
+
     // AttributesconnectNodes
     public final static String ATTRIBUTE_INDEX = "index";
+    public final static String ATTRIBUTE_NAME = "name";
 
     // Node types
     public final static String CLASS_ROOT = "BRoot";
@@ -13,8 +16,8 @@ public final class BigraphMetaModelConstants {
     public final static String CLASS_EDGE = "BEdge";
     public final static String CLASS_PORT = "BPort";
     public final static String CLASS_SITE = "BSite";
-
-    // References
+//
+//    // References
     public final static String REFERENCE_CHILD = "bChild";
     public final static String REFERENCE_PARENT = "bPrnt";
     public final static String REFERENCE_LINK = "bLink";

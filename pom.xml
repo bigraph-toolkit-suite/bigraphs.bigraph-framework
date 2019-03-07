@@ -80,7 +80,7 @@
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
                 <artifactId>bigraph-ecore-model</artifactId>
-                <version>1.0</version>
+                <version>2.0</version>
             </dependency>
             <!-- EMF -->
             <dependency>

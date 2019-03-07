@@ -1,34 +1,23 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import de.tudresden.inf.st.bigraphs.model.BigraphBaseModel.BNode;
-import de.tudresden.inf.st.bigraphs.model.BigraphBaseModel.BRoot;
-import de.tudresden.inf.st.bigraphs.model.BigraphBaseModel.BigraphMetaModelFactory;
-import org.eclipse.emf.common.util.URI;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BRoot;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelFactory;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.impl.EClassImpl;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.junit.jupiter.api.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Collections;
 
-import org.junit.jupiter.api.*;
+import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphSignatureTest {
@@ -153,12 +142,6 @@ public class BigraphSignatureTest {
 
     }
 
-    public void createExampleEcoreBigraph() {
-        BigraphMetaModelFactory factory = BigraphMetaModelFactory.eINSTANCE;
-        BRoot bRoot = factory.createBRoot();
-//        bRoot.getBChild().add()
-    }
-
     //for the dynamic emf feature: define ecore model at runtime (no code generation required)
     //Used for signatures: createNodeOfEClass dynamic subclasses of generated classes
     //code generation (i.e., signature extension) is based on the in-memory concept in EMF
@@ -166,11 +149,11 @@ public class BigraphSignatureTest {
     @DisplayName("Load, Modify and Output an Ecore model")
     @Order(2)
     public void loadEcoreModelTest() throws URISyntaxException {
-        InputStream in = getClass().getResourceAsStream("/model/bigraphDomainModel.ecore");
+        InputStream in = getClass().getResourceAsStream(BIGRAPH_BASE_MODEL);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         try {
-            EPackage metapackage = EMFUtils.loadEcoreModel("/model/bigraphDomainModel.ecore");
+            EPackage metapackage = EMFUtils.loadEcoreModel(BIGRAPH_BASE_MODEL);
             System.out.println("Model loaded");
 
 //            EPackage metapackage = (EPackage) resource.getContents().get(0);

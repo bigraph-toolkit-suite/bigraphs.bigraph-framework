@@ -19,7 +19,10 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//https://sdqweb.ipd.kit.edu/wiki/Creating_EMF_Model_instances_programmatically
 public class EMFUtils {
+
+    private final static EcoreFactory FACTORY = EcoreFactory.eINSTANCE;
 
     public static EPackage loadEcoreModel(String ecoreResource) throws IOException {
         ResourceSet resourceSet = new ResourceSetImpl();
@@ -29,15 +32,15 @@ public class EMFUtils {
 //        java.net.URI uri1 = resource1.toURI();
         URI uri = URI.createURI(resource1.toString());
 
-        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
+//        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMIResourceFactoryImpl()); //probably not necessary
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMIResourceFactoryImpl()); //probably not necessary
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new EcoreResourceFactoryImpl());//probably not necessary
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new EcoreResourceFactoryImpl());//probably not necessary
 
         Resource resource = resourceSet.createResource(uri);
         try {
-            resource.load(Collections.emptyMap());
+            resource.load(Collections.EMPTY_MAP);
 //            System.out.println("Model loaded");
             return (EPackage) resource.getContents().get(0);
         } catch (
@@ -113,7 +116,7 @@ public class EMFUtils {
 
     public static EAttribute addAttribute(EClass eClass, String name,
                                           EDataType type, boolean isId, int lowerBound, int upperBound) {
-        final EAttribute attribute = EcoreFactory.eINSTANCE.createEAttribute();
+        final EAttribute attribute = FACTORY.createEAttribute();
         // always add to container first
         eClass.getEStructuralFeatures().add(attribute);
         attribute.setName(name);
@@ -139,7 +142,7 @@ public class EMFUtils {
 
     public static EAttribute addAttribute(EClass eClass, String name,
                                           EDataType type, boolean isId, boolean ordered, boolean unique, boolean changeable, int lowerBound, int upperBound) {
-        final EAttribute attribute = EcoreFactory.eINSTANCE.createEAttribute();
+        final EAttribute attribute = FACTORY.createEAttribute();
         // always add to container first
         eClass.getEStructuralFeatures().add(attribute);
         attribute.setName(name);
@@ -155,7 +158,7 @@ public class EMFUtils {
 
     public static EReference addReference(EClass eClass, String name,
                                           EClassifier type, int lowerBound, int upperBound) {
-        final EReference reference = EcoreFactory.eINSTANCE.createEReference();
+        final EReference reference = FACTORY.createEReference();
         // always add to container first
         eClass.getEStructuralFeatures().add(reference);
         reference.setName(name);
@@ -167,7 +170,7 @@ public class EMFUtils {
 
     public static EPackage createPackage(final String name, final String prefix,
                                          final String uri) {
-        final EPackage epackage = EcoreFactory.eINSTANCE.createEPackage();
+        final EPackage epackage = FACTORY.createEPackage();
         epackage.setName(name);
         epackage.setNsPrefix(prefix);
         epackage.setNsURI(uri);
@@ -175,7 +178,7 @@ public class EMFUtils {
     }
 
     public static EClass createEClass(final String name) {
-        final EClass eClass = EcoreFactory.eINSTANCE.createEClass();
+        final EClass eClass = FACTORY.createEClass();
         eClass.setName(name);
         return eClass;
     }
@@ -195,10 +198,10 @@ public class EMFUtils {
                 .collect(Collectors.toList());
     }
 
-    public static void addSuperType(EClass customerRow, EPackage ddlPackage,
+    public static void addSuperType(EClass anEClass, EPackage aPackage,
                                     String name) {
-        final EClass eSuperClass = (EClass) ddlPackage.getEClassifier(name);
-        customerRow.getESuperTypes().add(eSuperClass);
+        final EClass eSuperClass = (EClass) aPackage.getEClassifier(name);
+        anEClass.getESuperTypes().add(eSuperClass);
     }
 
 }
