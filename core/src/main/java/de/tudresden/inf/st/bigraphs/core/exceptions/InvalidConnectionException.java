@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.exceptions;
 
-public class InvalidConnectionException extends Exception {
+public abstract class InvalidConnectionException extends Exception {
     public InvalidConnectionException() {
     }
 

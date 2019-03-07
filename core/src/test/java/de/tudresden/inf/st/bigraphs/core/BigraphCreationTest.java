@@ -4,22 +4,15 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BInnerName;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BOuterName;
-import guru.nidi.graphviz.attribute.Color;
-import guru.nidi.graphviz.attribute.Style;
-import guru.nidi.graphviz.engine.Format;
-import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.model.MutableGraph;
-import guru.nidi.graphviz.parse.Parser;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphCreationTest {
@@ -28,174 +21,233 @@ public class BigraphCreationTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("Create Bigraphs test series")
     class ArityChecks {
+        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+
+        @BeforeAll
+        void createSignature() {
+            signature = createExampleSignature();
+            // define some nodes
+//            builder.createRoot(); // create a root node first
+        }
+
+        @BeforeEach
+        void setUp() {
+            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+        }
+
+        @Test
+        @DisplayName("Connect a node to an outername where the control's arity is 0")
+        void connect_to_outername_1() {
+            BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+            InvalidArityOfControlException am = assertThrows(InvalidArityOfControlException.class, () -> {
+                DefaultControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Job");
+                System.out.println("Node of control will be added: " + selected + " and connected with outer name " + jeff);
+                builder.createRoot()
+                        .addSite()
+                        .addChild(selected)
+                        .connectNodeToOuterName(jeff);
+            });
+            am.printStackTrace();
+        }
+
+        @Test
+        @DisplayName("Connect a node to the same outername twice and then add another where the control's arity is 1")
+        void connect_to_outername_2() {
+            BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+            BigraphEntity.OuterName bob = builder.createOuterName("bob");
+            System.out.println("exceeding a node's ports w.r.t to the corresponding control's arity");
+            InvalidArityOfControlException am2 = assertThrows(InvalidArityOfControlException.class, () -> {
+                DefaultControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Computer");
+
+                builder.createRoot()
+                        .addChild(selected)
+                        .connectNodeToOuterName(jeff)
+                        .connectNodeToOuterName(jeff)
+                        .connectNodeToOuterName(bob);
+            });
+            am2.printStackTrace();
+        }
+
+        @AfterEach
+        void write_debug() {
+            assertAll(() -> builder.WRITE_DEBUG());
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class NestedHierarchyTestSeries {
         EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
         void createSignature() {
             signature = createExampleSignature();
+        }
+
+        @BeforeEach
+        void setUp() {
             builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
-            // define some nodes
-            builder.createRoot(); // create a root node first
         }
 
         @Test
-        @DisplayName("Connect a node to an outername where the control's arity is 0")
-        void connect_to_outername_1() {
-            EcoreBigraphBuilder.BigraphEntity jeff = builder.createOuterName("jeff");
-            ArityMismatch am = Assertions.assertThrows(ArityMismatch.class, () -> {
-                DefaultControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Job"); //getControlByName("Job", signature);
-                assert selected != null;
-                System.out.println("Node of control will be added: " + selected);
-                builder.addChild(selected);
-                EcoreBigraphBuilder.BigraphEntity lastCreatedNode = builder.getLastCreatedNode();
-                builder.connectNodeToOuterName(lastCreatedNode, jeff);
-            });
+        void build_simple() {
+            BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
+            BigraphEntity.InnerName tmp2 = builder.createInnerName("tmp2");
+            //TODO: über command pattern wird dann der builder aufgerufen (übersetzung von gui schritten und builder)
+            //test methoden ob verbindung möglich sind, wird über andere klasse gemacht
+
+            //"umweg": verbinde nodes über hierarchie grenzen hinweg: über Inner name, und dann schließen.
+            //so besitzen sie die gleiche Kante
+            builder.createRoot()
+                    .addChild(signature.getControlByName("Spool"))
+                    .addChild(signature.getControlByName("Room"))
+                    .withNewHierarchy()
+                    .addChild(signature.getControlByName("Computer"))
+                    .addChild(signature.getControlByName("Printer"))
+                    .goBack()
+                    .addChild(signature.getControlByName("Room"));
+
         }
 
-        @Test
-        @DisplayName("Connect a node to the same outername twice and then add another where the control's arity is 1")
-        void connect_to_outername_2() {
-            EcoreBigraphBuilder.BigraphEntity jeff = builder.createOuterName("jeff");
-            // exceeding a node's ports w.r.t to the corresponding control's arity
-            ArityMismatch am2 = Assertions.assertThrows(ArityMismatch.class, () -> {
-                DefaultControl<StringTypedName, FiniteOrdinal<Integer>> selected = getControlByName("Computer", signature);
-                builder.addChild(selected);
-                EcoreBigraphBuilder.BigraphEntity lastCreatedNode
-                        = builder.getLastCreatedNode();
-                assert selected != null;
-                builder.connectNodeToOuterName(lastCreatedNode, jeff);
-                builder.connectNodeToOuterName(lastCreatedNode, jeff);
-                EcoreBigraphBuilder.BigraphEntity bob = builder.createOuterName("bob");
-                builder.connectNodeToOuterName(lastCreatedNode, bob);
-            });
-        }
 
-        @AfterAll
-        void write_debug() {
-            builder.WRITE_DEBUG();
+        @AfterEach
+        void debug() {
+            assertAll(() -> {
+                builder.WRITE_DEBUG();
+            });
         }
     }
 
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class ConnectionTestSeries {
+    class ConnectionTestSeries_InnerOuterNames {
         EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
         void createSignature() {
             signature = createExampleSignature();
+        }
+
+        @BeforeEach
+        void setUp() {
             builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
-            // define some nodes
-            builder.createRoot(); // create a root node first
         }
 
         @Test
+        @Order(1)
         void to_many_connections() {
-            EcoreBigraphBuilder.BigraphEntity nodeLeft = builder.createChild(signature.getControlByName("Computer"));
-            EcoreBigraphBuilder.BigraphEntity nodeRight = builder.createChild(signature.getControlByName("Printer"));
-
-            ToManyConnections exc = Assertions.assertThrows(ToManyConnections.class, () -> {
-                builder.connectByEdge(nodeLeft, nodeRight);
-                Assertions.assertTrue(builder.areNodesConnected(nodeLeft, nodeRight));
-                builder.connectByEdge(nodeLeft, nodeRight);
+            ControlIsAtomicException exc = assertThrows(ControlIsAtomicException.class, () -> {
+                builder.createRoot()
+                        .connectByEdge(signature.getControlByName("Job"),
+                                signature.getControlByName("Job"),
+                                signature.getControlByName("Job"));
             });
-            System.out.println("Error: " + exc.getMessage());
+
+            assertAll(() -> {
+                builder.createRoot()
+                        .connectByEdge(signature.getControlByName("Computer"),
+                                signature.getControlByName("Computer"),
+                                signature.getControlByName("Printer"));
+            });
         }
 
         @Test
-        void connect_to_inner_name() throws ArityMismatch, InvalidConnectionException, LinkTypeNotExistsException {
-            EcoreBigraphBuilder.BigraphEntity nodeLeft = builder.createChild(signature.getControlByName("Printer"));
-            EcoreBigraphBuilder.BigraphEntity nodeRight = builder.createChild(signature.getControlByName("Printer"));
+        @Order(2)
+        void connect_to_inner_name() {
+            BigraphEntity.InnerName x = builder.createInnerName("x");
+            BigraphEntity.InnerName y = builder.createInnerName("y");
+            BigraphEntity.InnerName z = builder.createInnerName("z");
+            BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
 
-            EcoreBigraphBuilder.BigraphEntity x = builder.createInnerName("x");
-            EcoreBigraphBuilder.BigraphEntity y = builder.createInnerName("y");
-
-            try {
+            assertAll(() -> {
                 builder.connectInnerNames(x, y);
-            } catch (InvalidConnectionException e) {
-                e.printStackTrace();
-            }
+            });
 
-            EcoreBigraphBuilder.BigraphEntity printer = builder.createChild(signature.getControlByName("Printer"));
-            builder.connectNodeToInnerName(printer, x);
-            builder.connectNodeToInnerName(printer, y);
+            assertAll(() -> {
+                builder.createRoot()
+                        .addChild(signature.getControlByName("Printer"))
+                        .connectNodeToInnerName(x)
+                        .connectNodeToInnerName(y)
 
-            EcoreBigraphBuilder.BigraphEntity freshPrinter = builder.createChild(signature.getControlByName("Printer"));
-            EcoreBigraphBuilder.BigraphEntity z = builder.createInnerName("z");
-            builder.connectNodeToInnerName(freshPrinter, z);
-            builder.connectNodeToInnerName(freshPrinter, z);
+                        .addChild(signature.getControlByName("Printer"))
+                        .connectNodeToInnerName(z)
+                        .connectNodeToInnerName(z)
+                        .connectNodeToOuterName(jeff)
+                        .connectNodeToOuterName(jeff);
+            });
 
+            assertAll(() -> {
+                builder.createRoot()
+                        .addChild(signature.getControlByName("Printer"))
+                        .connectNodeToInnerName(x)
+                        .connectNodeToInnerName(y)
 
-            EcoreBigraphBuilder.BigraphEntity jeff = builder.createOuterName("jeff");
-            builder.connectNodeToOuterName(freshPrinter, jeff);
-            EcoreBigraphBuilder.BigraphEntity z2 = builder.createInnerName("z2");
-            builder.connectInnerToOuterName(z2, jeff);
-            builder.connectInnerToOuterName(z2, jeff);
+                        .addChild(signature.getControlByName("Printer"))
+                        .connectNodeToInnerName(z)
+                        .connectNodeToInnerName(z)
+                        .connectNodeToOuterName(jeff)
+                        .connectNodeToOuterName(jeff);
+            });
 
-            Assertions.assertThrows(ToManyConnections.class, () -> {
-                builder.connectNodeToInnerName(freshPrinter, z2);
+            assertThrows(InvalidConnectionException.class, () -> {
+                builder.connectInnerToOuterName(z, jeff);
             });
         }
 
 //        @Test
 //        @Disabled
 //        void createSites() {
-//            builder.createSite().createSite();
+//            builder.addSite().addSite();
 //        }
+
+
+        @AfterEach
+        void debug() {
+            assertAll(() -> {
+                builder.WRITE_DEBUG();
+            });
+        }
     }
 
     @Test
     void write_to_dot() throws IOException {
         //This belongs in the visu module
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
-        signature = createExampleSignature();
-        builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
-        // define some nodes
-        builder.createRoot(); // create a root node first
-        builder.addChild(signature.getControlByName("Printer"))
-                .addChild(signature.getControlByName("Printer"))
-                .addChild(signature.getControlByName("Printer"));
-//        builder.connectByEdge();
-        builder.createRoot().addChild(signature.getControlByName("Computer"));
-        builder.createRoot().addChild(signature.getControlByName("User"));
-
-        DynamicEcoreBigraph bigraph = builder.createBigraph();
-
-        builder.WRITE_DEBUG();
-//        EcoreBigraphBuilder.EcoreRoot root = (EcoreBigraphBuilder.EcoreRoot) bigraph.getRoot();
-//        if(root instanceof EcoreBigraphBuilder.EcoreRoot) {
-//            System.out.println("nice");
-//        }
-
-        MutableGraph g = Parser.read(getClass().getResourceAsStream("/color.dot"));
-        Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(new File("example/ex4-1.png"));
-
-        g.graphAttrs()
-                .add(Color.WHITE.gradient(Color.rgb("888888")).background().angle(90))
-                .nodeAttrs().add(Color.WHITE.fill())
-                .nodes().forEach(node ->
-                node.add(
-                        Color.named(node.name().toString()),
-                        Style.lineWidth(4).and(Style.FILLED)));
-        Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(new File("example/ex4-2.png"));
-    }
-
-    @Deprecated
-    private DefaultControl<StringTypedName, FiniteOrdinal<Integer>> getControlByName(String name, Signature signature) {
-        DefaultControl selected = null;
-        Iterator<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> iterator = signature.getControls().iterator();
-        while (iterator.hasNext()) {
-            DefaultControl<StringTypedName, FiniteOrdinal<Integer>> next1 = iterator.next();
-            if (next1.getNamedType().stringValue().equals(name)) {
-                selected = next1;
-                break;
-            }
-        }
-        return selected;
+//        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+//        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+//        signature = createExampleSignature();
+//        builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+//        // define some nodes
+//        builder.createRoot(); // create a root node first
+//        builder.addChild(signature.getControlByName("Printer"))
+//                .addChild(signature.getControlByName("Printer"))
+//                .addChild(signature.getControlByName("Printer"));
+////        builder.connectByEdge();
+//        builder.createRoot().addChild(signature.getControlByName("Computer"));
+//        builder.createRoot().addChild(signature.getControlByName("User"));
+//
+//        DynamicEcoreBigraph bigraph = builder.createBigraph();
+//
+//        builder.WRITE_DEBUG();
+////        EcoreBigraphBuilder.EcoreRoot root = (EcoreBigraphBuilder.EcoreRoot) bigraph.getRoot();
+////        if(root instanceof EcoreBigraphBuilder.EcoreRoot) {
+////            System.out.println("nice");
+////        }
+//
+//        MutableGraph g = Parser.read(getClass().getResourceAsStream("/color.dot"));
+//        Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(new File("example/ex4-1.png"));
+//
+//        g.graphAttrs()
+//                .add(Color.WHITE.gradient(Color.rgb("888888")).background().angle(90))
+//                .nodeAttrs().add(Color.WHITE.fill())
+//                .nodes().forEach(node ->
+//                node.add(
+//                        Color.named(node.name().toString()),
+//                        Style.lineWidth(4).and(Style.FILLED)));
+//        Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(new File("example/ex4-2.png"));
     }
 
     private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {

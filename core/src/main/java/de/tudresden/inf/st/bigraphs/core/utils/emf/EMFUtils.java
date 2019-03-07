@@ -108,8 +108,10 @@ public class EMFUtils {
          * Save the resource using OPTION_SCHEMA_LOCATION save option toproduce
          * xsi:schemaLocation attribute in the document
          */
+//        org.eclipse.emf.ecore.xmi.XMLResource.OPTION_PROCESS_DANGLING_HREF
         Map options = new HashMap();
         options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
+        options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, "THROW"); //see: https://books.google.de/books?id=ff-9ZYhvPwwC&pg=PA317&lpg=PA317&dq=emf+OPTION_PROCESS_DANGLING_HREF&source=bl&ots=yBXkH3qSpD&sig=ACfU3U3uEGX_DCnDa2DAnjRboybhyGsKng&hl=en&sa=X&ved=2ahUKEwiCg-vI7_DgAhXDIVAKHU1PAIgQ6AEwBHoECAYQAQ#v=onepage&q=emf%20OPTION_PROCESS_DANGLING_HREF&f=false
         outputRes.save(outputStream, options);
 
     }
