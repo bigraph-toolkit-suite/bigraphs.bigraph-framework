@@ -107,22 +107,28 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         return eObject;
     }
 
-
-
-//    public <C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>> EcoreBigraphBuilder<C>.Hierarchy newHierarchy(C control) {
-//        EObject childNode = EcoreBigraphBuilder.start(signature).createNodeOfEClass(control.getNamedType().stringValue(), control); // new Hierarchy()
-//        BigraphEntity.NodeEntity<C> nodeEntity = BigraphEntity.createNode(childNode, control);
-//        return new EcoreBigraphBuilder.Hierarchy(nodeEntity);
-////            new EcoreBigraphBuilder.Hierarchy()
-////        BigraphEntity.NodeEntity<C> child = createChild(control);
-//    }
-
+    public Hierarchy newHierarchy(C control) {
+        EObject childNode = createNodeOfEClass(control.getNamedType().stringValue(), control); // new Hierarchy()
+        BigraphEntity.NodeEntity<C> nodeEntity = BigraphEntity.createNode(childNode, control);
+        Hierarchy hierarchy = new Hierarchy(nodeEntity);
+        hierarchy.lastCreatedNode = nodeEntity;
+        return hierarchy;
+//            new EcoreBigraphBuilder.Hierarchy()
+//        BigraphEntity.NodeEntity<C> child = createChild(control);
+    }
 
     public class Hierarchy {
         final Hierarchy parentHierarchy;
         final BigraphEntity<C> parent;
         final Collection<BigraphEntity> childs = new ArrayList<>();
         BigraphEntity.NodeEntity<C> lastCreatedNode;
+
+        /**
+         * Creates a new independent hierarchy which can be added later.
+         *
+         * @param control the control for the hierarchies' parent
+         * @return
+         */
 
 
         private Hierarchy(BigraphEntity<C> parent) {
@@ -142,19 +148,39 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
             return Objects.isNull(this.parentHierarchy) ? this : this.parentHierarchy;
         }
 
+        /**
+         * Creates a new hierarchy builder where the last created node is the parent of this new hierarchy.
+         * <p>
+         * One can go to the previous hierarchy by calling the {@link Hierarchy#goBack()} method.
+         *
+         * @return the new hierarchy
+         */
         //CHECK if something was created...
         public Hierarchy withNewHierarchy() {
             return withNewHierarchyOn(getLastCreatedNode());
 //            return new Hierarchy(getLastCreatedNode(), this);
         }
 
-        public Hierarchy withNewHierarchy(Hierarchy thisOne) {
-            return new Hierarchy(getLastCreatedNode(), thisOne);
+//        public Hierarchy withNewHierarchy(Hierarchy thisOne) {
+//            return new Hierarchy(getLastCreatedNode(), thisOne);
+////            return new Hierarchy(getLastCreatedNode(), this);
+//        }
+
+        public Hierarchy addHierarchyToParent(Hierarchy thisOne) {
+            assert thisOne.getParent() != null;
+            addChildToParent(thisOne.getParent());
+            return this; //new Hierarchy(thisOne.getParent(), thisOne);
 //            return new Hierarchy(getLastCreatedNode(), this);
         }
 
 
-        public Hierarchy withNewHierarchyOn(BigraphEntity.NodeEntity<C> entity) {
+        /**
+         * Creates a new dynamic hierarchy where the parent is the current one.
+         *
+         * @param entity
+         * @return
+         */
+        private Hierarchy withNewHierarchyOn(BigraphEntity.NodeEntity<C> entity) {
             if (!childs.contains(entity)) {
                 throw new RuntimeException("Not possible");
             }
@@ -447,8 +473,8 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
 
         // are they connected to any other edge? If so, should the "bond" be broken up?
         if (!keepIdleEdges) {
-            clearAllConnectionsFromEdge(getEdgeFromInnerName(ecoreInnerName1));
-            clearAllConnectionsFromEdge(getEdgeFromInnerName(ecoreInnerName2));
+            disconnectNodesFromEdge(getEdgeFromInnerName(ecoreInnerName1));
+            disconnectNodesFromEdge(getEdgeFromInnerName(ecoreInnerName2));
         } // otherwise idle edges will remain
 
         EObject edgeOfEClass = createEdgeOfEClass();
@@ -458,7 +484,23 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         return this;
     }
 
-    private void clearAllConnectionsFromEdge(EObject edge) {
+    private void disconnectInnerNamesFromEdge(EObject edge) {
+        if (Objects.isNull(edge) || !edge.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_EDGE)))
+            return;
+        EList<EObject> bPoints1 = (EList<EObject>) edge.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_POINT));
+        if (Objects.nonNull(bPoints1)) {
+            Iterator<EObject> iterator = bPoints1.iterator();
+            while (iterator.hasNext()) {
+                EObject x = iterator.next();
+                if (x.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_INNERNAME))) {
+                    bPoints1.remove(x);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void disconnectNodesFromEdge(EObject edge) {
         // only edge classes allowed ...
         if (Objects.isNull(edge) || !edge.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_EDGE)))
             return;
@@ -476,7 +518,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
                     portList.remove(x);
                 }
             });
-            bPoints1.clear(); //TODO
+//            bPoints1.clear(); //TODO
         }
     }
 
@@ -748,8 +790,9 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
                     break;
                 }
             }
-        } else {
-            clearAllConnectionsFromEdge(blink);
+        } else { // if (blink.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_EDGE))) {
+            //remove the inner name from connected edge but leave the edge intact
+            disconnectInnerNamesFromEdge(blink);
         }
 
         if (!keepIdleNames)

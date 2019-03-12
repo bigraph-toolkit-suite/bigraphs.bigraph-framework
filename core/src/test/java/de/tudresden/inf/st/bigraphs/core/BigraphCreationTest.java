@@ -289,12 +289,53 @@ public class BigraphCreationTest {
                     .withNewHierarchy()
                     .addChild(signature.getControlByName("Job"))
                     .addSite()
-            .goBack()
-            .connectNodeToInnerName(signature.getControlByName("Printer"), x1);
+                    .goBack()
+                    .connectNodeToInnerName(signature.getControlByName("Printer"), x1);
 
 //            builder.new Hierarchy(signature.getControlByName("User"));
 
             builder.makeGround();
+        }
+
+        @AfterEach
+        void debug() {
+            assertAll(() -> {
+                builder.WRITE_DEBUG();
+            });
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class HierarchyTestSeries {
+        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+
+        @BeforeAll
+        void createSignature() {
+            signature = createExampleSignature();
+        }
+
+        @BeforeEach
+        void setUp() {
+            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+        }
+
+        @Test
+        void simple_hierarchy_test() throws InvalidConnectionException, LinkTypeNotExistsException {
+            BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
+            BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+
+            EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+            room.connectNodeToInnerName(tmp1)
+                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
+                    .addChild(signature.getControlByName("Job"));
+
+            builder.createRoot()
+                    .addHierarchyToParent(room)
+                    .addChild(signature.getControlByName("Room")).connectNodeToInnerName(tmp1);
+
+            builder.closeInnerName(tmp1);
         }
 
         @AfterEach
