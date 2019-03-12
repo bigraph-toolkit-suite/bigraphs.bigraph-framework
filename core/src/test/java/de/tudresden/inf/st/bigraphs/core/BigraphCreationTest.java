@@ -198,12 +198,104 @@ public class BigraphCreationTest {
             });
         }
 
-//        @Test
-//        @Disabled
-//        void createSites() {
-//            builder.addSite().addSite();
-//        }
+        @Test
+        void connect_to_inner_name_2() {
+            BigraphEntity.InnerName x1 = builder.createInnerName("x1");
+            BigraphEntity.InnerName x2 = builder.createInnerName("x2");
+            BigraphEntity.InnerName x3 = builder.createInnerName("x3");
+            BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
 
+            assertAll(() -> {
+                builder.connectInnerToOuterName(x3, jeff);
+            });
+
+            assertAll(() -> {
+                builder.createRoot()
+                        .addChild(signature.getControlByName("Printer"))
+                        .connectNodeToInnerName(x1)
+                        .connectNodeToInnerName(x2)
+                        .connectByEdge(signature.getControlByName("Printer"), signature.getControlByName("Printer"))
+                        .connectNodeToInnerName(x1)
+                        .addChild(signature.getControlByName("Printer"))
+                        .connectNodeToOuterName(jeff);
+                //TODO addChild(Hierarchy. instance als argument)
+                //somit kann man teilhierarchien aufbauen
+
+            });
+
+            try {
+                builder.connectInnerNames(x1, x2, true);
+                builder.connectInnerNames(x2, x3, false);
+            } catch (InvalidConnectionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Test
+        @DisplayName("Connects a node and an outer name to an inner name, " +
+                "closes it (keeps the idle name) and connects it to a new node again")
+        void closeinnerName() {
+            BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+            BigraphEntity.InnerName x = builder.createInnerName("x");
+
+            assertAll(() -> {
+                builder.connectInnerToOuterName(x, jeff);
+                builder.createRoot()
+                        .addChild(signature.getControlByName("Printer"))
+                        .connectNodeToOuterName(jeff);
+                builder.closeInnerName(x, true);
+//                builder.closeInnerName(x);
+
+
+                builder.createRoot()
+                        .addChild(signature.getControlByName("Computer"))
+                        .connectNodeToInnerName(x);
+
+                builder.closeAllInnerNames();
+            });
+        }
+
+        @AfterEach
+        void debug() {
+            assertAll(() -> {
+                builder.WRITE_DEBUG();
+            });
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class GroundBigraphTestSeries {
+        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+
+        @BeforeAll
+        void createSignature() {
+            signature = createExampleSignature();
+        }
+
+        @BeforeEach
+        void setUp() {
+            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+        }
+
+        @Test
+        void makeGround() throws InvalidConnectionException, LinkTypeNotExistsException {
+            BigraphEntity.InnerName x1 = builder.createInnerName("x1");
+            builder.createRoot()
+                    .addChild(signature.getControlByName("Computer"))
+                    .addChild(signature.getControlByName("Computer"))
+                    .addSite()
+                    .withNewHierarchy()
+                    .addChild(signature.getControlByName("Job"))
+                    .addSite()
+            .goBack()
+            .connectNodeToInnerName(signature.getControlByName("Printer"), x1);
+
+//            builder.new Hierarchy(signature.getControlByName("User"));
+
+            builder.makeGround();
+        }
 
         @AfterEach
         void debug() {

@@ -1,9 +1,9 @@
 package de.tudresden.inf.st.bigraphs.core.exceptions;
 
-public class LinkTypeNotExistsException extends Exception {
+public class LinkTypeNotExistsException extends TypeNotExistsException {
 
     public LinkTypeNotExistsException() {
-        this("This bigraph type doesn't exists.");
+        this("This bigraph link type doesn't exists.");
     }
 
     public LinkTypeNotExistsException(String message) {
