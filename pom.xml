@@ -35,22 +35,15 @@
     </properties>
 
     <repositories>
-        <!--<repository>-->
-        <!--<id>local-maven-repo</id>-->
-        <!--&lt;!&ndash;<layout>m2</layout>&ndash;&gt;-->
-        <!--<url>file:///${project.basedir}/local-maven-repo</url>-->
-        <!--</repository>-->
-        <!-- add Eclipse repository to resolve dependencies -->
         <repository>
             <id>Eclipse</id>
-            <layout>p2</layout>
+            <!--<layout>p2</layout>-->
             <url>${eclipse.mirror}/releases/photon/</url>
         </repository>
         <!-- add TMF repository for latest Xtend -->
         <repository>
             <id>TMF Repo</id>
-            <layout>p2</layout>
-            <!--<url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>-->
+            <!--<layout>p2</layout>-->
             <url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>
         </repository>
     </repositories>
@@ -80,7 +73,7 @@
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
                 <artifactId>bigraph-ecore-model</artifactId>
-                <version>2.0</version>
+                <version>3.0</version>
             </dependency>
             <!-- EMF -->
             <dependency>
