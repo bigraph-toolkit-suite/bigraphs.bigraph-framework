@@ -18,8 +18,6 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
-import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
-
 //TODO think about "ownership". Wenn z.B. BLink zurückgegeben wird, darf es nur wieder in den gleichen Bigraph aber nicht
 //in andere (cf. jlibbig)
 
@@ -65,7 +63,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     private EcoreBigraphBuilder(Signature<C> signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.completed = false;
-        this.bigraphicalSignatureAsTypeGraph();
+        this.bigraphicalSignatureAsTypeGraph("SAMPLE"); //TODO
         this.vertexNameSupplier = nodeNameSupplier;
     }
 
@@ -717,7 +715,18 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     }
 
     public DynamicEcoreBigraph createBigraph() {
-        DynamicEcoreBigraph bigraph = new DynamicEcoreBigraph(null);
+        ArrayList<BigraphEntity.RootEntity> roots = new ArrayList<>();
+        ArrayList<BigraphEntity.SiteEntity> sites = new ArrayList<>();
+        ArrayList<BigraphEntity.OuterName> outernames = new ArrayList<>();
+        ArrayList<BigraphEntity.InnerName> innernames = new ArrayList<>();
+        ArrayList<BigraphEntity.Edge> edges = new ArrayList<>();
+        availableRoots.forEach((ix, e) -> roots.add(BigraphEntity.create(e, BigraphEntity.RootEntity.class)));
+        availableSites.forEach((ix, e) -> sites.add(BigraphEntity.create(e, BigraphEntity.SiteEntity.class)));
+        availableOuterNames.forEach((ix, e) -> outernames.add(BigraphEntity.create(e, BigraphEntity.OuterName.class)));
+        availableInnerNames.forEach((ix, e) -> innernames.add(BigraphEntity.create(e, BigraphEntity.InnerName.class)));
+        availableEdges.forEach((ix, e) -> edges.add(BigraphEntity.create(e, BigraphEntity.Edge.class)));
+        DynamicEcoreBigraph bigraph = new DynamicEcoreBigraph(loadedEPackage,
+                signature, roots, sites, innernames, outernames, edges);
 //        bigraph.setRoot(currentRoot);
         return bigraph;
     }
@@ -819,33 +828,38 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         return list;
     }
 
-    //BLEIBT
-    public void WRITE_DEBUG() throws IOException {
-        try {
-            List<EObject> allresources = new ArrayList<>();
-//            allresources.add(currentRoot.getInstance());
-            availableRoots.forEach((s, x) -> allresources.add(x));
-            availableOuterNames.forEach((s, x) -> allresources.add(x));
-            availableInnerNames.forEach((s, x) -> allresources.add(x));
-            availableEdges.forEach((s, x) -> allresources.add(x));
-//            allresources.add(newPackage);
-//            allresources.addAll();
-            EMFUtils.writeDynamicInstanceModel(allresources, "bookStore", System.out);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
+//    public void export() throws IOException {
+//        this.export("sample", System.out);
+//    }
+//
+//    public void exportMetaModel(String filename, OutputStream outputStream) throws IOException {
+//        BigraphModelFileStore.writeDynamicMetaModel(loadedEPackage, filename, outputStream);
+//    }
+//
+//    //BLEIBT
+//    public void export(String filename, OutputStream outputStream) throws IOException {
+//        List<EObject> allresources = new ArrayList<>();
+////            allresources.add(currentRoot.getInstance());
+//        availableRoots.forEach((s, x) -> allresources.add(x));
+//        availableOuterNames.forEach((s, x) -> allresources.add(x));
+//        availableInnerNames.forEach((s, x) -> allresources.add(x));
+//        availableEdges.forEach((s, x) -> allresources.add(x));
+////            allresources.add(newPackage);
+////            allresources.addAll();
+//        BigraphModelFileStore.writeDynamicInstanceModel(loadedEPackage, allresources, filename, outputStream);
+//    }
 
     //BLEIBT
     //TODO: important: change namespace etc.: since instance model will refer to this namespace later
     //Wenn ich schon ein signatur modell habe, dann muss ich nur noch die controls extrahieren (subclasses of BNode)
-    public void bigraphicalSignatureAsTypeGraph() throws BigraphMetaModelLoadingFailedException {
+    public void bigraphicalSignatureAsTypeGraph(String name) throws BigraphMetaModelLoadingFailedException {
 //        EPackage loadedEPackage;
         try {
-            loadedEPackage = EMFUtils.loadEcoreModel(BIGRAPH_BASE_MODEL);
+            loadedEPackage = BigraphModelFileStore.loadInternalBigraphMetaModel();
+            loadedEPackage.setNsPrefix("bigraphMetaModel_" + name);
+            loadedEPackage.setName("bigraphMetaModel_" + name);
         } catch (IOException e) {
-            throw new BigraphMetaModelLoadingFailedException();
+            throw new BigraphMetaModelLoadingFailedException(e);
         }
 
 //        EList<EClassifier> eClassifiers = loadedEPackage.getEClassifiers();

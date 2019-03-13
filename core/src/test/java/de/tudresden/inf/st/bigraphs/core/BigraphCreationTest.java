@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class BigraphCreationTest {
                         .addChild(selected)
                         .connectNodeToOuterName(jeff);
             });
-            am.printStackTrace();
+//            am.printStackTrace();
         }
 
         @Test
@@ -66,13 +67,13 @@ public class BigraphCreationTest {
                         .connectNodeToOuterName(jeff)
                         .connectNodeToOuterName(bob);
             });
-            am2.printStackTrace();
+//            am2.printStackTrace();
         }
 
-        @AfterEach
-        void write_debug() {
-            assertAll(() -> builder.WRITE_DEBUG());
-        }
+//        @AfterEach
+//        void write_debug() {
+//            assertAll(() -> builder.export());
+//        }
     }
 
     @Nested
@@ -112,12 +113,12 @@ public class BigraphCreationTest {
         }
 
 
-        @AfterEach
-        void debug() {
-            assertAll(() -> {
-                builder.WRITE_DEBUG();
-            });
-        }
+//        @AfterEach
+//        void debug() {
+//            assertAll(() -> {
+//                builder.export();
+//            });
+//        }
     }
 
 
@@ -223,12 +224,10 @@ public class BigraphCreationTest {
 
             });
 
-            try {
+            assertThrows(InnerNameConnectedToOuterNameException.class, () -> {
                 builder.connectInnerNames(x1, x2, true);
                 builder.connectInnerNames(x2, x3, false);
-            } catch (InvalidConnectionException e) {
-                e.printStackTrace();
-            }
+            });
         }
 
         @Test
@@ -255,12 +254,12 @@ public class BigraphCreationTest {
             });
         }
 
-        @AfterEach
-        void debug() {
-            assertAll(() -> {
-                builder.WRITE_DEBUG();
-            });
-        }
+//        @AfterEach
+//        void debug() {
+//            assertAll(() -> {
+//                builder.export();
+//            });
+//        }
     }
 
     @Nested
@@ -297,12 +296,12 @@ public class BigraphCreationTest {
             builder.makeGround();
         }
 
-        @AfterEach
-        void debug() {
-            assertAll(() -> {
-                builder.WRITE_DEBUG();
-            });
-        }
+//        @AfterEach
+//        void debug() {
+//            assertAll(() -> {
+//                builder.export();
+//            });
+//        }
     }
 
     @Nested
@@ -322,28 +321,28 @@ public class BigraphCreationTest {
         }
 
         @Test
-        void simple_hierarchy_test() throws InvalidConnectionException, LinkTypeNotExistsException {
+        void simple_hierarchy_test() {
             BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
             BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
 
-            EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
-            room.connectNodeToInnerName(tmp1)
-                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
-                    .addChild(signature.getControlByName("Job"));
-
-            builder.createRoot()
-                    .addHierarchyToParent(room)
-                    .addChild(signature.getControlByName("Room")).connectNodeToInnerName(tmp1);
-
-            builder.closeInnerName(tmp1);
-        }
-
-        @AfterEach
-        void debug() {
             assertAll(() -> {
-                builder.WRITE_DEBUG();
+
+                EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+                room.connectNodeToInnerName(tmp1)
+                        .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
+                        .addChild(signature.getControlByName("Job"));
+
+                builder.createRoot()
+                        .addHierarchyToParent(room)
+                        .addChild(signature.getControlByName("Room")).connectNodeToInnerName(tmp1);
+
+                builder.closeInnerName(tmp1);
             });
+
+            DynamicEcoreBigraph bigraph = builder.createBigraph();
+            System.out.println(bigraph);
         }
+
     }
 
     @Test
@@ -364,7 +363,7 @@ public class BigraphCreationTest {
 //
 //        DynamicEcoreBigraph bigraph = builder.createBigraph();
 //
-//        builder.WRITE_DEBUG();
+//        builder.export();
 ////        EcoreBigraphBuilder.EcoreRoot root = (EcoreBigraphBuilder.EcoreRoot) bigraph.getRoot();
 ////        if(root instanceof EcoreBigraphBuilder.EcoreRoot) {
 ////            System.out.println("nice");

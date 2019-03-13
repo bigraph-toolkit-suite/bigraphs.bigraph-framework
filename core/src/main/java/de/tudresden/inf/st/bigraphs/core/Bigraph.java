@@ -1,10 +1,12 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.*;
 import org.eclipse.emf.ecore.EObject;
 
 //TODO think about the return types ...
+//TODO: add isGround()
 public interface Bigraph<S extends Signature> {
     /**
      * Get the respective signature of the current bigraph
@@ -13,13 +15,15 @@ public interface Bigraph<S extends Signature> {
      */
     S getSignature();
 
-    Iterable<? extends EObject> getRoots();
+    Iterable<BigraphEntity.RootEntity> getRoots();
 
-    Iterable<? extends EObject> getSites();
+    Iterable<BigraphEntity.SiteEntity> getSites();
 
-    Iterable<? extends EObject> getOuterNames();
+    Iterable<BigraphEntity.OuterName> getOuterNames();
 
-    Iterable<? extends EObject> getInnerNames();
+    Iterable<BigraphEntity.InnerName> getInnerNames();
+
+    Iterable<BigraphEntity.Edge> getEdges();
 
     <T extends EObject> boolean areConnected(T place1, T place2);
 }

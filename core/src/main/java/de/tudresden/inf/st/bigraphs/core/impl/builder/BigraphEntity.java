@@ -10,6 +10,14 @@ import org.eclipse.emf.ecore.EObject;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
+/**
+ * Wrapper-like classes for the dynamic EMF model of bigraphs. Allowing the user to handle the bigraph entities
+ * without getting in touch with Ecore objects.
+ * <p>
+ * The objects cannot be instatiated with the constructor. Therefore, the builder shall be used.
+ *
+ * @param <C> type of the controls
+ */
 public class BigraphEntity<C extends Control<?, ?>> {
 
 
@@ -103,6 +111,18 @@ public class BigraphEntity<C extends Control<?, ?>> {
 
         OuterName(EObject instance) {
             super(instance, BigraphEntityType.OUTER_NAME);
+        }
+
+    }
+
+    public static class Edge extends BigraphEntity {
+
+        Edge() {
+            super(null, BigraphEntityType.EDGE);
+        }
+
+        Edge(EObject instance) {
+            super(instance, BigraphEntityType.EDGE);
         }
 
     }

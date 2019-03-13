@@ -4,20 +4,14 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphModelFileStore;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BRoot;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelFactory;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-
-import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphSignatureTest {
@@ -149,11 +143,11 @@ public class BigraphSignatureTest {
     @DisplayName("Load, Modify and Output an Ecore model")
     @Order(2)
     public void loadEcoreModelTest() throws URISyntaxException {
-        InputStream in = getClass().getResourceAsStream(BIGRAPH_BASE_MODEL);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+//        InputStream in = getClass().getResourceAsStream(BIGRAPH_BASE_MODEL);
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         try {
-            EPackage metapackage = EMFUtils.loadEcoreModel(BIGRAPH_BASE_MODEL);
+            EPackage metapackage = BigraphModelFileStore.loadInternalBigraphMetaModel();
             System.out.println("Model loaded");
 
 //            EPackage metapackage = (EPackage) resource.getContents().get(0);
@@ -166,7 +160,7 @@ public class BigraphSignatureTest {
             metapackage.getEClassifiers().add(newControlClass);
             EMFUtils.addSuperType(newControlClass, metapackage, entityClass.getName());
 
-            EMFUtils.writeEcoreFile(metapackage, "custom2", "http://www.example.com/", System.out);
+//            EMFUtils.writeEcoreFile(metapackage, "custom2", "http://www.example.com/", System.out);
         } catch (
                 IOException e) {
             e.printStackTrace();

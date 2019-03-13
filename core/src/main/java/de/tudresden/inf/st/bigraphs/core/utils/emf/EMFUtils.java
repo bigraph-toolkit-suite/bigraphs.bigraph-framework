@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.core.utils.emf;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -12,6 +13,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
@@ -19,102 +21,54 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
+
 //https://sdqweb.ipd.kit.edu/wiki/Creating_EMF_Model_instances_programmatically
 public class EMFUtils {
 
     private final static EcoreFactory FACTORY = EcoreFactory.eINSTANCE;
 
-    public static EPackage loadEcoreModel(String ecoreResource) throws IOException {
-        ResourceSet resourceSet = new ResourceSetImpl();
 
 
-        URL resource1 = EMFUtils.class.getResource(ecoreResource);
-//        java.net.URI uri1 = resource1.toURI();
-        URI uri = URI.createURI(resource1.toString());
 
+//    @Deprecated
+//    public static void writeEcoreFile(EPackage metapackage, String name, String namespace, OutputStream outputStream) throws IOException {
+//        ResourceSet resourceSet = new ResourceSetImpl();
 //        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMIResourceFactoryImpl()); //probably not necessary
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
-//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new EcoreResourceFactoryImpl());//probably not necessary
-
-        Resource resource = resourceSet.createResource(uri);
-        try {
-            resource.load(Collections.EMPTY_MAP);
-//            System.out.println("Model loaded");
-            return (EPackage) resource.getContents().get(0);
-        } catch (
-                IOException e) {
-            throw e;
-        }
-    }
-
-    public static void writeEcoreFile(EPackage metapackage, String name, String namespace, OutputStream outputStream) throws IOException {
-        ResourceSet resourceSet = new ResourceSetImpl();
-        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMIResourceFactoryImpl()); //probably not necessary
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new EcoreResourceFactoryImpl());//probably not necessary
-        Resource outputRes = resourceSet.createResource(URI.createFileURI(name + ".ecore"));
-        // add our new package to resource contents
-        outputRes.getContents().add(metapackage);
-        metapackage.setName(name);
-        metapackage.setNsPrefix(name);
-        metapackage.setNsURI(namespace + name);
-        // and at last, we save to standard out.  Remove the first argument to save to file specified in pathToOutputFile
-        outputRes.save(outputStream, Collections.emptyMap());
-
-    }
-
-
-    public static void serializeMetaModel(EPackage ePackage, String filename, OutputStream outputStream) {
-        ResourceSet metaResourceSet = new ResourceSetImpl();
-
-        // Register XML Factory implementation to handle .ecore files
-        metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-                "ecore", new XMLResourceFactoryImpl());
-        Resource metaResource = metaResourceSet.createResource(URI.createURI("./" + filename + ".ecore"));
-        metaResource.getContents().add(ePackage);
-
-        try {
-            metaResource.save(null);
-//            ePackage.setNsURI("http://de.tudresden.inf.BigraphBaseModel");
-            metaResource.save(outputStream, null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    //TODO: add UTF-8
-    public static void writeDynamicInstanceModel(List<EObject> objects, String name, OutputStream outputStream) throws IOException {
-        ResourceSet resourceSet = new ResourceSetImpl();
-        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
-//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-//                "*", new XMLResourceFactoryImpl());
-//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 //        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        Resource outputRes = resourceSet.createResource(URI.createFileURI("./" + name + ".xmi"));
-        // add our new package to resource contents
-        objects.forEach(x -> outputRes.getContents().add(x));
-//        outputRes.getContents().add(object);
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMIResourceFactoryImpl()); //probably not necessary
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new EcoreResourceFactoryImpl());//probably not necessary
+//        Resource outputRes = resourceSet.createResource(URI.createFileURI(name + ".ecore"));
+//        // add our new package to resource contents
+//        outputRes.getContents().add(metapackage);
 //        metapackage.setName(name);
 //        metapackage.setNsPrefix(name);
 //        metapackage.setNsURI(namespace + name);
-        // and at last, we save to standard out.  Remove the first argument to save to file specified in pathToOutputFile
-        /*
-         * Save the resource using OPTION_SCHEMA_LOCATION save option toproduce
-         * xsi:schemaLocation attribute in the document
-         */
-//        org.eclipse.emf.ecore.xmi.XMLResource.OPTION_PROCESS_DANGLING_HREF
-        Map options = new HashMap();
-        options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
-        options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, "THROW"); //see: https://books.google.de/books?id=ff-9ZYhvPwwC&pg=PA317&lpg=PA317&dq=emf+OPTION_PROCESS_DANGLING_HREF&source=bl&ots=yBXkH3qSpD&sig=ACfU3U3uEGX_DCnDa2DAnjRboybhyGsKng&hl=en&sa=X&ved=2ahUKEwiCg-vI7_DgAhXDIVAKHU1PAIgQ6AEwBHoECAYQAQ#v=onepage&q=emf%20OPTION_PROCESS_DANGLING_HREF&f=false
-        outputRes.save(outputStream, options);
+//        // and at last, we save to standard out.  Remove the first argument to save to file specified in pathToOutputFile
+//        outputRes.save(outputStream, Collections.emptyMap());
+//
+//    }
 
-    }
+//    @Deprecated
+////    public static void serializeMetaModel(EPackage ePackage, String filename, OutputStream outputStream) {
+////        ResourceSet metaResourceSet = new ResourceSetImpl();
+////
+////        // Register XML Factory implementation to handle .ecore files
+////        metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
+////                "ecore", new XMLResourceFactoryImpl());
+////        Resource metaResource = metaResourceSet.createResource(URI.createURI("./" + filename + ".ecore"));
+////        metaResource.getContents().add(ePackage);
+////
+////        try {
+////            metaResource.save(null);
+//////            ePackage.setNsURI("http://de.tudresden.inf.BigraphBaseModel");
+////            metaResource.save(outputStream, null);
+////        } catch (IOException e) {
+////            e.printStackTrace();
+////        }
+////    }
+
 
     public static EAttribute addAttribute(EClass eClass, String name,
                                           EDataType type, boolean isId, int lowerBound, int upperBound) {
