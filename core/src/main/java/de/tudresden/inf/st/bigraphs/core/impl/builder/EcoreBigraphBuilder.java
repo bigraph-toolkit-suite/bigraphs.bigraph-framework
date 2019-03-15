@@ -11,6 +11,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EClassImpl;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.*;
@@ -178,7 +179,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
          */
         private Hierarchy withNewHierarchyOn(BigraphEntity.NodeEntity<C> entity) {
             if (!childs.contains(entity)) {
-                throw new RuntimeException("Not possible");
+                throw new RuntimeException("Not possible - A child must first be created");
             }
             return new Hierarchy(entity, this);
         }
@@ -245,6 +246,11 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
             return this;
         }
 
+        //TODO
+        public final Hierarchy connectByEdge(final Hierarchy... hierarchies) {
+            throw new NotImplementedException();
+        }
+
         /**
          * Creates new child nodes and connects them with an edge
          *
@@ -277,6 +283,11 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         public Hierarchy connectNodeToOuterName(BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidArityOfControlException {
             EcoreBigraphBuilder.this.connectNodeToOuterName(getLastCreatedNode(), outerName);
             return this;
+        }
+
+        //TODO
+        public void connectNodesToInnerName(BigraphEntity.InnerName innerName, C... controls) {
+            throw new NotImplementedException(); //see below
         }
 
         public void connectNodeToInnerName(C control, BigraphEntity.InnerName innerName) throws InvalidConnectionException, LinkTypeNotExistsException {
@@ -769,10 +780,14 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
      * Closes all inner names and doesn't keep idle edges and idle inner names.
      */
     public void closeAllInnerNames() {
-        for (Map.Entry<String, EObject> next : availableInnerNames.entrySet()) {
+        Iterator<Map.Entry<String, EObject>> iterator = availableInnerNames.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, EObject> next = iterator.next();
+//        for (Map.Entry<String, EObject> next : availableInnerNames.entrySet()) {
             try {
                 // the inner name is also removed from the above map in the following method
-                closeInnerName(BigraphEntity.create(next.getValue(), BigraphEntity.InnerName.class));
+                closeInnerName(BigraphEntity.create(next.getValue(), BigraphEntity.InnerName.class), true);
+                iterator.remove();
             } catch (LinkTypeNotExistsException ignored) { /* technically, this shouldn't happen*/ }
         }
     }
