@@ -1,7 +1,7 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.store;
 
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphArtifactHelper;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -18,10 +18,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.*;
-
-import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
 
 /**
  * A simple file store to serialize/deserialize bigraph model files.
@@ -39,24 +36,25 @@ public class BigraphModelFileStore {
         BigraphModelFileStore.exportBigraph(bigraph, "sample", System.out);
     }
 
-    public static void exportMetaModel(DynamicEcoreBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
-        BigraphModelFileStore.writeDynamicMetaModel(bigraph.getModelPackage(), filename, outputStream);
-    }
-
     public static void exportBigraph(DynamicEcoreBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
-        List<EObject> allresources = new ArrayList<>();
-        bigraph.getRoots().forEach((x) -> allresources.add(x.getInstance()));
-        bigraph.getOuterNames().forEach((x) -> allresources.add(x.getInstance()));
-        bigraph.getInnerNames().forEach((x) -> allresources.add(x.getInstance()));
-        bigraph.getEdges().forEach((x) -> allresources.add(x.getInstance()));
+        //        bigraph.getRoots().forEach((x) -> allresources.add(x.getInstance()));
+//        bigraph.getOuterNames().forEach((x) -> allresources.add(x.getInstance()));
+//        bigraph.getInnerNames().forEach((x) -> allresources.add(x.getInstance()));
+//        bigraph.getEdges().forEach((x) -> allresources.add(x.getInstance()));
+        Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph);
 //            allresources.add(newPackage);
 //            allresources.addAll();
         BigraphModelFileStore.writeDynamicInstanceModel(bigraph.getModelPackage(), allresources, filename, outputStream);
     }
 
+    public static void exportMetaModel(DynamicEcoreBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
+        BigraphModelFileStore.writeDynamicMetaModel(bigraph.getModelPackage(), filename, outputStream);
+    }
+
+
 
     //TODO: add UTF-8
-    public static void writeDynamicInstanceModel(EPackage ePackage, List<EObject> objects, String name, OutputStream outputStream) throws IOException {
+    public static void writeDynamicInstanceModel(EPackage ePackage, Collection<EObject> objects, String name, OutputStream outputStream) throws IOException {
         ResourceSet resourceSet = new ResourceSetImpl();
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
 //        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
@@ -132,33 +130,5 @@ public class BigraphModelFileStore {
 //        Resource resource = resourceSet.getResource(uri, true);
         resource.load(Collections.EMPTY_MAP);
         return (EPackage) resource.getContents().get(0);
-    }
-
-    public static EPackage loadInternalBigraphMetaModel() throws IOException {
-        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
-        ResourceSet resourceSet = new ResourceSetImpl();
-
-        URL resource1 = EMFUtils.class.getResource(BIGRAPH_BASE_MODEL);
-        URI uri = URI.createURI(resource1.toString()); //URI.createPlatformResourceURI(resource1.toString(), true);
-//        URI uri = URI.createURI(ecoreResource);
-
-        // resource factories
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
-
-
-        //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
-//        resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
-
-//         Resource resource = resourceSet.createResource(uri);
-        Resource resource = resourceSet.getResource(uri, true);
-        try {
-            resource.load(Collections.EMPTY_MAP);
-//            System.out.println("Model loaded");
-            return (EPackage) resource.getContents().get(0);
-        } catch (
-                IOException e) {
-            throw e;
-        }
     }
 }

@@ -1,5 +1,8 @@
-package de.tudresden.inf.st.bigraphs.core;
+package de.tudresden.inf.st.bigraphs.store;
 
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
@@ -9,22 +12,35 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphModelFileStore;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class BigraphModelSavingLoadingTest {
+public class BigraphArtifactTests {
+
+    @Test
+    void load_instance_model_test() {
+        assertAll(() -> {
+
+            DynamicEcoreBigraph bigraph = (DynamicEcoreBigraph) create();
+
+            BigraphModelFileStore.exportMetaModel(bigraph, "test_meta", new FileOutputStream("./test_meta.ecore"));
+            BigraphModelFileStore.exportBigraph(bigraph, "test", new FileOutputStream("./test.xmi"));
+
+//            EPackage ePackage = BigraphModelFileStore.loadEcoreMetaModel(URI.create("file:///home/dominik/git/BigraphFramework/core/test_meta.ecore"));
+
+//            EList<EObject> eObjects = BigraphModelFileStore.loadInstanceModel(ePackage, URI.create("file:///home/dominik/git/BigraphFramework/core/test.xmi"));
+//            System.out.println(eObjects);
+//            EList<EObject> eObjects2 = BigraphModelFileStore.loadInstanceModel(ePackage, URI.create("file:///home/dominik/git/BigraphFramework/core/src/test/resources/ecore-test-models/printer-example-1.xmi"));
+        });
+    }
 
     private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
         DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
@@ -63,22 +79,5 @@ public class BigraphModelSavingLoadingTest {
         FileOutputStream fioMeta = new FileOutputStream("./test_meta.ecore");
 
         return bigraph;
-    }
-
-    @Test
-    void load_instance_model_test() {
-        assertAll(() -> {
-
-            DynamicEcoreBigraph bigraph = (DynamicEcoreBigraph) create();
-
-            BigraphModelFileStore.exportMetaModel(bigraph, "test_meta", new FileOutputStream("./test_meta.ecore"));
-            BigraphModelFileStore.exportBigraph(bigraph, "test", new FileOutputStream("./test.xmi"));
-
-            EPackage ePackage = BigraphModelFileStore.loadEcoreMetaModel(URI.create("file:///home/dominik/git/BigraphFramework/core/test_meta.ecore"));
-
-            EList<EObject> eObjects = BigraphModelFileStore.loadInstanceModel(ePackage, URI.create("file:///home/dominik/git/BigraphFramework/core/test.xmi"));
-            System.out.println(eObjects);
-            EList<EObject> eObjects2 = BigraphModelFileStore.loadInstanceModel(ePackage, URI.create("file:///home/dominik/git/BigraphFramework/core/src/test/resources/ecore-test-models/printer-example-1.xmi"));
-        });
     }
 }
