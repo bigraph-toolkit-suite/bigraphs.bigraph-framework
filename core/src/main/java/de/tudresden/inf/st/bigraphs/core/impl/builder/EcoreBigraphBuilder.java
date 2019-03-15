@@ -11,7 +11,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EClassImpl;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.*;
@@ -48,7 +47,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     private final HashMap<String, EClass> availableEClassMap = new HashMap<>();
     @Deprecated
     private final HashMap<String, EReference> referenceMap = new HashMap<>();
-    private final HashMap<String, EReference> cntmRefMap = new HashMap<>();
+//    private final HashMap<String, EReference> cntmRefMap = new HashMap<>();
 
     // Create the VertexFactory so the generator can createNodeOfEClass vertices
     private Supplier<String> vertexNameSupplier;
@@ -59,6 +58,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     private final HashMap<String, EObject> availableInnerNames = new HashMap<>();
     private final HashMap<Integer, EObject> availableRoots = new HashMap<>(); //this is my "dynamic bigraph object" which can later be saved. //TODO probably a package??
     private final HashMap<Integer, EObject> availableSites = new HashMap<>(); //this is my "dynamic bigraph object" which can later be saved. //TODO probably a package??
+    private final HashMap<String, BigraphEntity.NodeEntity> availableNodes = new HashMap<>(); //this is my "dynamic bigraph object" which can later be saved. //TODO probably a package??
 
     private EcoreBigraphBuilder(Signature<C> signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
@@ -105,28 +105,33 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         return eObject;
     }
 
+    /**
+     * Creates a new independent hierarchy which can be added later.
+     *
+     * @param control the control of the parent for the new hierarchy
+     * @return a new hierarchy for the current bigraph
+     */
     public Hierarchy newHierarchy(C control) {
         EObject childNode = createNodeOfEClass(control.getNamedType().stringValue(), control); // new Hierarchy()
         BigraphEntity.NodeEntity<C> nodeEntity = BigraphEntity.createNode(childNode, control);
         Hierarchy hierarchy = new Hierarchy(nodeEntity);
         hierarchy.lastCreatedNode = nodeEntity;
         return hierarchy;
-//            new EcoreBigraphBuilder.Hierarchy()
-//        BigraphEntity.NodeEntity<C> child = createChild(control);
     }
 
+    /**
+     * A bigraph consists of many node hierarchy. This inner class represents one of these.
+     * These hierarchies can be built independently and added to the bigraph later.
+     */
     public class Hierarchy {
         final Hierarchy parentHierarchy;
         final BigraphEntity<C> parent;
+        /**
+         * maybe not needed? or what might be a case? this hierarchy is not contained in a bigraph structure
+         */
+        @Deprecated
         final Collection<BigraphEntity> childs = new ArrayList<>();
         BigraphEntity.NodeEntity<C> lastCreatedNode;
-
-        /**
-         * Creates a new independent hierarchy which can be added later.
-         *
-         * @param control the control for the hierarchies' parent
-         * @return
-         */
 
 
         private Hierarchy(BigraphEntity<C> parent) {
@@ -156,19 +161,12 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         //CHECK if something was created...
         public Hierarchy withNewHierarchy() {
             return withNewHierarchyOn(getLastCreatedNode());
-//            return new Hierarchy(getLastCreatedNode(), this);
         }
-
-//        public Hierarchy withNewHierarchy(Hierarchy thisOne) {
-//            return new Hierarchy(getLastCreatedNode(), thisOne);
-////            return new Hierarchy(getLastCreatedNode(), this);
-//        }
 
         public Hierarchy addHierarchyToParent(Hierarchy thisOne) {
             assert thisOne.getParent() != null;
             addChildToParent(thisOne.getParent());
-            return this; //new Hierarchy(thisOne.getParent(), thisOne);
-//            return new Hierarchy(getLastCreatedNode(), this);
+            return this;
         }
 
 
@@ -227,6 +225,11 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         private void addChildToParent(final BigraphEntity node) {
             ((EList) parent.getInstance().eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(node.getInstance());
             childs.add(node);
+            if (node.getType().equals(BigraphEntityType.NODE)) {
+                EAttribute name = EMFUtils.findAttribute(node.getInstance().eClass(), "name");
+                Object o = node.getInstance().eGet(name);
+                availableNodes.put(String.valueOf(o), (BigraphEntity.NodeEntity) node);
+            }
         }
 
         //MOVE, change return type
@@ -234,8 +237,9 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
             EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClassMap.get(BigraphMetaModelConstants.CLASS_SITE));
             final int ix = siteIdxSupplier.get();
             eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), ix);
-            ((EList) parent.getInstance().eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(eObject);
             BigraphEntity.SiteEntity siteEntity = BigraphEntity.create(eObject, BigraphEntity.SiteEntity.class);
+//            ((EList) parent.getInstance().eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(eObject);
+            addChildToParent(siteEntity);
             childs.add(siteEntity);
             availableSites.put(ix, eObject);
             return this;
@@ -642,8 +646,12 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     //BLEIBT - HELPER
     private EObject createPortWithIndex(final int index) {
         EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClassMap.get(BigraphMetaModelConstants.CLASS_PORT));
-        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX), index);
+        setIndexForEObject(eObject, index);
         return eObject;
+    }
+
+    private void setIndexForEObject(EObject eObject, final int index) {
+        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX), index);
     }
 
     //BLEIBT - HELPER
@@ -720,14 +728,14 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         ArrayList<BigraphEntity.OuterName> outernames = new ArrayList<>();
         ArrayList<BigraphEntity.InnerName> innernames = new ArrayList<>();
         ArrayList<BigraphEntity.Edge> edges = new ArrayList<>();
+        ArrayList<BigraphEntity.NodeEntity> nodes = new ArrayList<>();
         availableRoots.forEach((ix, e) -> roots.add(BigraphEntity.create(e, BigraphEntity.RootEntity.class)));
         availableSites.forEach((ix, e) -> sites.add(BigraphEntity.create(e, BigraphEntity.SiteEntity.class)));
         availableOuterNames.forEach((ix, e) -> outernames.add(BigraphEntity.create(e, BigraphEntity.OuterName.class)));
         availableInnerNames.forEach((ix, e) -> innernames.add(BigraphEntity.create(e, BigraphEntity.InnerName.class)));
         availableEdges.forEach((ix, e) -> edges.add(BigraphEntity.create(e, BigraphEntity.Edge.class)));
         DynamicEcoreBigraph bigraph = new DynamicEcoreBigraph(loadedEPackage,
-                signature, roots, sites, innernames, outernames, edges);
-//        bigraph.setRoot(currentRoot);
+                signature, roots, sites, availableNodes.values(), innernames, outernames, edges);
         return bigraph;
     }
 
@@ -736,7 +744,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
      * Converts the current bigraph to a ground bigraph (i.e., no sites an no inner names).
      */
     public void makeGround() {
-        // first deal with the sites
+        // first, deal with the sites
         Iterator<Map.Entry<Integer, EObject>> iterator = availableSites.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, EObject> next = iterator.next();
@@ -752,7 +760,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
             iterator.remove();
         }
 
-        // deal with the inner names
+        // lastly, deal with the inner names
         closeAllInnerNames();
     }
 
@@ -780,18 +788,17 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         closeInnerName(innerName, false);
     }
 
-    public void closeInnerName(BigraphEntity innerName, boolean keepIdleNames) throws LinkTypeNotExistsException {
+    public void closeInnerName(BigraphEntity innerName, boolean keepIdleName) throws LinkTypeNotExistsException {
 //        EClass eClassOuterName = availableEClassMap.get(BigraphMetaModelConstants.CLASS_OUTERNAME);
 //        EClass eClassEdge = availableEClassMap.get(BigraphMetaModelConstants.CLASS_EDGE);
         EAttribute attribute = EMFUtils.findAttribute(innerName.getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
         Object name = innerName.getInstance().eGet(attribute);
-//        boolean entryFound = false;
+        assert name != null;
         EObject eObject = availableInnerNames.get(String.valueOf(name));
         if (eObject == null) throw new InnerNameNotExistsException();
         EObject blink = (EObject) eObject.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_LINK));
-        if (blink == null) return;
-
-        if (blink.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
+        if (blink != null && blink.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
+//            if (blink.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
             EList<EObject> bPorts = (EList<EObject>) blink.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_POINT));
             for (int i = 0, n = bPorts.size(); i < n; i++) {
                 if (bPorts.get(i).equals(innerName.getInstance())) {
@@ -803,15 +810,67 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
             //remove the inner name from connected edge but leave the edge intact
             disconnectInnerNamesFromEdge(blink);
         }
+//        }
 
-        if (!keepIdleNames)
+        if (!keepIdleName)
             availableInnerNames.remove(String.valueOf(name));
 
     }
 
-    public void closeOuterName(BigraphEntity innerName) {
+    public void closeOuterName(BigraphEntity.OuterName outerName) throws TypeNotExistsException {
 //        innerName.getType().equals(BigraphEntityType.INNER_NAME)
-        throw new NotImplementedException();
+        this.closeOuterName(outerName, false);
+    }
+
+    /**
+     * If an inner name is connected to an outer name, the inner name will remain (i.e., not be removed).
+     *
+     * @param outername
+     * @param keepIdleName
+     * @throws TypeNotExistsException
+     */
+    public void closeOuterName(BigraphEntity.OuterName outername, boolean keepIdleName) throws TypeNotExistsException {
+        assert outername.getInstance() != null;
+        EAttribute attribute = EMFUtils.findAttribute(outername.getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+        Object name = outername.getInstance().eGet(attribute);
+        assert name != null;
+        EObject outerNameObject = availableOuterNames.get(String.valueOf(name));
+        if (!outername.getInstance().equals(outerNameObject))
+            throw new OuterNameNotExistsException();
+
+        EList<EObject> bPoints = (EList<EObject>) outerNameObject.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_POINT));
+        for (int i = bPoints.size() - 1; i >= 0; i--) {
+//            if (bPoints.get(i).eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_INNERNAME))) {
+//                bPoints.remove(i);
+//            } else
+            // the following is not really necessary
+            if (bPoints.get(i).eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_PORT))) {
+                EObject port = bPoints.get(i);
+                // get the corresponding node and remove the port
+                EObject node = (EObject) port.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_NODE));
+                EList<EObject> portList = (EList<EObject>) node.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_PORT));
+                portList.remove(port);
+                updatePortIndices(node);
+            }
+            bPoints.remove(i);
+        }
+
+        if (!keepIdleName)
+            availableOuterNames.remove(String.valueOf(name));
+
+//        throw new NotImplementedException();
+    }
+
+    //corresponds to the overridden generated code of the ecore-model library in eclipse
+    private void updatePortIndices(EObject node) {
+        if (!node.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_NODE))
+                && !node.eClass().getESuperTypes().contains(availableEClassMap.get(BigraphMetaModelConstants.CLASS_NODE)))
+            return;//TODO check for indexable eclass super type
+        EList<EObject> portList = (EList<EObject>) node.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_PORT));
+        for (int i = portList.size() - 1; i >= 0; i--) {
+            EObject eachPort = portList.get(i);
+            setIndexForEObject(eachPort, i);
+        }
     }
 
 
@@ -828,34 +887,13 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         return list;
     }
 
-//    public void export() throws IOException {
-//        this.export("sample", System.out);
-//    }
-//
-//    public void exportMetaModel(String filename, OutputStream outputStream) throws IOException {
-//        BigraphModelFileStore.writeDynamicMetaModel(loadedEPackage, filename, outputStream);
-//    }
-//
-//    //BLEIBT
-//    public void export(String filename, OutputStream outputStream) throws IOException {
-//        List<EObject> allresources = new ArrayList<>();
-////            allresources.add(currentRoot.getInstance());
-//        availableRoots.forEach((s, x) -> allresources.add(x));
-//        availableOuterNames.forEach((s, x) -> allresources.add(x));
-//        availableInnerNames.forEach((s, x) -> allresources.add(x));
-//        availableEdges.forEach((s, x) -> allresources.add(x));
-////            allresources.add(newPackage);
-////            allresources.addAll();
-//        BigraphModelFileStore.writeDynamicInstanceModel(loadedEPackage, allresources, filename, outputStream);
-//    }
-
     //BLEIBT
     //TODO: important: change namespace etc.: since instance model will refer to this namespace later
     //Wenn ich schon ein signatur modell habe, dann muss ich nur noch die controls extrahieren (subclasses of BNode)
     public void bigraphicalSignatureAsTypeGraph(String name) throws BigraphMetaModelLoadingFailedException {
 //        EPackage loadedEPackage;
         try {
-            loadedEPackage = BigraphModelFileStore.loadInternalBigraphMetaModel();
+            loadedEPackage = BigraphArtifactHelper.loadInternalBigraphMetaModel();
             loadedEPackage.setNsPrefix("bigraphMetaModel_" + name);
             loadedEPackage.setName("bigraphMetaModel_" + name);
         } catch (IOException e) {

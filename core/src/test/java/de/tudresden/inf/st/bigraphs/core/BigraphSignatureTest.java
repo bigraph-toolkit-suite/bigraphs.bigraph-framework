@@ -4,7 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphModelFileStore;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphArtifactHelper;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
@@ -147,7 +147,7 @@ public class BigraphSignatureTest {
 //        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         try {
-            EPackage metapackage = BigraphModelFileStore.loadInternalBigraphMetaModel();
+            EPackage metapackage = BigraphArtifactHelper.loadInternalBigraphMetaModel();
             System.out.println("Model loaded");
 
 //            EPackage metapackage = (EPackage) resource.getContents().get(0);

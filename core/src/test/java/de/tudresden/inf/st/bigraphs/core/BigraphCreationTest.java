@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphArtifactHelper;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
@@ -75,52 +76,6 @@ public class BigraphCreationTest {
 //            assertAll(() -> builder.export());
 //        }
     }
-
-    @Nested
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class NestedHierarchyTestSeries {
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
-
-        @BeforeAll
-        void createSignature() {
-            signature = createExampleSignature();
-        }
-
-        @BeforeEach
-        void setUp() {
-            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
-        }
-
-        @Test
-        void build_simple() {
-            BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
-            BigraphEntity.InnerName tmp2 = builder.createInnerName("tmp2");
-            //TODO: über command pattern wird dann der builder aufgerufen (übersetzung von gui schritten und builder)
-            //test methoden ob verbindung möglich sind, wird über andere klasse gemacht
-
-            //"umweg": verbinde nodes über hierarchie grenzen hinweg: über Inner name, und dann schließen.
-            //so besitzen sie die gleiche Kante
-            builder.createRoot()
-                    .addChild(signature.getControlByName("Spool"))
-                    .addChild(signature.getControlByName("Room"))
-                    .withNewHierarchy()
-                    .addChild(signature.getControlByName("Computer"))
-                    .addChild(signature.getControlByName("Printer"))
-                    .goBack()
-                    .addChild(signature.getControlByName("Room"));
-
-        }
-
-
-//        @AfterEach
-//        void debug() {
-//            assertAll(() -> {
-//                builder.export();
-//            });
-//        }
-    }
-
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -254,12 +209,26 @@ public class BigraphCreationTest {
             });
         }
 
-//        @AfterEach
-//        void debug() {
-//            assertAll(() -> {
-//                builder.export();
-//            });
-//        }
+        @Test
+        void close_outer_name() {
+            BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+            BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
+            BigraphEntity.InnerName x = builder.createInnerName("x");
+
+            assertAll(() -> {
+                builder.connectInnerToOuterName(x, jeff);
+                builder.createRoot()
+                        .addChild(signature.getControlByName("Printer"))
+                        .connectNodeToOuterName(jeff)
+                        .connectNodeToOuterName(jeff2);
+
+                builder.closeOuterName(jeff);
+                builder.closeInnerName(x);
+
+                //the inner name shall not have a reference to jeff now
+//                BigraphArtifactHelper.exportBigraph(builder.createBigraph());
+            });
+        }
     }
 
     @Nested
@@ -295,6 +264,51 @@ public class BigraphCreationTest {
 
             builder.makeGround();
         }
+
+//        @AfterEach
+//        void debug() {
+//            assertAll(() -> {
+//                builder.export();
+//            });
+//        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class NestedHierarchyTestSeries {
+        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+
+        @BeforeAll
+        void createSignature() {
+            signature = createExampleSignature();
+        }
+
+        @BeforeEach
+        void setUp() {
+            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+        }
+
+        @Test
+        void build_simple() {
+            BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
+            BigraphEntity.InnerName tmp2 = builder.createInnerName("tmp2");
+            //TODO: über command pattern wird dann der builder aufgerufen (übersetzung von gui schritten und builder)
+            //test methoden ob verbindung möglich sind, wird über andere klasse gemacht
+
+            //"umweg": verbinde nodes über hierarchie grenzen hinweg: über Inner name, und dann schließen.
+            //so besitzen sie die gleiche Kante
+            builder.createRoot()
+                    .addChild(signature.getControlByName("Spool"))
+                    .addChild(signature.getControlByName("Room"))
+                    .withNewHierarchy()
+                    .addChild(signature.getControlByName("Computer"))
+                    .addChild(signature.getControlByName("Printer"))
+                    .goBack()
+                    .addChild(signature.getControlByName("Room"));
+
+        }
+
 
 //        @AfterEach
 //        void debug() {

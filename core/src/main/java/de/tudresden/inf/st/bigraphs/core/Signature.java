@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 
 import java.util.Iterator;
 
+//TODO change iterable to set!
 public interface Signature<C extends Control<? extends NamedType, ? extends FiniteOrdinal>> {
     Iterable<C> getControls();
 

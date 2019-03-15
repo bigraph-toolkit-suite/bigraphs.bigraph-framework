@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
@@ -13,6 +14,8 @@ import java.util.Objects;
 /**
  * Wrapper-like classes for the dynamic EMF model of bigraphs. Allowing the user to handle the bigraph entities
  * without getting in touch with Ecore objects.
+ * <p>
+ * Also, helps to access attributes, references, etc. easier by offering methods.
  * <p>
  * The objects cannot be instatiated with the constructor. Therefore, the builder shall be used.
  *
@@ -137,6 +140,15 @@ public class BigraphEntity<C extends Control<?, ?>> {
             super(instance, (Control<?, ?>) control, BigraphEntityType.NODE);
         }
 
+        @Override
+        @Nullable
+        public EObject getInstance() { //TODO normally not intended
+            return super.getInstance();
+        }
+
+        public String getName() {
+            throw new NotImplementedException();
+        }
     }
 
     public static class SiteEntity extends BigraphEntity {
