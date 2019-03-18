@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.matching;
 
 import com.google.common.graph.SuccessorsFunction;
 import com.google.common.graph.Traverser;
+import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
@@ -32,4 +33,31 @@ public class EcoreBigraphAgentAdapter extends AbstractMatchAdapter {
         super(bigraph);
     }
 
+    /**
+     * includes also edges+outernames
+     *
+     * @param node
+     * @return
+     */
+    public List<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
+        EObject instance = node.getInstance();
+//        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+        List<ControlLinkPair> children = new ArrayList<>();
+
+        EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
+        if (Objects.nonNull(portRef)) {
+            EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
+            for (EObject eachPort : portList) {
+                //bPoints: for links
+                EStructuralFeature linkRef = eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                if (Objects.nonNull(linkRef) && Objects.nonNull(eachPort.eGet(linkRef))) {
+                    EObject obj = (EObject) eachPort.eGet(linkRef);
+
+                    children.add(new ControlLinkPair(node.getControl(), BigraphEntity.create(obj, BigraphEntity.OuterName.class)));
+                }
+            }
+
+        }
+        return children;
+    }
 }

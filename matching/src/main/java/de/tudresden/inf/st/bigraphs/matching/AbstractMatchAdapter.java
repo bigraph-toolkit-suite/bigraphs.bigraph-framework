@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.matching;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
+import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 //TODO: künstlichen super node einfügen für die roots, wenn es mehrere gibt
-public class AbstractMatchAdapter {
+public abstract class AbstractMatchAdapter {
     protected DynamicEcoreBigraph bigraph;
 
     public AbstractMatchAdapter(DynamicEcoreBigraph bigraph) {
@@ -34,6 +35,61 @@ public class AbstractMatchAdapter {
         return new ArrayList<>(bigraph.getSites());
     }
 
+    public static class ControlLinkPair {
+        Control control;
+        BigraphEntity link;
+
+        public ControlLinkPair(Control control, BigraphEntity link) {
+            this.control = control;
+            this.link = link;
+        }
+
+        public Control getControl() {
+            return control;
+        }
+
+        public BigraphEntity getLink() {
+            return link;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ControlLinkPair)) return false;
+            ControlLinkPair that = (ControlLinkPair) o;
+            return control.equals(that.control) &&
+                    link.equals(that.link);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(control, link);
+        }
+    }
+
+    public abstract List<ControlLinkPair> getLinksOfNode(BigraphEntity node);
+
+    //an edge is like an outername for an agent
+    public List<ControlLinkPair> getAllLinks(BigraphEntity startNode) {
+        List<ControlLinkPair> allVerticesPostOrder = new ArrayList<>();
+//        for (BigraphEntity eachRoot : bigraph.getRoots()) {
+//            BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
+        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(x -> {
+            List<ControlLinkPair> linksOfNode = getLinksOfNode(x);
+            allVerticesPostOrder.addAll(linksOfNode);
+            return getChildren(x);
+        });
+        Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(startNode);
+//            for(BigraphEntity e: v0) {
+//                return new ControlLinkPair(null, null);
+//            }
+        Lists.newArrayList(v0);
+//            allVerticesPostOrder.addAll();
+
+//        System.out.println();
+//        }
+        return allVerticesPostOrder;
+    }
 
     //FOR MATCHING: ONLY nodes, roots, site and outer names
     public int degreeOf(BigraphEntity nodeEntity) {
@@ -201,12 +257,7 @@ public class AbstractMatchAdapter {
 
     //FOR MATCHING
 
-    /**
-     * includes also edges+outernames
-     *
-     * @param node
-     * @return
-     */
+
     public List<BigraphEntity> getChildren(BigraphEntity node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
@@ -238,6 +289,19 @@ public class AbstractMatchAdapter {
             }
         }
         return leaves;
+    }
+
+    public boolean isLink(BigraphEntity node) {
+        return node.getType().equals(BigraphEntityType.OUTER_NAME) || node.getType().equals(BigraphEntityType.EDGE);
+    }
+
+    public boolean isOuterName(BigraphEntity node) {
+        return node.getType().equals(BigraphEntityType.OUTER_NAME);
+    }
+
+    public boolean isOuterName(EObject eObject) {
+        return eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
     }
 
     protected boolean isBPlace(EObject eObject) {

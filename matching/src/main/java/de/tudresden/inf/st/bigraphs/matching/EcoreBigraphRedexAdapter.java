@@ -20,13 +20,40 @@ public class EcoreBigraphRedexAdapter extends AbstractMatchAdapter {
     }
 
     //TODO: move this into a ReactionRule class
-    private boolean checkRedexConform() {
+    public boolean checkRedexConform() {
         for (BigraphEntity eachRoot : getRoots()) {
-            for (BigraphEntity each : getChildren(eachRoot)) {
+            for (BigraphEntity each : getChildrenWithSites(eachRoot)) {
                 if (isSite(each.getInstance())) return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Only outer names
+     *
+     * @param node
+     * @return
+     */
+    public List<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
+        EObject instance = node.getInstance();
+        List<ControlLinkPair> children = new ArrayList<>();
+
+        EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
+        if (Objects.nonNull(portRef)) {
+            EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
+            for (EObject eachPort : portList) {
+                //bPoints: for links
+                EStructuralFeature linkRef = eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                if (Objects.nonNull(linkRef) && Objects.nonNull(eachPort.eGet(linkRef))) {
+                    EObject obj = (EObject) eachPort.eGet(linkRef);
+                    if (isOuterName(obj)) {
+                        children.add(new ControlLinkPair(node.getControl(), BigraphEntity.create(obj, BigraphEntity.OuterName.class)));
+                    }
+                }
+            }
+        }
+        return children;
     }
 
     public int degreeOf(BigraphEntity nodeEntity) {

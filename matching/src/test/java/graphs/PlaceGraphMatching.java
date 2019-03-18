@@ -17,9 +17,12 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import de.tudresden.inf.st.bigraphs.matching.AbstractMatchAdapter;
 import de.tudresden.inf.st.bigraphs.matching.EcoreBigraphAgentAdapter;
 import de.tudresden.inf.st.bigraphs.matching.EcoreBigraphRedexAdapter;
 import de.tudresden.inf.st.bigraphs.store.BigraphModelFileStore;
+import org.eclipse.emf.ecore.EAttribute;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
@@ -49,11 +52,14 @@ public class PlaceGraphMatching {
 
         EcoreBigraphAgentAdapter bigraphAdapter = new EcoreBigraphAgentAdapter(bigraph0);
         EcoreBigraphRedexAdapter redexAdapter = new EcoreBigraphRedexAdapter(redex);
+        // everything under the root level of the redex is also considered as a site
+        boolean isConform = redexAdapter.checkRedexConform();
+        System.out.println("Redex is partial conform: " + isConform);
+        if (!isConform) throw new RuntimeException("Redex is not conform");
 
-//        BigraphEntity parent = redexAdapter.getParent(redexAdapter.getSites().get(0));
-//        redexAdapter.getOpenNeighborhoodOfVertex(parent);
-//        redexAdapter.getChildren(parent);
-
+//        List<AbstractMatchAdapter.ControlLinkPair> allLinksAgent = bigraphAdapter.getAllLinks();
+//        List<AbstractMatchAdapter.ControlLinkPair> allLinksRedex = redexAdapter.getAllLinks();
+//        throw new RuntimeException("stio");
         Table<BigraphEntity, BigraphEntity, List<BigraphEntity>> S = HashBasedTable.<BigraphEntity, BigraphEntity, List<BigraphEntity>>create();
         for (BigraphEntity gVert : bigraphAdapter.getAllVertices()) {
             for (BigraphEntity hVert : redexAdapter.getAllVertices()) {
@@ -68,6 +74,7 @@ public class PlaceGraphMatching {
                 S.put(gVert, hVert, redexAdapter.getOpenNeighborhoodOfVertex(hVert));
             }
         }
+
         System.out.println(S.size());
 
         //get all internal vertices in postorder
@@ -157,18 +164,13 @@ public class PlaceGraphMatching {
                 // update map S
                 S.put(eachV, eachU, uSetAfterMatching);
                 if (S.get(eachV, eachU).contains(eachU)) {
-//                    Traverser<BigraphEntity> traverserAgent = Traverser.forTree(bigraphAdapter::getChildren);
-//                    Iterable<BigraphEntity> ut = traverserRedex.depthFirstPostOrder(eachU);
-//                    Iterable<BigraphEntity> vt = traverserAgent.depthFirstPostOrder(eachV);
-//                    controlsU = Lists.newArrayList(ut).stream().map(x -> x.getControl()).filter(Objects::nonNull).collect(Collectors.toList());
-//                    controlsV = Lists.newArrayList(vt).stream().map(x -> x.getControl()).filter(Objects::nonNull).collect(Collectors.toList());
 
                     int i = redexAdapter.getRoots().indexOf(eachU);
                     if (!eachU.getType().equals(BigraphEntityType.ROOT)) {
                         System.out.println("Kein root...");
                         continue;
                     }
-                    boolean b = checkSubtreesControl(bigraphAdapter, eachV, redexAdapter, eachU);//TODO prüfen ob mit site gemacht werden kann
+                    boolean b = checkSubtreesControl(bigraphAdapter, eachV, redexAdapter, eachU, 0); //TODO prüfen ob mit site gemacht werden kann
                     System.out.println("Is good? => " + b);
                     if (!b) continue;
 //                    rootsFound[i] = 1;
@@ -187,22 +189,80 @@ public class PlaceGraphMatching {
 
     public boolean checkSubtreesControl(EcoreBigraphAgentAdapter adapterLeft, BigraphEntity nodeLeft,
                                         EcoreBigraphRedexAdapter adapterRight,
-                                        BigraphEntity nodeRight) {
+                                        BigraphEntity nodeRight, int round) {
 //        if(adapterLeft.getSiblings(nodeLeft).size() == 0 || adapterRight.getSiblings(nodeRight).size() == 0) {
 //            return false;
 //        }
         List<BigraphEntity> sibLeft = adapterLeft.getChildren(nodeLeft);
         List<BigraphEntity> sibRight = adapterRight.getChildrenWithSites(nodeRight);
-        if (sibLeft.size() == 0 && sibRight.size() == 0) return true;
+        if (sibLeft.size() == 0 || sibRight.size() == 0) return true;
         boolean hasSite = false;
         for (BigraphEntity eachRight : sibRight) {
             if (eachRight.getType().equals(BigraphEntityType.SITE)) hasSite = true;
         }
+        if (round == 0) hasSite = true;
+        //TODO control-linkname pair?
         List<Control> sibLeftControls = sibLeft.stream().map(x -> x.getControl()).filter(Objects::nonNull).collect(Collectors.toList());
         List<Control> sibRightControls = sibRight.stream().map(x -> x.getControl()).filter(Objects::nonNull).collect(Collectors.toList());
+
+        List<AbstractMatchAdapter.ControlLinkPair> lnkLeft = adapterLeft.getAllLinks(nodeLeft);
+        List<AbstractMatchAdapter.ControlLinkPair> lnkRight = adapterRight.getAllLinks(nodeRight);
+        //das rechte zusammenfassen für
+        //agent darf edge+outername haben für check
+        //redex darf nur outername haben für check
+
+//        Table<Control, String, Integer> incidence2 = HashBasedTable.create();
+//        for (AbstractMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
+//            for (AbstractMatchAdapter.ControlLinkPair eachPairLeft2 : lnkLeft) {
+//                EAttribute nameAttr = EMFUtils.findAttribute(eachPairLeft2.getLink().getInstance().eClass(), "name");
+//                Object name = eachPairLeft2.getLink().getInstance().eGet(nameAttr);
+////                if (eachPairLeft.getLink().equals(eachPairLeft2.getLink())) { //&& !eachPairRight.getControl().equals(eachPairRight2.getControl())
+//                incidence2.put(eachPairLeft.getControl(), String.valueOf(name), 1);
+////                } else {
+//                incidence2.put(eachPairLeft.getControl(), String.valueOf(name), 0);
+////                }
+//            }
+//        }
+//        boolean isgood = false;
+        //TODO: also check for distinct names and same names
+
+        if (round == 0) {
+            if (lnkRight.size() == 0) {
+                //hat der agent überhaupt links? - > wichtig
+                int cntMatch = 0;
+                for (Control each : sibLeftControls) {
+                    for (AbstractMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
+                        if (eachPairLeft.getControl().equals(each)) cntMatch++;
+                    }
+                }
+                if (cntMatch != 0) {
+                    System.out.println("links fehlen");
+                    return false;
+                }
+
+            } else {
+                boolean found = false;
+//        Table<Control, Control, Integer> incidence = HashBasedTable.create();
+                for (AbstractMatchAdapter.ControlLinkPair eachPairRight : lnkRight) {
+                    //get the link and control
+                    //check in left, wheter a control exists with a linking
+                    found = false; //reset
+                    for (AbstractMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
+                        if (eachPairLeft.getControl().equals(eachPairRight.getControl())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) break;
+                }
+                System.out.println("isgood =" + found);
+                if (!found) return false;
+            }
+        }
+
+
         if (!hasSite) {
 //            if (sibLeft.size() != sibRight.size()) return false;
-
             if (!sibLeftControls.equals(sibRightControls)) return false;
         } else {
             for (BigraphEntity eachUControl : sibRight) {
@@ -216,7 +276,7 @@ public class PlaceGraphMatching {
             for (BigraphEntity eachLeft : sibLeft) {
                 if (!eachRight.getType().equals(BigraphEntityType.SITE)) {
                     if (eachLeft.getControl().equals(eachRight.getControl())) {
-                        boolean result = checkSubtreesControl(adapterLeft, eachLeft, adapterRight, eachRight);
+                        boolean result = checkSubtreesControl(adapterLeft, eachLeft, adapterRight, eachRight, ++round);
                         if (!result) return false;
                     }
                 }
@@ -236,16 +296,6 @@ public class PlaceGraphMatching {
         }
         return bg;
     }
-
-    // Create the VertexFactory so the generator can createNodeOfEClass vertices
-    static Supplier<String> vSupplier = new Supplier<String>() {
-        private int id = 0;
-
-        @Override
-        public String get() {
-            return "v" + id++;
-        }
-    };
 
     private static Graph<BigraphEntity, DefaultEdge> buildEmptySimpleDirectedGraph() {
         return GraphTypeBuilder.<BigraphEntity, DefaultEdge>undirected()
@@ -296,33 +346,22 @@ public class PlaceGraphMatching {
 
     }
 
-    private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
-        defaultBuilder
-                .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
-
-        return (Signature<C>) defaultBuilder.create();
-    }
 
     public static Bigraph createRedex() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
-
+        BigraphEntity.OuterName a = builder.createOuterName("a");
         builder.
                 createRoot()
-                .addChild(signature.getControlByName("Computer")).withNewHierarchy().addSite().addSite().goBack()//TODO prüfen ob mit site gemacht werden kann
+                .addChild(signature.getControlByName("Computer"))//.connectNodeToOuterName(a)
+                .withNewHierarchy().addSite().addSite().goBack()//TODO prüfen ob mit site gemacht werden kann
 //                .addSite()
-                .addChild(signature.getControlByName("Printer"))
+                .addChild(signature.getControlByName("Printer")) //.connectNodeToOuterName(a)
         ;
         builder.createRoot()
 //                .addChild(signature.getControlByName("User")).withNewHierarchy().addSite().goBack()//.addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("User"))
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).goBack()//.addChild(signature.getControlByName("Job"))
+                .addChild(signature.getControlByName("User")).connectNodeToOuterName(a)
+                .withNewHierarchy().addChild(signature.getControlByName("Job")).addSite().goBack()//.addChild(signature.getControlByName("Job"))
 //                .addSite()
 //                .addChild(signature.getControlByName("Job"))
 //                .addChild(signature.getControlByName("Job"))
@@ -354,7 +393,7 @@ public class PlaceGraphMatching {
 //                .withNewHierarchy()
                 .addChild(signature.getControlByName("Room")).connectNodeToInnerName(roomLink)
                 .withNewHierarchy().addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User"))
+                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
                 .goBack()
                 .addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("Job"))
@@ -362,8 +401,9 @@ public class PlaceGraphMatching {
                 .goBack()
                 .addChild(signature.getControlByName("Room")).connectNodeToInnerName(roomLink)
                 .withNewHierarchy()
-                .connectByEdge(signature.getControlByName("Computer"), signature.getControlByName("Printer"))
-                .connectNodeToInnerName(printerSpoolLink)
+//                .connectByEdge(signature.getControlByName("Computer"), signature.getControlByName("Printer"))
+                .addChild(signature.getControlByName("Computer")).addChild(signature.getControlByName("Printer"))
+//                .connectNodeToInnerName(printerSpoolLink)
                 .goBack()
                 .addChild(signature.getControlByName("Spool")).connectNodeToInnerName(printerSpoolLink)
         ;
@@ -376,4 +416,18 @@ public class PlaceGraphMatching {
         DynamicEcoreBigraph bigraph = builder.createBigraph();
         return bigraph;
     }
+
+    private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
+        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
+        defaultBuilder
+                .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
+                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
+
+        return (Signature<C>) defaultBuilder.create();
+    }
+
 }
