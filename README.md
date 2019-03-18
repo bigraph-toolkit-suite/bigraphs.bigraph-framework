@@ -20,6 +20,8 @@ mvn install:install-file -Dfile=./libs/bigraphModel_v2.jar -DgroupId=de.tudresde
 
 mvn install:install-file -Dfile=./libs/bigraphModel_v3.jar -DgroupId=de.tudresden.inf.st.bigraphs.model -DartifactId=bigraph-ecore-model -Dversion=3.0 -Dpackaging=jar
 
+mvn install:install-file -Dfile=./libs/bigraphModel_v4.jar -DgroupId=de.tudresden.inf.st.bigraphs.model -DartifactId=bigraph-ecore-model -Dversion=3.0 -Dpackaging=jar
+
 <!--
 ```
 mvn deploy:deploy-file -DgroupId=de.tudresden.inf.st.bigraphs.model -DartifactId=bigraph-ecore-model -Dversion=1.0 -Durl=file:./local-maven-repo/ -DrepositoryId=local-maven-repo -DupdateReleaseInfo=true -Dfile=./libs/bigraphModel.jar
