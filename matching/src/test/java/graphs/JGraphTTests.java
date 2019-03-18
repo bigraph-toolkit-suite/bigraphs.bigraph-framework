@@ -155,6 +155,7 @@ public class JGraphTTests {
         return bg;
     }
 
+    //OK
     private static Iterable<String> getAllLeaves(Graph<String, DefaultEdge> g) {
         Set<String> strings = g.vertexSet();
         List<String> leaves = new ArrayList<>();

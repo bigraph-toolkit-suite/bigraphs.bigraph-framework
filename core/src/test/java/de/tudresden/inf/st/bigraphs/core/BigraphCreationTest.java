@@ -50,6 +50,8 @@ public class BigraphCreationTest {
                         .addChild(selected)
                         .connectNodeToOuterName(jeff);
             });
+            DynamicEcoreBigraph bigraph = builder.createBigraph();
+            System.out.println(bigraph);
 //            am.printStackTrace();
         }
 
@@ -206,6 +208,8 @@ public class BigraphCreationTest {
                         .connectNodeToInnerName(x);
 
                 builder.closeAllInnerNames();
+                DynamicEcoreBigraph bigraph = builder.createBigraph();
+                System.out.println(bigraph);
             });
         }
 
@@ -227,6 +231,8 @@ public class BigraphCreationTest {
 
                 //the inner name shall not have a reference to jeff now
 //                BigraphArtifactHelper.exportBigraph(builder.createBigraph());
+                DynamicEcoreBigraph bigraph = builder.createBigraph();
+                System.out.println(bigraph);
             });
         }
     }
