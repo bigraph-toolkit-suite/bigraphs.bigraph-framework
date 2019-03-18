@@ -513,6 +513,8 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         }
     }
 
+    //TODO: keep open port?? nicht benötigt, da keine kante auch kein port bedeutet (auch wenn das bei bigrapher grafisch so aussieht)
+    //wird dann trotzdem nicht gezählt
     private void disconnectNodesFromEdge(EObject edge) {
         // only edge classes allowed ...
         if (Objects.isNull(edge) || !edge.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_EDGE)))
@@ -734,20 +736,72 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     }
 
     public DynamicEcoreBigraph createBigraph() {
-        ArrayList<BigraphEntity.RootEntity> roots = new ArrayList<>();
-        ArrayList<BigraphEntity.SiteEntity> sites = new ArrayList<>();
-        ArrayList<BigraphEntity.OuterName> outernames = new ArrayList<>();
-        ArrayList<BigraphEntity.InnerName> innernames = new ArrayList<>();
-        ArrayList<BigraphEntity.Edge> edges = new ArrayList<>();
-        ArrayList<BigraphEntity.NodeEntity> nodes = new ArrayList<>();
-        availableRoots.forEach((ix, e) -> roots.add(BigraphEntity.create(e, BigraphEntity.RootEntity.class)));
-        availableSites.forEach((ix, e) -> sites.add(BigraphEntity.create(e, BigraphEntity.SiteEntity.class)));
-        availableOuterNames.forEach((ix, e) -> outernames.add(BigraphEntity.create(e, BigraphEntity.OuterName.class)));
-        availableInnerNames.forEach((ix, e) -> innernames.add(BigraphEntity.create(e, BigraphEntity.InnerName.class)));
-        availableEdges.forEach((ix, e) -> edges.add(BigraphEntity.create(e, BigraphEntity.Edge.class)));
-        DynamicEcoreBigraph bigraph = new DynamicEcoreBigraph(loadedEPackage,
-                signature, roots, sites, availableNodes.values(), innernames, outernames, edges);
+        BigraphInstanceDetails meta = new BigraphInstanceDetails(loadedEPackage, signature, availableRoots, availableSites,
+                availableNodes, availableInnerNames, availableOuterNames, availableEdges);
+        DynamicEcoreBigraph bigraph = new DynamicEcoreBigraph(meta);
         return bigraph;
+    }
+
+    public class BigraphInstanceDetails {
+        private EPackage modelPackage; //TODO wirklich diese package?
+        private Signature<C> signature;
+        private Collection<BigraphEntity.RootEntity> roots = new ArrayList<>();
+        private Collection<BigraphEntity.SiteEntity> sites = new ArrayList<>();
+        private Collection<BigraphEntity.InnerName> innerNames = new ArrayList<>();
+        private Collection<BigraphEntity.OuterName> outerNames = new ArrayList<>();
+        private Collection<BigraphEntity.Edge> edges = new ArrayList<>();
+        private Collection<BigraphEntity.NodeEntity> nodes; //TODO: node set p
+
+        private BigraphInstanceDetails(EPackage loadedEPackage,
+                                       Signature<C> signature,
+                                       HashMap<Integer, EObject> availableRoots,
+                                       HashMap<Integer, EObject> availableSites,
+                                       HashMap<String, BigraphEntity.NodeEntity> availableNodes,
+                                       HashMap<String, EObject> availableInnerNames,
+                                       HashMap<String, EObject> availableOuterNames,
+                                       HashMap<String, EObject> availableEdges
+        ) {
+            this.modelPackage = loadedEPackage;
+            this.signature = signature;
+            availableRoots.forEach((ix, e) -> this.roots.add(BigraphEntity.create(e, BigraphEntity.RootEntity.class)));
+            availableSites.forEach((ix, e) -> this.sites.add(BigraphEntity.create(e, BigraphEntity.SiteEntity.class)));
+            availableOuterNames.forEach((ix, e) -> this.outerNames.add(BigraphEntity.create(e, BigraphEntity.OuterName.class)));
+            availableInnerNames.forEach((ix, e) -> this.innerNames.add(BigraphEntity.create(e, BigraphEntity.InnerName.class)));
+            availableEdges.forEach((ix, e) -> this.edges.add(BigraphEntity.create(e, BigraphEntity.Edge.class)));
+            this.nodes = new ArrayList<>(availableNodes.values());
+        }
+
+        public Signature<C> getSignature() {
+            return signature;
+        }
+
+        public EPackage getModelPackage() {
+            return modelPackage;
+        }
+
+        public Collection<BigraphEntity.RootEntity> getRoots() {
+            return roots;
+        }
+
+        public Collection<BigraphEntity.SiteEntity> getSites() {
+            return sites;
+        }
+
+        public Collection<BigraphEntity.InnerName> getInnerNames() {
+            return innerNames;
+        }
+
+        public Collection<BigraphEntity.OuterName> getOuterNames() {
+            return outerNames;
+        }
+
+        public Collection<BigraphEntity.Edge> getEdges() {
+            return edges;
+        }
+
+        public Collection<BigraphEntity.NodeEntity> getNodes() {
+            return nodes;
+        }
     }
 
 
@@ -783,12 +837,13 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         Iterator<Map.Entry<String, EObject>> iterator = availableInnerNames.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, EObject> next = iterator.next();
-//        for (Map.Entry<String, EObject> next : availableInnerNames.entrySet()) {
             try {
-                // the inner name is also removed from the above map in the following method
+                // the inner name is not yet removed in the following method
                 closeInnerName(BigraphEntity.create(next.getValue(), BigraphEntity.InnerName.class), true);
                 iterator.remove();
-            } catch (LinkTypeNotExistsException ignored) { /* technically, this shouldn't happen*/ }
+            } catch (LinkTypeNotExistsException ignored) { /* technically, this shouldn't happen*/
+                throw new RuntimeException("This shouldn't happen. Please check the inner names map.");
+            }
         }
     }
 
@@ -830,6 +885,11 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         if (!keepIdleName)
             availableInnerNames.remove(String.valueOf(name));
 
+    }
+
+    //TODO: closeAllOuterNames()
+    public void closeAllOuterNames() {
+        throw new NotImplementedException();
     }
 
     public void closeOuterName(BigraphEntity.OuterName outerName) throws TypeNotExistsException {
