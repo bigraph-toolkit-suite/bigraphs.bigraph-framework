@@ -4,7 +4,7 @@ public final class BigraphMetaModelConstants {
 
     public final static String BIGRAPH_BASE_MODEL = "/model/bigraphBaseModel.ecore";
 
-    // AttributesconnectNodes
+    // Attributes
     public final static String ATTRIBUTE_INDEX = "index";
     public final static String ATTRIBUTE_NAME = "name";
 
@@ -16,8 +16,9 @@ public final class BigraphMetaModelConstants {
     public final static String CLASS_EDGE = "BEdge";
     public final static String CLASS_PORT = "BPort";
     public final static String CLASS_SITE = "BSite";
-//
-//    // References
+    public static final String CLASS_PLACE = "BPlace";
+
+    // References
     public final static String REFERENCE_CHILD = "bChild";
     public final static String REFERENCE_PARENT = "bPrnt";
     public final static String REFERENCE_LINK = "bLink";

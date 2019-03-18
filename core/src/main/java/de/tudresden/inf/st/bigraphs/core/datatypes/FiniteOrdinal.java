@@ -2,6 +2,8 @@ package de.tudresden.inf.st.bigraphs.core.datatypes;
 
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidOrdinalTypeException;
 
+import java.util.Objects;
+
 public class FiniteOrdinal<T extends Number> {
     private T value;
 
@@ -28,5 +30,18 @@ public class FiniteOrdinal<T extends Number> {
     @Deprecated
     public static FiniteOrdinal<Long> ofLong(long v) {
         return new FiniteOrdinal<>(v);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FiniteOrdinal)) return false;
+        FiniteOrdinal<?> that = (FiniteOrdinal<?>) o;
+        return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

@@ -23,7 +23,6 @@ import java.util.Objects;
  */
 public class BigraphEntity<C extends Control<?, ?>> {
 
-
     private EObject instance;
     private C control;
     protected BigraphEntityType type;
@@ -51,8 +50,9 @@ public class BigraphEntity<C extends Control<?, ?>> {
         this.type = bigraphEntity.getType();
     }
 
+    //TODO should be non null always!
     @Nullable
-    EObject getInstance() {
+    public EObject getInstance() {
         return instance;
     }
 
@@ -61,7 +61,7 @@ public class BigraphEntity<C extends Control<?, ?>> {
         return this;
     }
 
-
+    //TODO move attribute down to nodeentity
     public C getControl() {
         return control;
     }
@@ -73,6 +73,30 @@ public class BigraphEntity<C extends Control<?, ?>> {
 
     EClass eClass() {
         return Objects.isNull(getInstance()) ? null : getInstance().eClass();
+    }
+
+    @Override
+    public String toString() {
+        return "BigraphEntity{" +
+                "instance=" + instance.getClass() +
+                ", control=" + control +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BigraphEntity)) return false;
+        BigraphEntity<?> that = (BigraphEntity<?>) o;
+        return instance.equals(that.instance) &&
+                Objects.equals(control, that.control) &&
+                type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(instance, control, type);
     }
 
     @NonNull
