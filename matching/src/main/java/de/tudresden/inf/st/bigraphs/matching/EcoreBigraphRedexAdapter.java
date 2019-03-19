@@ -26,6 +26,8 @@ public class EcoreBigraphRedexAdapter extends AbstractMatchAdapter {
                 if (isSite(each.getInstance())) return false;
             }
         }
+        //size of outernames must match
+        //bigraph.getOuterNames().size()
         return true;
     }
 
@@ -169,11 +171,11 @@ public class EcoreBigraphRedexAdapter extends AbstractMatchAdapter {
     @Override
     public Collection<BigraphEntity> getAllVertices() {
         List<BigraphEntity> allNodes = new ArrayList<>();
+        allNodes.addAll(bigraph.getRoots());
         allNodes.addAll(bigraph.getNodes());
 //        allNodes.addAll(bigraph.getSites());
 //        allNodes.addAll(bigraph.getOuterNames());
 //        allNodes.addAll(bigraph.getEdges());
-        allNodes.addAll(bigraph.getRoots());
         return allNodes;
     }
 

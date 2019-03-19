@@ -2,8 +2,10 @@ package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -138,6 +140,12 @@ public class BigraphEntity<C extends Control<?, ?>> {
 
         OuterName(EObject instance) {
             super(instance, BigraphEntityType.OUTER_NAME);
+        }
+
+        public String getName() {
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), "name");
+            Object name = getInstance().eGet(nameAttr);
+            return String.valueOf(name);
         }
 
     }
