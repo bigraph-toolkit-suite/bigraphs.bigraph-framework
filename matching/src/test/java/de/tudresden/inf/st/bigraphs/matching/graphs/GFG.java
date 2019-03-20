@@ -1,4 +1,4 @@
-package graphs;// A Java program to find maximal
+package de.tudresden.inf.st.bigraphs.matching.graphs;// A Java program to find maximal
 // Bipartite matching. 
 
 class GFG {

@@ -67,6 +67,11 @@ public abstract class AbstractMatchAdapter {
         }
     }
 
+    /**
+     * <b>IMPORTANT</b> ONLY THe port indices are important for the order not the name itself
+     * @param node
+     * @return
+     */
     public abstract List<ControlLinkPair> getLinksOfNode(BigraphEntity node);
 
     //an edge is like an outername for an agent
@@ -300,8 +305,10 @@ public abstract class AbstractMatchAdapter {
     }
 
     public boolean isOuterName(EObject eObject) {
-        return eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
+        return eObject.eClass().getClassifierID() ==
+                        (((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
+                        eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
+                        eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
     }
 
     protected boolean isBPlace(EObject eObject) {

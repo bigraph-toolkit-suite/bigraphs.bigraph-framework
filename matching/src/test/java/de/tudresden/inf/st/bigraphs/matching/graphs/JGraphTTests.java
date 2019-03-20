@@ -1,4 +1,4 @@
-package graphs;
+package de.tudresden.inf.st.bigraphs.matching.graphs;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;

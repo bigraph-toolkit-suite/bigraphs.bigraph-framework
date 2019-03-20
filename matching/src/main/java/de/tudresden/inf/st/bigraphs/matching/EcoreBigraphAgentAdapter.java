@@ -41,7 +41,6 @@ public class EcoreBigraphAgentAdapter extends AbstractMatchAdapter {
      */
     public List<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
         EObject instance = node.getInstance();
-//        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
         List<ControlLinkPair> children = new ArrayList<>();
 
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
@@ -52,7 +51,6 @@ public class EcoreBigraphAgentAdapter extends AbstractMatchAdapter {
                 EStructuralFeature linkRef = eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
                 if (Objects.nonNull(linkRef) && Objects.nonNull(eachPort.eGet(linkRef))) {
                     EObject obj = (EObject) eachPort.eGet(linkRef);
-
                     children.add(new ControlLinkPair(node.getControl(), BigraphEntity.create(obj, BigraphEntity.OuterName.class)));
                 }
             }
