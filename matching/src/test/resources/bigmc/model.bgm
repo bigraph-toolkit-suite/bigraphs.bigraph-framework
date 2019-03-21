@@ -1,0 +1,34 @@
+# Controls
+%active Room : 1;
+%active User : 1;
+%active Spool : 1;
+%active Printer : 2;
+%active Computer : 1;
+%active Job : 0;
+%name jeff;
+%name a;
+
+# Rules
+# generate data
+#User.Smartphone -> User.Smartphone.Data;
+# transmit
+#User . Smartphone . Data | Computer.$1 -> User . Smartphone | Computer . (Data | $1);
+# move room
+#Room[a] . (User . Smartphone.Data | $1 ) || Room[a].$2 -> 
+#Room[a] . $1 || Room[a] . (User . Smartphone.Data | $2); 
+
+
+# Model
+# unterschiedliche verbindung
+#((Room[e2] . (Computer[a] | Computer[b])) | (Spool[jeff]));
+
+# gleiche verbindung (die /... spielen eigentlich keine rolle)
+((Room[e2] . (Computer[-] | Computer[-])) | (Spool[e1]));
+
+# infinite jobs added:
+#(Computer[a] | Printer[b,x] | $1) -> (Computer[a] | Printer[b,x] | Job | $1);
+# only one job can be added:
+(Computer[x] | Computer[x]) -> (Computer[-] | Computer[-] | Job);
+
+
+%check;

@@ -1,0 +1,10 @@
+digraph reaction_graph {
+   rankdir=LR;
+   node [shape = none];
+   N_1873836214639362069 [shape=rectangle, color=lightblue2, style=filled, label="(Room[e2].(Computer[-].nil | Computer[-].nil) | Spool[e1].nil)"];
+N_1873836214639362069 [ shape = none, label="(Room[e2].(Computer[-].nil | Computer[-].nil) | Spool[e1].nil)"];
+   N_1873836214639362069 -> N_1387946837178309444 [ label = "(Computer[x].nil | Computer[x].nil) -> (Computer[-].nil | Computer[-].nil | Job.nil)" ];
+N_1387946837178309444 [ shape = none, label="(Room[e2].(Computer[-].nil | Computer[-].nil | Job.nil) | Spool[e1].nil)"];
+   N_1387946837178309444 -> N_1387946837178309444 [ label = "(Computer[x].nil | Computer[x].nil) -> (Computer[-].nil | Computer[-].nil | Job.nil)" ];
+}
+
