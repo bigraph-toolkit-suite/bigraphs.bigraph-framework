@@ -9,7 +9,7 @@ import java.util.Collection;
 
 //TODO think about the return types ...
 //TODO: add isGround()
-public interface Bigraph<S extends Signature> {
+public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
     /**
      * Get the respective signature of the current bigraph
      *
