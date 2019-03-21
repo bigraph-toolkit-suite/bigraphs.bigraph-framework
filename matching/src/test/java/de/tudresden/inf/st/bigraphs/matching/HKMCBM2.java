@@ -59,6 +59,8 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     List<Control> availableControlsRedex = new ArrayList<>();
     List<Control> availableControlsAgent = new ArrayList<>();
 
+    boolean hasSite = false;
+
     /**
      * Constructs a new instance of the Hopcroft Karp bipartite matching algorithm. The input graph
      * must be bipartite. For efficiency reasons, this class does not check whether the input graph
@@ -81,7 +83,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         } else { // else, swap
             this.partition1 = partition2;
             this.partition2 = partition1;
-            swapedPlaces = true;
         }
 
 //        System.out.println("swapedPlaces = " + swapedPlaces);
@@ -104,7 +105,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 set.add(new Pair<>(a, b));
             }
         }
-        System.out.println("pairs=" + set);
+//        System.out.println("pairs=" + set);
         for (Pair<Control, Control> eachPair : set) {
             possibleLinks.put(eachPair.getFirst(), eachPair.getSecond(), false);
         }
@@ -116,6 +117,14 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 //            System.out.println(" ");
 //        });
 //        availableControls.stream().forEach(x -> System.out.print(x + ", " + x + "\n"));
+    }
+
+    public boolean isHasSite() {
+        return hasSite;
+    }
+
+    public void setHasSite(boolean hasSite) {
+        this.hasSite = hasSite;
     }
 
     /**
@@ -146,7 +155,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         for (BigraphEntity uOrig : partition1) {
             int u = vertexIndexMap.get(uOrig);
             List<AbstractMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(uOrig);
-//            Map<String, Integer> mapRedex = new LinkedHashMap<>();
             // ONLY THe port indices are important for the order not the name itself
             for (int ix = 0, n = linksOfRedex.size(); ix < n; ix++) {
                 AbstractMatchAdapter.ControlLinkPair x = linksOfRedex.get(ix);
@@ -273,10 +281,10 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 //                System.out.println("\t-----");
                 //kann man nicht so sagen,dass das redex und agent sind (das wechselt sich hier ab)
                 //redex: without edge, only outer names
-                List<AbstractMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(vertices.get(matching[i]));
+//                List<AbstractMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(vertices.get(matching[i]));
 //                linksOfNode.addAll(redexAdapter.getLinksOfNode(vertices.get(i)));
                 //agent: with edge and outer names
-                List<AbstractMatchAdapter.ControlLinkPair> linksOfNodeAgent = agentAdapter.getLinksOfNode(vertices.get(i));
+//                List<AbstractMatchAdapter.ControlLinkPair> linksOfNodeAgent = agentAdapter.getLinksOfNode(vertices.get(i));
 //                linksOfNode1.addAll(agentAdapter.getLinksOfNode(vertices.get(matching[i])));
 //                if (linksOfNode.size() > 0) {
 //                    BigraphEntity link = linksOfNode.get(0).getLink();
@@ -290,70 +298,42 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 //                }
 
 
-                if (redexAdapter.isRoot(vertices.get(i).getInstance()) || redexAdapter.isRoot(vertices.get(matching[i]).getInstance())) {
-                    edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
-//                    System.out.println("One is a root node"); //TODO: edge add needed?
-                } else //if (vertices.get(i).getControl().equals(vertices.get(matching[i]).getControl())
-//                        &&
-//                       if( linksOfNode.size() == linksOfNode1.size())
-//                )
-                {
-                    Pair<Control, Control> controlControlPair = new Pair<>(vertices.get(matching[i]).getControl(), vertices.get(i).getControl());
-                    possibleLinks.put(controlControlPair.getFirst(), controlControlPair.getSecond(), true);
+//                if (redexAdapter.isRoot(vertices.get(i).getInstance()) || redexAdapter.isRoot(vertices.get(matching[i]).getInstance())) {
+//                    edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
+////                    System.out.println("One is a root node"); //TODO: edge add needed?
+//                } else //if (vertices.get(i).getControl().equals(vertices.get(matching[i]).getControl())
+////                        &&
+////                       if( linksOfNode.size() == linksOfNode1.size())
+////                )
+//                {
+//                    Pair<Control, Control> controlControlPair = new Pair<>(vertices.get(matching[i]).getControl(), vertices.get(i).getControl());
+//                    possibleLinks.put(controlControlPair.getFirst(), controlControlPair.getSecond(), true);
 //                    boolean contains = set.contains(controlControlPair);
 //                    if(contains) {
 //                        ArrayList<Pair<Control, Control>> pairs = new ArrayList<>(set);
 //                        int ix = pairs.indexOf(controlControlPair);
 ////                        pairs.get(ix);
 //                    }
-                    //&&
-                    //                        vertices.get(i).getControl().equals(vertices.get(matching[i]).getControl())
-                    System.out.println("Control Agent = " + vertices.get(i).getControl());
-                    System.out.println("Control Redex = " + vertices.get(matching[i]).getControl());
+                //&&
+                //                        vertices.get(i).getControl().equals(vertices.get(matching[i]).getControl())
+                System.out.println("Control Redex = " + vertices.get(i).getControl());
+                System.out.println("Control Agent = " + vertices.get(matching[i]).getControl());
 
-                    boolean connectionsGood = true;
-                    // ONLY THe port indices are important for the order not the name itself
+//                boolean connectionsGood = true;
+                // ONLY THe port indices are important for the order not the name itself
 
 
-                    System.out.println("Redex = " + mapAgent);
-                    System.out.println("Agent = " + mapRedex);
+//                System.out.println("Redex = " + mapAgent);
+//                System.out.println("Agent = " + mapRedex);
 
-                    if (vertices.get(i).getControl().equals(vertices.get(matching[i]).getControl())) {
-                        if (linksOfRedex.size() != linksOfNodeAgent.size()) {
-//                           connectionsGood = false;
-                            System.out.println("\tUngleiche Links ");
-                            connectionsGood = false;
-                            matchCount--;
-                        } else {
-                            matchCount++;
-                        }
-                    } else {
-                        if ((linksOfRedex.size() > 0 && linksOfRedex.size() <= linksOfNodeAgent.size())
-                                || (linksOfNodeAgent.size() == 0 && linksOfRedex.size() == 0)) {
-                            matchCount++;
-                        } else {
-                            System.out.println("\tUngleiche Links ");
-                            connectionsGood = false;
-                        }
-                    }
-
-                    connectionsGood = true;
-
-                    if (connectionsGood)
-                        edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
-                }
-//                else if (vertices.get(i).getControl().equals(vertices.get(matching[i]).getControl())) {
-//                    redexAdapter.getLinksOfNode(vertices.get(i)).get(0).getLink()
-//                }
-
-                //TODO: if controls are not the same, check if they have a link
+                edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
 
             }
         }
-        boolean contains = possibleLinks.values().contains(false);
-        if (contains) {
-            System.out.println("Nicht alle kombinationen durchgegangen!");
-        }
+//        boolean contains = possibleLinks.values().contains(false);
+//        if (contains) {
+//            System.out.println("Nicht alle kombinationen durchgegangen!");
+//        }
 
         return new MatchingImpl<>(graph, edges, edges.size());
     }
@@ -370,6 +350,55 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         } else {
             System.out.println("LINKS/PORTS connection stimmt NICHT überein");
             return false;
+        }
+    }
+
+    public boolean areControlsSame() {
+        Map<Control, Long> ctrlsRedex = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+        Map<Control, Long> ctrlsAgent = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+        boolean linksOK = areLinksOK();
+        if (hasSite) { //(!collect2.equals(collect)) {
+            boolean controlsAreGood = false;
+            Iterator<Map.Entry<Control, Long>> iterator = ctrlsRedex.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Control, Long> each = iterator.next();
+                //is subset
+                if (ctrlsAgent.get(each.getKey()) == null) {
+//                    iterator.remove();
+                    controlsAreGood = false;
+                } else if (each.getValue() > ctrlsAgent.get(each.getKey())) {
+                    controlsAreGood = false;
+                } else {
+//                    System.out.println("OK");
+                    controlsAreGood = true;
+                    iterator.remove();
+                }
+            }
+            System.out.println("controls stimmen überein...." + controlsAreGood);
+            boolean isSubset = ctrlsRedex.size() == 0;
+            System.out.println("Subredex is subset of subagent=" + isSubset);
+            return isSubset && linksOK; //&& availableControlsRedex.size() >= availableControlsAgent.size()
+        } else {
+            boolean controlsAreGood = false;
+            Iterator<Map.Entry<Control, Long>> iterator = ctrlsRedex.entrySet().iterator();
+            while (iterator.hasNext()) {
+//            for (Map.Entry<Control, Long> each : collect.entrySet()) {
+                Map.Entry<Control, Long> each = iterator.next();
+                //must be equal
+                if (ctrlsAgent.get(each.getKey()) == null) {
+                    controlsAreGood = false;
+                } else if (!ctrlsAgent.get(each.getKey()).equals(each.getValue())) {
+                    controlsAreGood = false;
+                } else {
+//                    System.out.println("OK");
+                    controlsAreGood = true;
+                    iterator.remove();
+                }
+            }
+            System.out.println("controls stimmen nicht überein...." + controlsAreGood);
+            boolean isSubset = ctrlsRedex.size() == 0;
+            System.out.println("Subredex isSubset of subagent=" + isSubset);
+            return isSubset && linksOK; //&& availableControlsRedex.size() <= availableControlsAgent.size()
         }
     }
 

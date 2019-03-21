@@ -235,7 +235,7 @@ public abstract class AbstractMatchAdapter {
 //        allNodes.addAll(bigraph.getSites());
         return allNodes;
     }
-
+    //TODO: root at last
     public List<BigraphEntity> getAllInternalVerticesPostOrder() {
 //        BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
         Iterable<BigraphEntity> allVerticesPostOrder = getAllVerticesPostOrder();

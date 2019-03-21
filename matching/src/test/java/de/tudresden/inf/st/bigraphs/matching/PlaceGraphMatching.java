@@ -79,12 +79,12 @@ public class PlaceGraphMatching {
         System.out.println(S.size());
 
         //get all internal vertices in postorder
-        List<BigraphEntity> internalVertsG = bigraphAdapter.getAllInternalVerticesPostOrder();
+        List<BigraphEntity> internalVertsG = bigraphAdapter.getAllInternalVerticesPostOrder();//TODO ROOT AS LAST
         // restrict search space because of redex - only roots are needed
-        List<BigraphEntity> allVerticesOfH = new ArrayList<>(redexAdapter.getAllVertices()); //new ArrayList<>(redexAdapter.getRoots()); //
+        List<BigraphEntity> allVerticesOfH = new ArrayList<>(redexAdapter.getAllVertices()); //new ArrayList<>(redexAdapter.getRoots()); // // redexAdapter.getAllInternalVerticesPostOrder(); //
         System.out.println("n = " + bigraphAdapter.getAllVertices().size());
         System.out.println("k = " + allVerticesOfH.size());
-        System.out.println("Complexity: " + Math.pow(allVerticesOfH.size(), 1.5) * bigraphAdapter.getAllVertices().size());
+//        System.out.println("Complexity: " + Math.pow(allVerticesOfH.size(), 1.5) * bigraphAdapter.getAllVertices().size());
         int[] rootsFound = new int[allVerticesOfH.size()];
         int itcnt = 0;
         AtomicInteger treffer = new AtomicInteger(0);
@@ -98,12 +98,15 @@ public class PlaceGraphMatching {
                 BigraphEntity each = u_vertsOfH.get(i);
                 if (redexAdapter.degreeOf(each) > t + 1) u_vertsOfH.remove(each);
             }
+            int childcnt = 0;
 //            System.out.println("For eachV=" + eachV.toString());
             for (BigraphEntity eachU : u_vertsOfH) {
 //                System.out.println("\tFor eachU=" + eachU.toString());
                 itcnt++;
+                childcnt++;
                 System.out.println("");
                 System.out.println("New Round");
+                System.out.println("itcnt = " + itcnt);
                 List<BigraphEntity> neighborsOfU = redexAdapter.getOpenNeighborhoodOfVertex(eachU);
 //                neighborsOfU = neighborsOfU.stream().filter(x -> !x.getType().equals(BigraphEntityType.SITE)).collect(Collectors.toList());
                 Graph<BigraphEntity, DefaultEdge> bipartiteGraph = createBipartiteGraph(neighborsOfU, childrenOfV);
@@ -134,9 +137,18 @@ public class PlaceGraphMatching {
                     tmp.remove(neighborsOfU.get(i - 1));
                     partitionSets.add(tmp);
                 }
+                List<BigraphEntity> siblingsU = redexAdapter.getChildrenWithSites(eachU);
+                boolean hasSite = false;
+                for (BigraphEntity eachSibOfU : siblingsU) {
+                    if (eachSibOfU.getType().equals(BigraphEntityType.SITE)) hasSite = true;
+                }
+                if (redexAdapter.isRoot(eachU.getInstance()))
+                    hasSite = true;
+
                 // compute size of maximum matching of bipartite graph for all partitions
                 List<Integer> matchings = new ArrayList<>();
                 List<Integer> matchings2 = new ArrayList<>();
+                List<Boolean> matchings3 = new ArrayList<>();
                 List<BigraphEntity> uSetAfterMatching = new ArrayList<>();
                 int ic = 0;
                 for (List<BigraphEntity> eachPartitionX : partitionSets) {
@@ -146,13 +158,17 @@ public class PlaceGraphMatching {
                                         new HashSet<>(eachPartitionX), new HashSet<>(childrenOfV),
                                         redexAdapter, bigraphAdapter
                                 );
+                        alg.setHasSite(hasSite);
                         MatchingAlgorithm.Matching<BigraphEntity, DefaultEdge> matching = alg.getMatching();
 //                        System.out.println(matching);
                         matchings2.add(alg.getMatchCount());
                         int m = matching.getEdges().size();
                         matchings.add(m);
-                        if (m == eachPartitionX.size()) {
-                            if (alg.areLinksOK()) {
+                        matchings3.add(alg.areControlsSame());
+                        boolean m3 = alg.areControlsSame();
+                        System.out.println((m == eachPartitionX.size()) + " <> " + m3);
+                        if (m == eachPartitionX.size()) { // || (redexAdapter.isRoot(eachU.getInstance()))) { //&& ic == 0
+                            if (m3) {
                                 System.out.println("\tDARF SETZEN");
 
                                 if (ic == 0) {
@@ -169,6 +185,7 @@ public class PlaceGraphMatching {
                 }
                 // update map S
                 S.put(eachV, eachU, uSetAfterMatching);
+//                S.get(eachV, eachU).addAll(uSetAfterMatching);
                 if (S.get(eachV, eachU).contains(eachU)) {
 
                     int i = redexAdapter.getRoots().indexOf(eachU);
@@ -176,9 +193,10 @@ public class PlaceGraphMatching {
                         System.out.println("Kein root...");
                         continue;
                     }
-                    boolean isgoodcontrols = checkSubtreesControl(bigraphAdapter, eachV, redexAdapter, eachU, 0); //TODO prüfen ob mit site gemacht werden kann
-                    System.out.println("Is good? => " + isgoodcontrols);
-                    if (!isgoodcontrols) continue;
+//                    boolean isgoodcontrols = checkSubtreesControl(bigraphAdapter, eachV, redexAdapter, eachU, 0); //TODO prüfen ob mit site gemacht werden kann
+//                    System.out.println("Is good? => " + isgoodcontrols);
+//                    if (!isgoodcontrols) continue;
+//                    if (matchings3.contains(false)) continue;
                     treffer.incrementAndGet();
 //                    rootsFound[i] = 1;
                     System.out.println("FOUND A MATCHING: Agent=" + eachV.getControl() + " and Redex=" + eachU.getControl() + " // Root_ix = " + i);
@@ -358,24 +376,27 @@ public class PlaceGraphMatching {
     public static Bigraph createRedex() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
-        BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+        BigraphEntity.OuterName jeff = builder.createOuterName("jeff1");
         BigraphEntity.OuterName a1 = builder.createOuterName("a1");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
         BigraphEntity.OuterName e1 = builder.createOuterName("e1");
         builder.
                 createRoot()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a1)
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
-//                .withNewHierarchy().addSite().goBack()
-//                .addSite()
-//                .addChild(signature.getControlByName("Printer")).connectNodeToOuterName(b1).connectNodeToOuterName(e1)
+                    .withNewHierarchy()
+//                .addChild(signature.getControlByName("Printer")).connectNodeToOuterName(e1)//.addChild(signature.getControlByName("Job")) //.withNewHierarchy().addSite().goBack()
+                        .addSite().goBack()
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1).withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
+//                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .addChild(signature.getControlByName("Job"))//.withNewHierarchy().addSite()
+
         ;
         builder.createRoot()
 //                .addChild(signature.getControlByName("User")).withNewHierarchy().addSite().goBack()//.addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
-                .withNewHierarchy().addSite().goBack()//.addChild(signature.getControlByName("Job"))
+//                .withNewHierarchy().addSite().goBack()//.addChild(signature.getControlByName("Job"))
+                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
 //                .addSite()
-//                .addChild(signature.getControlByName("Job"))
 //                .addChild(signature.getControlByName("Job"))
         ;
         return builder.createBigraph();
@@ -406,6 +427,9 @@ public class PlaceGraphMatching {
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).withNewHierarchy()
 //                .connectByEdge(signature.getControlByName("Computer"), signature.getControlByName("Printer"))
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
+                .withNewHierarchy().addChild(signature.getControlByName("Job"))
+                    .addChild(signature.getControlByName("Job")).withNewHierarchy().addChild(signature.getControlByName("Job")).goBack().addChild(signature.getControlByName("Job")).goBack()
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
                 //add a child to the computer

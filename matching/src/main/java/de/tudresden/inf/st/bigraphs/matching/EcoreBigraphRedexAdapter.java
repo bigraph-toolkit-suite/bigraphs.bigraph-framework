@@ -171,8 +171,8 @@ public class EcoreBigraphRedexAdapter extends AbstractMatchAdapter {
     @Override
     public Collection<BigraphEntity> getAllVertices() {
         List<BigraphEntity> allNodes = new ArrayList<>();
-        allNodes.addAll(bigraph.getRoots());
         allNodes.addAll(bigraph.getNodes());
+        allNodes.addAll(bigraph.getRoots());
 //        allNodes.addAll(bigraph.getSites());
 //        allNodes.addAll(bigraph.getOuterNames());
 //        allNodes.addAll(bigraph.getEdges());
