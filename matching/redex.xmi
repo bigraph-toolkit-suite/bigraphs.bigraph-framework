@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="ASCII"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bigraphMetaModel_SAMPLE="http://de.tudresden.inf.st.bigraphs.models" xsi:schemaLocation="http://de.tudresden.inf.st.bigraphs.models jar:file:/home/dominik/.m2/repository/de/tudresden/inf/st/bigraphs/model/bigraph-ecore-model/3.0/bigraph-ecore-model-3.0.jar!/model/bigraphBaseModel.ecore">
   <bigraphMetaModel_SAMPLE:BRoot>
-    <bChild xsi:type="bigraphMetaModel_SAMPLE:Computer" name="v0">
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v1"/>
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:User" name="v2">
-        <bPorts bLink="jeff2"/>
+    <bChild xsi:type="bigraphMetaModel_SAMPLE:Room" name="v0">
+      <bChild xsi:type="bigraphMetaModel_SAMPLE:Printer" name="v1">
+        <bPorts bLink="a1"/>
+        <bPorts bLink="b2" index="1"/>
       </bChild>
-      <bPorts bLink="b1"/>
+      <bPorts bLink="e0"/>
+    </bChild>
+    <bChild xsi:type="bigraphMetaModel_SAMPLE:Room" name="v2">
+      <bChild xsi:type="bigraphMetaModel_SAMPLE:Printer" name="v3">
+        <bPorts bLink="a2"/>
+        <bPorts bLink="b3" index="1"/>
+      </bChild>
+      <bPorts bLink="e0"/>
+    </bChild>
+    <bChild xsi:type="bigraphMetaModel_SAMPLE:User" name="v4">
+      <bPorts bLink="u1"/>
     </bChild>
   </bigraphMetaModel_SAMPLE:BRoot>
-  <bigraphMetaModel_SAMPLE:BRoot index="1">
-    <bChild xsi:type="bigraphMetaModel_SAMPLE:Computer" name="v3">
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v4"/>
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:User" name="v5">
-        <bPorts bLink="jeff2"/>
-      </bChild>
-      <bPorts bLink="b2"/>
-    </bChild>
-  </bigraphMetaModel_SAMPLE:BRoot>
-  <bigraphMetaModel_SAMPLE:BOuterName name="b2" bPoints="/1/@bChild.0/@bPorts.0"/>
-  <bigraphMetaModel_SAMPLE:BOuterName name="jeff2" bPoints="/0/@bChild.0/@bChild.1/@bPorts.0 /1/@bChild.0/@bChild.1/@bPorts.0"/>
-  <bigraphMetaModel_SAMPLE:BOuterName name="jeff1"/>
-  <bigraphMetaModel_SAMPLE:BOuterName name="b1" bPoints="/0/@bChild.0/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="a1" bPoints="/0/@bChild.0/@bChild.0/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="b2" bPoints="/0/@bChild.0/@bChild.0/@bPorts.1"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="a2" bPoints="/0/@bChild.1/@bChild.0/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="b3" bPoints="/0/@bChild.1/@bChild.0/@bPorts.1"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="e0" bPoints="/0/@bChild.0/@bPorts.0 /0/@bChild.1/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="u1" bPoints="/0/@bChild.2/@bPorts.0"/>
 </xmi:XMI>
