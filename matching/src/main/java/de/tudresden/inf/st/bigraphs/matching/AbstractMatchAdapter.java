@@ -69,10 +69,35 @@ public abstract class AbstractMatchAdapter {
 
     /**
      * <b>IMPORTANT</b> ONLY THe port indices are important for the order not the name itself
+     *
      * @param node
      * @return
      */
     public abstract List<ControlLinkPair> getLinksOfNode(BigraphEntity node);
+
+    public List<BigraphEntity> getAllChildrenFromNode(BigraphEntity node) {
+        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(this::getChildren);
+        Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(node);
+        return Lists.newArrayList(v0);
+    }
+
+    public List<BigraphEntity> getNodesOfLink(BigraphEntity.OuterName outerName) {
+        EObject instance = outerName.getInstance();
+        List<BigraphEntity> linkedNodes = new ArrayList<>();
+        EStructuralFeature pointsRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+        if (Objects.isNull(pointsRef)) return linkedNodes;
+        EList<EObject> pointsList = (EList<EObject>) instance.eGet(pointsRef);
+        for (EObject eachPoint : pointsList) {
+            if(isBPort(eachPoint)) {
+                EStructuralFeature nodeRef = eachPoint.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
+                EObject node = (EObject) eachPoint.eGet(nodeRef);
+                String controlName = node.eClass().getName();
+                Control control = bigraph.getSignature().getControlByName(controlName);
+                linkedNodes.add(BigraphEntity.createNode(node, control));
+            }
+        }
+        return linkedNodes;
+    }
 
     //an edge is like an outername for an agent
     public List<ControlLinkPair> getAllLinks(BigraphEntity startNode) {
@@ -235,6 +260,7 @@ public abstract class AbstractMatchAdapter {
 //        allNodes.addAll(bigraph.getSites());
         return allNodes;
     }
+
     //TODO: root at last
     public List<BigraphEntity> getAllInternalVerticesPostOrder() {
 //        BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
@@ -306,13 +332,19 @@ public abstract class AbstractMatchAdapter {
 
     public boolean isOuterName(EObject eObject) {
         return eObject.eClass().getClassifierID() ==
-                        (((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
-                        eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
-                        eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
+                (((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
+                eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
     }
 
     protected boolean isBPlace(EObject eObject) {
         return eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PLACE));
+    }
+
+    protected boolean isBPort(EObject eObject) {
+        return eObject.eClass().getClassifierID() ==
+                (((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT)).getClassifierID() ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT));
     }
 
     protected boolean isBNode(EObject eObject) {

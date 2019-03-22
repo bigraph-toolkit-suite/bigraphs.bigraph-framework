@@ -22,19 +22,18 @@ ctrl D = 0;
 #| Printer{b,e0}.1
 big cwithj = Computer{a}. (Job.1 | Job.Job.1 | Job.1);
 
-big s0 = /e0 /e1 (((Room{e1} . (cwithj | Computer{a}.1 | Computer{a}.1 | Job.1)) | (Spool{e0}.1)) 
-| (Room{e1} . (User{jeff} . (Job.1 | Job.1) | Job.1 | Job.1)));
+big s0 = /e0 /e1 (((Room{e1} . (Computer{a}.1 | cwithj | Computer{a}.1 | Computer{u}.1 | Job.1)) | (Spool{e0}.1)) 
+| (Room{e1} . (User{u} . (Job.1 | Job.1) | Job.1 | Job.1)));
 
-# gleiche verbindung (die /... spielen eigentlich keine rolle)
-#big s0 = /a ((Room{e2} . (Computer{a}.1 | Computer{a}.1)) | (Spool{e1}.1)); # | (Room{e2} . (User2{jeff} . (Job.1))));
-
+big s1 = /e1 ((Room{e1} . (Computer{a}.1 | Computer{b1}.(Job.1 | User{jeff2}.1) ))
+ | (Room{e1} . (Computer{b1}.(Job.1) | User{jeff2}.1 )));
 
 # Reaction rules
 react nil = Job --> Job;
 
 big phi = /{w0,w1} Printer{w0,w1}.1;
 
-big klo = (Computer{b1}.(id(1)) | Computer{b1}.(Job.1) | Job.1); #| Printer{b1,e1}.1
+big klo = (Computer{b1}.(id(1)) | Computer{b1} | Job.1); #| Printer{b1,e1}.1
 big klo2 = (Computer{b1}.1 | Computer{b1}.1 | Job.1); #| Printer{b1,e1}.1
 
 react cp = klo --> klo;
@@ -43,13 +42,18 @@ big klo2 = User{jeff1}.(Job.1 | Job.1);
 react ur = 
 klo2 -> klo2;
 
-big blu = Job || Job;
+big neu = (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1));
+big neu2 = (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1 | Job.1));
+react combi = neu -> neu2;
 
+react combi2 = Computer{b1}.(Job.1 | User{jeff2}.1) || (Computer{b2}.(Job.1) | User{jeff2}.1)
+-> Computer{b1}.(Job.1 | Job.1 | User{jeff2}.1) || (Computer{b2}.(Job.1) | User{jeff2}.1);
 
 # Reactive system
 begin brs
-  init s0;
+  init s1;
   #rules = [ {nil} ];
-  rules = [ {cp} ];
+  #rules = [ {cp} ];
   #rules = [ {ur} ];
+  rules = [{combi2}];
 end

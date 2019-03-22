@@ -60,6 +60,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     List<Control> availableControlsAgent = new ArrayList<>();
 
     boolean hasSite = false;
+    boolean crossBoundary = true;
 
     /**
      * Constructs a new instance of the Hopcroft Karp bipartite matching algorithm. The input graph
@@ -81,6 +82,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
             this.partition1 = partition1;
             this.partition2 = partition2;
         } else { // else, swap
+            swapedPlaces = true;
             this.partition1 = partition2;
             this.partition2 = partition1;
         }
@@ -269,6 +271,8 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         }
         assert matchedVertices <= partition1.size();
 
+        System.out.println("Redex = " + mapAgent);
+        System.out.println("Agent = " + mapRedex);
         Set<DefaultEdge> edges = new HashSet<>();
         for (int i = 0; i < vertices.size(); i++) {
             if (matching[i] != DUMMY) {
@@ -322,10 +326,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 //                boolean connectionsGood = true;
                 // ONLY THe port indices are important for the order not the name itself
 
-
-//                System.out.println("Redex = " + mapAgent);
-//                System.out.println("Agent = " + mapRedex);
-
                 edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
 
             }
@@ -344,7 +344,9 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         Set<String> agentLinkNames = incidenceRight.columnMap().keySet();
         //Sets.union(new HashSet<>(availableControlsAgent), new HashSet<>(availableControlsRedex))
         //new HashSet<>(availableControlsRedex)
-        if (redexLinkNames.size() >= agentLinkNames.size()) {
+        //TODO: hier den cross boundary check erweitern, falls in beiden sets sowas vorkommt, dann normal checken
+        //ansonsten geht das nicht
+        if ((redexLinkNames.size() >= agentLinkNames.size() || hasSite)) { //!crossBoundary &&
             System.out.println("LINKS/PORTS connection stimmt überein");
             return true;
         } else {
@@ -356,7 +358,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     public boolean areControlsSame() {
         Map<Control, Long> ctrlsRedex = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
         Map<Control, Long> ctrlsAgent = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
-        boolean linksOK = areLinksOK();
+        boolean linksOK = true; //areLinksOK();
         if (hasSite) { //(!collect2.equals(collect)) {
             boolean controlsAreGood = false;
             Iterator<Map.Entry<Control, Long>> iterator = ctrlsRedex.entrySet().iterator();
@@ -404,6 +406,14 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 
     public int getMatchCount() {
         return matchCount;
+    }
+
+    public boolean isCrossBoundary() {
+        return crossBoundary;
+    }
+
+    public void setCrossBoundary(boolean crossBoundary) {
+        this.crossBoundary = crossBoundary;
     }
 
     //https://stackoverflow.com/a/32532049

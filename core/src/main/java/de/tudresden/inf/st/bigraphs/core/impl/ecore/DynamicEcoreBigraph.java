@@ -3,14 +3,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.ecore;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EPackageImpl;
+import org.eclipse.emf.ecore.*;
 
 import java.util.*;
 
@@ -96,6 +89,7 @@ public class DynamicEcoreBigraph implements Bigraph<Signature> {
     }
 
     //FOR MATCHING
+    @Deprecated //in adapter
     public Collection<BigraphEntity> getNodesWithRoots() {
         ArrayList<BigraphEntity> allVertices = new ArrayList<>();
         allVertices.addAll(nodes);
@@ -109,6 +103,22 @@ public class DynamicEcoreBigraph implements Bigraph<Signature> {
         return innerNames.size() == 0 && sites.size() == 0;
     }
 
+    public BigraphEntity getTopLevelRoot(BigraphEntity node) {
+        EPackage loadedEPackage = getModelPackage();
+        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        if (node.getInstance().eGet(prntRef) != null) {
+            return getTopLevelRoot(BigraphEntity.create((EObject) node.getInstance().eGet(prntRef), BigraphEntity.RootEntity.class));
+        }
+        return node;
+    }
+
+    public EObject getTopLevelRoot(EObject node) {
+        EStructuralFeature prntRef = node.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        if (node.eGet(prntRef) != null) {
+            return getTopLevelRoot((EObject) node.eGet(prntRef));
+        }
+        return node;
+    }
 
     @Override
     public <T extends EObject> boolean areConnected(T place1, T place2) {

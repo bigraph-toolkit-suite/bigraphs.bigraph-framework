@@ -4,37 +4,30 @@
     <bChild xsi:type="bigraphMetaModel_SAMPLE:Room" name="v0">
       <bChild xsi:type="bigraphMetaModel_SAMPLE:Computer" name="v1">
         <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v2"/>
-        <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v3">
-          <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v4"/>
+        <bChild xsi:type="bigraphMetaModel_SAMPLE:User" name="v3">
+          <bPorts bLink="jeff"/>
         </bChild>
-        <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v5"/>
-        <bPorts bLink="a"/>
+        <bPorts bLink="b1"/>
       </bChild>
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:Computer" name="v6">
-        <bPorts bLink="a"/>
-      </bChild>
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:Computer" name="v7">
-        <bPorts bLink="a"/>
-      </bChild>
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v8"/>
-    </bChild>
-    <bChild xsi:type="bigraphMetaModel_SAMPLE:Spool" name="v9">
       <bPorts bLink="e0"/>
     </bChild>
-    <bChild xsi:type="bigraphMetaModel_SAMPLE:Room" name="v10">
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:User" name="v11">
-        <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v12"/>
-        <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v13"/>
-        <bPorts bLink="jeff"/>
+    <bChild xsi:type="bigraphMetaModel_SAMPLE:Room" name="v4">
+      <bChild xsi:type="bigraphMetaModel_SAMPLE:Computer" name="v5">
+        <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v6"/>
+        <bChild xsi:type="bigraphMetaModel_SAMPLE:User" name="v7">
+          <bPorts bLink="jeff2"/>
+        </bChild>
+        <bPorts bLink="b1"/>
       </bChild>
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v14"/>
-      <bChild xsi:type="bigraphMetaModel_SAMPLE:Job" name="v15"/>
-      <bPorts bLink="e1"/>
+      <bPorts bLink="e0"/>
+    </bChild>
+    <bChild xsi:type="bigraphMetaModel_SAMPLE:Computer" name="v8">
+      <bPorts bLink="a"/>
     </bChild>
   </bigraphMetaModel_SAMPLE:BRoot>
-  <bigraphMetaModel_SAMPLE:BOuterName name="a" bPoints="/0/@bChild.0/@bChild.0/@bPorts.0 /0/@bChild.0/@bChild.1/@bPorts.0 /0/@bChild.0/@bChild.2/@bPorts.0"/>
-  <bigraphMetaModel_SAMPLE:BOuterName name="b"/>
-  <bigraphMetaModel_SAMPLE:BOuterName name="jeff" bPoints="/0/@bChild.2/@bChild.0/@bPorts.0"/>
-  <bigraphMetaModel_SAMPLE:BEdge name="e0" bPoints="/0/@bChild.1/@bPorts.0"/>
-  <bigraphMetaModel_SAMPLE:BEdge name="e1" bPoints="/0/@bChild.2/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="a" bPoints="/0/@bChild.2/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="jeff2" bPoints="/0/@bChild.1/@bChild.0/@bChild.1/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="jeff" bPoints="/0/@bChild.0/@bChild.0/@bChild.1/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BOuterName name="b1" bPoints="/0/@bChild.0/@bChild.0/@bPorts.0 /0/@bChild.1/@bChild.0/@bPorts.0"/>
+  <bigraphMetaModel_SAMPLE:BEdge name="e0" bPoints="/0/@bChild.0/@bPorts.0 /0/@bChild.1/@bPorts.0"/>
 </xmi:XMI>
