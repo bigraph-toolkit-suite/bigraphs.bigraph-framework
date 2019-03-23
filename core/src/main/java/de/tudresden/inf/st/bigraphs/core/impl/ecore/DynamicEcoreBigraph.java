@@ -19,12 +19,12 @@ import java.util.*;
 public class DynamicEcoreBigraph implements Bigraph<Signature> {
     private EPackage modelPackage; //TODO wirklich diese package?
 
-    private Collection<BigraphEntity.RootEntity> roots = null;
-    private Collection<BigraphEntity.SiteEntity> sites = null;
-    private Collection<BigraphEntity.InnerName> innerNames = null;
-    private Collection<BigraphEntity.OuterName> outerNames = null;
-    private Collection<BigraphEntity.Edge> edges = null;
-    private Collection<BigraphEntity.NodeEntity> nodes; //TODO: node set per tree??
+    private Set<BigraphEntity.RootEntity> roots = null;
+    private Set<BigraphEntity.SiteEntity> sites = null;
+    private Set<BigraphEntity.InnerName> innerNames = null;
+    private Set<BigraphEntity.OuterName> outerNames = null;
+    private Set<BigraphEntity.Edge> edges = null;
+    private Set<BigraphEntity.NodeEntity> nodes; //TODO: node set per tree??
     private Signature signature;
 
     //Fertig gebaute bigraph model
@@ -58,40 +58,40 @@ public class DynamicEcoreBigraph implements Bigraph<Signature> {
     }
 
     @Override
-    public Collection<BigraphEntity.RootEntity> getRoots() {
+    public Set<BigraphEntity.RootEntity> getRoots() {
         return this.roots;
     }
 
 
     @Override
-    public Collection<BigraphEntity.SiteEntity> getSites() {
+    public Set<BigraphEntity.SiteEntity> getSites() {
         return this.sites;
     }
 
     @Override
-    public Collection<BigraphEntity.OuterName> getOuterNames() {
+    public Set<BigraphEntity.OuterName> getOuterNames() {
         return this.outerNames;
     }
 
     @Override
-    public Collection<BigraphEntity.InnerName> getInnerNames() {
+    public Set<BigraphEntity.InnerName> getInnerNames() {
         return this.innerNames;
     }
 
     @Override
-    public Collection<BigraphEntity.Edge> getEdges() {
+    public Set<BigraphEntity.Edge> getEdges() {
         return this.edges;
     }
 
     @Override
-    public Collection<BigraphEntity.NodeEntity> getNodes() {
+    public Set<BigraphEntity.NodeEntity> getNodes() {
         return this.nodes;
     }
 
     //FOR MATCHING
     @Deprecated //in adapter
-    public Collection<BigraphEntity> getNodesWithRoots() {
-        ArrayList<BigraphEntity> allVertices = new ArrayList<>();
+    public Set<BigraphEntity> getNodesWithRoots() {
+        Set<BigraphEntity> allVertices = new LinkedHashSet<>();
         allVertices.addAll(nodes);
         allVertices.addAll(roots);
         return allVertices;

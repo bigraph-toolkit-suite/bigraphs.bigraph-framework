@@ -56,7 +56,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
 
     private final HashMap<String, EObject> availableEdges = new HashMap<>();
     private final HashMap<String, EObject> availableOuterNames = new HashMap<>();
-    private final HashMap<String, EObject> availableInnerNames = new HashMap<>();
+    private final HashMap<String, BigraphEntity.InnerName> availableInnerNames = new HashMap<>();
     private final HashMap<Integer, EObject> availableRoots = new HashMap<>(); //this is my "dynamic bigraph object" which can later be saved. //TODO probably a package??
     private final HashMap<Integer, EObject> availableSites = new HashMap<>(); //this is my "dynamic bigraph object" which can later be saved. //TODO probably a package??
     private final HashMap<String, BigraphEntity.NodeEntity> availableNodes = new HashMap<>(); //this is my "dynamic bigraph object" which can later be saved. //TODO probably a package??
@@ -343,14 +343,18 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
      */
     public BigraphEntity.InnerName createInnerName(String name) {
 //        BigraphEntity.InnerName ecoreInnerName = new BigraphEntity.InnerName(availableInnerNames.get(name));
-        BigraphEntity.InnerName ecoreInnerName = BigraphEntity.create(availableInnerNames.get(name), BigraphEntity.InnerName.class);
-        if (ecoreInnerName.getInstance() == null) {
+        BigraphEntity.InnerName ecoreInnerName = availableInnerNames.get(name); // = BigraphEntity.create(availableInnerNames.get(name), BigraphEntity.InnerName.class);
+        if (ecoreInnerName == null) {
             EObject bInnerName = loadedEPackage.getEFactoryInstance().create(availableEClassMap.get(BigraphMetaModelConstants.CLASS_INNERNAME));
             bInnerName.eSet(EMFUtils.findAttribute(bInnerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
-            ecoreInnerName.setInstance(bInnerName);
-            availableInnerNames.put(name, bInnerName);
+            try {
+                ecoreInnerName = BigraphEntity.create(bInnerName, BigraphEntity.InnerName.class);
+                ecoreInnerName.setInstance(bInnerName);
+                availableInnerNames.put(name, ecoreInnerName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-//        newPackage.getEClassifiers().add(ecoreOuterName.getInstance().eClass());
         return ecoreInnerName;
     }
 
@@ -417,7 +421,8 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
      */
     public void connectNodeToInnerName(BigraphEntity.NodeEntity node1, BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
         //check if outername exists
-        if (availableInnerNames.get(innerName.getInstance().eGet(EMFUtils.findAttribute(innerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME))) == null) {
+//        if (availableInnerNames.get(innerName.getInstance().eGet(EMFUtils.findAttribute(innerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME))) == null) {
+        if (availableInnerNames.get(innerName.getName()) == null) { //  getInstance().eGet(EMFUtils.findAttribute(innerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME))) == null) {
             throw new InnerNameNotExistsException();
         }
         checkIfNodeIsConnectable(node1);
@@ -745,19 +750,19 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     public class BigraphInstanceDetails {
         private EPackage modelPackage; //TODO wirklich diese package?
         private Signature<C> signature;
-        private Collection<BigraphEntity.RootEntity> roots = new ArrayList<>();
-        private Collection<BigraphEntity.SiteEntity> sites = new ArrayList<>();
-        private Collection<BigraphEntity.InnerName> innerNames = new ArrayList<>();
-        private Collection<BigraphEntity.OuterName> outerNames = new ArrayList<>();
-        private Collection<BigraphEntity.Edge> edges = new ArrayList<>();
-        private Collection<BigraphEntity.NodeEntity> nodes; //TODO: node set p
+        private Set<BigraphEntity.RootEntity> roots = new LinkedHashSet<>();
+        private Set<BigraphEntity.SiteEntity> sites = new LinkedHashSet<>();
+        private Set<BigraphEntity.InnerName> innerNames = new LinkedHashSet<>();
+        private Set<BigraphEntity.OuterName> outerNames = new LinkedHashSet<>();
+        private Set<BigraphEntity.Edge> edges = new LinkedHashSet<>();
+        private Set<BigraphEntity.NodeEntity> nodes; //TODO: node set p
 
         private BigraphInstanceDetails(EPackage loadedEPackage,
                                        Signature<C> signature,
                                        HashMap<Integer, EObject> availableRoots,
                                        HashMap<Integer, EObject> availableSites,
                                        HashMap<String, BigraphEntity.NodeEntity> availableNodes,
-                                       HashMap<String, EObject> availableInnerNames,
+                                       HashMap<String, BigraphEntity.InnerName> availableInnerNames,
                                        HashMap<String, EObject> availableOuterNames,
                                        HashMap<String, EObject> availableEdges
         ) {
@@ -766,9 +771,10 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
             availableRoots.forEach((ix, e) -> this.roots.add(BigraphEntity.create(e, BigraphEntity.RootEntity.class)));
             availableSites.forEach((ix, e) -> this.sites.add(BigraphEntity.create(e, BigraphEntity.SiteEntity.class)));
             availableOuterNames.forEach((ix, e) -> this.outerNames.add(BigraphEntity.create(e, BigraphEntity.OuterName.class)));
-            availableInnerNames.forEach((ix, e) -> this.innerNames.add(BigraphEntity.create(e, BigraphEntity.InnerName.class)));
+//            availableInnerNames.forEach((ix, e) -> this.innerNames.add(BigraphEntity.create(e, BigraphEntity.InnerName.class)));
+            this.innerNames = new LinkedHashSet<>(availableInnerNames.values());
             availableEdges.forEach((ix, e) -> this.edges.add(BigraphEntity.create(e, BigraphEntity.Edge.class)));
-            this.nodes = new ArrayList<>(availableNodes.values());
+            this.nodes = new LinkedHashSet<>(availableNodes.values());
         }
 
         public Signature<C> getSignature() {
@@ -779,27 +785,27 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
             return modelPackage;
         }
 
-        public Collection<BigraphEntity.RootEntity> getRoots() {
+        public Set<BigraphEntity.RootEntity> getRoots() {
             return roots;
         }
 
-        public Collection<BigraphEntity.SiteEntity> getSites() {
+        public Set<BigraphEntity.SiteEntity> getSites() {
             return sites;
         }
 
-        public Collection<BigraphEntity.InnerName> getInnerNames() {
+        public Set<BigraphEntity.InnerName> getInnerNames() {
             return innerNames;
         }
 
-        public Collection<BigraphEntity.OuterName> getOuterNames() {
+        public Set<BigraphEntity.OuterName> getOuterNames() {
             return outerNames;
         }
 
-        public Collection<BigraphEntity.Edge> getEdges() {
+        public Set<BigraphEntity.Edge> getEdges() {
             return edges;
         }
 
-        public Collection<BigraphEntity.NodeEntity> getNodes() {
+        public Set<BigraphEntity.NodeEntity> getNodes() {
             return nodes;
         }
     }
@@ -834,12 +840,12 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
      * Closes all inner names and doesn't keep idle edges and idle inner names.
      */
     public void closeAllInnerNames() {
-        Iterator<Map.Entry<String, EObject>> iterator = availableInnerNames.entrySet().iterator();
+        Iterator<Map.Entry<String, BigraphEntity.InnerName>> iterator = availableInnerNames.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, EObject> next = iterator.next();
+            Map.Entry<String, BigraphEntity.InnerName> next = iterator.next();
             try {
                 // the inner name is not yet removed in the following method
-                closeInnerName(BigraphEntity.create(next.getValue(), BigraphEntity.InnerName.class), true);
+                closeInnerName(next.getValue(), true);
                 iterator.remove();
             } catch (LinkTypeNotExistsException ignored) { /* technically, this shouldn't happen*/
                 throw new RuntimeException("This shouldn't happen. Please check the inner names map.");
@@ -848,25 +854,29 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     }
 
     /**
-     * Convenient method for {@link EcoreBigraphBuilder#closeInnerName(BigraphEntity, boolean)}.
+     * Convenient method for {@link EcoreBigraphBuilder#closeInnerName(BigraphEntity.InnerName, boolean)}.
      * The last argument defaults to {@code false}.
      *
      * @param innerName an inner name
      * @throws LinkTypeNotExistsException
      */
-    public void closeInnerName(BigraphEntity innerName) throws LinkTypeNotExistsException {
+    public void closeInnerName(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException {
         closeInnerName(innerName, false);
     }
 
-    public void closeInnerName(BigraphEntity innerName, boolean keepIdleName) throws LinkTypeNotExistsException {
+    public void closeInnerName(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException {
 //        EClass eClassOuterName = availableEClassMap.get(BigraphMetaModelConstants.CLASS_OUTERNAME);
 //        EClass eClassEdge = availableEClassMap.get(BigraphMetaModelConstants.CLASS_EDGE);
-        EAttribute attribute = EMFUtils.findAttribute(innerName.getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-        Object name = innerName.getInstance().eGet(attribute);
-        assert name != null;
-        EObject eObject = availableInnerNames.get(String.valueOf(name));
-        if (eObject == null) throw new InnerNameNotExistsException();
-        EObject blink = (EObject) eObject.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_LINK));
+//        EAttribute attribute = EMFUtils.findAttribute(innerName.getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+//        Object name = //innerName.getInstance().eGet(attribute);
+//        assert name != null;
+        //Owner check
+//        EObject eObject = availableInnerNames.get(String.valueOf(name));
+//        if (eObject == null) throw new InnerNameNotExistsException();
+        if (availableInnerNames.get(innerName.getName()) == null ||
+                !availableInnerNames.get(innerName.getName()).equals(innerName))
+            throw new InnerNameNotExistsException();
+        EObject blink = (EObject) innerName.getInstance().eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_LINK));
         if (blink != null && blink.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
 //            if (blink.eClass().equals(availableEClassMap.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
             EList<EObject> bPorts = (EList<EObject>) blink.eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_POINT));
@@ -883,7 +893,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
 //        }
 
         if (!keepIdleName)
-            availableInnerNames.remove(String.valueOf(name));
+            availableInnerNames.remove(innerName.getName());
 
     }
 

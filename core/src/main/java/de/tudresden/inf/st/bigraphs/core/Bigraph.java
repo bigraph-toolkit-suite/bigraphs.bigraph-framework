@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.*;
 import org.eclipse.emf.ecore.EObject;
 
 import java.util.Collection;
+import java.util.Set;
 
 //TODO think about the return types ...
 //TODO: add isGround()
@@ -17,19 +18,29 @@ public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
      */
     S getSignature();
 
-    Iterable<BigraphEntity.RootEntity> getRoots();
+    Set<BigraphEntity.RootEntity> getRoots();
 
-    Iterable<BigraphEntity.SiteEntity> getSites();
+    Set<BigraphEntity.SiteEntity> getSites();
 
-    Iterable<BigraphEntity.OuterName> getOuterNames();
+    Set<BigraphEntity.OuterName> getOuterNames();
 
-    Iterable<BigraphEntity.InnerName> getInnerNames();
+    Set<BigraphEntity.InnerName> getInnerNames();
 
-    Iterable<BigraphEntity.Edge> getEdges();
+    Set<BigraphEntity.Edge> getEdges();
 
-    Iterable<BigraphEntity.NodeEntity> getNodes();
+    Set<BigraphEntity.NodeEntity> getNodes();
 
-    boolean isGround();
+    default boolean isGround() {
+        return getInnerNames().size() == 0 && getSites().size() == 0;
+    }
+
+    default boolean isPrime() {
+        return false;
+    }
+
+    default boolean isDiscrete() {
+        return false;
+    }
 
     <T extends EObject> boolean areConnected(T place1, T place2);
 }

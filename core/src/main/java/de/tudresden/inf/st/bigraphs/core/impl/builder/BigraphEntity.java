@@ -29,31 +29,36 @@ public class BigraphEntity<C extends Control<?, ?>> {
     private C control;
     protected BigraphEntityType type;
 
-    public BigraphEntity() {
+    private BigraphEntity() {
     }
 
-    public BigraphEntity(EObject instance) {
-        this.instance = instance;
+    private BigraphEntity(@NonNull EObject instance) {
+        this(instance, null, null);
     }
 
-    BigraphEntity(EObject instance, C control, BigraphEntityType type) {
+    BigraphEntity(@NonNull EObject instance, C control, BigraphEntityType type) {
         this.instance = instance;
         this.control = control;
         this.type = type;
     }
 
-    BigraphEntity(EObject instance, BigraphEntityType type) {
+    BigraphEntity(@NonNull EObject instance, BigraphEntityType type) {
         this(instance, null, type);
     }
 
+    /**
+     * Copy constructor
+     *
+     * @param bigraphEntity
+     */
+    @Deprecated
     BigraphEntity(BigraphEntity bigraphEntity) {
         this.setInstance(bigraphEntity.getInstance());
         this.control = (C) bigraphEntity.getControl();
         this.type = bigraphEntity.getType();
     }
 
-    //TODO should be non null always!
-    @Nullable
+    @NonNull
     public EObject getInstance() {
         return instance;
     }
@@ -74,7 +79,7 @@ public class BigraphEntity<C extends Control<?, ?>> {
     }
 
     EClass eClass() {
-        return Objects.isNull(getInstance()) ? null : getInstance().eClass();
+        return getInstance().eClass();
     }
 
     @Override
@@ -102,43 +107,41 @@ public class BigraphEntity<C extends Control<?, ?>> {
     }
 
     @NonNull
-    public static <T extends BigraphEntity> T create(@Nullable EObject param, @NonNull Class<T> tClass) {
+    public static <T extends BigraphEntity> T create(@NonNull EObject param, @NonNull Class<T> tClass) {
         try {
-            if (Objects.isNull(param)) {
-                return tClass.newInstance();
-            } else {
-                return tClass.getDeclaredConstructor(EObject.class).newInstance(param);
-            }
+//            if (Objects.isNull(param)) {
+//                return tClass.newInstance();
+//            } else {
+            return tClass.getDeclaredConstructor(EObject.class).newInstance(param);
+//            }
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
+            assert e != null;
             return null;
         }
     }
 
     @NonNull
-    public static <C extends Control<?, ?>> NodeEntity<C> createNode(@Nullable EObject param, C control) {
+    public static <C extends Control<?, ?>> NodeEntity<C> createNode(@NonNull EObject param, C control) {
         return new NodeEntity<>(param, control);
     }
 
     public static class InnerName extends BigraphEntity {
 
-        InnerName() {
-            super(null, BigraphEntityType.INNER_NAME);
-        }
-
         InnerName(@NonNull EObject instance) {
             super(instance, null, BigraphEntityType.INNER_NAME);
         }
 
+        public String getName() {
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), "name");
+            Object name = getInstance().eGet(nameAttr);
+            return String.valueOf(name);
+        }
     }
 
     public static class OuterName extends BigraphEntity {
 
-        OuterName() {
-            super(null, BigraphEntityType.OUTER_NAME);
-        }
-
-        OuterName(EObject instance) {
+        OuterName(@NonNull EObject instance) {
             super(instance, BigraphEntityType.OUTER_NAME);
         }
 
@@ -151,10 +154,6 @@ public class BigraphEntity<C extends Control<?, ?>> {
     }
 
     public static class Edge extends BigraphEntity {
-
-        Edge() {
-            super(null, BigraphEntityType.EDGE);
-        }
 
         Edge(EObject instance) {
             super(instance, BigraphEntityType.EDGE);
@@ -172,14 +171,10 @@ public class BigraphEntity<C extends Control<?, ?>> {
             super(instance, (Control<?, ?>) control, BigraphEntityType.NODE);
         }
 
-        @Override
-        @Nullable
-        public EObject getInstance() { //TODO normally not intended
-            return super.getInstance();
-        }
-
         public String getName() {
-            throw new NotImplementedException();
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), "name");
+            Object name = getInstance().eGet(nameAttr);
+            return String.valueOf(name);
         }
     }
 
