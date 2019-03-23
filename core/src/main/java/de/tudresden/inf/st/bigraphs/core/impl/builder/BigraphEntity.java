@@ -12,7 +12,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
-
+//TODO Indexable und nameable hier implementieren easier access for dynamic bigraphs
 /**
  * Wrapper-like classes for the dynamic EMF model of bigraphs. Allowing the user to handle the bigraph entities
  * without getting in touch with Ecore objects.
@@ -159,6 +159,11 @@ public class BigraphEntity<C extends Control<?, ?>> {
             super(instance, BigraphEntityType.EDGE);
         }
 
+        public String getName() {
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), "name");
+            Object name = getInstance().eGet(nameAttr);
+            return String.valueOf(name);
+        }
     }
 
     public static class NodeEntity<C> extends BigraphEntity {

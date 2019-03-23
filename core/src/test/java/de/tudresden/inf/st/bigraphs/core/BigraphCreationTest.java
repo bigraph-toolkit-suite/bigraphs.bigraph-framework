@@ -12,8 +12,7 @@ import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphCreationTest {
@@ -119,6 +118,8 @@ public class BigraphCreationTest {
             BigraphEntity.InnerName y = builder.createInnerName("y");
             BigraphEntity.InnerName z = builder.createInnerName("z");
             BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+            BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff");
+            assertEquals(jeff, jeff2);
 
             assertAll(() -> {
                 builder.connectInnerNames(x, y);
