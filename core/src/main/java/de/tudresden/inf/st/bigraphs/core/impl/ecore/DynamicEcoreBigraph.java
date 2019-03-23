@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.impl.ecore;
 
 import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import org.eclipse.emf.ecore.*;
@@ -16,7 +17,7 @@ import java.util.*;
  * <p>
  * Ecore model of a bigraph. The elements are stored also separately in collections for easier access.
  */
-public class DynamicEcoreBigraph implements Bigraph<Signature> {
+public class DynamicEcoreBigraph implements Bigraph<Signature<DefaultDynamicControl<?, ?>>> {
     private EPackage modelPackage; //TODO wirklich diese package?
 
     private Set<BigraphEntity.RootEntity> roots = null;
