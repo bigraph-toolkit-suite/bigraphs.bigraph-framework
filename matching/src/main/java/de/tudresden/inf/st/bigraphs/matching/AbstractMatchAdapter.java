@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-//TODO: künstlichen super node einfügen für die roots, wenn es mehrere gibt
+//TODO use BigraphDelegator class
 public abstract class AbstractMatchAdapter {
     protected DynamicEcoreBigraph bigraph;
 
@@ -88,7 +88,7 @@ public abstract class AbstractMatchAdapter {
         if (Objects.isNull(pointsRef)) return linkedNodes;
         EList<EObject> pointsList = (EList<EObject>) instance.eGet(pointsRef);
         for (EObject eachPoint : pointsList) {
-            if(isBPort(eachPoint)) {
+            if (isBPort(eachPoint)) {
                 EStructuralFeature nodeRef = eachPoint.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
                 EObject node = (EObject) eachPoint.eGet(nodeRef);
                 String controlName = node.eClass().getName();

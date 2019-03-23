@@ -8,9 +8,9 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import de.tudresden.inf.st.bigraphs.store.BigraphModelFileStore;
 import org.jgrapht.Graph;
@@ -103,7 +103,6 @@ public class PlaceGraphMatching {
         AtomicInteger treffer = new AtomicInteger(0);
         Table<BigraphEntity, BigraphEntity, Integer> results = HashBasedTable.create();
         for (BigraphEntity eachV : internalVertsG) {
-            itcnt++;
             List<BigraphEntity> childrenOfV = bigraphAdapter.getChildren(eachV);
             List<BigraphEntity> u_vertsOfH = new ArrayList<>(allVerticesOfH);
             //d(u) <= t + 1
@@ -131,9 +130,6 @@ public class PlaceGraphMatching {
                 //C2: control check
                 // stimmen controls von childrenOfV und neighborsOfU überein? (root ist platzhalter)
                 // eachU und eachV müssen auch übereinstimmen
-                //zwei sachen überprüfen:
-                // 1) hat das aktuelle eachU eine Site als Children? -> dann durfen auch childs vorhanden sein
-                // 2) hat das aktuelle eachU eine Site als Sibling? -> dann dürfen auch mehr siblings eachV vorhanden sein
 
 
                 // Connect the edges
@@ -151,23 +147,22 @@ public class PlaceGraphMatching {
                     tmp.remove(neighborsOfU.get(i - 1));
                     partitionSets.add(tmp);
                 }
+
+                //zwei sachen überprüfen:
+                // 1) hat das aktuelle eachU eine Site als Children? -> dann durfen auch childs vorhanden sein
+                // 2) hat das aktuelle eachU eine Site als Sibling? -> dann dürfen auch mehr siblings eachV vorhanden sein
                 List<BigraphEntity> childrenWithSitesOfU = redexAdapter.getChildrenWithSites(eachU);
                 boolean hasSite = false;
                 for (BigraphEntity eachSibOfU : childrenWithSitesOfU) {
                     if (eachSibOfU.getType().equals(BigraphEntityType.SITE)) hasSite = true;
                 }
-                if (redexAdapter.isRoot(eachU.getInstance()))
+                if (redexAdapter.isRoot(eachU.getInstance())) //if the current element is a root then automatically a "site" is inferred
                     hasSite = true;
-
-                //TODO: check for cross-boundary links
-                //i.e.: ich muss überprüfen, ob das control ein cross boundary link hat
-                //wenn ja, dann schauen, ob in v auch so eines ist. wenn ja geht die überprüfung normal, da bothCrosslInks=true sind
-                //die überprüfung im bmm geht dann anders, wenn nur im redex set ein crossboundary ist
 
                 // compute size of maximum matching of bipartite graph for all partitions
                 List<Integer> matchings = new ArrayList<>();
-                List<Integer> matchings2 = new ArrayList<>();
-                List<Boolean> matchings3 = new ArrayList<>();
+//                List<Integer> matchings2 = new ArrayList<>();
+//                List<Boolean> matchings3 = new ArrayList<>();
                 List<BigraphEntity> uSetAfterMatching = new ArrayList<>();
                 int ic = 0;
                 for (List<BigraphEntity> eachPartitionX : partitionSets) {
@@ -178,17 +173,15 @@ public class PlaceGraphMatching {
                                         redexAdapter, bigraphAdapter
                                 );
                         alg.setHasSite(hasSite);
-                        if (itcnt == 2)
-                            alg.setCrossBoundary(true);//TODO
                         MatchingAlgorithm.Matching<BigraphEntity, DefaultEdge> matching = alg.getMatching();
 //                        System.out.println(matching);
-                        matchings2.add(alg.getMatchCount());
+//                        matchings2.add(alg.getMatchCount());
                         int m = matching.getEdges().size();
                         matchings.add(m);
-                        matchings3.add(alg.areControlsSame());
+//                        matchings3.add(alg.areControlsSame());
                         boolean m3 = alg.areControlsSame();
                         System.out.println((m == eachPartitionX.size()) + " <> " + m3);
-                        if (m == eachPartitionX.size()) { // || (redexAdapter.isRoot(eachU.getInstance()))) { //&& ic == 0
+                        if (m == eachPartitionX.size()) {
                             if (m3) {
                                 System.out.println("\tDARF SETZEN");
 
@@ -258,7 +251,7 @@ public class PlaceGraphMatching {
         boolean cross = true;
         Set<BigraphEntity> bigraphEntities2 = results.rowMap().keySet();
         Set<BigraphEntity> bigraphEntities = results.columnMap().keySet();
-        cross = true;
+        cross = false;
         if (cross) {
             List<BigraphEntity> allChildrenFromNodeU = new ArrayList<>();
             List<BigraphEntity> allChildrenFromNodeV = new ArrayList<>();
@@ -473,7 +466,7 @@ public class PlaceGraphMatching {
 
     public static Bigraph createRedex_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
 
         BigraphEntity.OuterName e0 = builder.createOuterName("e0");
         BigraphEntity.OuterName a1 = builder.createOuterName("a1");
@@ -505,7 +498,7 @@ public class PlaceGraphMatching {
 
     public static Bigraph createAgent_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("e0");
         BigraphEntity.OuterName a1 = builder.createOuterName("a1");
@@ -538,7 +531,7 @@ public class PlaceGraphMatching {
 
     public static Bigraph createAgent_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
@@ -570,7 +563,7 @@ public class PlaceGraphMatching {
 
     public static Bigraph createRedex_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
@@ -593,7 +586,7 @@ public class PlaceGraphMatching {
 
     public static Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
@@ -619,7 +612,7 @@ public class PlaceGraphMatching {
 
     public static Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
         BigraphEntity.OuterName a = builder.createOuterName("a");
@@ -659,7 +652,7 @@ public class PlaceGraphMatching {
 
     public static Bigraph createRedex_model_test_2() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff1");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
 
@@ -682,7 +675,7 @@ public class PlaceGraphMatching {
 
     public static Bigraph createAgent_model_test_2() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
 
         BigraphEntity.InnerName door = builder.createInnerName("door");
         BigraphEntity.OuterName e1 = builder.createOuterName("eroom");

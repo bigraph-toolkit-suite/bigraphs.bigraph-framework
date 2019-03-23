@@ -8,9 +8,9 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -57,13 +57,13 @@ public class BigraphArtifactTests {
 
     public static Bigraph create() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = EcoreBigraphBuilder.start(signature);
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
 
         BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
 
 
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
         room.connectNodeToInnerName(tmp1)
                 .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
                 .addChild(signature.getControlByName("Job"));

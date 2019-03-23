@@ -10,7 +10,7 @@ public abstract class AbstractBigraphFactory {
     //Der builder enthält schon das fertige model: wird vorher gebaut und dann übergeben
     //hat auch schon die signatur
     //einen abstrakt builder verwenden später
-//    abstract Bigraph createBigraph(EcoreBigraphBuilder builder);
+//    abstract Bigraph createBigraph(BigraphBuilder builder);
 
 
     /**

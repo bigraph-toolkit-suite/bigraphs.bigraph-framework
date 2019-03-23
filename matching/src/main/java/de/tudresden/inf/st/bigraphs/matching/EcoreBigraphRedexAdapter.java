@@ -37,8 +37,8 @@ public class EcoreBigraphRedexAdapter extends AbstractMatchAdapter {
 //            ((EList) rootOfEClass.eGet(chldRef)).add(eachRoot.getInstance());
 //        }
 //        newRoot = BigraphEntity.create(rootOfEClass, BigraphEntity.RootEntity.class);
-        EObject topLevelRoot = bigraph.getTopLevelRoot(((BigraphEntity) ((ArrayList) bigraph.getNodes()).get(0)).getInstance());
-        BigraphEntity topLevelRoot1 = bigraph.getTopLevelRoot(((BigraphEntity) ((ArrayList) bigraph.getNodes()).get(0)));
+//        EObject topLevelRoot = bigraph.getTopLevelRoot(((BigraphEntity) ((ArrayList) bigraph.getNodes()).get(0)).getInstance());
+//        BigraphEntity topLevelRoot1 = bigraph.getTopLevelRoot(((BigraphEntity) ((ArrayList) bigraph.getNodes()).get(0)));
 //        for(BigraphEntity.OuterName each: bigraph.getOuterNames()) {
 //            List<BigraphEntity> nodesOfLink = getNodesOfLink(each);
 //        }

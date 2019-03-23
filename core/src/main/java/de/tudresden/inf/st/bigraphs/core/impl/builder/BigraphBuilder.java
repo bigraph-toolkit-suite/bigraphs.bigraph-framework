@@ -35,7 +35,7 @@ import java.util.stream.StreamSupport;
  * @param <C> the type of the control
  */
 //<? extends NamedType<?>, ? extends FiniteOrdinal<?>>
-public class EcoreBigraphBuilder<C extends Control<?, ?>> {
+public class BigraphBuilder<C extends Control<?, ?>> {
 
     private EPackage loadedEPackage;
 
@@ -61,16 +61,16 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     private final HashMap<Integer, EObject> availableSites = new HashMap<>(); //this is my "dynamic bigraph object" which can later be saved. //TODO probably a package??
     private final HashMap<String, BigraphEntity.NodeEntity> availableNodes = new HashMap<>(); //this is my "dynamic bigraph object" which can later be saved. //TODO probably a package??
 
-    private EcoreBigraphBuilder(Signature<C> signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
+    private BigraphBuilder(Signature<C> signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.completed = false;
         this.bigraphicalSignatureAsTypeGraph("SAMPLE"); //TODO
         this.vertexNameSupplier = nodeNameSupplier;
     }
 
-    public static <C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>> EcoreBigraphBuilder start(@NonNull Signature<C> signature)
+    public static <C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>> BigraphBuilder start(@NonNull Signature<C> signature)
             throws BigraphMetaModelLoadingFailedException {
-        return EcoreBigraphBuilder.start(signature,
+        return BigraphBuilder.start(signature,
                 new Supplier<String>() {
                     private int id = 0;
 
@@ -81,10 +81,10 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
                 });
     }
 
-    public static <C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>> EcoreBigraphBuilder start(@NonNull Signature<C> signature,
-                                                                                                                    Supplier<String> nodeNameSupplier)
+    public static <C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>> BigraphBuilder start(@NonNull Signature<C> signature,
+                                                                                                               Supplier<String> nodeNameSupplier)
             throws BigraphMetaModelLoadingFailedException {
-        return new EcoreBigraphBuilder<>(signature, nodeNameSupplier);
+        return new BigraphBuilder<>(signature, nodeNameSupplier);
     }
 
 
@@ -268,7 +268,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
                 nodes.add(createChild(controls[i]));
             }
 
-            EcoreBigraphBuilder.this.connectByEdge(nodes.toArray(new BigraphEntity.NodeEntity[nodes.size()]));
+            BigraphBuilder.this.connectByEdge(nodes.toArray(new BigraphEntity.NodeEntity[nodes.size()]));
             childs.addAll(nodes); // now its safe, after above
             nodes.forEach(this::addChildToParent);
             return this;
@@ -281,7 +281,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
 
 
         public Hierarchy connectNodeToOuterName(BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidArityOfControlException {
-            EcoreBigraphBuilder.this.connectNodeToOuterName(getLastCreatedNode(), outerName);
+            BigraphBuilder.this.connectNodeToOuterName(getLastCreatedNode(), outerName);
             return this;
         }
 
@@ -296,7 +296,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
         }
 
         public Hierarchy connectNodeToInnerName(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidArityOfControlException, InvalidConnectionException {
-            EcoreBigraphBuilder.this.connectNodeToInnerName(getLastCreatedNode(), innerName);
+            BigraphBuilder.this.connectNodeToInnerName(getLastCreatedNode(), innerName);
             return this;
         }
 
@@ -362,11 +362,11 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     //TODO change return type
 
     /**
-     * no checks are done here... use {@link EcoreBigraphBuilder#isConnectedWithLink(de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity.NodeEntity, EObject)}
+     * no checks are done here... use {@link BigraphBuilder#isConnectedWithLink(de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity.NodeEntity, EObject)}
      *
      * @param node
      * @param edge
-     * @see EcoreBigraphBuilder#isConnectedWithLink(de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity.NodeEntity, EObject)
+     * @see BigraphBuilder#isConnectedWithLink(de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity.NodeEntity, EObject)
      */
     private void connectToEdge(BigraphEntity.NodeEntity<C> node, EObject edge) {
 //        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(referenceMap.get(BigraphMetaModelConstants.REFERENCE_PORT));
@@ -448,7 +448,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
 
 
     /**
-     * Convenient method of {@link EcoreBigraphBuilder#connectInnerNames(BigraphEntity.InnerName, BigraphEntity.InnerName, boolean)}
+     * Convenient method of {@link BigraphBuilder#connectInnerNames(BigraphEntity.InnerName, BigraphEntity.InnerName, boolean)}
      * which doesn't keep idle edges when inner names are already connected to a node. Meaning, that the last argument
      * defaults to {@code false}.
      *
@@ -457,7 +457,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
      * @return the builder
      * @throws InvalidConnectionException
      */
-    public EcoreBigraphBuilder<C> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2) throws InvalidConnectionException {
+    public BigraphBuilder<C> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2) throws InvalidConnectionException {
         return connectInnerNames(ecoreInnerName1, ecoreInnerName2, false);
     }
 
@@ -478,7 +478,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
      * @return the builder class
      * @throws InvalidConnectionException
      */
-    public EcoreBigraphBuilder<C> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2, boolean keepIdleEdges) throws InvalidConnectionException {
+    public BigraphBuilder<C> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2, boolean keepIdleEdges) throws InvalidConnectionException {
         assert ecoreInnerName1.getType().equals(BigraphEntityType.INNER_NAME);
         assert ecoreInnerName2.getType().equals(BigraphEntityType.INNER_NAME);
         // throw exception if an innername is already connected to an outername
@@ -854,7 +854,7 @@ public class EcoreBigraphBuilder<C extends Control<?, ?>> {
     }
 
     /**
-     * Convenient method for {@link EcoreBigraphBuilder#closeInnerName(BigraphEntity.InnerName, boolean)}.
+     * Convenient method for {@link BigraphBuilder#closeInnerName(BigraphEntity.InnerName, boolean)}.
      * The last argument defaults to {@code false}.
      *
      * @param innerName an inner name

@@ -2,23 +2,18 @@ package de.tudresden.inf.st.bigraphs.matching;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.jgrapht.*;
-import org.jgrapht.alg.interfaces.*;
-import org.jgrapht.alg.util.*;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphTests;
+import org.jgrapht.Graphs;
+import org.jgrapht.alg.interfaces.MatchingAlgorithm;
+import org.jgrapht.alg.util.FixedSizeIntegerQueue;
+import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.lang.Math.floor;
-import static java.lang.Math.log;
 
 public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 
@@ -60,7 +55,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     List<Control> availableControlsAgent = new ArrayList<>();
 
     boolean hasSite = false;
-    boolean crossBoundary = true;
+//    boolean crossBoundary = true;
 
     /**
      * Constructs a new instance of the Hopcroft Karp bipartite matching algorithm. The input graph
@@ -147,8 +142,8 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     }
 
     //preserve insertion order (duplicate names are anyway not allowed in bigraphs)
-    Map<String, Integer> mapRedex = new LinkedHashMap<>();
-    Map<String, Integer> mapAgent = new LinkedHashMap<>();
+//    Map<String, Integer> mapRedex = new LinkedHashMap<>();
+//    Map<String, Integer> mapAgent = new LinkedHashMap<>();
 
     /**
      * Greedily compute an initial feasible matching
@@ -156,20 +151,20 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     private void warmStart() {
         for (BigraphEntity uOrig : partition1) {
             int u = vertexIndexMap.get(uOrig);
-            List<AbstractMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(uOrig);
-            // ONLY THe port indices are important for the order not the name itself
-            for (int ix = 0, n = linksOfRedex.size(); ix < n; ix++) {
-                AbstractMatchAdapter.ControlLinkPair x = linksOfRedex.get(ix);
-
-                EStructuralFeature pntsRef = x.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-                EStructuralFeature attrName = x.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_NAME);
-                EList<EObject> points = (EList<EObject>) x.getLink().getInstance().eGet(pntsRef);
-                String name = (String) x.getLink().getInstance().eGet(attrName);
-                int num = points.size();
-//                        System.out.println(num + " = " + name);
-                mapRedex.merge(name, num, (a, b) -> a + b);
-                incidenceLeft.put(uOrig.getControl().getNamedType().stringValue(), name, true);
-            }
+//            List<AbstractMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(uOrig);
+//            // ONLY THe port indices are important for the order not the name itself
+//            for (int ix = 0, n = linksOfRedex.size(); ix < n; ix++) {
+//                AbstractMatchAdapter.ControlLinkPair x = linksOfRedex.get(ix);
+//
+//                EStructuralFeature pntsRef = x.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+//                EStructuralFeature attrName = x.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_NAME);
+//                EList<EObject> points = (EList<EObject>) x.getLink().getInstance().eGet(pntsRef);
+//                String name = (String) x.getLink().getInstance().eGet(attrName);
+//                int num = points.size();
+////                        System.out.println(num + " = " + name);
+//                mapRedex.merge(name, num, (a, b) -> a + b);
+//                incidenceLeft.put(uOrig.getControl().getNamedType().stringValue(), name, true);
+//            }
 
             for (BigraphEntity vOrig : Graphs.neighborListOf(graph, uOrig)) {
                 int v = vertexIndexMap.get(vOrig);
@@ -181,20 +176,20 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 }
             }
         }
-        for (BigraphEntity uOrig : partition2) {
-            List<AbstractMatchAdapter.ControlLinkPair> linksOfNodeAgent = agentAdapter.getLinksOfNode(uOrig);
-            for (int ix = 0, n = linksOfNodeAgent.size(); ix < n; ix++) {
-                AbstractMatchAdapter.ControlLinkPair x2 = linksOfNodeAgent.get(ix);
-                EStructuralFeature pntsRef2 = x2.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-                EStructuralFeature attrName2 = x2.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_NAME);
-                EList<EObject> points2 = (EList<EObject>) x2.getLink().getInstance().eGet(pntsRef2);
-                String name2 = (String) x2.getLink().getInstance().eGet(attrName2);
-                int num2 = points2.size();
-//                        System.out.println(num2 + " = " + name2);
-                mapAgent.merge(name2, num2, (a, b) -> a + b);
-                incidenceRight.put(uOrig.getControl().getNamedType().stringValue(), name2, true);
-            }
-        }
+//        for (BigraphEntity uOrig : partition2) {
+//            List<AbstractMatchAdapter.ControlLinkPair> linksOfNodeAgent = agentAdapter.getLinksOfNode(uOrig);
+//            for (int ix = 0, n = linksOfNodeAgent.size(); ix < n; ix++) {
+//                AbstractMatchAdapter.ControlLinkPair x2 = linksOfNodeAgent.get(ix);
+//                EStructuralFeature pntsRef2 = x2.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+//                EStructuralFeature attrName2 = x2.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_NAME);
+//                EList<EObject> points2 = (EList<EObject>) x2.getLink().getInstance().eGet(pntsRef2);
+//                String name2 = (String) x2.getLink().getInstance().eGet(attrName2);
+//                int num2 = points2.size();
+////                        System.out.println(num2 + " = " + name2);
+//                mapAgent.merge(name2, num2, (a, b) -> a + b);
+//                incidenceRight.put(uOrig.getControl().getNamedType().stringValue(), name2, true);
+//            }
+//        }
     }
 
     /**
@@ -271,99 +266,29 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         }
         assert matchedVertices <= partition1.size();
 
-        System.out.println("Redex = " + mapAgent);
-        System.out.println("Agent = " + mapRedex);
+//        System.out.println("Redex = " + mapAgent);
+//        System.out.println("Agent = " + mapRedex);
         Set<DefaultEdge> edges = new HashSet<>();
         for (int i = 0; i < vertices.size(); i++) {
             if (matching[i] != DUMMY) {
-                //todo: check if they have link matches agentAdapter.getLinksOfNode(vertices.get(matching[i]))
-                //redexAdapter.getLinksOfNode(vertices.get(i)).get(0).getLink(); redex
-                // Adapter.getLinksOfNode(vertices.get(i)).get(0).getLink().getName()
-                //agent: matching[i]
-                //redex: vertices.get(i)
-
-//                System.out.println("\t-----");
-                //kann man nicht so sagen,dass das redex und agent sind (das wechselt sich hier ab)
-                //redex: without edge, only outer names
-//                List<AbstractMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(vertices.get(matching[i]));
-//                linksOfNode.addAll(redexAdapter.getLinksOfNode(vertices.get(i)));
-                //agent: with edge and outer names
-//                List<AbstractMatchAdapter.ControlLinkPair> linksOfNodeAgent = agentAdapter.getLinksOfNode(vertices.get(i));
-//                linksOfNode1.addAll(agentAdapter.getLinksOfNode(vertices.get(matching[i])));
-//                if (linksOfNode.size() > 0) {
-//                    BigraphEntity link = linksOfNode.get(0).getLink();
-//                    String name = ((BigraphEntity.OuterName) link).getName();
-//                    System.out.println("\tControl: " + vertices.get(i).getControl() + " // Name redex link: " + name + " Size=" + linksOfNode.size());
-//                }
-//                if (linksOfNode1.size() > 0) {
-//                    BigraphEntity link1 = linksOfNode1.get(0).getLink();
-//                    String name1 = ((BigraphEntity.OuterName) link1).getName();
-//                    System.out.println("\tControl: " + vertices.get(matching[i]).getControl() + " // Name agent link: " + name1 + " Size=" + linksOfNode1.size());
-//                }
-
-
-//                if (redexAdapter.isRoot(vertices.get(i).getInstance()) || redexAdapter.isRoot(vertices.get(matching[i]).getInstance())) {
-//                    edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
-////                    System.out.println("One is a root node"); //TODO: edge add needed?
-//                } else //if (vertices.get(i).getControl().equals(vertices.get(matching[i]).getControl())
-////                        &&
-////                       if( linksOfNode.size() == linksOfNode1.size())
-////                )
-//                {
-//                    Pair<Control, Control> controlControlPair = new Pair<>(vertices.get(matching[i]).getControl(), vertices.get(i).getControl());
-//                    possibleLinks.put(controlControlPair.getFirst(), controlControlPair.getSecond(), true);
-//                    boolean contains = set.contains(controlControlPair);
-//                    if(contains) {
-//                        ArrayList<Pair<Control, Control>> pairs = new ArrayList<>(set);
-//                        int ix = pairs.indexOf(controlControlPair);
-////                        pairs.get(ix);
-//                    }
-                //&&
-                //                        vertices.get(i).getControl().equals(vertices.get(matching[i]).getControl())
                 System.out.println("Control Redex = " + vertices.get(i).getControl());
                 System.out.println("Control Agent = " + vertices.get(matching[i]).getControl());
-
-//                boolean connectionsGood = true;
-                // ONLY THe port indices are important for the order not the name itself
-
                 edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
-
             }
         }
-//        boolean contains = possibleLinks.values().contains(false);
-//        if (contains) {
-//            System.out.println("Nicht alle kombinationen durchgegangen!");
-//        }
 
         return new MatchingImpl<>(graph, edges, edges.size());
     }
 
-    public boolean areLinksOK() {
-
-        Set<String> redexLinkNames = incidenceLeft.columnMap().keySet();
-        Set<String> agentLinkNames = incidenceRight.columnMap().keySet();
-        //Sets.union(new HashSet<>(availableControlsAgent), new HashSet<>(availableControlsRedex))
-        //new HashSet<>(availableControlsRedex)
-        //TODO: hier den cross boundary check erweitern, falls in beiden sets sowas vorkommt, dann normal checken
-        //ansonsten geht das nicht
-        if ((redexLinkNames.size() >= agentLinkNames.size() || hasSite)) { //!crossBoundary &&
-            System.out.println("LINKS/PORTS connection stimmt überein");
-            return true;
-        } else {
-            System.out.println("LINKS/PORTS connection stimmt NICHT überein");
-            return false;
-        }
-    }
-
+    //TODO: think about to move this out from this class or integrate it better here
     public boolean areControlsSame() {
         Map<Control, Long> ctrlsRedex = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
         Map<Control, Long> ctrlsAgent = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
-        boolean linksOK = true; //areLinksOK();
         if (hasSite) { //(!collect2.equals(collect)) {
             boolean controlsAreGood = false;
-            Iterator<Map.Entry<Control, Long>> iterator = ctrlsRedex.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Control, Long> each = iterator.next();
+            Iterator<Map.Entry<Control, Long>> redexIterator = ctrlsRedex.entrySet().iterator();
+            while (redexIterator.hasNext()) {
+                Map.Entry<Control, Long> each = redexIterator.next();
                 //is subset
                 if (ctrlsAgent.get(each.getKey()) == null) {
 //                    iterator.remove();
@@ -373,19 +298,18 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 } else {
 //                    System.out.println("OK");
                     controlsAreGood = true;
-                    iterator.remove();
+                    redexIterator.remove();
                 }
             }
             System.out.println("controls stimmen überein...." + controlsAreGood);
             boolean isSubset = ctrlsRedex.size() == 0;
             System.out.println("Subredex is subset of subagent=" + isSubset);
-            return isSubset && linksOK; //&& availableControlsRedex.size() >= availableControlsAgent.size()
+            return isSubset; //&& availableControlsRedex.size() >= availableControlsAgent.size()
         } else {
             boolean controlsAreGood = false;
-            Iterator<Map.Entry<Control, Long>> iterator = ctrlsRedex.entrySet().iterator();
-            while (iterator.hasNext()) {
-//            for (Map.Entry<Control, Long> each : collect.entrySet()) {
-                Map.Entry<Control, Long> each = iterator.next();
+            Iterator<Map.Entry<Control, Long>> redexIterator = ctrlsRedex.entrySet().iterator();
+            while (redexIterator.hasNext()) {
+                Map.Entry<Control, Long> each = redexIterator.next();
                 //must be equal
                 if (ctrlsAgent.get(each.getKey()) == null) {
                     controlsAreGood = false;
@@ -394,13 +318,13 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 } else {
 //                    System.out.println("OK");
                     controlsAreGood = true;
-                    iterator.remove();
+                    redexIterator.remove();
                 }
             }
             System.out.println("controls stimmen nicht überein...." + controlsAreGood);
             boolean isSubset = ctrlsRedex.size() == 0;
             System.out.println("Subredex isSubset of subagent=" + isSubset);
-            return isSubset && linksOK; //&& availableControlsRedex.size() <= availableControlsAgent.size()
+            return isSubset; //&& availableControlsRedex.size() <= availableControlsAgent.size()
         }
     }
 
@@ -408,13 +332,13 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         return matchCount;
     }
 
-    public boolean isCrossBoundary() {
-        return crossBoundary;
-    }
-
-    public void setCrossBoundary(boolean crossBoundary) {
-        this.crossBoundary = crossBoundary;
-    }
+//    public boolean isCrossBoundary() {
+//        return crossBoundary;
+//    }
+//
+//    public void setCrossBoundary(boolean crossBoundary) {
+//        this.crossBoundary = crossBoundary;
+//    }
 
     //https://stackoverflow.com/a/32532049
     static String str(int i) {

@@ -4,10 +4,9 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphArtifactHelper;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import org.junit.jupiter.api.*;
 
@@ -24,7 +23,7 @@ public class BigraphCreationTest {
     @DisplayName("Create Bigraphs test series")
     class ArityChecks {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
 
         @BeforeAll
         void createSignature() {
@@ -35,7 +34,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
         }
 
         @Test
@@ -82,7 +81,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ConnectionTestSeries_InnerOuterNames {
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -92,7 +91,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
         }
 
         @Test
@@ -240,7 +239,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class GroundBigraphTestSeries {
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -250,7 +249,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
         }
 
         @Test
@@ -282,7 +281,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class NestedHierarchyTestSeries {
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -292,7 +291,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
         }
 
         @Test
@@ -327,7 +326,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class HierarchyTestSeries {
-        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -337,7 +336,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
         }
 
         @Test
@@ -347,7 +346,7 @@ public class BigraphCreationTest {
 
             assertAll(() -> {
 
-                EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+                BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
                 room.connectNodeToInnerName(tmp1)
                         .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
                         .addChild(signature.getControlByName("Job"));
@@ -368,10 +367,10 @@ public class BigraphCreationTest {
     @Test
     void write_to_dot() throws IOException {
         //This belongs in the visu module
-//        EcoreBigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+//        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
 //        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 //        signature = createExampleSignature();
-//        builder = EcoreBigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+//        builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
 //        // define some nodes
 //        builder.createRoot(); // create a root node first
 //        builder.addChild(signature.getControlByName("Printer"))
@@ -384,8 +383,8 @@ public class BigraphCreationTest {
 //        DynamicEcoreBigraph bigraph = builder.createBigraph();
 //
 //        builder.export();
-////        EcoreBigraphBuilder.EcoreRoot root = (EcoreBigraphBuilder.EcoreRoot) bigraph.getRoot();
-////        if(root instanceof EcoreBigraphBuilder.EcoreRoot) {
+////        BigraphBuilder.EcoreRoot root = (BigraphBuilder.EcoreRoot) bigraph.getRoot();
+////        if(root instanceof BigraphBuilder.EcoreRoot) {
 ////            System.out.println("nice");
 ////        }
 //

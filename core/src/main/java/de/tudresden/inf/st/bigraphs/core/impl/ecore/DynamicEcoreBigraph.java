@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.ecore;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.EcoreBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import org.eclipse.emf.ecore.*;
 
 import java.util.*;
@@ -30,7 +30,7 @@ public class DynamicEcoreBigraph implements Bigraph<Signature> {
     //Fertig gebaute bigraph model
     //TODO see ecorebuilder....
     public DynamicEcoreBigraph(
-            EcoreBigraphBuilder.BigraphInstanceDetails details
+            BigraphBuilder.BigraphInstanceDetails details
 //            EPackage modelPackage, Signature signature, Collection<BigraphEntity.RootEntity> roots,
 //                               Collection<BigraphEntity.SiteEntity> sites,
 //                               Collection<BigraphEntity.NodeEntity> nodes,
