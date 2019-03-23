@@ -744,13 +744,13 @@ public class BigraphBuilder<C extends Control<?, ?>> {
     }
 
     public DynamicEcoreBigraph createBigraph() {
-        BigraphInstanceDetails meta = new BigraphInstanceDetails(loadedEPackage, signature, availableRoots, availableSites,
+        InstanceParameter meta = new InstanceParameter(loadedEPackage, signature, availableRoots, availableSites,
                 availableNodes, availableInnerNames, availableOuterNames, availableEdges);
         DynamicEcoreBigraph bigraph = new DynamicEcoreBigraph(meta);
         return bigraph;
     }
 
-    public class BigraphInstanceDetails {
+    public class InstanceParameter {
         private EPackage modelPackage; //TODO wirklich diese package?
         private Signature<C> signature;
         private Set<BigraphEntity.RootEntity> roots;
@@ -760,14 +760,14 @@ public class BigraphBuilder<C extends Control<?, ?>> {
         private Set<BigraphEntity.Edge> edges;
         private Set<BigraphEntity.NodeEntity> nodes; //TODO: node set p
 
-        private BigraphInstanceDetails(EPackage loadedEPackage,
-                                       Signature<C> signature,
-                                       HashMap<Integer, BigraphEntity.RootEntity> availableRoots,
-                                       HashMap<Integer, BigraphEntity.SiteEntity> availableSites,
-                                       HashMap<String, BigraphEntity.NodeEntity> availableNodes,
-                                       HashMap<String, BigraphEntity.InnerName> availableInnerNames,
-                                       HashMap<String, BigraphEntity.OuterName> availableOuterNames,
-                                       HashMap<String, BigraphEntity.Edge> availableEdges
+        private InstanceParameter(EPackage loadedEPackage,
+                                  Signature<C> signature,
+                                  HashMap<Integer, BigraphEntity.RootEntity> availableRoots,
+                                  HashMap<Integer, BigraphEntity.SiteEntity> availableSites,
+                                  HashMap<String, BigraphEntity.NodeEntity> availableNodes,
+                                  HashMap<String, BigraphEntity.InnerName> availableInnerNames,
+                                  HashMap<String, BigraphEntity.OuterName> availableOuterNames,
+                                  HashMap<String, BigraphEntity.Edge> availableEdges
         ) {
             this.modelPackage = loadedEPackage;
             this.signature = signature;

@@ -6,10 +6,11 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 
 import java.util.Iterator;
+import java.util.Set;
 
 //TODO change iterable to set!
 public interface Signature<C extends Control<? extends NamedType, ? extends FiniteOrdinal>> {
-    Iterable<C> getControls();
+    Set<C> getControls();
 
     default C getControlByName(String name) {
         C selected = null;

@@ -23,7 +23,7 @@ import java.util.Objects;
  *
  * @param <C> type of the controls
  */
-public class BigraphEntity<C extends Control<?, ?>> {
+public class BigraphEntity<C extends Control<?, ?>> {//TODO entfernen nach unten verschieben
 
     private EObject instance;
     private C control;

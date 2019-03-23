@@ -3,10 +3,11 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.*;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 //TODO think about the return types ...
 //TODO: add isGround()
@@ -28,7 +29,9 @@ public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
 
     Set<BigraphEntity.Edge> getEdges();
 
-    Set<BigraphEntity.NodeEntity> getNodes();
+    <C extends Control> Set<BigraphEntity.NodeEntity<C>> getNodes();
+    //without sites
+    Set<BigraphEntity> getChildrenOf(BigraphEntity node);
 
     default boolean isGround() {
         return getInnerNames().size() == 0 && getSites().size() == 0;
@@ -42,5 +45,5 @@ public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
         return false;
     }
 
-    <T extends EObject> boolean areConnected(T place1, T place2);
+    boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2);
 }

@@ -7,14 +7,16 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 //TODO: überprüfen, ob controls nicht doppelt vorkommen
 
 public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOrdinal, C extends ControlBuilder, B extends SignatureBuilder> { //<C extends ControlBuilder, B extends SignatureBuilder<C, B>> {
-    private Collection<Control<NT, FO>> controls;
+    private Set<Control<NT, FO>> controls;
 
     public SignatureBuilder() {
-        this.controls = new ArrayList<>();
+        this.controls = new LinkedHashSet<>();
     }
 
 //    @SuppressWarnings("unchecked")
@@ -80,7 +82,7 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return (B) this;
     }
 
-    public Iterable<Control<NT, FO>> getControls() {
+    public Set<Control<NT, FO>> getControls() {
         return this.controls;
     }
 

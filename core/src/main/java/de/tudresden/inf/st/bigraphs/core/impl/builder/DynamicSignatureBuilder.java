@@ -8,6 +8,8 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 
+import java.util.Set;
+
 public class DynamicSignatureBuilder<NT extends NamedType, FO extends FiniteOrdinal>
         extends SignatureBuilder<NT, FO, DynamicControlBuilder<NT, FO>, DynamicSignatureBuilder<NT, FO>> {
 
@@ -20,7 +22,7 @@ public class DynamicSignatureBuilder<NT extends NamedType, FO extends FiniteOrdi
         @Override
     public <S extends Signature> S createSignature(Iterable<? extends Control> controls) {
 //        return DefaultDynamicSignature.class.cast(new DefaultDynamicSignature(null));
-        return (S) new DefaultDynamicSignature((Iterable<DefaultDynamicControl<? extends NamedType, ? extends FiniteOrdinal>>) controls);
+        return (S) new DefaultDynamicSignature((Set<DefaultDynamicControl<? extends NamedType, ? extends FiniteOrdinal>>) controls);
     }
 
 //    @Override
