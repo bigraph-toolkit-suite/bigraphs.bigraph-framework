@@ -17,6 +17,7 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
     protected S signature;
     protected Bigraph<S> redex;
     protected Bigraph<S> reactum;
+    protected boolean canReverse = false;
 
     public AbstractReactionRule(Bigraph<S> redex, Bigraph<S> reactum) throws ReactionRuleException {
         this.redex = redex;
@@ -36,7 +37,12 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
         return true;
     }
 
-//    protected boolean assertNoSitesBelowRoot() {
+    @Override
+    public boolean canReverse() {
+        return canReverse;
+    }
+
+    //    protected boolean assertNoSitesBelowRoot() {
 //        for (BigraphEntity eachRoot : getRoots()) {
 //            for (BigraphEntity each : getChildrenWithSites(eachRoot)) {
 //                if (isSite(each.getInstance())) return false;

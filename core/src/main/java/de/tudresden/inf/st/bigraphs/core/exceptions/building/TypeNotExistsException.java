@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.exceptions;
+package de.tudresden.inf.st.bigraphs.core.exceptions.building;
 
 public class TypeNotExistsException extends Exception {
 

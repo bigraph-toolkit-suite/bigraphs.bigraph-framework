@@ -4,4 +4,6 @@ public interface ReactionRule<S extends Signature> extends BigraphicalStructure<
     Bigraph<S> getRedex();
 
     Bigraph<S> getReactum();
+
+    boolean canReverse();
 }

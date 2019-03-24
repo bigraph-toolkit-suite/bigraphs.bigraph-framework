@@ -1,4 +1,6 @@
-package de.tudresden.inf.st.bigraphs.core.exceptions;
+package de.tudresden.inf.st.bigraphs.core.exceptions.building;
+
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 
 /**
  * When the user is trying to connect an inner name to an outer name where the inner name is already
