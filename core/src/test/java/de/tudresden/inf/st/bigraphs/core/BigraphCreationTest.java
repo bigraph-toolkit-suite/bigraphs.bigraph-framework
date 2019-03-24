@@ -4,9 +4,11 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import org.junit.jupiter.api.*;
 
@@ -21,8 +23,8 @@ public class BigraphCreationTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("Create Bigraphs test series")
     class ArityChecks {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
 
         @BeforeAll
         void createSignature() {
@@ -41,7 +43,7 @@ public class BigraphCreationTest {
         void connect_to_outername_1() {
             BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
             InvalidArityOfControlException am = assertThrows(InvalidArityOfControlException.class, () -> {
-                DefaultControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Job");
+                DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Job");
                 System.out.println("Node of control will be added: " + selected + " and connected with outer name " + jeff);
                 builder.createRoot()
                         .addSite()
@@ -60,7 +62,7 @@ public class BigraphCreationTest {
             BigraphEntity.OuterName bob = builder.createOuterName("bob");
             System.out.println("exceeding a node's ports w.r.t to the corresponding control's arity");
             InvalidArityOfControlException am2 = assertThrows(InvalidArityOfControlException.class, () -> {
-                DefaultControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Computer");
+                DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Computer");
 
                 builder.createRoot()
                         .addChild(selected)
@@ -80,8 +82,8 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ConnectionTestSeries_InnerOuterNames {
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
         void createSignature() {
@@ -240,8 +242,8 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class GroundBigraphTestSeries {
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
         void createSignature() {
@@ -282,8 +284,8 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class NestedHierarchyTestSeries {
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
         void createSignature() {
@@ -327,8 +329,8 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class HierarchyTestSeries {
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
         void createSignature() {
@@ -347,7 +349,7 @@ public class BigraphCreationTest {
 
             assertAll(() -> {
 
-                BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+                BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
                 room.connectNodeToInnerName(tmp1)
                         .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
                         .addChild(signature.getControlByName("Job"));
@@ -403,7 +405,7 @@ public class BigraphCreationTest {
     }
 
     private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DynamicSignatureBuilder<>();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

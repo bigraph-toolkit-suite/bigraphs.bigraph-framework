@@ -3,6 +3,9 @@ package de.tudresden.inf.st.bigraphs.core.impl.factory;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 
+//TODO: erstellt entweder dynamic controls oder default controls signaturen
+//ecore bigraph bekommt dann abstracte klasse zwischen interface bigraph noch
+
 //TODO: eventuell abstractfactory weglassen, wenn wir nur mit ecore arbeiten
 public abstract class AbstractBigraphFactory {
 
