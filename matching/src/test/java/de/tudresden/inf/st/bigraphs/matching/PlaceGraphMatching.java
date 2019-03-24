@@ -6,12 +6,15 @@ import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.matching.impl.AbstractDynamicMatchAdapter;
+import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphAgentAdapter;
+import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphRedexAdapter;
 import de.tudresden.inf.st.bigraphs.store.BigraphModelFileStore;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
@@ -71,8 +74,8 @@ public class PlaceGraphMatching {
         //TODO: check if links are cross boundary: dann müssen die roots zusammengeführt werden
         //und im bmm ist das ein platzhalter control der alles matched
 
-//        List<AbstractMatchAdapter.ControlLinkPair> allLinksAgent = bigraphAdapter.getAllLinks();
-//        List<AbstractMatchAdapter.ControlLinkPair> allLinksRedex = redexAdapter.getAllLinks();
+//        List<AbstractDynamicMatchAdapter.ControlLinkPair> allLinksAgent = bigraphAdapter.getAllLinks();
+//        List<AbstractDynamicMatchAdapter.ControlLinkPair> allLinksRedex = redexAdapter.getAllLinks();
 //        throw new RuntimeException("stio");
         Table<BigraphEntity, BigraphEntity, List<BigraphEntity>> S = HashBasedTable.<BigraphEntity, BigraphEntity, List<BigraphEntity>>create();
         for (BigraphEntity gVert : bigraphAdapter.getAllVertices()) {
@@ -102,7 +105,7 @@ public class PlaceGraphMatching {
         int itcnt = 0;
         AtomicInteger treffer = new AtomicInteger(0);
         Table<BigraphEntity, BigraphEntity, Integer> results = HashBasedTable.create();
-        for (BigraphEntity eachV : internalVertsG) {
+        for (BigraphEntity eachV : internalVertsG) {//TODO: FROM HERE
             List<BigraphEntity> childrenOfV = bigraphAdapter.getChildren(eachV);
             List<BigraphEntity> u_vertsOfH = new ArrayList<>(allVerticesOfH);
             //d(u) <= t + 1
@@ -291,8 +294,8 @@ public class PlaceGraphMatching {
         if (bigraphEntities.size() != 0) {
             System.out.println(v.getControl() + " // " + u.getControl());
 //            if (v.getControl().equals(u.getControl())) {
-            List<AbstractMatchAdapter.ControlLinkPair> lnkRedex = redexAdapter.getLinksOfNode(u);
-            List<AbstractMatchAdapter.ControlLinkPair> lnkAgent = agentAdapter.getLinksOfNode(v);
+            List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkRedex = redexAdapter.getLinksOfNode(u);
+            List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkAgent = agentAdapter.getLinksOfNode(v);
 
             //Die Anzahl muss auch stimmen
             if (lnkRedex.size() != 0 && lnkAgent.size() != 0) {
@@ -343,6 +346,7 @@ public class PlaceGraphMatching {
         return !lnk.containsValue(false);
     }
 
+    @Deprecated
     public boolean checkSubtreesControl(EcoreBigraphAgentAdapter adapterLeft, BigraphEntity nodeLeft,
                                         EcoreBigraphRedexAdapter adapterRight,
                                         BigraphEntity nodeRight, int round) {
@@ -361,15 +365,15 @@ public class PlaceGraphMatching {
         List<Control> sibLeftControls = sibLeft.stream().map(x -> x.getControl()).filter(Objects::nonNull).collect(Collectors.toList());
         List<Control> sibRightControls = sibRight.stream().map(x -> x.getControl()).filter(Objects::nonNull).collect(Collectors.toList());
 
-//        List<AbstractMatchAdapter.ControlLinkPair> lnkLeft = adapterLeft.getAllLinks(nodeLeft);
-//        List<AbstractMatchAdapter.ControlLinkPair> lnkRight = adapterRight.getAllLinks(nodeRight);
+//        List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkLeft = adapterLeft.getAllLinks(nodeLeft);
+//        List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkRight = adapterRight.getAllLinks(nodeRight);
         //das rechte zusammenfassen für
         //agent darf edge+outername haben für check
         //redex darf nur outername haben für check
 
 //        Table<Control, String, Integer> incidence2 = HashBasedTable.create();
-//        for (AbstractMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
-//            for (AbstractMatchAdapter.ControlLinkPair eachPairLeft2 : lnkLeft) {
+//        for (AbstractDynamicMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
+//            for (AbstractDynamicMatchAdapter.ControlLinkPair eachPairLeft2 : lnkLeft) {
 //                EAttribute nameAttr = EMFUtils.findAttribute(eachPairLeft2.getLink().getInstance().eClass(), "name");
 //                Object name = eachPairLeft2.getLink().getInstance().eGet(nameAttr);
 ////                if (eachPairLeft.getLink().equals(eachPairLeft2.getLink())) { //&& !eachPairRight.getControl().equals(eachPairRight2.getControl())
@@ -387,7 +391,7 @@ public class PlaceGraphMatching {
 //                //hat der agent überhaupt links? - > wichtig
 //                int cntMatch = 0;
 //                for (Control each : sibLeftControls) {
-//                    for (AbstractMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
+//                    for (AbstractDynamicMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
 //                        if (eachPairLeft.getControl().equals(each)) cntMatch++;
 //                    }
 //                }
@@ -399,11 +403,11 @@ public class PlaceGraphMatching {
 //            } else {
 //                boolean found = false;
 ////        Table<Control, Control, Integer> incidence = HashBasedTable.create();
-//                for (AbstractMatchAdapter.ControlLinkPair eachPairRight : lnkRight) {
+//                for (AbstractDynamicMatchAdapter.ControlLinkPair eachPairRight : lnkRight) {
 //                    //get the link and control
 //                    //check in left, wheter a control exists with a linking
 //                    found = false; //reset
-//                    for (AbstractMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
+//                    for (AbstractDynamicMatchAdapter.ControlLinkPair eachPairLeft : lnkLeft) {
 //                        if (eachPairLeft.getControl().equals(eachPairRight.getControl())) {
 //                            found = true;
 //                            break;
@@ -726,7 +730,7 @@ public class PlaceGraphMatching {
     }
 
     private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DynamicSignatureBuilder<>();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

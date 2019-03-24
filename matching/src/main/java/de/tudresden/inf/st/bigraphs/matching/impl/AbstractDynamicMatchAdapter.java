@@ -1,10 +1,9 @@
-package de.tudresden.inf.st.bigraphs.matching;
+package de.tudresden.inf.st.bigraphs.matching.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import org.eclipse.emf.common.util.EList;
@@ -19,21 +18,44 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-//TODO use BigraphDelegator class
-public abstract class AbstractMatchAdapter {
-    protected DynamicEcoreBigraph bigraph;
 
-    public AbstractMatchAdapter(DynamicEcoreBigraph bigraph) {
-        this.bigraph = bigraph;
+/**
+ * Matcher für dynamic signatures only
+ * <p>
+ * encapsulates a bigraph with a dynamic signature and provides different accessor methods
+ * for the underlying bigraph which are used/needed for the matching algorithm
+ */
+public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<DefaultDynamicSignature> {
+//    protected DynamicEcoreBigraph bigraph;
+
+    public AbstractDynamicMatchAdapter(Bigraph<DefaultDynamicSignature> bigraph) {
+        super(bigraph);
+//        this.bigraph = bigraph;
     }
 
-    public List<BigraphEntity> getRoots() {
-        return new ArrayList<>(bigraph.getRoots());
+    @SuppressWarnings("unchecked")
+    @Override
+    protected DynamicEcoreBigraph getBigraphDelegate() {
+        return super.getBigraphDelegate();
     }
 
-    public List<BigraphEntity> getSites() {
-        return new ArrayList<>(bigraph.getSites());
+    @Override
+    public List<BigraphEntity.RootEntity> getRoots() {
+        return new ArrayList<>(super.getRoots());
     }
+
+    //    @Override
+//    protected DynamicEcoreBigraph getBigraphDelegate() {
+//        return (DynamicEcoreBigraph) super.getBigraphDelegate();
+//    }
+
+//    public Collection<BigraphEntity> getRoots() {
+//        return new ArrayList<>(bigraph.getRoots());
+//    }
+
+//    public Collection<BigraphEntity> getSites() {
+//        return new ArrayList<>(bigraph.getSites());
+//    }
 
     public static class ControlLinkPair {
         Control control;
@@ -92,7 +114,7 @@ public abstract class AbstractMatchAdapter {
                 EStructuralFeature nodeRef = eachPoint.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
                 EObject node = (EObject) eachPoint.eGet(nodeRef);
                 String controlName = node.eClass().getName();
-                Control control = bigraph.getSignature().getControlByName(controlName);
+                Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
                 linkedNodes.add(BigraphEntity.createNode(node, control));
             }
         }
@@ -157,7 +179,7 @@ public abstract class AbstractMatchAdapter {
             if (isBNode(each)) {
                 //get control by name
                 String controlName = each.eClass().getName();
-                Control control = bigraph.getSignature().getControlByName(controlName);
+                Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
                 return BigraphEntity.createNode(each, control);
             } else {
                 return BigraphEntity.create(each, BigraphEntity.RootEntity.class);
@@ -181,7 +203,7 @@ public abstract class AbstractMatchAdapter {
                 if (isBNode(eachChild)) {
                     //get control by name
                     String controlName = eachChild.eClass().getName();
-                    Control control = bigraph.getSignature().getControlByName(controlName);
+                    Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
                     siblings.add(BigraphEntity.createNode(eachChild, control));
                 } else if (isSite(eachChild)) {
                     siblings.add(BigraphEntity.create(eachChild, BigraphEntity.SiteEntity.class));
@@ -207,7 +229,7 @@ public abstract class AbstractMatchAdapter {
                 if (isBNode(each)) {
                     //get control by name
                     String controlName = each.eClass().getName();
-                    Control control = bigraph.getSignature().getControlByName(controlName);
+                    Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
                     assert control != null;
                     convertedOne = BigraphEntity.createNode(each, control);
                 } else if (isRoot(each)) {
@@ -227,7 +249,7 @@ public abstract class AbstractMatchAdapter {
             if (isBNode(each)) {
                 //get control by name
                 String controlName = each.eClass().getName();
-                Control control = bigraph.getSignature().getControlByName(controlName);
+                Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
                 neighbors.add(BigraphEntity.createNode(each, control));
             } else {
                 //can only be root...
@@ -242,7 +264,7 @@ public abstract class AbstractMatchAdapter {
     public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
         List<BigraphEntity> neighbors = new ArrayList<>();
         EObject instance = node.getInstance();
-        if (bigraph.isGround()) { // no sites here...
+        if (getBigraphDelegate().isGround()) { // no sites here...
             neighborhoodHook(neighbors, node);
         }
         //TODO: now outer names and edges
@@ -253,10 +275,10 @@ public abstract class AbstractMatchAdapter {
 
     //ohne links
     public Collection<BigraphEntity> getAllVertices() {
-        List<BigraphEntity> allNodes = new ArrayList<>(bigraph.getNodes());
+        List<BigraphEntity> allNodes = new ArrayList<>(getNodes());
 //        allNodes.addAll(bigraph.getOuterNames());
 //        allNodes.addAll(bigraph.getEdges());
-        allNodes.addAll(bigraph.getRoots());
+        allNodes.addAll(getBigraphDelegate().getRoots());
 //        allNodes.addAll(bigraph.getSites());
         return allNodes;
     }
@@ -273,7 +295,7 @@ public abstract class AbstractMatchAdapter {
     //TODO: check if this is correcet with multiple roots
     public Iterable<BigraphEntity> getAllVerticesPostOrder() {
         Collection<BigraphEntity> allVerticesPostOrder = new ArrayList<>();
-        for (BigraphEntity eachRoot : bigraph.getRoots()) {
+        for (BigraphEntity eachRoot : getBigraphDelegate().getRoots()) {
 //            BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
             Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
             Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(eachRoot);
@@ -288,27 +310,9 @@ public abstract class AbstractMatchAdapter {
 
     //FOR MATCHING
 
-
+    //TODO default von bigraph api holen
     public List<BigraphEntity> getChildren(BigraphEntity node) {
-        EObject instance = node.getInstance();
-        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-        List<BigraphEntity> children = new ArrayList<>();
-        if (Objects.nonNull(chldRef)) {
-            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
-            //create class ...
-            //control can be acquired by the class name + signature
-            for (EObject eachChild : childs) {
-                if (isBNode(eachChild)) {
-                    String controlName = eachChild.eClass().getName();
-                    Control control = bigraph.getSignature().getControlByName(controlName);
-                    children.add(BigraphEntity.createNode(eachChild, control));
-                }
-//                else if (isSite(eachChild)) {
-//                    children.add(BigraphEntity.create(eachChild, BigraphEntity.SiteEntity.class));
-//                }
-            }
-        }
-        return children;
+        return new ArrayList<>(getBigraphDelegate().getChildrenOf(node));
     }
 
     //FOR MATCHING
@@ -332,34 +336,34 @@ public abstract class AbstractMatchAdapter {
 
     public boolean isOuterName(EObject eObject) {
         return eObject.eClass().getClassifierID() ==
-                (((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
-                eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
+                (((EPackageImpl) getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
+                eObject.eClass().equals(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
     }
 
-    protected boolean isBPlace(EObject eObject) {
-        return eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PLACE));
+    public boolean isBPlace(EObject eObject) {
+        return eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PLACE));
     }
 
-    protected boolean isBPort(EObject eObject) {
+    public boolean isBPort(EObject eObject) {
         return eObject.eClass().getClassifierID() ==
-                (((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT)).getClassifierID() ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT));
+                (((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT)).getClassifierID() ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT));
     }
 
-    protected boolean isBNode(EObject eObject) {
-        return eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE));
+    public boolean isBNode(EObject eObject) {
+        return eObject.eClass().equals(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE));
     }
 
-    protected boolean isRoot(EObject eObject) {
-        return eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_ROOT)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_ROOT));
+    public boolean isRoot(EObject eObject) {
+        return eObject.eClass().equals(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_ROOT)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_ROOT));
     }
 
-    protected boolean isSite(EObject eObject) {
-        return eObject.eClass().equals(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_SITE)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) bigraph.getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_SITE));
+    public boolean isSite(EObject eObject) {
+        return eObject.eClass().equals(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_SITE)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_SITE));
     }
 
 

@@ -4,6 +4,8 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphAgentAdapter;
+import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphRedexAdapter;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphTests;
 import org.jgrapht.Graphs;
@@ -151,10 +153,10 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     private void warmStart() {
         for (BigraphEntity uOrig : partition1) {
             int u = vertexIndexMap.get(uOrig);
-//            List<AbstractMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(uOrig);
+//            List<AbstractDynamicMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(uOrig);
 //            // ONLY THe port indices are important for the order not the name itself
 //            for (int ix = 0, n = linksOfRedex.size(); ix < n; ix++) {
-//                AbstractMatchAdapter.ControlLinkPair x = linksOfRedex.get(ix);
+//                AbstractDynamicMatchAdapter.ControlLinkPair x = linksOfRedex.get(ix);
 //
 //                EStructuralFeature pntsRef = x.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
 //                EStructuralFeature attrName = x.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_NAME);
@@ -177,9 +179,9 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
             }
         }
 //        for (BigraphEntity uOrig : partition2) {
-//            List<AbstractMatchAdapter.ControlLinkPair> linksOfNodeAgent = agentAdapter.getLinksOfNode(uOrig);
+//            List<AbstractDynamicMatchAdapter.ControlLinkPair> linksOfNodeAgent = agentAdapter.getLinksOfNode(uOrig);
 //            for (int ix = 0, n = linksOfNodeAgent.size(); ix < n; ix++) {
-//                AbstractMatchAdapter.ControlLinkPair x2 = linksOfNodeAgent.get(ix);
+//                AbstractDynamicMatchAdapter.ControlLinkPair x2 = linksOfNodeAgent.get(ix);
 //                EStructuralFeature pntsRef2 = x2.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
 //                EStructuralFeature attrName2 = x2.getLink().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_NAME);
 //                EList<EObject> points2 = (EList<EObject>) x2.getLink().getInstance().eGet(pntsRef2);
