@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Collection;
 
@@ -74,5 +75,15 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     @Override
     public boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2) {
         return bigraphDelegate.areConnected(place1, place2);
+    }
+
+    @Override
+    public BigraphEntity getParent(BigraphEntity node) {
+        return bigraphDelegate.getParent(node);
+    }
+
+    @Override
+    public EPackage getModelPackage() {
+        return bigraphDelegate.getModelPackage();
     }
 }

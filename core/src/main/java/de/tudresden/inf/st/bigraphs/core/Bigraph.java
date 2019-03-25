@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core;
 
 
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Collection;
 
@@ -25,6 +26,7 @@ public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
 
     <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
 
+    BigraphEntity getParent(BigraphEntity node);
     //without sites
     Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
 
@@ -41,4 +43,6 @@ public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
     }
 
     boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2);
+
+    EPackage getModelPackage();
 }

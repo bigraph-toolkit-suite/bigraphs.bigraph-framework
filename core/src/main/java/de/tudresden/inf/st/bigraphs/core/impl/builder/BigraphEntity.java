@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
+import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -13,6 +14,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 //TODO Indexable und nameable hier implementieren easier access for dynamic bigraphs
+
 /**
  * Wrapper-like classes for the dynamic EMF model of bigraphs. Allowing the user to handle the bigraph entities
  * without getting in touch with Ecore objects.
@@ -133,7 +135,7 @@ public class BigraphEntity<C extends Control<?, ?>> {//TODO entfernen nach unten
         }
 
         public String getName() {
-            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), "name");
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             Object name = getInstance().eGet(nameAttr);
             return String.valueOf(name);
         }
@@ -146,7 +148,7 @@ public class BigraphEntity<C extends Control<?, ?>> {//TODO entfernen nach unten
         }
 
         public String getName() {
-            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), "name");
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             Object name = getInstance().eGet(nameAttr);
             return String.valueOf(name);
         }
@@ -160,7 +162,7 @@ public class BigraphEntity<C extends Control<?, ?>> {//TODO entfernen nach unten
         }
 
         public String getName() {
-            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), "name");
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             Object name = getInstance().eGet(nameAttr);
             return String.valueOf(name);
         }
@@ -177,7 +179,7 @@ public class BigraphEntity<C extends Control<?, ?>> {//TODO entfernen nach unten
         }
 
         public String getName() {
-            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), "name");
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             Object name = getInstance().eGet(nameAttr);
             return String.valueOf(name);
         }
@@ -205,6 +207,11 @@ public class BigraphEntity<C extends Control<?, ?>> {//TODO entfernen nach unten
             super(instance, BigraphEntityType.ROOT);
         }
 
+        public int getIndex() {
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            Object name = getInstance().eGet(nameAttr);
+            return (Integer) name;
+        }
     }
 }
 

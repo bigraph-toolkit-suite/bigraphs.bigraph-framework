@@ -8,46 +8,62 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsEx
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.*;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.factory.AbstractBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class OperationsTest {
 
+    SimpleBigraphFactory factory;
+
+    @BeforeEach
+    void setUp() {
+        factory = new SimpleBigraphFactory();
+    }
+
     @Test
     void compose_test() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder2 = BigraphBuilder.start(signature);
 
-        BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
 
 
         BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room =
                 builder.newHierarchy(signature.getControlByName("Room"));
-        room.connectNodeToInnerName(tmp1)
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
-                .addChild(signature.getControlByName("Job"));
+        room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
 
         builder.createRoot()
-                .addHierarchyToParent(room)
-                .addChild(signature.getControlByName("Room")).connectNodeToInnerName(tmp1);
+                .addHierarchyToParent(room);
 
-        DynamicEcoreBigraph bigraph = builder.createBigraph();
+        builder2.createRoot()
+                .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite();
+
+
+        DynamicEcoreBigraph F = builder.createBigraph();
+        DynamicEcoreBigraph G = builder2.createBigraph();
+
 
         BigraphCompositor<DefaultDynamicSignature> compositor = new BigraphCompositor<>();
 
-        compositor.compose(bigraph, bigraph);
+        compositor.compose(G, F);
+
+//        BigraphEntity.NodeEntity<DefaultDynamicControl> next = F.getNodes().iterator().next();
+//        BigraphEntity parent = F.getParent(next);
+//        BigraphEntity parent0 = F.getParent(parent);
+//        int index = ((BigraphEntity.RootEntity) parent0).getIndex();
+//        System.out.println("index=" + index + " __ equals= " + parent0.equals(parent));
     }
 
-    private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DynamicSignatureBuilder<>();
-        defaultBuilder
+    private <C extends Control<?, ?>> Signature<C> createExampleSignature() {
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -55,6 +71,6 @@ public class OperationsTest {
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
-        return (Signature<C>) defaultBuilder.create();
+        return (Signature<C>) signatureBuilder.create();
     }
 }

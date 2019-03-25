@@ -82,6 +82,29 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
     }
 
     @Override
+    public BigraphEntity getParent(BigraphEntity node) {
+        EObject instance = node.getInstance();
+        EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
+            EObject each = (EObject) instance.eGet(prntRef);
+            if (isBNode(each)) {
+                Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodeEntity = nodes.stream().filter(x -> x.getInstance().equals(each)).findFirst();
+                //get control by name
+//                String controlName = each.eClass().getName();
+//                Control control = getSignature().getControlByName(controlName);
+                return nodeEntity.get();
+            } else { //root
+                //assert
+                Optional<BigraphEntity.RootEntity> rootEntity = roots.stream().filter(x -> x.getInstance().equals(each)).findFirst();
+                return rootEntity.isPresent() ? rootEntity.get() : null;
+            }
+        }
+        return node;
+
+
+    }
+
+    @Override
     public Collection<BigraphEntity> getChildrenOf(BigraphEntity node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);

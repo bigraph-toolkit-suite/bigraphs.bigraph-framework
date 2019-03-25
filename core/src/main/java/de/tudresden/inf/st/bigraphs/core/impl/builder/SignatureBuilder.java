@@ -10,8 +10,14 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-//TODO: überprüfen, ob controls nicht doppelt vorkommen
 
+/**
+ * Brdige pattern: abstraction is signature and implementor is controls or rather a strategy here?
+ * @param <NT>
+ * @param <FO>
+ * @param <C>
+ * @param <B>
+ */
 public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOrdinal, C extends ControlBuilder, B extends SignatureBuilder> { //<C extends ControlBuilder, B extends SignatureBuilder<C, B>> {
     private Set<Control<NT, FO>> controls;
 
@@ -35,7 +41,7 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
      *
      * @return the control builder
      */
-    public abstract C createControlBuilder();
+    abstract C createControlBuilder();
 
     private static <C extends ControlBuilder> C createControlBuilder(Class<C> clazz) {
         try {

@@ -74,6 +74,25 @@ public class BigraphBuilder<C extends Control<?, ?>> {
         this.vertexNameSupplier = nodeNameSupplier;
     }
 
+    /**
+     * (!) useSignature must be called afterwards
+     */
+    public BigraphBuilder() {
+        this.vertexNameSupplier = new Supplier<String>() {
+            private int id = 0;
+
+            @Override
+            public String get() {
+                return "v" + id++;
+            }
+        };
+    }
+
+    public void useSignature(Signature<C> signature) {
+        this.signature = signature;
+        this.bigraphicalSignatureAsTypeGraph("SAMPLE"); //TODO
+    }
+
     public static <C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>> BigraphBuilder start(@NonNull Signature<C> signature)
             throws BigraphMetaModelLoadingFailedException {
         return BigraphBuilder.start(signature,
@@ -222,7 +241,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
             ((EList) parent.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(node.getInstance());
             childs.add(node);
             if (node.getType().equals(BigraphEntityType.NODE)) {
-                EAttribute name = EMFUtils.findAttribute(node.getInstance().eClass(), "name");
+                EAttribute name = EMFUtils.findAttribute(node.getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                 Object o = node.getInstance().eGet(name);
                 availableNodes.put(String.valueOf(o), (BigraphEntity.NodeEntity) node);
             }
