@@ -18,6 +18,8 @@ public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
 
     Collection<BigraphEntity.SiteEntity> getSites();
 
+//    BigraphEntity.SiteEntity getSiteByIndex(int index);
+
     Collection<BigraphEntity.OuterName> getOuterNames();
 
     Collection<BigraphEntity.InnerName> getInnerNames();

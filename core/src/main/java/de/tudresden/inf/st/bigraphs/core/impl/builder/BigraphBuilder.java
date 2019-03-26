@@ -1,8 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.*;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
@@ -34,15 +32,16 @@ import java.util.stream.StreamSupport;
 /**
  * This bigraph builder offers a multi-scale approach for building bigraphs. From top to bottom.
  * Beginning with the outer and inner names. Create places and connect on the fly.
- *
- * @param <C> the type of the control
+ * <p>
+ * // * @param <C> the type of the control
  */
-public class BigraphBuilder<C extends Control<?, ?>> {
+//<C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>, S extends Signature<C>>
+public class BigraphBuilder<S extends Signature> {
 
     private EPackage loadedEPackage;
 
     private AtomicBoolean isCompleted = new AtomicBoolean(false);
-    private Signature<C> signature;
+    private S signature;
 
     /**
      * Complete map of all EClasses of the bigraph to be constructed
@@ -68,7 +67,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
     private final HashMap<Integer, BigraphEntity.SiteEntity> availableSites = new HashMap<>();
     private final HashMap<String, BigraphEntity.NodeEntity> availableNodes = new HashMap<>();
 
-    private BigraphBuilder(Signature<C> signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
+    private BigraphBuilder(S signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.bigraphicalSignatureAsTypeGraph("SAMPLE"); //TODO
         this.vertexNameSupplier = nodeNameSupplier;
@@ -77,6 +76,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
     /**
      * (!) useSignature must be called afterwards
      */
+    @Deprecated
     public BigraphBuilder() {
         this.vertexNameSupplier = new Supplier<String>() {
             private int id = 0;
@@ -88,12 +88,15 @@ public class BigraphBuilder<C extends Control<?, ?>> {
         };
     }
 
-    public void useSignature(Signature<C> signature) {
-        this.signature = signature;
+    @Deprecated
+    public BigraphBuilder<S> useSignature(Signature signature) {
+        this.signature = (S) signature;
         this.bigraphicalSignatureAsTypeGraph("SAMPLE"); //TODO
+        return this;
     }
 
-    public static <C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>> BigraphBuilder start(@NonNull Signature<C> signature)
+    //<C extends Control<?, ?>> Signature<C>
+    public static <S extends Signature> BigraphBuilder<S> start(@NonNull S signature)
             throws BigraphMetaModelLoadingFailedException {
         return BigraphBuilder.start(signature,
                 new Supplier<String>() {
@@ -106,8 +109,8 @@ public class BigraphBuilder<C extends Control<?, ?>> {
                 });
     }
 
-    public static <C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>> BigraphBuilder start(@NonNull Signature<C> signature,
-                                                                                                               Supplier<String> nodeNameSupplier)
+    public static <S extends Signature> BigraphBuilder<S> start(@NonNull S signature,
+                                                                Supplier<String> nodeNameSupplier)
             throws BigraphMetaModelLoadingFailedException {
         return new BigraphBuilder<>(signature, nodeNameSupplier);
     }
@@ -126,11 +129,11 @@ public class BigraphBuilder<C extends Control<?, ?>> {
      * @param control the control of the parent for the new hierarchy
      * @return a new hierarchy for the current bigraph
      */
-    public Hierarchy newHierarchy(C control) {
+    public Hierarchy newHierarchy(Control control) {
         EObject childNode = createNodeOfEClass(control.getNamedType().stringValue(), control); // new Hierarchy()
-        BigraphEntity.NodeEntity<C> nodeEntity = BigraphEntity.createNode(childNode, control);
+        BigraphEntity.NodeEntity<? extends Control> nodeEntity = BigraphEntity.createNode(childNode, control);
         Hierarchy hierarchy = new Hierarchy(nodeEntity);
-        hierarchy.lastCreatedNode = nodeEntity;
+        hierarchy.lastCreatedNode = (BigraphEntity.NodeEntity<Control<?, ?>>) nodeEntity;
         return hierarchy;
     }
 
@@ -140,20 +143,17 @@ public class BigraphBuilder<C extends Control<?, ?>> {
      */
     public class Hierarchy {
         final Hierarchy parentHierarchy;
-        final BigraphEntity<C> parent;
-        /**
-         * maybe not needed? or what might be a case? this hierarchy is not contained in a bigraph structure
-         */
-        @Deprecated
-        final Set<BigraphEntity> childs = new LinkedHashSet<>();
-        BigraphEntity.NodeEntity<C> lastCreatedNode;
+        final BigraphEntity<Control<?, ?>> parent;
+
+        final Set<BigraphEntity<Control<?, ?>>> child = new LinkedHashSet<>();
+        BigraphEntity.NodeEntity<Control<?, ?>> lastCreatedNode;
 
 
-        private Hierarchy(BigraphEntity<C> parent) {
+        private Hierarchy(BigraphEntity<Control<?, ?>> parent) {
             this(parent, null);
         }
 
-        private Hierarchy(BigraphEntity<C> parent, Hierarchy parentHierarchy) {
+        private Hierarchy(BigraphEntity<Control<?, ?>> parent, Hierarchy parentHierarchy) {
             this.parentHierarchy = parentHierarchy;
             this.parent = parent;
         }
@@ -191,8 +191,8 @@ public class BigraphBuilder<C extends Control<?, ?>> {
          * @param entity
          * @return
          */
-        private Hierarchy withNewHierarchyOn(BigraphEntity.NodeEntity<C> entity) {
-            if (!childs.contains(entity)) {
+        private Hierarchy withNewHierarchyOn(BigraphEntity.NodeEntity<Control<?, ?>> entity) {
+            if (!child.contains(entity)) {
                 throw new RuntimeException("Not possible - A child must first be created");
             }
             return new Hierarchy(entity, this);
@@ -208,26 +208,26 @@ public class BigraphBuilder<C extends Control<?, ?>> {
          * @param control the control
          * @return a freshly created object of control {@code control}
          */
-        private BigraphEntity.NodeEntity<C> createChild(C control) {
+        private BigraphEntity.NodeEntity<Control<?, ?>> createChild(Control<?, ?> control) {
             EObject childNode = createNodeOfEClass(control.getNamedType().stringValue(), control);
-            BigraphEntity.NodeEntity<C> nodeEntity = BigraphEntity.createNode(childNode, control);
-            updateLastCreatedNode(nodeEntity); //new BigraphEntity.NodeEntity(childNode, control));
+            BigraphEntity.NodeEntity<? extends Control> nodeEntity = BigraphEntity.createNode(childNode, control);
+            updateLastCreatedNode((BigraphEntity.NodeEntity<Control<?, ?>>) nodeEntity);
             return getLastCreatedNode();
         }
 
         //BLEIBT - HELPER
-        private boolean checkSameSignature(C control) {
+        private boolean checkSameSignature(Control<?, ?> control) {
             return iterableToList(signature.getControls()).contains(control);
         }
 
         //MOVE
         //this implies: added to a parent (see lastCreatedNode)
-        public Hierarchy addChild(C control) {
+        public Hierarchy addChild(Control<?, ?> control) {
             if (!checkSameSignature(control)) {
                 //TODO debug output or something ...
                 return this;
             }
-            final BigraphEntity.NodeEntity<C> child = createChild(control);
+            final BigraphEntity.NodeEntity<Control<?, ?>> child = createChild(control);
 //            if (addToParent)
             addChildToParent(child);
 //            ((EList) parent.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(child.getInstance());
@@ -239,7 +239,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
 
         private void addChildToParent(final BigraphEntity node) {
             ((EList) parent.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(node.getInstance());
-            childs.add(node);
+            child.add(node);
             if (node.getType().equals(BigraphEntityType.NODE)) {
                 EAttribute name = EMFUtils.findAttribute(node.getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                 Object o = node.getInstance().eGet(name);
@@ -255,7 +255,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
             BigraphEntity.SiteEntity siteEntity = BigraphEntity.create(eObject, BigraphEntity.SiteEntity.class);
 //            ((EList) parent.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(eObject);
             addChildToParent(siteEntity);
-            childs.add(siteEntity);
+            child.add(siteEntity);
             availableSites.put(ix, siteEntity);
             return this;
         }
@@ -272,9 +272,9 @@ public class BigraphBuilder<C extends Control<?, ?>> {
          * @return the builder hierarchy
          * @throws InvalidArityOfControlException if nodes cannot be connected because of the control's arity
          */
-        @SafeVarargs
-        public final Hierarchy connectByEdge(final C... controls) throws InvalidArityOfControlException {
-            List<BigraphEntity.NodeEntity<C>> nodes = new ArrayList<>();
+//        @SafeVarargs
+        public final Hierarchy connectByEdge(final Control<?, ?>... controls) throws InvalidArityOfControlException {
+            List<BigraphEntity.NodeEntity<Control<?, ?>>> nodes = new ArrayList<>();
             for (int i = 0, n = controls.length; i < n; i++) {
                 if (!checkSameSignature(controls[i])) return this; //TODO throw exception
             }
@@ -283,14 +283,16 @@ public class BigraphBuilder<C extends Control<?, ?>> {
             }
 
             BigraphBuilder.this.connectByEdge(nodes.toArray(new BigraphEntity.NodeEntity[nodes.size()]));
-            childs.addAll(nodes); // now its safe, after above
+//            nodes.forEach(x -> child.add(x));
+//            child.addAll(nodes.get(0));
+//            child.addAll((Collection<? extends BigraphEntity<Control<?, ?>>>) nodes); // now its safe, after above
             nodes.forEach(this::addChildToParent);
             return this;
         }
 
         //To be used to call toe enclosing class' methods for passing the nodes as arguments
-        public Collection<BigraphEntity> nodes() {
-            return childs;
+        public Collection<BigraphEntity<Control<?, ?>>> nodes() {
+            return child;
         }
 
 
@@ -300,11 +302,11 @@ public class BigraphBuilder<C extends Control<?, ?>> {
         }
 
         //TODO
-        public void connectNodesToInnerName(BigraphEntity.InnerName innerName, C... controls) {
+        public void connectNodesToInnerName(BigraphEntity.InnerName innerName, Control<?, ?>... controls) {
             throw new NotImplementedException(); //see below
         }
 
-        public void connectNodeToInnerName(C control, BigraphEntity.InnerName innerName) throws InvalidConnectionException, LinkTypeNotExistsException {
+        public void connectNodeToInnerName(Control<?, ?> control, BigraphEntity.InnerName innerName) throws InvalidConnectionException, LinkTypeNotExistsException {
             addChild(control);
             connectNodeToInnerName(innerName);
         }
@@ -314,11 +316,11 @@ public class BigraphBuilder<C extends Control<?, ?>> {
             return this;
         }
 
-        public BigraphEntity.NodeEntity<C> getLastCreatedNode() {
+        public BigraphEntity.NodeEntity<Control<?, ?>> getLastCreatedNode() {
             return lastCreatedNode;
         }
 
-        private void updateLastCreatedNode(BigraphEntity.NodeEntity<C> eObject) {
+        private void updateLastCreatedNode(BigraphEntity.NodeEntity<Control<?, ?>> eObject) {
             lastCreatedNode = eObject;
         }
 
@@ -390,7 +392,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
      * @param edge
      * @see BigraphBuilder#isConnectedWithLink(de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity.NodeEntity, EObject)
      */
-    private void connectToEdge(BigraphEntity.NodeEntity<C> node, BigraphEntity.Edge edge) {
+    private void connectToEdge(BigraphEntity.NodeEntity<Control<?, ?>> node, BigraphEntity.Edge edge) {
 //        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         Integer index = bPorts.size();
@@ -401,13 +403,13 @@ public class BigraphBuilder<C extends Control<?, ?>> {
         bPorts.add(portObject);
     }
 
-    private BigraphEntity.Edge connectByEdge(final BigraphEntity.NodeEntity<C>... nodes) throws InvalidArityOfControlException {
+    private BigraphEntity.Edge connectByEdge(final BigraphEntity.NodeEntity<Control<?, ?>>... nodes) throws InvalidArityOfControlException {
         //get arity and check number of connections
-        for (BigraphEntity.NodeEntity<C> each : nodes) {
+        for (BigraphEntity.NodeEntity<Control<?, ?>> each : nodes) {
             checkIfNodeIsConnectable(each);
         }
         BigraphEntity.Edge edge = createEdgeOfEClass();
-        for (BigraphEntity.NodeEntity<C> each : nodes) {
+        for (BigraphEntity.NodeEntity<Control<?, ?>> each : nodes) {
             connectToEdge(each, edge);
 
         }
@@ -439,7 +441,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
      * @throws InvalidArityOfControlException if the control cannot connect anything (e.g., is atomic, or no open ports left)
      * @throws InvalidConnectionException     if the inner name is already connected to an outer name
      */
-    public void connectNodeToInnerName(BigraphEntity.NodeEntity<C> node1, BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+    public void connectNodeToInnerName(BigraphEntity.NodeEntity<Control<?, ?>> node1, BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
         //check if outername exists
 //        if (availableInnerNames.get(innerName.getInstance().eGet(EMFUtils.findAttribute(innerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME))) == null) {
         if (availableInnerNames.get(innerName.getName()) == null) { //  getInstance().eGet(EMFUtils.findAttribute(innerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME))) == null) {
@@ -478,7 +480,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
      * @return the builder
      * @throws InvalidConnectionException
      */
-    public BigraphBuilder<C> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2) throws InvalidConnectionException {
+    public BigraphBuilder<S> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2) throws InvalidConnectionException {
         return connectInnerNames(ecoreInnerName1, ecoreInnerName2, false);
     }
 
@@ -499,7 +501,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
      * @return the builder class
      * @throws InvalidConnectionException
      */
-    public BigraphBuilder<C> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2, boolean keepIdleEdges) throws InvalidConnectionException {
+    public BigraphBuilder<S> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2, boolean keepIdleEdges) throws InvalidConnectionException {
         assert ecoreInnerName1.getType().equals(BigraphEntityType.INNER_NAME);
         assert ecoreInnerName2.getType().equals(BigraphEntityType.INNER_NAME);
         // throw exception if an innername is already connected to an outername
@@ -638,7 +640,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
      * @param node the node to check
      * @throws InvalidArityOfControlException if control is atomic or the current connections exceed the control's arity
      */
-    private void checkIfNodeIsConnectable(BigraphEntity.NodeEntity<C> node) throws InvalidArityOfControlException {
+    private void checkIfNodeIsConnectable(BigraphEntity.NodeEntity<Control<?, ?>> node) throws InvalidArityOfControlException {
 //        assert node.getType() ==
         EObject instance1 = node.getInstance();
 //        EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
@@ -656,7 +658,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
     }
 
     //BLEIBT - HELPER
-    private void connectNodeToOuterName(BigraphEntity.NodeEntity<C> node1, BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidArityOfControlException {
+    private void connectNodeToOuterName(BigraphEntity.NodeEntity<Control<?, ?>> node1, BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidArityOfControlException {
         //check if outername exists
         assert outerName.getType().equals(BigraphEntityType.OUTER_NAME);
 
@@ -696,7 +698,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
     }
 
     //BLEIBT - HELPER
-    private boolean isConnectedWithLink(BigraphEntity.NodeEntity<C> place1, @Nullable EObject aLink) {
+    private boolean isConnectedWithLink(BigraphEntity.NodeEntity<Control<?, ?>> place1, @Nullable EObject aLink) {
         if (Objects.isNull(aLink)) return false;
         EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
 //        EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(factory.getBigraphBaseModelPackage().getBNode_BPorts());
@@ -715,7 +717,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
     }
 
     //BLEIBT - HELPER
-    private boolean areNodesConnected(BigraphEntity.NodeEntity<C> place1, BigraphEntity.NodeEntity<C> place2) {
+    private boolean areNodesConnected(BigraphEntity.NodeEntity<Control<?, ?>> place1, BigraphEntity.NodeEntity<Control<?, ?>> place2) {
         EClass eClassPort = availableEClasses.get(BigraphMetaModelConstants.CLASS_PORT);
         EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
 //        EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(factory.getBigraphBaseModelPackage().getBNode_BPorts());
@@ -738,7 +740,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
     }
 
     //BLEIBT - HELPER
-    private EObject createNodeOfEClass(String name, @NonNull C control) {
+    private EObject createNodeOfEClass(String name, @NonNull Control<?, ?> control) {
         EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(name));
         EAttribute name1 = EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
         eObject.eSet(name1, vertexNameSupplier.get());
@@ -763,16 +765,18 @@ public class BigraphBuilder<C extends Control<?, ?>> {
         return edge;
     }
 
+    //TODO: reset values??
     public DynamicEcoreBigraph createBigraph() {
         InstanceParameter meta = new InstanceParameter(loadedEPackage, signature, availableRoots, availableSites,
                 availableNodes, availableInnerNames, availableOuterNames, availableEdges);
         DynamicEcoreBigraph bigraph = new DynamicEcoreBigraph(meta);
+        isCompleted.set(true);
         return bigraph;
     }
 
     public class InstanceParameter {
         private EPackage modelPackage; //TODO wirklich diese package?
-        private Signature<C> signature;
+        private S signature;
         private Set<BigraphEntity.RootEntity> roots;
         private Set<BigraphEntity.SiteEntity> sites;
         private Set<BigraphEntity.InnerName> innerNames;
@@ -781,7 +785,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
         private Set<BigraphEntity.NodeEntity> nodes; //TODO: node set p
 
         private InstanceParameter(EPackage loadedEPackage,
-                                  Signature<C> signature,
+                                  S signature,
                                   HashMap<Integer, BigraphEntity.RootEntity> availableRoots,
                                   HashMap<Integer, BigraphEntity.SiteEntity> availableSites,
                                   HashMap<String, BigraphEntity.NodeEntity> availableNodes,
@@ -804,7 +808,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
             this.nodes = new LinkedHashSet<>(availableNodes.values());
         }
 
-        public Signature<C> getSignature() {
+        public Signature<Control<?, ?>> getSignature() {
             return signature;
         }
 
@@ -851,7 +855,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
             // get parent
             EObject prnt = (EObject) eachSite.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PARENT));
             assert prnt != null;
-            // get all childs
+            // get all child
             EList<EObject> childs = (EList<EObject>) prnt.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD));
             boolean remove = childs.remove(eachSite.getInstance());
             assert remove;
@@ -988,7 +992,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
         }
     }
 
-    private List<C> iterableToList(Iterable<C> controls) {
+    private List<Control<?, ?>> iterableToList(Iterable<Control<?, ?>> controls) {
 //        List<C> list = new ArrayList<>();
 //        controls.iterator().forEachRemaining(list::add);
         return Lists.newArrayList(controls);
@@ -1005,7 +1009,7 @@ public class BigraphBuilder<C extends Control<?, ?>> {
             throw new BigraphMetaModelLoadingFailedException(e);
         }
 
-        Iterable<C> controls = signature.getControls();
+        Iterable<Control<?, ?>> controls = signature.getControls();
         StreamSupport.stream(controls.spliterator(), false)
                 .forEach(x -> {
                     EClass entityClass = (EClass) loadedEPackage.getEClassifier("BNode");

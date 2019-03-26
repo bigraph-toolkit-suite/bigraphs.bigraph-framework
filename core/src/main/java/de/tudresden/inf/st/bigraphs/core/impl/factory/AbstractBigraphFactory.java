@@ -1,11 +1,14 @@
 package de.tudresden.inf.st.bigraphs.core.impl.factory;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphOperations;
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphComposition;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicControlBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+
+import java.lang.reflect.Type;
 
 //TODO: erstellt entweder dynamic controls oder default controls signaturen (also builder und signaturebuilder werden
 //und compositor
@@ -20,12 +23,25 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 //Später kann man noch über attributed bigraphs nachdenken (kann auch für matching verwendet werden - constraints)
 
 
-public abstract class AbstractBigraphFactory {
+public abstract class AbstractBigraphFactory<S extends Signature, NT extends NamedType, FT extends FiniteOrdinal> implements BigraphFactoryElement {
+    protected Type successorClass = null;
 
-    public abstract <S extends SignatureBuilder> S createSignatureBuilder();
+    @Override
+    public Type getSuccessorImpl() {
+        return successorClass;
+    }
 
-    public abstract <S extends Signature> BigraphBuilder createBigraphBuilder(S signature);
+    public abstract <SB extends SignatureBuilder> SB createSignatureBuilder();
 
-    public abstract BigraphOperations createBigraphOperations();
+    /**
+     * Throws a class cast exception when a signature is passed as argument which was not created with the same signaturebuilder created
+     * by this factory.
+     *
+     * @param signature
+     * @return
+     */
+    public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
+
+    public abstract BigraphComposition<S> createBigraphOperations(Bigraph<S> bigraph);
 
 }

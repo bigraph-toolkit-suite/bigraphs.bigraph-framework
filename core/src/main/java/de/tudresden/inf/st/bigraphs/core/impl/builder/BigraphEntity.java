@@ -25,7 +25,7 @@ import java.util.Objects;
  *
  * @param <C> type of the controls
  */
-public class BigraphEntity<C extends Control<?, ?>> {//TODO entfernen nach unten verschieben
+public class BigraphEntity<C extends Control> {//TODO entfernen nach unten verschieben
 
     private EObject instance;
     private C control;
@@ -124,7 +124,7 @@ public class BigraphEntity<C extends Control<?, ?>> {//TODO entfernen nach unten
     }
 
     @NonNull
-    public static <C extends Control<?, ?>> NodeEntity<C> createNode(@NonNull EObject param, C control) {
+    public static NodeEntity<? extends Control> createNode(@NonNull EObject param, Control control) {
         return new NodeEntity<>(param, control);
     }
 

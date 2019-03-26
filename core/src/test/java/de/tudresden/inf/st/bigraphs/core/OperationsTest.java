@@ -10,7 +10,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.*;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,23 +18,23 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class OperationsTest {
 
-    SimpleBigraphFactory factory;
+    private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory;
 
     @BeforeEach
     void setUp() {
-        factory = new SimpleBigraphFactory();
+        factory = new SimpleBigraphFactory<>();
     }
 
     @Test
     void compose_test() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
-        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder2 = BigraphBuilder.start(signature);
-
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(DefaultDynamicSignature.class.cast(signature));
+        BigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(DefaultDynamicSignature.class.cast(signature));
+//
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
 
 
-        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room =
+        BigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
                 builder.newHierarchy(signature.getControlByName("Room"));
         room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
 
@@ -50,10 +49,10 @@ public class OperationsTest {
         DynamicEcoreBigraph G = builder2.createBigraph();
 
 
-        BigraphCompositor<DefaultDynamicSignature> compositor = new BigraphCompositor<>();
-
-        compositor.compose(G, F);
-
+        BigraphComposition<DefaultDynamicSignature> compositor = factory.createBigraphOperations(G);
+//        DefaultBigraphCompositor<DefaultDynamicSignature> compositor = (DefaultBigraphCompositor<DefaultDynamicSignature>) factory.createBigraphOperations(G);
+        compositor.compose(F);
+//
 //        BigraphEntity.NodeEntity<DefaultDynamicControl> next = F.getNodes().iterator().next();
 //        BigraphEntity parent = F.getParent(next);
 //        BigraphEntity parent0 = F.getParent(parent);
@@ -61,7 +60,7 @@ public class OperationsTest {
 //        System.out.println("index=" + index + " __ equals= " + parent0.equals(parent));
     }
 
-    private <C extends Control<?, ?>> Signature<C> createExampleSignature() {
+    private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
@@ -71,6 +70,6 @@ public class OperationsTest {
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
-        return (Signature<C>) signatureBuilder.create();
+        return (S) signatureBuilder.create();
     }
 }

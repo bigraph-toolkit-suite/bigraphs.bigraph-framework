@@ -6,10 +6,12 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.InnerNameConnectedToOuterNameException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -17,14 +19,17 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Disabled
 public class BigraphCreationTest {
+
+    private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("Create Bigraphs test series")
     class ArityChecks {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
-        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultDynamicSignature> builder;
 
         @BeforeAll
         void createSignature() {
@@ -35,7 +40,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = factory.createBigraphBuilder(signature);
         }
 
         @Test
@@ -82,7 +87,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ConnectionTestSeries_InnerOuterNames {
-        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -92,7 +97,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = factory.createBigraphBuilder(signature);
         }
 
         @Test
@@ -242,7 +247,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class GroundBigraphTestSeries {
-        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -252,7 +257,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = factory.createBigraphBuilder(signature);
         }
 
         @Test
@@ -284,7 +289,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class NestedHierarchyTestSeries {
-        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -294,7 +299,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = factory.createBigraphBuilder(signature);
         }
 
         @Test
@@ -329,7 +334,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class HierarchyTestSeries {
-        BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
+        BigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -339,7 +344,7 @@ public class BigraphCreationTest {
 
         @BeforeEach
         void setUp() {
-            builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
+            builder = factory.createBigraphBuilder(signature);
         }
 
         @Test
@@ -349,7 +354,7 @@ public class BigraphCreationTest {
 
             assertAll(() -> {
 
-                BigraphBuilder<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+                BigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
                 room.connectNodeToInnerName(tmp1)
                         .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
                         .addChild(signature.getControlByName("Job"));
@@ -367,46 +372,9 @@ public class BigraphCreationTest {
 
     }
 
-    @Test
-    void write_to_dot() throws IOException {
-        //This belongs in the visu module
-//        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder;
-//        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
-//        signature = createExampleSignature();
-//        builder = BigraphBuilder.start(signature); //TODO factory methode casted sowas dann
-//        // define some nodes
-//        builder.createRoot(); // create a root node first
-//        builder.addChild(signature.getControlByName("Printer"))
-//                .addChild(signature.getControlByName("Printer"))
-//                .addChild(signature.getControlByName("Printer"));
-////        builder.connectByEdge();
-//        builder.createRoot().addChild(signature.getControlByName("Computer"));
-//        builder.createRoot().addChild(signature.getControlByName("User"));
-//
-//        DynamicEcoreBigraph bigraph = builder.createBigraph();
-//
-//        builder.export();
-////        BigraphBuilder.EcoreRoot root = (BigraphBuilder.EcoreRoot) bigraph.getRoot();
-////        if(root instanceof BigraphBuilder.EcoreRoot) {
-////            System.out.println("nice");
-////        }
-//
-//        MutableGraph g = Parser.read(getClass().getResourceAsStream("/color.dot"));
-//        Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(new File("example/ex4-1.png"));
-//
-//        g.graphAttrs()
-//                .add(Color.WHITE.gradient(Color.rgb("888888")).background().angle(90))
-//                .nodeAttrs().add(Color.WHITE.fill())
-//                .nodes().forEach(node ->
-//                node.add(
-//                        Color.named(node.name().toString()),
-//                        Style.lineWidth(4).and(Style.FILLED)));
-//        Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(new File("example/ex4-2.png"));
-    }
-
-    private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DynamicSignatureBuilder<>();
-        defaultBuilder
+    private <C extends Control<?,?>, S extends Signature<C>> S createExampleSignature() {
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -414,6 +382,6 @@ public class BigraphCreationTest {
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
-        return (Signature<C>) defaultBuilder.create();
+        return (S) signatureBuilder.create();
     }
 }

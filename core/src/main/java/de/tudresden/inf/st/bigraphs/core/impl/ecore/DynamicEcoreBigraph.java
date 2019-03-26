@@ -92,7 +92,7 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
                 //get control by name
 //                String controlName = each.eClass().getName();
 //                Control control = getSignature().getControlByName(controlName);
-                return nodeEntity.get();
+                return nodeEntity.isPresent() ? nodeEntity.get() : null;
             } else { //root
                 //assert
                 Optional<BigraphEntity.RootEntity> rootEntity = roots.stream().filter(x -> x.getInstance().equals(each)).findFirst();
