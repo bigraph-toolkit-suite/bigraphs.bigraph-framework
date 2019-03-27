@@ -1,10 +1,15 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 
+import com.sun.tools.javac.util.Pair;
+import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NameSet;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import org.eclipse.emf.ecore.EPackage;
 
-import java.util.Collection;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
     /**
@@ -24,11 +29,26 @@ public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
 
     Collection<BigraphEntity.InnerName> getInnerNames();
 
+    default Map.Entry<Set<FiniteOrdinal<Integer>>, Set<StringTypedName>> getInnerFace() {
+        return new AbstractMap.SimpleImmutableEntry<>(
+                getSites().stream().map(x -> FiniteOrdinal.ofInteger(x.getIndex())).collect(Collectors.toSet()),
+                getInnerNames().stream().map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet())
+        );
+    }
+
+    default Map.Entry<Set<FiniteOrdinal<Integer>>, Set<StringTypedName>> getOuterFace() {
+        return new AbstractMap.SimpleImmutableEntry<>(
+                getRoots().stream().map(x -> FiniteOrdinal.ofInteger(x.getIndex())).collect(Collectors.toSet()),
+                getOuterNames().stream().map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet())
+        );
+    }
+
     Collection<BigraphEntity.Edge> getEdges();
 
     <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
 
     BigraphEntity getParent(BigraphEntity node);
+
     //without sites
     Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
 
