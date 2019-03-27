@@ -28,31 +28,32 @@ public class OperationsTest {
     @Test
     void compose_test() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(DefaultDynamicSignature.class.cast(signature));
-        BigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(DefaultDynamicSignature.class.cast(signature));
+        BigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
+        BigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
 //
-        BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
-
+        BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
+        BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
 
         BigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
-                builder.newHierarchy(signature.getControlByName("Room"));
+                builderForF.newHierarchy(signature.getControlByName("Room"));
         room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
 
-        builder.createRoot()
+        builderForF.createRoot()
                 .addHierarchyToParent(room);
 
-        builder2.createRoot()
-                .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite();
+        builderForG.createRoot()
+                .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite().goBack()
+                .addChild(signature.getControlByName("User")).connectNodeToInnerName(jeffG);
 
 
-        DynamicEcoreBigraph F = builder.createBigraph();
-        DynamicEcoreBigraph G = builder2.createBigraph();
+        DynamicEcoreBigraph F = builderForF.createBigraph();
+        DynamicEcoreBigraph G = builderForG.createBigraph();
 
 
-        BigraphComposition<DefaultDynamicSignature> compositor = factory.createBigraphOperations(G);
-//        DefaultBigraphCompositor<DefaultDynamicSignature> compositor = (DefaultBigraphCompositor<DefaultDynamicSignature>) factory.createBigraphOperations(G);
-        compositor.compose(F);
-//
+        BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
+//        DefaultBigraphComposite<DefaultDynamicSignature> compositor = (DefaultBigraphComposite<DefaultDynamicSignature>) factory.asBigraphOperator(G);
+        BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
+        Bigraph<DefaultDynamicSignature> outerBigraph = composedBigraph.getOuterBigraph();
 //        BigraphEntity.NodeEntity<DefaultDynamicControl> next = F.getNodes().iterator().next();
 //        BigraphEntity parent = F.getParent(next);
 //        BigraphEntity parent0 = F.getParent(parent);

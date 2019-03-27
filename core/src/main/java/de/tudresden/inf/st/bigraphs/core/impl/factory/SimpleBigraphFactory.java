@@ -2,8 +2,8 @@ package de.tudresden.inf.st.bigraphs.core.impl.factory;
 
 import com.google.common.reflect.TypeToken;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphComposition;
-import de.tudresden.inf.st.bigraphs.core.DefaultBigraphCompositor;
+import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
+import de.tudresden.inf.st.bigraphs.core.DefaultBigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
@@ -35,14 +35,8 @@ public class SimpleBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal
     }
 
     @Override
-    public BigraphComposition<DefaultDynamicSignature> createBigraphOperations(Bigraph<DefaultDynamicSignature> bigraph) {
-        return new DefaultBigraphCompositor<>(bigraph);
+    public BigraphComposite<DefaultDynamicSignature> asBigraphOperator(Bigraph<DefaultDynamicSignature> outerBigraph) {
+        return new DefaultBigraphComposite<>(outerBigraph);
     }
 
-//    @Override
-//    public BigraphComposition<DefaultDynamicSignature> createBigraphOperations() {
-//        DefaultBigraphCompositor<DefaultDynamicSignature> defaultDynamicSignatureBigraphCompositor = new DefaultBigraphCompositor<>();
-//        defaultDynamicSignatureBigraphCompositor.setBuilder(new BigraphBuilder());
-//        return defaultDynamicSignatureBigraphCompositor;
-//    }
 }

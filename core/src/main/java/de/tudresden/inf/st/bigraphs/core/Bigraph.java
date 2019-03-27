@@ -1,14 +1,15 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 
-import com.sun.tools.javac.util.Pair;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NameSet;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import org.eclipse.emf.ecore.EPackage;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {

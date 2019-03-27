@@ -38,7 +38,7 @@ import java.util.stream.StreamSupport;
 //<C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>, S extends Signature<C>>
 public class BigraphBuilder<S extends Signature> {
 
-    private EPackage loadedEPackage;
+    protected EPackage loadedEPackage;
 
     private AtomicBoolean isCompleted = new AtomicBoolean(false);
     private S signature;
@@ -67,7 +67,7 @@ public class BigraphBuilder<S extends Signature> {
     private final HashMap<Integer, BigraphEntity.SiteEntity> availableSites = new HashMap<>();
     private final HashMap<String, BigraphEntity.NodeEntity> availableNodes = new HashMap<>();
 
-    private BigraphBuilder(S signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
+    protected BigraphBuilder(S signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.bigraphicalSignatureAsTypeGraph("SAMPLE"); //TODO
         this.vertexNameSupplier = nodeNameSupplier;
@@ -107,6 +107,18 @@ public class BigraphBuilder<S extends Signature> {
                         return "v" + id++;
                     }
                 });
+    }
+
+    public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature, new Supplier<String>() {
+            private int id = 0;
+
+            @Override
+            public String get() {
+                return "v" + id++;
+            }
+        });
     }
 
     public static <S extends Signature> BigraphBuilder<S> start(@NonNull S signature,
@@ -249,9 +261,10 @@ public class BigraphBuilder<S extends Signature> {
 
         //MOVE, change return type
         public Hierarchy addSite() {
-            EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE));
             final int ix = siteIdxSupplier.get();
-            eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), ix);
+            EObject eObject = createSiteOfEClass(ix);
+//            EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE));
+//            eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), ix);
             BigraphEntity.SiteEntity siteEntity = BigraphEntity.create(eObject, BigraphEntity.SiteEntity.class);
 //            ((EList) parent.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(eObject);
             addChildToParent(siteEntity);
@@ -327,15 +340,28 @@ public class BigraphBuilder<S extends Signature> {
 
     }
 
+    protected EObject createSiteOfEClass(int index) {
+        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE));
+        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), index);
+        return eObject;
+    }
+
 
     //BLEIBT
     private BigraphEntity.RootEntity createRootEntity() {
-        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT));
         final int ix = rootIdxSupplier.get();
-        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), ix);//TODO über instance setzen
+        EObject eObject = this.createRootOfEClass(ix);
+//        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT));
+//        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), ix);//TODO über instance setzen
         BigraphEntity.RootEntity rootEntity = BigraphEntity.create(eObject, BigraphEntity.RootEntity.class);
         availableRoots.put(ix, rootEntity);
         return rootEntity;
+    }
+
+    protected EObject createRootOfEClass(int index) {
+        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT));
+        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), index);
+        return eObject;
     }
 
     //BLEIBT
@@ -740,10 +766,18 @@ public class BigraphBuilder<S extends Signature> {
     }
 
     //BLEIBT - HELPER
-    private EObject createNodeOfEClass(String name, @NonNull Control<?, ?> control) {
+    protected EObject createNodeOfEClass(String name, @NonNull Control<?, ?> control) {
+//        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(name));
+//        EAttribute name1 = EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+//        eObject.eSet(name1, vertexNameSupplier.get());
+//        return eObject;
+        return this.createNodeOfEClass(name, control, vertexNameSupplier.get());
+    }
+
+    protected EObject createNodeOfEClass(String name, @NonNull Control<?, ?> control, String nodeIdentifier) {
         EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(name));
         EAttribute name1 = EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-        eObject.eSet(name1, vertexNameSupplier.get());
+        eObject.eSet(name1, nodeIdentifier);
         return eObject;
     }
 
@@ -784,14 +818,14 @@ public class BigraphBuilder<S extends Signature> {
         private Set<BigraphEntity.Edge> edges;
         private Set<BigraphEntity.NodeEntity> nodes; //TODO: node set p
 
-        private InstanceParameter(EPackage loadedEPackage,
+        public InstanceParameter(EPackage loadedEPackage,
                                   S signature,
-                                  HashMap<Integer, BigraphEntity.RootEntity> availableRoots,
-                                  HashMap<Integer, BigraphEntity.SiteEntity> availableSites,
-                                  HashMap<String, BigraphEntity.NodeEntity> availableNodes,
-                                  HashMap<String, BigraphEntity.InnerName> availableInnerNames,
-                                  HashMap<String, BigraphEntity.OuterName> availableOuterNames,
-                                  HashMap<String, BigraphEntity.Edge> availableEdges
+                                  Map<Integer, BigraphEntity.RootEntity> availableRoots,
+                                  Map<Integer, BigraphEntity.SiteEntity> availableSites,
+                                  Map<String, BigraphEntity.NodeEntity> availableNodes,
+                                  Map<String, BigraphEntity.InnerName> availableInnerNames,
+                                  Map<String, BigraphEntity.OuterName> availableOuterNames,
+                                  Map<String, BigraphEntity.Edge> availableEdges
         ) {
             this.modelPackage = loadedEPackage;
             this.signature = signature;

@@ -183,6 +183,11 @@ public class BigraphEntity<C extends Control> {//TODO entfernen nach unten versc
             Object name = getInstance().eGet(nameAttr);
             return String.valueOf(name);
         }
+
+        public void setName(String nodeName) {
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+            getInstance().eSet(nameAttr, nodeName);
+        }
     }
 
     public static class SiteEntity extends BigraphEntity {
@@ -193,6 +198,12 @@ public class BigraphEntity<C extends Control> {//TODO entfernen nach unten versc
 
         SiteEntity(@NonNull EObject instance) {
             super(instance, BigraphEntityType.SITE);
+        }
+
+        public int getIndex() {
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            Object name = getInstance().eGet(nameAttr);
+            return (Integer) name;
         }
 
     }
