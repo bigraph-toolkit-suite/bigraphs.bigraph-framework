@@ -2,25 +2,22 @@ package de.tudresden.inf.st.bigraphs.visualization;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
 import guru.nidi.graphviz.attribute.Color;
-import guru.nidi.graphviz.attribute.ForNode;
-import guru.nidi.graphviz.attribute.Label;
-import guru.nidi.graphviz.attribute.Style;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
@@ -28,15 +25,14 @@ import guru.nidi.graphviz.model.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
 public class Test {
+    private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
 
     @org.junit.jupiter.api.Test
     void place_graph_export() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
@@ -94,12 +90,11 @@ public class Test {
         List<BigraphEntity> iterator = Lists.newArrayList(v0).stream().filter(x -> x.getType().equals(BigraphEntityType.NODE)).collect(Collectors.toList());
 
 
-
         List<MutableGraph> graphList2 = new ArrayList<>();
         for (BigraphEntity a : iterator) {
             for (BigraphEntity b : iterator) {
 //                if(a.getType())
-                    String an = a.getControl().getNamedType().stringValue() + "." + ((BigraphEntity.NodeEntity) a).getName();
+                String an = a.getControl().getNamedType().stringValue() + "." + ((BigraphEntity.NodeEntity) a).getName();
                 if (bigraph_a.areConnected((BigraphEntity.NodeEntity) a, (BigraphEntity.NodeEntity) b)) {
 
 
@@ -140,10 +135,10 @@ public class Test {
 
     }
 
-    public static DynamicEcoreBigraph createBigraph_A() throws
+    public DynamicEcoreBigraph createBigraph_A() throws
             LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
         BigraphEntity.OuterName a = builder.createOuterName("a");
@@ -181,8 +176,8 @@ public class Test {
 
     }
 
-    private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
+    private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
+        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -191,7 +186,7 @@ public class Test {
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
-        return (Signature<C>) defaultBuilder.create();
+        return (S) defaultBuilder.create();
     }
 
 }
