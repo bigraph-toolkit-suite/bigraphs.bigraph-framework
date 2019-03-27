@@ -8,15 +8,19 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 public class MatchTesting {
+    private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
 
     @Test
     void model_test_0() throws Exception {
@@ -29,9 +33,31 @@ public class MatchTesting {
 
     }
 
-    public static Bigraph createRedex_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    @Test
+    void model_test_1() throws Exception {
+        DynamicEcoreBigraph redex_model_test_1 = (DynamicEcoreBigraph) createRedex_model_test_1();
+        DynamicEcoreBigraph agent_model_test_1 = (DynamicEcoreBigraph) createAgent_model_test_1();
+
+        BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_1, redex_model_test_1);
+
+        matchingEngine.beginMatch();
+
+    }
+
+    @Test
+    void model_test_2() throws Exception {
+        DynamicEcoreBigraph redex_model_test_2 = (DynamicEcoreBigraph) createRedex_model_test_2();
+        DynamicEcoreBigraph agent_model_test_2 = (DynamicEcoreBigraph) createAgent_model_test_2();
+
+        BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_2, redex_model_test_2);
+
+        matchingEngine.beginMatch();
+
+    }
+
+    public Bigraph createRedex_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.OuterName e0 = builder.createOuterName("e0");
         BigraphEntity.OuterName a1 = builder.createOuterName("a1");
@@ -61,9 +87,9 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    public Bigraph createAgent_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("e0");
         BigraphEntity.OuterName a1 = builder.createOuterName("a1");
@@ -94,9 +120,9 @@ public class MatchTesting {
 
     }
 
-    public static Bigraph createAgent_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+    public Bigraph createAgent_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
@@ -126,9 +152,9 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public static Bigraph createRedex_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+    public Bigraph createRedex_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
@@ -149,9 +175,9 @@ public class MatchTesting {
 
     }
 
-    public static Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+    public Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
@@ -175,9 +201,9 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+    public Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
         BigraphEntity.OuterName a = builder.createOuterName("a");
@@ -215,9 +241,9 @@ public class MatchTesting {
 
     }
 
-    public static Bigraph createRedex_model_test_2() throws LinkTypeNotExistsException, InvalidConnectionException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+    public Bigraph createRedex_model_test_2() throws LinkTypeNotExistsException, InvalidConnectionException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff1");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
 
@@ -238,9 +264,9 @@ public class MatchTesting {
     }
 
 
-    public static Bigraph createAgent_model_test_2() throws LinkTypeNotExistsException, InvalidConnectionException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+    public Bigraph createAgent_model_test_2() throws LinkTypeNotExistsException, InvalidConnectionException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName door = builder.createInnerName("door");
         BigraphEntity.OuterName e1 = builder.createOuterName("eroom");
@@ -290,8 +316,8 @@ public class MatchTesting {
         return bigraph;
     }
 
-    private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DynamicSignatureBuilder<>();
+    private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -300,7 +326,7 @@ public class MatchTesting {
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
-        return (Signature<C>) defaultBuilder.create();
+        return (S) defaultBuilder.create();
     }
 
 }

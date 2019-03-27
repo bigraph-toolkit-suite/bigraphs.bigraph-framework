@@ -8,10 +8,14 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -24,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphArtifactTests {
+    private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
 
     @Test
     void load_instance_model_test() {
@@ -42,9 +47,9 @@ public class BigraphArtifactTests {
         });
     }
 
-    private static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
-        defaultBuilder
+    private <C extends Control<?,?>, S extends Signature<C>> S createExampleSignature() {
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -52,18 +57,18 @@ public class BigraphArtifactTests {
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
-        return (Signature<C>) defaultBuilder.create();
+        return (S) signatureBuilder.create();
     }
 
-    public static Bigraph create() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> builder = BigraphBuilder.start(signature);
+    public Bigraph create() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
 
 
-        BigraphBuilder<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+        BigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
         room.connectNodeToInnerName(tmp1)
                 .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
                 .addChild(signature.getControlByName("Job"));

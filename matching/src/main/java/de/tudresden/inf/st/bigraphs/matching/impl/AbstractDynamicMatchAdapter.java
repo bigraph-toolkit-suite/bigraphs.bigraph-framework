@@ -170,23 +170,24 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
         return cnt;
     }
 
-    public BigraphEntity getParent(BigraphEntity node) {
-        if (!isBPlace(node.getInstance())) return null;
-        EObject instance = node.getInstance();
-        EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
-            EObject each = (EObject) instance.eGet(prntRef);
-            if (isBNode(each)) {
-                //get control by name
-                String controlName = each.eClass().getName();
-                Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
-                return BigraphEntity.createNode(each, control);
-            } else {
-                return BigraphEntity.create(each, BigraphEntity.RootEntity.class);
-            }
-        }
-        return node;
-    }
+//    @Override
+//    public BigraphEntity getParent(BigraphEntity node) {
+////        if (!isBPlace(node.getInstance())) return null;
+////        EObject instance = node.getInstance();
+////        EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+////        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
+////            EObject each = (EObject) instance.eGet(prntRef);
+////            if (isBNode(each)) {
+////                //get control by name
+////                String controlName = each.eClass().getName();
+////                Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
+////                return BigraphEntity.createNode(each, control);
+////            } else {
+////                return BigraphEntity.create(each, BigraphEntity.RootEntity.class);
+////            }
+////        }
+//        return node;
+//    }
 
     public List<BigraphEntity> getSiblings(BigraphEntity node) {
         if (!isBPlace(node.getInstance())) return new ArrayList<>();
