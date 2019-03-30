@@ -14,15 +14,15 @@ import java.util.Set;
  * <p>
  * Can only be used within binding bigraphs.
  */
-public class BindingSignature extends AbstractSignature<DefaultDynamicControl<? extends NamedType, ? extends FiniteOrdinal>> {
+public class BindingSignature extends AbstractSignature<BindingControl<? extends NamedType, ? extends FiniteOrdinal>> {
 
-    public BindingSignature(Set<DefaultDynamicControl<? extends NamedType, ? extends FiniteOrdinal>> controls) {
+    public BindingSignature(Set<BindingControl<? extends NamedType, ? extends FiniteOrdinal>> controls) {
         super(controls);
     }
 
-    public boolean isBinding(DefaultDynamicControl<? extends NamedType, ? extends FiniteOrdinal> control) {
+    public boolean isBindingControl(BindingControl<? extends NamedType, ? extends FiniteOrdinal> control) {
         if (!getControls().contains(control)) return false;
-        DefaultDynamicControl<? extends NamedType, ? extends FiniteOrdinal> controlByName = getControlByName(control.getNamedType().stringValue());
-        return controlByName.getArity().equals(FiniteOrdinal.ofInteger(0)) && controlByName.getControlKind().equals(ControlKind.PASSIVE);
+        BindingControl<? extends NamedType, ? extends FiniteOrdinal> controlByName = getControlByName(control.getNamedType().stringValue());
+        return controlByName.isBindingControl();
     }
 }

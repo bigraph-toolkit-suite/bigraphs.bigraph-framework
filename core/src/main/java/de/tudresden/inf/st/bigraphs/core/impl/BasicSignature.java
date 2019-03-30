@@ -7,9 +7,9 @@ import de.tudresden.inf.st.bigraphs.core.*;
 
 import java.util.Set;
 
-public final class DefaultSignature extends AbstractSignature<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>> {
+public final class BasicSignature extends AbstractSignature<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>> {
 
-    public DefaultSignature(@NonNull Set<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>> controls) {
+    public BasicSignature(@NonNull Set<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>> controls) {
         super(controls);
     }
 

@@ -12,7 +12,7 @@ import java.util.Objects;
  * @param <NT>
  * @param <FO>
  */
-public final class DefaultDynamicControl<NT extends NamedType, FO extends FiniteOrdinal> extends AbstractControl<NT, FO> {
+public class DefaultDynamicControl<NT extends NamedType, FO extends FiniteOrdinal> extends AbstractControl<NT, FO> {
 
     private final ControlKind kindOfControl;
 
@@ -32,7 +32,7 @@ public final class DefaultDynamicControl<NT extends NamedType, FO extends Finite
     }
 
     public static <NT extends NamedType, FO extends FiniteOrdinal> DefaultDynamicControl<NT, FO> createDefaultDynamicControl(NT name, FO arity, ControlKind kindOfControl) {
-        return new DefaultDynamicControl<NT, FO>(name, arity, kindOfControl);
+        return new DefaultDynamicControl<>(name, arity, kindOfControl);
     }
 
     @Override

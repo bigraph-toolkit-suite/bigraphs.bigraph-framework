@@ -31,14 +31,5 @@ public abstract class AbstractSignature<C extends Control<? extends NamedType, ?
                 "controls=" + controls +
                 '}';
     }
-
-    //    @Override
-//    public Iterable<AbstractControl<NT, FO>> getControls() {
-//        return controls;
-//    }
-
-    //    @Override
-//    public Iterable<C> getControls() {
-//        return controls;
-//    }
+    
 }

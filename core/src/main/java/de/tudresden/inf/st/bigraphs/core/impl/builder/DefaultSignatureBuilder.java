@@ -4,8 +4,8 @@ import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.impl.BasicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultSignature;
 
 import java.util.Set;
 
@@ -26,12 +26,12 @@ public class DefaultSignatureBuilder<NT extends NamedType, FO extends FiniteOrdi
     @Override
     public <S extends Signature> S createSignature(Iterable<? extends Control> controls) {
 //        Collections.emptyList().addAll(controls);
-        return (S) new DefaultSignature((Set<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>>) controls);
+        return (S) new BasicSignature((Set<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>>) controls);
     }
 
 //    @Override
 //    protected <S extends Signature> Class<S> getSignatureClass() {
-//        return (Class<S>) DefaultSignature.class;
+//        return (Class<S>) BasicSignature.class;
 //    }
 
 }
