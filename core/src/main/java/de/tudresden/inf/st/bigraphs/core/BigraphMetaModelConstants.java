@@ -17,6 +17,8 @@ public final class BigraphMetaModelConstants {
     public final static String CLASS_PORT = "BPort";
     public final static String CLASS_SITE = "BSite";
     public static final String CLASS_PLACE = "BPlace";
+    public static final String CLASS_LINK = "BLink";
+    public static final String CLASS_POINT = "BPoint";
 
     // References
     public final static String REFERENCE_CHILD = "bChild";

@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.store;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -47,7 +48,40 @@ public class BigraphArtifactTests {
         });
     }
 
-    private <C extends Control<?,?>, S extends Signature<C>> S createExampleSignature() {
+    @Test
+    void compose_output() {
+        assertAll(() -> {
+
+            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+            BigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
+            BigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
+//
+            BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
+            BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
+
+            BigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
+                    builderForF.newHierarchy(signature.getControlByName("Room"));
+            room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
+            builderForF.createRoot()
+                    .addHierarchyToParent(room);
+
+            builderForG.createRoot()
+                    .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite().goBack()
+                    .addChild(signature.getControlByName("User")).connectNodeToInnerName(jeffG);
+
+
+            DynamicEcoreBigraph F = builderForF.createBigraph();
+            DynamicEcoreBigraph G = builderForG.createBigraph();
+
+
+            BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
+            BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
+            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) composedBigraph.getOuterBigraph(), "composetest", new FileOutputStream("./composetest.xmi"));
+        });
+    }
+
+
+    private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()

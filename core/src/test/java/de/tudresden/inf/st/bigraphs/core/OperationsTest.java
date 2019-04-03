@@ -14,6 +14,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileOutputStream;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class OperationsTest {
@@ -37,7 +39,6 @@ public class OperationsTest {
         BigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
                 builderForF.newHierarchy(signature.getControlByName("Room"));
         room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
-
         builderForF.createRoot()
                 .addHierarchyToParent(room);
 
@@ -53,7 +54,9 @@ public class OperationsTest {
         BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
 //        DefaultBigraphComposite<DefaultDynamicSignature> compositor = (DefaultBigraphComposite<DefaultDynamicSignature>) factory.asBigraphOperator(G);
         BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
+
         Bigraph<DefaultDynamicSignature> outerBigraph = composedBigraph.getOuterBigraph();
+
 //        BigraphEntity.NodeEntity<DefaultDynamicControl> next = F.getNodes().iterator().next();
 //        BigraphEntity parent = F.getParent(next);
 //        BigraphEntity parent0 = F.getParent(parent);

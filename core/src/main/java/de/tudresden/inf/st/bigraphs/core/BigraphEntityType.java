@@ -22,6 +22,26 @@ public enum BigraphEntityType {
         return entity.getType() == BigraphEntityType.NODE;
     }
 
+    public static boolean isPort(BigraphEntity entity) {
+        if (Objects.isNull(entity)) return false;
+        return entity.getType() == BigraphEntityType.PORT;
+    }
+
+    public static boolean isInnerName(BigraphEntity entity) {
+        if (Objects.isNull(entity)) return false;
+        return entity.getType() == BigraphEntityType.INNER_NAME;
+    }
+
+    public static boolean isOuterName(BigraphEntity entity) {
+        if (Objects.isNull(entity)) return false;
+        return entity.getType() == BigraphEntityType.OUTER_NAME;
+    }
+
+    public static boolean isEdge(BigraphEntity entity) {
+        if (Objects.isNull(entity)) return false;
+        return entity.getType() == BigraphEntityType.EDGE;
+    }
+
     public static boolean isPlaceType(BigraphEntity entity) {
         return BigraphEntityType.isPlaceType(entity.getType());
     }

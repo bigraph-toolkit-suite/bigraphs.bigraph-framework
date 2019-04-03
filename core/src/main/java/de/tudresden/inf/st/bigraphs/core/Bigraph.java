@@ -50,6 +50,10 @@ public interface Bigraph<S extends Signature> extends BigraphicalStructure<S> {
 
     BigraphEntity getParent(BigraphEntity node);
 
+    BigraphEntity getLink(BigraphEntity node);
+
+    Collection<BigraphEntity.Port> getPorts(BigraphEntity node);
+
     //without sites
     Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
 

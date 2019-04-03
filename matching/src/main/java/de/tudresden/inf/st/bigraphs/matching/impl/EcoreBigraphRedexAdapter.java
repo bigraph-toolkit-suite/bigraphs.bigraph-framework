@@ -54,14 +54,14 @@ public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
 
     /**
      * Only outer names
-     * The order place a role for checking (also in theory)
+     * The order plays a role for checking (also in theory)
      *
      * @param node
      * @return
      */
     public List<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
         EObject instance = node.getInstance();
-        List<ControlLinkPair> children = new ArrayList<>();
+        List<ControlLinkPair> children = new LinkedList<>();
 
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         if (Objects.nonNull(portRef)) {

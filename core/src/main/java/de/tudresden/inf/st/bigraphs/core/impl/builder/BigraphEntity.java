@@ -208,6 +208,32 @@ public class BigraphEntity<C extends Control> {//TODO entfernen nach unten versc
 
     }
 
+    public static class Port extends BigraphEntity {
+
+        public Port() {
+            super(null, BigraphEntityType.PORT);
+        }
+
+        Port(@NonNull EObject instance) {
+            super(instance, BigraphEntityType.PORT);
+        }
+
+        public int getIndex() {
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            Object name = getInstance().eGet(nameAttr);
+            return (Integer) name;
+        }
+
+        public void setIndex(int index) {
+            EAttribute idxAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            getInstance().eSet(idxAttr, index);
+        }
+
+    }
+
+
+
+
     public static class RootEntity extends BigraphEntity {
 
         RootEntity() {

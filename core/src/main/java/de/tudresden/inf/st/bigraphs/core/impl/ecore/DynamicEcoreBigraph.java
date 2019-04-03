@@ -92,16 +92,51 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
                 //get control by name
 //                String controlName = each.eClass().getName();
 //                Control control = getSignature().getControlByName(controlName);
-                return nodeEntity.isPresent() ? nodeEntity.get() : null;
+                return nodeEntity.orElse(null);
             } else { //root
                 //assert
                 Optional<BigraphEntity.RootEntity> rootEntity = roots.stream().filter(x -> x.getInstance().equals(each)).findFirst();
-                return rootEntity.isPresent() ? rootEntity.get() : null;
+                return rootEntity.orElse(null);
             }
         }
         return node;
 
 
+    }
+
+    @Override
+    public Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
+        if (!BigraphEntityType.isNode(node)) return Collections.EMPTY_LIST;
+        EObject instance = node.getInstance();
+        EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
+        EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
+        List<BigraphEntity.Port> portsList = new LinkedList<>();
+        for (EObject eachPort : portList) { // are ordered anyway
+            BigraphEntity.Port port = BigraphEntity.create(eachPort, BigraphEntity.Port.class);
+            port.setIndex(portList.indexOf(eachPort)); //eachPort.eGet(eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_INDEX))
+            portsList.add(port);
+        }
+        return portsList;
+    }
+
+    @Override
+    public BigraphEntity getLink(BigraphEntity node) {
+        if (!BigraphEntityType.isPointType(node)) return null;
+        EObject eObject = node.getInstance();
+        EStructuralFeature lnkRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+        if (Objects.isNull(lnkRef)) return null;
+        EObject linkObject = (EObject) eObject.eGet(lnkRef);
+        if (Objects.isNull(linkObject)) return null;
+        if (!isBLink(linkObject)) return null; //"owner" problem
+//        assert isBLink(linkObject);
+//        Optional<BigraphEntity> lnkEntity;
+        if (isBEdge(linkObject)) {
+            Optional<BigraphEntity.Edge> first = getEdges().stream().filter(x -> x.getInstance().equals(linkObject)).findFirst();
+            return first.orElse(null);
+        } else {
+            Optional<BigraphEntity.OuterName> first = getOuterNames().stream().filter(x -> x.getInstance().equals(linkObject)).findFirst();
+            return first.orElse(null);
+        }
     }
 
     @Override
@@ -176,13 +211,35 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
     }
 
     protected boolean isBPort(EObject eObject) {
-        return eObject.eClass().getClassifierID() ==
-                (((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT)).getClassifierID() ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT));
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
+//        return eObject.eClass().getClassifierID() ==
+//                (((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT)).getClassifierID() ||
+//                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT));
+    }
+
+    protected boolean isBPoint(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_POINT);
+//        return eObject.eClass().getClassifierID() ==
+//                (((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_POINT)).getClassifierID() ||
+//                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_POINT));
     }
 
     protected boolean isBNode(EObject eObject) {
-        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE));
+//        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE)) ||
+//                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE));
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_NODE);
+    }
+
+    protected boolean isBLink(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_LINK);
+    }
+
+    protected boolean isBEdge(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
+    }
+    //works only for elements of the calling class
+    protected boolean isOfEClass(EObject eObject, String eClassifier) {
+        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
     }
 }

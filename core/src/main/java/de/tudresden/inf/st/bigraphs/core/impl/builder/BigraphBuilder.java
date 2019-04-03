@@ -364,6 +364,18 @@ public class BigraphBuilder<S extends Signature> {
         return eObject;
     }
 
+    protected EObject createInnerNameOfEClass(String name) {
+        EObject bInnerName = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME));
+        bInnerName.eSet(EMFUtils.findAttribute(bInnerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
+        return bInnerName;
+    }
+
+    protected EObject createOuterNameOfEClass(String name) {
+        EObject bInnerName = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME));
+        bInnerName.eSet(EMFUtils.findAttribute(bInnerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
+        return bInnerName;
+    }
+
     //BLEIBT
 
     /**
@@ -395,8 +407,9 @@ public class BigraphBuilder<S extends Signature> {
 //        BigraphEntity.InnerName ecoreInnerName = new BigraphEntity.InnerName(availableInnerNames.get(name));
         BigraphEntity.InnerName ecoreInnerName = availableInnerNames.get(name); // = BigraphEntity.create(availableInnerNames.get(name), BigraphEntity.InnerName.class);
         if (ecoreInnerName == null) {
-            EObject bInnerName = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME));
-            bInnerName.eSet(EMFUtils.findAttribute(bInnerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
+            EObject bInnerName = createInnerNameOfEClass(name);
+//            EObject bInnerName = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME));
+//            bInnerName.eSet(EMFUtils.findAttribute(bInnerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
             try {
                 ecoreInnerName = BigraphEntity.create(bInnerName, BigraphEntity.InnerName.class);
                 ecoreInnerName.setInstance(bInnerName);
@@ -418,7 +431,7 @@ public class BigraphBuilder<S extends Signature> {
      * @param edge
      * @see BigraphBuilder#isConnectedWithLink(de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity.NodeEntity, EObject)
      */
-    private void connectToEdge(BigraphEntity.NodeEntity<Control<?, ?>> node, BigraphEntity.Edge edge) {
+    protected void connectToEdge(BigraphEntity.NodeEntity<Control<?, ?>> node, BigraphEntity.Edge edge) {
 //        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         Integer index = bPorts.size();
@@ -429,7 +442,18 @@ public class BigraphBuilder<S extends Signature> {
         bPorts.add(portObject);
     }
 
-    private BigraphEntity.Edge connectByEdge(final BigraphEntity.NodeEntity<Control<?, ?>>... nodes) throws InvalidArityOfControlException {
+    protected void connectToEdgeUsingIndex(BigraphEntity.NodeEntity<Control<?, ?>> node, BigraphEntity.Edge edge, int customPortIndex) {
+//        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
+        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
+//        Integer index = bPorts.size();
+        //create port with index
+        EObject portObject = createPortWithIndex(customPortIndex);
+        EReference linkReference = availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK);
+        portObject.eSet(linkReference, edge.getInstance()); //add edge reference for port
+        bPorts.add(portObject);
+    }
+
+    protected BigraphEntity.Edge connectByEdge(final BigraphEntity.NodeEntity<Control<?, ?>>... nodes) throws InvalidArityOfControlException {
         //get arity and check number of connections
         for (BigraphEntity.NodeEntity<Control<?, ?>> each : nodes) {
             checkIfNodeIsConnectable(each);
@@ -684,16 +708,9 @@ public class BigraphBuilder<S extends Signature> {
     }
 
     //BLEIBT - HELPER
-    private void connectNodeToOuterName(BigraphEntity.NodeEntity<Control<?, ?>> node1, BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidArityOfControlException {
+    protected void connectNodeToOuterName(BigraphEntity.NodeEntity<Control<?, ?>> node1, BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidArityOfControlException {
         //check if outername exists
-        assert outerName.getType().equals(BigraphEntityType.OUTER_NAME);
-
-//        if (availableOuterNames.get(outerName.getName()) == null ||
-//                !availableOuterNames.get(outerName.getName()).equals(outerName)) { // .getInstance().eGet(EMFUtils.findAttribute(outerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME)))
-//            throw new OuterNameNotExistsException();
-//        }
         assertOuterNameExists(outerName);
-
 
         boolean connectedWithOuterName = isConnectedWithLink(node1, outerName.getInstance());
         if (!connectedWithOuterName) {
@@ -713,7 +730,7 @@ public class BigraphBuilder<S extends Signature> {
     }
 
     //BLEIBT - HELPER
-    private EObject createPortWithIndex(final int index) {
+    protected EObject createPortWithIndex(final int index) {
         EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_PORT));
         setIndexForEObject(eObject, index);
         return eObject;
@@ -783,17 +800,25 @@ public class BigraphBuilder<S extends Signature> {
 
     //BLEIBT - HELPER
 
+    protected EObject createEdgeOfEClass0(String edgeName) {
+        assert availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE) != null;
+        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE));
+        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), edgeName);
+        return eObject;
+    }
+
     /**
      * Creates an edge of EClass {@link de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BEdge} and adds it to the
      * list of available edges {@code availableEdges}.
      *
      * @return the freshly created edge
      */
-    private BigraphEntity.Edge createEdgeOfEClass() {
+    protected BigraphEntity.Edge createEdgeOfEClass() {
         assert availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE) != null;
-        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE));
         final String name = edgeNameSupplier.get();
-        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
+//        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE));
+//        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
+        EObject eObject = createEdgeOfEClass0(name);
         BigraphEntity.Edge edge = BigraphEntity.create(eObject, BigraphEntity.Edge.class);
         availableEdges.put(name, edge);
         return edge;
@@ -808,6 +833,7 @@ public class BigraphBuilder<S extends Signature> {
         return bigraph;
     }
 
+    //DTO?
     public class InstanceParameter {
         private EPackage modelPackage; //TODO wirklich diese package?
         private S signature;
@@ -819,26 +845,21 @@ public class BigraphBuilder<S extends Signature> {
         private Set<BigraphEntity.NodeEntity> nodes; //TODO: node set p
 
         public InstanceParameter(EPackage loadedEPackage,
-                                  S signature,
-                                  Map<Integer, BigraphEntity.RootEntity> availableRoots,
-                                  Map<Integer, BigraphEntity.SiteEntity> availableSites,
-                                  Map<String, BigraphEntity.NodeEntity> availableNodes,
-                                  Map<String, BigraphEntity.InnerName> availableInnerNames,
-                                  Map<String, BigraphEntity.OuterName> availableOuterNames,
-                                  Map<String, BigraphEntity.Edge> availableEdges
+                                 S signature,
+                                 Map<Integer, BigraphEntity.RootEntity> availableRoots,
+                                 Map<Integer, BigraphEntity.SiteEntity> availableSites,
+                                 Map<String, BigraphEntity.NodeEntity> availableNodes,
+                                 Map<String, BigraphEntity.InnerName> availableInnerNames,
+                                 Map<String, BigraphEntity.OuterName> availableOuterNames,
+                                 Map<String, BigraphEntity.Edge> availableEdges
         ) {
             this.modelPackage = loadedEPackage;
             this.signature = signature;
             this.roots = new LinkedHashSet<>(availableRoots.values());
             this.edges = new LinkedHashSet<>(availableEdges.values());
-//            availableRoots.forEach((ix, e) -> this.roots.add(BigraphEntity.create(e, BigraphEntity.RootEntity.class)));
-//            availableSites.forEach((ix, e) -> this.sites.add(BigraphEntity.create(e, BigraphEntity.SiteEntity.class)));
             this.sites = new LinkedHashSet<>(availableSites.values());
-//            availableOuterNames.forEach((ix, e) -> this.outerNames.add(BigraphEntity.create(e, BigraphEntity.OuterName.class)));
-//            availableInnerNames.forEach((ix, e) -> this.innerNames.add(BigraphEntity.create(e, BigraphEntity.InnerName.class)));
             this.outerNames = new LinkedHashSet<>(availableOuterNames.values());
             this.innerNames = new LinkedHashSet<>(availableInnerNames.values());
-//            availableEdges.forEach((ix, e) -> this.edges.add(BigraphEntity.create(e, BigraphEntity.Edge.class)));
             this.nodes = new LinkedHashSet<>(availableNodes.values());
         }
 
