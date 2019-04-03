@@ -8,15 +8,13 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsEx
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.*;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.FileOutputStream;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class OperationsTest {
 

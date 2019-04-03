@@ -151,11 +151,11 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
 //        Supplier<String> edgeSupplier = createNameSupplier("e");
         HashMap<String, BigraphEntity.OuterName> myOuterNames = new LinkedHashMap<>();//coming from G
         for (BigraphEntity.OuterName each : g.getOuterNames()) {
-            myOuterNames.put(each.getName(), BigraphEntity.create(each.getInstance(), BigraphEntity.OuterName.class));
+            myOuterNames.put(each.getName(), (BigraphEntity.OuterName) builder.createNewOuterName(each.getName())); //BigraphEntity.create(each.getInstance(), BigraphEntity.OuterName.class));
         }
         HashMap<String, BigraphEntity.InnerName> myInnerNames = new LinkedHashMap<>(); //coming from F
         for (BigraphEntity.InnerName each : f.getInnerNames()) {
-            myInnerNames.put(each.getName(), BigraphEntity.create(each.getInstance(), BigraphEntity.InnerName.class));
+            myInnerNames.put(each.getName(), (BigraphEntity.InnerName) builder.createNewInnerName(each.getName())); //BigraphEntity.create(each.getInstance(), BigraphEntity.InnerName.class));
         }
 
         HashMap<String, BigraphEntity.Edge> myEdges = new LinkedHashMap<>();
@@ -170,31 +170,32 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
 
         Collection<BigraphEntity.InnerName> X = new LinkedHashSet<>(f.getInnerNames());
 
-        HashBiMap<BigraphEntity, BigraphEntity.Port> allPorts_FG = HashBiMap.create();
-        HashBiMap<BigraphEntity, BigraphEntity.Port> portsF2 = HashBiMap.create();
-        HashBiMap<BigraphEntity, BigraphEntity.Port> portsG2 = HashBiMap.create();
-        portsF2.putAll(V_F.values()
+//        HashBiMap<BigraphEntity, BigraphEntity.Port> allPorts_FG = HashBiMap.create();
+//        HashBiMap<BigraphEntity, BigraphEntity.Port> portsF2 = HashBiMap.create();
+//        HashBiMap<BigraphEntity, BigraphEntity.Port> portsG2 = HashBiMap.create();
+        List<AbstractMap.SimpleImmutableEntry<BigraphEntity.NodeEntity, BigraphEntity.Port>> portsF2 = V_F.values()
                 .stream()
                 .filter(n -> f.getPorts(n).size() != 0)
                 .collect(Collectors.toMap(o -> o, nodeEntity -> f.getPorts(nodeEntity)))
                 .entrySet()
-                .stream().flatMap(e -> e.getValue()
-                        .stream().map(v -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), v)))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-        portsG2.putAll(V_G.values()
+                .stream()
+                .flatMap(e -> e.getValue().stream().map(v -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), v)))
+                .collect(Collectors.toList());
+        List<AbstractMap.SimpleImmutableEntry<BigraphEntity.NodeEntity, BigraphEntity.Port>> portsG2 = V_G.values()
                 .stream()
                 .filter(n -> g.getPorts(n).size() != 0)
                 .collect(Collectors.toMap(o -> o, nodeEntity -> g.getPorts(nodeEntity)))
                 .entrySet()
-                .stream().flatMap(e -> e.getValue()
-                        .stream().map(v -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), v)))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-        allPorts_FG.putAll(portsF2);
-        allPorts_FG.putAll(portsG2);
+                .stream()
+                .flatMap(e -> e.getValue().stream().map(v -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), v)))
+                .collect(Collectors.toList());
+        List<AbstractMap.SimpleImmutableEntry<BigraphEntity.NodeEntity, BigraphEntity.Port>> allPorts_FG = new LinkedList<>();
+        allPorts_FG.addAll(portsF2);
+        allPorts_FG.addAll(portsG2);
 
         Set<BigraphEntity> Q_set = new LinkedHashSet<>(); // these are only points (inner names or ports
-        Q_set.addAll(portsF2.values());
-        Q_set.addAll(portsG2.values());
+        Q_set.addAll(portsF2.stream().map(AbstractMap.SimpleImmutableEntry::getValue).collect(Collectors.toList()));
+        Q_set.addAll(portsG2.stream().map(AbstractMap.SimpleImmutableEntry::getValue).collect(Collectors.toList()));
         Q_set.addAll(X);
 
         // Convenience maps on the link graph interfaces of F and G
@@ -233,7 +234,8 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 // is element and innername or port of F?
                 // is element connected to an edge of F?
                 // for F: connect innernames/ports to edges
-                if ((X.contains(q) || portsF2.values().contains(q)) && (E_F.containsValue(linkQofF))) {
+
+                if ((X.contains(q) || getNodeFromPort(portsF2, q) != null) && (E_F.containsValue(linkQofF))) {
                     System.out.println("\tlink(q) <- link_F(q)");
                     //link of current element must be the link_f of the current element
                     //determine if port or inner name
@@ -241,24 +243,26 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
 
                     //create the edge... linkQofF
                     assert BigraphEntityType.isEdge(linkQofF);
-                    BigraphEntity.Edge edge = myEdges.get(((BigraphEntity.Edge) linkQofF).getName());
+                    //edge name
+                    String edgeName = E.inverse().get(linkQofF);
+                    BigraphEntity.Edge edge = myEdges.get(edgeName); //((BigraphEntity.Edge) linkQofF).getName());
                     if (Objects.isNull(edge)) {
-                        edge = (BigraphEntity.Edge) builder.createNewEdge(((BigraphEntity.Edge) linkQofF).getName());
+                        edge = (BigraphEntity.Edge) builder.createNewEdge(edgeName); //((BigraphEntity.Edge) linkQofF).getName());
                         myEdges.put(edge.getName(), edge);
                     }
 
                     if (BigraphEntityType.isPort(q)) {
                         //hole index
                         BigraphEntity.Port q1 = (BigraphEntity.Port) q;
-                        String nodeName = V.inverse().get(allPorts_FG.inverse().get(q1));
+                        String nodeName = V.inverse().get(getNodeFromPort(allPorts_FG, q1)); //allPorts_FG.inverse().get(q1));
                         BigraphEntity.NodeEntity nodeEntity = myNodes.get(nodeName);
                         assert nodeEntity != null;
                         BigraphEntity.Port newPortWithIndex = (BigraphEntity.Port) builder.createNewPortWithIndex(q1.getIndex());
 
                         EStructuralFeature portsRef = nodeEntity.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
                         EList<EObject> portsList = (EList<EObject>) nodeEntity.getInstance().eGet(portsRef);
-                        portsList.set(newPortWithIndex.getIndex(), newPortWithIndex.getInstance());
-                        //connect port to edge
+                        portsList.add(newPortWithIndex.getInstance()); //newPortWithIndex.getIndex(),
+                                //connect port to edge
                         EStructuralFeature lnkRef = newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
                         newPortWithIndex.getInstance().eSet(lnkRef, edge.getInstance());
 
@@ -277,13 +281,15 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
 
                 //q ist ein port und zeigt auf einen outername von F der gleich ist mit dem Inner name von G
                 boolean contains = false;
+                String edgeName = E.inverse().get(linkQofF);
                 if (BigraphEntityType.isOuterName(linkQofF)) {
-                    contains = g.getInnerFace().getValue().contains(StringTypedName.of(((BigraphEntity.OuterName) linkQofF).getName()));
+                    contains = g.getInnerFace().getValue().contains(StringTypedName.of(edgeName)); //StringTypedName.of(((BigraphEntity.OuterName) linkQofF).getName()));
                 }
                 //q is inner name or port of F AND link of q is a outer name of F with the same name as the inner name of g
-                if ((X.contains(q) || portsF2.values().contains(q)) && contains) {
+
+                if ((X.contains(q) || getNodeFromPort(portsF2, q) != null) && contains) {
                     //get the corresponding outername
-                    StringTypedName nameValue = StringTypedName.of(((BigraphEntity.OuterName) linkQofF).getName());
+                    StringTypedName nameValue = StringTypedName.of(edgeName); //((BigraphEntity.OuterName) linkQofF).getName());
                     BigraphEntity.InnerName innerNameG = innerNames_G.get(nameValue.stringValue());
                     BigraphEntity.OuterName outerNameF = outerNames_F.get(nameValue.stringValue());
 
@@ -323,7 +329,8 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                     } else if (BigraphEntityType.isPort(q)) {
                         BigraphEntity.Port thePort = (BigraphEntity.Port) q;
                         //is a node of F
-                        String nodeName = V.inverse().get(allPorts_FG.inverse().get(thePort));
+
+                        String nodeName = V.inverse().get(getNodeFromPort(allPorts_FG, thePort)); //allPorts_FG.inverse().get(thePort));
                         BigraphEntity.NodeEntity nodeEntity = myNodes.get(nodeName);
                         builder.connectToEdgeUsingIndex(nodeEntity, (BigraphEntity.Edge) newLink, thePort.getIndex());
                         System.out.println("\tconnect port to edge " + ((BigraphEntity.Edge) link).getName());
@@ -332,11 +339,12 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
             }
             //C3: is a port of G:
             //for G-nodes: connect ports to edges or outer names of G
-            if (portsG2.values().contains(q)) {
+
+            if (getNodeFromPort(portsG2, q) != null) { //portsG2.values().contains(q)) {
                 System.out.println("\tlink(q) <- link_G(q)");
                 assert BigraphEntityType.isPort(q);
                 BigraphEntity.Port thePort = (BigraphEntity.Port) q;
-                String nodeName = V.inverse().get(allPorts_FG.inverse().get(thePort));
+                String nodeName = V.inverse().get(getNodeFromPort(allPorts_FG, thePort)); //allPorts_FG.inverse().get(thePort));
                 BigraphEntity.NodeEntity nodeEntity = myNodes.get(nodeName);
                 //is a node of F
                 BigraphEntity linkQofG = g.getLink(thePort);
@@ -351,9 +359,10 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                     );
                     System.out.println("connectn port to outer name " + outerName.getName());
                 } else if (BigraphEntityType.isEdge(linkQofG)) {
-                    BigraphEntity.Edge edge = myEdges.get(((BigraphEntity.Edge) linkQofG).getName());
+                    String edgeName = E.inverse().get(linkQofG);
+                    BigraphEntity.Edge edge = myEdges.get(edgeName); //((BigraphEntity.Edge) linkQofG).getName());
                     if (Objects.isNull(edge)) {
-                        edge = (BigraphEntity.Edge) builder.createNewEdge(((BigraphEntity.Edge) linkQofG).getName());
+                        edge = (BigraphEntity.Edge) builder.createNewEdge(edgeName); //((BigraphEntity.Edge) linkQofG).getName());
                         myEdges.put(edge.getName(), edge);
                     }
                     System.out.println(edge);
@@ -376,6 +385,14 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         Bigraph<S> bigraph = (Bigraph<S>) new DynamicEcoreBigraph(meta);//TODO rework necessary -> unsure which bigraph should be employed here
 
         return new DefaultBigraphComposite<>(bigraph);
+    }
+
+    private BigraphEntity getNodeFromPort(List<AbstractMap.SimpleImmutableEntry<BigraphEntity.NodeEntity, BigraphEntity.Port>> collect, BigraphEntity searchPattern) {
+        if (!BigraphEntityType.isPort(searchPattern)) return null;
+        for (Map.Entry<BigraphEntity.NodeEntity, BigraphEntity.Port> each : collect) {
+            if (each.getValue().equals(searchPattern)) return each.getKey();
+        }
+        return null;
     }
 
     private Supplier<String> createNameSupplier(final String prefix) {

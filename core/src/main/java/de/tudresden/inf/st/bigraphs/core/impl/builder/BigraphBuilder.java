@@ -816,8 +816,6 @@ public class BigraphBuilder<S extends Signature> {
     protected BigraphEntity.Edge createEdgeOfEClass() {
         assert availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE) != null;
         final String name = edgeNameSupplier.get();
-//        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE));
-//        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
         EObject eObject = createEdgeOfEClass0(name);
         BigraphEntity.Edge edge = BigraphEntity.create(eObject, BigraphEntity.Edge.class);
         availableEdges.put(name, edge);

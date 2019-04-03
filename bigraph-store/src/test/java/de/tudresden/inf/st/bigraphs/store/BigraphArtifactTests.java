@@ -58,10 +58,14 @@ public class BigraphArtifactTests {
 //
             BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
             BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
+            BigraphEntity.InnerName f1 = builderForF.createInnerName("x_f");
+            BigraphEntity.InnerName f2 = builderForF.createInnerName("y_f");
 
             BigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
                     builderForF.newHierarchy(signature.getControlByName("Room"));
-            room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
+            room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"))
+                    .addChild(signature.getControlByName("Printer")).connectNodeToInnerName(f1).connectNodeToInnerName(f2)
+            ;
             builderForF.createRoot()
                     .addHierarchyToParent(room);
 
@@ -73,7 +77,7 @@ public class BigraphArtifactTests {
             DynamicEcoreBigraph F = builderForF.createBigraph();
             DynamicEcoreBigraph G = builderForG.createBigraph();
 
-
+            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) F, "f", new FileOutputStream("./f.xmi"));
             BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
             BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
             BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) composedBigraph.getOuterBigraph(), "composetest", new FileOutputStream("./composetest.xmi"));
