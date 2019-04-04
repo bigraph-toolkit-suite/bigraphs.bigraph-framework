@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphArtifactTests {
     private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
+    private final static String TARGET_TEST_FOLDER = "./gen-test-resources/";
 
     @Test
     void load_instance_model_test() {
@@ -77,10 +78,14 @@ public class BigraphArtifactTests {
             DynamicEcoreBigraph F = builderForF.createBigraph();
             DynamicEcoreBigraph G = builderForG.createBigraph();
 
-            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) F, "f", new FileOutputStream("./f.xmi"));
+            BigraphModelFileStore.exportBigraph(F, "f", new FileOutputStream(TARGET_TEST_FOLDER + "f.xmi"));
             BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
             BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
-            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) composedBigraph.getOuterBigraph(), "composetest", new FileOutputStream("./composetest.xmi"));
+            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) composedBigraph.getOuterBigraph(), "composetest", new FileOutputStream(TARGET_TEST_FOLDER + "composetest.xmi"));
+
+            BigraphComposite<DefaultDynamicSignature> juxtapose = compositor.juxtapose(F);
+            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) juxtapose.getOuterBigraph(), "juxtatest", new FileOutputStream(TARGET_TEST_FOLDER + "juxtatest.xmi"));
+
         });
     }
 
