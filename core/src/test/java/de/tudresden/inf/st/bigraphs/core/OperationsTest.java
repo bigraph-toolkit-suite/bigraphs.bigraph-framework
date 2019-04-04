@@ -30,7 +30,7 @@ public class OperationsTest {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         BigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
         BigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
-//
+
         BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
         BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
 
@@ -53,7 +53,9 @@ public class OperationsTest {
 //        DefaultBigraphComposite<DefaultDynamicSignature> compositor = (DefaultBigraphComposite<DefaultDynamicSignature>) factory.asBigraphOperator(G);
         BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
 
-        Bigraph<DefaultDynamicSignature> outerBigraph = composedBigraph.getOuterBigraph();
+        compositor.juxtapose(F);
+
+//        Bigraph<DefaultDynamicSignature> outerBigraph = composedBigraph.getOuterBigraph();
 
 //        BigraphEntity.NodeEntity<DefaultDynamicControl> next = F.getNodes().iterator().next();
 //        BigraphEntity parent = F.getParent(next);

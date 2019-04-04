@@ -39,11 +39,224 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
     }
 
     @Override
+    public BigraphComposite<S> juxtapose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        Bigraph<S> g = getBigraphDelegate();
+        //rule: first G then F when rewriting names, ordinals
+        assertSignaturesAreSame(g.getSignature(), f.getSignature());
+        assertInterfaceCompatibleForJuxtaposition(g, f);
+
+        Supplier<Integer> rewriteRootSupplier = createNameSupplier();
+        Supplier<String> rewriteNameSupplier = createNameSupplier("v");
+        Supplier<Integer> rewriteSiteSupplier = createNameSupplier();
+
+        HashBiMap<String, BigraphEntity.NodeEntity> V = HashBiMap.create();
+        Map<String, BigraphEntity.NodeEntity> V_G = g.getNodes().stream().collect(Collectors.toMap(s -> rewriteNameSupplier.get(), Function.identity()));
+        Map<String, BigraphEntity.NodeEntity> V_F = f.getNodes().stream().collect(Collectors.toMap(s -> rewriteNameSupplier.get(), Function.identity()));
+        V.putAll(V_G);
+        V.putAll(V_F);
+
+        HashMap<Integer, BigraphEntity.RootEntity> myRoots = new LinkedHashMap<>();
+        HashBiMap<Integer, BigraphEntity.RootEntity> R = HashBiMap.create();
+        R.putAll(g.getRoots().stream().collect(Collectors.toMap(s -> rewriteRootSupplier.get(), Function.identity())));
+        R.putAll(f.getRoots().stream().collect(Collectors.toMap(s -> rewriteRootSupplier.get(), Function.identity())));
+        for (Map.Entry<Integer, BigraphEntity.RootEntity> each : R.entrySet()) {
+            myRoots.put(each.getKey(), (BigraphEntity.RootEntity) builder.createNewRoot(each.getKey()));
+        }
+
+        HashBiMap<Integer, BigraphEntity.SiteEntity> S = HashBiMap.create();
+        S.putAll(g.getSites().stream().collect(Collectors.toMap(s -> rewriteSiteSupplier.get(), Function.identity())));
+        S.putAll(f.getSites().stream().collect(Collectors.toMap(s -> rewriteSiteSupplier.get(), Function.identity())));
+        HashMap<Integer, BigraphEntity.SiteEntity> mySites = new LinkedHashMap<>();
+        for (Map.Entry<Integer, BigraphEntity.SiteEntity> each : S.entrySet()) {
+            mySites.put(each.getKey(), (BigraphEntity.SiteEntity) builder.createNewSite(each.getKey()));
+        }
+
+        HashMap<String, BigraphEntity.NodeEntity> myNodes = new LinkedHashMap<>();
+        //for nodes first
+        for (Map.Entry<String, BigraphEntity.NodeEntity> each : V.entrySet()) {
+            BigraphEntity.NodeEntity newNode = myNodes.get(each.getKey());
+            if (Objects.isNull(newNode)) {
+                newNode = (BigraphEntity.NodeEntity) builder.createNewNode(each.getValue().getControl(), each.getKey());
+                myNodes.put(each.getKey(), newNode);
+            }
+
+//            BigraphEntity.NodeEntity nodeEntity = V.get(each.getKey());
+            BigraphEntity parent = null;
+            if (V_F.containsKey(each.getKey())) {
+                parent = f.getParent(each.getValue());
+            } else if (V_G.containsKey(each.getKey())) {
+                parent = g.getParent(each.getValue());
+            }
+            assert parent != null;
+
+            BigraphEntity theParentToSet = null;
+            if (BigraphEntityType.isRoot(parent)) {
+                Integer integer = R.inverse().get(parent);
+                theParentToSet = myRoots.get(integer);
+            } else {
+                String s = V.inverse().get(parent);
+                theParentToSet = myNodes.get(s);
+                if (Objects.isNull(theParentToSet)) {
+                    newNode = (BigraphEntity.NodeEntity) builder.createNewNode(each.getValue().getControl(), each.getKey());
+                    myNodes.put(each.getKey(), newNode);
+                }
+            }
+            setParentOfNode(newNode, theParentToSet);
+        }
+        for (Map.Entry<Integer, BigraphEntity.SiteEntity> each : S.entrySet()) {
+            BigraphEntity.SiteEntity newSite = mySites.get(each.getKey());
+            if (Objects.isNull(newSite)) {
+                newSite = (BigraphEntity.SiteEntity) builder.createNewSite(each.getKey());
+                mySites.put(each.getKey(), newSite);
+            }
+
+            BigraphEntity parent = f.getParent(each.getValue());
+            if (Objects.isNull(parent)) {
+                parent = g.getParent(each.getValue());
+            }
+            assert parent != null;
+            BigraphEntity theParentToSet = null;
+            if (BigraphEntityType.isRoot(parent)) {
+                Integer integer = R.inverse().get(parent);
+                theParentToSet = myRoots.get(integer);
+            } else {
+                String s = V.inverse().get(parent);
+                theParentToSet = myNodes.get(s);
+            }
+            setParentOfNode(newSite, theParentToSet);
+        }
+
+        //create all inner names, outer names and edges
+        HashMap<String, BigraphEntity.Edge> myEdges = new LinkedHashMap<>();
+        HashMap<String, BigraphEntity.InnerName> myInnerNames = new LinkedHashMap<>();
+        HashMap<String, BigraphEntity.OuterName> myOuterNames = new LinkedHashMap<>();
+        Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e");
+        HashBiMap<String, BigraphEntity.Edge> E = HashBiMap.create();
+        HashBiMap<String, BigraphEntity.InnerName> I = HashBiMap.create();
+        HashBiMap<String, BigraphEntity.OuterName> O = HashBiMap.create();
+
+        Map<String, BigraphEntity.Edge> E_G = g.getEdges().stream().collect(Collectors.toMap(s -> rewriteEdgeNameSupplier.get(), Function.identity()));
+        Map<String, BigraphEntity.Edge> E_F = f.getEdges().stream().collect(Collectors.toMap(s -> rewriteEdgeNameSupplier.get(), Function.identity()));
+        E.putAll(E_G);
+        E.putAll(E_F);
+
+        I.putAll(g.getInnerNames().stream().collect(Collectors.toMap(s -> s.getName(), Function.identity())));
+        I.putAll(f.getInnerNames().stream().collect(Collectors.toMap(s -> s.getName(), Function.identity())));
+        O.putAll(g.getOuterNames().stream().collect(Collectors.toMap(s -> s.getName(), Function.identity())));
+        O.putAll(f.getOuterNames().stream().collect(Collectors.toMap(s -> s.getName(), Function.identity())));
+
+        for (Map.Entry<String, BigraphEntity.NodeEntity> each : V.entrySet()) {
+//            if (each.getValue().getControl().getArity().getValue().longValue() == 0) continue;
+//            each.getValue().getControl().getArity().getClass();
+            if (each.getValue().getControl().getArity().compareTo(FiniteOrdinal.ofInteger(0)) == 0) continue;
+
+            Collection<BigraphEntity.Port> ports = f.getPorts(each.getValue());
+            if (Objects.isNull(ports)) {
+                ports = g.getPorts(each.getValue());
+            }
+
+
+            String nodeName = V.inverse().get(each.getValue());
+            //portsize
+//            int portSize = 0;
+//            if (Objects.nonNull(V_F.get(nodeName))) {
+//                portSize = f.getPorts(V_F.get(nodeName)).size();
+//            } else {
+//                portSize = g.getPorts(V_G.get(nodeName)).size();
+//            }
+            BigraphEntity.NodeEntity newNode = myNodes.get(nodeName);
+            assert Objects.nonNull(newNode);
+            int portIx = 0;
+            for (BigraphEntity.Port eachPort : ports) {
+
+                BigraphEntity link = g.getLink(eachPort);
+                if (Objects.isNull(link)) {
+                    link = f.getLink(eachPort);
+                }
+
+                assert BigraphEntityType.isLinkType(link);
+
+                BigraphEntity newLink = null;
+                if (BigraphEntityType.isEdge(link)) {
+                    String edgeName = E.inverse().get(link);
+                    newLink = myEdges.get(edgeName);
+                    if (Objects.isNull(newLink)) {
+                        newLink = builder.createNewEdge(edgeName);
+                        myEdges.put(edgeName, (BigraphEntity.Edge) newLink);
+                    }
+                } else if (BigraphEntityType.isOuterName(link)) {
+                    String outerNameValue = O.inverse().get(link);
+                    newLink = myOuterNames.get(outerNameValue);
+                    if (Objects.isNull(newLink)) {
+                        newLink = builder.createNewOuterName(outerNameValue);
+                        myOuterNames.put(outerNameValue, (BigraphEntity.OuterName) newLink);
+                    }
+                }
+
+                BigraphEntity.Port newPortWithIndex = (BigraphEntity.Port) builder.createNewPortWithIndex(portIx++);
+                //add port to node
+                EStructuralFeature portsRef = newNode.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
+                EList<EObject> portsList = (EList<EObject>) newNode.getInstance().eGet(portsRef);
+                portsList.add(newPortWithIndex.getInstance());
+                //connect node to link
+                EStructuralFeature lnkRef = newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                newPortWithIndex.getInstance().eSet(lnkRef, newLink.getInstance());
+            }
+        }
+        //now the inner names
+        for (Map.Entry<String, BigraphEntity.InnerName> each : I.entrySet()) {
+            BigraphEntity.InnerName newInnerName = myInnerNames.get(each.getKey());
+            if (Objects.isNull(newInnerName)) {
+                newInnerName = (BigraphEntity.InnerName) builder.createNewInnerName(each.getKey());
+                myInnerNames.put(each.getKey(), newInnerName);
+            }
+
+            BigraphEntity link = g.getLink(each.getValue());
+            if (Objects.isNull(link)) {
+                link = f.getLink(each.getValue());
+            }
+
+            BigraphEntity newLink = null;
+            if (BigraphEntityType.isEdge(link)) {
+                String edgeName = E.inverse().get(link);
+                newLink = myEdges.get(edgeName);
+                if (Objects.isNull(newLink)) {
+                    newLink = builder.createNewEdge(edgeName);
+                    myEdges.put(edgeName, (BigraphEntity.Edge) newLink);
+                }
+            } else if (BigraphEntityType.isOuterName(link)) {
+                String outerNameValue = O.inverse().get(link);
+                newLink = myOuterNames.get(outerNameValue);
+                if (Objects.isNull(newLink)) {
+                    newLink = builder.createNewOuterName(outerNameValue);
+                    myOuterNames.put(outerNameValue, (BigraphEntity.OuterName) newLink);
+                }
+            }
+
+            //connect the inner name directly to this link
+            EStructuralFeature lnkRef = newInnerName.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+            newInnerName.getInstance().eSet(lnkRef, newLink.getInstance());
+        }
+
+        BigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
+                getModelPackage(),
+                getSignature(),
+                myRoots,
+                mySites,
+                myNodes,
+                myInnerNames, myOuterNames, myEdges);
+
+        Bigraph<S> bigraph = (Bigraph<S>) new DynamicEcoreBigraph(meta);//TODO rework necessary -> unsure which bigraph should be employed here
+
+        return new DefaultBigraphComposite<>(bigraph);
+    }
+
+    @Override
     public BigraphComposite<S> compose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph<S> g = getBigraphDelegate();
         assertSignaturesAreSame(g.getSignature(), f.getSignature());
 //        assertBigraphsAreNotSame(); //TODO important because node set must be disjunct too
-        assertInterfaceCompatibleForCompose(getBigraphDelegate(), f);
+        assertInterfaceCompatibleForCompose(g, f);
 
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
 
@@ -262,7 +475,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                         EStructuralFeature portsRef = nodeEntity.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
                         EList<EObject> portsList = (EList<EObject>) nodeEntity.getInstance().eGet(portsRef);
                         portsList.add(newPortWithIndex.getInstance()); //newPortWithIndex.getIndex(),
-                                //connect port to edge
+                        //connect port to edge
                         EStructuralFeature lnkRef = newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
                         newPortWithIndex.getInstance().eSet(lnkRef, edge.getInstance());
 
@@ -406,6 +619,17 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         };
     }
 
+    private Supplier<Integer> createNameSupplier() {
+        return new Supplier<Integer>() {
+            private int id = 0;
+
+            @Override
+            public Integer get() {
+                return id++;
+            }
+        };
+    }
+
     public <K, V> Optional<K> keys(Map<K, V> map, V value) {
         return map
                 .entrySet()
@@ -463,6 +687,25 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         boolean disjoint = Collections.disjoint(nameSetLeft, nameSetRight);
         if (disjoint || siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals)) {
             throw new IncompatibleInterfaceException();
+        }
+    }
+
+    protected void assertInterfaceCompatibleForJuxtaposition(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleInterfaceException {
+//        Set<FiniteOrdinal<Integer>> siteOrdinalsOuter = outer.getInnerFace().getKey();
+//        Set<FiniteOrdinal<Integer>> rootsOrdinalsOuter = outer.getOuterFace().getKey();
+//        Set<FiniteOrdinal<Integer>> sitesOrdinalsInner = inner.getInnerFace().getKey();
+//        Set<FiniteOrdinal<Integer>> rootsOrdinalsInner = inner.getOuterFace().getKey();
+
+        Set<StringTypedName> innerNamesOuter = outer.getInnerFace().getValue();
+        Set<StringTypedName> innerNamesInner = inner.getInnerFace().getValue();
+
+        Set<StringTypedName> outerNamesOuter = outer.getOuterFace().getValue();
+        Set<StringTypedName> outerNamesInner = inner.getOuterFace().getValue();
+
+        boolean disjointInnerNames = Collections.disjoint(innerNamesOuter, innerNamesInner);
+        boolean disjointOuterNames = Collections.disjoint(outerNamesOuter, outerNamesInner);
+        if (!disjointInnerNames || !disjointOuterNames) {
+            throw new IncompatibleInterfaceException("Common inner names or outer names ...");
         }
     }
 }

@@ -4,7 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidOrdinalTypeException;
 
 import java.util.Objects;
 
-public class FiniteOrdinal<T extends Number> {
+public class FiniteOrdinal<T extends Number> implements Comparable<FiniteOrdinal<T>> {
     private T value;
 
     private FiniteOrdinal(T value) {
@@ -16,7 +16,7 @@ public class FiniteOrdinal<T extends Number> {
     }
 
     private static <T extends Number> FiniteOrdinal<T> of(T v, Class<T> classType) {
-        if(!classType.isInstance(Integer.class) || !classType.isInstance(Long.class)) {
+        if (!classType.isInstance(Integer.class) || !classType.isInstance(Long.class)) {
             throw new InvalidOrdinalTypeException();
         }
         return new FiniteOrdinal<>(v);
@@ -43,5 +43,14 @@ public class FiniteOrdinal<T extends Number> {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public int compareTo(FiniteOrdinal<T> o) {
+        if (o.getValue() instanceof Long) {
+            return Long.compare(this.getValue().longValue(), o.getValue().longValue());
+        } else { // Integer
+            return Integer.compare(this.getValue().intValue(), o.getValue().intValue());
+        }
     }
 }
