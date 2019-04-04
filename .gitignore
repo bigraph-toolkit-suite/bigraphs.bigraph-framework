@@ -105,4 +105,4 @@ buildNumber.properties
 .nfs*
 
 gen-test-resources/*
-!gen-test-resources/.gitkeep
+#!gen-test-resources/.gitkeep

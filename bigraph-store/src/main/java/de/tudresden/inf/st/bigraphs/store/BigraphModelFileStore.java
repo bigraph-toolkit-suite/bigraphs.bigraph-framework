@@ -37,21 +37,13 @@ public class BigraphModelFileStore {
     }
 
     public static void exportBigraph(DynamicEcoreBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
-        //        bigraph.getRoots().forEach((x) -> allresources.add(x.getInstance()));
-//        bigraph.getOuterNames().forEach((x) -> allresources.add(x.getInstance()));
-//        bigraph.getInnerNames().forEach((x) -> allresources.add(x.getInstance()));
-//        bigraph.getEdges().forEach((x) -> allresources.add(x.getInstance()));
         Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph);
-//            allresources.add(newPackage);
-//            allresources.addAll();
         BigraphModelFileStore.writeDynamicInstanceModel(bigraph.getModelPackage(), allresources, filename, outputStream);
     }
 
     public static void exportMetaModel(DynamicEcoreBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
         BigraphModelFileStore.writeDynamicMetaModel(bigraph.getModelPackage(), filename, outputStream);
     }
-
-
 
     //TODO: add UTF-8
     public static void writeDynamicInstanceModel(EPackage ePackage, Collection<EObject> objects, String name, OutputStream outputStream) throws IOException {
