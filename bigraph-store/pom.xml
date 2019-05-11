@@ -17,6 +17,38 @@
             <artifactId>core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.eclipselabs</groupId>
+            <artifactId>cdo</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipselabs</groupId>
+            <artifactId>net4j</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipselabs</groupId>
+            <artifactId>cdo.hibernate</artifactId>
+            <type>pom</type>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse.emf.cdo</groupId>-->
+        <!--            <artifactId>net4j</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse.emf.cdo</groupId>-->
+        <!--            <artifactId>common</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse.emf.cdo</groupId>-->
+        <!--            <artifactId>server</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse.emf.cdo.transfer</groupId>-->
+        <!--            <artifactId>repository</artifactId>-->
+        <!--        </dependency>-->
+        <!--Test-->
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
         </dependency>

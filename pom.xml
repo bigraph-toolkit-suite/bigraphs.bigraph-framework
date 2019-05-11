@@ -27,6 +27,8 @@
         <emf-common-version>2.15.0</emf-common-version>
         <emf-ecore-version2>2.15.0</emf-ecore-version2>
         <emf-ecore-version>2.3.0-v200706262000</emf-ecore-version>
+<!--        <emf.cdo.version>4.6.2</emf.cdo.version>-->
+        <emf.cdo.version>4.5.0</emf.cdo.version>
         <eclipse.mirror>http://mirror.ibcp.fr/pub/eclipse/</eclipse.mirror>
         <junit.version>5.4.0</junit.version>
         <log4j.version>2.11.1</log4j.version>
@@ -102,6 +104,51 @@
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>2.14.0</version>
             </dependency>
+
+            <!-- https://github.com/ghillairet/cdo-maven -->
+            <dependency>
+                <groupId>org.eclipselabs</groupId>
+                <artifactId>cdo</artifactId>
+                <version>${emf.cdo.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipselabs</groupId>
+                <artifactId>net4j</artifactId>
+                <version>${emf.cdo.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipselabs</groupId>
+                <artifactId>cdo.hibernate</artifactId>
+                <version>${emf.cdo.version}</version>
+                <type>pom</type>
+            </dependency>
+            <!--            &lt;!&ndash; https://mvnrepository.com/artifact/org.eclipse.emf.cdo/net4j &ndash;&gt;-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+            <!--                <artifactId>net4j</artifactId>-->
+            <!--                <version>4.1.101</version>-->
+            <!--            </dependency>-->
+            <!--            &lt;!&ndash; https://mvnrepository.com/artifact/org.eclipse.emf.cdo/common &ndash;&gt;-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+            <!--                <artifactId>common</artifactId>-->
+            <!--                <version>4.2.1</version>-->
+            <!--            </dependency>-->
+            <!--            &lt;!&ndash; https://mvnrepository.com/artifact/org.eclipse.emf.cdo/server &ndash;&gt;-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+            <!--                <artifactId>server</artifactId>-->
+            <!--                <version>4.2.1</version>-->
+            <!--            </dependency>-->
+            <!--            &lt;!&ndash; https://mvnrepository.com/artifact/org.eclipse.emf.cdo.transfer/repository &ndash;&gt;-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.emf.cdo.transfer</groupId>-->
+            <!--                <artifactId>repository</artifactId>-->
+            <!--                <version>4.2.0</version>-->
+            <!--            </dependency>-->
+
             <!-- https://mvnrepository.com/artifact/org.checkerframework/checker -->
             <dependency>
                 <groupId>org.checkerframework</groupId>
