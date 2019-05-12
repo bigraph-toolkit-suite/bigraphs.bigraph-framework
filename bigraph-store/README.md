@@ -13,8 +13,11 @@ derby installation: https://medium.com/ctrl-alt-kaveet/tutorial-installing-apach
 
 ## CDO Client
 
-Tutorials:
-https://wiki.eclipse.org/CDO/Client
+Client examples:
+- https://wiki.eclipse.org/CDO/Client
+- http://git.eclipse.org/c/cdo/cdo.git/tree/plugins/org.eclipse.emf.cdo.examples/src/org/eclipse/emf/cdo/examples/server/Server.java
+- http://git.eclipse.org/c/cdo/cdo.git/tree/plugins/org.eclipse.emf.cdo.examples/src/org/eclipse/emf/cdo/examples/StandaloneContainerExample.java
+
+
 http://www.rcp-vision.com/cdo-connected-data-objects/
 https://wiki.eclipse.org/CDO/Hibernate_Store/Tutorial
-http://git.eclipse.org/c/cdo/cdo.git/tree/plugins/org.eclipse.emf.cdo.examples/src/org/eclipse/emf/cdo/examples/server/Server.java
