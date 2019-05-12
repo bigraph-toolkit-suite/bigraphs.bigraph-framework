@@ -17,6 +17,15 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class OperationsTest {
 
     private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory;
@@ -69,14 +78,31 @@ public class OperationsTest {
     void elementary_bigraph_composition_test() {
         //we want to check whether: merge_m+1 = join(id1 ⊗ merge_m).
         int m = 3;
-        Placings.Merge mergeM = Placings.merge(m + 1);
+        Placings<DefaultDynamicSignature> placings = factory.createPlacings();
+        Placings<DefaultDynamicSignature>.Merge merge_MplusOne = placings.merge(m + 1);
 
-        Placings.Join aJoin = Placings.join();
-        Placings.Merge merge1 = Placings.merge(1); //id_1 = merge_1
-        Placings.Merge mergeM0 = Placings.merge(m);
+        Placings<DefaultDynamicSignature>.Join aJoin = placings.join();
+        Placings<DefaultDynamicSignature>.Merge merge_1 = placings.merge(1); //id_1 = merge_1
+        Placings<DefaultDynamicSignature>.Merge merge_M = placings.merge(m);
 
-//        factory.asBigraphOperator(aJoin);
+        BigraphComposite<DefaultDynamicSignature> a = factory.asBigraphOperator(merge_1);
+        BigraphComposite<DefaultDynamicSignature> b = factory.asBigraphOperator(aJoin);
 
+        assertAll(() -> {
+            Bigraph<DefaultDynamicSignature> outerBigraph = b.compose(a.juxtapose(merge_M).getOuterBigraph()).getOuterBigraph();
+            assertEquals(merge_MplusOne.getRoots().size(), outerBigraph.getRoots().size());
+            assertEquals(merge_MplusOne.getSites().size(), outerBigraph.getSites().size());
+            assertEquals(merge_MplusOne.getOuterNames().size() == 0, outerBigraph.getOuterNames().size() == 0);
+            assertEquals(merge_MplusOne.getOuterNames().size() == 0, outerBigraph.getInnerNames().size() == 0);
+
+            // do the sites have the same and only one parent?
+            BigraphEntity.RootEntity rootA = outerBigraph.getRoots().iterator().next();
+            List<Boolean> collectA = outerBigraph.getSites().stream().map(x -> outerBigraph.getParent(x) == rootA).collect(Collectors.toList());
+            BigraphEntity.RootEntity rootB = merge_MplusOne.getRoots().iterator().next();
+            List<Boolean> collectB = merge_MplusOne.getSites().stream().map(x -> merge_MplusOne.getParent(x) == rootB).collect(Collectors.toList());
+
+            assertEquals(collectA.stream().allMatch(y -> y), collectB.stream().allMatch(y -> y));
+        });
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {

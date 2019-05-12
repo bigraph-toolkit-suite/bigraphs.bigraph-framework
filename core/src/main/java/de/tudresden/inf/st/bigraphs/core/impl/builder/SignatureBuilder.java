@@ -4,16 +4,14 @@ import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.impl.EmptySignature;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 
 /**
  * Brdige pattern: abstraction is signature and implementor is controls or rather a strategy here?
+ *
  * @param <NT>
  * @param <FO>
  * @param <C>
@@ -24,10 +22,6 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
 
     public SignatureBuilder() {
         this.controls = new LinkedHashSet<>();
-    }
-
-    public final EmptySignature createEmptySignature() {
-        return new EmptySignature();
     }
 
 //    @SuppressWarnings("unchecked")
@@ -60,15 +54,8 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         }
     }
 
-//    public C newControl() {
-//        C builder = createControlBuilder(); //createControlBuilder(getGenericTypeClass());//createControlBuilder(); //getGenericTypeClass());
-//        builder.withControlListBuilder(this);
-////                this.controls.add(control);
-//        return builder;
-//    }
-
     public C newControl() {
-        C builder = createControlBuilder(); //createControlBuilder(getGenericTypeClass());//createControlBuilder(); //getGenericTypeClass());
+        C builder = createControlBuilder();
         builder.withControlListBuilder(this);
 //                this.controls.add(control);
         return builder;
@@ -79,12 +66,16 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return self();
     }
 
-//    public B begin() {
-//        this.controls = new ArrayList<>();
-//        return self();
-//    }
-
     public abstract <S extends Signature> S createSignature(Iterable<? extends Control> controls); //, Class<S> type);
+
+    /**
+     * Creates an empty signature, meaning that the control set is empty.<br/>
+     * Needed for the interaction of elementary bigraphs and user-defined bigraphs.
+     *
+     * @param <S>
+     * @return an empty signature of type {@code S}.
+     */
+    public abstract <S extends Signature> S createSignature();
 
 //    protected  abstract <S extends Signature> Class<S> getSignatureClass();
 

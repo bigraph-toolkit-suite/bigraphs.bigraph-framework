@@ -11,7 +11,6 @@ import org.checkerframework.com.google.common.collect.Lists;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EClassImpl;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.*;
@@ -277,7 +276,7 @@ public class BigraphBuilder<S extends Signature> {
 
         //TODO
         public final Hierarchy connectByEdge(final Hierarchy... hierarchies) {
-            throw new NotImplementedException();
+            throw new RuntimeException("not implemented yet");
         }
 
         /**
@@ -318,7 +317,7 @@ public class BigraphBuilder<S extends Signature> {
 
         //TODO
         public void connectNodesToInnerName(BigraphEntity.InnerName innerName, Control<?, ?>... controls) {
-            throw new NotImplementedException(); //see below
+            throw new RuntimeException("not implemented yet"); //see below
         }
 
         public void connectNodeToInnerName(Control<?, ?> control, BigraphEntity.InnerName innerName) throws InvalidConnectionException, LinkTypeNotExistsException {
@@ -985,7 +984,7 @@ public class BigraphBuilder<S extends Signature> {
 
     //TODO: closeAllOuterNames()
     public void closeAllOuterNames() {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented yet");
     }
 
     public void closeOuterName(BigraphEntity.OuterName outerName) throws TypeNotExistsException {

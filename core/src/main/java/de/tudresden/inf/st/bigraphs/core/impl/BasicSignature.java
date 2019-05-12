@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import org.checkerframework.checker.nullness.qual.*;
 import de.tudresden.inf.st.bigraphs.core.*;
 
+import java.util.Collections;
 import java.util.Set;
 
 public class BasicSignature extends AbstractSignature<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>> {
@@ -12,5 +13,4 @@ public class BasicSignature extends AbstractSignature<DefaultControl<? extends N
     public BasicSignature(@NonNull Set<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>> controls) {
         super(controls);
     }
-
 }

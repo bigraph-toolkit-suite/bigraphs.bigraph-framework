@@ -1,10 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.factory;
 
 import com.google.common.reflect.TypeToken;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
-import de.tudresden.inf.st.bigraphs.core.DefaultBigraphComposite;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
@@ -12,6 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
 public class SimpleBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
         extends AbstractBigraphFactory<DefaultDynamicSignature, NT, FT> {
@@ -32,6 +30,11 @@ public class SimpleBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal
 //        BigraphBuilder<DefaultDynamicSignature> builder = new BigraphBuilder<DefaultDynamicSignature>().useSignature(signature);
 //        BigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
         return BigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
+    }
+
+    @Override
+    public Placings<DefaultDynamicSignature> createPlacings() {
+        return new Placings<>(this.createSignatureBuilder());
     }
 
     @Override

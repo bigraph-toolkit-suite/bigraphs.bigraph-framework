@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
 import java.lang.reflect.Type;
 
@@ -48,6 +49,8 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
      * @return a {@link BigraphBuilder} instance with signature type S which is inferred from the given signature.
      */
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
+
+    public abstract Placings<S> createPlacings();
 
     /**
      * Create a composition object for a given bigraph which allows to compose bigraphs.

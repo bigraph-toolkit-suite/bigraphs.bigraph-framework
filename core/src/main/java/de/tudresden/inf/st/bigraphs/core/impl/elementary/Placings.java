@@ -1,14 +1,15 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.EmptySignature;
+import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,89 +29,105 @@ import java.util.stream.IntStream;
  * By that a special placing called merge_m: m -> 1 can be derived and is implemented here for
  * convenience. merge_0 = 1, merge_1 = id_1, merge_2 = join, hence, merge_{m+1} = join o (id_1 + merge_m).
  */
-public final class Placings implements Serializable {
-    private volatile static SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
-    private volatile static EmptySignature emptySignature = factory.createSignatureBuilder().createEmptySignature();
-    private volatile static MutableBuilder<Signature> signatureMutableBuilder = BigraphBuilder.newMutableBuilder(emptySignature);
+public class Placings<S extends Signature> implements Serializable {
+    private volatile S emptySignature;
+    private volatile MutableBuilder<S> mutableBuilder;
+    private EPackage loadedModelPacakge;
 
-    public static Barren barren() {
+    public Placings(AbstractBigraphFactory factory) {
+//        AbstractBigraphFactory factory = new SimpleBigraphFactory<>();
+        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        emptySignature = (S) signatureBuilder.createSignature();
+        mutableBuilder = BigraphBuilder.newMutableBuilder(emptySignature);
+    }
+
+    /**
+     * @param signatureBuilder to create an empty signature of the appropriate type for working with
+     *                         user-defined bigraphs of the same type created with the same factory
+     */
+    public Placings(SignatureBuilder signatureBuilder) {
+//        AbstractBigraphFactory factory = new SimpleBigraphFactory<>();
+//        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        emptySignature = (S) signatureBuilder.createSignature();
+        mutableBuilder = BigraphBuilder.newMutableBuilder(emptySignature);
+        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
+    }
+
+    public Placings<S>.Barren barren() {
         return new Barren();
     }
 
-    public static Merge merge(int m) {
+    public Placings<S>.Merge merge(int m) {
         return new Merge(m);
     }
 
-    public static Join join() {
+    public Placings<S>.Join join() {
         return new Join();
     }
 
-    public static class Barren implements ElementaryBigraph {
+    public class Barren extends ElementaryBigraph {
         private final BigraphEntity.RootEntity root;
 
         Barren() {
-            root = (BigraphEntity.RootEntity) signatureMutableBuilder.createNewRoot(0);
+            root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
         }
 
         @Override
-        public EmptySignature getSignature() {
+        public S getSignature() {
             return emptySignature;
         }
 
         @Override
-        public Collection<BigraphEntity.RootEntity> getRoots() {
+        public final Collection<BigraphEntity.RootEntity> getRoots() {
             return Collections.singletonList(root);
         }
 
+        /**
+         * Returns always {@code null} since a barren cannot have any child.
+         *
+         * @param node is not evaluated
+         * @return always returns {@code null}
+         */
         @Override
-        public Collection<BigraphEntity.SiteEntity> getSites() {
-            return Collections.EMPTY_LIST;
+        public final BigraphEntity getParent(BigraphEntity node) {
+            return null;
         }
 
         @Override
-        public Collection<BigraphEntity.OuterName> getOuterNames() {
-            return Collections.EMPTY_LIST;
-        }
-
-        @Override
-        public Collection<BigraphEntity.InnerName> getInnerNames() {
-            return Collections.EMPTY_LIST;
+        public EPackage getModelPackage() {
+            return loadedModelPacakge;
         }
     }
 
-    public static class Join implements ElementaryBigraph {
+    public class Join extends ElementaryBigraph<S> {
         private final BigraphEntity.RootEntity root;
         private final Collection<BigraphEntity.SiteEntity> sites = new ArrayList<>(2);
 
         Join() {
-            root = (BigraphEntity.RootEntity) signatureMutableBuilder.createNewRoot(0);
-            sites.add((BigraphEntity.SiteEntity) signatureMutableBuilder.createNewSite(0));
-            sites.add((BigraphEntity.SiteEntity) signatureMutableBuilder.createNewSite(1));
+            root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
+            sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(0));
+            sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(1));
+            sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
         }
 
         @Override
-        public EmptySignature getSignature() {
+        public S getSignature() {
             return emptySignature;
         }
 
         @Override
-        public Collection<BigraphEntity.RootEntity> getRoots() {
+        public final Collection<BigraphEntity.RootEntity> getRoots() {
             return Collections.singletonList(root);
         }
 
         @Override
-        public Collection<BigraphEntity.SiteEntity> getSites() {
+        public final Collection<BigraphEntity.SiteEntity> getSites() {
             return sites;
         }
 
         @Override
-        public Collection<BigraphEntity.OuterName> getOuterNames() {
-            return Collections.EMPTY_LIST;
-        }
-
-        @Override
-        public Collection<BigraphEntity.InnerName> getInnerNames() {
-            return Collections.EMPTY_LIST;
+        public EPackage getModelPackage() {
+            return loadedModelPacakge;
         }
     }
 
@@ -118,40 +135,41 @@ public final class Placings implements Serializable {
     /**
      * A merge maps m sites to a single root where m > 0. Otherwise merge_0 = 1
      */
-    public static class Merge implements ElementaryBigraph {
+    public class Merge extends ElementaryBigraph<S> {
         private final BigraphEntity.RootEntity root;
         private final Collection<BigraphEntity.SiteEntity> sites;
 
         Merge(final int m) {
             sites = new ArrayList<>(m);
-            root = (BigraphEntity.RootEntity) signatureMutableBuilder.createNewRoot(0);
-            IntStream.range(0, m).forEach(value -> sites.add((BigraphEntity.SiteEntity) signatureMutableBuilder.createNewSite(value)));
+            root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
+            IntStream.range(0, m).forEach(value -> sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(value)));
+            sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
         }
 
         @Override
-        public EmptySignature getSignature() {
+        public S getSignature() {
             return emptySignature;
         }
 
         @Override
-        public Collection<BigraphEntity.RootEntity> getRoots() {
+        public final Collection<BigraphEntity.RootEntity> getRoots() {
             return Collections.singletonList(root);
         }
 
         @Override
-        public Collection<BigraphEntity.SiteEntity> getSites() {
+        public final Collection<BigraphEntity.SiteEntity> getSites() {
             return sites;
         }
 
         @Override
-        public Collection<BigraphEntity.OuterName> getOuterNames() {
-            return Collections.EMPTY_LIST;
+        public EPackage getModelPackage() {
+            return loadedModelPacakge;
         }
+    }
 
-        @Override
-        public Collection<BigraphEntity.InnerName> getInnerNames() {
-            return Collections.EMPTY_LIST;
-        }
+    private void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
+        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
 }

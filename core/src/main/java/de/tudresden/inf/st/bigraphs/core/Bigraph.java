@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface Bigraph<S extends Signature> extends BigraphicalConstruct<S> {
+public interface Bigraph<S extends Signature> extends HasSignature<S> {
     /**
      * Get the respective signature of the current bigraph
      *
@@ -34,22 +34,48 @@ public interface Bigraph<S extends Signature> extends BigraphicalConstruct<S> {
         );
     }
 
+//    Collection<BigraphEntity.Edge> getEdges();
+//    <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
+    //without sites
+//    Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
+
+    /**
+     * Prime bigraph has only one root and no inner names.
+     *
+     * @return true, if the bigraph is prime, otherwise false.
+     */
+    default boolean isPrime() {
+        return getRoots().size() == 1 && getInnerNames().size() == 0;
+    }
+
+    //TODO
+    default boolean isDiscrete() {
+        return false;
+    }
+
+    Collection<BigraphEntity.RootEntity> getRoots();
+
+    Collection<BigraphEntity.SiteEntity> getSites();
+
+    Collection<BigraphEntity.OuterName> getOuterNames();
+
+    Collection<BigraphEntity.InnerName> getInnerNames();
+
     Collection<BigraphEntity.Edge> getEdges();
 
     <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
+
+    Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
+
+    default boolean isGround() {
+        return getInnerNames().size() == 0 && getSites().size() == 0;
+    }
 
     BigraphEntity getParent(BigraphEntity node);
 
     BigraphEntity getLink(BigraphEntity node);
 
     Collection<BigraphEntity.Port> getPorts(BigraphEntity node);
-
-    //without sites
-    Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
-
-    default boolean isGround() {
-        return getInnerNames().size() == 0 && getSites().size() == 0;
-    }
 
     boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2);
 

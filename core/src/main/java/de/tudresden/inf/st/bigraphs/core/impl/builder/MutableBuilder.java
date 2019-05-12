@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsEx
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
 import java.util.function.Supplier;
@@ -22,6 +23,10 @@ public class MutableBuilder<S extends Signature> extends BigraphBuilder<S> {
 
     public MutableBuilder(S signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
         super(signature, nodeNameSupplier);
+    }
+
+    public EPackage getLoadedEPackage() {
+        return loadedEPackage;
     }
 
 //    public void bigraphicalSignatureAsTypeGraph(String name) throws BigraphMetaModelLoadingFailedException {

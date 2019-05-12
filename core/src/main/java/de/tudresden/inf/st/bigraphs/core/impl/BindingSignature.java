@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.ControlKind;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**

@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.BasicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 
+import java.util.Collections;
 import java.util.Set;
 
 //TODO nested builder: https://dzone.com/articles/nested-builder
@@ -27,6 +28,11 @@ public class DefaultSignatureBuilder<NT extends NamedType, FO extends FiniteOrdi
     public <S extends Signature> S createSignature(Iterable<? extends Control> controls) {
 //        Collections.emptyList().addAll(controls);
         return (S) new BasicSignature((Set<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>>) controls);
+    }
+
+    @Override
+    public <S extends Signature> S createSignature() {
+        return (S) new BasicSignature(Collections.EMPTY_SET);
     }
 
 //    @Override

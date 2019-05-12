@@ -110,9 +110,9 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 mySites.put(each.getKey(), newSite);
             }
 
-            BigraphEntity parent = f.getParent(each.getValue());
+            BigraphEntity parent = f.getParent(each.getValue()); //S.get(each.getKey())); //each.getValue());
             if (Objects.isNull(parent)) {
-                parent = g.getParent(each.getValue());
+                parent = g.getParent(each.getValue()); //S.get(each.getKey()));
             }
             assert parent != null;
             BigraphEntity theParentToSet = null;
@@ -685,7 +685,10 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         Set<StringTypedName> nameSetLeft = outer.getInnerFace().getValue();
         Set<StringTypedName> nameSetRight = inner.getOuterFace().getValue();
         boolean disjoint = Collections.disjoint(nameSetLeft, nameSetRight);
-        if (disjoint || siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals)) {
+        if((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() == 0 && nameSetRight.size() == 0)
+            disjoint = false; // this is legit if they are only place graphs
+        boolean disjoint2 = siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals);
+        if (disjoint || disjoint2) {
             throw new IncompatibleInterfaceException();
         }
     }
