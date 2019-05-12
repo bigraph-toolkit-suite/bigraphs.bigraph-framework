@@ -12,7 +12,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -62,6 +63,20 @@ public class OperationsTest {
 //        BigraphEntity parent0 = F.getParent(parent);
 //        int index = ((BigraphEntity.RootEntity) parent0).getIndex();
 //        System.out.println("index=" + index + " __ equals= " + parent0.equals(parent));
+    }
+
+    @Test
+    void elementary_bigraph_composition_test() {
+        //we want to check whether: merge_m+1 = join(id1 ⊗ merge_m).
+        int m = 3;
+        Placings.Merge mergeM = Placings.merge(m + 1);
+
+        Placings.Join aJoin = Placings.join();
+        Placings.Merge merge1 = Placings.merge(1); //id_1 = merge_1
+        Placings.Merge mergeM0 = Placings.merge(m);
+
+//        factory.asBigraphOperator(aJoin);
+
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {

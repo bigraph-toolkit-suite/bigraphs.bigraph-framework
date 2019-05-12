@@ -67,9 +67,11 @@ public class BigraphBuilder<S extends Signature> {
     private final HashMap<Integer, BigraphEntity.SiteEntity> availableSites = new HashMap<>();
     private final HashMap<String, BigraphEntity.NodeEntity> availableNodes = new HashMap<>();
 
+    //TODO new constructor with signature and namespace
+
     protected BigraphBuilder(S signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
-        this.bigraphicalSignatureAsTypeGraph("SAMPLE"); //TODO
+        this.bigraphicalSignatureAsTypeGraph("SAMPLE"); //TODO provide URI (namespace) here
         this.vertexNameSupplier = nodeNameSupplier;
     }
 

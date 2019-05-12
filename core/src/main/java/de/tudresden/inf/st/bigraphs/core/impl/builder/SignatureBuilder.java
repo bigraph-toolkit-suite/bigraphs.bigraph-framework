@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.impl.EmptySignature;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +24,10 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
 
     public SignatureBuilder() {
         this.controls = new LinkedHashSet<>();
+    }
+
+    public final EmptySignature createEmptySignature() {
+        return new EmptySignature();
     }
 
 //    @SuppressWarnings("unchecked")

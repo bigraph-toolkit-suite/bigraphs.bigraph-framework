@@ -14,7 +14,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

@@ -1,8 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-public interface BigraphicalStructure<S extends Signature> {
+public interface HasSignature<S extends Signature> {
     /**
-     * Get the respective signature of the current bigraph
+     * Get the corresponding signature of the underlying bigraph
      *
      * @return the signature of the bigraph
      */

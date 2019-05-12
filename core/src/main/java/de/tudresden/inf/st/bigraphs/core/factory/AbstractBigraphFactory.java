@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.impl.factory;
+package de.tudresden.inf.st.bigraphs.core.factory;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphComposite;

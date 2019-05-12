@@ -1,0 +1,34 @@
+# BigraphER
+bigrapher sim -s -t blub -f svg -S 2 model2.big
+bigrapher validate -d ./ -f svg -v model2.big
+bigrapher full -d ./states -f svg -s states -M 10 -t trans.svg -v model2.big
+
+
+# Model_Test_0
+bigrapher full -d ./model_test_0 -f svg -s model_test_0 -M 10 -t trans.svg -v model_test_0.big
+
+# Model-Test-1
+Two nodes in different rooms but are connected by the same name or a different name
+(immer 4 Redex Kombinationen mgl) -> und eine muss fehlschlagen
+bigrapher full -d ./model_test_1 -f svg -s model_test_1 -M 10 -t trans.svg -v model_test_1.big
+bigrapher validate -d ./model_test_1 -f svg -v model_test_1.big
+
+# Model_Test_2
+bigrapher full -d ./model_test_2 -f svg -s model_test_2 -M 10 -t trans.svg -v model_test_2.big
+
+# Model_Test_3
+bigrapher full -d ./model_test_3 -f svg -s model_test_3 -M 10 -t trans.svg -v model_test_3.big
+
+# Model_Test_4
+Building room comp example
+bigrapher full -d ./model_test_4 -f svg -s model_test_4 -M 10 -t trans.svg -v model_test_4.big
+
+
+# BigMC
+
+bigmc -p -G bigmc.dot -m 4 bigmc-model.bgm
+- 4 steps
+
+dot -Grankdir=TB -Teps bigmc.dot -o bigmc-transition-plot.eps
+- convert dot to eps
+- make graph go from top to bottom, also possible, LR, RL, etc.

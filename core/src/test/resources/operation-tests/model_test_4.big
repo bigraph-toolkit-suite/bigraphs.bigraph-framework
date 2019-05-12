@@ -1,0 +1,38 @@
+# Signature
+ctrl Building = 0;
+ctrl Room = 0;
+ctrl Comp = 1;
+ctrl Job = 0;
+ctrl User = 1;
+ctrl User2 = 0;
+ctrl A = 1;
+ctrl B = 1;
+
+# Reaction rules
+react nil = Job --> Job;
+big s0 = Job.1;
+
+big f = (
+Room . (User2.1 | Job.1)
+);
+
+big g = (
+  Job
+);
+
+big bla1 = id(1) | Job;
+big bla2 = id(2) + {jeff2};
+big bla = bla1 + bla2;
+
+
+
+#big r = (Room.(Comp{network}) | Room.(Comp{network}));
+
+big h = g*f;
+
+
+# Reactive system
+begin brs
+  init s0;
+  rules = [{nil}];
+end
