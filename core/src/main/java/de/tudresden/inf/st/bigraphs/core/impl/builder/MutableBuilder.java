@@ -66,6 +66,10 @@ public class MutableBuilder<S extends Signature> extends BigraphBuilder<S> {
         return BigraphEntity.create(portWithIndex, BigraphEntity.Port.class);
     }
 
+    public void connectInnerToOuter(BigraphEntity.InnerName innerName, BigraphEntity.OuterName outerName) {
+        super.connectInnerToOuterName0(innerName, outerName);
+    }
+
     public void connectToEdgeUsingIndex(BigraphEntity.NodeEntity<Control<?, ?>> node, BigraphEntity.Edge edge, int customPortIndex) {
         super.connectToEdgeUsingIndex(node, edge, customPortIndex);
     }

@@ -215,6 +215,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
             if (Objects.isNull(link)) {
                 link = f.getLink(each.getValue());
             }
+            if (Objects.isNull(link)) continue;
 
             BigraphEntity newLink = null;
             if (BigraphEntityType.isEdge(link)) {
@@ -361,7 +362,6 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         // Now the link graph ...
 
         //the next two will be kept for the new bigraph (the link graph interfaces)
-//        Supplier<String> edgeSupplier = createNameSupplier("e");
         HashMap<String, BigraphEntity.OuterName> myOuterNames = new LinkedHashMap<>();//coming from G
         for (BigraphEntity.OuterName each : g.getOuterNames()) {
             myOuterNames.put(each.getName(), (BigraphEntity.OuterName) builder.createNewOuterName(each.getName())); //BigraphEntity.create(each.getInstance(), BigraphEntity.OuterName.class));
@@ -407,9 +407,9 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         allPorts_FG.addAll(portsG2);
 
         Set<BigraphEntity> Q_set = new LinkedHashSet<>(); // these are only points (inner names or ports
+        Q_set.addAll(X);
         Q_set.addAll(portsF2.stream().map(AbstractMap.SimpleImmutableEntry::getValue).collect(Collectors.toList()));
         Q_set.addAll(portsG2.stream().map(AbstractMap.SimpleImmutableEntry::getValue).collect(Collectors.toList()));
-        Q_set.addAll(X);
 
         // Convenience maps on the link graph interfaces of F and G
         HashMap<String, BigraphEntity.OuterName> outerNames_G = new LinkedHashMap<>();
@@ -432,12 +432,13 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
             outerNames_F.put(each.getName(), each); //(BigraphEntity.InnerName) builder.createNewInnerName(eachInnerName.getName()));
         }
 
-
+        //TODO zweite condition muss holden
         for (BigraphEntity q : Q_set) {
             System.out.println(q);
 
             //C1,C3 preserving links
-            //C2: is recreating links (outer --connect-> inner == edge)
+            //C2: is recreating links (outer --connect-> inner == edge, or inner name of inner big is connected to the edge
+            // of a node)
 
 
             BigraphEntity linkQofF = f.getLink(q);
@@ -494,7 +495,15 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
 
                 //q ist ein port und zeigt auf einen outername von F der gleich ist mit dem Inner name von G
                 boolean contains = false;
+                // we need the name: from the edge or an outer name
                 String edgeName = E.inverse().get(linkQofF);
+                //TODO move into next if clause. we get the name directly w/ null check because it
+                // it is an outer name and cannot have an edge name
+                if (Objects.isNull(edgeName) &&
+                        Objects.nonNull(innerNames_G.get(((BigraphEntity.OuterName) linkQofF).getName()))) {
+                    edgeName = ((BigraphEntity.OuterName) linkQofF).getName();
+                }
+
                 if (BigraphEntityType.isOuterName(linkQofF)) {
                     contains = g.getInnerFace().getValue().contains(StringTypedName.of(edgeName)); //StringTypedName.of(((BigraphEntity.OuterName) linkQofF).getName()));
                 }
@@ -537,7 +546,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                         EStructuralFeature pointRef = newLink.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
                         EList<EObject> pointsOfOuterName = (EList<EObject>) newLink.getInstance().eGet(pointRef);
                         pointsOfOuterName.add(newInnerName.getInstance());
-                        System.out.println("\tconnect inner name to outer name " + ((BigraphEntity.OuterName) link).getName());
+                        System.out.println("\tconnect inner name to " + link);
 
                     } else if (BigraphEntityType.isPort(q)) {
                         BigraphEntity.Port thePort = (BigraphEntity.Port) q;
@@ -674,6 +683,8 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
     }
 
     protected void assertSignaturesAreSame(S signature1, S signature2) throws IncompatibleSignatureException {
+        //then one must be an elementary bigraph
+        if (signature1.getControls().size() == 0 || signature2.getControls().size() == 0) return;
         if (!signature1.equals(signature2)) {
             throw new IncompatibleSignatureException();
         }
@@ -685,9 +696,10 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         Set<StringTypedName> nameSetLeft = outer.getInnerFace().getValue();
         Set<StringTypedName> nameSetRight = inner.getOuterFace().getValue();
         boolean disjoint = Collections.disjoint(nameSetLeft, nameSetRight);
-        if((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() == 0 && nameSetRight.size() == 0)
+        if ((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() == 0 && nameSetRight.size() == 0)
             disjoint = false; // this is legit if they are only place graphs
         boolean disjoint2 = siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals);
+        if (siteOrdinals.size() == 0 && rootOrdinals.size() == 0) disjoint2 = false;
         if (disjoint || disjoint2) {
             throw new IncompatibleInterfaceException();
         }

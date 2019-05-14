@@ -9,6 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
 public class SimpleBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
@@ -35,6 +36,11 @@ public class SimpleBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal
     @Override
     public Placings<DefaultDynamicSignature> createPlacings() {
         return new Placings<>(this.createSignatureBuilder());
+    }
+
+    @Override
+    public Linkings<DefaultDynamicSignature> createLinkings() {
+        return new Linkings<>(this.createSignatureBuilder());
     }
 
     @Override

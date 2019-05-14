@@ -39,6 +39,7 @@ public class Placings<S extends Signature> implements Serializable {
         SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
         emptySignature = (S) signatureBuilder.createSignature();
         mutableBuilder = BigraphBuilder.newMutableBuilder(emptySignature);
+        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }
 
     /**

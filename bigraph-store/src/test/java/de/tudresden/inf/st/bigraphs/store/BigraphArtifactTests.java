@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
@@ -17,6 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -104,14 +107,39 @@ public class BigraphArtifactTests {
         BigraphComposite<DefaultDynamicSignature> a = factory.asBigraphOperator(merge_1);
         BigraphComposite<DefaultDynamicSignature> b = factory.asBigraphOperator(aJoin);
         try {
-            Bigraph<DefaultDynamicSignature> outerBigraph1 = a.juxtapose(merge_M).getOuterBigraph();
-            Bigraph<DefaultDynamicSignature> outerBigraph = b.compose(outerBigraph1).getOuterBigraph();
-            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) outerBigraph, "compose_test", new FileOutputStream(TARGET_TEST_FOLDER + "compose_test.xmi"));
+//            Bigraph<DefaultDynamicSignature> outerBigraph1 = a.juxtapose(merge_M).getOuterBigraph();
+//            Bigraph<DefaultDynamicSignature> outerBigraph = b.compose(outerBigraph1).getOuterBigraph();
+//            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) outerBigraph, "compose_test", new FileOutputStream(TARGET_TEST_FOLDER + "compose_test.xmi"));
+//
+
+            Linkings<DefaultDynamicSignature> linkings = factory.createLinkings();
+            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+            BigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
+            BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
+            builderForG.createRoot().addChild(signature.getControlByName("User")).connectNodeToInnerName(zInner);
+            DynamicEcoreBigraph simpleBigraph = builderForG.createBigraph();
+            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) simpleBigraph, "compose_test_2a", new FileOutputStream(TARGET_TEST_FOLDER + "compose_test_2a.xmi"));
+            Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
+            BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(simpleBigraph);
+            BigraphComposite<DefaultDynamicSignature> compose1 = compose.compose(substitution);
+            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) compose1.getOuterBigraph(), "compose_test_2b", new FileOutputStream(TARGET_TEST_FOLDER + "compose_test_2b.xmi"));
+
+            Linkings<DefaultDynamicSignature>.Substitution a1 = linkings.substitution(StringTypedName.of("a"), StringTypedName.of("b"), StringTypedName.of("c"));
+            Linkings<DefaultDynamicSignature>.Substitution a2 = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("a"));
+            Bigraph<DefaultDynamicSignature> a3 = factory.asBigraphOperator(a2).compose(a1).getOuterBigraph();
+            BigraphModelFileStore.exportBigraph((DynamicEcoreBigraph) a3, "compose_test_3", new FileOutputStream(TARGET_TEST_FOLDER + "compose_test_3.xmi"));
+
         } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (LinkTypeNotExistsException e) {
+            e.printStackTrace();
+        } catch (InvalidArityOfControlException e) {
+            e.printStackTrace();
+        } catch (InvalidConnectionException e) {
             e.printStackTrace();
         }
     }

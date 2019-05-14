@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,8 @@ public class ElementaryBigraphTests {
 
         assertTrue(b.isPrime());
         assertTrue(b2.isPrime());
+        assertTrue(b.isGround());
+        assertTrue(b2.isGround());
     }
 
     @Test
@@ -50,5 +53,18 @@ public class ElementaryBigraphTests {
         Placings.Merge merge = new Placings(factory).merge(3);
         assertEquals(1, merge.getRoots().size());
         assertEquals(3, merge.getSites().size());
+    }
+
+    @Test
+    void linkings() {
+        Linkings<Signature> linkings = new Linkings<>(factory);
+        Linkings<Signature>.Closure x = linkings.closure(StringTypedName.of("x"));
+        Linkings<Signature>.Substitution substitution = linkings.substitution(StringTypedName.of("y"),
+                StringTypedName.of("x1"),
+                StringTypedName.of("x2"),
+                StringTypedName.of("x3")
+        );
+        assertFalse(x.isGround());
+        assertFalse(substitution.isGround());
     }
 }

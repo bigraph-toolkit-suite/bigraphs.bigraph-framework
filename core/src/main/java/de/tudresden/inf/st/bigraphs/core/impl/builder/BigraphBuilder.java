@@ -478,9 +478,13 @@ public class BigraphBuilder<S extends Signature> {
         if (isInnerNameConnectedToOuterName(innerName, outerName)) return;
         if (isInnerNameConnectedToAnyOuterName(innerName)) throw new InnerNameConnectedToOuterNameException();
 
+        this.connectInnerToOuterName0(innerName, outerName);
+//        outerName.getBPoints().add(innerName);
+    }
+
+    protected void connectInnerToOuterName0(BigraphEntity innerName, BigraphEntity outerName) {
         EList<EObject> pointsOfOuterName = (EList<EObject>) outerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
         pointsOfOuterName.add(innerName.getInstance());
-//        outerName.getBPoints().add(innerName);
     }
 
     /**

@@ -13,6 +13,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OperationsTest {
 
@@ -102,6 +102,56 @@ public class OperationsTest {
             List<Boolean> collectB = merge_MplusOne.getSites().stream().map(x -> merge_MplusOne.getParent(x) == rootB).collect(Collectors.toList());
 
             assertEquals(collectA.stream().allMatch(y -> y), collectB.stream().allMatch(y -> y));
+        });
+    }
+
+    @Test
+    void elementary_bigraph_linkings_test() {
+        Linkings<DefaultDynamicSignature> linkings = new Linkings<>(factory);
+        Linkings<DefaultDynamicSignature>.Closure x1 = linkings.closure(StringTypedName.of("x"));
+        final Linkings<DefaultDynamicSignature>.Closure x2 = linkings.closure(StringTypedName.of("x"));
+
+        BigraphComposite<DefaultDynamicSignature> x1Op = factory.asBigraphOperator(x1);
+        assertThrows(IncompatibleInterfaceException.class, () -> x1Op.juxtapose(x2));
+
+        final Linkings<DefaultDynamicSignature>.Closure x3 = linkings.closure(StringTypedName.of("y"));
+        assertAll(() -> {
+            BigraphComposite<DefaultDynamicSignature> juxtapose = x1Op.juxtapose(x3);
+            assertEquals(2, juxtapose.getOuterBigraph().getInnerNames().size());
+            assertEquals(2, juxtapose.getOuterBigraph().getInnerFace().getValue().size());
+        });
+
+
+        assertAll(() -> {
+
+            //a bigraph is composed with a closure resulting in a inner name rewriting of that bigraph
+            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+            BigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
+            BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
+            builderForG.createRoot().addChild(signature.getControlByName("User")).connectNodeToInnerName(zInner);
+            DynamicEcoreBigraph simpleBigraph = builderForG.createBigraph();
+            Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
+            BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(simpleBigraph);
+            BigraphComposite<DefaultDynamicSignature> compose1 = compose.compose(substitution);
+
+            assertFalse(compose1.getOuterBigraph().isGround());
+            assertEquals(1, compose1.getOuterBigraph().getInnerNames().size());
+            // name was overwritten
+            assertEquals("y", compose1.getOuterBigraph().getInnerNames().iterator().next().getName());
+            assertEquals(0, compose1.getOuterBigraph().getOuterNames().size());
+        });
+
+
+        assertAll(() -> {
+            Linkings<DefaultDynamicSignature>.Substitution a1 = linkings.substitution(StringTypedName.of("a"), StringTypedName.of("b"), StringTypedName.of("c"));
+            Linkings<DefaultDynamicSignature>.Substitution a2 = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("a"));
+            Bigraph<DefaultDynamicSignature> outerBigraph = factory.asBigraphOperator(a2).compose(a1).getOuterBigraph();
+            assertEquals(outerBigraph.getOuterNames().size(), 1);
+            assertEquals(outerBigraph.getInnerNames().size(), 2);
+            assertEquals(outerBigraph.getNodes().size(), 0);
+            assertEquals(outerBigraph.getRoots().size(), 0);
+            assertEquals(outerBigraph.getSites().size(), 0);
+            assertFalse(outerBigraph.isGround());
         });
     }
 

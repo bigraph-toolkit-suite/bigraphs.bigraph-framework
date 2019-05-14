@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
 import java.lang.reflect.Type;
@@ -51,6 +52,8 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
 
     public abstract Placings<S> createPlacings();
+
+    public abstract Linkings<S> createLinkings();
 
     /**
      * Create a composition object for a given bigraph which allows to compose bigraphs.

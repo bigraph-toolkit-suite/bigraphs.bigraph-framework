@@ -23,7 +23,14 @@ big g = (
 big bla1 = id(1) | Job;
 big bla2 = id(2) + {jeff2};
 big bla = bla1 + bla2;
+big bbb1 = (/y ( y/{z} || User{y}.1));
+big bbb2 = (z/{y});
+big bbb = bbb1 * bbb2;
+# inner name "z": /y ( y/{z} || User{y}.1)
 
+big aaa1 = a/{b,c};
+big aaa2 = x/{a};
+big aaa = aaa2 * aaa1;
 
 
 #big r = (Room.(Comp{network}) | Room.(Comp{network}));
