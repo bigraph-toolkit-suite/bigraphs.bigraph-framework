@@ -14,24 +14,74 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
 import guru.nidi.graphviz.attribute.Color;
+import guru.nidi.graphviz.attribute.Label;
+import guru.nidi.graphviz.attribute.Shape;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
+import lombok.Data;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
 public class Test {
     private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
+
+    @org.junit.jupiter.api.Test
+    void placegraph_export2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+        DynamicEcoreBigraph bigraph_a = createBigraph_A();
+
+        LabelSupplier labelSupplier = new DefaultLabelSupplier();
+        GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
+
+        MutableGraph graph = mutGraph("Place Graph").setDirected(true);
+
+        // create the data structure first
+        //TODO create another hashmap for the link graph
+        Map<String, Set<GraphVizLink>> graphMap = new HashMap<>();
+        bigraph_a.getNodes().forEach(
+                s -> graphMap.put(labelSupplier.with(s).get(), new HashSet<>())
+        );
+        bigraph_a.getRoots().forEach(
+                s -> graphMap.put(labelSupplier.with(s).get(), new HashSet<>())
+        );
+        bigraph_a.getSites().forEach(
+                s -> graphMap.put(labelSupplier.with(s).get(), new HashSet<>())
+        );
+
+        // connects children to parent
+        Consumer<BigraphEntity> nestingConsumer = t -> {
+            BigraphEntity parent = bigraph_a.getParent(t);
+            graphMap.get(labelSupplier.with(t).get()).add(
+                    new GraphVizLink(labelSupplier.with(parent).get(), "", t, parent)
+            );
+        };
+        bigraph_a.getNodes().forEach(nestingConsumer);
+        bigraph_a.getSites().forEach(nestingConsumer);
+
+        graphMap.forEach((key, targetSet) -> {
+            Shape shape = targetSet.size() != 0 ? shapeSupplier.with(((GraphVizLink) targetSet.toArray()[0]).getSourceEntity()).get() : Shape.CIRCLE;
+            Node node = node(key).with(shape);
+
+//            if (currentState.getId().name().equals(node.name().toString())) col = Color.RED;
+            Color finalCol = Color.BLACK;
+            targetSet.forEach(l -> graph.add(
+                    node.with(finalCol).link(Link.to(node(l.getTarget())).with(Label.of(l.getLabel().toLowerCase())))
+            ));
+        });
+
+        Graphviz.fromGraph(graph).render(Format.PNG).toFile(new File("test/resources/graphviz/ex13.png"));
+    }
 
     @org.junit.jupiter.api.Test
     void place_graph_export() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
@@ -149,6 +199,7 @@ public class Test {
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).connectNodeToInnerName(roomLink)
                 .withNewHierarchy()
+                .addSite()
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("Job"))
@@ -160,6 +211,7 @@ public class Test {
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
                 .withNewHierarchy()
+                .addSite()
                 .addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff2)
                 .goBack()
@@ -167,8 +219,8 @@ public class Test {
 
 //                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
         ;
-        builder.closeAllInnerNames();
-        builder.makeGround();
+//        builder.closeAllInnerNames();
+//        builder.makeGround();
 
         DynamicEcoreBigraph bigraph = builder.createBigraph();
         return bigraph;
@@ -176,7 +228,7 @@ public class Test {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -188,4 +240,11 @@ public class Test {
         return (S) defaultBuilder.create();
     }
 
+    @Data
+    private static class GraphVizLink {
+        private final String target;
+        private final String label;
+        private final BigraphEntity sourceEntity;
+        private final BigraphEntity targetEntity;
+    }
 }

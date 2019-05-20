@@ -1,0 +1,32 @@
+package de.tudresden.inf.st.bigraphs.visualization;
+
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+
+import java.util.Objects;
+
+public class DefaultLabelSupplier extends LabelSupplier {
+
+    DefaultLabelSupplier() {
+        super(null);
+    }
+
+    public DefaultLabelSupplier(BigraphEntity node) {
+        super(node);
+    }
+
+    @Override
+    public String get() {
+        if (Objects.isNull(getNode())) return "INVALID";
+        switch (getNode().getType()) {
+            case NODE:
+                BigraphEntity.NodeEntity node = (BigraphEntity.NodeEntity) getNode();
+                return node.getControl().getNamedType().stringValue() + "_" + node.getName();
+            case ROOT:
+                return "r_" + ((BigraphEntity.RootEntity) getNode()).getIndex();
+            case SITE:
+                return "s_" + ((BigraphEntity.SiteEntity) getNode()).getIndex();
+            default:
+                return "NONE";
+        }
+    }
+}
