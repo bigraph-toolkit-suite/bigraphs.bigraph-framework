@@ -4,7 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 
 import java.util.Objects;
 
-public class DefaultLabelSupplier extends LabelSupplier {
+public class DefaultLabelSupplier extends GraphicalFeatureSupplier<String> {
 
     DefaultLabelSupplier() {
         super(null);

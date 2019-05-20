@@ -41,7 +41,7 @@ public class Test {
     void placegraph_export2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         DynamicEcoreBigraph bigraph_a = createBigraph_A();
 
-        LabelSupplier labelSupplier = new DefaultLabelSupplier();
+        GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
         GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
 
         MutableGraph graph = mutGraph("Place Graph").setDirected(true);
