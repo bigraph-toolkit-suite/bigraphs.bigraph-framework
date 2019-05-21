@@ -25,6 +25,10 @@ public class DefaultLabelSupplier extends GraphicalFeatureSupplier<String> {
                 return "r_" + ((BigraphEntity.RootEntity) getNode()).getIndex();
             case SITE:
                 return "s_" + ((BigraphEntity.SiteEntity) getNode()).getIndex();
+            case OUTER_NAME:
+                return ((BigraphEntity.OuterName) getNode()).getName();
+            case INNER_NAME:
+                return ((BigraphEntity.InnerName) getNode()).getName();
             default:
                 return "NONE";
         }

@@ -9,17 +9,14 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
-import guru.nidi.graphviz.attribute.Color;
-import guru.nidi.graphviz.attribute.Label;
-import guru.nidi.graphviz.attribute.Shape;
+import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
@@ -41,16 +38,20 @@ public class Test {
     void placegraph_export2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         DynamicEcoreBigraph bigraph_a = createBigraph_A();
 
-        GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
-        GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
+        final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
+        final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
 
         MutableGraph graph = mutGraph("Place Graph").setDirected(true);
 
         // create the data structure first
         //TODO create another hashmap for the link graph
-        Map<String, Set<GraphVizLink>> graphMap = new HashMap<>();
+        final Map<String, Set<GraphVizLink>> graphMap = new HashMap<>();
+        final Map<String, Set<GraphVizLink>> graphLinkMap = new HashMap<>();
         bigraph_a.getNodes().forEach(
-                s -> graphMap.put(labelSupplier.with(s).get(), new HashSet<>())
+                s -> {
+                    graphMap.put(labelSupplier.with(s).get(), new HashSet<>());
+                    graphLinkMap.put(labelSupplier.with(s).get(), new HashSet<>());
+                }
         );
         bigraph_a.getRoots().forEach(
                 s -> graphMap.put(labelSupplier.with(s).get(), new HashSet<>())
@@ -69,6 +70,21 @@ public class Test {
         bigraph_a.getNodes().forEach(nestingConsumer);
         bigraph_a.getSites().forEach(nestingConsumer);
 
+        for (BigraphEntity.NodeEntity eachNodeLeft : bigraph_a.getNodes()) {
+            String labelLeft = labelSupplier.with(eachNodeLeft).get();
+            for (BigraphEntity.NodeEntity eachNodeRight : bigraph_a.getNodes()) {
+                String labelRight = labelSupplier.with(eachNodeRight).get();
+                if (!eachNodeLeft.equals(eachNodeRight) && bigraph_a.areConnected(eachNodeLeft, eachNodeRight)) {
+                    GraphVizLink graphVizLink = new GraphVizLink(labelRight, "", eachNodeLeft, eachNodeRight);
+                    if (graphLinkMap.get(labelRight).contains(new GraphVizLink(labelLeft, "", eachNodeLeft, eachNodeRight))) {
+                        continue;
+                    }
+                    graphLinkMap.get(labelLeft).add(graphVizLink);
+                }
+            }
+        }
+
+
         graphMap.forEach((key, targetSet) -> {
             Shape shape = targetSet.size() != 0 ? shapeSupplier.with(((GraphVizLink) targetSet.toArray()[0]).getSourceEntity()).get() : Shape.CIRCLE;
             Node node = node(key).with(shape);
@@ -80,15 +96,71 @@ public class Test {
             ));
         });
 
-        Graphviz.fromGraph(graph).render(Format.PNG).toFile(new File("test/resources/graphviz/ex13.png"));
+        graphLinkMap.forEach((key, targetSet) -> {
+            Node node = node(key);
+            targetSet.forEach(x -> {
+                graph.add(
+                        node.link(Link.to(node(x.getTarget())).with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE))
+                );
+            });
+        });
+
+
+        // make nicer graph (ranked, etc.)
+        //add outer names, same rank
+//        Collection<LinkSource> sameRankOuternames = new ArrayList<>();
+//        bigraph_a.getOuterNames().forEach(x -> {
+//            Node outerNameNode = node(labelSupplier.with(x).get());
+//            sameRankOuternames.add(outerNameNode);
+//            outerNameNode = outerNameNode.with(Shape.RECTANGLE, Color.GREEN);
+//            graph.add(outerNameNode);
+//        });
+//        Graph outerNameRankedGraph = graph().graphAttr().with(Rank.SAME).with(sameRankOuternames.toArray(new LinkSource[sameRankOuternames.size()]));
+
+        Graph outerNameRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getOuterNames().stream()
+                .map(x -> node(labelSupplier.with(x).get()).with(Shape.RECTANGLE, Color.GREEN))
+                .toArray(LinkSource[]::new));
+        Graph innerNameRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getInnerNames().stream()
+                .map(x -> node(labelSupplier.with(x).get()).with(Shape.RECTANGLE, Color.BLUE))
+                .toArray(LinkSource[]::new));
+
+        Graph rootsRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getRoots().stream()
+                .map(x -> node(labelSupplier.with(x).get()))
+                .toArray(LinkSource[]::new));
+
+        //TODO: solve ranking by bfs level by level
+        List<Graph> nodesRankedGraph = bigraph_a.getNodes().stream().map(x -> {
+            Collection<BigraphEntity> childrenOf = bigraph_a.getChildrenOf(x);
+            Collection<LinkSource> sameRankNodes = new ArrayList<>();
+            childrenOf.forEach(y -> sameRankNodes.add(node(labelSupplier.with(y).get())));
+            if (sameRankNodes.size() == 0) return null;
+            Graph with = graph().graphAttr().with(Rank.SAME).with(sameRankNodes.toArray(new LinkSource[sameRankNodes.size()]));
+            return with;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+        List<Graph> nodesRankedGraph2 = bigraph_a.getRoots().stream().map(x -> {
+            Collection<BigraphEntity> childrenOf = bigraph_a.getChildrenOf(x);
+            Collection<LinkSource> sameRankNodes = new ArrayList<>();
+            childrenOf.forEach(y -> sameRankNodes.add(node(labelSupplier.with(y).get())));
+            if (sameRankNodes.size() == 0) return null;
+            Graph with = graph().graphAttr().with(Rank.SAME).with(sameRankNodes.toArray(new LinkSource[sameRankNodes.size()]));
+            return with;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+//        );
+        Graph mega = graph()
+                .with(rootsRankedGraph).with(nodesRankedGraph2).with(nodesRankedGraph).with(outerNameRankedGraph).with(innerNameRankedGraph)
+                .with(graph);
+        Graphviz.fromGraph(mega).render(Format.PNG).toFile(new File("test/resources/graphviz/ex13.png"));
     }
 
     @org.junit.jupiter.api.Test
     void place_graph_export() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         DynamicEcoreBigraph bigraph_a = createBigraph_A();
-        List<BigraphEntity.NodeEntity<DefaultDynamicControl>> computerNodes = bigraph_a.getNodes().stream().filter(x -> {
-            return x.getControl().equals(bigraph_a.getSignature().getControlByName("Computer"));
-        }).collect(Collectors.toList());
+        List<BigraphEntity.NodeEntity<DefaultDynamicControl>> computerNodes = bigraph_a
+                .getNodes()
+                .stream()
+                .filter(x -> x.getControl().equals(bigraph_a.getSignature().getControlByName("Computer")))
+                .collect(Collectors.toList());
 
 //        for (BigraphEntity.NodeEntity a : computerNodes) {
 //            for (BigraphEntity.NodeEntity b : computerNodes) {
@@ -246,5 +318,19 @@ public class Test {
         private final String label;
         private final BigraphEntity sourceEntity;
         private final BigraphEntity targetEntity;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof GraphVizLink)) return false;
+            GraphVizLink that = (GraphVizLink) o;
+            return Objects.equals(target, that.target) &&
+                    Objects.equals(label, that.label);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(target, label);
+        }
     }
 }

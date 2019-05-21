@@ -210,21 +210,13 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
 
     protected boolean isBPort(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
-//        return eObject.eClass().getClassifierID() ==
-//                (((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT)).getClassifierID() ||
-//                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT));
     }
 
     protected boolean isBPoint(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_POINT);
-//        return eObject.eClass().getClassifierID() ==
-//                (((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_POINT)).getClassifierID() ||
-//                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_POINT));
     }
 
     protected boolean isBNode(EObject eObject) {
-//        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE)) ||
-//                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE));
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_NODE);
     }
 
@@ -235,6 +227,7 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
     protected boolean isBEdge(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
     }
+
     //works only for elements of the calling class
     protected boolean isOfEClass(EObject eObject, String eClassifier) {
         return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
