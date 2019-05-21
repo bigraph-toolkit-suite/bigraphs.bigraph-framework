@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.visualization;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static guru.nidi.graphviz.model.Factory.*;
@@ -107,16 +109,6 @@ public class Test {
 
 
         // make nicer graph (ranked, etc.)
-        //add outer names, same rank
-//        Collection<LinkSource> sameRankOuternames = new ArrayList<>();
-//        bigraph_a.getOuterNames().forEach(x -> {
-//            Node outerNameNode = node(labelSupplier.with(x).get());
-//            sameRankOuternames.add(outerNameNode);
-//            outerNameNode = outerNameNode.with(Shape.RECTANGLE, Color.GREEN);
-//            graph.add(outerNameNode);
-//        });
-//        Graph outerNameRankedGraph = graph().graphAttr().with(Rank.SAME).with(sameRankOuternames.toArray(new LinkSource[sameRankOuternames.size()]));
-
         Graph outerNameRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getOuterNames().stream()
                 .map(x -> node(labelSupplier.with(x).get()).with(Shape.RECTANGLE, Color.GREEN))
                 .toArray(LinkSource[]::new));
@@ -124,33 +116,55 @@ public class Test {
                 .map(x -> node(labelSupplier.with(x).get()).with(Shape.RECTANGLE, Color.BLUE))
                 .toArray(LinkSource[]::new));
 
-        Graph rootsRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getRoots().stream()
-                .map(x -> node(labelSupplier.with(x).get()))
-                .toArray(LinkSource[]::new));
+//        Graph rootsRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getRoots().stream()
+//                .map(x -> node(labelSupplier.with(x).get()))
+//                .toArray(LinkSource[]::new));
 
-        //TODO: solve ranking by bfs level by level
-        List<Graph> nodesRankedGraph = bigraph_a.getNodes().stream().map(x -> {
-            Collection<BigraphEntity> childrenOf = bigraph_a.getChildrenOf(x);
-            Collection<LinkSource> sameRankNodes = new ArrayList<>();
-            childrenOf.forEach(y -> sameRankNodes.add(node(labelSupplier.with(y).get())));
-            if (sameRankNodes.size() == 0) return null;
-            Graph with = graph().graphAttr().with(Rank.SAME).with(sameRankNodes.toArray(new LinkSource[sameRankNodes.size()]));
-            return with;
-        }).filter(Objects::nonNull).collect(Collectors.toList());
-        List<Graph> nodesRankedGraph2 = bigraph_a.getRoots().stream().map(x -> {
-            Collection<BigraphEntity> childrenOf = bigraph_a.getChildrenOf(x);
-            Collection<LinkSource> sameRankNodes = new ArrayList<>();
-            childrenOf.forEach(y -> sameRankNodes.add(node(labelSupplier.with(y).get())));
-            if (sameRankNodes.size() == 0) return null;
-            Graph with = graph().graphAttr().with(Rank.SAME).with(sameRankNodes.toArray(new LinkSource[sameRankNodes.size()]));
-            return with;
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        // collect node heights first
+        Map<BigraphEntity, Integer> levelMap = new HashMap<>();
+        for (BigraphEntity eachRoot : bigraph_a.getRoots()) {
+            levelMap.put(eachRoot, 0);
+        }
+        for (BigraphEntity eachNode : bigraph_a.getNodes()) {
+            int levelUtil = getLevelUtil(bigraph_a, eachNode, 0);
+            levelMap.put(eachNode, levelUtil);
+        }
+        for (BigraphEntity eachSite : bigraph_a.getSites()) {
+            int levelUtil = getLevelUtil(bigraph_a, eachSite, 0);
+            levelMap.put(eachSite, levelUtil);
+        }
+        Map<Integer, List<BigraphEntity>> collect = levelMap.entrySet().stream().collect(Collectors.groupingBy(
+                Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
+        // created ranked node graph
+        List<Graph> nodesRankedGraph = collect.values().stream().map(bigraphEntities ->
+                graph().graphAttr().with(Rank.SAME).with(
+                        bigraphEntities.stream()
+                                .map(x -> node(labelSupplier.with(x).get()))
+                                .toArray(LinkSource[]::new)))
+                .collect(Collectors.toList());
+
+
+        //stream map (hierarchy level) groupBy
 
 //        );
         Graph mega = graph()
-                .with(rootsRankedGraph).with(nodesRankedGraph2).with(nodesRankedGraph).with(outerNameRankedGraph).with(innerNameRankedGraph)
+//                .with(rootsRankedGraph)
+//                .with(nodesRankedGraph)
+                .with(nodesRankedGraph).with(outerNameRankedGraph).with(innerNameRankedGraph)
                 .with(graph);
         Graphviz.fromGraph(mega).render(Format.PNG).toFile(new File("test/resources/graphviz/ex13.png"));
+    }
+
+    //TODO just calculate how many steps must be taken to get t
+    int getLevelUtil(Bigraph<?> bigraph, BigraphEntity data, int level) {
+        BigraphEntity parent = bigraph.getParent(data);
+        if (data == null || parent == null || BigraphEntityType.isRoot(parent) && level != 0)
+            return level + 1;
+        if (BigraphEntityType.isRoot(parent) && level == 0) {
+            return 1;
+        }
+        return getLevelUtil(bigraph, parent, level + 1);
     }
 
     @org.junit.jupiter.api.Test
@@ -200,6 +214,7 @@ public class Test {
 
             return childrenOf;
         });
+
 
 //        for (MutableGraph g : graphList)
 //        g.use((gr, ctc) -> {
