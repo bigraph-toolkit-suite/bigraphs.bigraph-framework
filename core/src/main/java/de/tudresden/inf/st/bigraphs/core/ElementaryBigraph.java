@@ -76,6 +76,23 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
         }
     }
 
+    /**
+     * Always returns {@code null}, since elementary bigraphs are node-free bigraphs
+     *
+     * @param port not considered
+     * @param <C>  not considered
+     * @return {@code null} is returned in every case
+     */
+    @Override
+    public <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
+        return null;
+    }
+
+    @Override
+    public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
+        return Collections.EMPTY_LIST;
+    }
+
     protected boolean isBLink(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_LINK);
     }
@@ -83,6 +100,7 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
     protected boolean isBEdge(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
     }
+
     //works only for elements of the calling class
     protected boolean isOfEClass(EObject eObject, String eClassifier) {
         return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||

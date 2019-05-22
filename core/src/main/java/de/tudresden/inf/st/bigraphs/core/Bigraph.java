@@ -34,11 +34,6 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         );
     }
 
-//    Collection<BigraphEntity.Edge> getEdges();
-//    <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
-    //without sites
-//    Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
-
     /**
      * Prime bigraph has only one root and no inner names.
      *
@@ -76,6 +71,15 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     BigraphEntity getLink(BigraphEntity node);
 
     Collection<BigraphEntity.Port> getPorts(BigraphEntity node);
+
+    <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port);
+
+    /**
+     * get all point entities (i.e., ports and inner names) from a link entity (edges and outer names)
+     * @param linkEntity
+     * @return
+     */
+    Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity);
 
     boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2);
 

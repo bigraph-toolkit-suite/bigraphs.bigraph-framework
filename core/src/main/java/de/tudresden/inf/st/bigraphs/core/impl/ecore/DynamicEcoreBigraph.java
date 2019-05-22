@@ -103,6 +103,17 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
     }
 
     @Override
+    public BigraphEntity.NodeEntity<DefaultDynamicControl> getNodeOfPort(BigraphEntity.Port port) {
+        if (Objects.isNull(port)) return null;
+        EObject instance = port.getInstance();
+        EStructuralFeature nodeRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
+        if (Objects.isNull(nodeRef)) return null;
+        EObject nodeObject = (EObject) instance.eGet(nodeRef);
+        Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> first = getNodes().stream().filter(x -> x.getInstance().equals(nodeObject)).findFirst();
+        return first.orElse(null);
+    }
+
+    @Override
     public Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
         if (!BigraphEntityType.isNode(node)) return Collections.EMPTY_LIST;
         EObject instance = node.getInstance();
@@ -115,6 +126,32 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
             portsList.add(port);
         }
         return portsList;
+    }
+
+    @Override
+    public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
+        if (Objects.isNull(linkEntity) || !isBLink(linkEntity.getInstance()))
+            return Collections.EMPTY_LIST;
+        final EObject eObject = linkEntity.getInstance();
+        final EStructuralFeature pointsRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+        if (Objects.isNull(pointsRef)) return Collections.EMPTY_LIST;
+        final EList<EObject> pointsObjects = (EList<EObject>) eObject.eGet(pointsRef);
+        if (Objects.isNull(pointsObjects)) return Collections.EMPTY_LIST;
+
+        final Collection<BigraphEntity> result = new ArrayList<>();
+        for (EObject eachObject : pointsObjects) {
+            if (isBPort(eachObject)) {
+                Optional<BigraphEntity.Port> first = getNodes().stream()
+                        .map(this::getPorts).flatMap(Collection::stream)
+                        .filter(x -> x.getInstance().equals(eachObject))
+                        .findFirst();
+                first.ifPresent(result::add);
+            } else if (isBInnerName(eachObject)) {
+                Optional<BigraphEntity.InnerName> first = getInnerNames().stream().filter(x -> x.getInstance().equals(eachObject)).findFirst();
+                first.ifPresent(result::add);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -210,6 +247,10 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
 
     protected boolean isBPort(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
+    }
+
+    protected boolean isBInnerName(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_INNERNAME);
     }
 
     protected boolean isBPoint(EObject eObject) {
