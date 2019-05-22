@@ -98,6 +98,11 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
+    public Collection<BigraphEntity> getAllPlaces() {
+        return bigraphDelegate.getAllPlaces();
+    }
+
+    @Override
     public Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
         return bigraphDelegate.getPorts(node);
     }

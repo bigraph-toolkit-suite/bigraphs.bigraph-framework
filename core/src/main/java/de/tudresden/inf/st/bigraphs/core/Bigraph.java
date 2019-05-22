@@ -56,6 +56,13 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
     Collection<BigraphEntity.InnerName> getInnerNames();
 
+    /**
+     * Returns all places of the bigraph, i.e., roots, nodes and sites.
+     *
+     * @return all places of the bigraph
+     */
+    Collection<BigraphEntity> getAllPlaces();
+
     Collection<BigraphEntity.Edge> getEdges();
 
     <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
@@ -66,6 +73,13 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         return getInnerNames().size() == 0 && getSites().size() == 0;
     }
 
+    /**
+     * Get the parent of a bigraph's place. Passing a root as argument will
+     * always return {@code null}.
+     *
+     * @param node a place of this bigraph
+     * @return the parent of the given place, or {@code null}
+     */
     BigraphEntity getParent(BigraphEntity node);
 
     BigraphEntity getLink(BigraphEntity node);
@@ -76,6 +90,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
     /**
      * get all point entities (i.e., ports and inner names) from a link entity (edges and outer names)
+     *
      * @param linkEntity
      * @return
      */

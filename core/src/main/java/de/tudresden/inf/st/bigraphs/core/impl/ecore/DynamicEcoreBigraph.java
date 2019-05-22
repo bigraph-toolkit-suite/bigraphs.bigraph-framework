@@ -75,6 +75,14 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
     }
 
     @Override
+    public Collection<BigraphEntity> getAllPlaces() {
+        Collection<BigraphEntity> list = new ArrayList<>(roots);
+        list.addAll(nodes);
+        list.addAll(sites);
+        return list;
+    }
+
+    @Override
     public Collection<BigraphEntity.Edge> getEdges() {
         return this.edges;
     }
@@ -97,7 +105,7 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
                 return rootEntity.orElse(null);
             }
         }
-        return node;
+        return null;
 
 
     }

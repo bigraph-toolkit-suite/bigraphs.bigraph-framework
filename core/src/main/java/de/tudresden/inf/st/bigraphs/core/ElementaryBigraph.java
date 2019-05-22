@@ -76,6 +76,11 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
         }
     }
 
+    @Override
+    public Collection<BigraphEntity> getAllPlaces() {
+        return Collections.EMPTY_LIST;
+    }
+
     /**
      * Always returns {@code null}, since elementary bigraphs are node-free bigraphs
      *

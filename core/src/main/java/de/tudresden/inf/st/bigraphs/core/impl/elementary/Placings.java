@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.IntStream;
@@ -94,6 +95,16 @@ public class Placings<S extends Signature> implements Serializable {
             return null;
         }
 
+        /**
+         * Returns the single root of this barren.
+         *
+         * @return the barren's root
+         */
+        @Override
+        public Collection<BigraphEntity> getAllPlaces() {
+            return Collections.singletonList(root);
+        }
+
         @Override
         public EPackage getModelPackage() {
             return loadedModelPacakge;
@@ -124,6 +135,19 @@ public class Placings<S extends Signature> implements Serializable {
         @Override
         public final Collection<BigraphEntity.SiteEntity> getSites() {
             return sites;
+        }
+
+        /**
+         * Returns the single root and the two sites of this join.
+         *
+         * @return the join's root and two children
+         */
+        @Override
+        public Collection<BigraphEntity> getAllPlaces() {
+            Collection<BigraphEntity> list = new ArrayList<>();
+            list.add(root);
+            list.addAll(sites);
+            return list;
         }
 
         @Override
@@ -160,6 +184,19 @@ public class Placings<S extends Signature> implements Serializable {
         @Override
         public final Collection<BigraphEntity.SiteEntity> getSites() {
             return sites;
+        }
+
+        /**
+         * Returns the single root and the {@code n} sites of this merge.
+         *
+         * @return the merge's root and {@code n} sites
+         */
+        @Override
+        public Collection<BigraphEntity> getAllPlaces() {
+            Collection<BigraphEntity> list = new ArrayList<>();
+            list.add(root);
+            list.addAll(sites);
+            return list;
         }
 
         @Override
