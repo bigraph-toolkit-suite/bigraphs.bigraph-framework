@@ -32,7 +32,7 @@ public class DefaultColorSupplier extends GraphicalFeatureSupplier<Color> {
             case OUTER_NAME:
                 return Color.GREEN;
             case EDGE:
-                return Color.WHITE;
+                return Color.GREEN;
             default:
                 return DEFAULT_COLOR;
         }
