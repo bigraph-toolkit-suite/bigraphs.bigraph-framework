@@ -85,7 +85,6 @@ public class Test {
         Map<Integer, List<BigraphEntity>> collect = levelMap.entrySet().stream().collect(Collectors.groupingBy(
                 Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
         // created ranked node graph
-
         // not necessary now to specify the appearance of the nodes. will be done later
         theGraph.add(collect.values().stream().map(bigraphEntities ->
                 graph().graphAttr().with(Rank.SAME).with(
@@ -93,7 +92,6 @@ public class Test {
                                 .map(x -> node(labelSupplier.with(x).get()))
                                 .toArray(LinkSource[]::new)))
                 .collect(Collectors.toList()));
-
         // make nicer graph (ranked, etc.)
         List<BigraphEntity> allLinks = new LinkedList<>();
         allLinks.addAll(bigraph_a.getOuterNames());
@@ -106,25 +104,24 @@ public class Test {
                         .toArray(LinkSource[]::new))
 
         );
-
-        allLinks.clear();
-        allLinks.addAll(bigraph_a.getInnerNames());
+        List<BigraphEntity> allPoints = new LinkedList<>(bigraph_a.getInnerNames());
 //        allLinks.addAll(bigraph_a.getEdges());
         theGraph.add(
-                graph().graphAttr().with(Rank.SOURCE).with(allLinks.stream()
-                        .map(x -> node(labelSupplier.with(x).get())
-                                .with(shapeSupplier.with(x).get())
-                                .with("style", "rounded")
-                                .with("color", "black")
-                                .with("fillcolor", colorSupplier.with(x).get())
+                graph().graphAttr().with(Rank.SOURCE).with(allPoints.stream()
+                                .map(x -> node(labelSupplier.with(x).get())
+                                                .with(shapeSupplier.with(x).get())
+//                                .with("style", "rounded")
+//                                .with("color", "black")
+//                                .with("fillcolor", colorSupplier.with(x).get())
 
 
-                        )
-                        .toArray(LinkSource[]::new)
+                                )
+                                .toArray(LinkSource[]::new)
                 )
         );
 
 
+        //HIERARCHY
         // Create node hieararchy for the Graph
         graphMap.forEach((key, targetSet) -> {
             Shape shape = targetSet.size() != 0 ? shapeSupplier.with(((GraphVizLink) targetSet.toArray()[0]).getSourceEntity()).get() : Shape.CIRCLE;
@@ -143,20 +140,21 @@ public class Test {
         Collection<BigraphEntity.Edge> edges = bigraph_a.getEdges();
 
         // now we consider outer name graphviz edges
+        // outer names are connected with inner names or nodes (respective ports)
         for (BigraphEntity.OuterName eachOuterName : bigraph_a.getOuterNames()) {
             Collection<BigraphEntity> pointsFromLink = bigraph_a.getPointsFromLink(eachOuterName);
             Node grOuter = node(labelSupplier.with(eachOuterName).get())
                     .with(shapeSupplier.with(eachOuterName).get(), colorSupplier.with(eachOuterName).get());
-            for (BigraphEntity each : pointsFromLink) {
-                switch (each.getType()) {
+            for (BigraphEntity point : pointsFromLink) {
+                switch (point.getType()) {
                     case PORT:
-                        BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph_a.getNodeOfPort((BigraphEntity.Port) each);
+                        BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph_a.getNodeOfPort((BigraphEntity.Port) point);
                         Node grNode = node(labelSupplier.with(nodeOfPort).get());
-                        theGraph.add(grNode.link(Link.to(grOuter))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
+                        theGraph.add(grNode.link(Link.to(grOuter).with(Style.DIAGONALS, Color.GREEN))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
                         break;
                     case INNER_NAME:
-                        Node grInner = node(labelSupplier.with(each).get()); //.with(Shape.RECTANGLE, Color.BLUE);
-                        theGraph.add(grInner.link(Link.to(grOuter))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
+                        Node grInner = node(labelSupplier.with(point).get()); //.with(Shape.RECTANGLE, Color.BLUE);
+                        theGraph.add(grInner.link(grOuter)); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
                         break;
                 }
             }
@@ -166,30 +164,35 @@ public class Test {
         //TODO: directly connect nodes together if ports == 1
         for (BigraphEntity.Edge eachEdge : edges) {
             // edges for graphviz are created as "hidden nodes"
-            Node hiddenEdgeNode = node(labelSupplier.with(eachEdge).get()).with(Shape.POINT);
+            final Node hiddenEdgeNode = node(labelSupplier.with(eachEdge).get()).with(Shape.POINT);
             //find the nodes that are connected to it
             Collection<BigraphEntity> pointsFromLink = bigraph_a.getPointsFromLink(eachEdge);
-            if (pointsFromLink.size() != 0) {
-                //if inner name: create new node
-                for (BigraphEntity eachPointNode : pointsFromLink) {
-                    switch (eachPointNode.getType()) {
-                        case INNER_NAME:
-                            Node grInner = node(labelSupplier.with(eachPointNode).get());
-                            theGraph.add(hiddenEdgeNode.link(
-                                    Link.to(grInner)));
+//            if (pointsFromLink.size() != 0) {
+            //if inner name: create new node
+            for (BigraphEntity point : pointsFromLink) {
+                switch (point.getType()) {
+                    case PORT:
+                        BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph_a.getNodeOfPort((BigraphEntity.Port) point);
+                        Node grNode = node(labelSupplier.with(nodeOfPort).get())
+                                .link(Link.to(hiddenEdgeNode).with(Style.FILLED, Color.GREEN));
+                        theGraph.add(grNode); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
+                        break;
+                    case INNER_NAME:
+                        Node grInner = node(labelSupplier.with(point).get());
+                        theGraph.add(hiddenEdgeNode.link(
+                                grInner));
 //                                            .with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)
 //                            ));
-                            break;
-                        case PORT:
-                            BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph_a.getNodeOfPort((BigraphEntity.Port) eachPointNode);
-                            Node grNode = node(labelSupplier.with(nodeOfPort).get());
-                            theGraph.add(grNode.link(Link.to(hiddenEdgeNode))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
-                            break;
-                    }
+                        break;
                 }
             }
+//            }
         }
 
+
+//        theGraph.add(node("Job_v4").link(Link.to(node("Job_v2"))));
+//        theGraph.add(node("Job_v2").link(Link.to(node("Job_v3"))));
+//        theGraph.add(node("qq2").link(node("aa2")));
 
 
         ;
