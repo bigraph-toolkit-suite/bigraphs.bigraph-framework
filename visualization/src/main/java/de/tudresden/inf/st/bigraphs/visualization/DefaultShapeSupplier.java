@@ -25,7 +25,12 @@ public class DefaultShapeSupplier extends GraphicalFeatureSupplier<Shape> {
             case NODE:
                 return Shape.RECTANGLE;
             case SITE:
-                return Shape.DIAMOND;
+                return Shape.RECTANGLE;
+            case INNER_NAME:
+            case OUTER_NAME:
+                return Shape.RECTANGLE;
+            case EDGE:
+                return Shape.POINT;
             default:
                 return DEFAULT_SHAPE;
         }

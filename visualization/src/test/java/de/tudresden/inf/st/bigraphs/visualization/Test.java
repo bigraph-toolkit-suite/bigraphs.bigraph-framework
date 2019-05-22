@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static guru.nidi.graphviz.model.Factory.*;
@@ -38,15 +37,14 @@ public class Test {
 
     @org.junit.jupiter.api.Test
     void placegraph_export2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        DynamicEcoreBigraph bigraph_a = createBigraph_A();
+        DynamicEcoreBigraph bigraph_a = createBigraph_b();
 
         final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
         final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
+        final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
 
-        MutableGraph graph = mutGraph("Place Graph").setDirected(true);
 
-        // create the data structure first
-        //TODO create another hashmap for the link graph
+        // create the data structure first for creating the node hierarchy
         final Map<String, Set<GraphVizLink>> graphMap = new HashMap<>();
         final Map<String, Set<GraphVizLink>> graphLinkMap = new HashMap<>();
         bigraph_a.getNodes().forEach(
@@ -72,99 +70,142 @@ public class Test {
         bigraph_a.getNodes().forEach(nestingConsumer);
         bigraph_a.getSites().forEach(nestingConsumer);
 
-        for (BigraphEntity.NodeEntity eachNodeLeft : bigraph_a.getNodes()) {
-            String labelLeft = labelSupplier.with(eachNodeLeft).get();
-            for (BigraphEntity.NodeEntity eachNodeRight : bigraph_a.getNodes()) {
-                String labelRight = labelSupplier.with(eachNodeRight).get();
-                if (!eachNodeLeft.equals(eachNodeRight) && bigraph_a.areConnected(eachNodeLeft, eachNodeRight)) {
-                    GraphVizLink graphVizLink = new GraphVizLink(labelRight, "", eachNodeLeft, eachNodeRight);
-                    if (graphLinkMap.get(labelRight).contains(new GraphVizLink(labelLeft, "", eachNodeLeft, eachNodeRight))) {
-                        continue;
-                    }
-                    graphLinkMap.get(labelLeft).add(graphVizLink);
-                }
-            }
+        MutableGraph theGraph = mutGraph("Edge Graph").setDirected(false).graphAttrs().add(RankDir.BOTTOM_TO_TOP);
+//        MutableGraph graph = mutGraph("Place Graph").setDirected(false);
+
+
+        //RANK NODES FIRST
+        // collect node heights first
+        Map<BigraphEntity, Integer> levelMap = new HashMap<>();
+        for (BigraphEntity each : bigraph_a.getAllPlaces()) {
+            int levelUtil = getNodeHeight(bigraph_a, each, 0);
+            levelMap.put(each, levelUtil);
         }
 
+        Map<Integer, List<BigraphEntity>> collect = levelMap.entrySet().stream().collect(Collectors.groupingBy(
+                Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
+        // created ranked node graph
 
+        // not necessary now to specify the appearance of the nodes. will be done later
+        theGraph.add(collect.values().stream().map(bigraphEntities ->
+                graph().graphAttr().with(Rank.SAME).with(
+                        bigraphEntities.stream()
+                                .map(x -> node(labelSupplier.with(x).get()))
+                                .toArray(LinkSource[]::new)))
+                .collect(Collectors.toList()));
+
+        // make nicer graph (ranked, etc.)
+        List<BigraphEntity> allLinks = new LinkedList<>();
+        allLinks.addAll(bigraph_a.getOuterNames());
+//        allLinks.addAll(bigraph_a.getEdges());
+        theGraph.add(
+                graph().graphAttr().with(Rank.SINK).with(allLinks.stream()
+                        .map(x -> node(labelSupplier.with(x).get())
+                                .with(shapeSupplier.with(x).get(), colorSupplier.with(x).get())
+                        )
+                        .toArray(LinkSource[]::new))
+
+        );
+
+        allLinks.clear();
+        allLinks.addAll(bigraph_a.getInnerNames());
+//        allLinks.addAll(bigraph_a.getEdges());
+        theGraph.add(
+                graph().graphAttr().with(Rank.SOURCE).with(allLinks.stream()
+                        .map(x -> node(labelSupplier.with(x).get())
+                                .with(shapeSupplier.with(x).get())
+                                .with("style", "rounded")
+                                .with("color", "black")
+                                .with("fillcolor", colorSupplier.with(x).get())
+
+
+                        )
+                        .toArray(LinkSource[]::new)
+                )
+        );
+
+
+        // Create node hieararchy for the Graph
         graphMap.forEach((key, targetSet) -> {
             Shape shape = targetSet.size() != 0 ? shapeSupplier.with(((GraphVizLink) targetSet.toArray()[0]).getSourceEntity()).get() : Shape.CIRCLE;
             Node node = node(key).with(shape);
 
 //            if (currentState.getId().name().equals(node.name().toString())) col = Color.RED;
             Color finalCol = Color.BLACK;
-            targetSet.forEach(l -> graph.add(
-                    node.with(finalCol).link(Link.to(node(l.getTarget())).with(Label.of(l.getLabel().toLowerCase())))
+            targetSet.forEach(l -> theGraph.add(
+                    node.with(colorSupplier.with(l.getSourceEntity()).get(), shapeSupplier.with(l.getSourceEntity()).get())
+                            .link(Link.to(node(l.getTarget())).with(Label.of(l.getLabel().toLowerCase())))
             ));
         });
 
-        graphLinkMap.forEach((key, targetSet) -> {
-            Node node = node(key);
-            targetSet.forEach(x -> {
-                graph.add(
-                        node.link(Link.to(node(x.getTarget())).with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE))
-                );
-            });
-        });
 
+        // this creates hyperedges for nodes and inner names
+        Collection<BigraphEntity.Edge> edges = bigraph_a.getEdges();
 
-        // make nicer graph (ranked, etc.)
-        Graph outerNameRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getOuterNames().stream()
-                .map(x -> node(labelSupplier.with(x).get()).with(Shape.RECTANGLE, Color.GREEN))
-                .toArray(LinkSource[]::new));
-        Graph innerNameRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getInnerNames().stream()
-                .map(x -> node(labelSupplier.with(x).get()).with(Shape.RECTANGLE, Color.BLUE))
-                .toArray(LinkSource[]::new));
-
-//        Graph rootsRankedGraph = graph().graphAttr().with(Rank.SAME).with(bigraph_a.getRoots().stream()
-//                .map(x -> node(labelSupplier.with(x).get()))
-//                .toArray(LinkSource[]::new));
-
-
-        // collect node heights first
-        Map<BigraphEntity, Integer> levelMap = new HashMap<>();
-        for (BigraphEntity eachRoot : bigraph_a.getRoots()) {
-            levelMap.put(eachRoot, 0);
+        // now we consider outer name graphviz edges
+        for (BigraphEntity.OuterName eachOuterName : bigraph_a.getOuterNames()) {
+            Collection<BigraphEntity> pointsFromLink = bigraph_a.getPointsFromLink(eachOuterName);
+            Node grOuter = node(labelSupplier.with(eachOuterName).get())
+                    .with(shapeSupplier.with(eachOuterName).get(), colorSupplier.with(eachOuterName).get());
+            for (BigraphEntity each : pointsFromLink) {
+                switch (each.getType()) {
+                    case PORT:
+                        BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph_a.getNodeOfPort((BigraphEntity.Port) each);
+                        Node grNode = node(labelSupplier.with(nodeOfPort).get());
+                        theGraph.add(grNode.link(Link.to(grOuter))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
+                        break;
+                    case INNER_NAME:
+                        Node grInner = node(labelSupplier.with(each).get()); //.with(Shape.RECTANGLE, Color.BLUE);
+                        theGraph.add(grInner.link(Link.to(grOuter))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
+                        break;
+                }
+            }
         }
-        for (BigraphEntity eachNode : bigraph_a.getNodes()) {
-            int levelUtil = getLevelUtil(bigraph_a, eachNode, 0);
-            levelMap.put(eachNode, levelUtil);
+
+
+        //TODO: directly connect nodes together if ports == 1
+        for (BigraphEntity.Edge eachEdge : edges) {
+            // edges for graphviz are created as "hidden nodes"
+            Node hiddenEdgeNode = node(labelSupplier.with(eachEdge).get()).with(Shape.POINT);
+            //find the nodes that are connected to it
+            Collection<BigraphEntity> pointsFromLink = bigraph_a.getPointsFromLink(eachEdge);
+            if (pointsFromLink.size() != 0) {
+                //if inner name: create new node
+                for (BigraphEntity eachPointNode : pointsFromLink) {
+                    switch (eachPointNode.getType()) {
+                        case INNER_NAME:
+                            Node grInner = node(labelSupplier.with(eachPointNode).get());
+                            theGraph.add(hiddenEdgeNode.link(
+                                    Link.to(grInner)));
+//                                            .with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)
+//                            ));
+                            break;
+                        case PORT:
+                            BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph_a.getNodeOfPort((BigraphEntity.Port) eachPointNode);
+                            Node grNode = node(labelSupplier.with(nodeOfPort).get());
+                            theGraph.add(grNode.link(Link.to(hiddenEdgeNode))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
+                            break;
+                    }
+                }
+            }
         }
-        for (BigraphEntity eachSite : bigraph_a.getSites()) {
-            int levelUtil = getLevelUtil(bigraph_a, eachSite, 0);
-            levelMap.put(eachSite, levelUtil);
-        }
-        Map<Integer, List<BigraphEntity>> collect = levelMap.entrySet().stream().collect(Collectors.groupingBy(
-                Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
-        // created ranked node graph
-        List<Graph> nodesRankedGraph = collect.values().stream().map(bigraphEntities ->
-                graph().graphAttr().with(Rank.SAME).with(
-                        bigraphEntities.stream()
-                                .map(x -> node(labelSupplier.with(x).get()))
-                                .toArray(LinkSource[]::new)))
-                .collect(Collectors.toList());
 
 
-        //stream map (hierarchy level) groupBy
 
-//        );
-        Graph mega = graph()
-//                .with(rootsRankedGraph)
-//                .with(nodesRankedGraph)
-                .with(nodesRankedGraph).with(outerNameRankedGraph).with(innerNameRankedGraph)
-                .with(graph);
-        Graphviz.fromGraph(mega).render(Format.PNG).toFile(new File("test/resources/graphviz/ex13.png"));
+        ;
+        System.out.println(theGraph.toString());
+        Graphviz.fromGraph(theGraph).render(Format.PNG).toFile(new File("test/resources/graphviz/ex13.png"));
     }
 
-    //TODO just calculate how many steps must be taken to get t
-    int getLevelUtil(Bigraph<?> bigraph, BigraphEntity data, int level) {
+    //TODO move into bigraph
+    int getNodeHeight(Bigraph<?> bigraph, BigraphEntity data, int level) {
         BigraphEntity parent = bigraph.getParent(data);
-        if (data == null || parent == null || BigraphEntityType.isRoot(parent) && level != 0)
-            return level + 1;
+        if (data == null || parent == null) //|| BigraphEntityType.isRoot(parent))
+            return level;
         if (BigraphEntityType.isRoot(parent) && level == 0) {
             return 1;
         }
-        return getLevelUtil(bigraph, parent, level + 1);
+        return getNodeHeight(bigraph, parent, level + 1);
     }
 
     @org.junit.jupiter.api.Test
@@ -311,7 +352,43 @@ public class Test {
 
         DynamicEcoreBigraph bigraph = builder.createBigraph();
         return bigraph;
+    }
 
+    public DynamicEcoreBigraph createBigraph_b() throws
+            LinkTypeNotExistsException, InvalidConnectionException, IOException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
+        BigraphEntity.InnerName spoolLink = builder.createInnerName("tmp_spoolLink");
+        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
+        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
+
+        builder.createRoot()
+                .addChild(signature.getControlByName("Room")).connectNodeToInnerName(roomLink)
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Printer")).connectNodeToInnerName(spoolLink).connectNodeToOuterName(b1)
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+                .goBack()
+                .goBack()
+
+                .addChild(signature.getControlByName("Room")).connectNodeToInnerName(roomLink)
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .withNewHierarchy().addSite().addChild(signature.getControlByName("Spool")).connectNodeToInnerName(spoolLink)
+                .goBack()
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff2)
+                .goBack()
+        ;
+        builder.closeInnerName(roomLink);
+        builder.closeInnerName(spoolLink);
+//        builder.closeAllInnerNames();
+//        builder.makeGround();
+
+        DynamicEcoreBigraph bigraph = builder.createBigraph();
+        return bigraph;
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {

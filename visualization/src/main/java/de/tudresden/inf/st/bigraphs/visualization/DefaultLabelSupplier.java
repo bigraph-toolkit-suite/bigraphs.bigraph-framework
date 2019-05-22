@@ -29,6 +29,8 @@ public class DefaultLabelSupplier extends GraphicalFeatureSupplier<String> {
                 return ((BigraphEntity.OuterName) getNode()).getName();
             case INNER_NAME:
                 return ((BigraphEntity.InnerName) getNode()).getName();
+            case EDGE:
+                return ((BigraphEntity.Edge) getNode()).getName();
             default:
                 return "NONE";
         }
