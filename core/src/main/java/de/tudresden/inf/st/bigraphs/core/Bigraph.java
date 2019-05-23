@@ -12,13 +12,45 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Generic bigraph interface of all bigraph entities in this framework.
+ * <p>
+ * Important direct implementations are:
+ * <ul>
+ * <li>{@link de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph}</li>
+ * <li>{@link BigraphDelegator}</li>
+ * <li>{@link ElementaryBigraph}</li>
+ * </ul>
+ *
+ * @param <S> type of the signature
+ */
 public interface Bigraph<S extends Signature> extends HasSignature<S> {
-    /**
-     * Get the respective signature of the current bigraph
-     *
-     * @return the signature of the bigraph
-     */
+
     S getSignature();
+
+    /**
+     * Checks, if the bigraph is ground, that is, whether the inner interface is empty (no sites and no inner names).
+     *
+     * @return {@code true}, if the bigraph is ground, otherwise {@code false}
+     */
+    default boolean isGround() {
+        return getInnerNames().size() == 0 && getSites().size() == 0;
+    }
+
+    /**
+     * Checks, if the bigraph is prime.
+     * A Prime bigraph has only one root and no inner names.
+     *
+     * @return true, if the bigraph is prime, otherwise false.
+     */
+    default boolean isPrime() {
+        return getRoots().size() == 1 && getInnerNames().size() == 0;
+    }
+
+    //TODO
+    default boolean isDiscrete() {
+        return false;
+    }
 
     default Map.Entry<Set<FiniteOrdinal<Integer>>, Set<StringTypedName>> getInnerFace() {
         return new AbstractMap.SimpleImmutableEntry<>(
@@ -34,19 +66,6 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         );
     }
 
-    /**
-     * Prime bigraph has only one root and no inner names.
-     *
-     * @return true, if the bigraph is prime, otherwise false.
-     */
-    default boolean isPrime() {
-        return getRoots().size() == 1 && getInnerNames().size() == 0;
-    }
-
-    //TODO
-    default boolean isDiscrete() {
-        return false;
-    }
 
     Collection<BigraphEntity.RootEntity> getRoots();
 
@@ -67,11 +86,15 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
     <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
 
+    /**
+     * Returns the set of children of a given node (including sites). <br/>
+     * If the node has no children, then an empty set is returned.
+     *
+     * @param node the node whose children should be returned
+     * @return a set of children of the given node
+     */
     Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
 
-    default boolean isGround() {
-        return getInnerNames().size() == 0 && getSites().size() == 0;
-    }
 
     /**
      * Get the parent of a bigraph's place. Passing a root as argument will
@@ -96,6 +119,16 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      */
     Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity);
 
+    /**
+     * Check if two nodes are connected to each other.
+     * <p>
+     * The method considers also indirect connection, meaning, it doesn't matter if they are connected by an edge
+     * or outer name.
+     *
+     * @param place1 left node
+     * @param place2 right node
+     * @return true, if the two nodes are connected by an edge or outer name
+     */
     boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2);
 
     EPackage getModelPackage();
