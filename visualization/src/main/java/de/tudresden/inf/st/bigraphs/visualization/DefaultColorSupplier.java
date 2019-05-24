@@ -28,9 +28,9 @@ public class DefaultColorSupplier extends GraphicalFeatureSupplier<Color> {
             case SITE:
                 return Color.GRAY;
             case INNER_NAME:
-                return Color.BLUE;
+                return Color.OLIVEDRAB;
             case OUTER_NAME:
-                return Color.GREEN;
+                return Color.GREENYELLOW;
             case EDGE:
                 return Color.GREEN;
             default:

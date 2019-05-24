@@ -21,7 +21,7 @@ public class DefaultShapeSupplier extends GraphicalFeatureSupplier<Shape> {
         if (Objects.isNull(getNode())) return DEFAULT_SHAPE;
         switch (getNode().getType()) {
             case ROOT:
-                return Shape.CIRCLE;
+                return Shape.ELLIPSE;
             case NODE:
                 return Shape.RECTANGLE;
             case SITE:

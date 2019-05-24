@@ -4,6 +4,11 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 
 import java.util.function.Supplier;
 
+/**
+ * Base abstract supplier class for all graphical attributes of a Graphviz graph.
+ *
+ * @param <V> attribute type of a style element
+ */
 public abstract class GraphicalFeatureSupplier<V> implements Supplier<V> {
     private BigraphEntity node;
 

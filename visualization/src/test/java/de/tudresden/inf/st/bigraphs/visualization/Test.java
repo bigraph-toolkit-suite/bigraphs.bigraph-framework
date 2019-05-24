@@ -1,12 +1,15 @@
 package de.tudresden.inf.st.bigraphs.visualization;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Table;
 import com.google.common.graph.Traverser;
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
@@ -16,144 +19,131 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import guru.nidi.graphviz.attribute.Color;
-import guru.nidi.graphviz.attribute.Shape;
+import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.Graph;
 import guru.nidi.graphviz.model.MutableGraph;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static guru.nidi.graphviz.model.Factory.mutGraph;
-import static guru.nidi.graphviz.model.Factory.mutNode;
+import static guru.nidi.graphviz.model.Factory.*;
 
 public class Test {
     private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
 
     @org.junit.jupiter.api.Test
     void placegraph_export2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        DynamicEcoreBigraph bigraph_a = createBigraph_b();
+//        DynamicEcoreBigraph bigraph_a = createBigraph_b();
 
         final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
         final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
         final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
 
-        GraphvizConverter.convert(bigraph_a, new File("test/resources/graphviz/ex_b20.png"),
-                Format.PNG,
-                labelSupplier, colorSupplier, shapeSupplier);
-        GraphvizConverter.toPNG(createBigraph_A(), new File("test/resources/graphviz/ex_a1.png"));
-        GraphvizConverter.toPNG(createBigraph_b(), new File("test/resources/graphviz/ex_b21.png"));
+        String convert = GraphvizConverter.toPNG(createSimpleBigraphHierarchy(),
+                true,
+                new File("src/test/resources/graphviz/ex_simple_tree.png")
+        );
+        System.out.println(convert);
+        String convert2 = GraphvizConverter.toPNG(createSimpleBigraphHierarchy(),
+                false,
+                new File("src/test/resources/graphviz/ex_simple_nesting.png")
+        );
+        System.out.println(convert2);
+        GraphvizConverter.toPNG(createBigraph_A(), true, new File("src/test/resources/graphviz/ex_A_tree.png"));
+        GraphvizConverter.toPNG(createBigraph_A(), false, new File("src/test/resources/graphviz/ex_A_nesting.png"));
+        GraphvizConverter.toPNG(createBigraph_b(), true, new File("src/test/resources/graphviz/ex_b_tree.png"));
+        GraphvizConverter.toPNG(createBigraph_b(), false, new File("src/test/resources/graphviz/ex_b_nesting.png"));
+
+        GraphvizConverter.toPNG(bigraphWithTwoRoots(), true, new File("src/test/resources/graphviz/ex_2roots_tree.png"));
+        GraphvizConverter.toPNG(bigraphWithTwoRoots(), false, new File("src/test/resources/graphviz/ex_2roots_nesting.png"));
     }
 
-    //old simple method (only hierarchy)
-    @Deprecated
-    @org.junit.jupiter.api.Test
-    void place_graph_export() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        DynamicEcoreBigraph bigraph_a = createBigraph_A();
-        List<BigraphEntity.NodeEntity<DefaultDynamicControl>> computerNodes = bigraph_a
-                .getNodes()
-                .stream()
-                .filter(x -> x.getControl().equals(bigraph_a.getSignature().getControlByName("Computer")))
-                .collect(Collectors.toList());
+    private MutableGraph makeHierarchyCluster(Bigraph bigraph, BigraphEntity nodeEntity, MutableGraph currentParent, GraphicalFeatureSupplier<String> labelSupplier) {
+        //if children: iterate and check
+        List<BigraphEntity> childrenOf = new ArrayList<>(bigraph.getChildrenOf(nodeEntity));
 
-//        for (BigraphEntity.NodeEntity a : computerNodes) {
-//            for (BigraphEntity.NodeEntity b : computerNodes) {
-//                boolean b1 = bigraph_a.areConnected(a, b);
-//                System.out.println("are connected=" + b1);
-//            }
-//        }
-
-//        List<BigraphEntity.NodeEntity> topLevel = new ArrayList<>();
-
-        List<MutableGraph> graphList = new ArrayList<>();
-        AtomicInteger c = null;
-        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(x -> {
-            List<BigraphEntity> childrenOf = new ArrayList<>(bigraph_a.getChildrenOf(x));
-//            if (childrenOf.size() == 0) return childrenOf;
-
-            for (BigraphEntity eachNode : childrenOf) {
-                MutableGraph g = mutGraph("example2").setDirected(true);
-                g.use((gr, ctc) -> {
-                    String namex = "root";
-                    if (!x.getType().equals(BigraphEntityType.ROOT)) {
-                        namex = x.getControl().getNamedType().stringValue() + "." + ((BigraphEntity.NodeEntity) x).getName();
-                    }
-                    String name = eachNode.getControl().getNamedType().stringValue() + "." + ((BigraphEntity.NodeEntity) eachNode).getName();
-                    System.out.println(namex + "->" + name);
-//                    mutNode(name);
-//                    mutNode(namex);
-                    mutNode(namex).addLink(mutNode(name));
-//                    mutNode(namex).addTo(g);
-//                    mutNode(name).addTo(g);
-                });
-                graphList.add(g);
-//                    g.add(mutNode(x.getControl().getNamedType().stringValue())).addLink(
-//                            mutNode(eachNode.getControl().getNamedType().stringValue())
-//                    );
-            }
-
-            return childrenOf;
-        });
-
-
-//        for (MutableGraph g : graphList)
-//        g.use((gr, ctc) -> {
-//            mutNode("root").linkTo(mutNode("Room.v4")); //.linkTo(mutNode("Room.v0"));
-//
-//        });
-//            Node root = node("main").with(Label.html("<b>main</b><br/>start"), Color.rgb("1020d0").font());
-        Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(bigraph_a.getRoots().iterator().next());
-        List<BigraphEntity> iterator = Lists.newArrayList(v0).stream().filter(x -> x.getType().equals(BigraphEntityType.NODE)).collect(Collectors.toList());
-
-
-        List<MutableGraph> graphList2 = new ArrayList<>();
-        for (BigraphEntity a : iterator) {
-            for (BigraphEntity b : iterator) {
-//                if(a.getType())
-                String an = a.getControl().getNamedType().stringValue() + "." + ((BigraphEntity.NodeEntity) a).getName();
-                if (bigraph_a.areConnected((BigraphEntity.NodeEntity) a, (BigraphEntity.NodeEntity) b)) {
-
-
-                    String bn = b.getControl().getNamedType().stringValue() + "." + ((BigraphEntity.NodeEntity) b).getName();
-
-                    MutableGraph g2 = mutGraph().setDirected(true).use((mutableGraph, creationContext) -> {
-//                        node(an).link(to(node(bn)).with(Color.RED));
-                        mutNode(an).linkTo(mutNode(bn)).with(Color.RED);
-                    });
-//                    MutableGraph g = mutGraph().setDirected(true);
-//                    MutableGraph g2 = g.use((gr, ctx) -> {
-//                        mutNode(an).linkTo(mutNode(bn));
-//
-//                    });
-                    graphList.add(g2);
-                }
+        List<MutableGraph> graphList = new LinkedList<>();
+        for (BigraphEntity each : childrenOf) {
+            Collection childrenOfEach = bigraph.getChildrenOf(each);
+            //create a child
+            if (childrenOfEach.size() == 0) {
+                currentParent.add(node(labelSupplier.with(each).get()));
+            } else { //create a new hierarchy graph
+                MutableGraph cluster = mutGraph(labelSupplier.with(each).get()).setCluster(true)
+                        .setDirected(true)
+                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), RankDir.BOTTOM_TO_TOP, Style.BOLD);
+                MutableGraph mutableGraph = makeHierarchyCluster(bigraph, each, cluster, labelSupplier);
+                graphList.add(mutableGraph);
             }
         }
+        graphList.forEach(currentParent::add);
+        return currentParent;
+    }
 
-        MutableGraph g = graphList.stream().reduce((mutableGraph, mutableGraph2) -> {
-            mutableGraph.addTo(mutableGraph2);
-            return mutableGraph2;
-        }).get();
+    @org.junit.jupiter.api.Test
+    void graphviz_hierarchy_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+        DynamicEcoreBigraph simpleBigraphHierarchy = createSimpleBigraphHierarchy();
 
-//        MutableGraph mutableGraph1 = graphList2.stream().reduce((mutableGraph, mutableGraph2) -> {
-//            mutableGraph.addTo(mutableGraph2);
-//            return mutableGraph2;
-//        }).get();
-
-//        MutableGraph g = mutGraph("example1").setDirected(true).use((gr, ctx) -> {
-//            mutNode("b");
-//            nodeAttrs().add(Color.RED);
-//            mutNode("a").addLink(mutNode("b"));
-//        });
-        Graphviz.fromGraph(g).height(800).render(Format.PNG).toFile(new File("test/resources/graphviz/ex12.png"));
-//        Graphviz.fromGraph(mutableGraph1).height(800).render(Format.PNG).toFile(new File("test/resources/graphviz/ex12.png"));
+        final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
 
 
+        List<MutableGraph> rootGraphs = new LinkedList<>();
+        for (BigraphEntity.RootEntity eachRoot : simpleBigraphHierarchy.getRoots()) {
+            MutableGraph graphRoot = mutGraph("root")
+                    .setDirected(false)
+                    .setCluster(true)
+                    .graphAttrs()
+                    .add(RankDir.BOTTOM_TO_TOP, Label.of("root"), Style.DASHED);
+            MutableGraph graph1 = makeHierarchyCluster(simpleBigraphHierarchy, eachRoot, graphRoot, labelSupplier);
+            rootGraphs.add(graph1);
+        }
+
+        Graph mega = graph("mega").with(rootGraphs);
+
+        System.out.println(mega.toString());
+        Graphviz.fromGraph(mega).height(800).render(Format.PNG).toFile(new File("src/test/resources/graphviz/ex_hierarchy.png"));
+    }
+
+    public DynamicEcoreBigraph createSimpleBigraphHierarchy() {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        builder.createRoot().addChild(signature.getControlByName("Room"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+                .goBack()
+                .goBack()
+        ;
+
+        return builder.createBigraph();
+    }
+
+    public DynamicEcoreBigraph bigraphWithTwoRoots() throws InvalidArityOfControlException, LinkTypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+        builder.createRoot().addChild(signature.getControlByName("Room"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer")).connectNodeToOuterName(network)
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+        ;
+
+        builder.createRoot().addChild(signature.getControlByName("Room"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer")).connectNodeToOuterName(network)
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+        ;
+
+        return builder.createBigraph();
     }
 
     public DynamicEcoreBigraph createBigraph_A() throws
