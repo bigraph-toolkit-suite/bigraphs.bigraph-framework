@@ -1,0 +1,36 @@
+# Signature
+ctrl Room = 1;
+ctrl User = 1;
+ctrl User2 = 0;
+ctrl Spool = 1;
+ctrl Printer = 2;
+ctrl Computer = 1;
+ctrl Job = 0;
+
+big s1 = /e0 (
+(Room{e0} . (Printer{a1, b1}.1)) 
+| (Room{e0} . (Printer{a2, b2}.1)) 
+| (Room{e0} . (Printer{a2, b2}.1)) 
+| User{u1}.1
+);
+
+# Reaction rules
+#react nil = Job --> Job;
+
+#big r = (Printer{a1, b1}.(Job.1 | User{jeff2}.1)) || (Printer{a1, b1}.(Job.1 | User{jeff2}.1));
+
+big r = (
+(Room{e0} . (Printer{a1, b2}.1)) 
+| (Room{e0} . (Printer{a2, b3}.1))
+| User{u1}.1
+);
+
+
+react combi2 = 
+r -> r;
+
+# Reactive system
+begin brs
+  init s1;
+  rules = [{combi2}];
+end

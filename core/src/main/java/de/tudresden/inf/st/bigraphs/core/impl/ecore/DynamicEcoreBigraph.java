@@ -197,10 +197,11 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
 //                    Control control = getSignature().getControlByName(controlName);
 //                    children.add(BigraphEntity.createNode(eachChild, control));
                     nodeEntity.ifPresent(children::add);
-                }
-//                else if (isSite(eachChild)) {
+                } else if (isBSite(eachChild)) {
+                    Optional<BigraphEntity.SiteEntity> nodeEntity = sites.stream().filter(x -> x.getInstance().equals(eachChild)).findFirst();
 //                    children.add(BigraphEntity.create(eachChild, BigraphEntity.SiteEntity.class));
-//                }
+                    nodeEntity.ifPresent(children::add);
+                }
             }
         }
         return children;
@@ -267,6 +268,10 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
 
     protected boolean isBNode(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_NODE);
+    }
+
+    protected boolean isBSite(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_SITE);
     }
 
     protected boolean isBLink(EObject eObject) {

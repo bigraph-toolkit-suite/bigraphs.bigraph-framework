@@ -26,11 +26,9 @@ import java.util.stream.StreamSupport;
  * for the underlying bigraph which are used/needed for the matching algorithm
  */
 public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<DefaultDynamicSignature> {
-//    protected DynamicEcoreBigraph bigraph;
 
     public AbstractDynamicMatchAdapter(Bigraph<DefaultDynamicSignature> bigraph) {
         super(bigraph);
-//        this.bigraph = bigraph;
     }
 
     @SuppressWarnings("unchecked")
@@ -43,19 +41,6 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
     public List<BigraphEntity.RootEntity> getRoots() {
         return new ArrayList<>(super.getRoots());
     }
-
-    //    @Override
-//    protected DynamicEcoreBigraph getBigraphDelegate() {
-//        return (DynamicEcoreBigraph) super.getBigraphDelegate();
-//    }
-
-//    public Collection<BigraphEntity> getRoots() {
-//        return new ArrayList<>(bigraph.getRoots());
-//    }
-
-//    public Collection<BigraphEntity> getSites() {
-//        return new ArrayList<>(bigraph.getSites());
-//    }
 
     public static class ControlLinkPair {
         Control control;
@@ -169,25 +154,6 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
 //        }
         return cnt;
     }
-
-//    @Override
-//    public BigraphEntity getParent(BigraphEntity node) {
-////        if (!isBPlace(node.getInstance())) return null;
-////        EObject instance = node.getInstance();
-////        EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-////        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
-////            EObject each = (EObject) instance.eGet(prntRef);
-////            if (isBNode(each)) {
-////                //get control by name
-////                String controlName = each.eClass().getName();
-////                Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
-////                return BigraphEntity.createNode(each, control);
-////            } else {
-////                return BigraphEntity.create(each, BigraphEntity.RootEntity.class);
-////            }
-////        }
-//        return node;
-//    }
 
     public List<BigraphEntity> getSiblings(BigraphEntity node) {
         if (!isBPlace(node.getInstance())) return new ArrayList<>();
@@ -310,10 +276,10 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
     }
 
     //FOR MATCHING
-
-    //TODO default von bigraph api holen
     public List<BigraphEntity> getChildren(BigraphEntity node) {
-        return new ArrayList<>(getBigraphDelegate().getChildrenOf(node));
+        return getBigraphDelegate().getChildrenOf(node)
+                .stream()
+                .filter(x -> !BigraphEntityType.isSite(x)).collect(Collectors.toList());
     }
 
     //FOR MATCHING

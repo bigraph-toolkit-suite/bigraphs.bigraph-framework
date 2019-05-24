@@ -1,0 +1,25 @@
+# Signature
+ctrl Room = 1;
+ctrl User = 1;
+ctrl User2 = 0;
+ctrl Spool = 1;
+ctrl Printer = 2;
+ctrl Computer = 1;
+ctrl Job = 0;
+
+
+big s1 = /door (
+(Room{door} . (Computer{a}.1 | Computer{a}.(Job.1 | Job.(Job.1) | Job.1) | Computer{a}.1 | Computer{jeff1}.1 | Job.1 )) 
+| (Spool{espool}.1) 
+| (Room{eroom} . (User{jeff2}.(Job.1 | Job.1) | Job.1 | Job.1))
+);
+
+big klo = (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1));
+
+react combi2 = klo -> klo;
+
+# Reactive system
+begin brs
+  init s1;
+  rules = [{combi2}];
+end

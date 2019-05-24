@@ -1,0 +1,30 @@
+# Signature
+ctrl Building = 0;
+ctrl Room = 0;
+ctrl Comp = 1;
+ctrl Job = 0;
+ctrl User = 0;
+ctrl A = 1;
+ctrl B = 1;
+
+
+big s1 = (
+Building . (Room.(Comp{network}.1) | Room.(Comp{network}.1) | Job.1) 
+);
+
+# Reaction rules
+#react nil = Job --> Job;
+
+big r = (Room.(Comp{network}) | Room.(Comp{network}));
+
+big f = Room . (User.1 | Job.1);
+big g = Job;
+big h = g*f;
+react combi2 = 
+r -> r;
+
+# Reactive system
+begin brs
+  init s1;
+  rules = [{combi2}];
+end
