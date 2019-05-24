@@ -70,11 +70,11 @@ public class MutableBuilder<S extends Signature> extends BigraphBuilder<S> {
         super.connectInnerToOuterName0(innerName, outerName);
     }
 
-    public void connectToEdgeUsingIndex(BigraphEntity.NodeEntity<Control<?, ?>> node, BigraphEntity.Edge edge, int customPortIndex) {
+    public void connectToEdgeUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge edge, int customPortIndex) {
         super.connectToEdgeUsingIndex(node, edge, customPortIndex);
     }
 
-    public void connectNodeToOuterName(BigraphEntity.NodeEntity<Control<?, ?>> node1, BigraphEntity.OuterName outerName) {
+    public void connectNodeToOuterName(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.OuterName outerName) {
         try {
             super.connectNodeToOuterName(node1, outerName);
         } catch (LinkTypeNotExistsException | InvalidArityOfControlException e) {

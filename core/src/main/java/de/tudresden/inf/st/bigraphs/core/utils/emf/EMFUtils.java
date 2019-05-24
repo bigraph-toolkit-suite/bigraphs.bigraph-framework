@@ -98,11 +98,12 @@ public class EMFUtils {
     }
 
     public static EAttribute findAttribute(EClass eClass, String attributeName) {
-        List<EAttribute> collect = eClass.getEAllAttributes().stream().filter(x -> x.getName().equals(attributeName)).collect(Collectors.toList());
-        if (collect.size() == 1) {
-            return collect.get(0);
-        }
-        return null;
+        Optional<EAttribute> first = eClass.getEAllAttributes().stream().filter(x -> x.getName().equals(attributeName)).findFirst();//.collect(Collectors.toList());
+        return first.orElse(null);
+//        if (collect.size() == 1) {
+//            return collect.get(0);
+//        }
+//        return null;
     }
 
     public static List<EReference> findAllReferences(EClass eClass) {

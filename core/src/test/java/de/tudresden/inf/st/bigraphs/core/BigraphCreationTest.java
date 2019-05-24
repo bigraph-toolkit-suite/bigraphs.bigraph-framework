@@ -9,6 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
@@ -260,16 +261,22 @@ public class BigraphCreationTest {
 
         @Test
         void makeGround() throws InvalidConnectionException, LinkTypeNotExistsException {
+            DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Long>> signatureBuilder = new DefaultSignatureBuilder<>();
+            signatureBuilder
+                    .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofLong(2)).assign();
+            Signature signature2 = signatureBuilder.createSignature();
+//            builder.createRoot().addChild(signature2.getControlByName("Printer"));
+
             BigraphEntity.InnerName x1 = builder.createInnerName("x1");
             builder.createRoot()
-                    .addChild(signature.getControlByName("Computer"))
-                    .addChild(signature.getControlByName("Computer"))
+                    .addChild(this.signature.getControlByName("Computer"))
+                    .addChild(this.signature.getControlByName("Computer"))
                     .addSite()
                     .withNewHierarchy()
-                    .addChild(signature.getControlByName("Job"))
+                    .addChild(this.signature.getControlByName("Job"))
                     .addSite()
                     .goBack()
-                    .connectNodeToInnerName(signature.getControlByName("Printer"), x1);
+                    .connectNodeToInnerName(this.signature.getControlByName("Printer"), x1);
 
 //            builder.new Hierarchy(signature.getControlByName("User"));
 

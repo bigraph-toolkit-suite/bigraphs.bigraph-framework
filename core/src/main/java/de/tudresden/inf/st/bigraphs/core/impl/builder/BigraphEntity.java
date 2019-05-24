@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.NameableType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -52,9 +53,9 @@ public class BigraphEntity<C extends Control> {//TODO entfernen nach unten versc
      * @param bigraphEntity
      */
     @Deprecated
-    BigraphEntity(BigraphEntity bigraphEntity) {
+    BigraphEntity(BigraphEntity<C> bigraphEntity) {
         this.setInstance(bigraphEntity.getInstance());
-        this.control = (C) bigraphEntity.getControl();
+        this.control = bigraphEntity.getControl();
         this.type = bigraphEntity.getType();
     }
 
@@ -109,15 +110,10 @@ public class BigraphEntity<C extends Control> {//TODO entfernen nach unten versc
     @NonNull
     public static <T extends BigraphEntity> T create(@NonNull EObject param, @NonNull Class<T> tClass) {
         try {
-//            if (Objects.isNull(param)) {
-//                return tClass.newInstance();
-//            } else {
             return tClass.getDeclaredConstructor(EObject.class).newInstance(param);
-//            }
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
-            assert e != null;
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -166,14 +162,10 @@ public class BigraphEntity<C extends Control> {//TODO entfernen nach unten versc
         }
     }
 
-    public static class NodeEntity<C> extends BigraphEntity {
-
-        public NodeEntity() {
-            super(null, BigraphEntityType.NODE);
-        }
+    public static class NodeEntity<C extends Control> extends BigraphEntity<C> {
 
         NodeEntity(@NonNull EObject instance, C control) {
-            super(instance, (Control<?, ?>) control, BigraphEntityType.NODE);
+            super(instance, control, BigraphEntityType.NODE);
         }
 
         public String getName() {
@@ -228,8 +220,6 @@ public class BigraphEntity<C extends Control> {//TODO entfernen nach unten versc
         }
 
     }
-
-
 
 
     public static class RootEntity extends BigraphEntity {
