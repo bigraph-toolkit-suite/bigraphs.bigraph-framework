@@ -2,7 +2,6 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
@@ -57,9 +56,9 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
     }
 
     @Override
-    public final BigraphEntity getLink(BigraphEntity node) {
-        if (!BigraphEntityType.isPointType(node)) return null;
-        EObject eObject = node.getInstance();
+    public final BigraphEntity getLinkOfPoint(BigraphEntity point) {
+        if (!BigraphEntityType.isPointType(point)) return null;
+        EObject eObject = point.getInstance();
         EStructuralFeature lnkRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
         if (Objects.isNull(lnkRef)) return null;
         EObject linkObject = (EObject) eObject.eGet(lnkRef);

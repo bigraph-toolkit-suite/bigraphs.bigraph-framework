@@ -163,9 +163,9 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
     }
 
     @Override
-    public BigraphEntity getLink(BigraphEntity node) {
-        if (!BigraphEntityType.isPointType(node)) return null;
-        EObject eObject = node.getInstance();
+    public BigraphEntity getLinkOfPoint(BigraphEntity point) {
+        if (!BigraphEntityType.isPointType(point)) return null;
+        EObject eObject = point.getInstance();
         EStructuralFeature lnkRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
         if (Objects.isNull(lnkRef)) return null;
         EObject linkObject = (EObject) eObject.eGet(lnkRef);

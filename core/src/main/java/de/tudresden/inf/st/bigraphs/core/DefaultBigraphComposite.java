@@ -169,9 +169,9 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
             int portIx = 0;
             for (BigraphEntity.Port eachPort : ports) {
 
-                BigraphEntity link = g.getLink(eachPort);
+                BigraphEntity link = g.getLinkOfPoint(eachPort);
                 if (Objects.isNull(link)) {
-                    link = f.getLink(eachPort);
+                    link = f.getLinkOfPoint(eachPort);
                 }
 
                 assert BigraphEntityType.isLinkType(link);
@@ -211,9 +211,9 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 myInnerNames.put(each.getKey(), newInnerName);
             }
 
-            BigraphEntity link = g.getLink(each.getValue());
+            BigraphEntity link = g.getLinkOfPoint(each.getValue());
             if (Objects.isNull(link)) {
-                link = f.getLink(each.getValue());
+                link = f.getLinkOfPoint(each.getValue());
             }
             if (Objects.isNull(link)) continue;
 
@@ -441,7 +441,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
             // of a node)
 
 
-            BigraphEntity linkQofF = f.getLink(q);
+            BigraphEntity linkQofF = f.getLinkOfPoint(q);
             if (Objects.nonNull(linkQofF)) {
 
                 //C1: preserve links
@@ -515,7 +515,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                     BigraphEntity.InnerName innerNameG = innerNames_G.get(nameValue.stringValue());
                     BigraphEntity.OuterName outerNameF = outerNames_F.get(nameValue.stringValue());
 
-                    BigraphEntity link = g.getLink(innerNameG);
+                    BigraphEntity link = g.getLinkOfPoint(innerNameG);
 
                     BigraphEntity newLink = null;
                     //is it an edge or an outer name?
@@ -569,7 +569,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 String nodeName = V.inverse().get(getNodeFromPort(allPorts_FG, thePort)); //allPorts_FG.inverse().get(thePort));
                 BigraphEntity.NodeEntity nodeEntity = myNodes.get(nodeName);
                 //is a node of F
-                BigraphEntity linkQofG = g.getLink(thePort);
+                BigraphEntity linkQofG = g.getLinkOfPoint(thePort);
                 if (BigraphEntityType.isOuterName(linkQofG)) {
                     //outer names are already created, they remain the same
                     BigraphEntity.OuterName outerName = myOuterNames.get(((BigraphEntity.OuterName) linkQofG).getName());
@@ -646,19 +646,6 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 .filter(entry -> value.equals(entry.getValue()))
                 .map(Map.Entry::getKey).findFirst();
     }
-
-//    public BigraphEntity findByNodeName(Collection<BigraphEntity> list, String nodeName) {
-//        return list.stream().filter(x -> BigraphEntityType.isNode(x)
-//                && ((BigraphEntity.NodeEntity<Object>) x).getName().equals(nodeName))
-//                .findFirst()
-//                .get();
-//    }
-//
-//    public BigraphEntity findRootByIndex(Collection<BigraphEntity.RootEntity> list, int index) {
-//        return list.stream().filter(x -> x.getIndex() == index)
-//                .findFirst()
-//                .get();
-//    }
 
 //    @Deprecated
 //    private BigraphEntity<?> createNewObjectFrom(BigraphEntity<?> entity) {

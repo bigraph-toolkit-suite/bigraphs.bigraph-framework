@@ -83,8 +83,8 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public BigraphEntity getLink(BigraphEntity node) {
-        return bigraphDelegate.getLink(node);
+    public BigraphEntity getLinkOfPoint(BigraphEntity point) {
+        return bigraphDelegate.getLinkOfPoint(point);
     }
 
     @Override

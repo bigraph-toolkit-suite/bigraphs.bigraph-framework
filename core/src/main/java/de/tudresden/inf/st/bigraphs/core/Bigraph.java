@@ -105,7 +105,13 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      */
     BigraphEntity getParent(BigraphEntity node);
 
-    BigraphEntity getLink(BigraphEntity node);
+    /**
+     * Returns the link of a bigraph's point type.
+     *
+     * @param point a point of the bigraph
+     * @return returns the link that connects the point a {@code null}
+     */
+    BigraphEntity getLinkOfPoint(BigraphEntity point);
 
     Collection<BigraphEntity.Port> getPorts(BigraphEntity node);
 
@@ -132,4 +138,17 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2);
 
     EPackage getModelPackage();
+
+    //    public BigraphEntity findByNodeName(Collection<BigraphEntity> list, String nodeName) {
+//        return list.stream().filter(x -> BigraphEntityType.isNode(x)
+//                && ((BigraphEntity.NodeEntity<Object>) x).getName().equals(nodeName))
+//                .findFirst()
+//                .get();
+//    }
+//
+//    public BigraphEntity findRootByIndex(Collection<BigraphEntity.RootEntity> list, int index) {
+//        return list.stream().filter(x -> x.getIndex() == index)
+//                .findFirst()
+//                .get();
+//    }
 }
