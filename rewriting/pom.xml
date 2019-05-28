@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>matching</artifactId>
+    <artifactId>rewriting</artifactId>
     <description>
         A generic matching algorithms for the subtree isomorphism problem.
         It provides adapter classes that can be used for incorporating other graph data structures.

@@ -13,7 +13,7 @@
 
     <modules>
         <module>core</module>
-        <module>matching</module>
+        <module>rewriting</module>
         <module>visualization</module>
         <module>bigraph-store</module>
     </modules>
@@ -27,7 +27,7 @@
         <emf-common-version>2.15.0</emf-common-version>
         <emf-ecore-version2>2.15.0</emf-ecore-version2>
         <emf-ecore-version>2.3.0-v200706262000</emf-ecore-version>
-<!--        <emf.cdo.version>4.6.2</emf.cdo.version>-->
+        <!--        <emf.cdo.version>4.6.2</emf.cdo.version>-->
         <emf.cdo.version>4.5.0</emf.cdo.version>
         <eclipse.mirror>http://mirror.ibcp.fr/pub/eclipse/</eclipse.mirror>
         <junit.version>5.4.0</junit.version>
@@ -67,14 +67,19 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
+                <artifactId>bigraph-ecore-model</artifactId>
+                <version>3.0</version>
+            </dependency>
+            <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
-                <artifactId>bigraph-ecore-model</artifactId>
-                <version>3.0</version>
+                <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                <artifactId>rewriting</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
