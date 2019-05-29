@@ -86,6 +86,11 @@
                 <artifactId>bigraph-store</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                <artifactId>visualization</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- EMF -->
             <dependency>
                 <groupId>org.eclipse.emf</groupId>

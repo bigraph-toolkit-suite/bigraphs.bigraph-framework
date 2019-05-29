@@ -24,6 +24,11 @@
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
             <artifactId>bigraph-store</artifactId>
         </dependency>
+        <!-- ONLY FOR TESTING REMOVE LATER-->
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>visualization</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
