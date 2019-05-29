@@ -59,7 +59,7 @@ public class BigraphBuilder<S extends Signature> {
     private Supplier<String> vertexNameSupplier;
 //    private Supplier<String> rootNameSupplier;
 
-    private final HashMap<String, BigraphEntity.Edge> availableEdges = new HashMap<>();
+    protected final HashMap<String, BigraphEntity.Edge> availableEdges = new HashMap<>();
     private final HashMap<String, BigraphEntity.OuterName> availableOuterNames = new HashMap<>();
     private final HashMap<String, BigraphEntity.InnerName> availableInnerNames = new HashMap<>();
     private final HashMap<Integer, BigraphEntity.RootEntity> availableRoots = new HashMap<>();
@@ -79,14 +79,7 @@ public class BigraphBuilder<S extends Signature> {
      */
     @Deprecated
     public BigraphBuilder() {
-        this.vertexNameSupplier = new Supplier<String>() {
-            private int id = 0;
-
-            @Override
-            public String get() {
-                return "v" + id++;
-            }
-        };
+        this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
     }
 
     @Deprecated
@@ -99,27 +92,12 @@ public class BigraphBuilder<S extends Signature> {
     //<C extends Control<?, ?>> Signature<C>
     public static <S extends Signature> BigraphBuilder<S> start(@NonNull S signature)
             throws BigraphMetaModelLoadingFailedException {
-        return BigraphBuilder.start(signature,
-                new Supplier<String>() {
-                    private int id = 0;
-
-                    @Override
-                    public String get() {
-                        return "v" + id++;
-                    }
-                });
+        return BigraphBuilder.start(signature, createNameSupplier(DEFAULT_VERTEX_PREFIX));
     }
 
     public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
             throws BigraphMetaModelLoadingFailedException {
-        return new MutableBuilder<>(signature, new Supplier<String>() {
-            private int id = 0;
-
-            @Override
-            public String get() {
-                return "v" + id++;
-            }
-        });
+        return new MutableBuilder<>(signature, createNameSupplier(DEFAULT_VERTEX_PREFIX));
     }
 
     public static <S extends Signature> BigraphBuilder<S> start(@NonNull S signature,
@@ -230,7 +208,7 @@ public class BigraphBuilder<S extends Signature> {
 
         //BLEIBT - HELPER
         private boolean checkSameSignature(Control control) {
-            return iterableToList(signature.getControls()).contains(control);
+            return Lists.newArrayList(signature.getControls()).contains(control);
         }
 
         //MOVE
@@ -1037,10 +1015,6 @@ public class BigraphBuilder<S extends Signature> {
         }
     }
 
-    private List<Control> iterableToList(Iterable<Control> controls) {
-        return Lists.newArrayList(controls);
-    }
-
     //TODO: important: change namespace etc.: since instance model will refer to this namespace later
     public void bigraphicalSignatureAsTypeGraph(String name) throws BigraphMetaModelLoadingFailedException {
 //        EPackage loadedEPackage;
@@ -1071,31 +1045,53 @@ public class BigraphBuilder<S extends Signature> {
         allrefs.forEach(x -> availableReferences.put(x.getName(), x));
     }
 
+    /**
+     * Clears all generated intermediate results of the bigraph's current construction inside the builder.
+     * <br/>
+     * <strong>Should not be called. Is made available for the {@link MutableBuilder}</strong>
+     */
+    protected void clearIntermediateResults() {
+        this.availableInnerNames.clear();
+        this.availableEdges.clear();
+        this.availableOuterNames.clear();
+        this.availableSites.clear();
+        this.availableNodes.clear();
+        this.availableRoots.clear();
+        edgeNameSupplier = createNameSupplier(DEFAULT_EDGE_PREFIX);
+        vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
+        rootIdxSupplier = createIndexSupplier();
+        siteIdxSupplier = createIndexSupplier();
+    }
 
-    private Supplier<String> edgeNameSupplier = new Supplier<String>() {
-        private int id = 0;
+    private static final String DEFAULT_EDGE_PREFIX = "e";
+    private static final String DEFAULT_VERTEX_PREFIX = "v";
 
-        @Override
-        public String get() {
-            return "e" + id++;
-        }
-    };
 
-    private Supplier<Integer> rootIdxSupplier = new Supplier<Integer>() {
-        private int id = 0;
+    private Supplier<String> edgeNameSupplier = createNameSupplier(DEFAULT_EDGE_PREFIX);
 
-        @Override
-        public Integer get() {
-            return id++;
-        }
-    };
+    private Supplier<Integer> rootIdxSupplier = createIndexSupplier();
 
-    private Supplier<Integer> siteIdxSupplier = new Supplier<Integer>() {
-        private int id = 0;
+    private Supplier<Integer> siteIdxSupplier = createIndexSupplier();
 
-        @Override
-        public Integer get() {
-            return id++;
-        }
-    };
+    private static Supplier<String> createNameSupplier(final String prefix) {
+        return new Supplier<String>() {
+            private int id = 0;
+
+            @Override
+            public String get() {
+                return prefix + id++;
+            }
+        };
+    }
+
+    private static Supplier<Integer> createIndexSupplier() {
+        return new Supplier<Integer>() {
+            private int id = 0;
+
+            @Override
+            public Integer get() {
+                return id++;
+            }
+        };
+    }
 }

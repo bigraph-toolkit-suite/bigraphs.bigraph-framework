@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
@@ -26,11 +27,16 @@ import java.lang.reflect.Type;
 
 
 public abstract class AbstractBigraphFactory<S extends Signature, NT extends NamedType, FT extends FiniteOrdinal> implements BigraphFactoryElement {
-    protected Type successorClass = null; //TODO: one for the signature type and one for the bigraph
+    protected Type successorClass = null; //TODO: one for the signature type (and one for the bigraph)
 
     @Override
     public Type getSuccessorImpl() {
         return successorClass;
+    }
+
+    //TODO move outside this class
+    public static SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> createSimpleBigraphFactory() {
+        return new SimpleBigraphFactory<>();
     }
 
     /**

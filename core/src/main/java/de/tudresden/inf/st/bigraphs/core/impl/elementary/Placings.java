@@ -67,6 +67,16 @@ public class Placings<S extends Signature> implements Serializable {
         return new Join();
     }
 
+    /**
+     * Bijective placing
+     *
+     * @param n number of roots/sites
+     * @return a permutation
+     */
+    public Placings<S>.Permutation permutation(int n) {
+        return new Permutation(n);
+    }
+
     public class Barren extends ElementaryBigraph {
         private final BigraphEntity.RootEntity root;
 
@@ -156,7 +166,6 @@ public class Placings<S extends Signature> implements Serializable {
         }
     }
 
-
     /**
      * A merge maps m sites to a single root where m > 0. Otherwise merge_0 = 1
      */
@@ -197,6 +206,44 @@ public class Placings<S extends Signature> implements Serializable {
             list.add(root);
             list.addAll(sites);
             return list;
+        }
+
+        @Override
+        public EPackage getModelPackage() {
+            return loadedModelPacakge;
+        }
+    }
+
+    public class Permutation extends ElementaryBigraph<S> {
+        private final Collection<BigraphEntity.RootEntity> roots;
+        private final Collection<BigraphEntity.SiteEntity> sites;
+
+        public Permutation(int n) {
+            roots = new ArrayList<>(n);
+            sites = new ArrayList<>(n);
+
+            for (int i = 0; i < n; i++) {
+                BigraphEntity.RootEntity newRoot = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(i);
+                BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(i);
+                setParentOfNode(newSite, newRoot);
+                roots.add(newRoot);
+                sites.add(newSite);
+            }
+        }
+
+        @Override
+        public Collection<BigraphEntity.RootEntity> getRoots() {
+            return roots;
+        }
+
+        @Override
+        public Collection<BigraphEntity.SiteEntity> getSites() {
+            return sites;
+        }
+
+        @Override
+        public S getSignature() {
+            return emptySignature;
         }
 
         @Override

@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static de.tudresden.inf.st.bigraphs.core.BigraphEntityType.*;
@@ -72,6 +73,19 @@ public class MutableBuilder<S extends Signature> extends BigraphBuilder<S> {
 
     public void connectToEdgeUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge edge, int customPortIndex) {
         super.connectToEdgeUsingIndex(node, edge, customPortIndex);
+    }
+
+    /**
+     * Clears all generated intermediate results of the bigraph's current construction inside the builder.
+     */
+    public void reset() {
+        super.clearIntermediateResults();
+        //TODO private super.reset()
+    }
+
+    //TODO: not nice here: must be changed!
+    public Map<String, BigraphEntity.Edge> getCreatedEdges() {
+        return super.availableEdges;
     }
 
     public void connectNodeToOuterName(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.OuterName outerName) {
