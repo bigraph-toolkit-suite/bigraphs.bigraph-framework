@@ -21,6 +21,7 @@ public class EcoreBigraphAgentAdapter extends AbstractDynamicMatchAdapter {
 
     public EcoreBigraphAgentAdapter(DynamicEcoreBigraph bigraph) {
         super(bigraph);
+        //TODO: assert: has only one root! only forest in tree matching
     }
 
     /**
@@ -41,7 +42,11 @@ public class EcoreBigraphAgentAdapter extends AbstractDynamicMatchAdapter {
                 EStructuralFeature linkRef = eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
                 if (Objects.nonNull(linkRef) && Objects.nonNull(eachPort.eGet(linkRef))) {
                     EObject obj = (EObject) eachPort.eGet(linkRef);
-                    children.add(new ControlLinkPair(node.getControl(), BigraphEntity.create(obj, BigraphEntity.OuterName.class)));
+                    if (isOuterName(obj)) {
+                        children.add(new ControlLinkPair(node.getControl(), BigraphEntity.create(obj, BigraphEntity.OuterName.class)));
+                    } else if (isBEdge(obj)) {
+                        children.add(new ControlLinkPair(node.getControl(), BigraphEntity.create(obj, BigraphEntity.Edge.class)));
+                    }
                 }
             }
 

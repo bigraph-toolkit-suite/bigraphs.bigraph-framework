@@ -8,18 +8,29 @@ ctrl Computer = 1;
 ctrl Job = 0;
 
 
+# big s1 = /door (
+# (Room{door} . (Computer{a}.1 | Computer{a}.(Job.1 | Job.(Job.1) | Job.1) | Computer{a}.1 | Computer{jeff1}.1 | Job.1 )) 
+# | (Spool{espool}.1) 
+# | (Room{eroom} . (User{door}.(Job.1 | Job.1) | Job.1 | Job.1))
+# );
+
 big s1 = /door (
-(Room{door} . (Computer{a}.1 | Computer{a}.(Job.1 | Job.(Job.1) | Job.1) | Computer{a}.1 | Computer{jeff1}.1 | Job.1 )) 
-| (Spool{espool}.1) 
-| (Room{eroom} . (User{jeff2}.(Job.1 | Job.1) | Job.1 | Job.1))
+  (Room{door} . (Computer{a}.1 | Computer{a}.(Job.1 | Job.(Job.1) | Job.1) | Computer{a}.1 | Computer{a}.1 | Computer{jeff1}.(Job.1) | Job.1 | User2.1 )) 
+  | (Spool{espool}.1) 
+  | (Room{eroom} . (User{door}.(Job.1 | Job.1) | Job.1 | Job.1))
 );
 
-big klo = (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1));
+big zweiA = (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1)); # matched nicht
+big zweiB = (Computer{b1}.(id(1)) | Computer{c}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1)); # matched
+big zweiBReactum = (Computer{b1}.(id(1) | User2.1) | Computer{c}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1)); # allows maaaany possible reactions, is not distinct
 
-react combi2 = klo -> klo;
+react react2A = zweiA -> zweiA;
+react react2B = zweiB -> zweiB;
+
+big klo = Job * 1;
 
 # Reactive system
 begin brs
   init s1;
-  rules = [{combi2}];
+  rules = [{react2A, react2B}];
 end

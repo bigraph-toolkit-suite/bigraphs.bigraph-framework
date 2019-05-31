@@ -1,6 +1,9 @@
 package de.tudresden.inf.st.bigraphs.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.matching.impl.AbstractDynamicMatchAdapter;
+
+import java.util.Collection;
 
 /**
  * A match result for a ground bigraph
@@ -31,5 +34,7 @@ public interface Match<B extends Bigraph> {
      * @return
      */
     B getRedexIdentity();
+
+    Collection<B> getParameter();
 
 }

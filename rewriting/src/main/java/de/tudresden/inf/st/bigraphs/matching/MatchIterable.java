@@ -1,5 +1,8 @@
 package de.tudresden.inf.st.bigraphs.matching;
 
+import com.sun.istack.internal.NotNull;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+
 import java.util.Iterator;
 
 /**
@@ -8,8 +11,19 @@ import java.util.Iterator;
  */
 public class MatchIterable implements Iterable<Match> {
 
+    private DefaultMatchIteratorImpl iterator;
+
+    public MatchIterable(DefaultMatchIteratorImpl iterator) {
+        this.iterator = iterator;
+    }
+
     @Override
     public Iterator<Match> iterator() {
-        return new MatchIterator();
+        return iterator;
     }
+
+//    @Override
+//    public MatchIteratorImpl iterator() {
+//        return this.iterator;
+//    }
 }

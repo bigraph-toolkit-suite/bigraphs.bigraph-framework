@@ -80,6 +80,14 @@ public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
         return children;
     }
 
+    /**
+     * Sites are not included in the count
+     * <p>
+     * All in/out-going edges of a node within the place graph.
+     *
+     * @param nodeEntity
+     * @return
+     */
     public int degreeOf(BigraphEntity nodeEntity) {
         //get all edges
         EObject instance = nodeEntity.getInstance();
@@ -140,6 +148,12 @@ public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
         return neighbors;
     }
 
+    /**
+     * Get all children of a node without sites included
+     *
+     * @param node
+     * @return
+     */
     public List<BigraphEntity> getChildren(BigraphEntity node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
@@ -152,7 +166,7 @@ public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
                     String controlName = eachChild.eClass().getName();
                     Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
                     children.add(BigraphEntity.createNode(eachChild, control));
-                } else if (isRoot(eachChild)) { //newRoot != null &&
+                } else if (isRoot(eachChild)) { //newRoot != null && //TODO this never happens!
                     children.add(BigraphEntity.create(eachChild, BigraphEntity.RootEntity.class));
                 }
             }

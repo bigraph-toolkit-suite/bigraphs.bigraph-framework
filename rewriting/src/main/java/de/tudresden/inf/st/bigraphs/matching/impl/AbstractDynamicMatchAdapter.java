@@ -11,10 +11,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -35,6 +32,10 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
     @Override
     protected DynamicEcoreBigraph getBigraphDelegate() {
         return super.getBigraphDelegate();
+    }
+
+    public DynamicEcoreBigraph getBigraph() {
+        return this.getBigraphDelegate();
     }
 
     @Override
@@ -107,6 +108,8 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
     }
 
     //an edge is like an outername for an agent
+    //TODO REMOVE
+    @Deprecated
     public List<ControlLinkPair> getAllLinks(BigraphEntity startNode) {
         List<ControlLinkPair> allVerticesPostOrder = new ArrayList<>();
 //        for (BigraphEntity eachRoot : bigraph.getRoots()) {
@@ -128,7 +131,13 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
         return allVerticesPostOrder;
     }
 
-    //FOR MATCHING: ONLY nodes, roots, site and outer names
+    /**
+     * All in/out-going edges of a node within the place graph.
+     * Sites are included in the count.
+     *
+     * @param nodeEntity
+     * @return
+     */
     public int degreeOf(BigraphEntity nodeEntity) {
         //get all edges
         EObject instance = nodeEntity.getInstance();
@@ -142,19 +151,15 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
         if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
             cnt++;
         }
-//        EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
-//        if (Objects.nonNull(portRef)) {
-//            EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
-//            cnt += portList.size();
-//        }
-        //bPoints: for links
-//        EStructuralFeature pntsRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-//        if (Objects.nonNull(pntsRef) && Objects.nonNull(instance.eGet(pntsRef))) {
-//            cnt += ((EList<EObject>) instance.eGet(pntsRef)).size();
-//        }
         return cnt;
     }
 
+    /**
+     * Returns all siblings of the current node of the current bigraph. The node itself is not included.
+     *
+     * @param node the node whoms sibling should be returned
+     * @return siblings of {@code node}
+     */
     public List<BigraphEntity> getSiblings(BigraphEntity node) {
         if (!isBPlace(node.getInstance())) return new ArrayList<>();
         EObject instance = node.getInstance();
@@ -167,6 +172,7 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
             EList<EObject> childs = (EList<EObject>) each.eGet(childRef);
             assert childs != null;
             for (EObject eachChild : childs) {
+                if (node.getInstance().equals(eachChild)) continue;
                 if (isBNode(eachChild)) {
                     //get control by name
                     String controlName = eachChild.eClass().getName();
@@ -275,6 +281,27 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
         return allVerticesPostOrder;
     }
 
+    public Iterable<BigraphEntity> getAllVerticesBfsOrder() {
+        Collection<BigraphEntity> allVerticesBfsOrder = new ArrayList<>();
+        for (BigraphEntity eachRoot : getBigraphDelegate().getRoots()) {
+//            BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
+//            Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
+//            Iterable<BigraphEntity> v0 = stringTraverser.breadthFirst(eachRoot);
+//            allVerticesBfsOrder.addAll(Lists.newArrayList(v0));
+            allVerticesBfsOrder.addAll(getAllVerticesBfsOrderFrom(eachRoot));
+
+        }
+        return allVerticesBfsOrder;
+    }
+
+    public Collection<BigraphEntity> getAllVerticesBfsOrderFrom(BigraphEntity eachRoot) {
+        Collection<BigraphEntity> allVerticesBfsOrder = new ArrayList<>();
+        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
+        Iterable<BigraphEntity> v0 = stringTraverser.breadthFirst(eachRoot);
+        allVerticesBfsOrder.addAll(Lists.newArrayList(v0));
+        return allVerticesBfsOrder;
+    }
+
     //FOR MATCHING
     public List<BigraphEntity> getChildren(BigraphEntity node) {
         return getBigraphDelegate().getChildrenOf(node)
@@ -310,6 +337,16 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
 
     public boolean isBPlace(EObject eObject) {
         return eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PLACE));
+    }
+
+    protected boolean isBEdge(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
+    }
+
+    //works only for elements of the calling class
+    protected boolean isOfEClass(EObject eObject, String eClassifier) {
+        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
     }
 
     public boolean isBPort(EObject eObject) {

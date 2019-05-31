@@ -1,0 +1,45 @@
+package de.tudresden.inf.st.bigraphs.matching;
+
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+
+import java.util.*;
+
+//TODO: in a future version: find matches incrementally and not all at the start (if possible)
+//  next() and hasNext() must be rewritten then
+//  see also comment in BigraphMatchingEngine
+public class DefaultMatchIteratorImpl implements Iterator<Match> {
+    private int cursor = 0;
+    private List<Match<DynamicEcoreBigraph>> matches = new ArrayList<>();
+
+    private BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine;
+//    private BigraphMatcher bigraphMatcher;
+//    private Match nextMatch;
+
+    DefaultMatchIteratorImpl(BigraphMatchingEngine<? extends DynamicEcoreBigraph> matchingEngine) throws IncompatibleSignatureException {
+        this.matchingEngine = (BigraphMatchingEngine<DynamicEcoreBigraph>) matchingEngine;
+        findMatches();
+    }
+
+    private void findMatches() {
+        this.matchingEngine.beginMatch();
+        matches = Collections.unmodifiableList(this.matchingEngine.getMatches());
+    }
+
+    @Override
+    public boolean hasNext() {
+        boolean tmp = cursor != matches.size();
+//        if (tmp) {
+//            cursor++;
+//        }
+        return tmp; // && nextMatch != null;
+    }
+
+    @Override
+    public Match next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        return matches.get(cursor++); //new MatchIterable(this);
+    }
+}

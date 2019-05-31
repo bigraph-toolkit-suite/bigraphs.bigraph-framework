@@ -18,44 +18,74 @@ import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public class MatchTesting {
     private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
 
     @Test
     void model_test_0() throws Exception {
-        DynamicEcoreBigraph redex_model_test_0 = (DynamicEcoreBigraph) createRedex_model_test_0();
         DynamicEcoreBigraph agent_model_test_0 = (DynamicEcoreBigraph) createAgent_model_test_0();
+        DynamicEcoreBigraph redex_model_test_0 = (DynamicEcoreBigraph) createRedex_model_test_0();
 
-        BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_0, redex_model_test_0);
+//        BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_0, redex_model_test_0);
 
-        matchingEngine.beginMatch();
+//        matchingEngine.beginMatch();
+        BigraphMatcher matcher = new BigraphMatcher();
+        MatchIterable match = matcher.match(agent_model_test_0, redex_model_test_0);
+        Iterator<Match> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            Match next = iterator.next();
+            System.out.println(next);
+        }
 
     }
 
     @Test
     void model_test_1() throws Exception {
-        DynamicEcoreBigraph redex_model_test_1 = (DynamicEcoreBigraph) createRedex_model_test_1();
         DynamicEcoreBigraph agent_model_test_1 = (DynamicEcoreBigraph) createAgent_model_test_1();
+        DynamicEcoreBigraph redex_model_test_1 = (DynamicEcoreBigraph) createRedex_model_test_1();
 
-        BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_1, redex_model_test_1);
-
-        matchingEngine.beginMatch();
+//        BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_1, redex_model_test_1);
+//        matchingEngine.beginMatch();
+        BigraphMatcher matcher = new BigraphMatcher();
+        MatchIterable match = matcher.match(agent_model_test_1, redex_model_test_1);
+        Iterator<Match> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            Match next = iterator.next();
+            System.out.println(next);
+        }
 
     }
 
     @Test
     void model_test_2() throws Exception {
-        DynamicEcoreBigraph redex_model_test_2 = (DynamicEcoreBigraph) createRedex_model_test_2();
         DynamicEcoreBigraph agent_model_test_2 = (DynamicEcoreBigraph) createAgent_model_test_2();
+        DynamicEcoreBigraph redex_model_test_2a = (DynamicEcoreBigraph) createRedex_model_test_2a();
+        //the second root of the redex will create many occurrences because a distinct match isn't possible
+        DynamicEcoreBigraph redex_model_test_2b = (DynamicEcoreBigraph) createRedex_model_test_2b();
 
-        BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_2, redex_model_test_2);
+//        BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_2, redex_model_test_2);
+//
+//        matchingEngine.beginMatch();
+        BigraphMatcher matcher = new BigraphMatcher();
+//        MatchIterable match = matcher.match(agent_model_test_2, redex_model_test_2a);
+//        Iterator<Match> iterator = match.iterator();
+//        while (iterator.hasNext()) {
+//            Match next = iterator.next();
+//            System.out.println(next);
+//        }
 
-        matchingEngine.beginMatch();
+        MatchIterable match = matcher.match(agent_model_test_2, redex_model_test_2b);
+        Iterator<Match> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            Match next = iterator.next();
+            System.out.println(next);
+        }
 
     }
 
-    public Bigraph createRedex_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    public Bigraph createRedex_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -87,7 +117,7 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public Bigraph createAgent_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    public Bigraph createAgent_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -120,7 +150,7 @@ public class MatchTesting {
 
     }
 
-    public Bigraph createAgent_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    public Bigraph createAgent_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
@@ -175,28 +205,27 @@ public class MatchTesting {
 
     }
 
-    public Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    public Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-        BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.OuterName b2 = builder.createOuterName("b2");
+        BigraphEntity.OuterName b = builder.createOuterName("b");
+        BigraphEntity.OuterName d = builder.createOuterName("d");
+        BigraphEntity.OuterName a = builder.createOuterName("a");
+        BigraphEntity.OuterName c = builder.createOuterName("c");
         builder.
                 createRoot()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
                 .withNewHierarchy()
+                .addChild(signature.getControlByName("User")).connectNodeToOuterName(d)
                 .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff2)
-                .goBack()
-
+//                .goBack()
         ;
         builder.createRoot()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(c)
                 .withNewHierarchy()
+                .addChild(signature.getControlByName("User")).connectNodeToOuterName(b)
                 .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff1)
-                .goBack()
+//                .goBack()
         ;
         return builder.createBigraph();
     }
@@ -206,10 +235,8 @@ public class MatchTesting {
         BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
-        BigraphEntity.OuterName a = builder.createOuterName("a");
+//        BigraphEntity.OuterName a = builder.createOuterName("a");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-//        BigraphEntity.OuterName b2 = builder.createOuterName("b2");
-        BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
 
         builder.createRoot()
@@ -231,8 +258,9 @@ public class MatchTesting {
                 .goBack()
                 .goBack()
 
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
+//                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
         ;
+        builder.closeInnerName(roomLink);
         builder.closeAllInnerNames();
         builder.makeGround();
 
@@ -241,7 +269,14 @@ public class MatchTesting {
 
     }
 
-    public Bigraph createRedex_model_test_2() throws LinkTypeNotExistsException, InvalidConnectionException {
+    /**
+     * Ground reaction rule that doesn't matches.
+     *
+     * @return
+     * @throws LinkTypeNotExistsException
+     * @throws InvalidConnectionException
+     */
+    public Bigraph createRedex_model_test_2a() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff1");
@@ -258,6 +293,37 @@ public class MatchTesting {
         ;
         builder.createRoot()
                 .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
+                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
+        ;
+        return builder.createBigraph();
+    }
+
+    /**
+     * Parametric Reaction Rule
+     * Redex will need parameters to be built.
+     *
+     * @return
+     * @throws LinkTypeNotExistsException
+     * @throws InvalidConnectionException
+     */
+    public Bigraph createRedex_model_test_2b() throws LinkTypeNotExistsException, InvalidConnectionException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
+        BigraphEntity.OuterName c = builder.createOuterName("c");
+        BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
+
+
+        // (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1));
+        builder.
+                createRoot()
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .withNewHierarchy().addSite().goBack()
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(c)
+                .addChild(signature.getControlByName("Job"))
+        ;
+        builder.createRoot()
+                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff1)
                 .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
         ;
         return builder.createBigraph();
@@ -285,7 +351,7 @@ public class MatchTesting {
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).connectNodeToInnerName(door)
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
+                .addChild(signature.getControlByName("Computer")) //.connectNodeToOuterName(a)
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("Job"))
@@ -294,6 +360,7 @@ public class MatchTesting {
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(jeff1)
                 .addChild(signature.getControlByName("Job"))
+                .addChild(signature.getControlByName("User"))
                 .goBack()
 
                 .addChild(signature.getControlByName("Spool")).connectNodeToOuterName(e0)
