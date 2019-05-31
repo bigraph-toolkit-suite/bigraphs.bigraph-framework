@@ -253,6 +253,16 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
     }
 
     @Override
+    public BigraphComposite<S> compose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        return this.compose(f.getOuterBigraph());
+    }
+
+    @Override
+    public BigraphComposite<S> juxtapose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        return this.juxtapose(f.getOuterBigraph());
+    }
+
+    @Override
     public BigraphComposite<S> compose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph<S> g = getBigraphDelegate();
         assertSignaturesAreSame(g.getSignature(), f.getSignature());
@@ -352,7 +362,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 assert p0 != null;
                 assert w0 != null;
                 setParentOfNode(w0, p0);
-                System.out.println("Child: " + w0.getControl() + " -> Parent: " + p0);
+//                System.out.println("Child: " + w0.getControl() + " -> Parent: " + p0);
             }
         }
 

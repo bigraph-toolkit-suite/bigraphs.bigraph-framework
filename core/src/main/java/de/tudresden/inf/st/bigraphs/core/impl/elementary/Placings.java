@@ -13,7 +13,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.IntStream;
@@ -59,6 +58,18 @@ public class Placings<S extends Signature> implements Serializable {
         return new Barren();
     }
 
+    public Placings<S>.Identity1 identity1() {
+        return new Identity1();
+    }
+
+    public Symmetry symmetry11() {
+        return new Symmetry(2);
+    }
+
+    public Symmetry symmetry(int n) {
+        return new Symmetry(n);
+    }
+
     public Placings<S>.Merge merge(int m) {
         return new Merge(m);
     }
@@ -68,16 +79,17 @@ public class Placings<S extends Signature> implements Serializable {
     }
 
     /**
-     * Bijective placing
+     * Create an "equally distributed permutation", similiar to an identity place graph.
+     * Each site will be mapped exactly to one root where the indices match.
      *
-     * @param n number of roots/sites
-     * @return a permutation
+     * @param n number of sites respectively roots mapped to each other n_i -> n_i, i in 1..n
+     * @return an "equally distributed permutation"
      */
     public Placings<S>.Permutation permutation(int n) {
         return new Permutation(n);
     }
 
-    public class Barren extends ElementaryBigraph {
+    public class Barren extends ElementaryBigraph<S> {
         private final BigraphEntity.RootEntity root;
 
         Barren() {
@@ -214,17 +226,73 @@ public class Placings<S extends Signature> implements Serializable {
         }
     }
 
+    /**
+     * Base class of a bijective placing.
+     * <p>
+     * This class will also create an identity place graph <i>id_n</i> ("equally distributed").
+     * Each site will be mapped to one root where the indices are the same.
+     */
     public class Permutation extends ElementaryBigraph<S> {
-        private final Collection<BigraphEntity.RootEntity> roots;
+        protected final Collection<BigraphEntity.RootEntity> roots;
         private final Collection<BigraphEntity.SiteEntity> sites;
 
-        public Permutation(int n) {
+        Permutation(int n) {
             roots = new ArrayList<>(n);
             sites = new ArrayList<>(n);
 
             for (int i = 0; i < n; i++) {
                 BigraphEntity.RootEntity newRoot = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(i);
                 BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(i);
+                setParentOfNode(newSite, newRoot);
+                roots.add(newRoot);
+                sites.add(newSite);
+            }
+        }
+
+        @Override
+        public Collection<BigraphEntity.RootEntity> getRoots() {
+            return roots;
+        }
+
+        @Override
+        public Collection<BigraphEntity.SiteEntity> getSites() {
+            return sites;
+        }
+
+        @Override
+        public S getSignature() {
+            return emptySignature;
+        }
+
+        @Override
+        public EPackage getModelPackage() {
+            return loadedModelPacakge;
+        }
+    }
+
+    /**
+     * Identity of a barren. Is a permutation of size one.
+     */
+    public class Identity1 extends Permutation {
+
+        Identity1() {
+            super(1);
+        }
+    }
+
+    /**
+     * Symmetry placings
+     */
+    public class Symmetry extends Permutation {
+        private final Collection<BigraphEntity.RootEntity> roots = new ArrayList<>(2);
+        private final Collection<BigraphEntity.SiteEntity> sites = new ArrayList<>(2);
+
+        Symmetry(int n) {
+            super(0);
+
+            for (int i = 0, j = 1; i < n; i++, j--) {
+                BigraphEntity.RootEntity newRoot = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(i);
+                BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(j);
                 setParentOfNode(newSite, newRoot);
                 roots.add(newRoot);
                 sites.add(newSite);

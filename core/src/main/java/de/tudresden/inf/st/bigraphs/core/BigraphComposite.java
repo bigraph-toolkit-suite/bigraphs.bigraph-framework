@@ -15,6 +15,8 @@ public interface BigraphComposite<S extends Signature> {
      * @return a new bigraph composed of both arguments
      */
     BigraphComposite<S> compose(Bigraph<S> inner) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+    BigraphComposite<S> compose(BigraphComposite<S> inner) throws IncompatibleSignatureException, IncompatibleInterfaceException;
 
     BigraphComposite<S> juxtapose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+    BigraphComposite<S> juxtapose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
 }
