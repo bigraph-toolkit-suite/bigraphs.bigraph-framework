@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.ReactionRule;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -12,6 +13,7 @@ import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
@@ -28,12 +30,13 @@ public class MatchTesting {
     void model_test_0() throws Exception {
         PureBigraph agent_model_test_0 = (PureBigraph) createAgent_model_test_0();
         PureBigraph redex_model_test_0 = (PureBigraph) createRedex_model_test_0();
+        ReactionRule<DefaultDynamicSignature> rr = new ParametricReactionRule<>(redex_model_test_0, redex_model_test_0);
 
 //        BigraphMatchingEngine<PureBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_0, redex_model_test_0);
 
 //        matchingEngine.beginMatch();
         BigraphMatcher matcher = new BigraphMatcher();
-        MatchIterable match = matcher.match(agent_model_test_0, redex_model_test_0);
+        MatchIterable match = matcher.match(agent_model_test_0, (PureBigraph) rr.getRedex());
         Iterator<Match> iterator = match.iterator();
         while (iterator.hasNext()) {
             Match next = iterator.next();

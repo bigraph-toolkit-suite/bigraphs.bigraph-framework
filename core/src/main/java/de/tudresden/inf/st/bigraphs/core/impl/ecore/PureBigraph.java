@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.ecore;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
@@ -14,6 +15,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Immutable bigraph data structure with some operations.
@@ -106,8 +108,14 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
             }
         }
         return null;
+    }
 
-
+    public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        if (BigraphEntityType.isRoot(node) || !isBPlace(node.getInstance())) return Collections.emptyList();
+        BigraphEntity parent = getParent(node);
+        if (Objects.isNull(parent)) return Collections.emptyList();
+        Collection<BigraphEntity> siblings = getChildrenOf(parent);
+        return siblings.stream().filter(x -> x.equals(node)).collect(Collectors.toList());
     }
 
     @Override
@@ -280,6 +288,10 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     protected boolean isBEdge(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
+    }
+
+    public boolean isBPlace(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PLACE);
     }
 
     //works only for elements of the calling class

@@ -7,6 +7,7 @@ import java.util.Collection;
 
 /**
  * Delegator class for bigraphs (currently only suitable for pure bigraphs, e.g., no getParents() method available)
+ *
  * @param <S>
  */
 public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S> {
@@ -99,6 +100,11 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     @Override
     public <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
         return bigraphDelegate.getNodeOfPort(port);
+    }
+
+    @Override
+    public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        return bigraphDelegate.getSiblings(node);
     }
 
     @Override

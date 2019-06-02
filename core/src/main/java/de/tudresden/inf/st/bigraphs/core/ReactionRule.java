@@ -6,4 +6,6 @@ public interface ReactionRule<S extends Signature> extends HasSignature<S> {
     Bigraph<S> getReactum();
 
     boolean canReverse();
+
+    InstantiationMap getInstantationMap();
 }

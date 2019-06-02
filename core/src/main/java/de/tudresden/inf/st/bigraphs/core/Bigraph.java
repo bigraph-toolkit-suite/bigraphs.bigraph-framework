@@ -119,6 +119,14 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port);
 
     /**
+     * Returns all siblings of the given node of the current bigraph. The node itself is not included.
+     *
+     * @param node the node whoms sibling should be returned
+     * @return siblings of {@code node}
+     */
+    Collection<BigraphEntity> getSiblings(BigraphEntity node);
+
+    /**
      * get all point entities (i.e., ports and inner names) from a link entity (edges and outer names)
      *
      * @param linkEntity
