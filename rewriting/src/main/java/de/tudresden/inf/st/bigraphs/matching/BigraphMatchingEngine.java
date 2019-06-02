@@ -11,12 +11,12 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.matching.impl.AbstractDynamicMatchAdapter;
 import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphAgentAdapter;
 import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphRedexAdapter;
@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class BigraphMatchingEngine<B extends DynamicEcoreBigraph> {
+public class BigraphMatchingEngine<B extends PureBigraph> {
 
     private EcoreBigraphRedexAdapter redexAdapter;
     private EcoreBigraphAgentAdapter agentAdapter;
@@ -75,8 +75,8 @@ public class BigraphMatchingEngine<B extends DynamicEcoreBigraph> {
 //        this.redex = redex;
         //TODO: validate
         //signature, ground agent
-        this.builder = BigraphBuilder.newMutableBuilder(agent.getSignature());
-        this.bLinking = BigraphBuilder.newMutableBuilder(agent.getSignature());
+        this.builder = PureBigraphBuilder.newMutableBuilder(agent.getSignature());
+        this.bLinking = PureBigraphBuilder.newMutableBuilder(agent.getSignature());
         this.redexAdapter = new EcoreBigraphRedexAdapter(redex);
         this.agentAdapter = new EcoreBigraphAgentAdapter(agent);
         this.init();
@@ -417,12 +417,12 @@ public class BigraphMatchingEngine<B extends DynamicEcoreBigraph> {
         //calculate the context
         //the parameters etc.
         Map<Integer, Bigraph> parameters = new HashMap<>();
-        SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> simpleBigraphFactory =
-                AbstractBigraphFactory.createSimpleBigraphFactory();
+        PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> pureBigraphFactory =
+                AbstractBigraphFactory.createPureBigraphFactory();
         boolean needsParameters = redexAdapter.getSites().size() >= 1;
         //when no params are necessary then a barren is all that is needed
         if (!needsParameters) {
-            parameters.put(0, simpleBigraphFactory.createPlacings().barren());
+            parameters.put(0, pureBigraphFactory.createPlacings().barren());
         }
 
         //context: replace the agent with sites at eachV and if edge exists, make inner name
@@ -648,7 +648,7 @@ public class BigraphMatchingEngine<B extends DynamicEcoreBigraph> {
         // erhalten bleiben. Oder vorher schauen ob der link mit einem node im redex ist, ansonsten kann man diesen schließen
 //        builder.closeAllInnerNames();
 
-        DynamicEcoreBigraph context = new DynamicEcoreBigraph(builder.new InstanceParameter(
+        PureBigraph context = new PureBigraph(builder.new InstanceParameter(
                 builder.getLoadedEPackage(),
                 agentAdapter.getSignature(),
                 Collections.singletonMap(0, newRoot),

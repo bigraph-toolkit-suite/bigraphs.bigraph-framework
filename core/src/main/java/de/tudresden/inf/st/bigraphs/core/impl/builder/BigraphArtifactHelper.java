@@ -1,8 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -10,14 +9,10 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -29,7 +24,7 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAP
  */
 public class BigraphArtifactHelper {
 
-    public static Collection<EObject> getResourcesFromBigraph(DynamicEcoreBigraph bigraph) {
+    public static Collection<EObject> getResourcesFromBigraph(PureBigraph bigraph) {
         Collection<EObject> allresources = new ArrayList<>();
         bigraph.getRoots().forEach((x) -> allresources.add(x.getInstance()));
         bigraph.getOuterNames().forEach((x) -> allresources.add(x.getInstance()));

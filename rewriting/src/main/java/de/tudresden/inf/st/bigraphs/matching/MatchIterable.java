@@ -1,8 +1,5 @@
 package de.tudresden.inf.st.bigraphs.matching;
 
-import com.sun.istack.internal.NotNull;
-import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
-
 import java.util.Iterator;
 
 /**

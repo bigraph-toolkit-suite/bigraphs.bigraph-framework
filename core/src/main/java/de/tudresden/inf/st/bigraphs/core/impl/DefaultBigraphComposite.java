@@ -1,14 +1,15 @@
-package de.tudresden.inf.st.bigraphs.core;
+package de.tudresden.inf.st.bigraphs.core.impl;
 
 import com.google.common.collect.HashBiMap;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -26,7 +27,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
     public DefaultBigraphComposite(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);
         // this is safe: S is inferred from the bigraph too where S is the same type as the builder's type S (they will have the same type thus)
-        this.builder = BigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature()); //new SimpleBigraphFactory().createBigraphBuilder(getBigraphDelegate().getSignature());
+        this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature()); //new PureBigraphFactory().createBigraphBuilder(getBigraphDelegate().getSignature());
     }
 
     /**
@@ -239,7 +240,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
             newInnerName.getInstance().eSet(lnkRef, newLink.getInstance());
         }
 
-        BigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
+        PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
                 getModelPackage(),
                 getSignature(),
                 myRoots,
@@ -247,7 +248,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 myNodes,
                 myInnerNames, myOuterNames, myEdges);
 
-        Bigraph<S> bigraph = (Bigraph<S>) new DynamicEcoreBigraph(meta);//TODO rework necessary -> unsure which bigraph should be employed here
+        Bigraph<S> bigraph = (Bigraph<S>) new PureBigraph(meta);//TODO rework necessary -> unsure which bigraph should be employed here
 
         return new DefaultBigraphComposite<>(bigraph);
     }
@@ -606,7 +607,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         }
 
 
-        BigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
+        PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
                 getModelPackage(),
                 getSignature(),
                 myRoots,
@@ -614,7 +615,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 myNodes,
                 myInnerNames, myOuterNames, myEdges);
 
-        Bigraph<S> bigraph = (Bigraph<S>) new DynamicEcoreBigraph(meta);//TODO rework necessary -> unsure which bigraph should be employed here
+        Bigraph<S> bigraph = (Bigraph<S>) new PureBigraph(meta);//TODO rework necessary -> unsure which bigraph should be employed here
 
         return new DefaultBigraphComposite<>(bigraph);
     }

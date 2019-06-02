@@ -4,6 +4,7 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.eclipse.emf.ecore.EPackage;
 
 import java.util.AbstractMap;
@@ -13,11 +14,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Generic bigraph interface of all bigraph entities in this framework.
+ * Generic bigraph interface of all bigraph entities in this framework (for all pure bigraphs)
  * <p>
  * Important direct implementations are:
  * <ul>
- * <li>{@link de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph}</li>
+ * <li>{@link PureBigraph}</li>
  * <li>{@link BigraphDelegator}</li>
  * <li>{@link ElementaryBigraph}</li>
  * </ul>

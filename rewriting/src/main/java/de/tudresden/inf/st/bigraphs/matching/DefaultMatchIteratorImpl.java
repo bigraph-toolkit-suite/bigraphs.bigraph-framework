@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.matching;
 
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 
 import java.util.*;
 
@@ -10,14 +10,14 @@ import java.util.*;
 //  see also comment in BigraphMatchingEngine
 public class DefaultMatchIteratorImpl implements Iterator<Match> {
     private int cursor = 0;
-    private List<Match<DynamicEcoreBigraph>> matches = new ArrayList<>();
+    private List<Match<PureBigraph>> matches = new ArrayList<>();
 
-    private BigraphMatchingEngine<DynamicEcoreBigraph> matchingEngine;
+    private BigraphMatchingEngine<PureBigraph> matchingEngine;
 //    private BigraphMatcher bigraphMatcher;
 //    private Match nextMatch;
 
-    DefaultMatchIteratorImpl(BigraphMatchingEngine<? extends DynamicEcoreBigraph> matchingEngine) throws IncompatibleSignatureException {
-        this.matchingEngine = (BigraphMatchingEngine<DynamicEcoreBigraph>) matchingEngine;
+    DefaultMatchIteratorImpl(BigraphMatchingEngine<? extends PureBigraph> matchingEngine) throws IncompatibleSignatureException {
+        this.matchingEngine = (BigraphMatchingEngine<PureBigraph>) matchingEngine;
         findMatches();
     }
 

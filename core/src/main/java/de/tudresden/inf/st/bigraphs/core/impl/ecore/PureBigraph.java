@@ -5,7 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -20,7 +20,7 @@ import java.util.*;
  * <p>
  * Ecore model of a bigraph. The elements are stored also separately in collections for easier access.
  */
-public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
+public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     private EPackage modelPackage; //TODO wirklich diese package?
 
     private final Set<BigraphEntity.RootEntity> roots;
@@ -33,7 +33,7 @@ public class DynamicEcoreBigraph implements Bigraph<DefaultDynamicSignature> {
 
     //Fertig gebaute bigraph model
     //TODO see ecorebuilder....
-    public DynamicEcoreBigraph(BigraphBuilder.InstanceParameter details) {
+    public PureBigraph(PureBigraphBuilder.InstanceParameter details) {
         this.modelPackage = details.getModelPackage();
         this.roots = Collections.unmodifiableSet(details.getRoots()); //roots;
         this.sites = Collections.unmodifiableSet(details.getSites()); //sites;

@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.store;
 
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphArtifactHelper;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -32,16 +32,16 @@ public class BigraphModelFileStore {
      * @param bigraph
      * @throws IOException
      */
-    public static void exportBigraph(DynamicEcoreBigraph bigraph) throws IOException {
+    public static void exportBigraph(PureBigraph bigraph) throws IOException {
         BigraphModelFileStore.exportBigraph(bigraph, "sample", System.out);
     }
 
-    public static void exportBigraph(DynamicEcoreBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
+    public static void exportBigraph(PureBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
         Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph);
         BigraphModelFileStore.writeDynamicInstanceModel(bigraph.getModelPackage(), allresources, filename, outputStream);
     }
 
-    public static void exportMetaModel(DynamicEcoreBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
+    public static void exportMetaModel(PureBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
         BigraphModelFileStore.writeDynamicMetaModel(bigraph.getModelPackage(), filename, outputStream);
     }
 

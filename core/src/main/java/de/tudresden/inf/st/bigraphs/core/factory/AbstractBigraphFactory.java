@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -35,8 +36,8 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
     }
 
     //TODO move outside this class
-    public static SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> createSimpleBigraphFactory() {
-        return new SimpleBigraphFactory<>();
+    public static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> createPureBigraphFactory() {
+        return new PureBigraphFactory<>();
     }
 
     /**
@@ -53,7 +54,7 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
      * signature type.
      *
      * @param signature the signature of the bigraph to build
-     * @return a {@link BigraphBuilder} instance with signature type S which is inferred from the given signature.
+     * @return a {@link PureBigraphBuilder} instance with signature type S which is inferred from the given signature.
      */
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
 

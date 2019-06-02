@@ -4,7 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
@@ -35,10 +35,10 @@ public class Placings<S extends Signature> implements Serializable {
     private EPackage loadedModelPacakge;
 
     public Placings(AbstractBigraphFactory factory) {
-//        AbstractBigraphFactory factory = new SimpleBigraphFactory<>();
+//        AbstractBigraphFactory factory = new PureBigraphFactory<>();
         SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
         emptySignature = (S) signatureBuilder.createSignature();
-        mutableBuilder = BigraphBuilder.newMutableBuilder(emptySignature);
+        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }
 
@@ -47,10 +47,10 @@ public class Placings<S extends Signature> implements Serializable {
      *                         user-defined bigraphs of the same type created with the same factory
      */
     public Placings(SignatureBuilder signatureBuilder) {
-//        AbstractBigraphFactory factory = new SimpleBigraphFactory<>();
+//        AbstractBigraphFactory factory = new PureBigraphFactory<>();
 //        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
         emptySignature = (S) signatureBuilder.createSignature();
-        mutableBuilder = BigraphBuilder.newMutableBuilder(emptySignature);
+        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }
 

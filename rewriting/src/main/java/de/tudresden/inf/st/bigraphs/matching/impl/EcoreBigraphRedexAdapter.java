@@ -3,7 +3,7 @@ package de.tudresden.inf.st.bigraphs.matching.impl;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
@@ -13,7 +13,7 @@ import java.util.*;
 
 public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
 
-    public EcoreBigraphRedexAdapter(DynamicEcoreBigraph bigraph) {
+    public EcoreBigraphRedexAdapter(PureBigraph bigraph) {
         super(bigraph);
     }
 

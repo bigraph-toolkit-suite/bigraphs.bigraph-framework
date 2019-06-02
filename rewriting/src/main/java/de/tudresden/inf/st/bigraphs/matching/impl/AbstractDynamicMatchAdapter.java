@@ -5,7 +5,7 @@ import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -30,11 +30,11 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
 
     @SuppressWarnings("unchecked")
     @Override
-    protected DynamicEcoreBigraph getBigraphDelegate() {
+    protected PureBigraph getBigraphDelegate() {
         return super.getBigraphDelegate();
     }
 
-    public DynamicEcoreBigraph getBigraph() {
+    public PureBigraph getBigraph() {
         return this.getBigraphDelegate();
     }
 

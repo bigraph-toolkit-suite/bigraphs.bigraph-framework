@@ -4,18 +4,19 @@ import com.google.common.reflect.TypeToken;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultBigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
-public class SimpleBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
+public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
         extends AbstractBigraphFactory<DefaultDynamicSignature, NT, FT> {
 
-    public SimpleBigraphFactory() {
+    PureBigraphFactory() {
         super.successorClass = new TypeToken<DefaultDynamicControl<NT, FT>>() {
         }.getType();
     }
@@ -27,10 +28,10 @@ public class SimpleBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal
     }
 
     @Override
-    public BigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature) {
-//        BigraphBuilder<DefaultDynamicSignature> builder = new BigraphBuilder<DefaultDynamicSignature>().useSignature(signature);
-//        BigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
-        return BigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
+    public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature) {
+//        PureBigraphBuilder<DefaultDynamicSignature> builder = new PureBigraphBuilder<DefaultDynamicSignature>().useSignature(signature);
+//        PureBigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
+        return PureBigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
     }
 
     @Override
@@ -44,7 +45,7 @@ public class SimpleBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal
     }
 
     @Override
-    public BigraphComposite<DefaultDynamicSignature> asBigraphOperator(Bigraph<DefaultDynamicSignature> outerBigraph) {
+    public DefaultBigraphComposite<DefaultDynamicSignature> asBigraphOperator(Bigraph<DefaultDynamicSignature> outerBigraph) {
         return new DefaultBigraphComposite<>(outerBigraph);
     }
 

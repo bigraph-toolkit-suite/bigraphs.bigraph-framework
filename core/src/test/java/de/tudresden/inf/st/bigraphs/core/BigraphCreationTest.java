@@ -5,14 +5,15 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.InnerNameConnectedToOuterNameException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
 //@Disabled
 public class BigraphCreationTest {
 
-    private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
+    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("Create Bigraphs test series")
     class ArityChecks {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
-        BigraphBuilder<DefaultDynamicSignature> builder;
+        PureBigraphBuilder<DefaultDynamicSignature> builder;
 
         @BeforeAll
         void createSignature() {
@@ -54,7 +55,7 @@ public class BigraphCreationTest {
                         .addChild(selected)
                         .connectNodeToOuterName(jeff);
             });
-            DynamicEcoreBigraph bigraph = builder.createBigraph();
+            PureBigraph bigraph = builder.createBigraph();
             System.out.println(bigraph);
 //            am.printStackTrace();
         }
@@ -86,7 +87,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ConnectionTestSeries_InnerOuterNames {
-        BigraphBuilder<DefaultDynamicSignature> builder;
+        PureBigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -214,7 +215,7 @@ public class BigraphCreationTest {
                         .connectNodeToInnerName(x);
 
                 builder.closeAllInnerNames();
-                DynamicEcoreBigraph bigraph = builder.createBigraph();
+                PureBigraph bigraph = builder.createBigraph();
                 System.out.println(bigraph);
             });
         }
@@ -237,7 +238,7 @@ public class BigraphCreationTest {
 
                 //the inner name shall not have a reference to jeff now
 //                BigraphArtifactHelper.exportBigraph(builder.createBigraph());
-                DynamicEcoreBigraph bigraph = builder.createBigraph();
+                PureBigraph bigraph = builder.createBigraph();
                 System.out.println(bigraph);
             });
         }
@@ -246,7 +247,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class GroundBigraphTestSeries {
-        BigraphBuilder<DefaultDynamicSignature> builder;
+        PureBigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -294,7 +295,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class NestedHierarchyTestSeries {
-        BigraphBuilder<DefaultDynamicSignature> builder;
+        PureBigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -339,7 +340,7 @@ public class BigraphCreationTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class HierarchyTestSeries {
-        BigraphBuilder<DefaultDynamicSignature> builder;
+        PureBigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
 
         @BeforeAll
@@ -359,7 +360,7 @@ public class BigraphCreationTest {
 
             assertAll(() -> {
 
-                BigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+                PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
                 room.connectNodeToInnerName(tmp1)
                         .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
                         .addChild(signature.getControlByName("Job"));
@@ -371,13 +372,13 @@ public class BigraphCreationTest {
                 builder.closeInnerName(tmp1);
             });
 
-            DynamicEcoreBigraph bigraph = builder.createBigraph();
+            PureBigraph bigraph = builder.createBigraph();
             System.out.println(bigraph);
         }
 
     }
 
-    private <C extends Control<?,?>, S extends Signature<C>> S createExampleSignature() {
+    private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()

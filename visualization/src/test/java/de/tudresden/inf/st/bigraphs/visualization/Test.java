@@ -1,10 +1,6 @@
 package de.tudresden.inf.st.bigraphs.visualization;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Table;
-import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -12,13 +8,14 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -28,17 +25,15 @@ import guru.nidi.graphviz.model.MutableGraph;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
 public class Test {
-    private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = new SimpleBigraphFactory<>();
+    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @org.junit.jupiter.api.Test
     void placegraph_export2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-//        DynamicEcoreBigraph bigraph_a = createBigraph_b();
+//        PureBigraph bigraph_a = createBigraph_b();
 
         final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
         final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
@@ -87,7 +82,7 @@ public class Test {
 
     @org.junit.jupiter.api.Test
     void graphviz_hierarchy_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
-        DynamicEcoreBigraph simpleBigraphHierarchy = createSimpleBigraphHierarchy();
+        PureBigraph simpleBigraphHierarchy = createSimpleBigraphHierarchy();
 
         final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
 
@@ -109,9 +104,9 @@ public class Test {
         Graphviz.fromGraph(mega).height(800).render(Format.PNG).toFile(new File("src/test/resources/graphviz/ex_hierarchy.png"));
     }
 
-    public DynamicEcoreBigraph createSimpleBigraphHierarchy() {
+    public PureBigraph createSimpleBigraphHierarchy() {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         builder.createRoot().addChild(signature.getControlByName("Room"))
                 .withNewHierarchy()
@@ -125,9 +120,9 @@ public class Test {
         return builder.createBigraph();
     }
 
-    public DynamicEcoreBigraph bigraphWithTwoRoots() throws InvalidArityOfControlException, LinkTypeNotExistsException {
+    public PureBigraph bigraphWithTwoRoots() throws InvalidArityOfControlException, LinkTypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot().addChild(signature.getControlByName("Room"))
                 .withNewHierarchy()
@@ -146,10 +141,10 @@ public class Test {
         return builder.createBigraph();
     }
 
-    public DynamicEcoreBigraph createBigraph_A() throws
+    public PureBigraph createBigraph_A() throws
             LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
         BigraphEntity.OuterName a = builder.createOuterName("a");
@@ -183,14 +178,14 @@ public class Test {
 //        builder.closeAllInnerNames();
 //        builder.makeGround();
 
-        DynamicEcoreBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.createBigraph();
         return bigraph;
     }
 
-    public DynamicEcoreBigraph createBigraph_b() throws
+    public PureBigraph createBigraph_b() throws
             LinkTypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
         BigraphEntity.InnerName spoolLink = builder.createInnerName("tmp_spoolLink");
@@ -220,7 +215,7 @@ public class Test {
 //        builder.closeAllInnerNames();
 //        builder.makeGround();
 
-        DynamicEcoreBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.createBigraph();
         return bigraph;
     }
 

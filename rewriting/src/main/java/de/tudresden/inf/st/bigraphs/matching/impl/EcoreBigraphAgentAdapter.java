@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.matching.impl;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -19,7 +19,7 @@ import java.util.Objects;
 // In dieser Variante werden die links erst einmal nicht mit aufgenommen
 public class EcoreBigraphAgentAdapter extends AbstractDynamicMatchAdapter {
 
-    public EcoreBigraphAgentAdapter(DynamicEcoreBigraph bigraph) {
+    public EcoreBigraphAgentAdapter(PureBigraph bigraph) {
         super(bigraph);
         //TODO: assert: has only one root! only forest in tree matching
     }

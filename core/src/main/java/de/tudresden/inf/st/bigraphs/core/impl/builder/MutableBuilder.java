@@ -1,26 +1,25 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFailedException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static de.tudresden.inf.st.bigraphs.core.BigraphEntityType.*;
-
 //TODO: do not inherit from builder directly
 //TODO make lightweight builder: references are acquired via eclass directly
-public class MutableBuilder<S extends Signature> extends BigraphBuilder<S> {
+
+/**
+ * A generic mutable builder intended to be used for all bigraph types
+ *
+ * @param <S>
+ */
+public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
 
     public MutableBuilder(S signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
         super(signature, nodeNameSupplier);

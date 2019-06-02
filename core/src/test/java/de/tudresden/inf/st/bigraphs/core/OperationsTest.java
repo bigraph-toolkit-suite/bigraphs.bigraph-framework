@@ -6,45 +6,42 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
+import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.DynamicEcoreBigraph;
-import de.tudresden.inf.st.bigraphs.core.factory.SimpleBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OperationsTest {
 
-    private SimpleBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory;
+    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @BeforeEach
     void setUp() {
-        factory = new SimpleBigraphFactory<>();
     }
 
     @Test
     void compose_test() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        BigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
-        BigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
 
         BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
         BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
 
-        BigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
                 builderForF.newHierarchy(signature.getControlByName("Room"));
         room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
         builderForF.createRoot()
@@ -55,8 +52,8 @@ public class OperationsTest {
                 .addChild(signature.getControlByName("User")).connectNodeToInnerName(jeffG);
 
 
-        DynamicEcoreBigraph F = builderForF.createBigraph();
-        DynamicEcoreBigraph G = builderForG.createBigraph();
+        PureBigraph F = builderForF.createBigraph();
+        PureBigraph G = builderForG.createBigraph();
 
 
         BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
@@ -126,10 +123,10 @@ public class OperationsTest {
 
             //a bigraph is composed with a closure resulting in a inner name rewriting of that bigraph
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-            BigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
             builderForG.createRoot().addChild(signature.getControlByName("User")).connectNodeToInnerName(zInner);
-            DynamicEcoreBigraph simpleBigraph = builderForG.createBigraph();
+            PureBigraph simpleBigraph = builderForG.createBigraph();
             Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
             BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(simpleBigraph);
             BigraphComposite<DefaultDynamicSignature> compose1 = compose.compose(substitution);
