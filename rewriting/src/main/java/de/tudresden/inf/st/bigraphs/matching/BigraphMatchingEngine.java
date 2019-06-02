@@ -41,7 +41,6 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
     private Table<BigraphEntity, BigraphEntity, List<BigraphEntity>> S = HashBasedTable.create();
     private AtomicInteger treffer;
     private Table<BigraphEntity, BigraphEntity, Integer> results;
-    private int[] rootsFound;
     private int itcnt;
     private List<BigraphEntity> internalVertsG;
     private List<BigraphEntity> allVerticesOfH;
@@ -104,7 +103,6 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
 //        System.out.println("n = " + agentAdapter.getAllVertices().size());
 //        System.out.println("k = " + allVerticesOfH.size());
 //        System.out.println("Complexity: " + Math.pow(allVerticesOfH.size(), 1.5) * bigraphAdapter.getAllVertices().size());
-        rootsFound = new int[allVerticesOfH.size()];
         itcnt = 0;
         treffer = new AtomicInteger(0);
         results = HashBasedTable.create();
@@ -247,7 +245,14 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
                         Map<BigraphEntity, List<BigraphEntity>> nodeDiffByControlCheck = findOccurrences(childrenOfV, neighborsOfU);
 //                        Map<Integer, List<BigraphEntity>> occs = new HashMap<>();
                         occurrenceTable.putIfAbsent(i, new HashMap<>());
-                        occurrenceTable.get(i).putAll(nodeDiffByControlCheck);
+//                        occurrenceTable.get(i).putAll(nodeDiffByControlCheck); //this doesn't work if ambiguity in node matching exists (e.g., a symmetric bigraph)
+                        for (Map.Entry<BigraphEntity, List<BigraphEntity>> eachEntry : nodeDiffByControlCheck.entrySet()) {
+                            if (occurrenceTable.get(i).get(eachEntry.getKey()) == null) {
+                                occurrenceTable.get(i).putAll(nodeDiffByControlCheck);
+                            } else {
+                                occurrenceTable.get(i).get(eachEntry.getKey()).addAll(eachEntry.getValue());
+                            }
+                        }
                         // permutationen kann dann gebildet werden, um die redex nodes auf die agents zu matchen...
 
 
@@ -449,6 +454,18 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
         //where first u node is found replace with site
         //this should build the node hierarchy and put places under those nodes where the redex matched
         int currentRedexRoot = -1;
+
+        // get all possible redex to agents matches first. A strategy must be involved here to distributed
+        //the matchings especially if multiple occurrences were found. Currently the current match is used
+        // which is post order
+        Set<BigraphEntity> availableAgentNodes = occurrenceTable.entrySet().stream()
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList())
+                .stream().map(Map::values)
+                .flatMap(Collection::stream)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+
         for (BigraphEntity eachNodeV : agentAdapter.getAllVerticesBfsOrder()) {
             if (BigraphEntityType.isRoot(eachNodeV)) {
                 continue;
@@ -548,8 +565,8 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
                 List<BigraphEntity> savedRedexNodes = new ArrayList<>();
                 Map<BigraphEntity, List<BigraphEntity>> redexToAgentMapping = occurrenceTable.get(rootIx);
                 //Re-collect all agent nodes first
-                Set<BigraphEntity> availableAgentNodes = redexToAgentMapping.values().stream()
-                        .flatMap(Collection::stream).collect(Collectors.toSet());
+//                Set<BigraphEntity> availableAgentNodes = redexToAgentMapping.values().stream()
+//                        .flatMap(Collection::stream).collect(Collectors.toSet());
                 for (Map.Entry<BigraphEntity, List<BigraphEntity>> redexAgentMapping : redexToAgentMapping.entrySet()) {
                     //get any value from the value list
                     for (BigraphEntity correspondence : redexAgentMapping.getValue()) {
