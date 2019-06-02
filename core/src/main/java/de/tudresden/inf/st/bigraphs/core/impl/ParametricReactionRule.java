@@ -3,11 +3,11 @@ package de.tudresden.inf.st.bigraphs.core.impl;
 import de.tudresden.inf.st.bigraphs.core.AbstractReactionRule;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.exceptions.ReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 
 public class ParametricReactionRule<S extends Signature> extends AbstractReactionRule<S> {
 
-    public ParametricReactionRule(Bigraph<S> redex, Bigraph<S> reactum) throws ReactionRuleException {
+    public ParametricReactionRule(Bigraph<S> redex, Bigraph<S> reactum) throws InvalidReactionRuleException {
         super(redex, reactum);
     }
 
