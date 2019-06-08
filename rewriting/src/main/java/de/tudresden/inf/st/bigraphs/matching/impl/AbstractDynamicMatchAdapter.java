@@ -161,7 +161,7 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
      * @param node the node whoms sibling should be returned
      * @return siblings of {@code node}
      */
-    public List<BigraphEntity> getSiblings(BigraphEntity node) {
+    public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
         if (!isBPlace(node.getInstance())) return new ArrayList<>();
         EObject instance = node.getInstance();
         List<BigraphEntity> siblings = new ArrayList<>();

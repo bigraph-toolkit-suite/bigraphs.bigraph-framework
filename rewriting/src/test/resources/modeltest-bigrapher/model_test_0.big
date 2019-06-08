@@ -10,7 +10,7 @@ ctrl Job = 0;
 # active bedeutet: sie können reagieren, sprich es wird eine site automatisch reingelegt
 # weil controls default active sind, muss man immer .1 machen, damit site verschwindet
 
-big s1 = /e0 (
+big s1 = {abc} + /e0 (
 (Room{e0} . (Computer{b1} . (User{jeff2}.1 | Job.1)))
 | (Room{e0} . (Computer{b1} . (User{jeff2}.1 | Job.1))) 
 );
@@ -20,6 +20,11 @@ big r = (
 (Computer{a} . (User{b}.1 | Job.1)) 
 || (Computer{c} . (User{d}.1 | Job.1)) 
 );
+
+# react r2 = {a} + User{abc};
+# --> 
+# {a} + User{abc};
+
 
 react combi2 = 
 r -> r;

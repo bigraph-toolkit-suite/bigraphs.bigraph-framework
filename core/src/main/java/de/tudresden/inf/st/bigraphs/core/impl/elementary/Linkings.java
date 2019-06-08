@@ -80,7 +80,7 @@ public class Linkings<S extends Signature> implements Serializable {
          * @return an empty list
          */
         @Override
-        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Collections.EMPTY_LIST;
         }
     }
@@ -127,7 +127,7 @@ public class Linkings<S extends Signature> implements Serializable {
          * @return an empty list
          */
         @Override
-        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Collections.EMPTY_LIST;
         }
     }

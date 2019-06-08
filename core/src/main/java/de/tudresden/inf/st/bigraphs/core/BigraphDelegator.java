@@ -103,8 +103,8 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
-        return bigraphDelegate.getSiblings(node);
+    public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        return bigraphDelegate.getSiblingsOfNode(node);
     }
 
     @Override

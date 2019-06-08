@@ -130,7 +130,7 @@ public class Placings<S extends Signature> implements Serializable {
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Collections.EMPTY_LIST;
         }
 
@@ -180,7 +180,7 @@ public class Placings<S extends Signature> implements Serializable {
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             if (BigraphEntityType.isSite(node) && sites.contains((BigraphEntity.SiteEntity) node)) {
                 return sites.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
             }
@@ -236,7 +236,7 @@ public class Placings<S extends Signature> implements Serializable {
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             if (BigraphEntityType.isSite(node) && sites.contains((BigraphEntity.SiteEntity) node)) {
                 return sites.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
             }
@@ -288,7 +288,7 @@ public class Placings<S extends Signature> implements Serializable {
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Collections.emptyList();
         }
 
@@ -338,7 +338,7 @@ public class Placings<S extends Signature> implements Serializable {
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Collections.emptyList();
         }
 

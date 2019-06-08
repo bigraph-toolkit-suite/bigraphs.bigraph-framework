@@ -48,6 +48,38 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         return getRoots().size() == 1 && getInnerNames().size() == 0;
     }
 
+    /**
+     * A concrete bigraph is epimorphic iff its place graph has no idle root and its link graph has no idle outer names.
+     *
+     * @return {@code true} if the bigraph is epimorphic, otherwise {@code false}
+     */
+    default boolean isEpimorphic() {
+        boolean placeGraphIsEpi = getRoots().stream().allMatch(x -> getChildrenOf(x).size() > 0);
+        boolean linkGraphIsEpi = getOuterNames().stream().allMatch(x -> getPointsFromLink(x).size() > 0);
+        return placeGraphIsEpi && linkGraphIsEpi;
+    }
+
+    /**
+     * A concrete bigraph is monomorphic iff no two sites are siblings and no two inner names are siblings.
+     * With other words, every edge has at most one inner name.
+     *
+     * @return {@code true} if the bigraph is monomorphic, otherwise {@code false}
+     */
+    default boolean isMonomorphic() {
+        // check that no two sites are siblings
+        boolean noTwoSitesAreSiblings = getSites().stream().map(this::getSiblingsOfNode).allMatch(x -> x.stream().noneMatch(BigraphEntityType::isSite));
+
+        // check that no two inner names are siblings
+        for (BigraphEntity.InnerName eachInner : getInnerNames()) {
+            final Collection<BigraphEntity> pointsFromLink = getPointsFromLink(getLinkOfPoint(eachInner));
+            if (pointsFromLink.stream().filter(x -> !x.equals(eachInner)).anyMatch(BigraphEntityType::isInnerName)) {
+                return false;
+            }
+        }
+
+        return noTwoSitesAreSiblings;
+    }
+
     //TODO
     default boolean isDiscrete() {
         return false;
@@ -124,7 +156,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param node the node whoms sibling should be returned
      * @return siblings of {@code node}
      */
-    Collection<BigraphEntity> getSiblings(BigraphEntity node);
+    Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node);
 
     /**
      * get all point entities (i.e., ports and inner names) from a link entity (edges and outer names)

@@ -115,10 +115,10 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
     public final <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
         return Collections.EMPTY_LIST;
     }
-    
+
     @Override
-    public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
-        throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getSiblings(BigraphEntity) yet.");
+    public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getSiblingsOfNode(BigraphEntity) yet.");
     }
 
     //TODO for discrete ion important!

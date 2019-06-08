@@ -111,7 +111,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         return null;
     }
 
-    public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+    public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
         if (BigraphEntityType.isRoot(node) || !isBPlace(node.getInstance())) return Collections.emptyList();
         BigraphEntity parent = getParent(node);
         if (Objects.isNull(parent)) return Collections.emptyList();

@@ -87,7 +87,7 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
 
         boolean areNotSiblings = false;
         for (BigraphEntity.SiteEntity eachSite : redex.getSites()) {
-            if ((int) redex.getSiblings(eachSite).stream().filter(BigraphEntityType::isSite).count() > 0) {
+            if ((int) redex.getSiblingsOfNode(eachSite).stream().filter(BigraphEntityType::isSite).count() > 0) {
                 areNotSiblings = true;
                 break;
             }
