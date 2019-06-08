@@ -501,7 +501,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 }
 
                 //C2: (connect outer to inner names)
-                // is element and innername or port of F?
+                // is element an inner name or port of F?
                 // is element connected to an inner name of G?
 
                 //q ist ein port und zeigt auf einen outername von F der gleich ist mit dem Inner name von G
@@ -541,6 +541,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                         String name = ((BigraphEntity.OuterName) link).getName();
                         newLink = myOuterNames.get(name);
                     }
+                    if (newLink == null) continue;
                     assert newLink != null;
                     System.out.println("\tlink(q) <- link_G(y)");
                     //index beachten

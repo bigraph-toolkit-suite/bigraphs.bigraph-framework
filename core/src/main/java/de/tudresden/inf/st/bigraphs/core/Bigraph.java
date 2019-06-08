@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
  * </ul>
  *
  * @param <S> type of the signature
+ * @author Dominik Grzelak
  */
 public interface Bigraph<S extends Signature> extends HasSignature<S> {
 

@@ -1,19 +1,20 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Interface for the basic building blocks for all bigraphs.
  * <p>
  * With them other larger bigraphs can be built.
+ *
+ * @param <S>
+ * @author Dominik Grzelak
  */
 public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<S> {
 
@@ -94,7 +95,28 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
 
     @Override
     public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
-        return Collections.EMPTY_LIST;
+        if (Objects.isNull(linkEntity) || !isBLink(linkEntity.getInstance()))
+            return Collections.EMPTY_LIST;
+        final EObject eObject = linkEntity.getInstance();
+        final EStructuralFeature pointsRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+        if (Objects.isNull(pointsRef)) return Collections.EMPTY_LIST;
+        final EList<EObject> pointsObjects = (EList<EObject>) eObject.eGet(pointsRef);
+        if (Objects.isNull(pointsObjects)) return Collections.EMPTY_LIST;
+
+        final Collection<BigraphEntity> result = new ArrayList<>();
+        for (EObject eachObject : pointsObjects) {
+            if (isBPort(eachObject)) {
+                Optional<BigraphEntity.Port> first = getNodes().stream()
+                        .map(this::getPorts).flatMap(Collection::stream)
+                        .filter(x -> x.getInstance().equals(eachObject))
+                        .findFirst();
+                first.ifPresent(result::add);
+            } else if (isBInnerName(eachObject)) {
+                Optional<BigraphEntity.InnerName> first = getInnerNames().stream().filter(x -> x.getInstance().equals(eachObject)).findFirst();
+                first.ifPresent(result::add);
+            }
+        }
+        return result;
     }
 
     protected boolean isBLink(EObject eObject) {
@@ -103,6 +125,14 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
 
     protected boolean isBEdge(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
+    }
+
+    protected boolean isBPort(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
+    }
+
+    protected boolean isBInnerName(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_INNERNAME);
     }
 
     //works only for elements of the calling class
