@@ -26,7 +26,9 @@ import java.lang.reflect.Type;
 //ecore bigraph bekommt dann abstracte klasse zwischen interface bigraph noch
 //Später kann man noch über attributed bigraphs nachdenken (kann auch für matching verwendet werden - constraints)
 
-
+/**
+ * @author Dominik Grzelak
+ */
 public abstract class AbstractBigraphFactory<S extends Signature, NT extends NamedType, FT extends FiniteOrdinal> implements BigraphFactoryElement {
     protected Type successorClass = null; //TODO: one for the signature type (and one for the bigraph)
 

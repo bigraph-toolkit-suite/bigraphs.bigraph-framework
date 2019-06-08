@@ -1,7 +1,8 @@
-package de.tudresden.inf.st.bigraphs.core.exceptions;
+package de.tudresden.inf.st.bigraphs.core.exceptions.builder;
 
-import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
-
+/**
+ * @author Dominik Grzelak
+ */
 public class InnerNameNotExistsException extends LinkTypeNotExistsException {
 
     public InnerNameNotExistsException() {

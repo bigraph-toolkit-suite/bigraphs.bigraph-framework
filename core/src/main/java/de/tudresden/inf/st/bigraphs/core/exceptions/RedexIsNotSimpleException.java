@@ -1,5 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core.exceptions;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class RedexIsNotSimpleException extends InvalidReactionRuleException {
 
     public RedexIsNotSimpleException() {

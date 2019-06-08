@@ -1,7 +1,10 @@
-package de.tudresden.inf.st.bigraphs.core.exceptions.building;
+package de.tudresden.inf.st.bigraphs.core.exceptions.builder;
 
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class InnerNameConnectedToOuterNameException extends InvalidConnectionException {
 
     public InnerNameConnectedToOuterNameException() {

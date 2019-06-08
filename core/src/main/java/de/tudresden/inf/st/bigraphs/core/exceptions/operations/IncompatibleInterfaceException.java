@@ -1,5 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core.exceptions.operations;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class IncompatibleInterfaceException extends Exception {
     public IncompatibleInterfaceException() {
         super("Interface not compatible");

@@ -1,5 +1,8 @@
-package de.tudresden.inf.st.bigraphs.core.exceptions.building;
+package de.tudresden.inf.st.bigraphs.core.exceptions.builder;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class LinkTypeNotExistsException extends TypeNotExistsException {
 
     public LinkTypeNotExistsException() {

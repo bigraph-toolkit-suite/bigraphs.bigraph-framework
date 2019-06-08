@@ -4,6 +4,12 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidOrdinalTypeException;
 
 import java.util.Objects;
 
+/**
+ * Data type for a finite ordinal which is used within an interface of a bigraph.
+ *
+ * @param <T> type of the ordinal. Either Integer or Long are supported
+ * @author Dominik Grzelak
+ */
 public class FiniteOrdinal<T extends Number> implements Comparable<FiniteOrdinal<T>> {
     private T value;
 

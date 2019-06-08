@@ -1,6 +1,10 @@
 package de.tudresden.inf.st.bigraphs.core.exceptions;
 
 //TODO verständlicher machen
+
+/**
+ * @author Dominik Grzelak
+ */
 public class InvalidArityOfControlException extends InvalidConnectionException {
 
     public InvalidArityOfControlException() {

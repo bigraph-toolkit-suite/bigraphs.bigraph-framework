@@ -1,5 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core.exceptions;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class BigraphMetaModelLoadingFailedException extends RuntimeException {
 
     public BigraphMetaModelLoadingFailedException(Exception e) {

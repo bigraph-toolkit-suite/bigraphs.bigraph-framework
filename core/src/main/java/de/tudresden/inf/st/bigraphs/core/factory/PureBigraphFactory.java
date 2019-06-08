@@ -13,6 +13,11 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
+//TODO default should be "change nsURI in to "http: ///ecore_file_name.ecore" and nsPrefix into "ecore_file_name" it woks great" when saving
+
+/**
+ * @author Dominik Grzelak
+ */
 public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
         extends AbstractBigraphFactory<DefaultDynamicSignature, NT, FT> {
 

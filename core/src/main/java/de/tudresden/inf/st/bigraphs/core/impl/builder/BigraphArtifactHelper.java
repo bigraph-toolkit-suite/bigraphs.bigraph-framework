@@ -21,16 +21,25 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAP
 /**
  * A simple file store to serialize/deserialize bigraph model files.
  * <b>For experimental purposes only.</b>
+ *
+ * @author Dominik Grzelak
  */
 public class BigraphArtifactHelper {
 
+    /**
+     * Get all {@link EObject} instances of a bigraph. Necessary when exporting an Ecore model.
+     *
+     * @param bigraph the bigraphs whos {@link EObject} instances should be collected
+     * @return a collection of the {@link EObject} instances for the given bigraph
+     */
     public static Collection<EObject> getResourcesFromBigraph(PureBigraph bigraph) {
         Collection<EObject> allresources = new ArrayList<>();
+        // the child-parent relationship is automatically considered as well as "ports"
+        // that is way we don't need to call getNodes() and getSites()
         bigraph.getRoots().forEach((x) -> allresources.add(x.getInstance()));
         bigraph.getOuterNames().forEach((x) -> allresources.add(x.getInstance()));
         bigraph.getInnerNames().forEach((x) -> allresources.add(x.getInstance()));
         bigraph.getEdges().forEach((x) -> allresources.add(x.getInstance()));
-
         return allresources;
     }
 

@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
-import de.tudresden.inf.st.bigraphs.core.exceptions.building.*;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.*;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
