@@ -65,13 +65,14 @@ public class BigraphArtifactTests {
                     .addChild(signature.getControlByName("Printer")).connectNodeToInnerName(f1).connectNodeToInnerName(f2)
             ;
             builderForF.createRoot()
-                    .addHierarchyToParent(room);
+                    .addChild(room);
 
             builderForG.createRoot()
                     .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite().goBack()
                     .addChild(signature.getControlByName("User")).connectNodeToInnerName(jeffG);
 
 
+            builderForF.createBigraph();
             PureBigraph F = builderForF.createBigraph();
             PureBigraph G = builderForG.createBigraph();
 
@@ -158,7 +159,7 @@ public class BigraphArtifactTests {
                 .addChild(signature.getControlByName("Job"));
 
         builder.createRoot()
-                .addHierarchyToParent(room)
+                .addChild(room)
                 .addChild(signature.getControlByName("Room")).connectNodeToInnerName(tmp1);
 
         builder.closeInnerName(tmp1);

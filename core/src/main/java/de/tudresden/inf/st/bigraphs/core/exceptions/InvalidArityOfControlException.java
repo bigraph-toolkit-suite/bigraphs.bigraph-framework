@@ -1,8 +1,9 @@
 package de.tudresden.inf.st.bigraphs.core.exceptions;
 
-//TODO verständlicher machen
-
 /**
+ * Exception that is thrown with operations on controls where the arity must be considered, e.g., connecting
+ * links to a node with no free ports.
+ *
  * @author Dominik Grzelak
  */
 public class InvalidArityOfControlException extends InvalidConnectionException {

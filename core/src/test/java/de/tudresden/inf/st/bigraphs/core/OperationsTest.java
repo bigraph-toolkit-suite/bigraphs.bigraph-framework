@@ -45,7 +45,7 @@ public class OperationsTest {
                 builderForF.newHierarchy(signature.getControlByName("Room"));
         room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
         builderForF.createRoot()
-                .addHierarchyToParent(room);
+                .addChild(room);
 
         builderForG.createRoot()
                 .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite().goBack()

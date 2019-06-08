@@ -7,7 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
@@ -212,10 +212,10 @@ public class MatchTesting {
     public Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-        BigraphEntity.OuterName b = builder.createOuterName("b");
-        BigraphEntity.OuterName d = builder.createOuterName("d");
         BigraphEntity.OuterName a = builder.createOuterName("a");
+        BigraphEntity.OuterName b = builder.createOuterName("b");
         BigraphEntity.OuterName c = builder.createOuterName("c");
+        BigraphEntity.OuterName d = builder.createOuterName("d");
         builder.
                 createRoot()
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)

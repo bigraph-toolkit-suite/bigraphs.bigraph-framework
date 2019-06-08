@@ -12,7 +12,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
-//TODO Indexable und nameable hier implementieren easier access for dynamic bigraphs
 
 /**
  * Wrapper-like classes for the dynamic EMF model of bigraphs. Allowing the user to handle the bigraph entities
@@ -24,7 +23,7 @@ import java.util.Objects;
  *
  * @param <C> type of the controls
  */
-public class BigraphEntity<C extends Control> {//TODO entfernen nach unten verschieben
+public class BigraphEntity<C extends Control> {
 
     private EObject instance;
     private C control;
@@ -68,8 +67,7 @@ public class BigraphEntity<C extends Control> {//TODO entfernen nach unten versc
         this.instance = instance;
         return this;
     }
-
-    //TODO move attribute down to nodeentity
+    
     public C getControl() {
         return control;
     }

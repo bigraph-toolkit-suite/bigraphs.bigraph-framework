@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -128,6 +130,11 @@ public class Placings<S extends Signature> implements Serializable {
         }
 
         @Override
+        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+            return Collections.EMPTY_LIST;
+        }
+
+        @Override
         public EPackage getModelPackage() {
             return loadedModelPacakge;
         }
@@ -170,6 +177,14 @@ public class Placings<S extends Signature> implements Serializable {
             list.add(root);
             list.addAll(sites);
             return list;
+        }
+
+        @Override
+        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+            if (BigraphEntityType.isSite(node) && sites.contains((BigraphEntity.SiteEntity) node)) {
+                return sites.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
+            }
+            return Collections.emptyList();
         }
 
         @Override
@@ -221,6 +236,14 @@ public class Placings<S extends Signature> implements Serializable {
         }
 
         @Override
+        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+            if (BigraphEntityType.isSite(node) && sites.contains((BigraphEntity.SiteEntity) node)) {
+                return sites.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
+            }
+            return Collections.emptyList();
+        }
+
+        @Override
         public EPackage getModelPackage() {
             return loadedModelPacakge;
         }
@@ -262,6 +285,11 @@ public class Placings<S extends Signature> implements Serializable {
         @Override
         public S getSignature() {
             return emptySignature;
+        }
+
+        @Override
+        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+            return Collections.emptyList();
         }
 
         @Override
@@ -307,6 +335,11 @@ public class Placings<S extends Signature> implements Serializable {
         @Override
         public Collection<BigraphEntity.SiteEntity> getSites() {
             return sites;
+        }
+
+        @Override
+        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+            return Collections.emptyList();
         }
 
         @Override

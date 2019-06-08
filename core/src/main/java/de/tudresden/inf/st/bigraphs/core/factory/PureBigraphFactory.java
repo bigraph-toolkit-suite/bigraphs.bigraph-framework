@@ -36,7 +36,7 @@ public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
     public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature) {
 //        PureBigraphBuilder<DefaultDynamicSignature> builder = new PureBigraphBuilder<DefaultDynamicSignature>().useSignature(signature);
 //        PureBigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
-        return PureBigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
+        return PureBigraphBuilder.withSignature(DefaultDynamicSignature.class.cast(signature));
     }
 
     @Override

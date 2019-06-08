@@ -8,7 +8,12 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 import java.util.Iterator;
 import java.util.Set;
 
-//TODO change iterable to set!
+/**
+ * Common interface of a bigraph's signature.
+ *
+ * @param <C> type of the control
+ * @author Dominik Grzelak
+ */
 public interface Signature<C extends Control<? extends NamedType, ? extends FiniteOrdinal>> {
     Set<C> getControls();
 

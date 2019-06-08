@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 //TODO: do not inherit from builder directly
-//TODO make lightweight builder: references are acquired via eclass directly
+//  make lightweight builder: references are acquired via eclass directly
 
 /**
  * A generic mutable builder intended to be used for all bigraph types
@@ -79,10 +79,8 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
      */
     public void reset() {
         super.clearIntermediateResults();
-        //TODO private super.reset()
     }
 
-    //TODO: not nice here: must be changed!
     public Map<String, BigraphEntity.Edge> getCreatedEdges() {
         return super.availableEdges;
     }

@@ -18,6 +18,9 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Dominik Grzelak
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 //@Disabled
 public class BigraphCreationTest {
@@ -34,8 +37,6 @@ public class BigraphCreationTest {
         @BeforeAll
         void createSignature() {
             signature = createExampleSignature();
-            // define some nodes
-//            builder.createRoot(); // create a root node first
         }
 
         @BeforeEach
@@ -78,10 +79,6 @@ public class BigraphCreationTest {
 //            am2.printStackTrace();
         }
 
-//        @AfterEach
-//        void write_debug() {
-//            assertAll(() -> builder.export());
-//        }
     }
 
     @Nested
@@ -183,8 +180,6 @@ public class BigraphCreationTest {
                         .connectNodeToInnerName(x1)
                         .addChild(signature.getControlByName("Printer"))
                         .connectNodeToOuterName(jeff);
-                //TODO addChild(Hierarchy. instance als argument)
-                //somit kann man teilhierarchien aufbauen
 
             });
 
@@ -277,19 +272,12 @@ public class BigraphCreationTest {
                     .addChild(this.signature.getControlByName("Job"))
                     .addSite()
                     .goBack()
-                    .connectNodeToInnerName(this.signature.getControlByName("Printer"), x1);
+                    .connectNodeToInnerName(x1, this.signature.getControlByName("Printer"));
 
 //            builder.new Hierarchy(signature.getControlByName("User"));
 
             builder.makeGround();
         }
-
-//        @AfterEach
-//        void debug() {
-//            assertAll(() -> {
-//                builder.export();
-//            });
-//        }
     }
 
     @Nested
@@ -312,8 +300,6 @@ public class BigraphCreationTest {
         void build_simple() {
             BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
             BigraphEntity.InnerName tmp2 = builder.createInnerName("tmp2");
-            //TODO: über command pattern wird dann der builder aufgerufen (übersetzung von gui schritten und builder)
-            //test methoden ob verbindung möglich sind, wird über andere klasse gemacht
 
             //"umweg": verbinde nodes über hierarchie grenzen hinweg: über Inner name, und dann schließen.
             //so besitzen sie die gleiche Kante
@@ -325,16 +311,7 @@ public class BigraphCreationTest {
                     .addChild(signature.getControlByName("Printer"))
                     .goBack()
                     .addChild(signature.getControlByName("Room"));
-
         }
-
-
-//        @AfterEach
-//        void debug() {
-//            assertAll(() -> {
-//                builder.export();
-//            });
-//        }
     }
 
     @Nested
@@ -366,7 +343,8 @@ public class BigraphCreationTest {
                         .addChild(signature.getControlByName("Job"));
 
                 builder.createRoot()
-                        .addHierarchyToParent(room)
+                        .addChild(room) // easily build complex hierarchies of many different parts
+                        .addChild(room) // easily build complex hierarchies of many different parts
                         .addChild(signature.getControlByName("Room")).connectNodeToInnerName(tmp1);
 
                 builder.closeInnerName(tmp1);

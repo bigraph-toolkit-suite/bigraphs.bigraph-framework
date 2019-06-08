@@ -9,7 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.building.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
@@ -374,8 +374,8 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
             boolean hadMatch = false;
             for (BigraphEntity eachRedex : redexNodes) {
                 boolean b = theSame(eachAgent, eachRedex) && iSameControl(eachAgent, eachRedex);
-                boolean linksAreMatching = checkLinkIdentity(eachAgent, eachRedex);
-                System.out.println(b);
+                boolean linksAreMatching = checkLinkIdentityByNodes(eachAgent, eachRedex);
+//                System.out.println(b);
                 if (b && linksAreMatching) {
                     hadMatch = true;
                     mapping.putIfAbsent(eachRedex, new ArrayList<>());
@@ -750,7 +750,7 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
     }
 
     //inner names gibt es nicht und müssen auch nicht betrachtet werden (thus, getNodesOfLink is enough)
-    private boolean checkLinkIdentity(BigraphEntity v, BigraphEntity u) {
+    private boolean checkLinkIdentityByNodes(BigraphEntity v, BigraphEntity u) {
         List<BigraphEntity> bigraphEntities = S.get(v, u);//corresponding?
         if (bigraphEntities.size() != 0) {
             List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkRedex = redexAdapter.getLinksOfNode(u);

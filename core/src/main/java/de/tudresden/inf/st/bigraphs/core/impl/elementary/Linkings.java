@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EPackage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class Linkings<S extends Signature> implements Serializable {
 
@@ -71,6 +72,17 @@ public class Linkings<S extends Signature> implements Serializable {
         public EPackage getModelPackage() {
             return loadedModelPacakge;
         }
+
+        /**
+         * Always returns an empty list because a linking has no nodes.
+         *
+         * @param node argument is not considered
+         * @return an empty list
+         */
+        @Override
+        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     public class Substitution extends ElementaryBigraph<S> {
@@ -106,6 +118,17 @@ public class Linkings<S extends Signature> implements Serializable {
         @Override
         public EPackage getModelPackage() {
             return loadedModelPacakge;
+        }
+
+        /**
+         * Always returns an empty list because a linking has no nodes.
+         *
+         * @param node argument is not considered
+         * @return an empty list
+         */
+        @Override
+        public Collection<BigraphEntity> getSiblings(BigraphEntity node) {
+            return Collections.EMPTY_LIST;
         }
     }
 }

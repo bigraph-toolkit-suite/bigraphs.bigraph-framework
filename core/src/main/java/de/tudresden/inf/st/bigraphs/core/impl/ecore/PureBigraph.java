@@ -18,12 +18,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Immutable bigraph data structure with some operations.
+ * This Ecore-based model implementation of a bigraph is a immutable data structure providing also some operations on it.
+ * Implements directly the {@link Bigraph} interface with a {@link DefaultDynamicSignature}.
  * <p>
- * Ecore model of a bigraph. The elements are stored also separately in collections for easier access.
+ * The elements are stored separately in collections for easier access. The collections cannot modified afterwards.
+ * <p>
+ * A {@link PureBigraph} must be built using the {@link PureBigraphBuilder}.
+ *
+ * @author Dominik Grzelak
+ * @see de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder
  */
 public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
-    private EPackage modelPackage; //TODO wirklich diese package?
+    private EPackage modelPackage;
 
     private final Set<BigraphEntity.RootEntity> roots;
     private final Set<BigraphEntity.SiteEntity> sites;
@@ -33,8 +39,6 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     private final List<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes;
     private final DefaultDynamicSignature signature;
 
-    //Fertig gebaute bigraph model
-    //TODO see ecorebuilder....
     public PureBigraph(PureBigraphBuilder.InstanceParameter details) {
         this.modelPackage = details.getModelPackage();
         this.roots = Collections.unmodifiableSet(details.getRoots()); //roots;
@@ -96,13 +100,10 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
             EObject each = (EObject) instance.eGet(prntRef);
             if (isBNode(each)) {
+                //get control at instance level
                 Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodeEntity = nodes.stream().filter(x -> x.getInstance().equals(each)).findFirst();
-                //get control by name
-//                String controlName = each.eClass().getName();
-//                Control control = getSignature().getControlByName(controlName);
                 return nodeEntity.orElse(null);
             } else { //root
-                //assert
                 Optional<BigraphEntity.RootEntity> rootEntity = roots.stream().filter(x -> x.getInstance().equals(each)).findFirst();
                 return rootEntity.orElse(null);
             }
@@ -200,14 +201,9 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
             for (EObject eachChild : childs) {
                 if (isBNode(eachChild)) {//TODO set could be inefficient here for large bigraphs
                     Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodeEntity = nodes.stream().filter(x -> x.getInstance().equals(eachChild)).findFirst();
-                    //control can be acquired by the class name + signature
-//                    String controlName = eachChild.eClass().getName();
-//                    Control control = getSignature().getControlByName(controlName);
-//                    children.add(BigraphEntity.createNode(eachChild, control));
                     nodeEntity.ifPresent(children::add);
                 } else if (isBSite(eachChild)) {
                     Optional<BigraphEntity.SiteEntity> nodeEntity = sites.stream().filter(x -> x.getInstance().equals(eachChild)).findFirst();
-//                    children.add(BigraphEntity.create(eachChild, BigraphEntity.SiteEntity.class));
                     nodeEntity.ifPresent(children::add);
                 }
             }
