@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.factory;
 
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphArtifactHelper;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -18,7 +18,10 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple file utility class to serialize bigraphs and deserialize Ecore-based bigraph model files.
@@ -35,7 +38,7 @@ public class BigraphModelFileStore {
      * @param modelFilename the base filename of the exported model files
      * @throws IOException
      */
-    public static void exportBigraph(PureBigraph bigraph, String modelFilename) throws IOException {
+    public static void exportBigraph(Bigraph<?> bigraph, String modelFilename) throws IOException {
 //        BigraphModelFileStore.exportBigraph(bigraph, modelFilename, System.out);
     }
 
@@ -47,7 +50,7 @@ public class BigraphModelFileStore {
      * @param outputStream the output stream
      * @throws IOException
      */
-    public static void exportAsInstanceModel(PureBigraph bigraph, String baseFilename, OutputStream outputStream) throws IOException {
+    public static void exportAsInstanceModel(Bigraph<?> bigraph, String baseFilename, OutputStream outputStream) throws IOException {
         Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph);
         BigraphModelFileStore.writeDynamicInstanceModel(bigraph.getModelPackage(), allresources, baseFilename, outputStream);
     }
@@ -60,7 +63,7 @@ public class BigraphModelFileStore {
      * @param outputStream
      * @throws IOException
      */
-    public static void exportAsMetaModel(PureBigraph bigraph, String filename, OutputStream outputStream) throws IOException {
+    public static void exportAsMetaModel(Bigraph<?> bigraph, String filename, OutputStream outputStream) throws IOException {
         BigraphModelFileStore.writeDynamicMetaModel(bigraph.getModelPackage(), filename, outputStream);
     }
 
