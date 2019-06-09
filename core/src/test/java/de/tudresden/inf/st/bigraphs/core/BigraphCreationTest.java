@@ -81,6 +81,74 @@ public class BigraphCreationTest {
 
     }
 
+    @Test
+    void biraph_is_discrete() throws InvalidArityOfControlException, LinkTypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+
+        assertAll(() -> {
+            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            BigraphEntity.OuterName a = builder.createOuterName("a");
+            BigraphEntity.OuterName b = builder.createOuterName("b");
+            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
+                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(b);
+            PureBigraph bigraph = builder.createBigraph();
+            assertTrue(bigraph.isDiscrete());
+        });
+
+        assertAll(() -> {
+            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            BigraphEntity.OuterName a = builder.createOuterName("a");
+            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
+                    .addChild(signature.getControlByName("User"));
+            PureBigraph bigraph = builder.createBigraph();
+            assertFalse(bigraph.isDiscrete());
+        });
+
+        assertAll(() -> {
+            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            BigraphEntity.OuterName a = builder.createOuterName("a");
+            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
+                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(a);
+            PureBigraph bigraph = builder.createBigraph();
+            assertFalse(bigraph.isDiscrete());
+        });
+        assertAll(() -> {
+            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            BigraphEntity.InnerName a = builder.createInnerName("a");
+            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToInnerName(a)
+                    .addChild(signature.getControlByName("User")).connectNodeToInnerName(a);
+            builder.closeInnerName(a);
+            PureBigraph bigraph = builder.createBigraph();
+            assertFalse(bigraph.isDiscrete());
+        });
+
+        assertAll(() -> {
+            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            BigraphEntity.OuterName a = builder.createOuterName("a");
+            BigraphEntity.OuterName b = builder.createOuterName("b");
+            BigraphEntity.OuterName c = builder.createOuterName("c");
+            BigraphEntity.OuterName d = builder.createOuterName("d");
+            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
+                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(b)
+                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(c)
+            ;
+            PureBigraph bigraph = builder.createBigraph();
+            assertFalse(bigraph.isDiscrete());
+        });
+
+        assertAll(() -> {
+            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            BigraphEntity.OuterName a = builder.createOuterName("a");
+            BigraphEntity.OuterName b = builder.createOuterName("b");
+            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
+                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(b)
+                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(b)
+            ;
+            PureBigraph bigraph = builder.createBigraph();
+            assertFalse(bigraph.isDiscrete());
+        });
+    }
+
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ConnectionTestSeries_InnerOuterNames {

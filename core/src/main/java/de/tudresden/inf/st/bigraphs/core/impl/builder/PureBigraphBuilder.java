@@ -996,6 +996,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
     /**
      * Closes the outer name by removing all connections and the outer name itself. This method doesn't allow
      * idle names.
+     * Connected nodes over the same name will not be connected by an edge.
      *
      * @param outerName the outer name to remove
      * @throws TypeNotExistsException

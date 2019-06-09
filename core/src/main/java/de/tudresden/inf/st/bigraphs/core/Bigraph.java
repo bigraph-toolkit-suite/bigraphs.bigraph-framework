@@ -43,16 +43,17 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * Checks, if the bigraph is prime.
      * A Prime bigraph has only one root and no inner names.
      *
-     * @return true, if the bigraph is prime, otherwise false.
+     * @return {@code true}, if the bigraph is prime, otherwise {@code false}.
      */
     default boolean isPrime() {
         return getRoots().size() == 1 && getInnerNames().size() == 0;
     }
 
     /**
-     * A concrete bigraph is epimorphic iff its place graph has no idle root and its link graph has no idle outer names.
+     * A concrete bigraph is epi (epimorphic) iff its place graph has no idle root (i.e., no root is a barren) and
+     * its link graph has no idle outer names.
      *
-     * @return {@code true} if the bigraph is epimorphic, otherwise {@code false}
+     * @return {@code true} if the bigraph is epi, otherwise {@code false}
      */
     default boolean isEpimorphic() {
         boolean placeGraphIsEpi = getRoots().stream().allMatch(x -> getChildrenOf(x).size() > 0);
@@ -61,10 +62,10 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     }
 
     /**
-     * A concrete bigraph is monomorphic iff no two sites are siblings and no two inner names are siblings.
-     * With other words, every edge has at most one inner name.
+     * A concrete bigraph is mono (monomorphic) iff no two sites are siblings and no two inner names are siblings.
+     * With other words, every edge has at most one inner name (= no two inner names are peers).
      *
-     * @return {@code true} if the bigraph is monomorphic, otherwise {@code false}
+     * @return {@code true} if the bigraph is mono, otherwise {@code false}
      */
     default boolean isMonomorphic() {
         // check that no two sites are siblings
@@ -81,9 +82,36 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         return noTwoSitesAreSiblings;
     }
 
-    //TODO
+
+    /**
+     * A discrete bigraph has no edges and its link map is bijective (all names are distinct and every point is open).
+     * <p>
+     * See: 1.Jensen, O.H., Milner, R.: Bigraphs and mobile processes (revised). University of Cambridge Computer Laboratory (2004), p. 59.
+     *
+     * @return {@code true} if the bigraph is discrete, otherwise {@code false}
+     */
     default boolean isDiscrete() {
-        return false;
+        // check if no edges: ensures that no points are connected by an edge
+        boolean hasNoEdges = getEdges().size() == 0;
+        // check if no outer name is idle and at most one point is connected to it. No two points must be
+        // peers.
+        boolean noNameIsIdle = getOuterNames().stream().allMatch(x -> getPointsFromLink(x).size() == 1);
+
+        //check that every point is open..
+        boolean allPortsOpen = true;
+        for (BigraphEntity.NodeEntity each : getNodes()) {
+            if (each.getControl().getArity().getValue().longValue() >= 1) {
+                Collection<BigraphEntity.Port> ports = getPorts(each);
+                if (ports.size() == 0 ||
+                        !ports.stream().allMatch(x -> BigraphEntityType.isOuterName(getLinkOfPoint(x)))) {
+                    allPortsOpen = false;
+                    break;
+                }
+            }
+        }
+        boolean allInnerOpen = getInnerNames().stream().allMatch(x -> BigraphEntityType.isOuterName(getLinkOfPoint(x)));
+
+        return hasNoEdges && allPortsOpen && allInnerOpen && noNameIsIdle;
     }
 
     default Map.Entry<Set<FiniteOrdinal<Integer>>, Set<StringTypedName>> getInnerFace() {
