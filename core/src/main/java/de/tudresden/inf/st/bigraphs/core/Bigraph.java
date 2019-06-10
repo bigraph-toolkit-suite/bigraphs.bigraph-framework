@@ -62,8 +62,8 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     }
 
     /**
-     * A concrete bigraph is mono (monomorphic) iff no two sites are siblings and no two inner names are siblings.
-     * With other words, every edge has at most one inner name (= no two inner names are peers).
+     * A concrete bigraph is mono (monomorphic) iff no two sites are siblings ("inner-injective") and no two inner names
+     * are siblings. With other words, every edge has at most one inner name (= no two inner names are peers).
      *
      * @return {@code true} if the bigraph is mono, otherwise {@code false}
      */
@@ -80,6 +80,21 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         }
 
         return noTwoSitesAreSiblings;
+    }
+
+
+    /**
+     * Checks if the bigraph is guarding. A bigraph is guarding if no site has a root as parent and
+     * no inner name is open.
+     *
+     * @return {@code true} if the bigraph is guarding, otherwise {@code false}
+     */
+    default boolean isGuarding() {
+        return getRoots().stream()
+                .map(this::getChildrenOf)
+                .flatMap(Collection::stream)
+                .noneMatch(BigraphEntityType::isSite) &&
+                getInnerNames().size() == 0;
     }
 
 
