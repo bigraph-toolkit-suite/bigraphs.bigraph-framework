@@ -5,13 +5,13 @@ import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -21,6 +21,8 @@ import java.util.stream.StreamSupport;
  * <p>
  * encapsulates a bigraph with a dynamic signature and provides different accessor methods
  * for the underlying bigraph which are used/needed for the matching algorithm
+ *
+ * @author Dominik Grzelak
  */
 public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynamicSignature>> extends BigraphDelegator<DefaultDynamicSignature> {
 
@@ -72,12 +74,12 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
     }
 
     /**
-     * <b>IMPORTANT</b> ONLY THe port indices are important for the order not the name itself
+     * <b>IMPORTANT</b> ONLY the port indices are important for the order not the name itself
      *
      * @param node
      * @return
      */
-    public abstract List<ControlLinkPair> getLinksOfNode(BigraphEntity node);
+    public abstract AbstractSequentialList<ControlLinkPair> getLinksOfNode(BigraphEntity node);
 
     public List<BigraphEntity> getAllChildrenFromNode(BigraphEntity node) {
         Traverser<BigraphEntity> stringTraverser = Traverser.forTree(this::getChildren);
@@ -95,9 +97,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
             if (isBPort(eachPoint)) {
                 EStructuralFeature nodeRef = eachPoint.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
                 EObject node = (EObject) eachPoint.eGet(nodeRef);
-                String controlName = node.eClass().getName();
-                Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
-                linkedNodes.add(BigraphEntity.createNode(node, control));
+                addPlaceToList(linkedNodes, node, false);
             }
         }
         return linkedNodes;
@@ -145,17 +145,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
             assert childs != null;
             for (EObject eachChild : childs) {
                 if (node.getInstance().equals(eachChild)) continue;
-                if (isBNode(eachChild)) {
-                    //get control by name
-                    String controlName = eachChild.eClass().getName();
-                    Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
-                    siblings.add(BigraphEntity.createNode(eachChild, control));
-                } else if (isSite(eachChild)) {
-                    siblings.add(BigraphEntity.create(eachChild, BigraphEntity.SiteEntity.class));
-                } else {
-                    //can only be root...
-                    siblings.add(BigraphEntity.create(eachChild, BigraphEntity.RootEntity.class));
-                }
+                addPlaceToList(siblings, eachChild, true);
             }
         }
         return siblings;
@@ -163,45 +153,69 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
 
     protected List<BigraphEntity> neighborhoodHook(List<BigraphEntity> neighbors, BigraphEntity node) {
         EObject instance = node.getInstance();
+        // first check the children of the node
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
         if (Objects.nonNull(chldRef)) {
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
-            //create class ...
-            //control can be acquired by the class name + signature
             for (EObject each : childs) {
-                BigraphEntity convertedOne = null;
-                // safe: no sites here ...
-                if (isBNode(each)) {
-                    //get control by name
-                    String controlName = each.eClass().getName();
-                    Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
-                    assert control != null;
-                    convertedOne = BigraphEntity.createNode(each, control);
-                } else if (isRoot(each)) {
-                    //can only be root...
-                    convertedOne = BigraphEntity.create(each, BigraphEntity.RootEntity.class);
-                }
-                if (convertedOne != null)
-                    neighbors.add(convertedOne);
+                addPlaceToList(neighbors, each, false);
             }
         }
-        // parent
+        // second, the parent
         EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
-            EObject each = (EObject) instance.eGet(prntRef);
-            // safe: no sites here ...
-            if (isBNode(each)) {
-                //get control by name
-                String controlName = each.eClass().getName();
-                Control control = getBigraphDelegate().getSignature().getControlByName(controlName);
-                neighbors.add(BigraphEntity.createNode(each, control));
-            } else {
-                //can only be root...
-                neighbors.add(BigraphEntity.create(each, BigraphEntity.RootEntity.class));
-            }
+            final EObject each = (EObject) instance.eGet(prntRef);
+            addPlaceToList(neighbors, each, false);
         }
         return neighbors;
     }
+
+    /**
+     * Find the corresponding node of the given {@link EObject} instance (representing a root or node) and
+     * add it to the given list.
+     * <p>
+     * Throws a runtime exception of the node couldn't be found.
+     *
+     * @param neighbors
+     * @param each
+     */
+    protected void addPlaceToList(final List<BigraphEntity> neighbors, final EObject each, boolean withSites) {
+        try {
+
+            if (isBNode(each)) {
+                neighbors.add(
+                        getNodes().stream()
+                                .filter(x -> x.getInstance().equals(each))
+                                .findFirst()
+                                .orElseThrow(throwableSupplier)
+                );
+            } else if (isRoot(each)) {
+                neighbors.add(
+                        getRoots().stream()
+                                .filter(x -> x.getInstance().equals(each))
+                                .findFirst()
+                                .orElseThrow(throwableSupplier)
+                );
+            }
+            if (withSites && isSite(each)) {
+                neighbors.add(
+                        getSites().stream()
+                                .filter(x -> x.getInstance().equals(each))
+                                .findFirst()
+                                .orElseThrow(throwableSupplier)
+                );
+            }
+        } catch (Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
+    }
+
+    protected Supplier<Throwable> throwableSupplier = new Supplier<Throwable>() {
+        @Override
+        public Throwable get() {
+            return new RuntimeException("Node couldn't be found in the node set of the bigraph.");
+        }
+    };
 
 
     /**
@@ -289,14 +303,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
             }
         }
         return leaves;
-    }
-
-    public boolean isLink(BigraphEntity node) {
-        return node.getType().equals(BigraphEntityType.OUTER_NAME) || node.getType().equals(BigraphEntityType.EDGE);
-    }
-
-    public boolean isOuterName(BigraphEntity node) {
-        return node.getType().equals(BigraphEntityType.OUTER_NAME);
     }
 
     public boolean isOuterName(EObject eObject) {

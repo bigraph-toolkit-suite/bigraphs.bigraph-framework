@@ -8,9 +8,11 @@ import de.tudresden.inf.st.bigraphs.rewriting.matching.pure.PureBigraphMatcher;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * The starting point for executing matching of bigraphs.
+ * This class represents the starting point for executing matching of bigraphs. A bigraph matcher consists of a bigraph
+ * matching engine. A concrete matcher with the corresponding matching engine w.r.t. to the bigraph type can be created
+ * using the factory method create() by supplying the bigraph type.
  * <p>
- * Matches are returned via an iterator for easier access of the results The instances of the matches are of type
+ * Matches are then returned via an iterator for easier access of the results The instances of the matches are of type
  * {@link BigraphMatch}.
  * For the iterator, the matching engine can get later also access a "custom constraints matching method"
  * (not yet implemented)
