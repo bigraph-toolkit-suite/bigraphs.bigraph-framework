@@ -10,11 +10,12 @@ import java.lang.reflect.ParameterizedType;
 /**
  * The starting point for executing matching of bigraphs.
  * <p>
- * Matches are returned via an iterator for easier access of the results.
+ * Matches are returned via an iterator for easier access of the results The instances of the matches are of type
+ * {@link BigraphMatch}.
  * For the iterator, the matching engine can get later also access a "custom constraints matching method"
  * (not yet implemented)
  * <p>
- * With other words: This class works like a factory to return the matches as iterables.
+ * With other words: This class works like a factory to return the matches as iterables of class {@link BigraphMatch}.
  *
  * @author Dominik Grzelak
  */

@@ -21,31 +21,6 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
         super(bigraph);
     }
 
-
-    //TODO: move this into a ReactionRule class
-    @Deprecated
-    public boolean checkRedexConform() {
-        for (BigraphEntity eachRoot : getRoots()) {
-            for (BigraphEntity each : getChildrenWithSites(eachRoot)) {
-                if (isSite(each.getInstance())) return false;
-            }
-        }
-        return true;
-    }
-
-    //BLEIBT
-    private EObject createRootOfEClass() {
-        EPackage loadedEPackage = getBigraphDelegate().getModelPackage();
-//        EClassifier rootEClass = loadedEPackage.getEClassifiers().get(0);
-        EClassifier eClassifierGen = ((EPackageImpl) getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_ROOT);
-        EClass eClass = eClassifierGen.eClass();
-        EObject eObject = loadedEPackage.getEFactoryInstance().create((EClass) eClassifierGen);
-//        final int ix = rootIdxSupplier.get();
-        eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), 0);
-//        availableRoots.put(ix, eObject);
-        return eObject;
-    }
-
     /**
      * Only outer names
      * The order plays a role for checking (also in theory)
@@ -102,14 +77,7 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
         return cnt;
     }
 
-    // Redex allows sites
-    @Override
-    public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
-        List<BigraphEntity> neighbors = new ArrayList<>();
-        neighbors = neighborhoodHook(neighbors, node);
-        return neighbors;
-    }
-
+    @Deprecated
     public List<BigraphEntity> getOpenNeighborhoodOfVertexWithSites(BigraphEntity node) {
         List<BigraphEntity> neighbors = new ArrayList<>();
         neighbors = neighborhoodHook(neighbors, node);
@@ -172,19 +140,5 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
             }
         }
         return children;
-    }
-
-
-    /**
-     * Get all vertices (roots and nodes) without sites.
-     *
-     * @return
-     */
-    @Override
-    public Collection<BigraphEntity> getAllVertices() {
-        List<BigraphEntity> allNodes = new ArrayList<>();
-        allNodes.addAll(getBigraphDelegate().getNodes());
-        allNodes.addAll(getRoots());
-        return allNodes;
     }
 }

@@ -103,30 +103,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         return linkedNodes;
     }
 
-    //an edge is like an outername for an agent
-    //TODO REMOVE
-    @Deprecated
-    public List<ControlLinkPair> getAllLinks(BigraphEntity startNode) {
-        List<ControlLinkPair> allVerticesPostOrder = new ArrayList<>();
-//        for (BigraphEntity eachRoot : bigraph.getRoots()) {
-//            BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
-        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(x -> {
-            List<ControlLinkPair> linksOfNode = getLinksOfNode(x);
-            allVerticesPostOrder.addAll(linksOfNode);
-            return getChildren(x);
-        });
-        Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(startNode);
-//            for(BigraphEntity e: v0) {
-//                return new ControlLinkPair(null, null);
-//            }
-        Lists.newArrayList(v0);
-//            allVerticesPostOrder.addAll();
-
-//        System.out.println();
-//        }
-        return allVerticesPostOrder;
-    }
-
     /**
      * All in/out-going edges of a node within the place graph.
      * Sites are included in the count.
@@ -149,8 +125,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         }
         return cnt;
     }
-
-    //TODO: do not override!
 
     /**
      * Returns all siblings of the current node of the current bigraph. The node itself is not included.
@@ -204,7 +178,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
                     assert control != null;
                     convertedOne = BigraphEntity.createNode(each, control);
                 } else if (isRoot(each)) {
-//                        Class clazz = BigraphEntity.RootEntity.class;
                     //can only be root...
                     convertedOne = BigraphEntity.create(each, BigraphEntity.RootEntity.class);
                 }
@@ -230,51 +203,45 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         return neighbors;
     }
 
-    //TODO: do not create classes: get them from the entity map from the bigraph
-    //FOR MATCHING
+
+    /**
+     * This method is used solely for the matching algorithm.
+     *
+     * @param node
+     * @return
+     */
     public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
         List<BigraphEntity> neighbors = new ArrayList<>();
-        EObject instance = node.getInstance();
-        if (getBigraphDelegate().isGround()) { // no sites here...
-            neighborhoodHook(neighbors, node);
-        }
-        //TODO: now outer names and edges
+        neighbors = neighborhoodHook(neighbors, node); //TODO: do not create classes: get them from the entity map from the bigraph
         return neighbors;
     }
 
-    //TODO: get link vertices from vertex method
-
-    //ohne links
+    /**
+     * Get all vertices (roots and nodes) without sites.
+     *
+     * @return
+     */
     public Collection<BigraphEntity> getAllVertices() {
         List<BigraphEntity> allNodes = new ArrayList<>(getNodes());
-//        allNodes.addAll(bigraph.getOuterNames());
-//        allNodes.addAll(bigraph.getEdges());
-        allNodes.addAll(getBigraphDelegate().getRoots());
-//        allNodes.addAll(bigraph.getSites());
+        allNodes.addAll(getRoots());
         return allNodes;
     }
 
     //TODO: root at last
     public List<BigraphEntity> getAllInternalVerticesPostOrder() {
-//        BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
         Iterable<BigraphEntity> allVerticesPostOrder = getAllVerticesPostOrder();
-        List<BigraphEntity> collect = StreamSupport.stream(allVerticesPostOrder.spliterator(), false).filter(x -> getChildren(x).size() > 0).collect(Collectors.toList());
-//        return collect;
+        List<BigraphEntity> collect = StreamSupport.stream(allVerticesPostOrder.spliterator(), false)
+                .filter(x -> getChildren(x).size() > 0)
+                .collect(Collectors.toList());
         return collect;
     }
 
-    //TODO: check if this is correcet with multiple roots
     public Iterable<BigraphEntity> getAllVerticesPostOrder() {
         Collection<BigraphEntity> allVerticesPostOrder = new ArrayList<>();
         for (BigraphEntity eachRoot : getBigraphDelegate().getRoots()) {
-//            BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
             Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
             Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(eachRoot);
             allVerticesPostOrder.addAll(Lists.newArrayList(v0));
-//        for (BigraphEntity each : v0) {
-//            System.out.print(each + ", ");
-//        }
-//        System.out.println();
         }
         return allVerticesPostOrder;
     }
@@ -282,12 +249,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
     public Iterable<BigraphEntity> getAllVerticesBfsOrder() {
         Collection<BigraphEntity> allVerticesBfsOrder = new ArrayList<>();
         for (BigraphEntity eachRoot : getBigraphDelegate().getRoots()) {
-//            BigraphEntity rootNode = new ArrayList<>(bigraph.getRoots()).get(0);
-//            Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
-//            Iterable<BigraphEntity> v0 = stringTraverser.breadthFirst(eachRoot);
-//            allVerticesBfsOrder.addAll(Lists.newArrayList(v0));
             allVerticesBfsOrder.addAll(getAllVerticesBfsOrderFrom(eachRoot));
-
         }
         return allVerticesBfsOrder;
     }
@@ -300,14 +262,25 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         return allVerticesBfsOrder;
     }
 
-    //FOR MATCHING
+    /**
+     * Get all children of a bigraph node precluding all sites.
+     * This method is used solely for the matching algorithm.
+     *
+     * @param node
+     * @return
+     */
     public List<BigraphEntity> getChildren(BigraphEntity node) {
         return getBigraphDelegate().getChildrenOf(node)
                 .stream()
                 .filter(x -> !BigraphEntityType.isSite(x)).collect(Collectors.toList());
     }
 
-    //FOR MATCHING
+    /**
+     * Get all leaves of a the bigraph's place graph (i.e., a tree).
+     * This method is used solely for the matching algorithm.
+     *
+     * @return
+     */
     public Collection<BigraphEntity> getAllLeaves() {
         List<BigraphEntity> leaves = new ArrayList<>();
         for (BigraphEntity each : this.getAllVertices()) {
