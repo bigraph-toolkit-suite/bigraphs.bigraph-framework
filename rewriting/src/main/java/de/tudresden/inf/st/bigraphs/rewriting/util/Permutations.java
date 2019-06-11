@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.matching;
+package de.tudresden.inf.st.bigraphs.rewriting.util;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

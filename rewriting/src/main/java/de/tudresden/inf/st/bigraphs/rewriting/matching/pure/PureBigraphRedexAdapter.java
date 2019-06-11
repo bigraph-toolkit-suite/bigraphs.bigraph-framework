@@ -1,25 +1,25 @@
-package de.tudresden.inf.st.bigraphs.matching.impl;
+package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractDynamicMatchAdapter;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import java.util.*;
 
-public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
+/**
+ * @author Dominik Grzelak
+ */
+public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBigraph> {
 
-    public EcoreBigraphRedexAdapter(PureBigraph bigraph) {
+    public PureBigraphRedexAdapter(PureBigraph bigraph) {
         super(bigraph);
     }
-
-//    @Deprecated
-//    BigraphEntity newRoot;
-//    List<BigraphEntity> crossBoundary = new ArrayList<>();
 
 
     //TODO: move this into a ReactionRule class
@@ -32,12 +32,6 @@ public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
         }
         return true;
     }
-
-//    @Override
-//    public List<BigraphEntity> getRoots() {
-//        if (newRoot == null) return super.getRoots();
-//        return new ArrayList<>(Collections.singleton(newRoot));
-//    }
 
     //BLEIBT
     private EObject createRootOfEClass() {
@@ -113,19 +107,6 @@ public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
     public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
         List<BigraphEntity> neighbors = new ArrayList<>();
         neighbors = neighborhoodHook(neighbors, node);
-
-//        EObject instance = node.getInstance();
-//        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-//        if (Objects.nonNull(chldRef)) {
-//            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
-//            for (EObject each : childs) {
-//                if (newRoot != null && isRoot(each)) neighbors.addAll(bigraph.getRoots());
-////                if (isSite(each)) {
-////                    BigraphEntity convertedOne = BigraphEntity.create(each, BigraphEntity.SiteEntity.class);
-////                    neighbors.add(convertedOne);
-//            }
-////        }
-//        }
         return neighbors;
     }
 
@@ -142,7 +123,6 @@ public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
                     BigraphEntity convertedOne = BigraphEntity.create(each, BigraphEntity.SiteEntity.class);
                     neighbors.add(convertedOne);
                 }
-//                if (newRoot != null && isRoot(each)) neighbors.addAll(getBigraphDelegate().getRoots());
             }
         }
         return neighbors;
@@ -195,25 +175,15 @@ public class EcoreBigraphRedexAdapter extends AbstractDynamicMatchAdapter {
     }
 
 
+    /**
+     * Get all vertices (roots and nodes) without sites.
+     *
+     * @return
+     */
     @Override
     public Collection<BigraphEntity> getAllVertices() {
         List<BigraphEntity> allNodes = new ArrayList<>();
         allNodes.addAll(getBigraphDelegate().getNodes());
-        allNodes.addAll(getRoots());
-//        if (newRoot != null) allNodes.addAll(bigraph.getRoots());
-//        allNodes.addAll(bigraph.getSites());
-//        allNodes.addAll(bigraph.getOuterNames());
-//        allNodes.addAll(bigraph.getEdges());
-        return allNodes;
-    }
-
-    public Collection<BigraphEntity> getAllVerticesWithSites() {
-        List<BigraphEntity> allNodes = new ArrayList<>();
-        allNodes.addAll(getBigraphDelegate().getNodes());
-        allNodes.addAll(getBigraphDelegate().getSites());
-//        if (newRoot != null) allNodes.addAll(getBigraphDelegate().getRoots());
-//        allNodes.addAll(bigraph.getOuterNames());
-//        allNodes.addAll(bigraph.getEdges());
         allNodes.addAll(getRoots());
         return allNodes;
     }

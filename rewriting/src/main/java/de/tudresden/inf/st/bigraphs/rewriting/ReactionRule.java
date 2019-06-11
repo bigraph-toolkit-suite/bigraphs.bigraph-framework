@@ -1,4 +1,8 @@
-package de.tudresden.inf.st.bigraphs.core;
+package de.tudresden.inf.st.bigraphs.rewriting;
+
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.HasSignature;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 
 /**
  * Common interface for reaction rules.

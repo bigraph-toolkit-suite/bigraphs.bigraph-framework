@@ -1,5 +1,7 @@
-package de.tudresden.inf.st.bigraphs.core;
+package de.tudresden.inf.st.bigraphs.rewriting;
 
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 

@@ -1,16 +1,16 @@
-package de.tudresden.inf.st.bigraphs.matching;
+package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.matching.impl.AbstractDynamicMatchAdapter;
 
 import java.util.Collection;
 
 /**
- * A match result for a ground bigraph
+ * A result of a matching of type {@code B}.
  *
- * @param <B>
+ * @param <B> the bigraph type of the match
+ * @author Dominik Grzelak
  */
-public interface Match<B extends Bigraph> {
+public interface BigraphMatch<B extends Bigraph> {
 
     B getContext();
 

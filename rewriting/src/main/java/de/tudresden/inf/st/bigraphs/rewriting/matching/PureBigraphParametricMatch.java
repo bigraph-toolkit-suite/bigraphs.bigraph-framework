@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.matching;
+package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class DefaultParametricMatch implements Match<PureBigraph> {
+public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
 
     //TODO add bigraphbuilder/factory for composition
     private Collection<Bigraph> parameters = new ArrayList<>();
@@ -15,8 +15,8 @@ public class DefaultParametricMatch implements Match<PureBigraph> {
     private PureBigraph identity;
     private PureBigraph redex;
 
-    public DefaultParametricMatch(PureBigraph context, PureBigraph redex,
-                                  Collection<Bigraph> parameters, PureBigraph identity) {
+    public PureBigraphParametricMatch(PureBigraph context, PureBigraph redex,
+                                      Collection<Bigraph> parameters, PureBigraph identity) {
         this.parameters = parameters;
         this.context = context;
         this.identity = identity;
@@ -24,7 +24,7 @@ public class DefaultParametricMatch implements Match<PureBigraph> {
     }
 
     void assertCheckSites() {
-        //TODO
+        //TODO: check: shouldn't be needed here ...
     }
 
     @Override

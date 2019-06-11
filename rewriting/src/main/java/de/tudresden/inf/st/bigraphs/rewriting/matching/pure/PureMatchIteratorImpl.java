@@ -1,23 +1,24 @@
-package de.tudresden.inf.st.bigraphs.matching;
+package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 
 import java.util.*;
 
 //TODO: in a future version: find matches incrementally and not all at the start (if possible)
 //  next() and hasNext() must be rewritten then
-//  see also comment in BigraphMatchingEngine
-public class DefaultMatchIteratorImpl implements Iterator<Match> {
+//  see also comment in PureBigraphMatchingEngine
+public class PureMatchIteratorImpl implements Iterator<BigraphMatch<?>> {
     private int cursor = 0;
-    private List<Match<PureBigraph>> matches = new ArrayList<>();
+    private List<BigraphMatch<PureBigraph>> matches = new ArrayList<>();
 
-    private BigraphMatchingEngine<PureBigraph> matchingEngine;
-//    private BigraphMatcher bigraphMatcher;
-//    private Match nextMatch;
+    private PureBigraphMatchingEngine<PureBigraph> matchingEngine;
+//    private PureBigraphMatcher bigraphMatcher;
+//    private BigraphMatch nextMatch;
 
-    DefaultMatchIteratorImpl(BigraphMatchingEngine<? extends PureBigraph> matchingEngine) throws IncompatibleSignatureException {
-        this.matchingEngine = (BigraphMatchingEngine<PureBigraph>) matchingEngine;
+    PureMatchIteratorImpl(PureBigraphMatchingEngine<? extends PureBigraph> matchingEngine) throws IncompatibleSignatureException {
+        this.matchingEngine = (PureBigraphMatchingEngine<PureBigraph>) matchingEngine;
         findMatches();
     }
 
@@ -36,7 +37,7 @@ public class DefaultMatchIteratorImpl implements Iterator<Match> {
     }
 
     @Override
-    public Match next() {
+    public BigraphMatch<PureBigraph> next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }

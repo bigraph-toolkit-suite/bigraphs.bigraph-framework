@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.matching.impl;
+package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
@@ -22,7 +22,7 @@ import java.util.stream.StreamSupport;
  * encapsulates a bigraph with a dynamic signature and provides different accessor methods
  * for the underlying bigraph which are used/needed for the matching algorithm
  */
-public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<DefaultDynamicSignature> {
+public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynamicSignature>> extends BigraphDelegator<DefaultDynamicSignature> {
 
     public AbstractDynamicMatchAdapter(Bigraph<DefaultDynamicSignature> bigraph) {
         super(bigraph);
@@ -30,12 +30,8 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
 
     @SuppressWarnings("unchecked")
     @Override
-    protected PureBigraph getBigraphDelegate() {
+    public B getBigraphDelegate() {
         return super.getBigraphDelegate();
-    }
-
-    public PureBigraph getBigraph() {
-        return this.getBigraphDelegate();
     }
 
     @Override
@@ -155,6 +151,7 @@ public abstract class AbstractDynamicMatchAdapter extends BigraphDelegator<Defau
     }
 
     //TODO: do not override!
+
     /**
      * Returns all siblings of the current node of the current bigraph. The node itself is not included.
      *

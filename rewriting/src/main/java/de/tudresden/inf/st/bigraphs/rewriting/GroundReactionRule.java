@@ -1,6 +1,5 @@
-package de.tudresden.inf.st.bigraphs.core.impl;
+package de.tudresden.inf.st.bigraphs.rewriting;
 
-import de.tudresden.inf.st.bigraphs.core.AbstractReactionRule;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;

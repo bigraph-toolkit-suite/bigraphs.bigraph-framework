@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.matching;
+package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -17,10 +17,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
-import de.tudresden.inf.st.bigraphs.matching.impl.AbstractDynamicMatchAdapter;
-import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphAgentAdapter;
-import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphRedexAdapter;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractDynamicMatchAdapter;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.PureBigraphParametricMatch;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
@@ -34,10 +34,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class BigraphMatchingEngine<B extends PureBigraph> {
+public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
-    private EcoreBigraphRedexAdapter redexAdapter;
-    private EcoreBigraphAgentAdapter agentAdapter;
+    private PureBigraphRedexAdapter redexAdapter;
+    private PureBigraphAgentAdapter agentAdapter;
     private Table<BigraphEntity, BigraphEntity, List<BigraphEntity>> S = HashBasedTable.create();
     private AtomicInteger treffer;
     private Table<BigraphEntity, BigraphEntity, Integer> results;
@@ -45,7 +45,7 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
     private List<BigraphEntity> internalVertsG;
     private List<BigraphEntity> allVerticesOfH;
 
-    private List<Match<B>> matches = new LinkedList<>();
+    private List<BigraphMatch<B>> matches = new LinkedList<>();
 
     @Deprecated
     private HashMap<Integer, BigraphEntity> hitsU = new HashMap<>();
@@ -69,15 +69,15 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
     private final MutableBuilder<DefaultDynamicSignature> builder;
     private final MutableBuilder<DefaultDynamicSignature> bLinking;
 
-    BigraphMatchingEngine(B agent, B redex) throws IncompatibleSignatureException {
+    PureBigraphMatchingEngine(B agent, B redex) throws IncompatibleSignatureException {
 //        this.agent = agent;
 //        this.redex = redex;
         //TODO: validate
         //signature, ground agent
         this.builder = PureBigraphBuilder.newMutableBuilder(agent.getSignature());
         this.bLinking = PureBigraphBuilder.newMutableBuilder(agent.getSignature());
-        this.redexAdapter = new EcoreBigraphRedexAdapter(redex);
-        this.agentAdapter = new EcoreBigraphAgentAdapter(agent);
+        this.redexAdapter = new PureBigraphRedexAdapter(redex);
+        this.agentAdapter = new PureBigraphAgentAdapter(agent);
         this.init();
     }
 
@@ -694,10 +694,13 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
 
         // parameters are only needed when RR contains sites, otherwise they contain just a barren
         //see e.g., \cite[p.75]{elsborg_bigraphs_2009}
-        DefaultParametricMatch m = new DefaultParametricMatch(context, redexAdapter.getBigraph(),
+        PureBigraphParametricMatch m = new PureBigraphParametricMatch(
+                context,
+                redexAdapter.getBigraphDelegate(),
                 parameters.values(),
-                null);
-        matches.add((Match<B>) m);
+                null
+        );
+        matches.add((BigraphMatch<B>) m);
     }
 
     private void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
@@ -705,7 +708,7 @@ public class BigraphMatchingEngine<B extends PureBigraph> {
         node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
-    public List<Match<B>> getMatches() {
+    public List<BigraphMatch<B>> getMatches() {
         return matches;
     }
 

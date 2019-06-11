@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.matching.graphs;
+package de.tudresden.inf.st.bigraphs.rewriting.matching.graphs;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -22,8 +22,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;

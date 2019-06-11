@@ -1,11 +1,9 @@
-package de.tudresden.inf.st.bigraphs.matching;
+package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphAgentAdapter;
-import de.tudresden.inf.st.bigraphs.matching.impl.EcoreBigraphRedexAdapter;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphTests;
 import org.jgrapht.Graphs;
@@ -17,6 +15,13 @@ import org.jgrapht.graph.DefaultEdge;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Slightly modified version of the original {@link org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching}
+ * algorithm.
+ *
+ * @author Dominik Grzelak
+ * @see org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching
+ */
 public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 
     private final Graph<BigraphEntity, DefaultEdge> graph;
@@ -43,8 +48,8 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 
     /* queue used for breadth first search */
     private FixedSizeIntegerQueue queue;
-    private EcoreBigraphRedexAdapter redexAdapter;
-    private EcoreBigraphAgentAdapter agentAdapter;
+    private PureBigraphRedexAdapter redexAdapter;
+    private PureBigraphAgentAdapter agentAdapter;
 
     private Set<Control> availableControls = new LinkedHashSet<>();
     Set<Pair<Control, Control>> set = new HashSet<>();
@@ -70,7 +75,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
      * @param partition2 the second partition of vertices in the bipartite graph (AGENT)
      */
     public HKMCBM2(
-            Graph<BigraphEntity, DefaultEdge> graph, Set<BigraphEntity> partition1, Set<BigraphEntity> partition2, EcoreBigraphRedexAdapter redexAdapter, EcoreBigraphAgentAdapter agentAdapter) {
+            Graph<BigraphEntity, DefaultEdge> graph, Set<BigraphEntity> partition1, Set<BigraphEntity> partition2, PureBigraphRedexAdapter redexAdapter, PureBigraphAgentAdapter agentAdapter) {
         this.graph = GraphTests.requireUndirected(graph);
         this.redexAdapter = redexAdapter;
         this.agentAdapter = agentAdapter;

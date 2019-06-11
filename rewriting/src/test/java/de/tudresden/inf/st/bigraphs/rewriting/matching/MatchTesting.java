@@ -1,8 +1,7 @@
-package de.tudresden.inf.st.bigraphs.matching;
+package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ReactionRule;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -13,11 +12,13 @@ import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.rewriting.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.pure.PureBigraphMatcher;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -32,14 +33,14 @@ public class MatchTesting {
         PureBigraph redex_model_test_0 = (PureBigraph) createRedex_model_test_0();
         ReactionRule<DefaultDynamicSignature> rr = new ParametricReactionRule<>(redex_model_test_0, redex_model_test_0);
 
-//        BigraphMatchingEngine<PureBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_0, redex_model_test_0);
+//        PureBigraphMatchingEngine<PureBigraph> matchingEngine = new PureBigraphMatchingEngine<>(agent_model_test_0, redex_model_test_0);
 
 //        matchingEngine.beginMatch();
-        BigraphMatcher matcher = new BigraphMatcher();
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class); //new PureBigraphMatcher();
         MatchIterable match = matcher.match(agent_model_test_0, (PureBigraph) rr.getRedex());
-        Iterator<Match> iterator = match.iterator();
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
-            Match next = iterator.next();
+            BigraphMatch<?> next = iterator.next();
             System.out.println(next);
         }
 
@@ -50,13 +51,13 @@ public class MatchTesting {
         PureBigraph agent_model_test_1 = (PureBigraph) createAgent_model_test_1();
         PureBigraph redex_model_test_1 = (PureBigraph) createRedex_model_test_1();
 
-//        BigraphMatchingEngine<PureBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_1, redex_model_test_1);
+//        PureBigraphMatchingEngine<PureBigraph> matchingEngine = new PureBigraphMatchingEngine<>(agent_model_test_1, redex_model_test_1);
 //        matchingEngine.beginMatch();
-        BigraphMatcher matcher = new BigraphMatcher();
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
         MatchIterable match = matcher.match(agent_model_test_1, redex_model_test_1);
-        Iterator<Match> iterator = match.iterator();
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
-            Match next = iterator.next();
+            BigraphMatch<?> next = iterator.next();
             System.out.println(next);
         }
 
@@ -69,21 +70,21 @@ public class MatchTesting {
         //the second root of the redex will create many occurrences because a distinct match isn't possible
         PureBigraph redex_model_test_2b = (PureBigraph) createRedex_model_test_2b();
 
-//        BigraphMatchingEngine<PureBigraph> matchingEngine = new BigraphMatchingEngine<>(agent_model_test_2, redex_model_test_2);
+//        PureBigraphMatchingEngine<PureBigraph> matchingEngine = new PureBigraphMatchingEngine<>(agent_model_test_2, redex_model_test_2);
 //
 //        matchingEngine.beginMatch();
-        BigraphMatcher matcher = new BigraphMatcher();
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 //        MatchIterable match = matcher.match(agent_model_test_2, redex_model_test_2a);
-//        Iterator<Match> iterator = match.iterator();
+//        Iterator<BigraphMatch> iterator = match.iterator();
 //        while (iterator.hasNext()) {
-//            Match next = iterator.next();
+//            BigraphMatch next = iterator.next();
 //            System.out.println(next);
 //        }
 
         MatchIterable match = matcher.match(agent_model_test_2, redex_model_test_2b);
-        Iterator<Match> iterator = match.iterator();
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
-            Match next = iterator.next();
+            BigraphMatch<?> next = iterator.next();
             System.out.println(next);
         }
 
