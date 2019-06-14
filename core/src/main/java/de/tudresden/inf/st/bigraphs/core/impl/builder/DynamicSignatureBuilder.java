@@ -27,8 +27,8 @@ public class DynamicSignatureBuilder<NT extends NamedType, FO extends FiniteOrdi
     }
 
     @Override
-    public <S extends Signature> S createSignature() {
-        return (S) new DefaultDynamicSignature(Collections.EMPTY_SET);
+    public DefaultDynamicSignature createSignature() {
+        return new DefaultDynamicSignature(Collections.EMPTY_SET);
     }
 
 //    @Override

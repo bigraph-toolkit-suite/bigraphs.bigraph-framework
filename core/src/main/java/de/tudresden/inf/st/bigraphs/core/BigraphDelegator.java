@@ -63,21 +63,6 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public boolean isGround() {
-        return bigraphDelegate.isGround();
-    }
-
-    @Override
-    public boolean isPrime() {
-        return bigraphDelegate.isPrime();
-    }
-
-    @Override
-    public boolean isDiscrete() {
-        return bigraphDelegate.isDiscrete();
-    }
-
-    @Override
     public boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2) {
         return bigraphDelegate.areConnected(place1, place2);
     }

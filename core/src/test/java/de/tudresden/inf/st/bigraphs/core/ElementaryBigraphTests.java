@@ -3,14 +3,15 @@ package de.tudresden.inf.st.bigraphs.core;
 import com.google.common.collect.Lists;
 import com.sun.tools.javac.util.ArrayUtils;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphModelFileStore;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.*;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.junit.jupiter.api.DisplayName;
@@ -19,9 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -125,6 +124,30 @@ public class ElementaryBigraphTests {
         assertTrue(identity1.isPrime());
 
 
+    }
+
+    @Test
+    void ion_atom_molecule() {
+        //make generic test: provide n as parameter for # of distinct names
+
+        StringTypedName controlName = StringTypedName.of("K");
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+
+        Signature signature = signatureBuilder
+                .newControl().identifier(controlName).arity(FiniteOrdinal.ofInteger(5)).assign().create();
+
+        Set<StringTypedName> outerNames = new HashSet<>(Arrays.asList(StringTypedName.of("x1"),
+                StringTypedName.of("x2"), StringTypedName.of("x3"), StringTypedName.of("x4"), StringTypedName.of("x5")));
+
+        assertAll(() -> {
+            DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> discreteIon =
+                    factory.createDiscreteIon(controlName, outerNames, (DefaultDynamicSignature) signature);
+            discreteIon.getModelPackage();
+            assertTrue(discreteIon.isDiscrete());
+            assertTrue(discreteIon.isPrime());
+            assertEquals(1, discreteIon.getSites().size());
+            assertEquals(1, discreteIon.getNodes().size());
+        });
     }
 
     @Test
@@ -270,7 +293,7 @@ public class ElementaryBigraphTests {
             assertEquals(result.getInnerNames().size(), z_over_XY.getInnerNames().size());
             assertEquals(result.getInnerNames().size(), Y0.length + X.length);
             for (BigraphEntity.InnerName innerName : result.getInnerNames()) {
-                if(!Y_and_X.contains(StringTypedName.of(innerName.getName()))) {
+                if (!Y_and_X.contains(StringTypedName.of(innerName.getName()))) {
                     throw new Exception("inner name not contained in the initial name set X + Y");
                 }
             }

@@ -251,10 +251,10 @@ public class BigraphCreationTest {
 
             });
 
-            assertThrows(InnerNameConnectedToOuterNameException.class, () -> {
-                builder.connectInnerNames(x1, x2, true);
-                builder.connectInnerNames(x2, x3, false);
-            });
+//            assertThrows(InnerNameConnectedToOuterNameException.class, () -> {
+//                builder.connectInnerNames(x1, x2, true);
+//                builder.connectInnerNames(x2, x3, false);
+//            });
         }
 
         @Test

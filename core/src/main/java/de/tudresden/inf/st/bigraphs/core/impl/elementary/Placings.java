@@ -95,7 +95,9 @@ public class Placings<S extends Signature> implements Serializable {
         private final BigraphEntity.RootEntity root;
 
         Barren() {
+            super(null);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
+
         }
 
         @Override
@@ -145,6 +147,7 @@ public class Placings<S extends Signature> implements Serializable {
         private final Collection<BigraphEntity.SiteEntity> sites = new ArrayList<>(2);
 
         Join() {
+            super(null);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
             sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(0));
             sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(1));
@@ -201,6 +204,7 @@ public class Placings<S extends Signature> implements Serializable {
         private final Collection<BigraphEntity.SiteEntity> sites;
 
         Merge(final int m) {
+            super(null);
             sites = new ArrayList<>(m);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
             IntStream.range(0, m).forEach(value -> sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(value)));
@@ -260,6 +264,7 @@ public class Placings<S extends Signature> implements Serializable {
         private final Collection<BigraphEntity.SiteEntity> sites;
 
         Permutation(int n) {
+            super(null);
             roots = new ArrayList<>(n);
             sites = new ArrayList<>(n);
 

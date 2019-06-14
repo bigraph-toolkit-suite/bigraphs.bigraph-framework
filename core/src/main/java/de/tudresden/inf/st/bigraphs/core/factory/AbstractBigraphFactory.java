@@ -9,10 +9,12 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
 import java.lang.reflect.Type;
+import java.util.Set;
 
 //TODO: erstellt entweder dynamic controls oder default controls signaturen (also builder und signaturebuilder werden
 //und compositor
@@ -63,6 +65,17 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
     public abstract Placings<S> createPlacings();
 
     public abstract Linkings<S> createLinkings();
+
+    /**
+     * Throws a runtime exception either because of InvalidConnectionException or TypeNotExistsException when connecting
+     * the outer names to the node.
+     *
+     * @param name
+     * @param outerNames
+     * @param signature
+     * @return
+     */
+    public abstract DiscreteIon<S, NT, FT> createDiscreteIon(NT name, Set<NT> outerNames, S signature);
 
     /**
      * Create a composition object for a given bigraph which allows to compose bigraphs.

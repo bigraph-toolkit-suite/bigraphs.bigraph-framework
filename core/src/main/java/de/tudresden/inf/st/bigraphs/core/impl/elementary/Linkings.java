@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Objects;
 
 /**
- *
  * @param <S>
  * @author Dominik Grzelak
  */
@@ -81,6 +80,7 @@ public class Linkings<S extends Signature> implements Serializable {
     public class IdentityEmpty extends ElementaryBigraph<S> {
 
         public IdentityEmpty() {
+            super(null);
         }
 
         @Override
@@ -116,6 +116,7 @@ public class Linkings<S extends Signature> implements Serializable {
         private final Collection<BigraphEntity.InnerName> innerNames = new ArrayList<>(1);
 
         Closure(NamedType<?> name) {
+            super(null);
             x = (BigraphEntity.InnerName) mutableBuilder.createNewInnerName(name.stringValue());
             innerNames.add(x);
         }
@@ -152,6 +153,7 @@ public class Linkings<S extends Signature> implements Serializable {
         private final Collection<BigraphEntity.InnerName> innerNames;
 
         Substitution(NamedType<?> outerName, NamedType<?>... innerNames) {
+            super(null);
             if (Objects.isNull(outerName) || innerNames.length == 0) {
                 throw new RuntimeException("Substitution cannot be created because outer name or inner name is missing.");
             }
@@ -167,6 +169,7 @@ public class Linkings<S extends Signature> implements Serializable {
         }
 
         Substitution(final NamedType<?>... names) {
+            super(null);
             if (names.length == 0) {
                 throw new RuntimeException("Renaming (Substitution) cannot be created because names are missing.");
             }

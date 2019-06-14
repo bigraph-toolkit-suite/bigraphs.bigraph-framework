@@ -16,7 +16,11 @@ import java.util.*;
  * @param <S>
  * @author Dominik Grzelak
  */
-public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<S> {
+public abstract class ElementaryBigraph<S extends Signature> extends BigraphDelegator<S> { //implements Bigraph<S> {
+
+    public ElementaryBigraph(Bigraph<S> bigraphDelegate) {
+        super(bigraphDelegate);
+    }
 
     @Override
     public Collection<BigraphEntity.RootEntity> getRoots() {
@@ -57,7 +61,7 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
     }
 
     @Override
-    public final BigraphEntity getLinkOfPoint(BigraphEntity point) {
+    public BigraphEntity getLinkOfPoint(BigraphEntity point) {
         if (!BigraphEntityType.isPointType(point)) return null;
         EObject eObject = point.getInstance();
         EStructuralFeature lnkRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
@@ -142,7 +146,7 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
     }
 
     @Override
-    public final <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
+    public <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
         return Collections.EMPTY_LIST;
     }
 
@@ -159,7 +163,7 @@ public abstract class ElementaryBigraph<S extends Signature> implements Bigraph<
 
 
     @Override
-    public final Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
+    public Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
         return Collections.EMPTY_LIST;
     }
 
