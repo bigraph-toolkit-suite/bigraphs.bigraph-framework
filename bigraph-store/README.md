@@ -1,3 +1,6 @@
+# Bigraph Store (CDO)
+
+- provides means to store and load bigraphical models from a CDO server
 
 Hint: net4j version of CDO Server must match with the maven dependency.
 Otherwise an exception is thrown ala "org.eclipse.net4j.channel.ChannelException: Failed to register channel with peer: Protocol version 37 does not match expected version 34"

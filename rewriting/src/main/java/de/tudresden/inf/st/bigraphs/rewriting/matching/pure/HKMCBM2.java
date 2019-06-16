@@ -54,14 +54,13 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     private Set<Control> availableControls = new LinkedHashSet<>();
     Set<Pair<Control, Control>> set = new HashSet<>();
     Table<Control, Control, Boolean> possibleLinks = HashBasedTable.create();
-    Table<String, String, Boolean> incidenceLeft = HashBasedTable.create();
-    Table<String, String, Boolean> incidenceRight = HashBasedTable.create();
-    @Deprecated
-    boolean swapedPlaces = false;
-    List<Control> availableControlsRedex = new ArrayList<>();
-    List<Control> availableControlsAgent = new ArrayList<>();
+//    Table<String, String, Boolean> incidenceLeft = HashBasedTable.create();
+//    Table<String, String, Boolean> incidenceRight = HashBasedTable.create();
 
-    boolean hasSite = false;
+    private List<Control> availableControlsRedex = new ArrayList<>();
+    private List<Control> availableControlsAgent = new ArrayList<>();
+
+    private boolean hasSite = false;
 //    boolean crossBoundary = true;
 
     /**
@@ -84,7 +83,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
             this.partition1 = partition1;
             this.partition2 = partition2;
         } else { // else, swap
-            swapedPlaces = true;
             this.partition1 = partition2;
             this.partition2 = partition1;
         }
@@ -99,15 +97,11 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         availableControls.addAll(collect);
         availableControls.addAll(collect1);
 
-//        Pair<Control, Control> paris
-//        Set<Pair<Control, Control>> set = new HashSet<>();
-//        Table<Control, Control, Boolean> possibleLinks = HashBasedTable.create();
         for (Control a : collect) {
             for (Control b : collect1) {
                 set.add(new Pair<>(a, b));
             }
         }
-//        System.out.println("pairs=" + set);
         for (Pair<Control, Control> eachPair : set) {
             possibleLinks.put(eachPair.getFirst(), eachPair.getSecond(), false);
         }
@@ -156,20 +150,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     private void warmStart() {
         for (BigraphEntity uOrig : partition1) {
             int u = vertexIndexMap.get(uOrig);
-//            List<AbstractDynamicMatchAdapter.ControlLinkPair> linksOfRedex = redexAdapter.getLinksOfNode(uOrig);
-//            // ONLY THe port indices are important for the order not the name itself
-//            for (int ix = 0, n = linksOfRedex.size(); ix < n; ix++) {
-//                AbstractDynamicMatchAdapter.ControlLinkPair x = linksOfRedex.get(ix);
-//
-//                EStructuralFeature pntsRef = x.getLinkOfPoint().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-//                EStructuralFeature attrName = x.getLinkOfPoint().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_NAME);
-//                EList<EObject> points = (EList<EObject>) x.getLinkOfPoint().getInstance().eGet(pntsRef);
-//                String name = (String) x.getLinkOfPoint().getInstance().eGet(attrName);
-//                int num = points.size();
-////                        System.out.println(num + " = " + name);
-//                mapRedex.merge(name, num, (a, b) -> a + b);
-//                incidenceLeft.put(uOrig.getControl().getNamedType().stringValue(), name, true);
-//            }
 
             for (BigraphEntity vOrig : Graphs.neighborListOf(graph, uOrig)) {
                 int v = vertexIndexMap.get(vOrig);
@@ -181,20 +161,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 }
             }
         }
-//        for (BigraphEntity uOrig : partition2) {
-//            List<AbstractDynamicMatchAdapter.ControlLinkPair> linksOfNodeAgent = agentAdapter.getLinksOfNode(uOrig);
-//            for (int ix = 0, n = linksOfNodeAgent.size(); ix < n; ix++) {
-//                AbstractDynamicMatchAdapter.ControlLinkPair x2 = linksOfNodeAgent.get(ix);
-//                EStructuralFeature pntsRef2 = x2.getLinkOfPoint().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-//                EStructuralFeature attrName2 = x2.getLinkOfPoint().getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_NAME);
-//                EList<EObject> points2 = (EList<EObject>) x2.getLinkOfPoint().getInstance().eGet(pntsRef2);
-//                String name2 = (String) x2.getLinkOfPoint().getInstance().eGet(attrName2);
-//                int num2 = points2.size();
-////                        System.out.println(num2 + " = " + name2);
-//                mapAgent.merge(name2, num2, (a, b) -> a + b);
-//                incidenceRight.put(uOrig.getControl().getNamedType().stringValue(), name2, true);
-//            }
-//        }
     }
 
     /**
@@ -331,7 +297,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 }
             }
 //            System.out.println("controls stimmen nicht überein...." + controlsAreGood);
-            boolean isSubset = ctrlsRedex.size() == 0;
+            boolean isSubset = ctrlsRedex.size() == 0 && controlsAreGood;
 //            System.out.println("Subredex isSubset of subagent=" + isSubset);
             return isSubset; //&& availableControlsRedex.size() <= availableControlsAgent.size()
         }

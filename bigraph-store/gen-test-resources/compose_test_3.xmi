@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bigraphMetaModel_SAMPLE="http://de.tudresden.inf.st.bigraphs.models" xsi:schemaLocation="http://de.tudresden.inf.st.bigraphs.models jar:file:/home/dominik/.m2/repository/de/tudresden/inf/st/bigraphs/model/bigraph-ecore-model/3.0/bigraph-ecore-model-3.0.jar!/model/bigraphBaseModel.ecore">
-  <bigraphMetaModel_SAMPLE:BOuterName name="x" bPoints="b c"/>
-  <bigraphMetaModel_SAMPLE:BInnerName bLink="x" name="b"/>
-  <bigraphMetaModel_SAMPLE:BInnerName bLink="x" name="c"/>
-</xmi:XMI>
