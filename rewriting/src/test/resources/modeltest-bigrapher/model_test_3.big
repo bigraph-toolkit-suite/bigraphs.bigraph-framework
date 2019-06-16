@@ -8,22 +8,11 @@ ctrl Computer = 1;
 ctrl Job = 0;
 
 big s1 = /e0 (
-(Room{e0} . (Printer{a1, b1}.1)) 
-| (Room{e0} . (Printer{a2, b2}.1)) 
-| (Room{e0} . (Printer{a2, b2}.1)) 
-| User{u1}.1
+  (Room{e0} . (Computer{network}. ( User{a}.User{b}.1 | Job.Job.1 ) | User{bob}.1)) 
+  | (Room{e0} . (User{jeff}.1))
 );
 
-# Reaction rules
-#react nil = Job --> Job;
-
-#big r = (Printer{a1, b1}.(Job.1 | User{jeff2}.1)) || (Printer{a1, b1}.(Job.1 | User{jeff2}.1));
-
-big r = (
-(Room{e0} . (Printer{a1, b2}.1)) 
-| (Room{e0} . (Printer{a2, b3}.1))
-| User{u1}.1
-);
+big r = Computer{network} .(id(1) | Job.id(1));
 
 
 react combi2 = 

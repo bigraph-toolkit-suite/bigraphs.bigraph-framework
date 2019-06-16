@@ -84,7 +84,9 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
     public List<BigraphEntity> getAllChildrenFromNode(BigraphEntity node) {
         Traverser<BigraphEntity> stringTraverser = Traverser.forTree(this::getChildren);
         Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(node);
-        return Lists.newArrayList(v0);
+        ArrayList<BigraphEntity> bigraphEntities = Lists.newArrayList(v0);
+        bigraphEntities.remove(node);
+        return bigraphEntities;
     }
 
     public List<BigraphEntity> getNodesOfLink(BigraphEntity.OuterName outerName) {

@@ -91,69 +91,65 @@ public class MatchTesting {
 
     }
 
-    public Bigraph createRedex_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+    @Test
+    void model_test_3() throws Exception {
+        PureBigraph agent_model_test_3 = (PureBigraph) createAgent_model_test_3();
+        PureBigraph redex_model_test_3 = (PureBigraph) createRedex_model_test_3();
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 
-        BigraphEntity.OuterName e0 = builder.createOuterName("e0");
-        BigraphEntity.OuterName a1 = builder.createOuterName("a1");
-        BigraphEntity.OuterName a2 = builder.createOuterName("a2");
-        BigraphEntity.OuterName b2 = builder.createOuterName("b2");
-        BigraphEntity.OuterName b3 = builder.createOuterName("b3");
-        BigraphEntity.OuterName u1 = builder.createOuterName("u1");
+        MatchIterable match = matcher.match(agent_model_test_3, redex_model_test_3);
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            BigraphMatch<?> next = iterator.next();
+            System.out.println(next);
+        }
 
-//        big r = (
-//                (Room{e0} . (Printer{a1, b2}.1))
-//| (Room{e0} . (Printer{a2, b3}.1))
-//| User{b4}.1
-//);
-
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room")).connectNodeToOuterName(e0)
-                .withNewHierarchy().addChild(signature.getControlByName("Printer")).connectNodeToOuterName(a1).connectNodeToOuterName(b2)
-                .goBack()
-
-                .addChild(signature.getControlByName("Room")).connectNodeToOuterName(e0)
-                .withNewHierarchy().addChild(signature.getControlByName("Printer")).connectNodeToOuterName(a2).connectNodeToOuterName(b3)
-                .goBack()
-
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(u1)
-        ;
-
-        return builder.createBigraph();
     }
+
 
     public Bigraph createAgent_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
-        BigraphEntity.InnerName roomLink = builder.createInnerName("e0");
-        BigraphEntity.OuterName a1 = builder.createOuterName("a1");
-        BigraphEntity.OuterName a2 = builder.createOuterName("a2");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.OuterName b2 = builder.createOuterName("b2");
-        BigraphEntity.OuterName u1 = builder.createOuterName("u1");
+        BigraphEntity.InnerName roomLink = builder.createInnerName("door");
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+        BigraphEntity.OuterName bob = builder.createOuterName("bob");
+        BigraphEntity.OuterName a = builder.createOuterName("a");
+        BigraphEntity.OuterName b = builder.createOuterName("b");
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).connectNodeToInnerName(roomLink)
-                .withNewHierarchy().addChild(signature.getControlByName("Printer")).connectNodeToOuterName(a1).connectNodeToOuterName(b1)
+                .withNewHierarchy().addChild(signature.getControlByName("User")).connectNodeToOuterName(bob)
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(network)
+                .withNewHierarchy().addChild(signature.getControlByName("Job")).withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
+                .addChild(signature.getControlByName("User")).connectNodeToOuterName(a)
+                .withNewHierarchy().addChild(signature.getControlByName("User")).connectNodeToOuterName(b)
+                .goBack()
+                .goBack()
                 .goBack()
 
                 .addChild(signature.getControlByName("Room")).connectNodeToInnerName(roomLink)
-                .withNewHierarchy().addChild(signature.getControlByName("Printer")).connectNodeToOuterName(a2).connectNodeToOuterName(b2)
+                .withNewHierarchy().addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
                 .goBack()
-
-                .addChild(signature.getControlByName("Room")).connectNodeToInnerName(roomLink)
-                .withNewHierarchy().addChild(signature.getControlByName("Printer")).connectNodeToOuterName(a2).connectNodeToOuterName(b2)
-                .goBack()
-
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(u1)
         ;
 
         builder.closeAllInnerNames();
         builder.makeGround();
         return builder.createBigraph();
 
+    }
+
+    public Bigraph createRedex_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+
+        builder.createRoot()
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(network)
+                .withNewHierarchy().addSite().addChild(signature.getControlByName("Job")).withNewHierarchy().addSite();
+        return builder.createBigraph();
     }
 
     public Bigraph createAgent_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException {

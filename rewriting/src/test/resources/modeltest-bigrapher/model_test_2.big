@@ -22,15 +22,15 @@ big s1 = /door (
 
 big zweiA = (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1)); # matched nicht
 big zweiB = (Computer{b1}.(id(1)) | Computer{c}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1)); # matched
-big zweiBReactum = (Computer{b1}.(id(1) | User2.1) | Computer{c}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1)); # allows maaaany possible reactions, is not distinct
+# big zweiBReactum = (Computer{b1}.(id(1) | User2.1) | Computer{c}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1)); # allows maaaany possible reactions, is not distinct
 
 react react2A = zweiA -> zweiA;
 react react2B = zweiB -> zweiB;
 
-big klo = Job * 1;
+# big klo = Job * 1;
 
 # Reactive system
 begin brs
   init s1;
-  rules = [{react2A, react2B}];
+  rules = [{react2B}];
 end
