@@ -445,7 +445,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
 
         //TODO zweite condition muss holden
         for (BigraphEntity q : Q_set) {
-            System.out.println(q);
+//            System.out.println(q);
 
             //C1,C3 preserving links
             //C2: is recreating links (outer --connect-> inner == edge, or inner name of inner big is connected to the edge
@@ -461,7 +461,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 // for F: connect innernames/ports to edges
 
                 if ((X.contains(q) || getNodeFromPort(portsF2, q) != null) && (E_F.containsValue(linkQofF))) {
-                    System.out.println("\tlink(q) <- link_F(q)");
+//                    System.out.println("\tlink(q) <- link_F(q)");
                     //link of current element must be the link_f of the current element
                     //determine if port or inner name
                     //determine index
@@ -543,7 +543,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                     }
                     if (newLink == null) continue;
                     assert newLink != null;
-                    System.out.println("\tlink(q) <- link_G(y)");
+//                    System.out.println("\tlink(q) <- link_G(y)");
                     //index beachten
                     //via node names aus nodes holen
 
@@ -558,7 +558,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                         EStructuralFeature pointRef = newLink.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
                         EList<EObject> pointsOfOuterName = (EList<EObject>) newLink.getInstance().eGet(pointRef);
                         pointsOfOuterName.add(newInnerName.getInstance());
-                        System.out.println("\tconnect inner name to " + link);
+//                        System.out.println("\tconnect inner name to " + link);
 
                     } else if (BigraphEntityType.isPort(q)) {
                         BigraphEntity.Port thePort = (BigraphEntity.Port) q;
@@ -567,7 +567,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                         String nodeName = V.inverse().get(getNodeFromPort(allPorts_FG, thePort)); //allPorts_FG.inverse().get(thePort));
                         BigraphEntity.NodeEntity nodeEntity = myNodes.get(nodeName);
                         builder.connectToEdgeUsingIndex(nodeEntity, (BigraphEntity.Edge) newLink, thePort.getIndex());
-                        System.out.println("\tconnect port to edge " + ((BigraphEntity.Edge) link).getName());
+//                        System.out.println("\tconnect port to edge " + ((BigraphEntity.Edge) link).getName());
                     }
                 }
             }
@@ -575,7 +575,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
             //for G-nodes: connect ports to edges or outer names of G
 
             if (getNodeFromPort(portsG2, q) != null) { //portsG2.values().contains(q)) {
-                System.out.println("\tlink(q) <- link_G(q)");
+//                System.out.println("\tlink(q) <- link_G(q)");
                 assert BigraphEntityType.isPort(q);
                 BigraphEntity.Port thePort = (BigraphEntity.Port) q;
                 String nodeName = V.inverse().get(getNodeFromPort(allPorts_FG, thePort)); //allPorts_FG.inverse().get(thePort));
@@ -585,13 +585,13 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 if (BigraphEntityType.isOuterName(linkQofG)) {
                     //outer names are already created, they remain the same
                     BigraphEntity.OuterName outerName = myOuterNames.get(((BigraphEntity.OuterName) linkQofG).getName());
-                    System.out.println(outerName);
+//                    System.out.println(outerName);
                     BigraphEntity newPortWithIndex = builder.createNewPortWithIndex(thePort.getIndex());
                     newPortWithIndex.getInstance().eSet(
                             newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK),
                             outerName.getInstance()
                     );
-                    System.out.println("connectn port to outer name " + outerName.getName());
+//                    System.out.println("connectn port to outer name " + outerName.getName());
                 } else if (BigraphEntityType.isEdge(linkQofG)) {
                     String edgeName = E.inverse().get(linkQofG);
                     BigraphEntity.Edge edge = myEdges.get(edgeName); //((BigraphEntity.Edge) linkQofG).getName());
@@ -599,9 +599,9 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                         edge = (BigraphEntity.Edge) builder.createNewEdge(edgeName); //((BigraphEntity.Edge) linkQofG).getName());
                         myEdges.put(edge.getName(), edge);
                     }
-                    System.out.println(edge);
+//                    System.out.println(edge);
                     builder.connectToEdgeUsingIndex(nodeEntity, edge, thePort.getIndex());
-                    System.out.println("connectn port to edge " + edge.getName());
+//                    System.out.println("connectn port to edge " + edge.getName());
                 }
 
             }

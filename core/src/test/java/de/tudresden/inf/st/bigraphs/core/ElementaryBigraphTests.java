@@ -1,15 +1,14 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import com.google.common.collect.Lists;
-import com.sun.tools.javac.util.ArrayUtils;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.BigraphModelFileStore;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.*;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
@@ -19,8 +18,9 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.io.FileOutputStream;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -128,26 +128,44 @@ public class ElementaryBigraphTests {
 
     @Test
     void ion_atom_molecule() {
-        //make generic test: provide n as parameter for # of distinct names
+        String nodeName = "K";
+        StringTypedName controlName = StringTypedName.of(nodeName);
+        int maxArityCount = 5;
 
-        StringTypedName controlName = StringTypedName.of("K");
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        for (int arity = 0; arity < maxArityCount; arity++) {
+            System.out.println("Create Discrete Ion " + nodeName + " with artiy " + arity);
+            DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder =
+                    factory.createSignatureBuilder();
+            Signature signature = signatureBuilder
+                    .newControl().identifier(controlName).arity(FiniteOrdinal.ofInteger(arity)).assign()
+                    .create();
 
-        Signature signature = signatureBuilder
-                .newControl().identifier(controlName).arity(FiniteOrdinal.ofInteger(5)).assign().create();
+            Set<StringTypedName> outerNames = arity == 0 ? Collections.emptySet() : IntStream.range(0, arity).boxed()
+                    .map(x -> StringTypedName.of("x" + x))
+                    .collect(Collectors.toSet());
 
-        Set<StringTypedName> outerNames = new HashSet<>(Arrays.asList(StringTypedName.of("x1"),
-                StringTypedName.of("x2"), StringTypedName.of("x3"), StringTypedName.of("x4"), StringTypedName.of("x5")));
+            int finalArity = arity;
+            assertAll(() -> {
+                DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> discreteIon =
+                        factory.createDiscreteIon(controlName, outerNames, (DefaultDynamicSignature) signature);
+                discreteIon.getModelPackage();
+                assertTrue(discreteIon.isDiscrete());
+                assertTrue(discreteIon.isPrime());
+                assertEquals(finalArity, discreteIon.getOuterNames().size());
+                assertEquals(1, discreteIon.getSites().size());
+                assertEquals(1, discreteIon.getNodes().size());
+                assertEquals(1, discreteIon.getRoots().size());
+                System.out.println("Make discrete atom from discrete ion: " + nodeName + "_x * 1");
+                Bigraph<DefaultDynamicSignature> discreteAtom = factory.asBigraphOperator(discreteIon)
+                        .compose(factory.createPlacings().barren())
+                        .getOuterBigraph();
 
-        assertAll(() -> {
-            DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> discreteIon =
-                    factory.createDiscreteIon(controlName, outerNames, (DefaultDynamicSignature) signature);
-            discreteIon.getModelPackage();
-            assertTrue(discreteIon.isDiscrete());
-            assertTrue(discreteIon.isPrime());
-            assertEquals(1, discreteIon.getSites().size());
-            assertEquals(1, discreteIon.getNodes().size());
-        });
+                assertEquals(0, discreteAtom.getSites().size());
+                assertEquals(1, discreteAtom.getNodes().size());
+                assertEquals(1, discreteAtom.getRoots().size());
+                assertEquals(finalArity, discreteAtom.getOuterNames().size());
+            });
+        }
     }
 
     @Test
