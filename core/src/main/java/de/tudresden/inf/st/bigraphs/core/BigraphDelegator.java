@@ -8,7 +8,8 @@ import java.util.Collection;
 /**
  * Delegator class for bigraphs (currently only suitable for pure bigraphs, e.g., no getParents() method available)
  *
- * @param <S>
+ * @param <S> type of the signature
+ * @author Dominik Grzelak
  */
 public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S> {
 

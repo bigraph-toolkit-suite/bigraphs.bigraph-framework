@@ -2,6 +2,9 @@ package de.tudresden.inf.st.bigraphs.core;
 
 public final class BigraphMetaModelConstants {
 
+    /**
+     * Relative path to the Ecore bigraph meta model inside the included bigraph model library.
+     */
     public final static String BIGRAPH_BASE_MODEL = "/model/bigraphBaseModel.ecore";
 
     // Attributes

@@ -11,7 +11,8 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInter
  * <li>{@link de.tudresden.inf.st.bigraphs.core.impl.DefaultBigraphComposite} for pure bigraphs</li>
  * </ul>
  *
- * @param <S>
+ * @param <S> type of the signature
+ * @author Dominik Grzelak
  */
 public interface BigraphComposite<S extends Signature> {
 
@@ -36,7 +37,7 @@ public interface BigraphComposite<S extends Signature> {
      * Compute the tensor product of two bigraphs. The outer bigraph is the composite object itself.
      * A new immutable bigraph is created and returned as a {@link BigraphComposite} to be composed again.
      *
-     * @param f
+     * @param f inner bigraph term for the juxtaposition
      * @return the juxtaposition of two bigraphs
      * @throws IncompatibleSignatureException
      * @throws IncompatibleInterfaceException
@@ -46,7 +47,7 @@ public interface BigraphComposite<S extends Signature> {
     /**
      * Convenient method for {@link BigraphComposite#juxtapose(BigraphComposite)}.
      *
-     * @param f
+     * @param f inner bigraph term for the juxtaposition
      * @return
      * @throws IncompatibleSignatureException
      * @throws IncompatibleInterfaceException

@@ -5,6 +5,8 @@ package de.tudresden.inf.st.bigraphs.core.factory;
 // default should be "change nsURI in to "http: ///ecore_file_name.ecore" and nsPrefix into "ecore_file_name" it woks great" when saving
 
 /**
+ * Provides simple means to load and save bigraphs via the filesystem.
+ *
  * @author Dominik Grzelak
  */
 public class FilesystemBigraphFactory {
