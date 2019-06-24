@@ -158,14 +158,15 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
          * @return the new hierarchy
          */
         //CHECK if something was created...
-        public Hierarchy withNewHierarchy() {
+        public Hierarchy withNewHierarchy() throws ControlIsAtomicException {
+            assertControlIsAtomic(getLastCreatedNode());
             return withNewHierarchyOn(getLastCreatedNode());
         }
 
-        public Hierarchy addChild(Hierarchy thisOne) {
+        public Hierarchy addChild(Hierarchy thisOne) throws ControlIsAtomicException {
             assert thisOne.getParent() != null;
             assert BigraphEntityType.isNode(thisOne.getParent());
-
+            assertControlIsAtomic(thisOne.getParent());
             // First, check if node is not already in the list or being put under a different name
             // the node itself and the name is searched
             if (
@@ -179,7 +180,8 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
         }
 
         //this implies: added to a parent (see lastCreatedNode)
-        public Hierarchy addChild(Control control) {
+        public Hierarchy addChild(Control control) throws ControlIsAtomicException {
+            assertControlIsAtomic(getParent());
             if (!checkSameSignature(control)) {
                 //TODO debug output or something ...
                 return this;
@@ -187,6 +189,12 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
             final BigraphEntity.NodeEntity<Control> child = createChild(control);
             addChildToParent(child);
             return this;
+        }
+
+        public void assertControlIsAtomic(BigraphEntity bigraphEntity) throws ControlIsAtomicException {
+            if (Objects.nonNull(bigraphEntity) && !BigraphEntityType.isRoot(bigraphEntity) && ControlKind.isAtomic(bigraphEntity.getControl())) {
+                throw new ControlIsAtomicException();
+            }
         }
 
 
@@ -303,7 +311,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
          * @throws InvalidConnectionException
          * @throws LinkTypeNotExistsException
          */
-        public void connectNodesToInnerName(BigraphEntity.InnerName innerName, Control... controls) throws InvalidConnectionException, LinkTypeNotExistsException {
+        public void connectNodesToInnerName(BigraphEntity.InnerName innerName, Control... controls) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
             if (controls == null || controls.length == 0) return;
             for (Control each : controls) {
                 connectNodeToInnerName(innerName, each);
@@ -318,7 +326,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
          * @throws InvalidConnectionException
          * @throws LinkTypeNotExistsException
          */
-        public void connectNodeToInnerName(BigraphEntity.InnerName innerName, Control control) throws InvalidConnectionException, LinkTypeNotExistsException {
+        public void connectNodeToInnerName(BigraphEntity.InnerName innerName, Control control) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
             addChild(control);
             connectNodeToInnerName(innerName);
         }
@@ -687,7 +695,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
 //        Integer value = (Integer) arity.getValue();
         castedArityOfControl = castedArityOfControl == null ? 0 : castedArityOfControl;
         if (castedArityOfControl == 0)
-            throw new ControlIsAtomicException();
+            throw new InvalidArityOfControlException();
         if (numberOfConnections.compareTo(castedArityOfControl) >= 0)
             throw new ToManyConnections(); // numberOfConnections >= castedArityOfControl
     }

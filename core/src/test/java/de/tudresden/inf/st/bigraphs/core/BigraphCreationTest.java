@@ -168,7 +168,7 @@ public class BigraphCreationTest {
         @Test
         @Order(1)
         void to_many_connections() {
-            ControlIsAtomicException exc = assertThrows(ControlIsAtomicException.class, () -> {
+            assertThrows(InvalidArityOfControlException.class, () -> {
                 builder.createRoot()
                         .connectByEdge(signature.getControlByName("Job"),
                                 signature.getControlByName("Job"),
@@ -324,7 +324,7 @@ public class BigraphCreationTest {
         }
 
         @Test
-        void makeGround() throws InvalidConnectionException, LinkTypeNotExistsException {
+        void makeGround() throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
             DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Long>> signatureBuilder = new DefaultSignatureBuilder<>();
             signatureBuilder
                     .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofLong(2)).assign();
@@ -365,7 +365,7 @@ public class BigraphCreationTest {
         }
 
         @Test
-        void build_simple() {
+        void build_simple() throws ControlIsAtomicException {
             BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
             BigraphEntity.InnerName tmp2 = builder.createInnerName("tmp2");
 
@@ -424,6 +424,63 @@ public class BigraphCreationTest {
 
     }
 
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class ControlAtomicityTests {
+        PureBigraphBuilder<DefaultDynamicSignature> builder;
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+
+        @BeforeAll
+        void createSignature() {
+            signature = createExampleSignature();
+        }
+
+        @BeforeEach
+        void setUp() {
+            builder = factory.createBigraphBuilder(signature);
+        }
+
+        @Test
+        void controls_are_atomic() {
+
+            assertThrows(ControlIsAtomicException.class, () -> {
+                builder.createRoot()
+                        .addChild(signature.getControlByName("A"))
+                        .addChild(signature.getControlByName("C"))
+                        .withNewHierarchy().addChild(signature.getControlByName("B"));
+            });
+            assertThrows(ControlIsAtomicException.class, () -> {
+                builder.createRoot()
+                        .addChild(signature.getControlByName("C"))
+                        .withNewHierarchy().addChild(signature.getControlByName("A"));
+            });
+            assertThrows(ControlIsAtomicException.class, () -> {
+                builder.createRoot()
+                        .addChild(signature.getControlByName("C"))
+                        .withNewHierarchy().addSite();
+            });
+
+            assertAll(() -> {
+                builder.createRoot()
+                        .addChild(signature.getControlByName("Room"))
+                        .withNewHierarchy().addChild(signature.getControlByName("Room"))
+                        .withNewHierarchy().addChild(signature.getControlByName("Room"))
+                        .addSite()
+                        .withNewHierarchy().addChild(signature.getControlByName("Room"))
+                        .withNewHierarchy().addSite();
+            });
+
+
+            PureBigraph bigraph = builder.createBigraph();
+
+            assertTrue(bigraph.isActiveAtSite(0));
+            assertTrue(bigraph.isActiveAtSite(1));
+
+            System.out.println(bigraph);
+        }
+
+    }
+
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
         signatureBuilder
@@ -432,7 +489,11 @@ public class BigraphCreationTest {
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
+                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().kind(ControlKind.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
+        ;
 
         return (S) signatureBuilder.create();
     }

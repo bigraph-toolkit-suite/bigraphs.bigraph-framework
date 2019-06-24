@@ -8,6 +8,9 @@ import java.util.Objects;
 
 /**
  * Immutable dynamic control. Status of a control can be specified. If non provided the control will be active.
+ * <p>
+ * A node can be atomic or non-atomic which is determined by its control. Atomic nodes are empty. Non-atomic nodes
+ * can be active or passive.
  *
  * @param <NT>
  * @param <FO>
@@ -28,6 +31,9 @@ public class DefaultDynamicControl<NT extends NamedType, FO extends FiniteOrdina
 
     private DefaultDynamicControl(NT name, FO arity, ControlKind kindOfControl) {
         super(name, arity);
+        if (Objects.isNull(kindOfControl)) {
+            kindOfControl = ControlKind.ACTIVE;
+        }
         this.kindOfControl = kindOfControl;
     }
 

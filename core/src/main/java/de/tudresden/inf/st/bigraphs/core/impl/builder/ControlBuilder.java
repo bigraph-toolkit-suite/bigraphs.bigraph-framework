@@ -29,7 +29,7 @@ public abstract class ControlBuilder<NT extends NamedType, V extends FiniteOrdin
     }
 
 
-    abstract Control build();
+    abstract Control<NT, V> build();
 
     @SuppressWarnings("unchecked")
     final B self() {

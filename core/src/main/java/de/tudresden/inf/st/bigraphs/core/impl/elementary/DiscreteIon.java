@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
@@ -25,15 +26,19 @@ public class DiscreteIon<S extends Signature, NT extends NamedType, FT extends F
         super(null);
         builder = (PureBigraphBuilder<S>) factory.createBigraphBuilder(signature);
 
-        PureBigraphBuilder<S>.Hierarchy hierarchy = builder.createRoot().addChild(signature.getControlByName(name.stringValue()));
-        outerNames.forEach(x -> {
-            try {
-                hierarchy.connectNodeToOuterName(builder.createOuterName(x.stringValue()));
-            } catch (LinkTypeNotExistsException | InvalidArityOfControlException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        hierarchy.withNewHierarchy().addSite();
+        try {
+            PureBigraphBuilder<S>.Hierarchy hierarchy = builder.createRoot().addChild(signature.getControlByName(name.stringValue()));
+            outerNames.forEach(x -> {
+                try {
+                    hierarchy.connectNodeToOuterName(builder.createOuterName(x.stringValue()));
+                } catch (LinkTypeNotExistsException | InvalidArityOfControlException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            hierarchy.withNewHierarchy().addSite();
+        } catch (ControlIsAtomicException e) {
+            throw new RuntimeException("Control shouldn't be atomic!");
+        }
         bigraphDelegate = (Bigraph<S>) builder.createBigraph();
     }
 

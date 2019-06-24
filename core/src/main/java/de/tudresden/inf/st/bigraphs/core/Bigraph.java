@@ -7,10 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.eclipse.emf.ecore.EPackage;
 
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -78,8 +75,31 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
                 return false;
             }
         }
-
         return noTwoSitesAreSiblings;
+    }
+
+    default boolean isActiveAtSite(int siteIndex) {
+        Optional<BigraphEntity.SiteEntity> first = getSites().stream().filter(x -> x.getIndex() == siteIndex).findFirst();
+        if (first.isPresent()) {
+            BigraphEntity parent = getParent(first.get());
+            while (Objects.nonNull(parent) && !BigraphEntityType.isRoot(parent)) {
+                if (!ControlKind.isActive(parent.getControl())) {
+                    return false;
+                }
+                parent = getParent(parent);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * A bigraph is active if all its sites are active. See {@link Bigraph#isActiveAtSite(int)}.
+     *
+     * @return {@code true} if the bigraph is active.
+     */
+    default boolean isActive() {
+        return getSites().stream().allMatch(x -> isActiveAtSite(x.getIndex()));
     }
 
 

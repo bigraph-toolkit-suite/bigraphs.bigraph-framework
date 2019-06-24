@@ -17,7 +17,7 @@ import java.util.Set;
  * @param <C>
  * @param <B>
  */
-public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOrdinal, C extends ControlBuilder, B extends SignatureBuilder> { //<C extends ControlBuilder, B extends SignatureBuilder<C, B>> {
+public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOrdinal, C extends ControlBuilder<NT, FO, C>, B extends SignatureBuilder> { //<C extends ControlBuilder, B extends SignatureBuilder<C, B>> {
     private Set<Control<NT, FO>> controls;
 
     public SignatureBuilder() {
@@ -57,7 +57,6 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
     public C newControl() {
         C builder = createControlBuilder();
         builder.withControlListBuilder(this);
-//                this.controls.add(control);
         return builder;
     }
 
@@ -88,7 +87,7 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return this.controls;
     }
 
-    public <C extends Control<NT, FO>, S extends Signature<C>> S create() {
+    public <CT extends Control<NT, FO>, S extends Signature<CT>> S create() {
         return createSignature(getControls()); //, getSignatureClass());
     }
 }

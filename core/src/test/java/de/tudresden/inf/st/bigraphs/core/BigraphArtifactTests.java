@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
@@ -127,7 +128,7 @@ public class BigraphArtifactTests {
             BigraphModelFileStore.exportAsInstanceModel((PureBigraph) a3, "compose_test_3",
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_3.xmi"));
 
-        } catch (LinkTypeNotExistsException | IOException | IncompatibleSignatureException | IncompatibleInterfaceException | InvalidConnectionException e) {
+        } catch (LinkTypeNotExistsException | IOException | IncompatibleSignatureException | IncompatibleInterfaceException | InvalidConnectionException | ControlIsAtomicException e) {
             e.printStackTrace();
         }
     }
@@ -145,7 +146,7 @@ public class BigraphArtifactTests {
         return (S) signatureBuilder.create();
     }
 
-    public Bigraph createBigraphSample() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    public Bigraph createBigraphSample() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 

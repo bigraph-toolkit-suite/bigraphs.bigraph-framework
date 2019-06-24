@@ -20,7 +20,7 @@ public class DynamicSignatureBuilder<NT extends NamedType, FO extends FiniteOrdi
     }
 
 
-        @Override
+    @Override
     public <S extends Signature> S createSignature(Iterable<? extends Control> controls) {
 //        return DefaultDynamicSignature.class.cast(new DefaultDynamicSignature(null));
         return (S) new DefaultDynamicSignature((Set<DefaultDynamicControl<? extends NamedType, ? extends FiniteOrdinal>>) controls);

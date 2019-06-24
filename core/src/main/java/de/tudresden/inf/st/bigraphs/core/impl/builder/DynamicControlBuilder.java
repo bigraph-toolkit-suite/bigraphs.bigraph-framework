@@ -13,7 +13,7 @@ public class DynamicControlBuilder<NT extends NamedType, V extends FiniteOrdinal
         super();
     }
 
-    DynamicControlBuilder kind(ControlKind kind) {
+    public DynamicControlBuilder<NT, V> kind(ControlKind kind) {
         this.kind = kind;
         return self();
     }

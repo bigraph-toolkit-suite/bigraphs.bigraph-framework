@@ -8,6 +8,14 @@ ctrl User2 = 0;
 ctrl A = 1;
 ctrl B = 1;
 
+ctrl NN = 0;
+atomic ctrl AA = 0;
+
+big normalBig = NN;
+big atomicBig = AA;
+
+react ququ = NN . (NN | NN) -> (NN | NN);
+
 # Reaction rules
 react nil = Job --> Job;
 big s0 = Job.1;
