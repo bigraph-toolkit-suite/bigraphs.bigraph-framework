@@ -15,6 +15,7 @@ big normalBig = NN;
 big atomicBig = AA;
 
 react ququ = NN . (NN | NN) -> (NN | NN);
+big ququ2 = AA . id(1);
 
 # Reaction rules
 react nil = Job --> Job;

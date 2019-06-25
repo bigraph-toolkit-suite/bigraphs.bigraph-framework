@@ -78,10 +78,30 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         return noTwoSitesAreSiblings;
     }
 
+    /**
+     * A site is active if all its ancestors are also active.
+     *
+     * @param siteIndex the index of the site to check
+     * @return {@code true} if the site is active, otherwise {@code false}
+     */
     default boolean isActiveAtSite(int siteIndex) {
         Optional<BigraphEntity.SiteEntity> first = getSites().stream().filter(x -> x.getIndex() == siteIndex).findFirst();
         if (first.isPresent()) {
             BigraphEntity parent = getParent(first.get());
+            while (Objects.nonNull(parent) && !BigraphEntityType.isRoot(parent)) {
+                if (!ControlKind.isActive(parent.getControl())) {
+                    return false;
+                }
+                parent = getParent(parent);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    default boolean isActiveAtNode(BigraphEntity.NodeEntity node) {
+        if (Objects.nonNull(node) && ControlKind.isActive(node.getControl())) {
+            BigraphEntity parent = getParent(node);
             while (Objects.nonNull(parent) && !BigraphEntityType.isRoot(parent)) {
                 if (!ControlKind.isActive(parent.getControl())) {
                     return false;

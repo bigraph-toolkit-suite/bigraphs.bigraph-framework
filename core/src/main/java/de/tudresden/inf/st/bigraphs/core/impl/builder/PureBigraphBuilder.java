@@ -159,14 +159,14 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
          */
         //CHECK if something was created...
         public Hierarchy withNewHierarchy() throws ControlIsAtomicException {
-            assertControlIsAtomic(getLastCreatedNode());
+            assertControlIsNonAtomic(getLastCreatedNode());
             return withNewHierarchyOn(getLastCreatedNode());
         }
 
         public Hierarchy addChild(Hierarchy thisOne) throws ControlIsAtomicException {
             assert thisOne.getParent() != null;
             assert BigraphEntityType.isNode(thisOne.getParent());
-            assertControlIsAtomic(thisOne.getParent());
+            assertControlIsNonAtomic(thisOne.getParent());
             // First, check if node is not already in the list or being put under a different name
             // the node itself and the name is searched
             if (
@@ -180,8 +180,8 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
         }
 
         //this implies: added to a parent (see lastCreatedNode)
-        public Hierarchy addChild(Control control) throws ControlIsAtomicException {
-            assertControlIsAtomic(getParent());
+        public Hierarchy addChild(Control control) {
+            assertControlIsNonAtomic(getParent());
             if (!checkSameSignature(control)) {
                 //TODO debug output or something ...
                 return this;
@@ -191,8 +191,15 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
             return this;
         }
 
-        public void assertControlIsAtomic(BigraphEntity bigraphEntity) throws ControlIsAtomicException {
-            if (Objects.nonNull(bigraphEntity) && !BigraphEntityType.isRoot(bigraphEntity) && ControlKind.isAtomic(bigraphEntity.getControl())) {
+        /**
+         * Throws an exception if the given node has an atomic control
+         *
+         * @param bigraphEntity the bigraph node to check for atomicity
+         */
+        void assertControlIsNonAtomic(BigraphEntity bigraphEntity) {
+            if (Objects.nonNull(bigraphEntity) &&
+                    !BigraphEntityType.isRoot(bigraphEntity) &&
+                    ControlKind.isAtomic(bigraphEntity.getControl())) {
                 throw new ControlIsAtomicException();
             }
         }
@@ -237,7 +244,8 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
         private void addChildToParent(final BigraphEntity node) {
             if (!BigraphEntityType.isPlaceType(node)) return;
 
-            ((EList) parent.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(node.getInstance());
+            ((EList) parent.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD)))
+                    .add(node.getInstance());
             child.add(node);
 
 
@@ -248,14 +256,19 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
             }
         }
 
-        //MOVE, change return type
+        /**
+         * Adds a site to the current parent.
+         * <p>
+         * An {@link ControlIsAtomicException} is thrown if the parent's control is <i>atomic</i>.
+         *
+         * @return adds a site to the current parent
+         * @see ControlIsAtomicException
+         */
         public Hierarchy addSite() {
+            assertControlIsNonAtomic(getParent());
             final int ix = siteIdxSupplier.get();
             EObject eObject = createSiteOfEClass(ix);
-//            EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE));
-//            eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), ix);
             BigraphEntity.SiteEntity siteEntity = BigraphEntity.create(eObject, BigraphEntity.SiteEntity.class);
-//            ((EList) parent.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD))).add(eObject);
             addChildToParent(siteEntity);
             child.add(siteEntity);
             availableSites.put(ix, siteEntity);

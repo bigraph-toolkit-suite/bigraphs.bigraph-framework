@@ -16,6 +16,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -475,6 +477,13 @@ public class BigraphCreationTest {
 
             assertTrue(bigraph.isActiveAtSite(0));
             assertTrue(bigraph.isActiveAtSite(1));
+
+            // the room hierarchy is completely active
+            bigraph.getNodes().stream()
+                    .filter(x -> x.getControl().getNamedType().stringValue().equals("Room"))
+                    .forEach(x -> {
+                        assertTrue(bigraph.isActiveAtNode(x));
+                    });
 
             System.out.println(bigraph);
         }

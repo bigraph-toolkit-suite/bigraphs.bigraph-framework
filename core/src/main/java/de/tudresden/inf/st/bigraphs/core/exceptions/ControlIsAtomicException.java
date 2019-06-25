@@ -5,7 +5,7 @@ package de.tudresden.inf.st.bigraphs.core.exceptions;
  *
  * @author Dominik Grzelak
  */
-public class ControlIsAtomicException extends Exception {
+public class ControlIsAtomicException extends RuntimeException {
 
     public ControlIsAtomicException() {
         super("Control is atomic");
