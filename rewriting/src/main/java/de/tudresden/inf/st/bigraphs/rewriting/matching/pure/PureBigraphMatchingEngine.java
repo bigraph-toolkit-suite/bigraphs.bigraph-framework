@@ -22,7 +22,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractDynamicMatchAdapter;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.PureBigraphParametricMatch;
-import de.tudresden.inf.st.bigraphs.rewriting.util.Combination;
 import de.tudresden.inf.st.bigraphs.rewriting.util.Permutations;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -55,26 +54,12 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
     private List<BigraphMatch<B>> matches = new LinkedList<>();
 
-//    @Deprecated
-//    private HashMap<Integer, BigraphEntity> hitsU = new HashMap<>();
-    /**
-     * The agent's match (node) is stored along the corresponding redex' root index of the match
-     * (if multiple occurrences were possible)
-     * <p>
-     * Describes which root index of the redex matches which agent node
-     */
-//    @Deprecated
-//    private HashMap<Integer, BigraphEntity> hitsV = new HashMap<>();
-
-
-//    @Deprecated
     private HashMap<BigraphEntity, List<Integer>> hitsVIx = new HashMap<>();
 
     //Integer: redex ix | redex (root) <-> agent nodes that corresponds to the redex nodes at redex root ix
     //<root ix, map<Redexnode under root, list<agent nodes>>
     @Deprecated
     Map<Integer, Map<BigraphEntity, List<BigraphEntity>>> occurrenceTable = new HashMap<>();
-//    private Table<Integer, > occurrenceTable;
 
     private final MutableBuilder<DefaultDynamicSignature> builder;
     private final MutableBuilder<DefaultDynamicSignature> builder2;
@@ -277,19 +262,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
                         int i1 = treffer.incrementAndGet();
 
-                        //<root ix, map<Redexnode under root, list<agent nodes>>
-//                        Map<BigraphEntity, List<BigraphEntity>> nodeDiffByControlCheck = findOccurrences(childrenOfV, neighborsOfU, true);
-////                        Map<Integer, List<BigraphEntity>> occs = new HashMap<>();
-//                        occurrenceTable.putIfAbsent(i, new HashMap<>());
-////                        occurrenceTable.get(i).putAll(nodeDiffByControlCheck); //this doesn't work if ambiguity in node matching exists (e.g., a symmetric bigraph)
-//                        for (Map.Entry<BigraphEntity, List<BigraphEntity>> eachEntry : nodeDiffByControlCheck.entrySet()) {
-//                            if (occurrenceTable.get(i).get(eachEntry.getKey()) == null) {
-//                                occurrenceTable.get(i).putAll(nodeDiffByControlCheck);
-//                                break;
-//                            } else {
-//                                occurrenceTable.get(i).get(eachEntry.getKey()).addAll(eachEntry.getValue());
-//                            }
-//                        }
 
                         // mapped redex root index zu agent node
                         hitsVIx.putIfAbsent(eachV, new LinkedList<>());
@@ -298,25 +270,19 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                         //save last eachU and eachV
                         // check if we found a matching across all roots of the redex
                         // both following statements are equivalent
-                        boolean wereAllRootsVisited = true; //i == redexAdapter.getRoots().size() - 1;
-                        boolean wereAllRootsVisited2 = true; //(i1) % redexAdapter.getRoots().size() == 0;
-                        if (wereAllRootsVisited2 && wereAllRootsVisited) {
+//                        boolean wereAllRootsVisited = true; //i == redexAdapter.getRoots().size() - 1;
+//                        boolean wereAllRootsVisited2 = true; //(i1) % redexAdapter.getRoots().size() == 0;
+//                        if (wereAllRootsVisited2 && wereAllRootsVisited) {
 
-                            System.out.println("FOUND A MATCHING: Agent=" + eachV.getControl() + " and Redex=" + eachU.getControl() + " // Root_ix = " + i);
+                        System.out.println("FOUND A MATCHING: Agent=" + eachV.getControl() + " and Redex=" + eachU.getControl() + " // Root_ix = " + i);
 //                            System.out.println("Children of U");
 //                            redexAdapter.getChildren(eachU).forEach(x -> System.out.println(x.getControl()));
 //                            System.out.println("Children of V");
 //                            agentAdapter.getChildren(eachV).forEach(x -> System.out.println(x.getControl()));
 
-                            // TODO for iterator style: save a breakpoint here somehow... aber nur wenn für alle redex roots
-                            // ein distinct agent node zugewiesen werden konnte
-                            // save the current child of internalVertsG and u_vertsOfH and all intermediate results
-                            // do not call init() again
-                            // create a new method beginMatch() which accepts arguments to begin at these stored positions
-                            //  and is called later from the iterator after the first match
-//                            hitsU.clear();
-//                            hitsV.clear();
-                        }
+                        // TODO for iterator style: save a breakpoint here somehow... aber nur wenn für alle redex roots
+
+//                        }
                     }
                 }
             }
@@ -344,35 +310,9 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 //            hitsV.clear();
 //        HashMap<Integer, BigraphEntity> hitsV = new HashMap<>();
         final int numOfRoots = redexAdapter.getRoots().size();
-//        hitsV.clear();
 
-//            areDisjoint = redexAdapter.getRoots().size() == collect.size();
-//            System.out.println("Disjoint2=" + areDisjoint);
+        LinkedList<BigraphEntity> collect = new LinkedList<>(hitsVIx.keySet());
 
-        //parent nodes should be in order corresponding to the redex indices order
-//        List<BigraphEntity> collectChildren = IntStream.range(0, numOfRoots).boxed().map(ix -> occurrenceTable.get(ix))
-//                .flatMap(x -> x.values().stream())
-//                .flatMap(Collection::stream)
-//                .collect(Collectors.toList());
-//        LinkedList<BigraphEntity> collect = collectChildren.stream()
-//                .map(x -> agentAdapter.getParent(x))
-//                .distinct()
-//                .collect(Collectors.toCollection(LinkedList::new));//
-        LinkedList<BigraphEntity> collect = new LinkedList<>(hitsVIx.keySet());// collectChildren.stream()
-//                .map(x -> agentAdapter.getParent(x))
-//                .distinct()
-//                .collect(Collectors.toCollection(LinkedList::new));
-
-//        List<BigraphEntity> childMatches = occurrenceTable.values().stream()
-//                .flatMap(x -> x.keySet().stream())
-//                .collect(Collectors.toList());
-
-//        boolean childMatchesAreUnique = new HashSet<>(collectChildren).size() == childMatches.size();
-
-//        boolean areDisjoint =
-//                occurrenceTable.values().stream()
-//                        .allMatch(bigraphEntityListMap -> bigraphEntityListMap.entrySet().stream()
-//                                .allMatch(entry2 -> entry2.getValue().size() == 1));
         boolean redexRootMatchIsUnique = numOfRoots == treffer.get(); //collect.size();
         System.out.println("Disjoint redex root matches=" + redexRootMatchIsUnique);
 //        System.out.println("Unique redex<-> agent child matches=" + childMatchesAreUnique);
@@ -406,14 +346,25 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
             BiMap<Integer, BigraphEntity> hitsV_new = HashBiMap.create();
 //            HashMap<Integer, BigraphEntity> hitsV_new = new HashMap<>();
 
+
             for (int i = 0; i < eachCombination.length; i++) {
                 int tmpRootIx = eachCombination[i];
                 BigraphEntity agentNode = collect.get(i);
-                if (!hitsVIx.get(agentNode).contains(tmpRootIx)) {
-                    break;
+                if (redexRootMatchIsUnique) {
+                    //this will only executed when combination is of size 1
+                    assert combination.size() == 1;
+                    BigraphEntity finalAgentNode = agentNode;
+                    agentNode = hitsVIx.entrySet().stream().filter(e -> e.getValue().contains(tmpRootIx)).findFirst().get().getKey();
+                } else {
+                    if (!hitsVIx.get(agentNode).contains(tmpRootIx)) {
+                        break;
+                    }
                 }
                 hitsV_new.put(tmpRootIx, agentNode);
             }
+//            } else {
+//                hitsVIx.entrySet().stream().filter()
+//            }
 
             if (hitsV_new.size() != numOfRoots) {
                 System.out.println("NOT VALID=" + Arrays.toString(eachCombination));
@@ -439,37 +390,26 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                 List<BigraphEntity> childrenOfRedex = redexAdapter.getChildren(redexAdapter.getRoots().get(redexRootIx));
                 Map<BigraphEntity, List<BigraphEntity>> nodeDiffByControlCheck = findOccurrences(childrenOfAgent, childrenOfRedex, true);
                 Map<Integer, List<BigraphEntity>> occs = new HashMap<>();
-                childMatchesAreUnique = nodeDiffByControlCheck.values().size() == childrenOfRedex.size();
-                for (Map.Entry<BigraphEntity, List<BigraphEntity>> eachMapping : nodeDiffByControlCheck.entrySet()) {
-                    hitsV_newChildren.put(redexRootIx, eachMapping.getKey(), eachMapping.getValue().get(0));
-//                    if (occurrenceTable.get(i).get(eachEntry.getKey()) == null) {
-//                        occurrenceTable.get(i).putAll(nodeDiffByControlCheck);
-//                        break;
-//                    } else {
-//                        occurrenceTable.get(i).get(eachEntry.getKey()).addAll(eachEntry.getValue());
-//                    }
-                }
+//                childMatchesAreUnique = XXX == childrenOfRedex.size();
+                List<BigraphEntity> availableAgentMatchNodes = new LinkedList<>();//nodeDiffByControlCheck.values().stream().flatMap(x -> x.stream()).collect(Collectors.toList());
+
                 //TODO find occurrences: new combinatorial problem
                 // buildmatch must then be called in a new loop
+                //current impl: "randomly" select an agent node
+                for (Map.Entry<BigraphEntity, List<BigraphEntity>> eachMapping : nodeDiffByControlCheck.entrySet()) {
+                    for (BigraphEntity x : eachMapping.getValue()) {
+                        if (!availableAgentMatchNodes.contains(x)) {
+                            hitsV_newChildren.put(redexRootIx, x, eachMapping.getKey());
+                            availableAgentMatchNodes.add(x);
+                            break;
+                        }
+                    }
+                }
                 //if(multiple) {
 //            }
 
                 //add result to allCombinations later
-
-//                    occurrenceTable.putIfAbsent(i, new HashMap<>());
-////                        occurrenceTable.get(i).putAll(nodeDiffByControlCheck); //this doesn't work if ambiguity in node matching exists (e.g., a symmetric bigraph)
-//                    for (Map.Entry<BigraphEntity, List<BigraphEntity>> eachEntry : nodeDiffByControlCheck.entrySet()) {
-//                        if (occurrenceTable.get(i).get(eachEntry.getKey()) == null) {
-//                            occurrenceTable.get(i).putAll(nodeDiffByControlCheck);
-//                            break;
-//                        } else {
-//                            occurrenceTable.get(i).get(eachEntry.getKey()).addAll(eachEntry.getValue());
-//                        }
-//                    }
             }
-
-//            if(!childMatchesAreUnique) {
-//            }
 
             try {
                 buildMatch(hitsV_new, hitsV_newChildren);
@@ -552,6 +492,8 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
     /**
      * Constructs the context and the parameters of the redex to build the "redex image".
+     *
+     * @param hitsV_newChildren redex root ix, agent node, redex node
      */
     private void buildMatch(BiMap<Integer, BigraphEntity> hitsV, Table<Integer, BigraphEntity, BigraphEntity> hitsV_newChildren) throws ContextIsNotActive {
         //calculate the context
@@ -579,8 +521,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
         //first: create roots
         //should only have one root!
-//        Optional<BigraphEntity.RootEntity> first = agentAdapter.getRoots().stream().findFirst();
-//        assert first.isPresent();
         final BigraphEntity.RootEntity newRootCtx = (BigraphEntity.RootEntity) builder.createNewRoot(0); //first.get().getIndex());
         final Map<Integer, BigraphEntity.SiteEntity> newSites = new HashMap<>();
         final Map<String, BigraphEntity.NodeEntity> newNodes = new HashMap<>();
@@ -597,17 +537,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         //where first u node is found replace with site
         //this should build the node hierarchy and put places under those nodes where the redex matched
 
-
-        //TODO: use hitsV_newChildren
-        Set<BigraphEntity> availableAgentNodes = new ArrayList<>(occurrenceTable.values())
-                .stream().map(Map::values)
-                .flatMap(Collection::stream)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
-        // nodes that are not anymore available when a redex is matched to an agent node
-        Set<BigraphEntity> blockNodes = new HashSet<>();
-        //redex -> agent
-        Map<BigraphEntity, BigraphEntity> correspondences = new LinkedHashMap<>();
+        Set<BigraphEntity> blockNodesForContext = new HashSet<>();
 
         // Recreate idle outer names in the agent for the context: the redex don't need to be checked, as it
         // cannot have idle outer names. It is "simple".
@@ -622,9 +552,9 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
             // skip blocked children first (children that are in the redex match
             //this part will be executed after the top-level nodes of the redex were matched with the corresponding agent nodes
-            if (blockNodes.contains(eachNodeV)) {
+            if (blockNodesForContext.contains(eachNodeV)) {
                 //put all their children inside
-                blockNodes.addAll(agentAdapter.getChildrenOf(eachNodeV));
+                blockNodesForContext.addAll(agentAdapter.getChildrenOf(eachNodeV));
 //                blockNodes.addAll(agentAdapter.getAllChildrenFromNode(eachNodeV));
                 continue;
             }
@@ -667,48 +597,36 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
                 //TODO: that part below must be supplied from outside: use hitsV_newChildren
                 //  don't use occurrenceTable
-
                 Integer rootIx = hitsV.entrySet().stream().filter(x -> x.getValue().equals(eachNodeV)).findFirst().get().getKey();
+
+                List<BigraphEntity> savedRedexNodes = new ArrayList<>(); //all agent nodes that shouldn't be considered anymore
+
                 Collection<BigraphEntity> childrenOfCurrentAgentParent = agentAdapter.getChildrenOf(eachNodeV);
-
-                List<BigraphEntity> savedRedexNodes = new ArrayList<>();
-                // it's possible that a redex node can be matched to multipe agent nodes. Sometimes there is no
-                // exact match possible because the redex is not "tight" enough
-                // if multiple occurrences are found, then the transition system must span a new branch
-                //TODO:start Permutations bilden (oder anfangs nur 1. index wählen: das sind alles verschiedene states beim rewriting später
-                //  How to count the number of possible combiniation which equals to the number of new branches in the LTS
-                //  we have the rootIx: every
-
-                Map<BigraphEntity, List<BigraphEntity>> redexToAgentMapping = occurrenceTable.get(rootIx); //key: redex nodes -> list of possible agent nodes
-                //Re-collect all agent nodes first
-//                Set<BigraphEntity> availableAgentNodes = redexToAgentMapping.values().stream()
-//                        .flatMap(Collection::stream).collect(Collectors.toSet());
-                List<BigraphEntity> allChildrenOfAgent = new LinkedList<>();
-                for (Map.Entry<BigraphEntity, List<BigraphEntity>> redexAgentMapping : redexToAgentMapping.entrySet()) {
-                    //get any value from the value list: here we just take the first one (order of the list)
-                    for (BigraphEntity correspondence : redexAgentMapping.getValue()) {
-                        if (availableAgentNodes.contains(correspondence)) {
-                            savedRedexNodes.add(correspondence);
-                            correspondences.put(redexAgentMapping.getKey(), correspondence);
-                            allChildrenOfAgent.addAll(agentAdapter.getAllChildrenFromNode(correspondence));
-                            //remove the set of available nodes to take
-                            availableAgentNodes.remove(correspondence);
-                            childrenOfCurrentAgentParent.remove(correspondence); //and reduce also the set of agent's children at this step
-                            // hier ist es "egal" wie die parameter hineingelegt werden, das ändert die transitionen nicht
-                            // nur die "erste ebene", da kann es mehr occurrences geben
-                            if (needsParameters)
-                                iterateThroughChild(redexAgentMapping.getKey(), correspondence, parameters, paramOuterNameSupplier);
-                            break;
+                Iterator<BigraphEntity> iterator = childrenOfCurrentAgentParent.iterator();
+                for (BigraphEntity agentNext : childrenOfCurrentAgentParent) {
+                    if (hitsV_newChildren.containsColumn(agentNext)) {
+                        if (needsParameters) {
+                            Map.Entry<Integer, BigraphEntity> integerBigraphEntityEntry = hitsV_newChildren.column(agentNext)
+                                    .entrySet()
+                                    .stream().findFirst().get();
+                            Integer rootIx0 = integerBigraphEntityEntry.getKey();
+                            BigraphEntity redexEntityCorrespondence = hitsV_newChildren.get(rootIx0, agentNext);
+                            iterateThroughChild(redexEntityCorrespondence, agentNext, parameters, paramOuterNameSupplier);
                         }
+                        savedRedexNodes.add(agentNext);
                     }
                 }
-                // TODO:end
+                while (iterator.hasNext()) {
+                    if (savedRedexNodes.contains(iterator.next())) {
+                        iterator.remove();
+                    }
+                }
 
                 //rest of the available nodes remains and the savedRedexNodes goes into the blocking list
                 //and all their children
                 savedRedexNodes.forEach(x -> {
-                    blockNodes.add(x);
-                    blockNodes.addAll(agentAdapter.getChildrenOf(x)); //these are the parameters for the current root index..
+                    blockNodesForContext.add(x);
+                    blockNodesForContext.addAll(agentAdapter.getChildrenOf(x)); //these are the parameters for the current root index..
                 });
 
 
@@ -724,13 +642,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                 newSites.put(newSite.getIndex(), newSite);
                 setParentOfNode(newSite, newNode);
 
-                // create the parameter bigraph for the redex at the site
-                System.out.println("create parameters ...");
-                //find the first site at this level
-                //the rest
-
-//                TODO: do something with: getAllChildrenFrom.... and built this structure as parameter for the site
-//                createParameter(allChildrenOfAgent, correspondences, parameters, paramOuterNameSupplier);
             }
 
             //TODO collect also outernames
