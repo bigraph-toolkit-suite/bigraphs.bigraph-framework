@@ -203,6 +203,8 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
     <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
 
+    BigraphEntity getTopLevelRoot(BigraphEntity node);
+
     /**
      * Returns the set of children of a given node (including sites). <br/>
      * If the node has no children, then an empty set is returned.

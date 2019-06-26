@@ -84,6 +84,11 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
+    public BigraphEntity getTopLevelRoot(BigraphEntity node) {
+        return bigraphDelegate.getTopLevelRoot(node);
+    }
+
+    @Override
     public <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
         return bigraphDelegate.getNodeOfPort(port);
     }
