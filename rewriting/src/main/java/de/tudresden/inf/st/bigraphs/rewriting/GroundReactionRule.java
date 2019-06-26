@@ -4,9 +4,9 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 
-public class GroundReactionRule<S extends Signature> extends AbstractReactionRule<S> {
+public class GroundReactionRule<B extends Bigraph<? extends Signature>> extends AbstractReactionRule<B> {
 
-    public GroundReactionRule(Bigraph<S> redex, Bigraph<S> reactum) throws InvalidReactionRuleException {
+    public GroundReactionRule(B redex, B reactum) throws InvalidReactionRuleException {
         super(redex, reactum);
     }
 }

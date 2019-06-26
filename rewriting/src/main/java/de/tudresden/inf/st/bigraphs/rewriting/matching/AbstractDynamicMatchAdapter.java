@@ -222,13 +222,14 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
 
     /**
      * This method is used solely for the matching algorithm.
+     * Doesn't include the node itself. Opposite is the closed neighborhood which includes the node itself.
      *
      * @param node
      * @return
      */
     public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
         List<BigraphEntity> neighbors = new ArrayList<>();
-        neighbors = neighborhoodHook(neighbors, node); //TODO: do not create classes: get them from the entity map from the bigraph
+        neighbors = neighborhoodHook(neighbors, node);
         return neighbors;
     }
 

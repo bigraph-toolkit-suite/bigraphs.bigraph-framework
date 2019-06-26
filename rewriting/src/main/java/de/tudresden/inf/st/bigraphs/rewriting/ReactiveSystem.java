@@ -15,7 +15,17 @@ import java.util.Collection;
  */
 public interface ReactiveSystem<S extends Signature, B extends Bigraph<S>> {
 
-    Collection<ReactionRule<S>> getReactionRules();
+    //TODO: add id/label supplier, add this also to RR and agent (create interface for that)
+    //TODO: add list of applicants (is updated after each match and user is notified by a callback
+    //TODO: add transitiontriple (is updated after each match and user is notified by a callback
+    // or when the execution stops
+
+    /**
+     * Return the labels of the transition system which are called reaction rules for BRS.
+     *
+     * @return the labels of the transition system
+     */
+    Collection<ReactionRule<B>> getReactionRules();
 
     /**
      * Checks whether the bigraphical reactive system is simple. A BRS is simple if all its reaction rules are so.
@@ -29,8 +39,12 @@ public interface ReactiveSystem<S extends Signature, B extends Bigraph<S>> {
     void setReactiveSystemListener(ReactiveSystemListener reactiveSystemListener);
 
     interface ReactiveSystemListener {
+
         void onReactiveSystemStarted();
 
         void onReactiveSystemFinished();
+
+        void onUpdateReactionRuleApplies();
+
     }
 }

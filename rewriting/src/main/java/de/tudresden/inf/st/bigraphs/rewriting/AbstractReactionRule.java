@@ -14,16 +14,16 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
  * <p>
  * Other checks are also performed checking the reaction rule for conformity: Interfaces and "simpleness".
  *
- * @param <S> type of the signature
+ * @param <B> type of the bigraph
  */
-public abstract class AbstractReactionRule<S extends Signature> implements ReactionRule<S> {
-    protected final S signature;
-    protected final Bigraph<S> redex;
-    protected final Bigraph<S> reactum;
+public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature>> implements ReactionRule<B> {
+    protected final Signature signature;
+    protected final B redex;
+    protected final B reactum;
     protected boolean canReverse = false;
     protected final InstantiationMap instantiationMap;
 
-    public AbstractReactionRule(final Bigraph<S> redex, final Bigraph<S> reactum, final InstantiationMap instantiationMap) throws InvalidReactionRuleException {
+    public AbstractReactionRule(final B redex, final B reactum, final InstantiationMap instantiationMap) throws InvalidReactionRuleException {
         this.redex = redex;
         this.reactum = reactum;
         this.instantiationMap = instantiationMap;
@@ -35,7 +35,7 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
     }
 
 
-    public AbstractReactionRule(final Bigraph<S> redex, final Bigraph<S> reactum) throws InvalidReactionRuleException {
+    public AbstractReactionRule(final B redex, final B reactum) throws InvalidReactionRuleException {
         this(redex, reactum, InstantiationMap.create(redex.getRoots().size()));//TODO check if this is correct concerning the instantiation map
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
     }
 
 
-    public boolean hasIdleOuterNames(Bigraph<S> redex) {
+    public boolean hasIdleOuterNames(B redex) {
         boolean isIdle = false;
         for (BigraphEntity.OuterName eachOuter : redex.getOuterNames()) {
             // check for idle links (bigraphER doesn't allows it either
@@ -73,7 +73,7 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
      *
      * @param redex the redex of the reaction rule to be checked
      */
-    private void assertParametricRedexIsSimple(Bigraph<S> redex) throws RedexIsNotSimpleException {
+    private void assertParametricRedexIsSimple(B redex) throws RedexIsNotSimpleException {
         //"openness": all links are interfaces (edges, and outer names)
         //TODO must not be severe constraint, as we can internally model edges as outer names (in the matching as currently done)
 //        boolean isOpen = redex.getInnerNames().size() == 0 && redex.getEdges().size() == 0;
@@ -89,7 +89,7 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
      * @param redex the outer names of the redex to check
      * @throws InvalidReactionRuleException if outer name is idle.
      */
-    private void assertNoIdleOuterName(Bigraph<S> redex) throws InvalidReactionRuleException {
+    private void assertNoIdleOuterName(B redex) throws InvalidReactionRuleException {
         if (hasIdleOuterNames(redex)) {
             throw new OuterNameIsIdleException();
         }
@@ -99,14 +99,14 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
      * Check if the interfaces of the redex and reactum conforms to the following form: <br/>
      * <i>R = (R, R'), R: m -> J and R': m' -> J</i>
      */
-    private void assertInterfaceDefinitionIsCorrect(Bigraph<S> redex, Bigraph<S> reactum) throws NoConformReactionRuleInterfaces {
+    private void assertInterfaceDefinitionIsCorrect(B redex, B reactum) throws NoConformReactionRuleInterfaces {
         //check same interface
         if (!redex.getOuterFace().equals(reactum.getOuterFace())) {
             throw new NoConformReactionRuleInterfaces();
         }
     }
 
-    private void assertSignaturesAreSame(S signature1, S signature2) throws IncompatibleSignatureException {
+    private void assertSignaturesAreSame(Signature signature1, Signature signature2) throws IncompatibleSignatureException {
         if (!signature1.equals(signature2)) {
             throw new IncompatibleSignatureException();
         }
@@ -124,17 +124,17 @@ public abstract class AbstractReactionRule<S extends Signature> implements React
 
 
     @Override
-    public Bigraph<S> getRedex() {
+    public B getRedex() {
         return this.redex;
     }
 
     @Override
-    public Bigraph<S> getReactum() {
+    public B getReactum() {
         return this.reactum;
     }
 
-    @Override
-    public S getSignature() {
-        return this.signature;
-    }
+//    @Override
+//    public S getSignature() {
+//        return this.signature;
+//    }
 }

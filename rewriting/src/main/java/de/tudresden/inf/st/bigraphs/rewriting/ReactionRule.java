@@ -9,24 +9,24 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
  * <p>
  * A reaction rule is a data structure containing the redex, reactum and an instantiation map.
  *
- * @param <S>
+ * @param <B> type of the bigraph
  * @author Dominik Grzelak
  */
-public interface ReactionRule<S extends Signature> extends HasSignature<S> {
+public interface ReactionRule<B extends Bigraph<? extends Signature>> {
 
     /**
      * Return the redex of the reaction rule
      *
      * @return the redex of the reaction rule
      */
-    Bigraph<S> getRedex();
+    B getRedex();
 
     /**
      * Return the reactum of the reaction rule
      *
      * @return the reactum of the reaction rule
      */
-    Bigraph<S> getReactum();
+    B getReactum();
 
     /**
      * Checks whether the parametric redex is simple.

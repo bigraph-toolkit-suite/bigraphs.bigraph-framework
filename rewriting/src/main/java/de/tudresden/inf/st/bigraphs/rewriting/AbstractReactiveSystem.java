@@ -4,6 +4,8 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Dominik Grzelak
@@ -12,13 +14,15 @@ public abstract class AbstractReactiveSystem<S extends Signature, B extends Bigr
 
     protected ReactiveSystemListener reactiveSystemListener;
 
+    protected List<ReactionRule<B>> reactionRules = new LinkedList<>();
+
     public AbstractReactiveSystem() {
         onAttachListener(this);
     }
 
     @Override
-    public Collection<ReactionRule<S>> getReactionRules() {
-        return null;
+    public Collection<ReactionRule<B>> getReactionRules() {
+        return reactionRules;
     }
 
     @Override
@@ -30,7 +34,7 @@ public abstract class AbstractReactiveSystem<S extends Signature, B extends Bigr
         if (reactiveSystem instanceof ReactiveSystem.ReactiveSystemListener) {
             reactiveSystem.setReactiveSystemListener((ReactiveSystemListener) this);
         } else {
-            //TODO: set default empty listener
+            //TODO: set default empty listener to ensure that we always have a listener even if the user doesn't care
         }
 
     }
