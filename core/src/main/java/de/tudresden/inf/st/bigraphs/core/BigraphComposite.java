@@ -53,4 +53,20 @@ public interface BigraphComposite<S extends Signature> {
      * @throws IncompatibleInterfaceException
      */
     BigraphComposite<S> juxtapose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+
+    /**
+     * Compute the parallel product of two bigraphs. The parallel product is defined as tensor product, except it allows
+     * name sharing. So the tensor product can be seen as a special case of the parallel product.
+     * <p>
+     * This implementation satisfies the "bifunctiorial property". The inner faces must not be disjoint here, as defined
+     * in previous works of Milner.
+     *
+     * @param f inner bigraph term for the parallel product
+     * @return the parallel product of two bigraphs
+     * @throws IncompatibleSignatureException
+     * @throws IncompatibleInterfaceException
+     */
+    BigraphComposite<S> parallelProduct(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+
+    BigraphComposite<S> parallelProduct(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
 }

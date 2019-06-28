@@ -4,10 +4,12 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphModelFileStore;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
@@ -20,6 +22,9 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,6 +75,54 @@ public class OperationsTest {
 //        BigraphEntity parent0 = F.getParent(parent);
 //        int index = ((BigraphEntity.RootEntity) parent0).getIndex();
 //        System.out.println("index=" + index + " __ equals= " + parent0.equals(parent));
+    }
+
+    private final static String TARGET_TEST_PATH = "src/test/exported-models/";
+
+    @Test
+    void parallelProduct() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builderForH = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.OuterName networkF = builderForF.createOuterName("wifi");
+        BigraphEntity.OuterName networkG = builderForG.createOuterName("wifi");
+        BigraphEntity.InnerName ethernetF = builderForF.createInnerName("ethernet");
+        BigraphEntity.InnerName ethernetF2 = builderForF.createInnerName("ethernet2");
+        BigraphEntity.InnerName ethernetG = builderForG.createInnerName("ethernet");
+//        BigraphEntity.InnerName ethernetH = builderForH.createInnerName("ethernet");
+//        BigraphEntity.InnerName networkH = builderForH.createInnerName("wifi");
+        if (true) {
+            builderForF.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+                    .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(networkF);//.connectNodeToInnerName(ethernetF);
+            builderForG.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+                    .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(networkG);//.connectNodeToInnerName(ethernetG);
+
+//            builderForF.connectInnerToOuterName(ethernetF, networkF);
+//            builderForG.connectInnerToOuterName(ethernetG, networkG);
+        } else {
+            builderForF.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+                    .addChild(signature.getControlByName("Computer")).connectInnerNamesToNode(ethernetF, ethernetF2);
+            builderForG.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+                    .addChild(signature.getControlByName("Computer")).connectNodeToInnerName(ethernetG);
+            builderForH.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+                    .addChild(signature.getControlByName("Printer"));
+        }
+        PureBigraph F = builderForF.createBigraph();
+        PureBigraph G = builderForG.createBigraph();
+        PureBigraph H = builderForH.createBigraph();
+        BigraphModelFileStore.exportAsInstanceModel((PureBigraph) F, "F",
+                new FileOutputStream(TARGET_TEST_PATH + "F.xmi"));
+        BigraphModelFileStore.exportAsInstanceModel((PureBigraph) G, "G",
+                new FileOutputStream(TARGET_TEST_PATH + "G.xmi"));
+
+        BigraphComposite<DefaultDynamicSignature> juxtapose = factory.asBigraphOperator(F).parallelProduct(G);
+        Bigraph<DefaultDynamicSignature> result = juxtapose.getOuterBigraph();
+        BigraphModelFileStore.exportAsInstanceModel(result, "result",
+                new FileOutputStream(TARGET_TEST_PATH + "result.xmi"));
+//        System.out.println(result.getSupport());
+
     }
 
     @Test

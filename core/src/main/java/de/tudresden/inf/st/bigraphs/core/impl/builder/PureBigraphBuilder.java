@@ -191,6 +191,11 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
             return this;
         }
 
+        public Hierarchy connectInnerNamesToNode(BigraphEntity.InnerName... innerNames) throws InvalidConnectionException, LinkTypeNotExistsException {
+            PureBigraphBuilder.this.connectNodeToInnerNames(getLastCreatedNode(), innerNames);
+            return this;
+        }
+
         /**
          * Throws an exception if the given node has an atomic control
          *
@@ -442,6 +447,18 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
         bPorts.add(portObject);
     }
 
+    protected boolean isConnectedWithEdge(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge edge) {
+        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
+        for (EObject eObject : bPorts) {
+            EReference linkReference = availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK);
+            EObject theLink = (EObject) eObject.eGet(linkReference);
+            if (Objects.nonNull(theLink) && theLink.equals(edge.getInstance())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected void connectToEdgeUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge edge, int customPortIndex) {
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         //create port with index
@@ -478,7 +495,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
     public PureBigraphBuilder<S> connectInnerToOuterName(BigraphEntity innerName, BigraphEntity outerName) throws InvalidConnectionException {
         // check if the inner name and outer name are coming from this builder
         if (availableInnerNames.values().stream().anyMatch(x -> x.equals(innerName)) &&
-                availableOuterNames.values().stream().anyMatch(x -> x.equals(innerName))) {
+                availableOuterNames.values().stream().anyMatch(x -> x.equals(outerName))) {
 
 
             EObject edgeFromInnerName = getEdgeFromInnerName(innerName);
@@ -498,7 +515,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
     }
 
     /**
-     * Link a node with an inner name
+     * Link a node with an inner name by an edge
      *
      * @param node1     the node
      * @param innerName the inner name
@@ -530,6 +547,47 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
             // and add it to the inner name
             innerName.getInstance().eSet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK), edgeOfEClass.getInstance());
             connectToEdge(node1, edgeOfEClass);
+        }
+    }
+
+    /**
+     * Link multiple inner names by an edge to one node
+     *
+     * @param node1      the node
+     * @param innerNames the inner name
+     * @throws LinkTypeNotExistsException     if the inner name doesn't exists (i.e., doesn't belong from this builder
+     * @throws InvalidArityOfControlException if the control cannot connect anything (e.g., is atomic, or no open ports left)
+     * @throws InvalidConnectionException     if the inner name is already connected to an outer name
+     */
+    public void connectNodeToInnerNames(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.InnerName... innerNames) throws LinkTypeNotExistsException, InvalidConnectionException {
+        //check if outername exists
+        if (innerNames.length == 0) return;
+        BigraphEntity.Edge newEdge = createEdgeOfEClass();
+        EClass eClassEdge = availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE);
+        for (BigraphEntity.InnerName innerName : innerNames) {
+            if (availableInnerNames.get(innerName.getName()) == null) {
+                throw new InnerNameNotExistsException();
+            }
+
+            if (isInnerNameConnectedToAnyOuterName(innerName)) throw new InnerNameConnectedToOuterNameException();
+
+            //EDGE can connect many inner names: pick the specific edge of the given inner name
+            //check if innerName has an edge (secure: inner name is not connected to an outer name here
+            EObject linkOfInner = (EObject) innerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK));
+
+            // check if node is connected with the possibly existing edge
+            if (!isConnectedWithLink(node1, linkOfInner)) {
+                //simply switch edge
+                if (Objects.nonNull(linkOfInner) && linkOfInner.eClass().equals(eClassEdge)) { // an edge
+                    newEdge.setInstance(linkOfInner); // replace the instance of an edge
+                }
+                // and add it to the inner name
+                innerName.getInstance().eSet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK), newEdge.getInstance());
+                if (!isConnectedWithEdge(node1, newEdge)) {
+                    checkIfNodeIsConnectable(node1);
+                    connectToEdge(node1, newEdge);
+                }
+            }
         }
     }
 
