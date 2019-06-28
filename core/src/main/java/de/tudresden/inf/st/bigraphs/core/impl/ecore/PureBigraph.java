@@ -3,7 +3,6 @@ package de.tudresden.inf.st.bigraphs.core.impl.ecore;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
@@ -109,6 +108,15 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
             }
         }
         return null;
+    }
+
+    @Override
+    public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+        if (Objects.isNull(innerName)) return Collections.emptyList();
+        BigraphEntity linkOfPoint = getLinkOfPoint(innerName);
+        if (Objects.isNull(linkOfPoint)) return Collections.emptyList();
+        return getPointsFromLink(linkOfPoint).stream().filter(BigraphEntityType::isInnerName)
+                .filter(x -> !x.equals(innerName)).map(x -> (BigraphEntity.InnerName) x).collect(Collectors.toList());
     }
 
     public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {

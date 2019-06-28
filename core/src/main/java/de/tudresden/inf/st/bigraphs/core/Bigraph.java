@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EPackage;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Generic bigraph interface of all bigraph entities in this framework (for all pure bigraphs)
@@ -76,6 +77,20 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
             }
         }
         return noTwoSitesAreSiblings;
+    }
+
+    /**
+     * Returns the support of a bigraph. The support is a finite set comprising the nodes of the place graph and the edges
+     * of the link graph of the current bigraph.
+     * <p>
+     * Only concrete bigraphs have a support. If this set is empty, the bigraph is considered as abstract.
+     *
+     * @return the support <i>|B|</i> of the bigraph <i>B</i>
+     */
+    default Collection<BigraphEntity> getSupport() {
+        return (Collection<BigraphEntity>) Stream.concat(
+                getNodes().stream(),
+                getEdges().stream());
     }
 
     /**
@@ -243,6 +258,14 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @return siblings of {@code node}
      */
     Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node);
+
+    /**
+     * Returns all siblings of an inner name. The collection will not contain any port.
+     *
+     * @param innerName the inner name who's siblings should be returned
+     * @return
+     */
+    Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName);
 
     /**
      * get all point entities (i.e., ports and inner names) from a link entity (edges and outer names)

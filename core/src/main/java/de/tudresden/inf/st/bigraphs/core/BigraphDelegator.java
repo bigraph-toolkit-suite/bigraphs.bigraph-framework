@@ -89,6 +89,11 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
+    public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+        return bigraphDelegate.getSiblingsOfInnerName(innerName);
+    }
+
+    @Override
     public <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
         return bigraphDelegate.getNodeOfPort(port);
     }
