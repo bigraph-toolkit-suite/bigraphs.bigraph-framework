@@ -23,6 +23,12 @@ bigrapher full -d ./model_test_3 -f svg -s model_test_3 -M 10 -t trans.svg -v mo
 Building room comp example
 bigrapher full -d ./model_test_4 -f svg -s model_test_4 -M 10 -t trans.svg -v model_test_4.big
 
+# Model_Test_A
+bigrapher full -d ./model_test_a -f svg -s model_test_a -M 10 -t trans.svg -v model_test_a.big
+
+# Papertest
+Building room comp example
+bigrapher full -d ./papertest -f svg -s papertest -M 10 -t trans.svg -v papertest.big
 
 # BigMC
 

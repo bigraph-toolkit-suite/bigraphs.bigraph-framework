@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 
 import java.util.Collection;
 
@@ -13,6 +14,13 @@ import java.util.Collection;
 public interface BigraphMatch<B extends Bigraph> {
 
     B getContext();
+
+    /**
+     * Identity link graph for the composition of the context and the redex image (with params)
+     *
+     * @return
+     */
+    B getContextIdentity();
 
     /**
      * Returns the redex of the reaction rule.
@@ -33,8 +41,8 @@ public interface BigraphMatch<B extends Bigraph> {
      *
      * @return
      */
-    B getRedexIdentity();
+    ElementaryBigraph getRedexIdentity();
 
-    Collection<B> getParameter();
+    Collection<B> getParameters();
 
 }

@@ -44,7 +44,8 @@ public class JGraphTTests {
 
         //Create example trees from paper
         Graph<String, DefaultEdge> sampleTreeG = createSampleTreeG();
-        Graph<String, DefaultEdge> sampleTreeH = createSampleTreeH();
+        Graph<String, DefaultEdge> sampleTreeH = createSampleTreeH2(); //both H and H2 generate the same result
+        // the algo finds all subtree isos
 
         //createNodeOfEClass random artificial tree
 //        SimpleDirectedGraph<String, DefaultEdge> tree = (SimpleDirectedGraph<String, DefaultEdge>) buildEmptySimpleDirectedGraph();
@@ -234,13 +235,32 @@ public class JGraphTTests {
         h.addVertex("u2");
         h.addVertex("u3");
         h.addVertex("u4");
-        h.addVertex("u4");
 
         h.addEdge("u1", "u0");
         h.addEdge("u2", "u0");
         h.addEdge("u3", "u0");
 
         h.addEdge("u4", "u2");
+        exportGraph(h, "h");
+        return h;
+    }
+
+    // same as H but other slightly other layout (different root but structure is preserved)
+    private static Graph<String, DefaultEdge> createSampleTreeH2() {
+        SimpleGraph<String, DefaultEdge> h = (SimpleGraph<String, DefaultEdge>) buildEmptySimpleDirectedGraph();
+        h.addVertex("u0");
+        h.addVertex("u1");
+        h.addVertex("u2");
+        h.addVertex("u3");
+        h.addVertex("u4");
+
+        h.addEdge("u1", "u0");
+        h.addEdge("u2", "u0");
+
+
+        h.addEdge("u3", "u2");
+        h.addEdge("u4", "u2");
+
         exportGraph(h, "h");
         return h;
     }
@@ -282,7 +302,7 @@ public class JGraphTTests {
                 mxCellRenderer.createBufferedImage(graphAdapter, null, 2, Color.WHITE, true, null);
         try {
             Path currentRelativePath = Paths.get("");
-            Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), "matching", "src", "test", "resources", filename + ".png");
+            Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), "rewriting", "src", "test", "resources", filename + ".png");
 //            String s = currentRelativePath.toAbsolutePath().toString();
             File imgFile = new File(completePath.toUri());
             if (!imgFile.exists()) {

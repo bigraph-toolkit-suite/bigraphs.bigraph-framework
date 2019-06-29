@@ -8,8 +8,11 @@ ctrl A = 1;
 ctrl B = 1;
 
 
+big stuff = /e (A{e}.1 | A{a}.1 | B{e}.(Job.1 | Job.1));
+big stuff2 = /e (A{e}.1 | A{b}.1 | A{b}.1);
+
 big s1 = (
-Building . (Room.(Comp{network}.1) | Room.(Comp{network}.1) | Job.1) 
+Building . (Room.(Comp{network1}.stuff) | Room.(Comp{network}.stuff2) | Job.1) 
 );
 
 # Reaction rules
@@ -17,14 +20,11 @@ Building . (Room.(Comp{network}.1) | Room.(Comp{network}.1) | Job.1)
 
 big r = (Room.(Comp{network}) | Room.(Comp{network}));
 
-big f = Room . (User.1 | Job.1);
-big g = Job;
-big h = g*f;
-react combi2 = 
+react r1 = 
 r -> r;
 
 # Reactive system
 begin brs
   init s1;
-  rules = [{combi2}];
+  rules = [{r1}];
 end
