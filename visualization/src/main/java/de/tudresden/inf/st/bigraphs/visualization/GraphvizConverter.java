@@ -151,18 +151,27 @@ public class GraphvizConverter {
         }
 
         // Put inner names to the bottom of the graph
+        List<BigraphEntity> allLinks = new LinkedList<>(bigraph.getOuterNames());
+        List<String> outerLabels = allLinks.stream().map(x -> ((BigraphEntity.OuterName) x).getName()).collect(Collectors.toList());
         List<BigraphEntity> allPoints = new LinkedList<>(bigraph.getInnerNames());
+        List<String> duplicates = allPoints.stream().map(x -> ((BigraphEntity.InnerName) x).getName())
+                .filter(x -> outerLabels.contains(x))
+                .collect(Collectors.toList());
         Rank rankPoints = asTreeStructure ? Rank.SOURCE : Rank.MIN;
         theGraph.add(
                 graph().graphAttr().with(rankPoints).with(allPoints.stream()
-                        .map(x -> node(labelSupplier.with(x).get())
-                                .with(shapeSupplier.with(x).get(), colorSupplier.with(x).get())
+                        .map(x -> {
+                                    String label = labelSupplier.with(x).get();
+                                    if (duplicates.contains(label)) label += "i";
+                                    return node(label)
+                                            .with(shapeSupplier.with(x).get(), colorSupplier.with(x).get(), Label.of(labelSupplier.with(x).get()));
+                                }
                         )
                         .toArray(LinkSource[]::new)
                 )
         );
         // make nicer graph (ranked, etc.)
-        List<BigraphEntity> allLinks = new LinkedList<>(bigraph.getOuterNames());
+
         if (asTreeStructure) allLinks.addAll(bigraph.getEdges());
         Rank rankLinks = asTreeStructure ? Rank.SINK : Rank.MAX;
         theGraph.add(
@@ -181,6 +190,7 @@ public class GraphvizConverter {
         // outer names are connected with inner names or nodes (respective ports)
         for (BigraphEntity.OuterName eachOuterName : bigraph.getOuterNames()) {
             Collection<BigraphEntity> pointsFromLink = bigraph.getPointsFromLink(eachOuterName);
+            if (pointsFromLink.size() == 0) continue;
             Node grOuter = node(labelSupplier.with(eachOuterName).get())
                     .with(shapeSupplier.with(eachOuterName).get(), colorSupplier.with(eachOuterName).get());
             for (BigraphEntity point : pointsFromLink) {
@@ -188,10 +198,12 @@ public class GraphvizConverter {
                     case PORT:
                         BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);
                         Node grNode = node(labelSupplier.with(nodeOfPort).get());
-                        theGraph.add(grNode.link(Link.to(grOuter).with(Style.DIAGONALS, Color.GREEN))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
+                        theGraph.add(grNode.link(Link.to(grOuter).with(Color.GREEN))); //.with(Style.BOLD, Label.of(""), Color.GREEN, Arrow.NONE)));
                         break;
                     case INNER_NAME:
-                        Node grInner = node(labelSupplier.with(point).get());
+                        String label = labelSupplier.with(point).get();
+                        if (duplicates.contains(label)) label += "i";
+                        Node grInner = node(label).with(Label.of(labelSupplier.with(point).get()));
                         theGraph.add(grInner.link(Link.to(grOuter).with(Color.GREEN)));
                         break;
                 }
@@ -202,9 +214,10 @@ public class GraphvizConverter {
         //TODO: directly connect nodes together if ports == 1
         for (BigraphEntity.Edge eachEdge : edges) {
             // edges for graphviz are created as "hidden nodes"
-            final Node hiddenEdgeNode = node(labelSupplier.with(eachEdge).get()).with(Shape.POINT, Color.GREEN);
             //find the nodes that are connected to it
             Collection<BigraphEntity> pointsFromLink = bigraph.getPointsFromLink(eachEdge);
+            if (pointsFromLink.size() == 0) continue;
+            final Node hiddenEdgeNode = node(labelSupplier.with(eachEdge).get()).with(Shape.POINT, Color.GREEN);
 //            if (pointsFromLink.size() != 0) {
             //if inner name: create new node
             for (BigraphEntity point : pointsFromLink) {
