@@ -229,7 +229,9 @@ public class GraphvizConverter {
                         theGraph.add(grNode);
                         break;
                     case INNER_NAME:
-                        Node grInner = node(labelSupplier.with(point).get());
+                        String label = labelSupplier.with(point).get();
+                        if (duplicates.contains(label)) label += "i";
+                        Node grInner = node(label);
                         theGraph.add(hiddenEdgeNode.link(
                                 Link.to(grInner).with(Color.GREEN)));
                         break;
