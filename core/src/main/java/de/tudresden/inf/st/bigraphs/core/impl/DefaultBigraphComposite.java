@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
+import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 //TODO originalen bigraph type class zurückgeben falls user casten sicher will
 public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegator<S> implements BigraphComposite<S> {
 
-    private final MutableBuilder<S> builder;
+    private MutableBuilder<S> builder;
 
     public DefaultBigraphComposite(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);
@@ -253,6 +254,15 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         return parallelProduct(f.getOuterBigraph());
     }
 
+    // necessary when one bigraph is an elementary one
+    protected void createBuilderMergeSignatures(S sig1, S sig2) {
+        if (sig1.getControls().size() < sig2.getControls().size() || getBigraphDelegate() instanceof ElementaryBigraph) {
+            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(sig2);
+        } else {
+            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(sig1);
+        }
+    }
+
     @Override
     public BigraphComposite<S> parallelProduct(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph<S> g = getBigraphDelegate();
@@ -349,8 +359,19 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         List<BigraphEntity.InnerName> I = new ArrayList<>();
         I.addAll(g.getInnerNames());
         I.addAll(f.getInnerNames());
+        List<BigraphEntity.OuterName> O = new ArrayList<>();
+        O.addAll(g.getOuterNames());
+        O.addAll(f.getOuterNames());
+        for (BigraphEntity.OuterName each : O) {
+            String outerNameValue = each.getName();//O.inverse().get(link);
+            BigraphEntity.OuterName newLink = myOuterNames.get(outerNameValue);
+            if (Objects.isNull(newLink)) {
+                newLink = (BigraphEntity.OuterName) builder.createNewOuterName(outerNameValue);
+                myOuterNames.put(outerNameValue, newLink);
+            }
+        }
 
-//        Map<String, Long> collect00 = I.stream().collect(Collectors.groupingBy(e -> e.getName(), Collectors.counting()));
+        Map<String, Long> innerNamegroupCounter = I.stream().collect(Collectors.groupingBy(e -> e.getName(), Collectors.counting()));
         Map<String, String> collectGroup = new ConcurrentHashMap<>();
 //        collect00.keySet().stream().collect(Collectors.toMap(s -> s, s -> rewriteEdgeNameSupplier.get()));
         for (BigraphEntity.InnerName eachInner : I) {
@@ -369,7 +390,6 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                     collectGroup.put(second.getName(), newEdgeName);
                 }
             }
-//            collectGroup.put(eachKey, newEdgeName);
         }
 
 
@@ -412,7 +432,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                     for (BigraphEntity eachInner : pointsFromLink) {
                         if (BigraphEntityType.isInnerName(eachInner)) {
                             String innerName = ((BigraphEntity.InnerName) eachInner).getName();
-                            if (collectGroup.containsKey(innerName)) {
+                            if (collectGroup.containsKey(innerName) && innerNamegroupCounter.get(innerName) > 1) {
                                 edgeName = collectGroup.get(innerName);
                                 //all inner siblings are merged under one edge, thus, we can break here
                                 break;
@@ -461,7 +481,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
             BigraphEntity newLink = null;
             if (BigraphEntityType.isEdge(link)) {
                 String edgeName = E.inverse().get(link);
-                if (collectGroup.containsKey(each.getName())) {
+                if (collectGroup.containsKey(each.getName()) && innerNamegroupCounter.get(each.getName()) > 1) {
                     edgeName = collectGroup.get(each.getName());
                 }
                 newLink = myEdges.get(edgeName);
@@ -475,6 +495,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 if (Objects.isNull(newLink)) {
                     newLink = builder.createNewOuterName(outerNameValue);
                     myOuterNames.put(outerNameValue, (BigraphEntity.OuterName) newLink);
+                    builder.connectInnerToOuter(newInnerName, (BigraphEntity.OuterName) newLink);
                 }
             }
 
@@ -492,7 +513,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 myInnerNames, myOuterNames, myEdges);
         builder.reset();
         Bigraph<S> bigraph = (Bigraph<S>) new PureBigraph(meta);
-
+//        bigraph.getPointsFromLink(new ArrayList<>(bigraph.getOuterNames()).get(1));
         return new DefaultBigraphComposite<>(bigraph);
     }
 
@@ -902,23 +923,6 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                 .map(Map.Entry::getKey).findFirst();
     }
 
-//    @Deprecated
-//    private BigraphEntity<?> createNewObjectFrom(BigraphEntity<?> entity) {
-//        //copy constructor call?
-//        if (entity.getType().equals(BigraphEntityType.NODE)) {
-//            return BigraphEntity.createNode(entity.getInstance(), entity.getControl());
-//        } else {
-//            return BigraphEntity.create(entity.getInstance(), entity.getClass());
-//        }
-//        // if isNode
-//        //BigraphEntity(@NonNull EObject instance, C control, BigraphEntityType type) casten und übergeben
-//        //else: BigraphEntity(@NonNull EObject instance, BigraphEntityType type) übergeben
-//    }
-
-    private void applyNewLink() {
-
-    }
-
     private void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
@@ -926,7 +930,10 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
 
     protected void assertSignaturesAreSame(S signature1, S signature2) throws IncompatibleSignatureException {
         //then one must be an elementary bigraph
-        if (signature1.getControls().size() == 0 || signature2.getControls().size() == 0) return;
+        if (signature1.getControls().size() == 0 || signature2.getControls().size() == 0) {
+            createBuilderMergeSignatures(signature1, signature2);
+            return;
+        }
         if (!signature1.equals(signature2)) {
             throw new IncompatibleSignatureException();
         }
@@ -948,11 +955,6 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
     }
 
     protected void assertInterfaceCompatibleForJuxtaposition(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleInterfaceException {
-//        Set<FiniteOrdinal<Integer>> siteOrdinalsOuter = outer.getInnerFace().getKey();
-//        Set<FiniteOrdinal<Integer>> rootsOrdinalsOuter = outer.getOuterFace().getKey();
-//        Set<FiniteOrdinal<Integer>> sitesOrdinalsInner = inner.getInnerFace().getKey();
-//        Set<FiniteOrdinal<Integer>> rootsOrdinalsInner = inner.getOuterFace().getKey();
-
         Set<StringTypedName> innerNamesOuter = outer.getInnerFace().getValue();
         Set<StringTypedName> innerNamesInner = inner.getInnerFace().getValue();
 

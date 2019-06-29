@@ -109,6 +109,11 @@ public class Linkings<S extends Signature> implements Serializable {
         public EPackage getModelPackage() {
             return loadedModelPacakge;
         }
+
+        @Override
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.emptyList();
+        }
     }
 
     public class Closure extends ElementaryBigraph<S> {
@@ -146,6 +151,7 @@ public class Linkings<S extends Signature> implements Serializable {
         public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Collections.EMPTY_LIST;
         }
+
     }
 
     public class Substitution extends ElementaryBigraph<S> {
@@ -213,6 +219,11 @@ public class Linkings<S extends Signature> implements Serializable {
         @Override
         public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Collections.EMPTY_LIST;
+        }
+
+        @Override
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            throw new RuntimeException("Not yet implemented");
         }
     }
 }

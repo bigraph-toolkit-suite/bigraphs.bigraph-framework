@@ -81,6 +81,11 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
     }
 
     @Override
+    public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+        return Collections.emptyList();
+    }
+
+    @Override
     public Collection<BigraphEntity> getAllPlaces() {
         return Collections.EMPTY_LIST;
     }

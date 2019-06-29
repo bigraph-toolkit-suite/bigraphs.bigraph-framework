@@ -8,6 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -300,7 +301,9 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     //works only for elements of the calling class
     protected boolean isOfEClass(EObject eObject, String eClassifier) {
-        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
+        return eObject.eClass().getName().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName()) ||
+                eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
+                eObject.eClass().getEAllSuperTypes().stream().map(ENamedElement::getName).collect(Collectors.toList()).contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName())
+                || eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
     }
 }
