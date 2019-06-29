@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @param <S>
@@ -223,7 +224,7 @@ public class Linkings<S extends Signature> implements Serializable {
 
         @Override
         public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
-            throw new RuntimeException("Not yet implemented");
+            return this.innerNames.stream().filter(x -> !x.equals(innerName)).collect(Collectors.toList());
         }
     }
 }

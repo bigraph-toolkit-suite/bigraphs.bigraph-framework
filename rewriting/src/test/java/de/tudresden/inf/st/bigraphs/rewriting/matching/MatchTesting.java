@@ -38,7 +38,7 @@ public class MatchTesting {
         PureBigraph context = (PureBigraph) next.getContext();
         PureBigraph redex = (PureBigraph) next.getRedex();
         PureBigraph contextIdentity = (PureBigraph) next.getContextIdentity();
-        ElementaryBigraph identityForParams = next.getRedexIdentity();
+        ElementaryBigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
         PureBigraph contextComposed = (PureBigraph) factory.asBigraphOperator(context).parallelProduct(contextIdentity).getOuterBigraph();
 //            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
 //                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
@@ -74,12 +74,12 @@ public class MatchTesting {
                     new File(path + "identityForParams.png")
             );
 
-            BigraphComposite bigraphComposite = factory
-                    .asBigraphOperator(identityForParams).parallelProduct(redex);
-            GraphvizConverter.toPNG(bigraphComposite.getOuterBigraph(),
-                    true,
-                    new File(path + "redexImage.png")
-            );
+//            BigraphComposite bigraphComposite = factory
+//                    .asBigraphOperator(identityForParams).parallelProduct(redex); //.compose();
+//            GraphvizConverter.toPNG(bigraphComposite.getOuterBigraph(),
+//                    true,
+//                    new File(path + "redexImage.png")
+//            );
 
             AtomicInteger cnt = new AtomicInteger(0);
             next.getParameters().forEach(x -> {
@@ -110,8 +110,10 @@ public class MatchTesting {
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class); //new PureBigraphMatcher();
         MatchIterable match = matcher.match(agent_model_test_0, rr.getRedex());
         Iterator<BigraphMatch<?>> iterator = match.iterator();
+        int transition = 0;
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
+            createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + transition++ + "/");
             System.out.println("NEXT: " + next);
         }
 
