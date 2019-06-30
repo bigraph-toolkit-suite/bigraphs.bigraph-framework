@@ -4,9 +4,7 @@ import com.google.common.reflect.TypeToken;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultBigraphComposite;
+import de.tudresden.inf.st.bigraphs.core.impl.PureBigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
@@ -65,8 +63,8 @@ public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
     }
 
     @Override
-    public DefaultBigraphComposite<DefaultDynamicSignature> asBigraphOperator(Bigraph<DefaultDynamicSignature> outerBigraph) {
-        return new DefaultBigraphComposite<>(outerBigraph);
+    public PureBigraphComposite<DefaultDynamicSignature> asBigraphOperator(Bigraph<DefaultDynamicSignature> outerBigraph) {
+        return new PureBigraphComposite<>(outerBigraph);
     }
 
 }

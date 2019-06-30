@@ -2,13 +2,14 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
+import de.tudresden.inf.st.bigraphs.core.impl.PureBigraphComposite;
 
 /**
  * Common interface for the composition of bigraphs.
  * <p>
  * Current implementations are:
  * <ul>
- * <li>{@link de.tudresden.inf.st.bigraphs.core.impl.DefaultBigraphComposite} for pure bigraphs</li>
+ * <li>{@link PureBigraphComposite} for pure bigraphs</li>
  * </ul>
  *
  * @param <S> type of the signature

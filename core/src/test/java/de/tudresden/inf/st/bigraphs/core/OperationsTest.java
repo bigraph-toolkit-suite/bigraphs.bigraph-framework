@@ -63,7 +63,7 @@ public class OperationsTest {
 
 
         BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
-//        DefaultBigraphComposite<DefaultDynamicSignature> compositor = (DefaultBigraphComposite<DefaultDynamicSignature>) factory.asBigraphOperator(G);
+//        PureBigraphComposite<DefaultDynamicSignature> compositor = (PureBigraphComposite<DefaultDynamicSignature>) factory.asBigraphOperator(G);
         BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
 
         compositor.juxtapose(F);

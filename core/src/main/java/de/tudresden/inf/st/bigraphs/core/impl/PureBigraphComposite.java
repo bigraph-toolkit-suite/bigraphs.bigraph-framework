@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -11,7 +10,9 @@ import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -23,11 +24,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 //TODO originalen bigraph type class zurückgeben falls user casten sicher will
-public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegator<S> implements BigraphComposite<S> {
+public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<S> implements BigraphComposite<S> {
 
     private MutableBuilder<S> builder;
 
-    public DefaultBigraphComposite(Bigraph<S> bigraphDelegate) {
+    public PureBigraphComposite(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);
         // this is safe: S is inferred from the bigraph too where S is the same type as the builder's type S (they will have the same type thus)
         this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature()); //new PureBigraphFactory().createBigraphBuilder(getBigraphDelegate().getSignature());
@@ -46,7 +47,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
     public BigraphComposite<S> juxtapose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph<S> g = getBigraphDelegate();
         //rule: first G then F when rewriting names, ordinals
-        assertSignaturesAreSame(g.getSignature(), f.getSignature());
+        assertSignaturesAreSame(g, f);
         assertInterfaceCompatibleForJuxtaposition(g, f);
 
         Supplier<Integer> rewriteRootSupplier = createNameSupplier();
@@ -246,7 +247,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         builder.reset();
         Bigraph<S> bigraph = (Bigraph<S>) new PureBigraph(meta);//TODO rework necessary -> unsure which bigraph should be employed here
 
-        return new DefaultBigraphComposite<>(bigraph);
+        return new PureBigraphComposite<>(bigraph);
     }
 
     @Override
@@ -254,19 +255,10 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         return parallelProduct(f.getOuterBigraph());
     }
 
-    // necessary when one bigraph is an elementary one
-    protected void createBuilderMergeSignatures(S sig1, S sig2) {
-        if (sig1.getControls().size() < sig2.getControls().size() || getBigraphDelegate() instanceof ElementaryBigraph) {
-            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(sig2);
-        } else {
-            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(sig1);
-        }
-    }
-
     @Override
     public BigraphComposite<S> parallelProduct(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph<S> g = getBigraphDelegate();
-        assertSignaturesAreSame(g.getSignature(), f.getSignature());
+        assertSignaturesAreSame(g, f);
 
         Supplier<Integer> rewriteRootSupplier = createNameSupplier();
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
@@ -514,7 +506,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         builder.reset();
         Bigraph<S> bigraph = (Bigraph<S>) new PureBigraph(meta);
 //        bigraph.getPointsFromLink(new ArrayList<>(bigraph.getOuterNames()).get(1));
-        return new DefaultBigraphComposite<>(bigraph);
+        return new PureBigraphComposite<>(bigraph);
     }
 
     @Override
@@ -530,8 +522,8 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
     @Override
     public BigraphComposite<S> compose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph<S> g = getBigraphDelegate();
-        assertSignaturesAreSame(g.getSignature(), f.getSignature());
-//        assertBigraphsAreNotSame(); //TODO important because node set must be disjunct too
+        assertSignaturesAreSame(g, f);
+//        assertBigraphsAreNotSame(); //TODO disjoint support of bigraphs is not important here as we are re-creating everything
         assertInterfaceCompatibleForCompose(g, f);
 
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
@@ -855,7 +847,6 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                             newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK),
                             outerName.getInstance()
                     );
-//                    System.out.println("connectn port to outer name " + outerName.getName());
                 } else if (BigraphEntityType.isEdge(linkQofG)) {
                     String edgeName = E.inverse().get(linkQofG);
                     BigraphEntity.Edge edge = myEdges.get(edgeName); //((BigraphEntity.Edge) linkQofG).getName());
@@ -863,9 +854,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
                         edge = (BigraphEntity.Edge) builder.createNewEdge(edgeName); //((BigraphEntity.Edge) linkQofG).getName());
                         myEdges.put(edge.getName(), edge);
                     }
-//                    System.out.println(edge);
                     builder.connectToEdgeUsingIndex(nodeEntity, edge, thePort.getIndex());
-//                    System.out.println("connectn port to edge " + edge.getName());
                 }
 
             }
@@ -882,7 +871,7 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
 
         Bigraph<S> bigraph = (Bigraph<S>) new PureBigraph(meta);//TODO rework necessary -> unsure which bigraph should be employed here
 
-        return new DefaultBigraphComposite<>(bigraph);
+        return new PureBigraphComposite<>(bigraph);
     }
 
     private BigraphEntity getNodeFromPort(List<AbstractMap.SimpleImmutableEntry<BigraphEntity.NodeEntity, BigraphEntity.Port>> collect, BigraphEntity searchPattern) {
@@ -915,26 +904,32 @@ public class DefaultBigraphComposite<S extends Signature> extends BigraphDelegat
         };
     }
 
-    public <K, V> Optional<K> keys(Map<K, V> map, V value) {
-        return map
-                .entrySet()
-                .stream()
-                .filter(entry -> value.equals(entry.getValue()))
-                .map(Map.Entry::getKey).findFirst();
-    }
-
     private void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
-    protected void assertSignaturesAreSame(S signature1, S signature2) throws IncompatibleSignatureException {
-        //then one must be an elementary bigraph
-        if (signature1.getControls().size() == 0 || signature2.getControls().size() == 0) {
-            createBuilderMergeSignatures(signature1, signature2);
+    protected void assertSignaturesAreSame(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleSignatureException {
+        //special handling if one is an elementary bigraph
+        if (inner instanceof DiscreteIon || outer instanceof DiscreteIon) {
+            SignatureBuilder signatureBuilder = AbstractBigraphFactory.createPureBigraphFactory().createSignatureBuilder();
+            inner.getSignature().getControls().forEach(x -> {
+                signatureBuilder.addControl((Control) x);
+            });
+            outer.getSignature().getControls().forEach(x -> {
+                signatureBuilder.addControl((Control) x);
+            });
+            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(signatureBuilder.create());
             return;
         }
-        if (!signature1.equals(signature2)) {
+        if (outer instanceof ElementaryBigraph) {
+            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(inner.getSignature());
+            return;
+        } else if (inner instanceof ElementaryBigraph) {
+            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(outer.getSignature());
+            return;
+        }
+        if (!outer.getSignature().equals(inner.getSignature())) {
             throw new IncompatibleSignatureException();
         }
     }
