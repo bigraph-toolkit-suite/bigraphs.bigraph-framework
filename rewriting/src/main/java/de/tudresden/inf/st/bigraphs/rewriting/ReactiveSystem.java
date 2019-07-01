@@ -15,9 +15,10 @@ import java.util.Collection;
  */
 public interface ReactiveSystem<S extends Signature, B extends Bigraph<S>> {
 
-    //TODO: add id/label supplier, add this also to RR and agent (create interface for that)
+    //TODO: add id/label supplier, add this also to RR and agent (create interface for that): use support for this to build a hash (should be unique)
     //TODO: add list of applicants (is updated after each match and user is notified by a callback
-    //TODO: add transitiontriple (is updated after each match and user is notified by a callback
+    //TODO: add transitiontriple (is updated after each match and user is notified by a callback - or a Table (many RR and an agent could
+    //  lead to the same a'
     // or when the execution stops
 
     /**
@@ -38,9 +39,11 @@ public interface ReactiveSystem<S extends Signature, B extends Bigraph<S>> {
 
     void setReactiveSystemListener(ReactiveSystemListener reactiveSystemListener);
 
-    interface ReactiveSystemListener {
+    interface ReactiveSystemListener<S extends Signature, B extends Bigraph<S>> {
 
         void onReactiveSystemStarted();
+
+        void onCheckingReactionRule(ReactionRule<B> reactionRule);
 
         void onReactiveSystemFinished();
 

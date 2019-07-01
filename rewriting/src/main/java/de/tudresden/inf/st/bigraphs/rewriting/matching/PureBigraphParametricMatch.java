@@ -3,7 +3,7 @@ package de.tudresden.inf.st.bigraphs.rewriting.matching;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultBigraphComposite;
+import de.tudresden.inf.st.bigraphs.core.impl.PureBigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 
@@ -28,7 +28,7 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
         this.identity = identity;
         this.redex = redex;
         this.contextIdentity = contextIdentity;
-        DefaultBigraphComposite<DefaultDynamicSignature> redexComposite = AbstractBigraphFactory.createPureBigraphFactory().asBigraphOperator(this.redex);
+        PureBigraphComposite<DefaultDynamicSignature> redexComposite = AbstractBigraphFactory.createPureBigraphFactory().asBigraphOperator(this.redex);
         //TODO: calculate redexImage
     }
 

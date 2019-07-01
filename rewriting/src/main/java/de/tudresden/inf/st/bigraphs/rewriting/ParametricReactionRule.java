@@ -13,5 +13,8 @@ public class ParametricReactionRule<B extends Bigraph<? extends Signature>> exte
     public ParametricReactionRule(B redex, B reactum) throws InvalidReactionRuleException {
         super(redex, reactum);
     }
-    
+
+    public ParametricReactionRule(B redex, B reactum, InstantiationMap instantiationMap) throws InvalidReactionRuleException {
+        super(redex, reactum, instantiationMap);
+    }
 }

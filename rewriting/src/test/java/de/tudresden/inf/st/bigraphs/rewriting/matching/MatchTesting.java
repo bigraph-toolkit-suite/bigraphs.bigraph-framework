@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 //TODO write better tests here: the redex output should conform to the expected output - this makes observing things easier
 // to the equivalent bigraphER output result (means, check for num. of outer names etc.)
 public class MatchTesting {
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next, String path) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
         PureBigraph context = (PureBigraph) next.getContext();
@@ -113,7 +113,7 @@ public class MatchTesting {
         int transition = 0;
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + transition++ + "/");
+//            createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + transition++ + "/");
             System.out.println("NEXT: " + next);
         }
 
@@ -336,7 +336,7 @@ public class MatchTesting {
 
     }
 
-    public Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public static Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName a = builder.createOuterName("a");
@@ -361,7 +361,7 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
+    public static Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -514,7 +514,7 @@ public class MatchTesting {
         return bigraph;
     }
 
-    private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
+    private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()

@@ -42,13 +42,12 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     @Override
     public boolean isRedexSimple() {
         return getRedex().isEpimorphic() && getRedex().isMonomorphic() &&
-//                getRedex().isPrime() && // need not be a prime
                 getRedex().isGuarding() &&
-                getRedex().getEdges().size() == 0; //no inner names are checked in the guarding clause
+                getRedex().getEdges().size() == 0; //"doesn't contain inner names" is checked in the guarding clause
     }
 
 
-    public boolean hasIdleOuterNames(B redex) {
+    protected boolean hasIdleOuterNames(B redex) {
         boolean isIdle = false;
         for (BigraphEntity.OuterName eachOuter : redex.getOuterNames()) {
             // check for idle links (bigraphER doesn't allows it either

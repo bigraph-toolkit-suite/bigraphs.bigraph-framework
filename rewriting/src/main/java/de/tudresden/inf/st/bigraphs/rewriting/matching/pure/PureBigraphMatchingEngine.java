@@ -62,11 +62,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
     private final MutableBuilder<DefaultDynamicSignature> builder2;
     private final MutableBuilder<DefaultDynamicSignature> bLinking;
 
-    PureBigraphMatchingEngine(B agent, B redex) throws IncompatibleSignatureException {
-//        this.agent = agent;
-//        this.redex = redex;
-        //TODO: validate
-        //TODO: check if sites are active
+    PureBigraphMatchingEngine(B agent, B redex) {
         //signature, ground agent
         this.builder = PureBigraphBuilder.newMutableBuilder(agent.getSignature());
         this.builder2 = PureBigraphBuilder.newMutableBuilder(agent.getSignature());
@@ -189,8 +185,8 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                 }
 
                 // compute size of maximum matching of bipartite graph for all partitions
-                List<Integer> matchings = new ArrayList<>();
-                List<HKMCBM2> lastResults = new ArrayList<>();
+//                List<Integer> matchings = new ArrayList<>();
+//                List<HKMCBM2> lastResults = new ArrayList<>();
 //                List<Integer> matchings2 = new ArrayList<>();
 //                List<Boolean> matchings3 = new ArrayList<>();
                 List<BigraphEntity> uSetAfterMatching = new ArrayList<>();
@@ -207,8 +203,8 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 //                        System.out.println(matching);
 //                        matchings2.add(alg.getMatchCount());
                         int m = matching.getEdges().size();
-                        matchings.add(m);
-                        lastResults.add(alg);
+//                        matchings.add(m);
+//                        lastResults.add(alg);
 //                        matchings3.add(alg.areControlsSame());
                         boolean m3 = alg.areControlsSame();
 //                        System.out.println((m == eachPartitionX.size()) + " <> " + m3);
@@ -553,12 +549,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
             }
 
-            //TODO collect also outernames
-            //  28.5.19:
-            //  Make EDGES TO INNERNAMES (OK) BUT
-            //  make alle links to innernames (?)
-
-
             List<AbstractDynamicMatchAdapter.ControlLinkPair> linksOfNode = agentAdapter.getLinksOfNode(eachNodeV);
             for (AbstractDynamicMatchAdapter.ControlLinkPair eachPair : linksOfNode) {
                 String linkName;
@@ -592,11 +582,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
             }
         }
 
-        // outer names in d must not included in outernames of R
-
-
-        //TODO falls ein subnode im redex+parameter ein link mit einem node im context hat muss dieser
-        // erhalten bleiben. Oder vorher schauen ob der link mit einem node im redex ist, ansonsten kann man diesen schließen
+        // outer names in d must not included in outernames of R: die names kommen direkt aus dem agent und dürfen gleichen namen haben
 //        builder.closeAllInnerNames();
 
         PureBigraph context = new PureBigraph(builder.new InstanceParameter(
@@ -610,9 +596,9 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
         //gehe nodes
         ElementaryBigraph<DefaultDynamicSignature> identityForParams;
-        Linkings<DefaultDynamicSignature> linkings = pureBigraphFactory.createLinkings();
+        Linkings<DefaultDynamicSignature> linkings = pureBigraphFactory.createLinkings(agentAdapter.getSignature());
         if (parameters.size() == 0) {
-            identityForParams = pureBigraphFactory.createLinkings().identity_e();
+            identityForParams = linkings.identity_e();
         } else {
             //baue renaming link graph von parameter
             List<StringTypedName> names = (List<StringTypedName>) parameters.values().stream().map(x -> x.getOuterNames())
@@ -777,9 +763,9 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                             builder2.getLoadedEPackage(),
                             agentAdapter.getSignature(),
                             Collections.singletonMap(0, rootParam),
-                            Collections.EMPTY_MAP,
+                            Collections.emptyMap(),
                             paramNodes,
-                            Collections.EMPTY_MAP,
+                            Collections.emptyMap(),
                             paramOuterNames,
                             builder2.getCreatedEdges()
                     )
