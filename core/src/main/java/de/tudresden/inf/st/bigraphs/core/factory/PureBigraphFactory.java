@@ -37,19 +37,27 @@ public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
 
     @Override
     public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature) {
-//        PureBigraphBuilder<DefaultDynamicSignature> builder = new PureBigraphBuilder<DefaultDynamicSignature>().useSignature(signature);
-//        PureBigraphBuilder.start(DefaultDynamicSignature.class.cast(signature));
         return PureBigraphBuilder.withSignature(DefaultDynamicSignature.class.cast(signature));
     }
 
     @Override
     public Placings<DefaultDynamicSignature> createPlacings() {
-        return new Placings<>(this.createSignatureBuilder());
+        return new Placings<DefaultDynamicSignature>(this.createSignatureBuilder());
+    }
+
+    @Override
+    public Placings<DefaultDynamicSignature> createPlacings(DefaultDynamicSignature signature) {
+        return new Placings<>(signature);
     }
 
     @Override
     public Linkings<DefaultDynamicSignature> createLinkings() {
-        return new Linkings<>(this.createSignatureBuilder());
+        return new Linkings<DefaultDynamicSignature>(this.createSignatureBuilder());
+    }
+
+    @Override
+    public Linkings<DefaultDynamicSignature> createLinkings(DefaultDynamicSignature signature) {
+        return new Linkings<>(signature);
     }
 
     @Override

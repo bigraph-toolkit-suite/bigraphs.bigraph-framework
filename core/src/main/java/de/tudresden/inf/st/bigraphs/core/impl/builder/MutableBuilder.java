@@ -70,8 +70,8 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
         super.connectInnerToOuterName0(innerName, outerName);
     }
 
-    public void connectToEdgeUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge edge, int customPortIndex) {
-        super.connectToEdgeUsingIndex(node, edge, customPortIndex);
+    public void connectToLinkUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity theLink, int customPortIndex) {
+        super.connectToLinkUsingIndex(node, theLink, customPortIndex);
     }
 
     /**

@@ -45,4 +45,17 @@ public abstract class BigraphHandler {
 //        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE)) ||
 //                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE));
 //    }
+
+    //    public BigraphEntity findByNodeName(Collection<BigraphEntity> list, String nodeName) {
+//        return list.stream().filter(x -> BigraphEntityType.isNode(x)
+//                && ((BigraphEntity.NodeEntity<Object>) x).getName().equals(nodeName))
+//                .findFirst()
+//                .get();
+//    }
+//
+//    public BigraphEntity findRootByIndex(Collection<BigraphEntity.RootEntity> list, int index) {
+//        return list.stream().filter(x -> x.getIndex() == index)
+//                .findFirst()
+//                .get();
+//    }
 }

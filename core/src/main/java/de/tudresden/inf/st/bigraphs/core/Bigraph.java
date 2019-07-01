@@ -88,9 +88,9 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @return the support <i>|B|</i> of the bigraph <i>B</i>
      */
     default Collection<BigraphEntity> getSupport() {
-        return (Collection<BigraphEntity>) Stream.concat(
+        return Stream.concat(
                 getNodes().stream(),
-                getEdges().stream());
+                getEdges().stream()).collect(Collectors.toList());
     }
 
     /**
@@ -289,16 +289,4 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
     EPackage getModelPackage();
 
-    //    public BigraphEntity findByNodeName(Collection<BigraphEntity> list, String nodeName) {
-//        return list.stream().filter(x -> BigraphEntityType.isNode(x)
-//                && ((BigraphEntity.NodeEntity<Object>) x).getName().equals(nodeName))
-//                .findFirst()
-//                .get();
-//    }
-//
-//    public BigraphEntity findRootByIndex(Collection<BigraphEntity.RootEntity> list, int index) {
-//        return list.stream().filter(x -> x.getIndex() == index)
-//                .findFirst()
-//                .get();
-//    }
 }

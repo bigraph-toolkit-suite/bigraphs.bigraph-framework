@@ -251,6 +251,26 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
     }
 
     @Override
+    public BigraphComposite<S> parallelProductOf(Bigraph<S>... bigraphs) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        if (bigraphs.length == 0) return this;
+        BigraphComposite<S> next = parallelProduct(bigraphs[0]);
+        for (int i = 1, n = bigraphs.length; i < n; i++) {
+            next = next.parallelProduct(bigraphs[i]);
+        }
+        return next;
+    }
+
+    @Override
+    public BigraphComposite<S> juxtpositionOf(Bigraph<S>... bigraphs) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        if (bigraphs.length == 0) return this;
+        BigraphComposite<S> next = juxtapose(bigraphs[0]);
+        for (int i = 1, n = bigraphs.length; i < n; i++) {
+            next = next.juxtapose(bigraphs[i]);
+        }
+        return next;
+    }
+
+    @Override
     public BigraphComposite<S> parallelProduct(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         return parallelProduct(f.getOuterBigraph());
     }
@@ -822,7 +842,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
 
                         String nodeName = V.inverse().get(getNodeFromPort(allPorts_FG, thePort)); //allPorts_FG.inverse().get(thePort));
                         BigraphEntity.NodeEntity nodeEntity = myNodes.get(nodeName);
-                        builder.connectToEdgeUsingIndex(nodeEntity, (BigraphEntity.Edge) newLink, thePort.getIndex());
+                        builder.connectToLinkUsingIndex(nodeEntity, newLink, thePort.getIndex());
 //                        System.out.println("\tconnect port to edge " + ((BigraphEntity.Edge) link).getName());
                     }
                 }
@@ -854,7 +874,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
                         edge = (BigraphEntity.Edge) builder.createNewEdge(edgeName); //((BigraphEntity.Edge) linkQofG).getName());
                         myEdges.put(edge.getName(), edge);
                     }
-                    builder.connectToEdgeUsingIndex(nodeEntity, edge, thePort.getIndex());
+                    builder.connectToLinkUsingIndex(nodeEntity, edge, thePort.getIndex());
                 }
 
             }

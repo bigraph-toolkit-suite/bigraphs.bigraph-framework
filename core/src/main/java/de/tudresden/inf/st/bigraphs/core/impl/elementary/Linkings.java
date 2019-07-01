@@ -58,10 +58,18 @@ public class Linkings<S extends Signature> implements Serializable {
         return new IdentityEmpty();
     }
 
+    @Deprecated
     public Linkings(AbstractBigraphFactory factory) {
 //        AbstractBigraphFactory factory = new PureBigraphFactory<>();
         SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
         emptySignature = (S) signatureBuilder.createSignature();
+        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
+        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
+    }
+
+    public Linkings(S signature) {
+//        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        emptySignature = signature;
         mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }

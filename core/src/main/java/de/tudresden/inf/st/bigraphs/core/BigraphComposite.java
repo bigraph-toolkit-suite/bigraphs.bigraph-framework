@@ -70,4 +70,13 @@ public interface BigraphComposite<S extends Signature> {
     BigraphComposite<S> parallelProduct(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
 
     BigraphComposite<S> parallelProduct(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+
+    /**
+     * Compute the parallel product in a row.
+     *
+     * @param bigraphs
+     * @return
+     */
+    BigraphComposite<S> parallelProductOf(Bigraph<S> ...bigraphs) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+    BigraphComposite<S> juxtpositionOf(Bigraph<S> ...bigraphs) throws IncompatibleSignatureException, IncompatibleInterfaceException;
 }

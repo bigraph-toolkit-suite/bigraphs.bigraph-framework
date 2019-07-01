@@ -2,21 +2,20 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.*;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.InnerNameConnectedToOuterNameException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import org.junit.jupiter.api.*;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -84,7 +83,7 @@ public class BigraphCreationTest {
     }
 
     @Test
-    void biraph_is_discrete() throws InvalidArityOfControlException, LinkTypeNotExistsException {
+    void biraph_is_discrete() {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
 
         assertAll(() -> {

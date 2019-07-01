@@ -63,8 +63,10 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
 
     public abstract Placings<S> createPlacings();
+    public abstract Placings<S> createPlacings(S signature);
 
     public abstract Linkings<S> createLinkings();
+    public abstract Linkings<S> createLinkings(S signature);
 
     /**
      * Throws a runtime exception either because of InvalidConnectionException or TypeNotExistsException when connecting

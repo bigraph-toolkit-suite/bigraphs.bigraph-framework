@@ -459,12 +459,12 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
         return false;
     }
 
-    protected void connectToEdgeUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge edge, int customPortIndex) {
+    protected void connectToLinkUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity theLink, int customPortIndex) {
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         //create port with index
         EObject portObject = createPortWithIndex(customPortIndex);
         EReference linkReference = availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK);
-        portObject.eSet(linkReference, edge.getInstance()); //add edge reference for port
+        portObject.eSet(linkReference, theLink.getInstance()); //add edge reference for port
         bPorts.add(portObject);
     }
 
