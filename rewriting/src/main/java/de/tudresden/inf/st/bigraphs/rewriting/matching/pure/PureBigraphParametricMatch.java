@@ -20,10 +20,10 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     private ElementaryBigraph identity;
     private PureBigraph redex;
     private PureBigraph redexImage;
-    private PureBigraph contextIdentity;
+    private Bigraph contextIdentity;
 
     public PureBigraphParametricMatch(PureBigraph context, PureBigraph redex,
-                                      Collection<Bigraph> parameters, ElementaryBigraph identity, PureBigraph contextIdentity) {
+                                      Collection<Bigraph> parameters, ElementaryBigraph identity, Bigraph contextIdentity) {
         this.parameters = parameters;
         this.context = context;
         this.identity = identity;
@@ -44,7 +44,7 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     }
 
     @Override
-    public PureBigraph getContextIdentity() {
+    public Bigraph getContextIdentity() {
         return contextIdentity;
     }
 

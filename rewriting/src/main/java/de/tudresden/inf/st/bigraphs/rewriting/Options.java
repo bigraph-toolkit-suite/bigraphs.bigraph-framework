@@ -2,12 +2,15 @@ package de.tudresden.inf.st.bigraphs.rewriting;
 
 //TODO: add tactics/order/priorities for RR execution (here?)
 
+import java.io.File;
+
 /**
  * @author Dominik Grzelak
  */
 public class Options {
     private int maximumTransitions;
-
+    private File folderOutputStates;
+    //TODO output reaction graph? static inner class with folderOutputStates: see bigrapher...
     private Options() {
     }
 

@@ -16,7 +16,7 @@ public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
         super();
     }
 
-    public MatchIterable match(PureBigraph agent, PureBigraph redex) throws IncompatibleSignatureException {
+    public MatchIterable match(PureBigraph agent, PureBigraph redex) {
         super.agent = agent;
         super.redex = redex;
         PureBigraphMatchingEngine<PureBigraph> matchingEngine = new PureBigraphMatchingEngine<>(this.agent, this.redex);

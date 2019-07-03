@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting.impl;
+package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
@@ -7,7 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
-import de.tudresden.inf.st.bigraphs.rewriting.AbstractReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.AbstractReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
@@ -24,7 +24,7 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<DefaultDynamicS
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Override
-    protected void buildGroundReaction(PureBigraph agent, BigraphMatch<?> match, ReactionRule<PureBigraph> rule) {
+    protected PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<?> match, ReactionRule<PureBigraph> rule) {
 
         try {
             Bigraph outerBigraph = factory.asBigraphOperator(match.getContext())
@@ -50,6 +50,7 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<DefaultDynamicS
                     true,
                     new File("agentReacted.png")
             );
+            return (PureBigraph) agentReacted;
         } catch (IncompatibleSignatureException e) {
             e.printStackTrace();
         } catch (IncompatibleInterfaceException e) {
@@ -57,10 +58,11 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<DefaultDynamicS
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
-    protected void buildParametricReaction(PureBigraph agent, BigraphMatch<?> match, ReactionRule<PureBigraph> rule) {
-
+    protected PureBigraph buildParametricReaction(PureBigraph agent, BigraphMatch<?> match, ReactionRule<PureBigraph> rule) {
+        return null;
     }
 }

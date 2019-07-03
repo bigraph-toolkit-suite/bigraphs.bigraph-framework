@@ -20,7 +20,7 @@ public interface BigraphMatch<B extends Bigraph<?>> {
      *
      * @return
      */
-    B getContextIdentity();
+    Bigraph getContextIdentity();
 
     /**
      * Returns the redex of the reaction rule.

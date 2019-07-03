@@ -17,7 +17,7 @@ public class PureMatchIteratorImpl implements Iterator<BigraphMatch<?>> {
 //    private PureBigraphMatcher bigraphMatcher;
 //    private BigraphMatch nextMatch;
 
-    PureMatchIteratorImpl(PureBigraphMatchingEngine<? extends PureBigraph> matchingEngine) throws IncompatibleSignatureException {
+    PureMatchIteratorImpl(PureBigraphMatchingEngine<? extends PureBigraph> matchingEngine) {
         this.matchingEngine = (PureBigraphMatchingEngine<PureBigraph>) matchingEngine;
         findMatches();
     }

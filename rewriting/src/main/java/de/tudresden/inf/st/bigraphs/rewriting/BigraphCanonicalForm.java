@@ -36,7 +36,7 @@ public class BigraphCanonicalForm {
         }
     }
 
-    public static <B extends Bigraph<?>> String bfcf(B bigraph) {
+    public <B extends Bigraph<?>> String bfcf(B bigraph) {
         getInstance().assertBigraphIsGroundAndPrime(bigraph);
         final StringBuilder sb = new StringBuilder();
         sb.append("r0$");
@@ -44,9 +44,11 @@ public class BigraphCanonicalForm {
         Traverser<BigraphEntity> childrenTraverser2 = Traverser.forTree(x -> {
             Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(x);
             if (!visited.contains(x)) {
-                childrenOf.stream().map(x3 -> x3.getControl())
-                        .filter(Objects::nonNull)
-                        .map(x3 -> x3.getNamedType().stringValue()).sorted()
+                childrenOf.stream()
+                        .filter(x3 -> Objects.nonNull(x3.getControl()))
+                        .map(x3 -> x3.getControl().getNamedType().stringValue())
+                        //bigraph.getPorts((BigraphEntity) x3).size()
+                        .sorted()
                         .forEach(sb::append);
                 if (childrenOf.size() != 0)
                     sb.append("$");

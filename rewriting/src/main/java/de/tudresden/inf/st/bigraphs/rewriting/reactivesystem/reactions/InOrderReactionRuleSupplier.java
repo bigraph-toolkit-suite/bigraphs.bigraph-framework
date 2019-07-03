@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting.reactions;
+package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;

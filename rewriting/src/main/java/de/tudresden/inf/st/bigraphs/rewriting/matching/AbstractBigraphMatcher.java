@@ -48,7 +48,7 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<?>> {
         throw new RuntimeException("Not Implemented Yet");
     }
 
-    public abstract MatchIterable match(B agent, B redex) throws IncompatibleSignatureException;
+    public abstract MatchIterable match(B agent, B redex);
 
     /**
      * Returns the supplied agent passed via the {@link AbstractBigraphMatcher#match(Bigraph, Bigraph)} method.

@@ -1,9 +1,10 @@
-package de.tudresden.inf.st.bigraphs.rewriting;
+package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 
 /**
  * This base class represents an immutable data structure for all kinds of reaction rules.

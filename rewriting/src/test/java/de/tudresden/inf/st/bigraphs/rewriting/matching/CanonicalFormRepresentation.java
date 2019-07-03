@@ -35,15 +35,19 @@ public class CanonicalFormRepresentation {
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
-    void name() throws IOException {
-        Bigraph sampleBigraph = createSampleBigraph();
-        Bigraph sampleBigraph2 = createSampleBigraph2();
-        GraphvizConverter.toPNG(sampleBigraph2,
+    void name() throws IOException, InvalidConnectionException, LinkTypeNotExistsException {
+        Bigraph sampleBigraph = createSampleBigraphB1(); //createSampleBigraph();
+        Bigraph sampleBigraph2 = createSampleBigraphB2(); //createSampleBigraph2();
+        GraphvizConverter.toPNG(sampleBigraph,
                 true,
                 new File("sampleBigraph.png")
         );
-        String bfcf = BigraphCanonicalForm.bfcf(sampleBigraph);
-        String bfcf1 = BigraphCanonicalForm.bfcf(sampleBigraph);
+        GraphvizConverter.toPNG(sampleBigraph2,
+                true,
+                new File("sampleBigraph2.png")
+        );
+        String bfcf = BigraphCanonicalForm.getInstance().bfcf(sampleBigraph);
+        String bfcf1 = BigraphCanonicalForm.getInstance().bfcf(sampleBigraph2);
         assertEquals(bfcf, bfcf1);
     }
 
@@ -89,15 +93,6 @@ public class CanonicalFormRepresentation {
                 .addChild(signature.getControlByName("B"))
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("C"))
-                .withNewHierarchy()
-                .addChild(signature.getControlByName("G"))
-                .addChild(signature.getControlByName("H"))
-                .goBack()
-                .addChild(signature.getControlByName("D"))
-                .goBack()
-                .addChild(signature.getControlByName("B"))
-                .withNewHierarchy()
-                .addChild(signature.getControlByName("C"))
                 .addChild(signature.getControlByName("E"))
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("F"))
@@ -105,10 +100,57 @@ public class CanonicalFormRepresentation {
                 .goBack()
                 .goBack()
                 .addChild(signature.getControlByName("B"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("C"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("G"))
+                .addChild(signature.getControlByName("H"))
+                .goBack()
+                .addChild(signature.getControlByName("D"))
+                .goBack()
+                .addChild(signature.getControlByName("B"))
                 .goBack()
         ;
 
         return builder.createBigraph();
+    }
+
+    public Bigraph createSampleBigraphB1() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        BigraphEntity.InnerName inner = builder.createInnerName("inner");
+        builder.createRoot()
+                .addChild(signature.getControlByName("A"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("B")).connectNodeToInnerName(inner)
+                .addChild(signature.getControlByName("C")).connectNodeToInnerName(inner)
+                .goBack()
+                .addChild(signature.getControlByName("A"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("B"))
+                .addChild(signature.getControlByName("C"))
+                .goBack()
+        ;
+        return builder.closeAllInnerNames().createBigraph();
+    }
+
+    public Bigraph createSampleBigraphB2() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        BigraphEntity.InnerName inner = builder.createInnerName("inner");
+        builder.createRoot()
+                .addChild(signature.getControlByName("A"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("B"))
+                .addChild(signature.getControlByName("C"))
+                .goBack()
+                .addChild(signature.getControlByName("A"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("C")).connectNodeToInnerName(inner)
+                .addChild(signature.getControlByName("B")).connectNodeToInnerName(inner)
+                .goBack()
+        ;
+        return builder.closeAllInnerNames().createBigraph();
     }
 
 
