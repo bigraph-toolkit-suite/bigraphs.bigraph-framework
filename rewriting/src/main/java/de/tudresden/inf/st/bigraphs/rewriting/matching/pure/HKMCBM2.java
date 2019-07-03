@@ -1,7 +1,5 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import org.jgrapht.Graph;
@@ -9,7 +7,6 @@ import org.jgrapht.GraphTests;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 import org.jgrapht.alg.util.FixedSizeIntegerQueue;
-import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.*;
@@ -51,17 +48,12 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     private PureBigraphRedexAdapter redexAdapter;
     private PureBigraphAgentAdapter agentAdapter;
 
-    private Set<Control> availableControls = new LinkedHashSet<>();
-    Set<Pair<Control, Control>> set = new HashSet<>();
-    Table<Control, Control, Boolean> possibleLinks = HashBasedTable.create();
-//    Table<String, String, Boolean> incidenceLeft = HashBasedTable.create();
-//    Table<String, String, Boolean> incidenceRight = HashBasedTable.create();
+//    private Set<Control> availableControls = new LinkedHashSet<>();
 
     private List<Control> availableControlsRedex = new ArrayList<>();
     private List<Control> availableControlsAgent = new ArrayList<>();
 
     private boolean hasSite = false;
-//    boolean crossBoundary = true;
 
     /**
      * Constructs a new instance of the Hopcroft Karp bipartite matching algorithm. The input graph
@@ -94,25 +86,8 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         List<Control> collect1 = partition2.stream().map(x -> x.getControl()).filter(Objects::nonNull)
                 .collect(Collectors.toList());
         availableControlsAgent = new ArrayList<>(collect1);
-        availableControls.addAll(collect);
-        availableControls.addAll(collect1);
-
-        for (Control a : collect) {
-            for (Control b : collect1) {
-                set.add(new Pair<>(a, b));
-            }
-        }
-        for (Pair<Control, Control> eachPair : set) {
-            possibleLinks.put(eachPair.getFirst(), eachPair.getSecond(), false);
-        }
-
-//    }
-//        Permutations.of(new ArrayList<>(availableControls)).forEach(p -> {
-//            p.forEach(System.out::print);
-//            possibleLinks.put(p)
-//            System.out.println(" ");
-//        });
-//        availableControls.stream().forEach(x -> System.out.print(x + ", " + x + "\n"));
+//        availableControls.addAll(collect);
+//        availableControls.addAll(collect1);
     }
 
     public boolean isHasSite() {
@@ -139,10 +114,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         dist = new int[partition1.size() + 1];
         queue = new FixedSizeIntegerQueue(vertices.size());
     }
-
-    //preserve insertion order (duplicate names are anyway not allowed in bigraphs)
-//    Map<String, Integer> mapRedex = new LinkedHashMap<>();
-//    Map<String, Integer> mapAgent = new LinkedHashMap<>();
 
     /**
      * Greedily compute an initial feasible matching
@@ -220,8 +191,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         }
         return true;
     }
-
-    private int matchCount = 0;
 
     @Override
     public Matching<BigraphEntity, DefaultEdge> getMatching() {
@@ -301,10 +270,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 //            System.out.println("Subredex isSubset of subagent=" + isSubset);
             return isSubset; //&& availableControlsRedex.size() <= availableControlsAgent.size()
         }
-    }
-
-    public int getMatchCount() {
-        return matchCount;
     }
 
 //    public boolean isCrossBoundary() {

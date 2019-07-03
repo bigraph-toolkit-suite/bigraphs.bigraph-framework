@@ -42,8 +42,8 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     @Override
     public boolean isRedexSimple() {
         return getRedex().isEpimorphic() && getRedex().isMonomorphic() &&
-                getRedex().isGuarding() &&
-                getRedex().getEdges().size() == 0; //"doesn't contain inner names" is checked in the guarding clause
+                getRedex().isGuarding() && //"doesn't contain inner names" is checked in the guarding clause
+                getRedex().getEdges().size() == 0; // every link is open
     }
 
 
@@ -98,10 +98,10 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
      * Check if the interfaces of the redex and reactum conforms to the following form: <br/>
      * <i>R = (R, R'), R: m -> J and R': m' -> J</i>
      */
-    private void assertInterfaceDefinitionIsCorrect(B redex, B reactum) throws NoConformReactionRuleInterfaces {
+    private void assertInterfaceDefinitionIsCorrect(B redex, B reactum) throws NonConformReactionRuleInterfaces {
         //check same interface
         if (!redex.getOuterFace().equals(reactum.getOuterFace())) {
-            throw new NoConformReactionRuleInterfaces();
+            throw new NonConformReactionRuleInterfaces();
         }
     }
 

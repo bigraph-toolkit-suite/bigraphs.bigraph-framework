@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * An implementation of an {@link AbstractReactiveSystem} providing a simple BRS with pure bigraphs ({@link PureBigraph}).
+ *
  * @author Dominik Grzelak
  */
 public class SimpleReactiveSystem extends AbstractReactiveSystem<DefaultDynamicSignature, PureBigraph> {
@@ -25,7 +27,7 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<DefaultDynamicS
     protected void buildGroundReaction(PureBigraph agent, BigraphMatch<?> match, ReactionRule<PureBigraph> rule) {
 
         try {
-            Bigraph outerBigraph = factory.asBigraphOperator((PureBigraph) match.getContext())
+            Bigraph outerBigraph = factory.asBigraphOperator(match.getContext())
                     .juxtapose(match.getContextIdentity()).getOuterBigraph();
             System.out.println(outerBigraph);
             GraphvizConverter.toPNG(outerBigraph,

@@ -8,9 +8,11 @@ import de.tudresden.inf.st.bigraphs.rewriting.matching.pure.PureBigraphMatcher;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * This class represents the starting point for executing matching of bigraphs. A bigraph matcher consists of a bigraph
- * matching engine. A concrete matcher with the corresponding matching engine w.r.t. to the bigraph type can be created
- * using the factory method create() by supplying the bigraph type.
+ * This class is responsible for executing bigraph matching. A bigraph matcher consists of a bigraph
+ * matching engine. A concrete matcher with the corresponding matching engine w.r.t. to the bigraph type. The correct one,
+ * is created using the factory method {@link AbstractBigraphMatcher#create(Class)} by supplying the bigraph type as class.
+ * <p>
+ * The matcher needs an agent and redex to perform bigraph matching.
  * <p>
  * Matches are then returned via an iterator for easier access of the results The instances of the matches are of type
  * {@link BigraphMatch}.
@@ -19,6 +21,7 @@ import java.lang.reflect.ParameterizedType;
  * <p>
  * With other words: This class works like a factory to return the matches as iterables of class {@link BigraphMatch}.
  *
+ * @param <B> type of the bigraph
  * @author Dominik Grzelak
  */
 public abstract class AbstractBigraphMatcher<B extends Bigraph<?>> {

@@ -1,7 +1,8 @@
-package de.tudresden.inf.st.bigraphs.rewriting;
+package de.tudresden.inf.st.bigraphs.rewriting.structures;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
 
 /**
  * A transition of a labelled transition system is a triple containing the source and target and the

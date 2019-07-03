@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractDynamicMatchAdapter;
@@ -17,6 +18,11 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
 
     public PureBigraphAgentAdapter(PureBigraph bigraph) {
         super(bigraph);
+    }
+
+    @Override
+    public DefaultDynamicSignature getSignature() {
+        return (DefaultDynamicSignature) super.getSignature();
     }
 
     /**

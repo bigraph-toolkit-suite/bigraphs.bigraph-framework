@@ -17,9 +17,9 @@ import java.util.stream.StreamSupport;
 
 
 /**
- * Matcher für dynamic signatures only
+ * An adapter for bigraphs used for the matching procedure.
  * <p>
- * encapsulates a bigraph with a dynamic signature and provides different accessor methods
+ * Encapsulates a bigraph with a dynamic signature and provides different accessor methods
  * for the underlying bigraph which are used/needed for the matching algorithm
  *
  * @author Dominik Grzelak

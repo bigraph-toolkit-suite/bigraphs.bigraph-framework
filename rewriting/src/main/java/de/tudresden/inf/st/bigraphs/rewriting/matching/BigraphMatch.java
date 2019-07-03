@@ -11,7 +11,7 @@ import java.util.Collection;
  * @param <B> the bigraph type of the match
  * @author Dominik Grzelak
  */
-public interface BigraphMatch<B extends Bigraph> {
+public interface BigraphMatch<B extends Bigraph<?>> {
 
     B getContext();
 

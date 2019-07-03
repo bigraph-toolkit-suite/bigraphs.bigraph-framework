@@ -8,13 +8,26 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An instantiation map for a parametric reaction rule.
+ *
+ * @author Dominik Grzelak
  */
 public class InstantiationMap {
 
-    private Map<FiniteOrdinal<Integer>, FiniteOrdinal<Integer>> mappings = new ConcurrentHashMap<>();
+    private Map<FiniteOrdinal<Integer>, FiniteOrdinal<Integer>> mappings;
 
     private InstantiationMap(Map<FiniteOrdinal<Integer>, FiniteOrdinal<Integer>> mappings) {
         this.mappings = mappings;
+    }
+
+    /**
+     * Creates an empty instantiation map. The method calls the {@link InstantiationMap#create(int)} method
+     * with <i>0</i> as argument. The user must supply values by using {@link InstantiationMap#map(int, int)} afterwards.
+     *
+     * @return an empty instantiation map
+     * @see InstantiationMap#create(int)
+     */
+    public static InstantiationMap create() {
+        return InstantiationMap.create(0);
     }
 
     /**

@@ -1,6 +1,9 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractDynamicMatchAdapter;
@@ -18,6 +21,16 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
     public PureBigraphRedexAdapter(PureBigraph bigraph) {
         super(bigraph);
     }
+
+    @Override
+    public DefaultDynamicSignature getSignature() {
+        return (DefaultDynamicSignature) super.getSignature();
+    }
+
+//    @Override
+//    protected PureBigraph getBigraphDelegate() {
+//        return (Bigraph<DefaultDynamicSignature>) super.getBigraphDelegate();
+//    }
 
     /**
      * Only outer names are returned, edges are not considered for the result.
