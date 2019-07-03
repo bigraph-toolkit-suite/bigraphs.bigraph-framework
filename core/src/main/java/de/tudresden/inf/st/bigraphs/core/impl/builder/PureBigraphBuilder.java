@@ -1009,7 +1009,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
     /**
      * Closes all inner names and doesn't keep idle edges and idle inner names.
      */
-    public void closeAllInnerNames() {
+    public PureBigraphBuilder<S> closeAllInnerNames() {
         Iterator<Map.Entry<String, BigraphEntity.InnerName>> iterator = availableInnerNames.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, BigraphEntity.InnerName> next = iterator.next();
@@ -1021,6 +1021,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
                 throw new RuntimeException("This shouldn't happen. Please check the inner names map.");
             }
         }
+        return this;
     }
 
     /**

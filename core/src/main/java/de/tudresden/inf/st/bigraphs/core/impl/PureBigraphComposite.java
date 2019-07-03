@@ -102,8 +102,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
                 String s = V.inverse().get(parent);
                 theParentToSet = myNodes.get(s);
                 if (Objects.isNull(theParentToSet)) {
-                    newNode = (BigraphEntity.NodeEntity) builder.createNewNode(each.getValue().getControl(), each.getKey());
-                    myNodes.put(each.getKey(), newNode);
+                    theParentToSet = builder.createNewNode(parent.getControl(), s);
+                    myNodes.put(each.getKey(), (BigraphEntity.NodeEntity) theParentToSet);
                 }
             }
             setParentOfNode(newNode, theParentToSet);
@@ -332,8 +332,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
                 String s = V.inverse().get(parent);
                 theParentToSet = myNodes.get(s);
                 if (Objects.isNull(theParentToSet)) {
-                    newNode = (BigraphEntity.NodeEntity) builder.createNewNode(each.getValue().getControl(), each.getKey());
-                    myNodes.put(each.getKey(), newNode);
+                    theParentToSet = builder.createNewNode(parent.getControl(), s);
+                    myNodes.put(s, (BigraphEntity.NodeEntity) theParentToSet);
                 }
             }
             setParentOfNode(newNode, theParentToSet);

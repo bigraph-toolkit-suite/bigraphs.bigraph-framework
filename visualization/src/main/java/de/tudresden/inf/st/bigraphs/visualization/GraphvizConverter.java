@@ -293,7 +293,8 @@ public class GraphvizConverter {
         return currentParent;
     }
 
-    //TODO move into bigraph
+    //TODO use bigraph interface method
+    @Deprecated
     private int getNodeHeight(Bigraph<?> bigraph, BigraphEntity data, int level) {
         BigraphEntity parent = bigraph.getParent(data);
         if (data == null || parent == null)
