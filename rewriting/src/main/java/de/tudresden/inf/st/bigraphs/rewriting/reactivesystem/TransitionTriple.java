@@ -10,14 +10,14 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
  *
  * @author Dominik Grzelak
  */
-public class TransitionTriple<S extends Signature, B extends Bigraph<S>> {
-    private ReactiveSystem<S, B> transitionOwner;
+public class TransitionTriple<B extends Bigraph<? extends Signature<?>>> {
+    private ReactiveSystem<B> transitionOwner;
 
     private B source;
     private B label;
     private B target;
 
-    public TransitionTriple(ReactiveSystem<S, B> transitionOwner, B source, B label, B target) {
+    public TransitionTriple(ReactiveSystem<B> transitionOwner, B source, B label, B target) {
         this.transitionOwner = transitionOwner;
         this.source = source;
         this.label = label;
@@ -29,7 +29,7 @@ public class TransitionTriple<S extends Signature, B extends Bigraph<S>> {
         throw new RuntimeException("Not implemented yet");
     }
 
-    public ReactiveSystem<S, B> getTransitionOwner() {
+    public ReactiveSystem<B> getTransitionOwner() {
         return transitionOwner;
     }
 

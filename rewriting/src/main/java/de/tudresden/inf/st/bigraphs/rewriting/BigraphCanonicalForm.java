@@ -11,11 +11,17 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Create a unique (canonical) label for a place graph of a bigraph such that two isomorphic place graphs have the same label. Also known as
- * string representation of a graph. With the implemented canonical forms in this class, we create a unique representation
- * for labelled rooted unordered trees, that are, place graph without sites.
+ * This helper class creates a unique (canonical) label for a place graph of a bigraph such that two isomorphic place graphs
+ * have the same label. This is also known as string representation of a graph. With the implemented canonical forms in
+ * this class, we create a unique representation for labelled rooted unordered trees, that are, place graphs without sites.
  * <p>
- * This implementation works only for ground bigraphs (i.e. agents)
+ * This implementation works only for ground bigraphs (i.e. agents).
+ * <p>
+ * The algorithm used to generate the canonical form is adopted from {@code [1]}.
+ * <p>
+ * <b>References</b>
+ * <p>
+ * [1] Chi, Y., Yang, Y., Muntz, R.R.: Canonical forms for labelled trees and their applications in frequent subtree mining. Knowl Inf Syst. 8, 203–234 (2005). https://doi.org/10.1007/s10115-004-0180-7.
  *
  * @author Dominik Grzelak
  */
@@ -36,6 +42,13 @@ public class BigraphCanonicalForm {
         }
     }
 
+    /**
+     * Create a breadth-first canonical form (BFCF) for a bigraph's place graph.
+     *
+     * @param bigraph the bigraph
+     * @param <B>     the type of the bigraph
+     * @return the BFCF of the place graph of the given bigraph
+     */
     public <B extends Bigraph<?>> String bfcf(B bigraph) {
         getInstance().assertBigraphIsGroundAndPrime(bigraph);
         final StringBuilder sb = new StringBuilder();
@@ -51,7 +64,7 @@ public class BigraphCanonicalForm {
                         .sorted()
                         .forEach(sb::append);
                 if (childrenOf.size() != 0)
-                    sb.append("$");
+                    sb.append("$"); // "backtrack" character
                 visited.add(x);
             }
             return childrenOf;
@@ -63,7 +76,7 @@ public class BigraphCanonicalForm {
         if (sb.charAt(sb.length() - 1) == '$') {
             sb.deleteCharAt(sb.length() - 1);
         }
-        sb.insert(sb.length(), "#");
+        sb.insert(sb.length(), "#"); // "end-of-sequence" character
         return sb.toString();
     }
 //    Traverser<BigraphEntity> childrenTraverser = Traverser.forTree(bigraph::getChildrenOf);

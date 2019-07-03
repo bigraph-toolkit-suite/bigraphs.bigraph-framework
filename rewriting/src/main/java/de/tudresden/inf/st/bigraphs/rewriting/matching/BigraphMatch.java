@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 
 import java.util.Collection;
 
@@ -11,7 +12,7 @@ import java.util.Collection;
  * @param <B> the bigraph type of the match
  * @author Dominik Grzelak
  */
-public interface BigraphMatch<B extends Bigraph<?>> {
+public interface BigraphMatch<B extends Bigraph<? extends Signature<?>>> {
 
     B getContext();
 
@@ -20,7 +21,7 @@ public interface BigraphMatch<B extends Bigraph<?>> {
      *
      * @return
      */
-    Bigraph getContextIdentity();
+    Bigraph<? extends Signature<?>> getContextIdentity();
 
     /**
      * Returns the redex of the reaction rule.

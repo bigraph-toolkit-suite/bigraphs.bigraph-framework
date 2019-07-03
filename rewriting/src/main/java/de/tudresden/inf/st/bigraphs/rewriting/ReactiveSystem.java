@@ -13,7 +13,7 @@ import java.util.Collection;
  *
  * @author Dominik Grzelak
  */
-public interface ReactiveSystem<S extends Signature, B extends Bigraph<S>> {
+public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
 
     //TODO: add id/label supplier, add this also to RR and agent (create interface for that): use support for this to build a hash (should be unique)
     //TODO: add list of applicants (is updated after each match and user is notified by a callback
@@ -37,9 +37,9 @@ public interface ReactiveSystem<S extends Signature, B extends Bigraph<S>> {
         return getReactionRules().stream().allMatch(ReactionRule::isRedexSimple);
     }
 
-    void setReactiveSystemListener(ReactiveSystemListener reactiveSystemListener);
+    void setReactiveSystemListener(ReactiveSystemListener<B> reactiveSystemListener);
 
-    interface ReactiveSystemListener<S extends Signature, B extends Bigraph<S>> {
+    interface ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>> {
 
         void onReactiveSystemStarted();
 

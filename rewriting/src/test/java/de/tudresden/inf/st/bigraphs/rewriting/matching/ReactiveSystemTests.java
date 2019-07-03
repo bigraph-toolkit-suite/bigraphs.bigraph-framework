@@ -17,7 +17,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
-import de.tudresden.inf.st.bigraphs.rewriting.Options;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
@@ -45,7 +45,7 @@ public class ReactiveSystemTests {
         assertEquals(1, reactiveSystem.getReactionRules().size());
         assertTrue(reactiveSystem.isSimple());
 
-        Options opts = Options.create(2);
+        ReactiveSystemOptions opts = ReactiveSystemOptions.create(2);
         reactiveSystem.simulate(agent, opts);
     }
 
@@ -61,7 +61,7 @@ public class ReactiveSystemTests {
         reactiveSystem.addReactionRule(rr2);
         assertTrue(reactiveSystem.isSimple());
 
-        Options opts = Options.create(4);
+        ReactiveSystemOptions opts = ReactiveSystemOptions.create(4);
         reactiveSystem.computeTransitionSystem(agent, opts);
     }
 

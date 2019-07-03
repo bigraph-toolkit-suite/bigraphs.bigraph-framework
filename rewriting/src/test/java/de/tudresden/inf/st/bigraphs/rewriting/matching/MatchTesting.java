@@ -21,6 +21,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -113,7 +114,7 @@ public class MatchTesting {
         int transition = 0;
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-//            createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + transition++ + "/");
+            createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + transition++ + "/");
             System.out.println("NEXT: " + next);
         }
 
@@ -129,6 +130,7 @@ public class MatchTesting {
         Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
+            createGraphvizOutput(agent_model_test_1, next, "src/test/resources/graphviz/model1/");
             System.out.println(next);
         }
 
@@ -153,6 +155,7 @@ public class MatchTesting {
         Iterator<BigraphMatch<?>> iterator2 = match2.iterator();
         while (iterator2.hasNext()) {
             BigraphMatch<?> next = iterator2.next();
+            createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
             System.out.println(next);
         }
 
@@ -175,6 +178,7 @@ public class MatchTesting {
     }
 
     @Test
+    @DisplayName("no matches should occur")
     void model_test_4() throws Exception {
         PureBigraph agent_model_test_4 = (PureBigraph) createAgent_model_test_4();
         PureBigraph redex_model_test_4 = (PureBigraph) createRedex_model_test_4();
@@ -184,6 +188,7 @@ public class MatchTesting {
         Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
+//            createGraphvizOutput(agent_model_test_4, next, "src/test/resources/graphviz/model4/");
             System.out.println(next);
         }
 

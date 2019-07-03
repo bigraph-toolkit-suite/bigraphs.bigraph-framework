@@ -8,14 +8,13 @@ import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.rewriting.Options;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.ReactionRuleSupplier;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ReactionGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
@@ -30,7 +29,6 @@ import java.lang.reflect.ParameterizedType;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -43,20 +41,20 @@ import java.util.stream.Stream;
  *
  * @author Dominik Grzelak
  */
-public abstract class AbstractReactiveSystem<S extends Signature, B extends Bigraph<S>> implements ReactiveSystem<S, B> {
+public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signature<?>>> implements ReactiveSystem<B> {
     private final static ReactiveSystem.ReactiveSystemListener DEFAULT_LISTENER = new EmptyReactiveSystemListener();
 
     protected ReactiveSystemListener reactiveSystemListener;
 
     protected BiMap<String, ReactionRule<B>> reactionRules = HashBiMap.create();
-    protected Options options;
+    protected ReactiveSystemOptions options;
     protected AbstractBigraphMatcher<B> matcher;
     protected ReactionGraph<B> reactionGraph;
     protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.getInstance();
 
     public AbstractReactiveSystem() {
         onAttachListener(this);
-        matcher = AbstractBigraphMatcher.create(getGenericTypeClass(1));
+        matcher = AbstractBigraphMatcher.create(getGenericTypeClass(0));
         reactionGraph = new ReactionGraph<>();
     }
 
@@ -65,6 +63,7 @@ public abstract class AbstractReactiveSystem<S extends Signature, B extends Bigr
         return reactionRules.values();
     }
 
+    @SuppressWarnings("unused")
     public synchronized boolean addReactionRule(ReactionRule<B> reactionRule) {
         if (!reactionRules.containsValue(reactionRule)) {
             reactionRules.put(rSupplier.get(), reactionRule);
@@ -81,37 +80,35 @@ public abstract class AbstractReactiveSystem<S extends Signature, B extends Bigr
      * @param options additional options
      */
     //TODO add predicates with match functions as in bigmc
-    public synchronized void computeTransitionSystem(final B agent, final Options options) {
+    public synchronized void computeTransitionSystem(final B agent, final ReactiveSystemOptions options) {
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
         workingQueue.add(agent);
         int transitionCnt = 0;
         while (!workingQueue.isEmpty() && transitionCnt < options.getMaximumTransitions()) {
             // Remove the first element w of the work queue Q.
             final B theAgent = workingQueue.remove();
-            // For each reaction rule, find all matches m1 ...mn in w.
-            List<B> matched = new LinkedList<>();
+            // For each reaction rule, find all matches m1 ...mn in w
             //TODO: generate appropriate supplier for the given option
             Stream.generate(ReactionRuleSupplier.createInOrder(getReactionRules()))
                     .limit(getReactionRules().size())
-                    .peek(x -> reactiveSystemListener.onCheckingReactionRule(x))
+                    .peek(x -> reactiveSystemListener.onCheckingReactionRule((ReactionRule<B>) x))
                     .forEachOrdered(eachRule -> {
                         //                            List<B> currentMatches = new LinkedList<>();
                         String bfcfOfW = canonicalForm.bfcf(theAgent);
                         MatchIterable match = matcher.match(theAgent, (B) eachRule.getRedex());
                         Iterator<BigraphMatch<?>> iterator = match.iterator();
                         while (iterator.hasNext()) {
-                            BigraphMatch<?> next = iterator.next();
+                            BigraphMatch<B> next = (BigraphMatch<B>) iterator.next();
 //                            System.out.println("NEXT: " + next);
                             B reaction = null;
                             if (next.getParameters().size() == 0) {
-                                reaction = (B) buildGroundReaction(theAgent, next, eachRule);
+                                reaction = buildGroundReaction(theAgent, next, (ReactionRule<B>) eachRule);
                             } else {
-                                reaction = (B) buildParametricReaction(theAgent, next, eachRule);
+                                reaction = buildParametricReaction(theAgent, next, (ReactionRule<B>) eachRule);
                             }
                             if (Objects.nonNull(reaction)) {
                                 String bfcf = canonicalForm.bfcf(reaction);
                                 String reactionLbl = reactionRules.inverse().get(eachRule);
-//                                    String bfcf_redex = canonicalForm.bfcf(next.getRedex());
                                 if (!reactionGraph.containsBigraph(bfcf)) {
                                     reactionGraph.addEdge(theAgent, bfcfOfW, reaction, bfcf, (B) next.getRedex(), reactionLbl);
                                     workingQueue.add(reaction);
@@ -164,7 +161,7 @@ public abstract class AbstractReactiveSystem<S extends Signature, B extends Bigr
     // https://github.com/pivovarit/parallel-collectors
     // https://www.baeldung.com/java-8-parallel-streams-custom-threadpool
 
-    public synchronized void simulate(final B agent, final Options options) {
+    public synchronized void simulate(final B agent, final ReactiveSystemOptions options) {
         AtomicInteger maximumTransitions = new AtomicInteger(options.getMaximumTransitions());
         AtomicInteger currentTransitionCount = new AtomicInteger(0);
 
@@ -184,7 +181,7 @@ public abstract class AbstractReactiveSystem<S extends Signature, B extends Bigr
                     MatchIterable match = matcher.match(agent, (B) eachRule.getRedex());
                     Iterator<BigraphMatch<?>> iterator = match.iterator();
                     while (iterator.hasNext()) {
-                        BigraphMatch<?> next = iterator.next();
+                        BigraphMatch<B> next = (BigraphMatch<B>) iterator.next();
                         System.out.println("NEXT: " + next);
                         if (next.getParameters().size() == 0) {
                             buildGroundReaction(agent, next, eachRule);
@@ -200,24 +197,24 @@ public abstract class AbstractReactiveSystem<S extends Signature, B extends Bigr
         reactiveSystemListener.onReactiveSystemFinished();
     }
 
-    protected abstract B buildGroundReaction(final B agent, final BigraphMatch<?> match, ReactionRule<B> rule);
+    protected abstract B buildGroundReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
 
     protected abstract B buildParametricReaction(final B agent, final BigraphMatch<?> match, ReactionRule<B> rule);
 
     @Override
-    public synchronized void setReactiveSystemListener(ReactiveSystemListener reactiveSystemListener) {
+    public synchronized void setReactiveSystemListener(ReactiveSystemListener<B> reactiveSystemListener) {
         this.reactiveSystemListener = reactiveSystemListener;
     }
 
-    public synchronized Options getOptions() {
+    public synchronized ReactiveSystemOptions getOptions() {
         return options;
     }
 
-    private void onAttachListener(ReactiveSystem reactiveSystem) {
+    private void onAttachListener(ReactiveSystem<B> reactiveSystem) {
         if (reactiveSystem instanceof ReactiveSystem.ReactiveSystemListener) {
             reactiveSystem.setReactiveSystemListener((ReactiveSystemListener) this);
         } else {
-            reactiveSystem.setReactiveSystemListener(DEFAULT_LISTENER);
+            reactiveSystem.setReactiveSystemListener((ReactiveSystemListener<B>) DEFAULT_LISTENER);
         }
     }
 
