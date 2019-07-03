@@ -60,6 +60,21 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     }
 
     @Override
+    public int getLevelOf(BigraphEntity place) {
+        return getNodeHeight(place, 0);
+    }
+
+    private int getNodeHeight(BigraphEntity data, int level) {
+        BigraphEntity parent = getParent(data);
+        if (data == null || parent == null)
+            return level;
+        if (BigraphEntityType.isRoot(parent) && level == 0) {
+            return 1;
+        }
+        return getNodeHeight(parent, level + 1);
+    }
+
+    @Override
     public Collection<BigraphEntity.RootEntity> getRoots() {
         return this.roots;
     }

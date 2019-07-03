@@ -104,6 +104,11 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
+    public int getLevelOf(BigraphEntity place) {
+        return bigraphDelegate.getLevelOf(place);
+    }
+
+    @Override
     public Collection<BigraphEntity> getAllPlaces() {
         return bigraphDelegate.getAllPlaces();
     }

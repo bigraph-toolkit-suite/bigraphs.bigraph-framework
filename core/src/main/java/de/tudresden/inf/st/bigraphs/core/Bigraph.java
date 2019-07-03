@@ -198,6 +198,8 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         );
     }
 
+    int getLevelOf(BigraphEntity place);
+
 
     Collection<BigraphEntity.RootEntity> getRoots();
 

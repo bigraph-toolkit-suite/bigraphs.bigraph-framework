@@ -3,9 +3,9 @@ package de.tudresden.inf.st.bigraphs.core.exceptions;
 /**
  * @author Dominik Grzelak
  */
-public class NoConformReactionRuleInterfaces extends InvalidReactionRuleException {
+public class NonConformReactionRuleInterfaces extends InvalidReactionRuleException {
 
-    public NoConformReactionRuleInterfaces() {
+    public NonConformReactionRuleInterfaces() {
         super("Reaction rule are not conform to the following definition: R: m -> J and R': m' -> J");
     }
 }
