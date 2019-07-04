@@ -94,7 +94,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
                     .peek(x -> reactiveSystemListener.onCheckingReactionRule((ReactionRule<B>) x))
                     .forEachOrdered(eachRule -> {
                         //                            List<B> currentMatches = new LinkedList<>();
-                        String bfcfOfW = canonicalForm.bfcf(theAgent);
+                        String bfcfOfW = canonicalForm.bfcs(theAgent);
                         MatchIterable match = matcher.match(theAgent, (B) eachRule.getRedex());
                         Iterator<BigraphMatch<?>> iterator = match.iterator();
                         while (iterator.hasNext()) {
@@ -107,7 +107,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
                                 reaction = buildParametricReaction(theAgent, next, (ReactionRule<B>) eachRule);
                             }
                             if (Objects.nonNull(reaction)) {
-                                String bfcf = canonicalForm.bfcf(reaction);
+                                String bfcf = canonicalForm.bfcs(reaction);
                                 String reactionLbl = reactionRules.inverse().get(eachRule);
                                 if (!reactionGraph.containsBigraph(bfcf)) {
                                     reactionGraph.addEdge(theAgent, bfcfOfW, reaction, bfcf, (B) next.getRedex(), reactionLbl);

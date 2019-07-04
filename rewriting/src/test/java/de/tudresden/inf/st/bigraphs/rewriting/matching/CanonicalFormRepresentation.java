@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import com.google.common.collect.Lists;
-import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -17,7 +16,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
 import org.junit.jupiter.api.Test;
@@ -25,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,22 +36,108 @@ public class CanonicalFormRepresentation {
 
     @Test
     void name() throws IOException, InvalidConnectionException, LinkTypeNotExistsException {
-        Bigraph sampleBigraph = createSampleBigraphB1(); //createSampleBigraph();
-        Bigraph sampleBigraph2 = createSampleBigraphB2(); //createSampleBigraph2();
-        GraphvizConverter.toPNG(sampleBigraph,
+
+        Bigraph biesingerSampleBigraph = createBiesingerSampleBigraph();
+        String bfcs = BigraphCanonicalForm.getInstance().bfcs(biesingerSampleBigraph);
+        assertEquals(bfcs, "r0$" + "A$BB$CD$E$FG$E#");
+        System.out.println(bfcs);
+        GraphvizConverter.toPNG(biesingerSampleBigraph,
                 true,
-                new File("sampleBigraph.png")
+                new File("sampleBigraph_biesinger.png")
         );
-        GraphvizConverter.toPNG(sampleBigraph2,
-                true,
-                new File("sampleBigraph2.png")
-        );
-        String bfcf = BigraphCanonicalForm.getInstance().bfcf(sampleBigraph);
-        String bfcf1 = BigraphCanonicalForm.getInstance().bfcf(sampleBigraph2);
-        assertEquals(bfcf, bfcf1);
+
+        AtomicInteger cnt2 = new AtomicInteger(0);
+        long count2 = Stream.of(createSampleBigraphB1(), createSampleBigraphB2())
+                .peek(x -> {
+                    try {
+                        GraphvizConverter.toPNG(x,
+                                true,
+                                new File("sampleBigraph2_" + cnt2.incrementAndGet() + ".png")
+                        );
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .map(x -> BigraphCanonicalForm.getInstance().bfcs(x))
+                .peek(System.out::println)
+                .distinct()
+                .count();
+        assertEquals(count2, 1);
+//
+        AtomicInteger cnt0 = new AtomicInteger(0);
+        long count = Stream.of(createSampleBigraphA1(), createSampleBigraphA2())
+                .peek(x -> {
+                    try {
+                        GraphvizConverter.toPNG(x,
+                                true,
+                                new File("sampleBigraph0_" + cnt0.incrementAndGet() + ".png")
+                        );
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .map(x -> BigraphCanonicalForm.getInstance().bfcs(x))
+                .peek(System.out::println)
+                .distinct()
+                .count();
+        assertEquals(count, 1);
+
+        List<Bigraph> sampleGraphs = createSampleGraphs();
+        AtomicInteger cnt1 = new AtomicInteger(0);
+        long num = sampleGraphs.stream()
+                .peek(x -> {
+                    try {
+                        GraphvizConverter.toPNG(x,
+                                true,
+                                new File("sampleBigraph1_" + cnt1.incrementAndGet() + ".png")
+                        );
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .map(x -> BigraphCanonicalForm.getInstance().bfcs(x))
+                .peek(System.out::println)
+                .distinct()
+                .count();
+//                .allMatch(x -> BigraphCanonicalForm.getInstance().bfcs(sampleGraphs.get(0)))
+//                .reduce((s1, s21) -> s1.compareTo(s2) == 0 ? s1 : "").get();
+//        assert !s3.isEmpty();
+        assertEquals(num, 1);
     }
 
-    public Bigraph createSampleBigraph() throws ControlIsAtomicException {
+    /**
+     * Example graph within the slides of Markus Biesinger. The BFCS is "A$BB$CD$E$FG$E#".
+     *
+     * @return an example graph
+     * @throws ControlIsAtomicException
+     * @see <a href="https://www.ke.tu-darmstadt.de/lehre/archiv/ws0809/ml-sem/slides/Biesinger_Markus.pdf">https://www.ke.tu-darmstadt.de/lehre/archiv/ws0809/ml-sem/slides/Biesinger_Markus.pdf</a>
+     */
+    public Bigraph createBiesingerSampleBigraph() throws ControlIsAtomicException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        builder.createRoot()
+                .addChild(signature.getControlByName("A"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("B"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("E"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("E")).goBack().goBack()
+                .addChild(signature.getControlByName("B"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("D"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("G"))
+                .addChild(signature.getControlByName("F"))
+                .goBack()
+                .addChild(signature.getControlByName("C"));
+
+
+        return builder.createBigraph();
+    }
+
+    public Bigraph createSampleBigraphA1() throws ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -83,7 +169,7 @@ public class CanonicalFormRepresentation {
         return builder.createBigraph();
     }
 
-    public Bigraph createSampleBigraph2() throws ControlIsAtomicException {
+    public Bigraph createSampleBigraphA2() throws ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -93,11 +179,11 @@ public class CanonicalFormRepresentation {
                 .addChild(signature.getControlByName("B"))
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("C"))
-                .addChild(signature.getControlByName("E"))
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("F"))
                 .addChild(signature.getControlByName("H"))
                 .goBack()
+                .addChild(signature.getControlByName("E"))
                 .goBack()
                 .addChild(signature.getControlByName("B"))
                 .withNewHierarchy()
@@ -154,6 +240,45 @@ public class CanonicalFormRepresentation {
     }
 
 
+    public List<Bigraph> createSampleGraphs() {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> b2 = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> b3 = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> b4 = factory.createBigraphBuilder(signature);
+
+        b1.createRoot()
+                .addChild(signature.getControlByName("A"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("B")).withNewHierarchy()
+                .addChild(signature.getControlByName("C")).goBack()
+                .addChild(signature.getControlByName("B"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("D")).addChild(signature.getControlByName("C"));
+
+        b2.createRoot().addChild(signature.getControlByName("A")).withNewHierarchy()
+                .addChild(signature.getControlByName("B")).withNewHierarchy().addChild(signature.getControlByName("C"))
+                .goBack()
+                .addChild(signature.getControlByName("B")).withNewHierarchy()
+                .addChild(signature.getControlByName("C")).addChild(signature.getControlByName("D"));
+
+        b3.createRoot().addChild(signature.getControlByName("A")).withNewHierarchy()
+                .addChild(signature.getControlByName("B")).withNewHierarchy()
+                .addChild(signature.getControlByName("D")).addChild(signature.getControlByName("C"))
+                .goBack()
+                .addChild(signature.getControlByName("B")).withNewHierarchy().addChild(signature.getControlByName("C"))
+        ;
+        b4.createRoot().addChild(signature.getControlByName("A")).withNewHierarchy()
+                .addChild(signature.getControlByName("B")).withNewHierarchy()
+                .addChild(signature.getControlByName("C")).addChild(signature.getControlByName("D"))
+                .goBack()
+                .addChild(signature.getControlByName("B")).withNewHierarchy().addChild(signature.getControlByName("C"))
+        ;
+
+        return Lists.newArrayList(b1.createBigraph(), b2.createBigraph(), b3.createBigraph(), b4.createBigraph());
+    }
+
+
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
@@ -164,7 +289,9 @@ public class CanonicalFormRepresentation {
                 .newControl().identifier(StringTypedName.of("E")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("F")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("G")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("H")).arity(FiniteOrdinal.ofInteger(1)).assign();
+                .newControl().identifier(StringTypedName.of("H")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Q")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        ;
 
         return (S) defaultBuilder.create();
     }
