@@ -61,18 +61,70 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     @Override
     public int getLevelOf(BigraphEntity place) {
-        return getNodeHeight(place, 0);
+        if (BigraphEntityType.isRoot(place)) {
+            return 0;
+        }
+        return getNodeDepth(place, 1);
     }
 
-    private int getNodeHeight(BigraphEntity data, int level) {
+    private int getNodeDepth(BigraphEntity data, int level) {
         BigraphEntity parent = getParent(data);
-        if (data == null || parent == null)
+        if (BigraphEntityType.isRoot(parent)) {
             return level;
-        if (BigraphEntityType.isRoot(parent) && level == 0) {
+        } else if (BigraphEntityType.isRoot(parent) && level == 0) {
             return 1;
         }
-        return getNodeHeight(parent, level + 1);
+        return getNodeDepth(parent, level + 1);
     }
+
+    @Override
+    public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
+        List<BigraphEntity> neighbors = new ArrayList<>();
+        neighbors = neighborhoodHook(neighbors, node);
+        return neighbors;
+    }
+
+    private List<BigraphEntity> neighborhoodHook(List<BigraphEntity> neighbors, BigraphEntity node) {
+        EObject instance = node.getInstance();
+        // first check the children of the node
+        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+        if (Objects.nonNull(chldRef)) {
+            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
+            for (EObject each : childs) {
+                addPlaceToList(neighbors, each);
+            }
+        }
+        // second, the parent
+        EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
+            final EObject each = (EObject) instance.eGet(prntRef);
+            addPlaceToList(neighbors, each);
+        }
+        return neighbors;
+    }
+
+    private void addPlaceToList(final List<BigraphEntity> neighbors, final EObject each) {
+        if (isBNode(each)) {
+            neighbors.add(
+                    getNodes().stream()
+                            .filter(x -> x.getInstance().equals(each))
+                            .findFirst().get()
+            );
+        } else if (isBRoot(each)) {
+            neighbors.add(
+                    getRoots().stream()
+                            .filter(x -> x.getInstance().equals(each))
+                            .findFirst().get()
+            );
+        } else if (isBSite(each)) {
+            neighbors.add(
+                    getSites().stream()
+                            .filter(x -> x.getInstance().equals(each))
+                            .findFirst().get()
+            );
+        }
+    }
+
 
     @Override
     public Collection<BigraphEntity.RootEntity> getRoots() {
@@ -300,6 +352,10 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     protected boolean isBSite(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_SITE);
+    }
+
+    protected boolean isBRoot(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_ROOT);
     }
 
     protected boolean isBLink(EObject eObject) {

@@ -198,8 +198,17 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         );
     }
 
+    //TODO rename method
+
+    /**
+     * Get the depth of a place entity.
+     *
+     * @param place the place who's depth should be computed
+     * @return the depth of the given place entity of this bigraph
+     */
     int getLevelOf(BigraphEntity place);
 
+    List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node);
 
     Collection<BigraphEntity.RootEntity> getRoots();
 

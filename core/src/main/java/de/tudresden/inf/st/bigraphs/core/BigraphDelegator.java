@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Delegator class for bigraphs (currently only suitable for pure bigraphs, e.g., no getParents() method available)
@@ -81,6 +82,11 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     @Override
     public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
         return bigraphDelegate.getPointsFromLink(linkEntity);
+    }
+
+    @Override
+    public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
+        return bigraphDelegate.getOpenNeighborhoodOfVertex(node);
     }
 
     @Override
