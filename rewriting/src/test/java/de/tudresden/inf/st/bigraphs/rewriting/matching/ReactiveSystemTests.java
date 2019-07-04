@@ -55,9 +55,13 @@ public class ReactiveSystemTests {
         SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();
         ReactionRule<PureBigraph> rr = createReactionRule_A();
+        ReactionRule<PureBigraph> rrSelf = createReactionRule_A_SelfApply();
+        ReactionRule<PureBigraph> rrsame = createReactionRule_A();
         ReactionRule<PureBigraph> rr2 = createReactionRule_A2();
 
         reactiveSystem.addReactionRule(rr);
+        reactiveSystem.addReactionRule(rrSelf);
+        reactiveSystem.addReactionRule(rrsame);
         reactiveSystem.addReactionRule(rr2);
         assertTrue(reactiveSystem.isSimple());
 
@@ -130,6 +134,31 @@ public class ReactiveSystemTests {
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
+
+    public static ReactionRule<PureBigraph> createReactionRule_A_SelfApply() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
+
+        builder.createRoot()
+                .addChild(signature.getControlByName("Room"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Computer"))
+        ;
+        builder2.createRoot()
+                .addChild(signature.getControlByName("Room"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Computer"))
+        ;
+//        builder.closeAllInnerNames();
+        builder.makeGround();
+        builder2.makeGround();
+        PureBigraph redex = builder.createBigraph();
+        PureBigraph reactum = builder2.createBigraph();
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        return rr;
+    }
+
 
     public static ReactionRule<PureBigraph> createReactionRule_A() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();

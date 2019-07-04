@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 
 import java.util.Collection;
@@ -8,15 +9,15 @@ import java.util.Collection;
 /**
  * @author Dominik Grzelak
  */
-public class InOrderReactionRuleSupplier extends ReactionRuleSupplier {
+public class InOrderReactionRuleSupplier<B extends Bigraph<? extends Signature<?>>> extends ReactionRuleSupplier<B> {
     private int currentCounter = 0;
 
-    <B extends Bigraph<?>> InOrderReactionRuleSupplier(Collection<ReactionRule<B>> availableRules) {
+    InOrderReactionRuleSupplier(Collection<ReactionRule<B>> availableRules) {
         super(availableRules);
     }
 
     @Override
-    public ReactionRule get() {
+    public ReactionRule<B> get() {
         if (currentCounter < availableRules.size()) {
             return availableRules.get(currentCounter++);
         }

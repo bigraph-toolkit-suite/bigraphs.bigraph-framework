@@ -1,22 +1,26 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.Signature;
+
 import java.util.Iterator;
 
 /**
  * Custom iterable implementation for matches of type {@link BigraphMatch}.
  *
+ * @param <T> type of the bigraph within a {@link BigraphMatch} "container" holding the match result
  * @author Dominik Grzelak
  */
-public class MatchIterable implements Iterable<BigraphMatch<?>> {
+public class MatchIterable<T extends BigraphMatch<? extends Bigraph<? extends Signature<?>>>> implements Iterable<T> {
 
-    private Iterator<BigraphMatch<?>> iterator;
+    private Iterator<T> iterator;
 
-    public MatchIterable(Iterator<BigraphMatch<?>> iterator) {
+    public MatchIterable(Iterator<T> iterator) {
         this.iterator = iterator;
     }
 
     @Override
-    public Iterator<BigraphMatch<?>> iterator() {
+    public Iterator<T> iterator() {
         return iterator;
     }
 

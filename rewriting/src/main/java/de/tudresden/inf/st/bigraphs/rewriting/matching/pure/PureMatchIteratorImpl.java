@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
-import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 
@@ -9,22 +8,31 @@ import java.util.*;
 //TODO: in a future version: find matches incrementally and not all at the start (if possible)
 //  next() and hasNext() must be rewritten then
 //  see also comment in PureBigraphMatchingEngine
-public class PureMatchIteratorImpl implements Iterator<BigraphMatch<?>> {
+
+/**
+ * Iterator implementation for bigraph matching.
+ * <p>
+ * This iterator is created by the {@link PureBigraphMatcher} class.
+ *
+ * @param <B> type of the bigraph
+ * @author Dominik Grzelak
+ */
+public class PureMatchIteratorImpl<B extends PureBigraph> implements Iterator<BigraphMatch<B>> {
     private int cursor = 0;
-    private List<BigraphMatch<PureBigraph>> matches = new ArrayList<>();
+    private List<BigraphMatch<B>> matches = new ArrayList<>();
 
-    private PureBigraphMatchingEngine<PureBigraph> matchingEngine;
-//    private PureBigraphMatcher bigraphMatcher;
-//    private BigraphMatch nextMatch;
+    private PureBigraphMatchingEngine<B> matchingEngine;
 
-    PureMatchIteratorImpl(PureBigraphMatchingEngine<? extends PureBigraph> matchingEngine) {
-        this.matchingEngine = (PureBigraphMatchingEngine<PureBigraph>) matchingEngine;
-        findMatches();
+    PureMatchIteratorImpl(PureBigraphMatchingEngine<B> matchingEngine) {
+        this.matchingEngine = matchingEngine; //(PureBigraphMatchingEngine<PureBigraph>) matchingEngine;
+        this.findMatches();
     }
 
     private void findMatches() {
         this.matchingEngine.beginMatch();
-        matches = Collections.unmodifiableList(this.matchingEngine.getMatches());
+//        BigraphMatch[] bigraphMatches = this.matchingEngine.getMatches().toArray(new BigraphMatch[0]);
+//        this.matches = Collections.unmodifiableList(Arrays.<BigraphMatch<B>>asList(bigraphMatches));
+        this.matches = Collections.<BigraphMatch<B>>unmodifiableList(this.matchingEngine.getMatches());
     }
 
     @Override
@@ -37,10 +45,10 @@ public class PureMatchIteratorImpl implements Iterator<BigraphMatch<?>> {
     }
 
     @Override
-    public BigraphMatch<PureBigraph> next() {
+    public BigraphMatch<B> next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        return matches.get(cursor++); //new MatchIterable(this);
+        return matches.get(cursor++);
     }
 }

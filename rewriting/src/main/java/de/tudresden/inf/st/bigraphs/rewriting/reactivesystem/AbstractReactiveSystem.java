@@ -8,12 +8,13 @@ import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.ReactionRuleSupplier;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
@@ -28,7 +29,10 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -37,14 +41,14 @@ import java.util.stream.Stream;
 //TODO: add tactics/order/priorities for RR execution (here?)
 
 /**
- * Algorithm for reaction graph is from (Perrone, 2013)
+ * Algorithm for reaction graph is from (Perrone, 2013) used to perform readability analysis.
  *
  * @author Dominik Grzelak
  */
 public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signature<?>>> implements ReactiveSystem<B> {
     private final static ReactiveSystem.ReactiveSystemListener DEFAULT_LISTENER = new EmptyReactiveSystemListener();
 
-    protected ReactiveSystemListener reactiveSystemListener;
+    protected ReactiveSystemListener<B> reactiveSystemListener;
 
     protected BiMap<String, ReactionRule<B>> reactionRules = HashBiMap.create();
     protected ReactiveSystemOptions options;
@@ -81,47 +85,47 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
      */
     //TODO add predicates with match functions as in bigmc
     public synchronized void computeTransitionSystem(final B agent, final ReactiveSystemOptions options) {
+        this.options = options;
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
         workingQueue.add(agent);
         int transitionCnt = 0;
-        while (!workingQueue.isEmpty() && transitionCnt < options.getMaximumTransitions()) {
+        while (!workingQueue.isEmpty() && transitionCnt < this.options.getMaximumTransitions()) {
             // Remove the first element w of the work queue Q.
             final B theAgent = workingQueue.remove();
             // For each reaction rule, find all matches m1 ...mn in w
             //TODO: generate appropriate supplier for the given option
-            Stream.generate(ReactionRuleSupplier.createInOrder(getReactionRules()))
+            InOrderReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.<B>createInOrder(getReactionRules());
+            Stream.generate(inOrder)
                     .limit(getReactionRules().size())
-                    .peek(x -> reactiveSystemListener.onCheckingReactionRule((ReactionRule<B>) x))
+                    .peek(x -> reactiveSystemListener.onCheckingReactionRule(x))
                     .forEachOrdered(eachRule -> {
-                        //                            List<B> currentMatches = new LinkedList<>();
                         String bfcfOfW = canonicalForm.bfcs(theAgent);
-                        MatchIterable match = matcher.match(theAgent, (B) eachRule.getRedex());
-                        Iterator<BigraphMatch<?>> iterator = match.iterator();
+                        MatchIterable<BigraphMatch<B>> match = matcher.match(theAgent, eachRule.getRedex());
+                        Iterator<BigraphMatch<B>> iterator = match.iterator();
                         while (iterator.hasNext()) {
-                            BigraphMatch<B> next = (BigraphMatch<B>) iterator.next();
+                            BigraphMatch<B> next = iterator.next();
 //                            System.out.println("NEXT: " + next);
                             B reaction = null;
                             if (next.getParameters().size() == 0) {
-                                reaction = buildGroundReaction(theAgent, next, (ReactionRule<B>) eachRule);
+                                reaction = buildGroundReaction(theAgent, next, eachRule);
                             } else {
-                                reaction = buildParametricReaction(theAgent, next, (ReactionRule<B>) eachRule);
+                                reaction = buildParametricReaction(theAgent, next, eachRule);
                             }
                             if (Objects.nonNull(reaction)) {
                                 String bfcf = canonicalForm.bfcs(reaction);
                                 String reactionLbl = reactionRules.inverse().get(eachRule);
                                 if (!reactionGraph.containsBigraph(bfcf)) {
-                                    reactionGraph.addEdge(theAgent, bfcfOfW, reaction, bfcf, (B) next.getRedex(), reactionLbl);
+                                    reactionGraph.addEdge(theAgent, bfcfOfW, reaction, bfcf, next.getRedex(), reactionLbl);
                                     workingQueue.add(reaction);
                                 } else {
-                                    reactionGraph.addEdge(theAgent, bfcfOfW, reaction, bfcf, (B) next.getRedex(), reactionLbl);
+                                    reactionGraph.addEdge(theAgent, bfcfOfW, reaction, bfcf, next.getRedex(), reactionLbl);
                                 }
                             }
                         }
                     });
             //TODO  Check each property p ∈ P against w.
 
-            //TODO  Repeat the procedure for the next item in the work queue, terminating
-            //successfully if the work queue is empty.
+            //Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty.
             transitionCnt++;
         }
 
@@ -130,14 +134,14 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
 
     public void exportGraph(Graph g, String filename) {
         JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<String, DefaultEdge>(g);
-//        mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
 //        mxIGraphLayout layout = new mxCompactTreeLayout(graphAdapter);
-//        mxIGraphLayout layout = new mxOrthogonalLayout(graphAdapter);
         mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.NORTH);
+//        ((mxHierarchicalLayout)layout).setFineTuning(true);
+//        ((mxHierarchicalLayout)layout).setResizeParent(true);
         layout.execute(graphAdapter.getDefaultParent());
 
         BufferedImage image =
-                mxCellRenderer.createBufferedImage(graphAdapter, null, 2, Color.WHITE, true, null);
+                mxCellRenderer.createBufferedImage(graphAdapter, null, 2, Color.WHITE, false, null);
         try {
             Path currentRelativePath = Paths.get("");
             Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), filename + ".png");
@@ -145,7 +149,11 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
             if (!imgFile.exists()) {
                 imgFile.createNewFile();
             }
-            ImageIO.write(image, "PNG", imgFile);
+            if (image == null) {
+                System.out.println("Image is null, cannot write image.");
+            } else {
+                ImageIO.write(image, "PNG", imgFile);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -171,7 +179,8 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
 
         //for each "available" agents not in visitedAgents
         // add here the "tactic" supplier: now is in-order
-        Stream.generate(ReactionRuleSupplier.createInOrder(getReactionRules()))
+        InOrderReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.createInOrder(getReactionRules());
+        Stream.generate(inOrder)
                 .limit(getReactionRules().size())
                 .peek(x -> {
                     reactiveSystemListener.onCheckingReactionRule(x);
@@ -230,7 +239,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
     }
 
 
-    public static class EmptyReactiveSystemListener implements ReactiveSystem.ReactiveSystemListener {
+    public static class EmptyReactiveSystemListener<B extends Bigraph<? extends Signature<?>>> implements ReactiveSystem.ReactiveSystemListener<B> {
 
         @Override
         public void onReactiveSystemStarted() {
@@ -238,7 +247,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
         }
 
         @Override
-        public void onCheckingReactionRule(ReactionRule reactionRule) {
+        public void onCheckingReactionRule(ReactionRule<B> reactionRule) {
 
         }
 
