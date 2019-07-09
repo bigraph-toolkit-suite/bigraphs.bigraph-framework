@@ -105,6 +105,17 @@ public class CanonicalFormRepresentation {
         assertEquals(num, 1);
     }
 
+    @Test
+    void name2() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {
+        Bigraph l1 = createSampleBigraphL1();
+        GraphvizConverter.toPNG(l1,
+                true,
+                new File("sampleBigraph_L_1.png")
+        );
+        String bfcs = BigraphCanonicalForm.getInstance().bfcs(l1);
+        System.out.println(bfcs);
+    }
+
     /**
      * Example graph within the slides of Markus Biesinger. The BFCS is "A$BB$CD$E$FG$E#".
      *
@@ -239,6 +250,29 @@ public class CanonicalFormRepresentation {
         return builder.closeAllInnerNames().createBigraph();
     }
 
+    public Bigraph createSampleBigraphL1() throws InvalidConnectionException, LinkTypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.InnerName edge = b1.createInnerName("edge");
+        BigraphEntity.InnerName edge2 = b1.createInnerName("edge2");
+        BigraphEntity.OuterName o1 = b1.createOuterName("o1");
+
+        b1.createRoot().addChild("R")
+                .withNewHierarchy()
+                .addChild("J").connectNodeToInnerName(edge2)
+                .addChild("A").connectNodeToInnerName(edge2).connectNodeToOuterName(o1)
+                .addChild("A")
+                .goBack()
+                .addChild("R")
+                .withNewHierarchy()
+                .addChild("A").connectNodeToInnerName(edge)
+                .addChild("J").connectNodeToInnerName(edge2)
+//                .addChild("C")
+        ;
+        b1.closeAllInnerNames();
+        return b1.createBigraph();
+    }
 
     public List<Bigraph> createSampleGraphs() {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
@@ -282,7 +316,7 @@ public class CanonicalFormRepresentation {
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -290,7 +324,10 @@ public class CanonicalFormRepresentation {
                 .newControl().identifier(StringTypedName.of("F")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("G")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("H")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("I")).arity(FiniteOrdinal.ofInteger(2)).assign()
+                .newControl().identifier(StringTypedName.of("J")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("Q")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("R")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
 
         return (S) defaultBuilder.create();

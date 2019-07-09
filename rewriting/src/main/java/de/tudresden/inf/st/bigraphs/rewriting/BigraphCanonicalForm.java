@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.rewriting;
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
@@ -93,7 +94,7 @@ public class BigraphCanonicalForm {
                 //group by parents
                 //in der reihenfolge wie oben: lexicographic "from small to large", and bfs from left to right
                 Map<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> collect1 = collect.entrySet().stream()
-//                        .sorted(Comparator.comparing(k -> k.getKey().getControl().getNamedType().stringValue()))
+                        .sorted(Comparator.comparing(k -> k.getKey().getControl().getNamedType().stringValue()))
                         .collect(Collectors.groupingBy(e -> bigraph.getParent(e.getKey()), Collectors.toCollection(LinkedList::new)));
                 LinkedHashMap<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> collect2 = collect1.entrySet().stream()
                         .sorted(Map.Entry.comparingByValue(BigraphCanonicalForm::compareByControl))
@@ -104,8 +105,28 @@ public class BigraphCanonicalForm {
                         .sorted(BigraphCanonicalForm::compareByControlThenChildrenSize)
                         .forEachOrdered(e -> {
                             e.getValue().stream()
-//                                    .sorted(Comparator.comparing(k -> k.getKey().getControl().getNamedType().stringValue()))
-                                    .forEachOrdered(val -> sb.append(val.getValue().getNamedType().stringValue()));
+                                    .sorted(
+                                            Comparator.comparing((Map.Entry<BigraphEntity, Control> k) ->
+                                                    k.getKey().getControl().getNamedType().stringValue() //+ "" + bigraph.getPorts(k.getKey()).size()
+                                            ).thenComparing(Comparator.comparing((Map.Entry<BigraphEntity, Control> k) ->
+                                                    bigraph.getPorts(k.getKey()).size()).reversed())
+                                    )
+                                    .forEachOrdered(val -> {
+                                        sb.append(val.getValue().getNamedType().stringValue());
+//                                        String suffix = "";
+                                        int num;
+                                        if ((num = bigraph.getPorts(val.getKey()).size()) > 0) {
+                                            sb.append("{"); //.append(num).append(":");
+
+                                            bigraph.getPorts(val.getKey()).stream()
+                                                    .map(bigraph::getLinkOfPoint)
+                                                    .map(l -> BigraphEntityType.isEdge(l) ? ((BigraphEntity.Edge) l).getName() : ((BigraphEntity.OuterName) l).getName())
+                                                    .sorted()
+                                                    .forEachOrdered(n -> sb.append(n).append("|"));
+                                            sb.deleteCharAt(sb.length() - 1);
+                                            sb.append("}");
+                                        }
+                                    });
                             sb.append("$");
                         });
             }
@@ -117,20 +138,14 @@ public class BigraphCanonicalForm {
             sb.deleteCharAt(sb.length() - 1);
         }
         sb.insert(sb.length(), "#");
-        return sb.toString();
-    }
 
-    private static int compareByControl(LinkedList<Map.Entry<BigraphEntity, Control>> lhs, LinkedList<Map.Entry<BigraphEntity, Control>> rhs) {
-        String s1 = lhs.stream().map(x -> x.getValue().getNamedType().stringValue()).sorted().collect(Collectors.joining(""));
-        String s2 = rhs.stream().map(x -> x.getValue().getNamedType().stringValue()).sorted().collect(Collectors.joining(""));
-        return s1.compareTo(s2);
-//        if (s1.equals(s2)) {
-//            return rhs.size() - lhs.size();
-//        } else {
-//            String prefix1 = lhs.size() >= rhs.size() ? "1" : "0";
-//            String prefix2 = rhs.size() >= lhs.size() ? "1" : "0";
-//            return (prefix1 + s1).compareTo(prefix2 + s2);
+        // add outernamesnames
+//        if (bigraph.getOuterNames().size() > 0) {
+//            bigraph.getOuterNames().stream().sorted(Comparator.comparing(k -> k.getName()))
+//                    .forEachOrdered(o -> sb.insert(0, o.getName()));
 //        }
+
+        return sb.toString();
     }
 
     /**
@@ -149,6 +164,19 @@ public class BigraphCanonicalForm {
         } else {
             return lhs.getKey().getControl().getNamedType().stringValue().compareTo(rhs.getKey().getControl().getNamedType().stringValue());
         }
+    }
+
+    private static int compareByControl(LinkedList<Map.Entry<BigraphEntity, Control>> lhs, LinkedList<Map.Entry<BigraphEntity, Control>> rhs) {
+        String s1 = lhs.stream().map(x -> x.getValue().getNamedType().stringValue()).sorted().collect(Collectors.joining(""));
+        String s2 = rhs.stream().map(x -> x.getValue().getNamedType().stringValue()).sorted().collect(Collectors.joining(""));
+        return s1.compareTo(s2);
+//        if (s1.equals(s2)) {
+//            return rhs.size() - lhs.size();
+//        } else {
+//            String prefix1 = lhs.size() >= rhs.size() ? "1" : "0";
+//            String prefix2 = rhs.size() >= lhs.size() ? "1" : "0";
+//            return (prefix1 + s1).compareTo(prefix2 + s2);
+//        }
     }
 
     /**

@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
@@ -134,29 +135,29 @@ public class ReactiveSystemTests {
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_A() throws ControlIsAtomicException {
+    public static Bigraph createAgent_A() throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-
+        BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer"))
+                .addChild("Computer").connectNodeToOuterName(network)
         ;
         builder.makeGround();
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_A_Final() throws ControlIsAtomicException {
+    public static Bigraph createAgent_A_Final() throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-
+        BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot()
-                .addChild(signature.getControlByName("Room"))
+                .addChild("Room")
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer"))
+                .addChild("Computer").connectNodeToOuterName(network)
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+                .addChild("Job").addChild("Job")
         ;
         return builder.createBigraph();
     }
@@ -200,16 +201,17 @@ public class ReactiveSystemTests {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
-
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
-                .addChild(signature.getControlByName("Room"))
+                .addChild("Room")
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer"))
+                .addChild("Computer").connectNodeToOuterName(network)
         ;
         builder2.createRoot()
-                .addChild(signature.getControlByName("Room"))
+                .addChild("Room")
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer"))
+                .addChild("Computer").connectNodeToOuterName(network2)
         ;
 //        builder.closeAllInnerNames();
         builder.makeGround();
@@ -225,18 +227,19 @@ public class ReactiveSystemTests {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
-
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
-                .addChild(signature.getControlByName("Room"))
+                .addChild("Room")
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer"))
+                .addChild("Computer").connectNodeToOuterName(network)
         ;
         builder2.createRoot()
-                .addChild(signature.getControlByName("Room"))
+                .addChild("Room")
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer"))
+                .addChild("Computer").connectNodeToOuterName(network2)
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Job"))
+                .addChild("Job")
         ;
 
 //        builder.closeAllInnerNames();
@@ -252,20 +255,21 @@ public class ReactiveSystemTests {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
-
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
-                .addChild(signature.getControlByName("Room"))
+                .addChild("Room")
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer"))
+                .addChild("Computer").connectNodeToOuterName(network)
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Job"))
+                .addChild("Job")
         ;
         builder2.createRoot()
-                .addChild(signature.getControlByName("Room"))
+                .addChild("Room")
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer"))
+                .addChild("Computer").connectNodeToOuterName(network2)
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+                .addChild("Job").addChild("Job")
         ;
 
 //        builder.closeAllInnerNames();
