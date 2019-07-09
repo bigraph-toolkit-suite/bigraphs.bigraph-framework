@@ -258,6 +258,13 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      */
     BigraphEntity getLinkOfPoint(BigraphEntity point);
 
+    /**
+     * Return all ports of a node. If the node's control has arity 0, then the list will always be empty.
+     * If no link is attached to a port, the list will also be empty.
+     *
+     * @param node the node who's ports shall be returned
+     * @return all ports of a node
+     */
     Collection<BigraphEntity.Port> getPorts(BigraphEntity node);
 
     <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port);

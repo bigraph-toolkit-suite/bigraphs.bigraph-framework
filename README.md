@@ -19,8 +19,9 @@ The high level API eases the programming of bigraphical systems for real-world a
 **Features**
 
 - dynamic creation of bigraphs at runtime based on an Ecore meta model
-- bigraph matching (WIP) 
-- visualization (WIP)
+- bigraph matching (beta) 
+- visualization (beta)
+- reaction system (= transition system, but no minimal transition system, alpha)
 - simple model file store (WIP)
 
 ## Bigraph Meta Model 

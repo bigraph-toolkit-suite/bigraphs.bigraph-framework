@@ -216,12 +216,13 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     @Override
     public Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
-        if (!BigraphEntityType.isNode(node)) return Collections.EMPTY_LIST;
+        if (!BigraphEntityType.isNode(node)) return Collections.emptyList();
         EObject instance = node.getInstance();
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
         List<BigraphEntity.Port> portsList = new LinkedList<>();
         for (EObject eachPort : portList) { // are ordered anyway
+            //TODO: don't create new class everytime!
             BigraphEntity.Port port = BigraphEntity.create(eachPort, BigraphEntity.Port.class);
             port.setIndex(portList.indexOf(eachPort)); //eachPort.eGet(eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_INDEX))
             portsList.add(port);
@@ -232,12 +233,12 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     @Override
     public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
         if (Objects.isNull(linkEntity) || !isBLink(linkEntity.getInstance()))
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         final EObject eObject = linkEntity.getInstance();
         final EStructuralFeature pointsRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-        if (Objects.isNull(pointsRef)) return Collections.EMPTY_LIST;
+        if (Objects.isNull(pointsRef)) return Collections.emptyList();
         final EList<EObject> pointsObjects = (EList<EObject>) eObject.eGet(pointsRef);
-        if (Objects.isNull(pointsObjects)) return Collections.EMPTY_LIST;
+        if (Objects.isNull(pointsObjects)) return Collections.emptyList();
 
         final Collection<BigraphEntity> result = new ArrayList<>();
         for (EObject eachObject : pointsObjects) {

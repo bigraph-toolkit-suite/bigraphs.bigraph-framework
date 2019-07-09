@@ -84,10 +84,21 @@ public class GraphvizConverter {
             theGraph.add(rootGraphs);
         }
 
+        //RANK NODES
+        // collect node heights first
+        Map<BigraphEntity, Integer> levelMap = new HashMap<>();
+//        for (BigraphEntity each : bigraph.getAllPlaces()) {
+//            int levelUtil = getNodeHeight(bigraph, each, 0);
+//            levelMap.put(each, levelUtil);
+//        }
+
         // create the data structure first for creating the node hierarchy
         final Map<String, Set<GraphVizLink>> graphMap = new HashMap<>();
-        bigraph.getAllPlaces().forEach(s -> graphMap.put(labelSupplier.with(s).get(), new HashSet<>()));
-
+        bigraph.getAllPlaces().forEach(s -> {
+            graphMap.put(labelSupplier.with(s).get(), new HashSet<>());
+//            int levelUtil = bigraph.getLevelOf(s); //getNodeHeight(bigraph, s, 0);
+            levelMap.put(s, bigraph.getLevelOf(s));
+        });//TODO: move down with putIFAbsent
         // connects children to parent
         Consumer<BigraphEntity> nestingConsumer = t -> {
             BigraphEntity parent = bigraph.getParent(t);
@@ -99,13 +110,13 @@ public class GraphvizConverter {
         bigraph.getSites().forEach(nestingConsumer);
 
 
-        //RANK NODES
-        // collect node heights first
-        Map<BigraphEntity, Integer> levelMap = new HashMap<>();
-        for (BigraphEntity each : bigraph.getAllPlaces()) {
-            int levelUtil = getNodeHeight(bigraph, each, 0);
-            levelMap.put(each, levelUtil);
-        }
+//        //RANK NODES
+//        // collect node heights first
+//        Map<BigraphEntity, Integer> levelMap = new HashMap<>();
+//        for (BigraphEntity each : bigraph.getAllPlaces()) {
+//            int levelUtil = getNodeHeight(bigraph, each, 0);
+//            levelMap.put(each, levelUtil);
+//        }
         Map<Integer, List<BigraphEntity>> collect = levelMap.entrySet().stream()
                 .collect(
                         Collectors.groupingBy(
@@ -268,7 +279,7 @@ public class GraphvizConverter {
 
     private MutableGraph makeHierarchyCluster(Bigraph bigraph, BigraphEntity nodeEntity, MutableGraph currentParent) {
         //if children: iterate and check
-        List<BigraphEntity> childrenOf = new ArrayList<>(bigraph.getChildrenOf(nodeEntity));
+        List<BigraphEntity> childrenOf = new ArrayList<BigraphEntity>(bigraph.getChildrenOf(nodeEntity));
 
         List<MutableGraph> graphList = new LinkedList<>();
         for (BigraphEntity each : childrenOf) {
@@ -291,18 +302,6 @@ public class GraphvizConverter {
         }
         graphList.forEach(currentParent::add);
         return currentParent;
-    }
-
-    //TODO use bigraph interface method
-    @Deprecated
-    private int getNodeHeight(Bigraph<?> bigraph, BigraphEntity data, int level) {
-        BigraphEntity parent = bigraph.getParent(data);
-        if (data == null || parent == null)
-            return level;
-        if (BigraphEntityType.isRoot(parent) && level == 0) {
-            return 1;
-        }
-        return getNodeHeight(bigraph, parent, level + 1);
     }
 
     @Data
