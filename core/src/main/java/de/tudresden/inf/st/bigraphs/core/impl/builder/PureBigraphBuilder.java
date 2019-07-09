@@ -179,6 +179,10 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
             return this;
         }
 
+        public Hierarchy addChild(String controlName) {
+            return addChild(signature.getControlByName(controlName));
+        }
+
         //this implies: added to a parent (see lastCreatedNode)
         public Hierarchy addChild(Control control) {
             assertControlIsNonAtomic(getParent());
