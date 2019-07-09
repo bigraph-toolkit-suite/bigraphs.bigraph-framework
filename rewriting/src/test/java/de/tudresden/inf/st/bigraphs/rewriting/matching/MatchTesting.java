@@ -23,6 +23,10 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Mode;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +38,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 // to the equivalent bigraphER output result (means, check for num. of outer names etc.)
 public class MatchTesting {
     private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+
+    public static void main(String[] args) throws Exception {
+        org.openjdk.jmh.Main.main(args);
+    }
 
     void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next, String path) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
         PureBigraph context = (PureBigraph) next.getContext();
@@ -137,7 +145,10 @@ public class MatchTesting {
     }
 
     @Test
-    void model_test_2() throws Exception {
+    @Benchmark
+    @Fork(value = 1, warmups = 2)
+    @BenchmarkMode(Mode.AverageTime)
+    public void model_test_2() throws Exception {
         PureBigraph agent_model_test_2 = (PureBigraph) createAgent_model_test_2();
         PureBigraph redex_model_test_2a = (PureBigraph) createRedex_model_test_2a();
         //the second root of the redex will create many occurrences because a distinct match isn't possible
@@ -151,12 +162,17 @@ public class MatchTesting {
 //            System.out.println(next);
 //        }
 
-        MatchIterable match2 = matcher.match(agent_model_test_2, redex_model_test_2b);
-        Iterator<BigraphMatch<?>> iterator2 = match2.iterator();
-        while (iterator2.hasNext()) {
-            BigraphMatch<?> next = iterator2.next();
-            createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
-            System.out.println(next);
+        for (int i = 0; i < 10; i++) {
+            Stopwatch timer0 = Stopwatch.createStarted();
+            MatchIterable match2 = matcher.match(agent_model_test_2, redex_model_test_2b);
+            Iterator<BigraphMatch<?>> iterator2 = match2.iterator();
+            while (iterator2.hasNext()) {
+                BigraphMatch<?> next = iterator2.next();
+                long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
+                System.out.println("Match time FULL (millisecs) " + (elapsed0 / 1e+6f));
+//                createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
+//                System.out.println(next);
+            }
         }
 
     }
@@ -192,6 +208,45 @@ public class MatchTesting {
             System.out.println(next);
         }
 
+    }
+
+    @Test
+    void model_test_5() throws InvalidConnectionException, LinkTypeNotExistsException {
+        PureBigraph agent_model_test_5 = (PureBigraph) createAgent_model_test_5();
+        PureBigraph redex_model_test_5 = (PureBigraph) createRedex_model_test_5();
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+
+        MatchIterable match = matcher.match(agent_model_test_5, redex_model_test_5);
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            BigraphMatch<?> next = iterator.next();
+//            createGraphvizOutput(agent_model_test_4, next, "src/test/resources/graphviz/model4/");
+            System.out.println(next);
+        }
+    }
+
+    public Bigraph createAgent_model_test_5() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        builder.createRoot()
+                .addChild(signature.getControlByName("Computer"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Room"))
+                .addChild(signature.getControlByName("Job"));
+        return builder.createBigraph();
+    }
+
+    public Bigraph createRedex_model_test_5() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        builder.createRoot()
+                .addChild(signature.getControlByName("Room"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Computer"))
+                .addChild(signature.getControlByName("Job"));
+        return builder.createBigraph();
     }
 
     public Bigraph createAgent_model_test_4() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {

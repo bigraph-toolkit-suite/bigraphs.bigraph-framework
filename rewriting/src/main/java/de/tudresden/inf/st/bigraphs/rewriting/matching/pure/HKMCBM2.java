@@ -10,7 +10,7 @@ import org.jgrapht.alg.util.FixedSizeIntegerQueue;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Slightly modified version of the original {@link org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching}
@@ -50,8 +50,10 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 
 //    private Set<Control> availableControls = new LinkedHashSet<>();
 
-    private List<Control> availableControlsRedex = new ArrayList<>();
-    private List<Control> availableControlsAgent = new ArrayList<>();
+    private LinkedList<Control> availableControlsRedex;
+    private LinkedList<Control> availableControlsAgent;
+    private Map<Control, Long> ctrlsRedex = new ConcurrentHashMap<>(); // = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+    private Map<Control, Long> ctrlsAgent = new ConcurrentHashMap<>(); // = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
 
     private boolean hasSite = false;
 
@@ -79,15 +81,26 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
             this.partition2 = partition1;
         }
 
-//        System.out.println("swapedPlaces = " + swapedPlaces);
-        List<Control> collect = partition1.stream().map(x -> x.getControl()).filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        availableControlsRedex = new ArrayList<>(collect);
-        List<Control> collect1 = partition2.stream().map(x -> x.getControl()).filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        availableControlsAgent = new ArrayList<>(collect1);
-//        availableControls.addAll(collect);
-//        availableControls.addAll(collect1);
+//        availableControlsRedex = new LinkedList<>();
+//        availableControlsAgent = new LinkedList<>();
+//        for (BigraphEntity each : partition1) {
+//            if (each.getControl() != null) {
+////                availableControlsRedex.add(each.getControl());
+////                ctrlsRedex.putIfAbsent(each.getControl(), 0L);
+//                ctrlsRedex.put(each.getControl(), ctrlsRedex.getOrDefault(each.getControl(), 0L) + 1);
+//            }
+//        }
+//        for (BigraphEntity each : partition2) {
+//            if (each.getControl() != null) {
+////                availableControlsAgent.add(each.getControl());
+////                ctrlsAgent.putIfAbsent(each.getControl(), 0L);
+//                ctrlsAgent.put(each.getControl(), ctrlsAgent.getOrDefault(each.getControl(), 0L) + 1);
+//            }
+//        }
+//        availableControlsRedex = partition1.stream().map((Function<BigraphEntity, Control>) BigraphEntity::getControl).filter(Objects::nonNull)
+//                .sorted(Comparator.comparing(bigraphEntity -> bigraphEntity.getNamedType().stringValue())).collect(Collectors.toCollection(LinkedList::new));
+//        availableControlsAgent = partition2.stream().map((Function<BigraphEntity, Control>) BigraphEntity::getControl).filter(Objects::nonNull)
+//                .sorted(Comparator.comparing(bigraphEntity -> bigraphEntity.getNamedType().stringValue())).collect(Collectors.toCollection(LinkedList::new));
     }
 
     public boolean isHasSite() {
@@ -225,9 +238,32 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     List<BigraphEntity> loserNodes = new ArrayList<>();
 
     //TODO: think about to move this out from this class or integrate it better here
+
+    /**
+     * The order is not important (place graphs are unordered trees) so we just have to check if each control is present
+     * somewhere
+     *
+     * @return
+     */
     public boolean areControlsSame() {
-        Map<Control, Long> ctrlsRedex = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
-        Map<Control, Long> ctrlsAgent = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+//        availableControlsRedex = new LinkedList<>();
+//        availableControlsAgent = new LinkedList<>();
+        for (BigraphEntity each : partition1) {
+            if (each.getControl() != null) {
+//                availableControlsRedex.add(each.getControl());
+//                ctrlsRedex.putIfAbsent(each.getControl(), 0L);
+                ctrlsRedex.put(each.getControl(), ctrlsRedex.getOrDefault(each.getControl(), 0L) + 1);
+            }
+        }
+        for (BigraphEntity each : partition2) {
+            if (each.getControl() != null) {
+//                availableControlsAgent.add(each.getControl());
+//                ctrlsAgent.putIfAbsent(each.getControl(), 0L);
+                ctrlsAgent.put(each.getControl(), ctrlsAgent.getOrDefault(each.getControl(), 0L) + 1);
+            }
+        }
+//        Map<Control, Long> ctrlsRedex = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+//        Map<Control, Long> ctrlsAgent = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
         if (hasSite) { //(!collect2.equals(collect)) {
             boolean controlsAreGood = false;
             Iterator<Map.Entry<Control, Long>> redexIterator = ctrlsRedex.entrySet().iterator();
@@ -257,8 +293,10 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 //must be equal
                 if (ctrlsAgent.get(each.getKey()) == null) {
                     controlsAreGood = false;
+                    break;
                 } else if (!ctrlsAgent.get(each.getKey()).equals(each.getValue())) {
                     controlsAreGood = false;
+                    break;
                 } else {
 //                    System.out.println("OK");
                     controlsAreGood = true;
@@ -271,14 +309,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
             return isSubset; //&& availableControlsRedex.size() <= availableControlsAgent.size()
         }
     }
-
-//    public boolean isCrossBoundary() {
-//        return crossBoundary;
-//    }
-//
-//    public void setCrossBoundary(boolean crossBoundary) {
-//        this.crossBoundary = crossBoundary;
-//    }
 
     //https://stackoverflow.com/a/32532049
     static String str(int i) {

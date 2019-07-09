@@ -21,10 +21,17 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.MatchPredicate;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
+import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,28 +52,68 @@ public class ReactiveSystemTests {
         assertEquals(1, reactiveSystem.getReactionRules().size());
         assertTrue(reactiveSystem.isSimple());
 
-        ReactiveSystemOptions opts = ReactiveSystemOptions.create(2);
+        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
         reactiveSystem.simulate(agent, opts);
     }
 
     @Test
+    void create_reactionsystem_options_test() {
+        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
+        opts.and(transitionOpts()
+                .setMaximumTransitions(4)
+                .setMaximumTime(TimeUnit.SECONDS)
+                .create()
+        ).and(ReactiveSystemOptions.exportOpts()
+                .setOutputStatesFolder(new File(""))
+                .setTraceFile(new File(""))
+                .create()
+        );
+
+
+        opts.and(transitionOpts()
+                .setMaximumTransitions(4)
+                .setMaximumTime(TimeUnit.SECONDS)
+                .create());
+
+        ReactiveSystemOptions.TransitionOptions opts1 = opts.get(ReactiveSystemOptions.Options.TRANSITION);
+        assertEquals(opts1.getMaximumTransitions(), 4);
+
+    }
+
+    @Test
     void create_transition_system_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
-        // Create reaction rules
+        // Create reaction rulesname
         SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();
         ReactionRule<PureBigraph> rr = createReactionRule_A();
-        ReactionRule<PureBigraph> rrSelf = createReactionRule_A_SelfApply();
         ReactionRule<PureBigraph> rrsame = createReactionRule_A();
+        ReactionRule<PureBigraph> rrSelf = createReactionRule_A_SelfApply();
         ReactionRule<PureBigraph> rr2 = createReactionRule_A2();
 
         reactiveSystem.addReactionRule(rr);
         reactiveSystem.addReactionRule(rrSelf);
-        reactiveSystem.addReactionRule(rrsame);
         reactiveSystem.addReactionRule(rr2);
+        reactiveSystem.addReactionRule(rrsame);
         assertTrue(reactiveSystem.isSimple());
+        Path currentRelativePath = Paths.get("");
+        Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), "transition_graph.png");
+        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
+        opts
+                .and(transitionOpts()
+                        .setMaximumTransitions(4)
+                        .setMaximumTime(TimeUnit.SECONDS)
+                        .create()
+                )
+                .setMeasureTime(true)
+                .and(ReactiveSystemOptions.exportOpts()
+                        .setTraceFile(new File(completePath.toUri()))
+                        .create()
+                )
+        ;
 
-        ReactiveSystemOptions opts = ReactiveSystemOptions.create(4);
-        reactiveSystem.computeTransitionSystem(agent, opts);
+        MatchPredicate<PureBigraph> pred1 = MatchPredicate.create((PureBigraph) createAgent_A_Final());
+
+        reactiveSystem.computeTransitionSystem(agent, opts, Arrays.asList(pred1));
     }
 
     public static Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
@@ -92,11 +139,25 @@ public class ReactiveSystemTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         builder.createRoot()
-                .addChild(signature.getControlByName("Room"))
+                .addChild("Room")
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("Computer"))
         ;
         builder.makeGround();
+        return builder.createBigraph();
+    }
+
+    public static Bigraph createAgent_A_Final() throws ControlIsAtomicException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        builder.createRoot()
+                .addChild(signature.getControlByName("Room"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Computer"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+        ;
         return builder.createBigraph();
     }
 

@@ -272,11 +272,9 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
     }
 
     public Collection<BigraphEntity> getAllVerticesBfsOrderFrom(BigraphEntity eachRoot) {
-        Collection<BigraphEntity> allVerticesBfsOrder = new ArrayList<>();
         Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
         Iterable<BigraphEntity> v0 = stringTraverser.breadthFirst(eachRoot);
-        allVerticesBfsOrder.addAll(Lists.newArrayList(v0));
-        return allVerticesBfsOrder;
+        return new ArrayList<>(Lists.newArrayList(v0));
     }
 
     /**

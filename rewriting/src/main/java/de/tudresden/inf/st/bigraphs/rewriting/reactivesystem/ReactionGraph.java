@@ -22,7 +22,7 @@ public class ReactionGraph<B extends Bigraph<?>> {
     private Graph<String, String> graph;
 
     public ReactionGraph() {
-        graph = buildEmptySimpleDirectedGraph();
+        reset();
     }
 
     public void addEdge(B source, String sourceLbl, B target, String targetLbl, B reaction, String reactionLbl) {
@@ -32,6 +32,10 @@ public class ReactionGraph<B extends Bigraph<?>> {
         bigraphMap.putIfAbsent(sourceLbl, source);
         bigraphMap.putIfAbsent(targetLbl, target);
         labelMap.putIfAbsent(reactionLbl, reaction);
+    }
+
+    public void reset() {
+        graph = buildEmptySimpleDirectedGraph();
     }
 
     public boolean containsBigraph(String label) {

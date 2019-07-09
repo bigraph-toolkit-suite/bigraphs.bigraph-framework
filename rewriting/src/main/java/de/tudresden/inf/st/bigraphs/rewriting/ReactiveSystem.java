@@ -2,6 +2,8 @@ package de.tudresden.inf.st.bigraphs.rewriting;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.TransitionPredicates;
+import org.jgrapht.GraphPath;
 
 import java.util.Collection;
 
@@ -14,12 +16,6 @@ import java.util.Collection;
  * @author Dominik Grzelak
  */
 public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
-
-    //TODO: add id/label supplier, add this also to RR and agent (create interface for that): use support for this to build a hash (should be unique)
-    //TODO: add list of applicants (is updated after each match and user is notified by a callback
-    //TODO: add transitiontriple (is updated after each match and user is notified by a callback - or a Table (many RR and an agent could
-    //  lead to the same a'
-    // or when the execution stops
 
     /**
      * Return the labels of the transition system which are called reaction rules for BRS.
@@ -41,13 +37,31 @@ public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
 
     interface ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>> {
 
-        void onReactiveSystemStarted();
+        default void onReactiveSystemStarted() {
+        }
 
-        void onCheckingReactionRule(ReactionRule<B> reactionRule);
+        default void onCheckingReactionRule(ReactionRule<B> reactionRule) {
+        }
 
-        void onReactiveSystemFinished();
+        default void onReactiveSystemFinished() {
+        }
 
-        void onUpdateReactionRuleApplies();
+        default void onUpdateReactionRuleApplies() {
+        }
+
+        /**
+         * Reports a violation of a predicate and supplies a counter-example trace from the starting state to the violating state
+         * to the method.
+         *
+         * @param currentAgent
+         * @param predicate
+         * @param counterExampleTrace
+         */
+        default void onPredicateViolated(B currentAgent, TransitionPredicates<B> predicate, GraphPath<String, String> counterExampleTrace) {
+        }
+
+        default void onAllPredicateMatched(B currentAgent) {
+        }
 
     }
 }

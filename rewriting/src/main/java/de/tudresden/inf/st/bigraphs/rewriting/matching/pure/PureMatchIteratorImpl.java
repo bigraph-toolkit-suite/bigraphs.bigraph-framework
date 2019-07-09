@@ -32,11 +32,15 @@ public class PureMatchIteratorImpl<B extends PureBigraph> implements Iterator<Bi
         this.matchingEngine.beginMatch();
 //        BigraphMatch[] bigraphMatches = this.matchingEngine.getMatches().toArray(new BigraphMatch[0]);
 //        this.matches = Collections.unmodifiableList(Arrays.<BigraphMatch<B>>asList(bigraphMatches));
+        if (this.matchingEngine.hasMatched()) {
+            this.matchingEngine.createMatchResult();
+        }
         this.matches = Collections.<BigraphMatch<B>>unmodifiableList(this.matchingEngine.getMatches());
     }
 
     @Override
     public boolean hasNext() {
+        if (matches.size() == 0) return false;
         boolean tmp = cursor != matches.size();
 //        if (tmp) {
 //            cursor++;
