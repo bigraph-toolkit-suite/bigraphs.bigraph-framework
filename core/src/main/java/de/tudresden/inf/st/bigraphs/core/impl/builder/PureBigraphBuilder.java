@@ -115,9 +115,9 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
      */
     public Hierarchy newHierarchy(Control control) {
         EObject childNode = createNodeOfEClass(control.getNamedType().stringValue(), control); // new Hierarchy()
-        BigraphEntity.NodeEntity nodeEntity = BigraphEntity.createNode(childNode, control);
-        Hierarchy hierarchy = new Hierarchy(nodeEntity);
-        hierarchy.lastCreatedNode = (BigraphEntity.NodeEntity<Control>) nodeEntity;
+        BigraphEntity.NodeEntity newParentNode = BigraphEntity.createNode(childNode, control);
+        Hierarchy hierarchy = new Hierarchy(newParentNode);
+        hierarchy.lastCreatedNode = (BigraphEntity.NodeEntity<Control>) newParentNode;
         return hierarchy;
     }
 
@@ -148,6 +148,18 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
 
         public Hierarchy goBack() {
             return Objects.isNull(this.parentHierarchy) ? this : this.parentHierarchy;
+        }
+
+        public Hierarchy top() {
+            Hierarchy tmp = this.parentHierarchy;
+            if (Objects.isNull(tmp)) return this;
+            Hierarchy last = null;
+            do {
+                if (tmp != null) last = tmp;
+                tmp = tmp.parentHierarchy;
+            }
+            while (tmp != null);
+            return last;
         }
 
         /**

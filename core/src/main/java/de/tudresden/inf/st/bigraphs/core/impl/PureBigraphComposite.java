@@ -549,10 +549,14 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
 
         //rewrite names...to make them disjoint. This will leave the original nodes untouched
-        Map<String, BigraphEntity.NodeEntity> V_G = g.getNodes().stream().collect(Collectors.toMap(s -> rewriteNameSupplier.get(), Function.identity()));
+        Map<String, BigraphEntity.NodeEntity> V_G = g.getNodes().stream().collect(Collectors.toMap(s -> rewriteNameSupplier.get(), Function.identity(),
+                (v1, v2) -> v1,
+                LinkedHashMap::new));
 
         //rewrite names...to make them disjoint. This will leave the original nodes untouched
-        Map<String, BigraphEntity.NodeEntity> V_F = f.getNodes().stream().collect(Collectors.toMap(s -> rewriteNameSupplier.get(), Function.identity()));
+        Map<String, BigraphEntity.NodeEntity> V_F = f.getNodes().stream().collect(Collectors.toMap(s -> rewriteNameSupplier.get(), Function.identity(),
+                (v1, v2) -> v1,
+                LinkedHashMap::new));
 
         // aggregated node set of the new bigraph to be composed
         HashBiMap<String, BigraphEntity.NodeEntity> V = HashBiMap.create();
@@ -568,9 +572,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
 
         // nodes are disjoint now - see above rewriteNodeNames
         Set<BigraphEntity> W_set = new LinkedHashSet<>();
-        W_set.addAll(V.values());
+        W_set.addAll(V.values()); //.stream().sorted(Comparator.comparing(x -> ((BigraphEntity.NodeEntity) x).getName())).collect(Collectors.toList()));
         W_set.addAll(k);
-
         Set<BigraphEntity> kVF = new LinkedHashSet<>();
         kVF.addAll(V_F.values());
         kVF.addAll(k);
@@ -592,19 +595,34 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
         for (BigraphEntity w : W_set) {
             if (BigraphEntityType.isNode(w)) {
                 String s = supplier2.get();
+//                s = ((BigraphEntity.NodeEntity) w).getName();
                 BigraphEntity.NodeEntity newNode = (BigraphEntity.NodeEntity) builder.createNewNode(w.getControl(), s);
                 myNodes.put(s, newNode);
             } else {
                 BigraphEntity.SiteEntity newNode = (BigraphEntity.SiteEntity) builder.createNewSite(((BigraphEntity.SiteEntity) w).getIndex());
                 mySites.put(((BigraphEntity.SiteEntity) w).getIndex(), newNode);
             }
+        }
+
+
+        for (BigraphEntity w : W_set) {
+//            if (BigraphEntityType.isNode(w)) {
+//                String s = supplier2.get();
+////                s = ((BigraphEntity.NodeEntity) w).getName();
+//                BigraphEntity.NodeEntity newNode = (BigraphEntity.NodeEntity) builder.createNewNode(w.getControl(), s);
+//                myNodes.put(s, newNode);
+//            } else {
+//                BigraphEntity.SiteEntity newNode = (BigraphEntity.SiteEntity) builder.createNewSite(((BigraphEntity.SiteEntity) w).getIndex());
+//                mySites.put(((BigraphEntity.SiteEntity) w).getIndex(), newNode);
+//            }
 
             BigraphEntity p = null;
             BigraphEntity prntFofW = f.getParent(w);
             FiniteOrdinal<Integer> j = Objects.nonNull(prntFofW) && BigraphEntityType.isRoot(prntFofW) ? FiniteOrdinal.ofInteger(((BigraphEntity.RootEntity) prntFofW).getIndex()) : null;
             if (kVF.contains(w) && V_F.containsValue(prntFofW)) {
                 p = prntFofW;
-            } else if (kVF.contains(w) && BigraphEntityType.isRoot(prntFofW) && mOrdinals.contains(j)) { // ist eine site of F AND is a site of G
+            } else if (kVF.contains(w) && BigraphEntityType.isRoot(prntFofW) &&
+                    mOrdinals.contains(j)) { // ist eine site of F AND is a site of G
                 int index = ((BigraphEntity.RootEntity) prntFofW).getIndex();
                 //find the site of G with index j
                 Optional<BigraphEntity.SiteEntity> first = g.getSites().stream().filter(x -> x.getIndex() == index).findFirst();
@@ -619,6 +637,11 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
             if (BigraphEntityType.isNode(w)) {
                 String name = V.inverse().get(w); // get the rewritten name of the "old" node first
                 w0 = myNodes.get(name); // get the new corresponding one
+//                if (Objects.isNull(w0)) {
+//                    String s = supplier2.get();
+//                    w0 = (BigraphEntity.NodeEntity) builder.createNewNode(w.getControl(), s);
+//                    myNodes.put(s, (BigraphEntity.NodeEntity) w0);
+//                }
             } else {
                 w0 = mySites.get(((BigraphEntity.SiteEntity) w).getIndex());
             }

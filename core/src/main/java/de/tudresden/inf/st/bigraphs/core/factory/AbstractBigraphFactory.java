@@ -62,10 +62,14 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
      */
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
 
+    @Deprecated
     public abstract Placings<S> createPlacings();
+
     public abstract Placings<S> createPlacings(S signature);
 
+    @Deprecated
     public abstract Linkings<S> createLinkings();
+
     public abstract Linkings<S> createLinkings(S signature);
 
     /**

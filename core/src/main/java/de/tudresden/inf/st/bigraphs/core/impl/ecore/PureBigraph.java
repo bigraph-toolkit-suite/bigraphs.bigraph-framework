@@ -166,6 +166,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     @Override
     public BigraphEntity getParent(BigraphEntity node) {
+        assert Objects.nonNull(node);
         EObject instance = node.getInstance();
         EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
