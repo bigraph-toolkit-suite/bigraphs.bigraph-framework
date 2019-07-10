@@ -4,9 +4,7 @@ import com.google.common.base.Stopwatch;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
@@ -46,7 +44,7 @@ public class MatchTesting {
     void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next, String path) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
         PureBigraph context = (PureBigraph) next.getContext();
         PureBigraph redex = (PureBigraph) next.getRedex();
-        PureBigraph contextIdentity = (PureBigraph) next.getContextIdentity();
+        Bigraph contextIdentity = next.getContextIdentity();
         ElementaryBigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
         PureBigraph contextComposed = (PureBigraph) factory.asBigraphOperator(context).parallelProduct(contextIdentity).getOuterBigraph();
 //            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
@@ -164,13 +162,13 @@ public class MatchTesting {
 
         for (int i = 0; i < 10; i++) {
             Stopwatch timer0 = Stopwatch.createStarted();
-            MatchIterable match2 = matcher.match(agent_model_test_2, redex_model_test_2b);
-            Iterator<BigraphMatch<?>> iterator2 = match2.iterator();
+            MatchIterable<BigraphMatch<PureBigraph>> match2 = matcher.match(agent_model_test_2, redex_model_test_2b);
+            Iterator<BigraphMatch<PureBigraph>> iterator2 = match2.iterator();
             while (iterator2.hasNext()) {
                 BigraphMatch<?> next = iterator2.next();
                 long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
                 System.out.println("Match time FULL (millisecs) " + (elapsed0 / 1e+6f));
-//                createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
+                createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
 //                System.out.println(next);
             }
         }
@@ -211,6 +209,7 @@ public class MatchTesting {
     }
 
     @Test
+    @DisplayName("no matches should occur")
     void model_test_5() throws InvalidConnectionException, LinkTypeNotExistsException {
         PureBigraph agent_model_test_5 = (PureBigraph) createAgent_model_test_5();
         PureBigraph redex_model_test_5 = (PureBigraph) createRedex_model_test_5();
@@ -223,6 +222,81 @@ public class MatchTesting {
 //            createGraphvizOutput(agent_model_test_4, next, "src/test/resources/graphviz/model4/");
             System.out.println(next);
         }
+    }
+
+    @Test
+    @DisplayName("no matches should occur")
+    void match_test_6_counting() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleInterfaceException, InvalidReactionRuleException, IOException {
+        PureBigraph agent = createAgent_A(-1, 1);
+//        createGraphvizOutput(agent_a, null, "src/test/resources/graphviz/model6/");
+        GraphvizConverter.toPNG(agent,
+                true,
+                new File("src/test/resources/graphviz/model6/agent.png")
+        );
+        ReactionRule<PureBigraph> reactionRule_3 = createReactionRule_3();
+        PureBigraph redex = reactionRule_3.getRedex();
+
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+
+        MatchIterable match = matcher.match(agent, redex);
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            BigraphMatch<?> next = iterator.next();
+            createGraphvizOutput(agent, next, "src/test/resources/graphviz/model6/");
+            System.out.println(next);
+        }
+    }
+
+    @Test
+    void model_test_7() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {
+        PureBigraph agent_model_test_7 = createAgent_model_test_7();
+        GraphvizConverter.toPNG(agent_model_test_7,
+                true,
+                new File("src/test/resources/graphviz/model7/agent_7.png")
+        );
+        PureBigraph redex_7 = createRedex_7();
+        GraphvizConverter.toPNG(redex_7,
+                true,
+                new File("src/test/resources/graphviz/model7/redex_7.png")
+        );
+
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+
+        MatchIterable match = matcher.match(agent_model_test_7, redex_7);
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            BigraphMatch<?> next = iterator.next();
+//            createGraphvizOutput(agent, next, "src/test/resources/graphviz/model6/");
+            System.out.println(next);
+        }
+    }
+
+    public PureBigraph createAgent_model_test_7() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+        DefaultDynamicSignature signature = createSignatureABC();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy a = builder.newHierarchy(signature.getControlByName("A"));
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy b = builder.newHierarchy(signature.getControlByName("B"));
+
+        a.addChild("B")
+                .addChild("C")
+                .withNewHierarchy().addChild("D").addChild("E");
+        b.addChild("F").addChild("G").withNewHierarchy().addChild("H").addChild("I");
+
+        builder.createRoot()
+                .addChild(a.top())
+                .addChild(b.top())
+        ;
+        return builder.createBigraph();
+    }
+
+    public PureBigraph createRedex_7() {
+        DefaultDynamicSignature signature = createSignatureABC();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        builder.createRoot().addChild("G").withNewHierarchy().addChild("H").addChild("I");
+
+        builder.createRoot().addChild("C").withNewHierarchy().addChild("A").withNewHierarchy().addChild("D").addChild("E");
+        return builder.createBigraph();
     }
 
     public Bigraph createAgent_model_test_5() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
@@ -587,6 +661,93 @@ public class MatchTesting {
                 .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).assign();
 
         return (S) defaultBuilder.create();
+    }
+
+    private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature2() {
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        defaultBuilder
+                .newControl().identifier(StringTypedName.of("Age")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("S")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("Z")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("True")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("False")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("Left")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("Right")).arity(FiniteOrdinal.ofInteger(0)).assign()
+        ;
+
+        return (S) defaultBuilder.create();
+    }
+
+    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignatureABC() {
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        defaultBuilder
+                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("E")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("F")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("G")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("H")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("I")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("J")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        ;
+
+        return (S) defaultBuilder.create();
+    }
+
+    /**
+     * big numberLeft = Left.S.S.S.S.S.S.Z;
+     * big numberRight = Right.S.S.S.S.Z;
+     * big start = Age . (numberLeft | numberRight);
+     */
+    public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature2();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy leftNode =
+                builder.newHierarchy(signature.getControlByName("Left"))
+                        .addChild("Z");
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rightNode =
+                builder.newHierarchy(signature.getControlByName("Right"))
+                        .addChild("S");
+//        for (int i = 0; i < left - 1; i++) {
+//            leftNode = leftNode.withNewHierarchy().addChild("S");
+//        }
+//        leftNode = leftNode.withNewHierarchy().addChild("Z").top();
+        for (int i = 0; i < right - 1; i++) {
+            rightNode = rightNode.withNewHierarchy().addChild("S");
+        }
+//        rightNode = rightNode.withNewHierarchy().addChild("Z").top();
+        rightNode = rightNode.top();
+
+        builder.createRoot()
+                .addChild("Age")
+                .withNewHierarchy()
+                .addChild(leftNode)
+                .addChild(rightNode)
+        ;
+        builder.makeGround();
+        return builder.createBigraph();
+    }
+
+    public static ReactionRule<PureBigraph> createReactionRule_3() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature2();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
+
+        builder.createRoot()
+                .addChild("Left").withNewHierarchy().addSite()
+                .top()
+                .addChild("Right").withNewHierarchy().addChild("Z")
+        ;
+        builder2.createRoot()
+                .addChild("False").withNewHierarchy().addSite()
+        ;
+        PureBigraph redex = builder.createBigraph();
+        PureBigraph reactum = builder2.createBigraph();
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        return rr;
     }
 
 }
