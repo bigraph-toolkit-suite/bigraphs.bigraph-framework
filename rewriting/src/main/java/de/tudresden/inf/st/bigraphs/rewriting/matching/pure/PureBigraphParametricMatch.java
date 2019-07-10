@@ -30,7 +30,7 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
         this.identity = identity;
         this.redex = redex;
         this.contextIdentity = contextIdentity;
-        PureBigraphComposite<DefaultDynamicSignature> redexComposite = AbstractBigraphFactory.createPureBigraphFactory().asBigraphOperator(this.redex);
+//        PureBigraphComposite<DefaultDynamicSignature> redexComposite = AbstractBigraphFactory.createPureBigraphFactory().asBigraphOperator(this.redex);
         //TODO: calculate redexImage
     }
 

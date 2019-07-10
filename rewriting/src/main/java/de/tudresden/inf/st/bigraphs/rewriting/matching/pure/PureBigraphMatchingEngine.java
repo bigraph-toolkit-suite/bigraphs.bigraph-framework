@@ -48,7 +48,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
     //    private int itcnt; //not necessary
     private List<BigraphEntity> internalVertsG;
     private List<BigraphEntity> allVerticesOfH;
-    private SimpleGraph<BigraphEntity, DefaultEdge> bg;
     private List<BigraphMatch<B>> matches = new LinkedList<>();
 
     private HashMap<BigraphEntity, List<Integer>> hitsVIx = new HashMap<>();
@@ -95,7 +94,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 //            }
 //        }
 
-        internalVertsG = agentAdapter.getAllInternalVerticesPostOrder();//TODO ROOT AS LAST
+        internalVertsG = agentAdapter.getAllInternalVerticesPostOrder();//TODO return as stream...
         treffer = new AtomicInteger(0);
         results = HashBasedTable.create();
     }
@@ -119,7 +118,10 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
         timer0 = Stopwatch.createStarted();
         List<List<BigraphEntity>> partitionSets = new ArrayList<>();
-        List<BigraphEntity> uSetAfterMatching = new ArrayList<>();
+//        List<BigraphEntity> uSetAfterMatching = new ArrayList<>();
+//        agentAdapter.getAllInternalVerticesPostOrderAsStream().forEach(eachV -> {
+
+//        });
         for (BigraphEntity eachV : internalVertsG) {
             List<BigraphEntity> childrenOfV = agentAdapter.getChildren(eachV);
             List<BigraphEntity> u_vertsOfH = new ArrayList<>(allVerticesOfH);
@@ -128,7 +130,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
             for (int i = u_vertsOfH.size() - 1; i >= 0; i--) {
                 BigraphEntity each = u_vertsOfH.get(i);
                 if (redexAdapter.degreeOf(each) > t + 1)
-                    u_vertsOfH.remove(each);//TODO getdegree in bigraph vorspeichern
+                    u_vertsOfH.remove(each); //TODO getdegree in bigraph vorspeichern
             }
 
 //            System.out.println("For eachV=" + eachV.toString());
@@ -137,6 +139,12 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 //            System.out.println("Children: ");
 //            childrenOfV.forEach(this::printName);
             for (BigraphEntity eachU : u_vertsOfH) {
+                boolean cs = true; //eachU.getControl().equals(eachV.getControl());
+                if (eachU.getControl() != null && eachV.getControl() != null) {
+                    cs = isSameControl(eachU, eachV); //eachU.getControl().equals(eachV.getControl());
+                }
+//                System.out.println("Q: " + cs);
+                if (!cs) continue;
 //                if (S.get(eachV, eachU) == null) {
 //                    S.put(eachV, eachU, new ArrayList<>());
 //                }
@@ -171,7 +179,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                     }
                 }
                 partitionSets.clear();
-//                List<List<BigraphEntity>> partitionSets = new ArrayList<>();//TODO refactor: do not create new list
                 partitionSets.add(neighborsOfU);
                 for (int i = 1, un = neighborsOfU.size(); i <= un; i++) {
                     List<BigraphEntity> tmp = new ArrayList<>(neighborsOfU);
@@ -197,12 +204,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                 }
 
                 // compute size of maximum matching of bipartite graph for all partitions
-//                List<Integer> matchings = new ArrayList<>();
-//                List<HKMCBM2> lastResults = new ArrayList<>();
-//                List<Integer> matchings2 = new ArrayList<>();
-//                List<Boolean> matchings3 = new ArrayList<>();
-//                List<BigraphEntity> uSetAfterMatching = new ArrayList<>();
-                uSetAfterMatching = new ArrayList<>();
+                List uSetAfterMatching = new ArrayList<>();
                 int ic = 0;
                 for (List<BigraphEntity> eachPartitionX : partitionSets) {
                     try {
@@ -214,12 +216,13 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                         alg.setHasSite(hasSite);
                         MatchingAlgorithm.Matching<BigraphEntity, DefaultEdge> matching = alg.getMatching();
                         int m = matching.getEdges().size();
-//                        System.out.println((m == eachPartitionX.size()) + " <> " + m3);
-                        if (m == eachPartitionX.size()) {
+
+
+                        if (m == eachPartitionX.size()) { //eachPartitionX.size() != 0 && m != 0 &&
                             boolean m3 = alg.areControlsSame();
                             if (m3) {
-//                                System.out.println("\tDARF SETZEN");
-
+//                                System.out.println(eachPartitionX.size() + ", " + m + ", " + hasSite);
+//                                System.out.println("\tDARF SETZEN: " + ic + " und cs=" + cs);
                                 if (ic == 0) {
                                     uSetAfterMatching.add(eachU);
                                 } else {
@@ -239,11 +242,11 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 //                }
                 if (S.get(eachV, eachU).contains(eachU)) {
 
-                    int i = redexAdapter.getRoots().indexOf(eachU);
                     if (!eachU.getType().equals(BigraphEntityType.ROOT)) {
 //                        System.out.println("Kein root...");
                         continue;
                     }
+                    int i = redexAdapter.getRoots().indexOf(eachU);
 //                    if (treffer.get() < redexAdapter.getRoots().size())
                     if (results.get(eachV, eachU) == null)
                         results.put(eachV, eachU, i);
@@ -270,6 +273,8 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                 }
             }
         }
+
+//        });
 
         System.out.println("Treffer=" + treffer.get());
         if (hasMatched()) {
@@ -410,8 +415,13 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         System.out.println("MATCHING TIME 2 " + (elapsed0 / 1e+6f));
     }
 
+    /**
+     * Checks if any match could be found and also if all redex roots could be matched
+     *
+     * @return
+     */
     public boolean hasMatched() {
-        return treffer.get() > 0;
+        return treffer.get() > 0 && treffer.get() == redexAdapter.getRoots().size();
     }
 
     /**
@@ -434,7 +444,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         boolean needsParameters = redexAdapter.getSites().size() >= 1;
         //when no params are necessary then a barren is all that is needed
         if (needsParameters) {
-            redexAdapter.getSites().forEach(x -> parameters.put(x.getIndex(), pureBigraphFactory.createPlacings().barren()));
+            redexAdapter.getSites().forEach(x -> parameters.put(x.getIndex(), pureBigraphFactory.createPlacings(redexAdapter.getSignature()).barren()));
         }
 
         @Deprecated
@@ -468,8 +478,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         //this should build the node hierarchy and put places under those nodes where the redex matched
 
         Set<BigraphEntity> blockNodesForContext = new HashSet<>();
-
-        List<StringTypedName> wiringContext = new ArrayList<>();
 
         // Recreate idle outer names in the agent for the context: the redex don't need to be checked, as it
         // cannot have idle outer names. It is "simple".
@@ -526,9 +534,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
             //abstract the rest away and put children into blocked list
             boolean hasAmatch = hitsV.values().contains(eachNodeV);
             if (hasAmatch) { // && agentAdapter.getChildrenOf(eachNodeV).size() >= 1) {
-
-                //TODO: that part below must be supplied from outside: use hitsV_newChildren
-                //  don't use occurrenceTable
                 Integer rootIx = hitsV.entrySet().stream().filter(x -> x.getValue().equals(eachNodeV)).findFirst().get().getKey();
 
                 List<BigraphEntity> savedRedexNodes = new ArrayList<>(); //all agent nodes that shouldn't be considered anymore
@@ -595,7 +600,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                             .orElse(builder.createInnerName(linkName + "_innername"));
 //                    BigraphEntity.InnerName innerName = builder.createInnerName(link.getName());
                     newInnerNames.put(innerName.getName(), innerName);
-                    wiringContext.add(StringTypedName.of(innerName.getName()));
                     try {
                         builder.connectNodeToInnerName((BigraphEntity.NodeEntity) newNode, innerName);
                     } catch (LinkTypeNotExistsException | InvalidConnectionException e) {
@@ -735,7 +739,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 //                String name = ((BigraphEntity.Edge) each.getLink()).getName();
 //                BigraphEntity.OuterName newOuterName = builder2.createOuterName(outerNameSupplier.get() + "_e");
                 BigraphEntity.OuterName newOuterName = builder2.createOuterName(((BigraphEntity.Edge) each.getLink()).getName() + "_innername");//TODO hier mit e_inner machen
-                //NAMENSKONVETION DIE LINKS WIEDER SCHLIESST
+                //NAMENSKONVETION DIE LINKS WIEDER SCHLIESST - unnötig
                 builder2.connectNodeToOuterName(newNode, newOuterName);
                 outerNames.put(newOuterName.getName(), newOuterName);
             }
@@ -743,9 +747,11 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
     }
 
     // corresponding parts
-    private void iterateThroughChild(BigraphEntity redex, BigraphEntity agent, Map<Integer, Bigraph> parameters, Supplier<String> outerNameSupplier, BiMap<BigraphEntity.NodeEntity, BigraphEntity.NodeEntity> matchDict) {
-        List<BigraphEntity> redexChildren = redexAdapter.getChildren(redex);
+    private void iterateThroughChild(BigraphEntity redex, BigraphEntity agent, Map<Integer, Bigraph> parameters,
+                                     Supplier<String> outerNameSupplier,
+                                     BiMap<BigraphEntity.NodeEntity, BigraphEntity.NodeEntity> matchDict) {
         boolean hasSite = redexAdapter.getChildrenWithSites(redex).stream().anyMatch(BigraphEntityType::isSite);
+        List<BigraphEntity> redexChildren = redexAdapter.getChildren(redex);
 
         Map<BigraphEntity, BigraphEntity> distinctMatch = new ConcurrentHashMap<>();
         List<BigraphEntity> agentChildren = agentAdapter.getChildren(agent);
@@ -762,7 +768,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
                     } catch (java.lang.IllegalArgumentException e) {
                         e.printStackTrace();
                     }
-                    continue;
+//                    continue;
                 }
             }
         }
@@ -850,7 +856,9 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         for (int i = agents.size() - 1; i >= 0; i--) {
             BigraphEntity eachAgent = agents.get(i);
             for (BigraphEntity eachRedex : redexNodes) { //degree checking is done in hasSameSpatialStructure() method
-                boolean b = hasSameSpatialStructure(eachAgent, eachRedex, withSitesNoExactMatch) && isSameControl(eachAgent, eachRedex);
+//                boolean b = hasSameSpatialStructure(eachAgent, eachRedex, withSitesNoExactMatch) && isSameControl(eachAgent, eachRedex);
+                //TODO: CHANGED:
+                boolean b = hasSameSpatialStructure2(eachAgent, eachRedex) && isSameControl(eachAgent, eachRedex);
                 boolean linksAreMatching = checkLinkIdentityByNodes(eachAgent, eachRedex);
                 if (b && linksAreMatching) {
                     mapping.putIfAbsent(eachRedex, new ArrayList<>());
@@ -859,6 +867,27 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
             }
         }
         return mapping;
+    }
+
+    //TODO: CHANGED?
+    private boolean hasSameSpatialStructure2(BigraphEntity agent, BigraphEntity redex) {
+        if (!S.rowMap().get(agent).containsKey(redex)) {
+            return false;
+        }
+//        List<BigraphEntity> bigraphEntities = S.get(agent, redex);
+//        if (Objects.isNull(bigraphEntities)) return false;
+        List<BigraphEntity> children = redexAdapter.getChildren(redex);
+//        if (bigraphEntities.size() > 0) {
+        for (BigraphEntity eachChild : children) {
+//                boolean hasSite = redexAdapter.getChildrenWithSites(eachChild).stream().anyMatch(BigraphEntityType::isSite);
+            if (!hasSameSpatialStructure2(agent, eachChild)) { // && !checkLinkIdentityByNodes(agent, eachChild)) {
+                return false;
+            }
+        }
+        return true;
+//        } else {
+//            return false;
+//        }
     }
 
     /**
@@ -880,7 +909,9 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
             return false;
         if (bigraphEntities.size() > 0) {
             for (BigraphEntity eachChild : children) {
-                if (!hasSameSpatialStructure(agent, eachChild, noExactMatch) && !checkLinkIdentityByNodes(agent, eachChild)) {
+//                TODO: CHANGED: hasSiteVar added and passed..
+                boolean hasSite = redexAdapter.getChildrenWithSites(eachChild).stream().anyMatch(BigraphEntityType::isSite);
+                if (!hasSameSpatialStructure(agent, eachChild, hasSite) && !checkLinkIdentityByNodes(agent, eachChild)) {
                     return false;
                 }
             }
@@ -1023,7 +1054,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
      * @return
      */
     private Graph<BigraphEntity, DefaultEdge> createBipartiteGraph(List<BigraphEntity> x, List<BigraphEntity> y) {
-        bg = (SimpleGraph<BigraphEntity, DefaultEdge>) buildEmptySimpleDirectedGraph();
+        SimpleGraph<BigraphEntity, DefaultEdge> bg = (SimpleGraph<BigraphEntity, DefaultEdge>) buildEmptySimpleDirectedGraph();
         for (BigraphEntity eachX : x) {
             bg.addVertex(eachX);
         }

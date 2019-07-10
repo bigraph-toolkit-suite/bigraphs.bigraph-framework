@@ -50,10 +50,10 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 
 //    private Set<Control> availableControls = new LinkedHashSet<>();
 
-    private LinkedList<Control> availableControlsRedex;
-    private LinkedList<Control> availableControlsAgent;
-    private Map<Control, Long> ctrlsRedex = new ConcurrentHashMap<>(); // = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
-    private Map<Control, Long> ctrlsAgent = new ConcurrentHashMap<>(); // = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+    //    private LinkedList<Control> availableControlsRedex;
+//    private LinkedList<Control> availableControlsAgent;
+    private Map<Control, Long> ctrlsRedex; // = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+    private Map<Control, Long> ctrlsAgent; // = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
 
     private boolean hasSite = false;
 
@@ -80,6 +80,9 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
             this.partition1 = partition2;
             this.partition2 = partition1;
         }
+
+        ctrlsRedex = new ConcurrentHashMap<>(this.partition1.size());
+        ctrlsAgent = new ConcurrentHashMap<>(this.partition2.size());
 
 //        availableControlsRedex = new LinkedList<>();
 //        availableControlsAgent = new LinkedList<>();
@@ -115,11 +118,11 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
      * Initialize data structures
      */
     private void init() {
-        vertices = new ArrayList<>();
+        vertices = new ArrayList<>(partition1.size() + partition2.size() + 1);
         vertices.add(null);
         vertices.addAll(partition1);
         vertices.addAll(partition2);
-        vertexIndexMap = new HashMap<>();
+        vertexIndexMap = new HashMap<>(vertices.size());
         for (int i = 0; i < vertices.size(); i++)
             vertexIndexMap.put(vertices.get(i), i);
 

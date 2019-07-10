@@ -32,6 +32,20 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
 //        return (Bigraph<DefaultDynamicSignature>) super.getBigraphDelegate();
 //    }
 
+    public List<BigraphEntity> getChildrenWithSites(BigraphEntity node) {
+        EObject instance = node.getInstance();
+        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+        List<BigraphEntity> children = new ArrayList<>();
+        if (Objects.nonNull(chldRef)) {
+            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
+            //control can be acquired by the class name + signature
+            for (EObject eachChild : childs) {
+                addPlaceToList(children, eachChild, true);
+            }
+        }
+        return children;
+    }
+
     /**
      * Only outer names are returned, edges are not considered for the result.
      * The order plays a role for checking (also in theory)
@@ -117,17 +131,17 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
 //        return children;
 //    }
 
-    public List<BigraphEntity> getChildrenWithSites(BigraphEntity node) {
-        EObject instance = node.getInstance();
-        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-        List<BigraphEntity> children = new ArrayList<>();
-        if (Objects.nonNull(chldRef)) {
-            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
-            //control can be acquired by the class name + signature
-            for (EObject eachChild : childs) {
-                addPlaceToList(children, eachChild, true);
-            }
-        }
-        return children;
-    }
+//    public List<BigraphEntity> getChildrenWithSites(BigraphEntity node) {
+//        EObject instance = node.getInstance();
+//        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+//        List<BigraphEntity> children = new ArrayList<>();
+//        if (Objects.nonNull(chldRef)) {
+//            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
+//            //control can be acquired by the class name + signature
+//            for (EObject eachChild : childs) {
+//                addPlaceToList(children, eachChild, true);
+//            }
+//        }
+//        return children;
+//    }
 }
