@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.rewriting;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.TransitionPredicates;
 import org.jgrapht.GraphPath;
 
@@ -57,7 +58,7 @@ public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
          * @param predicate
          * @param counterExampleTrace
          */
-        default void onPredicateViolated(B currentAgent, TransitionPredicates<B> predicate, GraphPath<String, String> counterExampleTrace) {
+        default void onPredicateViolated(B currentAgent, TransitionPredicates<B> predicate, GraphPath<String, ReactionGraph.LabeledEdge> counterExampleTrace) {
         }
 
         default void onAllPredicateMatched(B currentAgent) {

@@ -37,7 +37,7 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
 
 
     public AbstractReactionRule(final B redex, final B reactum) throws InvalidReactionRuleException {
-        this(redex, reactum, InstantiationMap.create(redex.getRoots().size()));//TODO check if this is correct concerning the instantiation map
+        this(redex, reactum, InstantiationMap.create(redex.getSites().size()));
     }
 
     @Override

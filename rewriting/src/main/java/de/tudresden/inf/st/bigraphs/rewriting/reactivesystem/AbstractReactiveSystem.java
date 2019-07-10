@@ -125,8 +125,10 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
                             if (next.getParameters().size() == 0) {
                                 reaction = buildGroundReaction(theAgent, next, eachRule);
                             } else {
+                                //TODO: beachte instantiation map
                                 reaction = buildParametricReaction(theAgent, next, eachRule);
                             }
+//                            assert Objects.nonNull(reaction);
                             if (Objects.nonNull(reaction)) {
                                 String bfcf = canonicalForm.bfcs(reaction);
                                 String reactionLbl = reactionRules.inverse().get(eachRule);
@@ -139,23 +141,25 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
                             }
                         }
                     });
-            // "Check each property p ∈ P against w."
-            if (!predicateChecker.checkAll(theAgent)) {
-                // compute counter-example trace from w back to the root
+            if (predicateChecker.getPredicates().size() > 0) {
+                // "Check each property p ∈ P against w."
+                if (!predicateChecker.checkAll(theAgent)) {
+                    // compute counter-example trace from w back to the root
 
 //                DijkstraShortestPath<String, String> dijkstraShortestPath = new DijkstraShortestPath<>(reactionGraph.getGraph());
-                GraphPath<String, String> pathBetween = DijkstraShortestPath.findPathBetween(reactionGraph.getGraph(), bfcfOfW, rootBfcs);
-                //TODO: report violation of the predicates
-                for (Map.Entry<TransitionPredicates<B>, Boolean> eachPredciate : predicateChecker.getChecked().entrySet()) {
-                    if (!eachPredciate.getValue()) {
-                        System.out.println("Counter-example trace for predicate violation: " + pathBetween);
+                    GraphPath<String, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(reactionGraph.getGraph(), bfcfOfW, rootBfcs);
+                    //TODO: report violation of the predicates
+                    for (Map.Entry<TransitionPredicates<B>, Boolean> eachPredciate : predicateChecker.getChecked().entrySet()) {
+                        if (!eachPredciate.getValue()) {
+                            System.out.println("Counter-example trace for predicate violation: " + pathBetween);
 //                        System.out.println("Violation of predicate = " + eachPredciate.getKey());
-                        reactiveSystemListener.onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
+                            reactiveSystemListener.onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
+                        }
                     }
-                }
-            } else {
+                } else {
 //                System.out.println("Matched");
-                reactiveSystemListener.onAllPredicateMatched(theAgent);
+                    reactiveSystemListener.onAllPredicateMatched(theAgent);
+                }
             }
 
             // "Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty."
@@ -262,7 +266,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
 
     protected abstract B buildGroundReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
 
-    protected abstract B buildParametricReaction(final B agent, final BigraphMatch<?> match, ReactionRule<B> rule);
+    protected abstract B buildParametricReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
 
     @Override
     public synchronized void setReactiveSystemListener(ReactiveSystemListener<B> reactiveSystemListener) {

@@ -44,12 +44,6 @@ public class BigraphCanonicalForm {
     private BigraphCanonicalForm() {
     }
 
-    private <B extends Bigraph<?>> void assertBigraphIsGroundAndPrime(B bigraph) {
-        if (!bigraph.isGround() || !bigraph.isPrime()) {
-            throw new BigraphIsNotGroundException();
-        }
-    }
-
     /**
      * Build a breadth-first canonical string (BFCS) for a bigraph's place graph
      * according to the lexicographic order. The representation is unique.
@@ -61,7 +55,7 @@ public class BigraphCanonicalForm {
      * @return the BFCS of the place graph of the given bigraph
      */
     public <B extends Bigraph<?>> String bfcs(B bigraph) {
-        getInstance().assertBigraphIsGroundAndPrime(bigraph);
+        assertBigraphIsGroundAndPrime(bigraph);
         final StringBuilder sb = new StringBuilder();
         Map<BigraphEntity, BigraphEntity> parentMap = new LinkedHashMap<>();
         List<BigraphEntity> frontier = new LinkedList<>();
@@ -221,6 +215,11 @@ public class BigraphCanonicalForm {
         return sb.toString();
     }
 
+    private <B extends Bigraph<?>> void assertBigraphIsGroundAndPrime(B bigraph) {
+        if (!bigraph.isGround() || !bigraph.isPrime()) {
+            throw new BigraphIsNotGroundException();
+        }
+    }
 //    public static int compareByControl(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
 //        String s1 = lhs.getValue().stream().map(x -> x.getValue().getNamedType().stringValue()).collect(Collectors.joining(""));
 //        String s2 = rhs.getValue().stream().map(x -> x.getValue().getNamedType().stringValue()).collect(Collectors.joining(""));
