@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder;
@@ -15,18 +16,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
 import java.lang.reflect.Type;
 import java.util.Set;
-
-//TODO: erstellt entweder dynamic controls oder default controls signaturen (also builder und signaturebuilder werden
-//und compositor
-
-//später wird noch type mitgegeben in factory um zu unterscheiden welche art von bigraph
-// verwendet wird (falls es später andere bigraph extensions gibt, e.g. sharing, with sortings):
-//Dann wird entsprechender builder und signaturebuilder geholt (art der signatur/controls und dem bigraph typ angepasst)
-//grundlage bleibt immer ecore
-
-//richtigerweise ersellt per unterklasse
-//ecore bigraph bekommt dann abstracte klasse zwischen interface bigraph noch
-//Später kann man noch über attributed bigraphs nachdenken (kann auch für matching verwendet werden - constraints)
 
 /**
  * @author Dominik Grzelak
@@ -61,6 +50,17 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
      * @return a {@link PureBigraphBuilder} instance with signature type S which is inferred from the given signature.
      */
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
+
+    /**
+     * Throws a class cast exception when a signature is passed as argument which was not created with the
+     * {@link SignatureBuilder} created by the same instance of this factory. Thus, they must have the same
+     * signature type.
+     *
+     * @param signature     the signature of the bigraph to build
+     * @param metaModelData meta data for the ecore files
+     * @return a {@link PureBigraphBuilder} instance with signature type S which is inferred from the given signature.
+     */
+    public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature, EMetaModelData metaModelData);
 
     @Deprecated
     public abstract Placings<S> createPlacings();

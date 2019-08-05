@@ -13,7 +13,7 @@ import java.util.*;
  * <p>
  * With them other larger bigraphs can be built.
  *
- * @param <S>
+ * @param <S> type of the signature
  * @author Dominik Grzelak
  */
 public abstract class ElementaryBigraph<S extends Signature> extends BigraphDelegator<S> { //implements Bigraph<S> {
@@ -24,27 +24,27 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
 
     @Override
     public Collection<BigraphEntity.RootEntity> getRoots() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
     public Collection<BigraphEntity.SiteEntity> getSites() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
     public Collection<BigraphEntity.OuterName> getOuterNames() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
     public Collection<BigraphEntity.InnerName> getInnerNames() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
     public Collection<BigraphEntity.Edge> getEdges() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override

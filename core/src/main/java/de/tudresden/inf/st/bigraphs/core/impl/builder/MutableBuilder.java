@@ -1,12 +1,16 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFailedException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -21,15 +25,17 @@ import java.util.function.Supplier;
  */
 public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
 
-    public MutableBuilder(S signature, Supplier<String> nodeNameSupplier) throws BigraphMetaModelLoadingFailedException {
-        super(signature, nodeNameSupplier);
+    public MutableBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
+        super(signature);
+    }
+
+    public MutableBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
+        super(signature, metaModelData);
     }
 
     public EPackage getLoadedEPackage() {
         return loadedEPackage;
     }
-
-//    public void bigraphicalSignatureAsTypeGraph(String name) throws BigraphMetaModelLoadingFailedException {
 
     public BigraphEntity createNewNode(Control<?, ?> control, String nodeIdentifier) {
         EObject childNode = super.createNodeOfEClass(control.getNamedType().stringValue(), control, nodeIdentifier);
@@ -74,6 +80,11 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
         super.connectToLinkUsingIndex(node, theLink, customPortIndex);
     }
 
+    public void connectToEdge(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge theLink) {
+        super.connectToEdge(node, theLink);
+
+    }
+
     /**
      * Clears all generated intermediate results of the bigraph's current construction inside the builder.
      */
@@ -90,6 +101,28 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
             super.connectNodeToOuterName(node1, outerName);
         } catch (LinkTypeNotExistsException | InvalidArityOfControlException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Performs no checking at all, only if the node is already connected to the given outer name.
+     *
+     * @param node1
+     * @param outerName
+     */
+    public void connectNodeToOuterName2(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.OuterName outerName) {
+        if (!isConnectedWithLink(node1, outerName.getInstance())) {
+            // create a port
+            EList<EObject> bPorts = (EList<EObject>) node1.getInstance().eGet(node1.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT));
+            int index = bPorts.size();
+            BigraphEntity.Port newPortWithIndex = (BigraphEntity.Port) createNewPortWithIndex(index);
+            //add port to node
+            EStructuralFeature portsRef = node1.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
+            EList<EObject> portsList = (EList<EObject>) node1.getInstance().eGet(portsRef);
+            portsList.add(newPortWithIndex.getInstance());
+            //connect node to link
+            EStructuralFeature lnkRef = newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+            newPortWithIndex.getInstance().eSet(lnkRef, outerName.getInstance());
         }
     }
 

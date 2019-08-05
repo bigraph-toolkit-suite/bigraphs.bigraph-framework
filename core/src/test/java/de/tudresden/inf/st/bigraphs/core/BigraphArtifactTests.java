@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
@@ -37,7 +38,7 @@ public class BigraphArtifactTests {
     void load_instance_model_test() {
         assertAll(() -> {
 
-            PureBigraph bigraph = (PureBigraph) createBigraphSample();
+            PureBigraph bigraph = (PureBigraph) createSampleBigraph();
 
             BigraphModelFileStore.exportAsMetaModel(bigraph, "test_meta",
                     new FileOutputStream("src/test/exported-models/test_meta.ecore"));
@@ -146,9 +147,14 @@ public class BigraphArtifactTests {
         return (S) signatureBuilder.create();
     }
 
-    public Bigraph createBigraphSample() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
+    public Bigraph createSampleBigraph() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        EMetaModelData metaModelData = new EMetaModelData.MetaModelDataBuilder()
+                .setName("sampleModel")
+                .setNsPrefix("bigraphSampleModel")
+                .setNsUri("http://sample.bigraph")
+                .create();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature, metaModelData);
 
         BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff");

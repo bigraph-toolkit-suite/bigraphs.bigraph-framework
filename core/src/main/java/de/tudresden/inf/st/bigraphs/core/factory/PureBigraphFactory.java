@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
@@ -16,8 +17,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
 import java.util.Set;
-
-//TODO default should be "change nsURI in to "http: ///ecore_file_name.ecore" and nsPrefix into "ecore_file_name" it woks great" when saving
 
 /**
  * @author Dominik Grzelak
@@ -38,7 +37,12 @@ public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
 
     @Override
     public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature) {
-        return PureBigraphBuilder.withSignature(DefaultDynamicSignature.class.cast(signature));
+        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature));
+    }
+
+    @Override
+    public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, EMetaModelData metaModelData) {
+        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelData);
     }
 
     @Override

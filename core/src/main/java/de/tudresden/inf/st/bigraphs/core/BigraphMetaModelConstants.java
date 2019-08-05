@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+//TODO: read from properties file
 public final class BigraphMetaModelConstants {
 
     /**
