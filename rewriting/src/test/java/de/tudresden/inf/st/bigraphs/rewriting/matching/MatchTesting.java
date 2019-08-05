@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
@@ -16,6 +17,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.GroundReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
@@ -160,7 +162,7 @@ public class MatchTesting {
 //            System.out.println(next);
 //        }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             Stopwatch timer0 = Stopwatch.createStarted();
             MatchIterable<BigraphMatch<PureBigraph>> match2 = matcher.match(agent_model_test_2, redex_model_test_2b);
             Iterator<BigraphMatch<PureBigraph>> iterator2 = match2.iterator();
@@ -248,7 +250,7 @@ public class MatchTesting {
     }
 
     @Test
-    void model_test_7() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {
+    void model_test_7() throws InvalidConnectionException, LinkTypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         PureBigraph agent_model_test_7 = createAgent_model_test_7();
         GraphvizConverter.toPNG(agent_model_test_7,
                 true,
@@ -266,9 +268,66 @@ public class MatchTesting {
         Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-//            createGraphvizOutput(agent, next, "src/test/resources/graphviz/model6/");
+            createGraphvizOutput(agent_model_test_7, next, "src/test/resources/graphviz/model7/");
             System.out.println(next);
         }
+    }
+
+    @Test
+    void idle_edge_test() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
+        PureBigraph agent = createAgent_idle_edge_test();
+        GraphvizConverter.toPNG(agent,
+                true,
+                new File("src/test/resources/graphviz/model_idleedge/agent.png")
+        );
+        PureBigraph redex = createRedex_idle_edge_test();
+        GraphvizConverter.toPNG(redex,
+                true,
+                new File("src/test/resources/graphviz/model_idleedge/redex.png")
+        );
+
+        GroundReactionRule<PureBigraph> rr = new GroundReactionRule<>(redex, redex);
+
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+
+        MatchIterable match = matcher.match(agent, redex);
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            BigraphMatch<?> next = iterator.next();
+//            createGraphvizOutput(agent_model_test_7, next, "src/test/resources/graphviz/model7/");
+            System.out.println(next);
+        }
+    }
+
+    //        big s0 = /a Building . (Room.(Printer{a,b}.1));
+    public PureBigraph createAgent_idle_edge_test() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.OuterName a = builder.createOuterName("a");
+        BigraphEntity.OuterName b = builder.createOuterName("b");
+        builder.createRoot()
+                .addChild("Building").withNewHierarchy().addChild("Room")
+                .withNewHierarchy().addChild("Printer").connectNodeToOuterName(a)
+                .connectNodeToOuterName(b)
+        ;
+
+        return builder.createBigraph();
+    }
+
+    public PureBigraph createRedex_idle_edge_test() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.OuterName a = builder.createOuterName("a");
+        BigraphEntity.OuterName b = builder.createOuterName("b");
+        builder.createRoot()
+                .addChild("Room").withNewHierarchy()
+                .addChild("Printer").connectNodeToOuterName(a)
+                .connectNodeToOuterName(b)
+        ;
+        builder.closeOuterName(a, true);
+        return builder.createBigraph();
     }
 
     public PureBigraph createAgent_model_test_7() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
@@ -295,7 +354,7 @@ public class MatchTesting {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         builder.createRoot().addChild("G").withNewHierarchy().addChild("H").addChild("I");
 
-        builder.createRoot().addChild("C").withNewHierarchy().addChild("A").withNewHierarchy().addChild("D").addChild("E");
+//        builder.createRoot().addChild("C").withNewHierarchy().addChild("A").withNewHierarchy().addChild("D").addChild("E");
         return builder.createBigraph();
     }
 
@@ -549,12 +608,12 @@ public class MatchTesting {
 
 
         // (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1));
-        builder.
-                createRoot()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
-                .withNewHierarchy().addSite().goBack()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(jeff)
-                .addChild(signature.getControlByName("Job"))
+//        builder.
+//                createRoot()
+//                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+//                .withNewHierarchy().addSite().goBack()
+//                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(jeff)
+//                .addChild(signature.getControlByName("Job"))
         ;
         builder.createRoot()
                 .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
@@ -652,6 +711,7 @@ public class MatchTesting {
         DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
+                .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()

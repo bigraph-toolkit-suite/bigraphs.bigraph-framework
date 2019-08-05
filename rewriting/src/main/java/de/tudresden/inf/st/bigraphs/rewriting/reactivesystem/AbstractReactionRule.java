@@ -28,10 +28,10 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         this.redex = redex;
         this.reactum = reactum;
         this.instantiationMap = instantiationMap;
-        assertSignaturesAreSame(this.redex.getSignature(), this.reactum.getSignature());
-        assertInterfaceDefinitionIsCorrect(redex, reactum);
-        assertParametricRedexIsSimple(this.redex);
-        assertNoIdleOuterName(this.redex);
+        this.assertSignaturesAreSame(this.redex.getSignature(), this.reactum.getSignature());
+        this.assertInterfaceDefinitionIsCorrect(this.redex, this.reactum);
+        this.assertParametricRedexIsSimple(this.redex);
+        this.assertNoIdleOuterName(this.reactum); // redex is captured by "simple" constraint above
         this.signature = this.redex.getSignature();
     }
 

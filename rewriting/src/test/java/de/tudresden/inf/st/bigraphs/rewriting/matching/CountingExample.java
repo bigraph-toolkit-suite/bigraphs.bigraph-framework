@@ -43,7 +43,7 @@ public class CountingExample {
         // Create reaction rulesname
         SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
 
-        PureBigraph agent_a = createAgent_A(2, 5);
+        PureBigraph agent_a = createAgent_A(3, 4);
         GraphvizConverter.toPNG(agent_a,
                 true,
                 new File("counting_agent.png")
