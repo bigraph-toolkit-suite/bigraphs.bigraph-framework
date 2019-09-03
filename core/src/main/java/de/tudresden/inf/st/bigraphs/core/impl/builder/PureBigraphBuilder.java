@@ -2,7 +2,10 @@ package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
-import de.tudresden.inf.st.bigraphs.core.exceptions.*;
+import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFailedException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.*;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
@@ -770,7 +773,7 @@ public class PureBigraphBuilder<S extends Signature> implements BigraphBuilder<S
      * @param node the node to check
      * @throws InvalidArityOfControlException if control is atomic or the current connections exceed the control's arity
      */
-    private void checkIfNodeIsConnectable(BigraphEntity.NodeEntity<Control> node) throws InvalidArityOfControlException {
+    public void checkIfNodeIsConnectable(BigraphEntity.NodeEntity<Control> node) throws InvalidArityOfControlException {
 //        assert node.getType() ==
         EObject instance1 = node.getInstance();
 //        EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));

@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.builder;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -46,12 +47,13 @@ public class BigraphArtifactHelper {
 
     public static EPackage loadInternalBigraphMetaModel() throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
+        BigraphBaseModelPackage.eINSTANCE.eClass();
         ResourceSet resourceSet = new ResourceSetImpl();
 
         URL resource1 = EMFUtils.class.getResource(BIGRAPH_BASE_MODEL);
         URI uri = URI.createURI(resource1.toString()); //URI.createPlatformResourceURI(resource1.toString(), true);
 //        URI uri = URI.createURI(ecoreResource);
-
+        resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
         // resource factories
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
@@ -59,9 +61,9 @@ public class BigraphArtifactHelper {
 
         //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
 //        resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
-
-//         Resource resource = resourceSet.createResource(uri);
-        Resource resource = resourceSet.getResource(uri, true);
+        //TODO throw error if resource is not available!
+//        Resource resource = resourceSet.getResource(uri, true);
+        Resource resource = resourceSet.createResource(uri);
         try {
             resource.load(Collections.EMPTY_MAP);
 //            System.out.println("Model loaded");

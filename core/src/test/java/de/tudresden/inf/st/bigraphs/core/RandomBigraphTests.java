@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGeneration;
 import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ public class RandomBigraphTests {
     @Test
     void name() {
         DefaultDynamicSignature exampleSignature = createExampleSignature();
-        PureBigraph generated = new RandomBigraphGenerator().generate(exampleSignature, 1, 10, 1.f);
+        PureBigraph generated = new PureBigraphGeneration().generate(exampleSignature, 1, 10, 1.f);
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
