@@ -51,3 +51,6 @@ Do this only once or when the model changes.
 
 The model can now be used as a Maven dependency in other modules of this project and will be exported also in the 
 generated *.jar later.
+
+_v3: current
+_v5: cdo migrated model

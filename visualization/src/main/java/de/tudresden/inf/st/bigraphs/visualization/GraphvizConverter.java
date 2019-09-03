@@ -228,7 +228,9 @@ public class GraphvizConverter {
             // edges for graphviz are created as "hidden nodes"
             //find the nodes that are connected to it
             Collection<BigraphEntity> pointsFromLink = bigraph.getPointsFromLink(eachEdge);
-            if (pointsFromLink.size() == 0) continue;
+            if (pointsFromLink.size() == 0) {
+                continue;
+            }
             final Node hiddenEdgeNode = node(labelSupplier.with(eachEdge).get()).with(Shape.POINT, Color.GREEN);
 //            if (pointsFromLink.size() != 0) {
             //if inner name: create new node

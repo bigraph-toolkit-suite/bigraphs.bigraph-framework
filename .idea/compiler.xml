@@ -9,11 +9,11 @@
         <module name="core" />
         <module name="bigraphstore" />
         <module name="visualization" />
-        <module name="bigraph-store" />
         <module name="rewriting" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="bigraph-store" target="1.8" />
       <module name="matching" target="1.8" />
     </bytecodeTargetLevel>
   </component>
