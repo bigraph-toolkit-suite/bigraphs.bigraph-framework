@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.visualization;
 
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import guru.nidi.graphviz.attribute.Shape;
 
 import java.util.Objects;

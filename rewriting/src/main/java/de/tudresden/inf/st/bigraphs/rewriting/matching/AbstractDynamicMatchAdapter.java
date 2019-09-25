@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;

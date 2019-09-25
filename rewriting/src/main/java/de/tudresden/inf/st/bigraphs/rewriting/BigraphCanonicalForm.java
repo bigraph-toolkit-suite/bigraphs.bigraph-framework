@@ -6,7 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 
 import java.util.*;
 import java.util.function.Function;

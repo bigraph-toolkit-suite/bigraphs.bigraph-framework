@@ -7,17 +7,12 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.PureBigraphComposite;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.AbstractReactiveSystem;
-import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

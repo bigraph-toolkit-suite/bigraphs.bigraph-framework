@@ -2,8 +2,8 @@ package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractDynamicMatchAdapter;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;

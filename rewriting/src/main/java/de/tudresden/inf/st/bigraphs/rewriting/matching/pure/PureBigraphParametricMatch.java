@@ -2,11 +2,8 @@ package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.PureBigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 
 import java.util.ArrayList;

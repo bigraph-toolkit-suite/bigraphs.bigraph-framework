@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphTests;
 import org.jgrapht.Graphs;

@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching.pure;
 
 import com.google.common.base.Stopwatch;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
