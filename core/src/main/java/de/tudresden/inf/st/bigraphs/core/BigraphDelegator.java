@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Collection;
@@ -127,5 +128,10 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     @Override
     public EPackage getModelPackage() {
         return bigraphDelegate.getModelPackage();
+    }
+
+    @Override
+    public EObject getModel() {
+        return bigraphDelegate.getModel();
     }
 }

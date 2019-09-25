@@ -1,15 +1,15 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 
 public abstract class ControlBuilder<NT extends NamedType, V extends FiniteOrdinal, B extends ControlBuilder<NT, V, B>> {
     NT type;
     V arity;
     private SignatureBuilder<NT, V, B, ? extends SignatureBuilder> builder;
 
-    ControlBuilder() {
+    public ControlBuilder() {
 
     }
 
@@ -29,14 +29,22 @@ public abstract class ControlBuilder<NT extends NamedType, V extends FiniteOrdin
     }
 
 
-    abstract Control<NT, V> build();
+    protected abstract Control<NT, V> build();
 
     @SuppressWarnings("unchecked")
-    final B self() {
+    public final B self() {
         return (B) this;
     }
 
     public void withControlListBuilder(SignatureBuilder<NT, V, B, ? extends SignatureBuilder> cbSignatureBuilder) {
         this.builder = cbSignatureBuilder;
+    }
+
+    public NT getType() {
+        return type;
+    }
+
+    public V getArity() {
+        return arity;
     }
 }

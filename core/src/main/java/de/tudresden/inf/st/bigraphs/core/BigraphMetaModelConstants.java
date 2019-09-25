@@ -23,6 +23,7 @@ public final class BigraphMetaModelConstants {
     public static final String CLASS_PLACE = "BPlace";
     public static final String CLASS_LINK = "BLink";
     public static final String CLASS_POINT = "BPoint";
+    public static final String CLASS_BIGRAPH = "BBigraph";
 
     // References
     public final static String REFERENCE_CHILD = "bChild";
@@ -31,6 +32,10 @@ public final class BigraphMetaModelConstants {
     public final static String REFERENCE_POINT = "bPoints";
     public final static String REFERENCE_PORT = "bPorts";
     public final static String REFERENCE_NODE = "bNode";
+    public final static String REFERENCE_BINNERNAMES = "bInnerNames";
+    public final static String REFERENCE_BOUTERNAMES = "bOuterNames";
+    public final static String REFERENCE_BEDGES = "bEdges";
+    public final static String REFERENCE_BROOTS = "bRoots";
 
 
 }

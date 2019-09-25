@@ -1,10 +1,9 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core.impl;
 
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.NameableType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -53,7 +52,8 @@ public class BigraphEntity<C extends Control> {
      */
     @Deprecated
     BigraphEntity(BigraphEntity<C> bigraphEntity) {
-        this.setInstance(bigraphEntity.getInstance());
+//        this.setInstance(bigraphEntity.getInstance());
+        this.instance = bigraphEntity.getInstance();
         this.control = bigraphEntity.getControl();
         this.type = bigraphEntity.getType();
     }
@@ -63,10 +63,10 @@ public class BigraphEntity<C extends Control> {
         return instance;
     }
 
-    BigraphEntity setInstance(EObject instance) {
-        this.instance = instance;
-        return this;
-    }
+//    BigraphEntity setInstance(EObject instance) {
+//        this.instance = instance;
+//        return this;
+//    }
     
     public C getControl() {
         return control;

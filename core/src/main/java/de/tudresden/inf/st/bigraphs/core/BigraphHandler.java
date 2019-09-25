@@ -1,13 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EPackageImpl;
-
-import java.util.Objects;
-
 public abstract class BigraphHandler {
 
 //    default boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2) {

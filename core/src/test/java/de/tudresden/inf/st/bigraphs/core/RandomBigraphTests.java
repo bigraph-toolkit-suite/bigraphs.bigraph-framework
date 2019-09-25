@@ -6,9 +6,11 @@ import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGeneration;
-import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BBigraph;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BRoot;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelFactory;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,6 +18,21 @@ import org.junit.jupiter.api.Test;
  */
 public class RandomBigraphTests {
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+
+    @Test
+    void apiestt() {
+        BBigraph bBigraph = BigraphBaseModelFactory.eINSTANCE.createBBigraph();
+        BRoot bRoot = BigraphBaseModelFactory.eINSTANCE.createBRoot();
+        bBigraph.getBRoots().add(bRoot);
+        System.out.println(bRoot.getBBigraph().hashCode());
+        System.out.println(bBigraph.getBRoots().size());
+        BBigraph bBigraph2 = BigraphBaseModelFactory.eINSTANCE.createBBigraph();
+        bBigraph2.getBRoots().add(bRoot);
+
+        System.out.println(bRoot.getBBigraph().hashCode());
+        System.out.println(bBigraph.getBRoots().size());
+        System.out.println(bBigraph2.getBRoots().size());
+    }
 
     @Test
     void name() {

@@ -1,12 +1,13 @@
-package de.tudresden.inf.st.bigraphs.core.impl.ecore;
+package de.tudresden.inf.st.bigraphs.core.impl.pure;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.BigraphBuilderSupport;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
@@ -27,10 +28,11 @@ import java.util.stream.Collectors;
  * A {@link PureBigraph} must be built using the {@link PureBigraphBuilder}.
  *
  * @author Dominik Grzelak
- * @see de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphBuilder
+ * @see BigraphBuilder
  */
 public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     private EPackage modelPackage;
+    private EObject bigraphEModel;
 
     private final Set<BigraphEntity.RootEntity> roots;
     private final Set<BigraphEntity.SiteEntity> sites;
@@ -41,8 +43,9 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     private final Map<EObject, BigraphEntity.NodeEntity<DefaultDynamicControl>> nodesMap = new ConcurrentHashMap<>();
     private final DefaultDynamicSignature signature;
 
-    public PureBigraph(PureBigraphBuilder.InstanceParameter details) {
+    public PureBigraph(BigraphBuilderSupport.InstanceParameter details) {
         this.modelPackage = details.getModelPackage();
+        this.bigraphEModel = details.getbBigraphObject();
         this.roots = Collections.unmodifiableSet(details.getRoots()); //roots;
         this.sites = Collections.unmodifiableSet(details.getSites()); //sites;
         this.nodes = new ArrayList<>(Collections.unmodifiableSet(details.getNodes())); //nodes;
@@ -55,6 +58,11 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     public EPackage getModelPackage() {
         return this.modelPackage;
+    }
+
+    @Override
+    public EObject getModel() {
+        return this.bigraphEModel;
     }
 
     @Override

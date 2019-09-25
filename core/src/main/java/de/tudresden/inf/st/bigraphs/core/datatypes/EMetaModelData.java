@@ -33,6 +33,10 @@ public class EMetaModelData {
         return nsUri;
     }
 
+    public static MetaModelDataBuilder builder() {
+        return new MetaModelDataBuilder();
+    }
+
     /**
      * Builder class to create {@link EMetaModelData} instances.
      *

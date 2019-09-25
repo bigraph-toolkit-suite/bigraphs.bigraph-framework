@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.factory;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphArtifactHelper;
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifactHelper;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -69,30 +69,23 @@ public class BigraphModelFileStore {
 
     //TODO: add UTF-8
     private static void writeDynamicInstanceModel(EPackage ePackage, Collection<EObject> objects, String name, OutputStream outputStream) throws IOException {
-        ResourceSet resourceSet = new ResourceSetImpl();
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
-//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-//                "*", new XMLResourceFactoryImpl());
+        final ResourceSet resourceSet = new ResourceSetImpl();
 //        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceImpl());
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 //        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        Resource outputRes = resourceSet.createResource(URI.createFileURI(name + ".xmi")); //
+        final Resource outputRes = resourceSet.createResource(URI.createFileURI(name + ".xmi")); //
         // add our new package to resource contents
         objects.forEach(x -> outputRes.getContents().add(x));
 //        outputRes.getContents().add(ePackage); //TODO then the meta model is also included in the instance model
-        outputRes.getResourceSet().getPackageRegistry().put("http:///com.ibm.dynamic.example.bookstore.ecore", ePackage);
+        outputRes.getResourceSet().getPackageRegistry().put(ePackage.getNsURI(), ePackage);
 
-//        outputRes.getContents().add(object);
-//        metapackage.setName(name);
-//        metapackage.setNsPrefix(name);
-//        metapackage.setNsURI(namespace + name);
-        // and at last, we save to standard out.  Remove the first argument to save to file specified in pathToOutputFile
         /*
-         * Save the resource using OPTION_SCHEMA_LOCATION save option toproduce
+         * Save the resource using OPTION_SCHEMA_LOCATION save option to produce
          * xsi:schemaLocation attribute in the document
          */
 //        org.eclipse.emf.ecore.xmi.XMLResource.OPTION_PROCESS_DANGLING_HREF
-        Map options = new HashMap();
+        Map<String, Object> options = new HashMap<>();
         options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, "THROW"); //see: https://books.google.de/books?id=ff-9ZYhvPwwC&pg=PA317&lpg=PA317&dq=emf+OPTION_PROCESS_DANGLING_HREF&source=bl&ots=yBXkH3qSpD&sig=ACfU3U3uEGX_DCnDa2DAnjRboybhyGsKng&hl=en&sa=X&ved=2ahUKEwiCg-vI7_DgAhXDIVAKHU1PAIgQ6AEwBHoECAYQAQ#v=onepage&q=emf%20OPTION_PROCESS_DANGLING_HREF&f=false
         outputRes.save(outputStream, options);

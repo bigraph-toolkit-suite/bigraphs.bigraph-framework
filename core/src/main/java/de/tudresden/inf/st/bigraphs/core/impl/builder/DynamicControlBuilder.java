@@ -19,7 +19,7 @@ public class DynamicControlBuilder<NT extends NamedType, V extends FiniteOrdinal
     }
 
     @Override
-    DefaultDynamicControl<NT, V> build() {
-        return DefaultDynamicControl.createDefaultDynamicControl(super.type, super.arity, this.kind);
+    protected DefaultDynamicControl<NT, V> build() {
+        return DefaultDynamicControl.createDefaultDynamicControl(getType(), getArity(), this.kind);
     }
 }

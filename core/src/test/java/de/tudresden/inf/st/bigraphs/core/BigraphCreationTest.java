@@ -10,11 +10,13 @@ import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -93,6 +95,12 @@ public class BigraphCreationTest {
             builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
                     .addChild(signature.getControlByName("User")).connectNodeToOuterName(b);
             PureBigraph bigraph = builder.createBigraph();
+            EObject model = bigraph.getModel();
+            EList<EObject> bRoots = (EList<EObject>) model.eGet(model.eClass().getEStructuralFeature("bRoots"));
+            Assertions.assertEquals(1, bRoots.size());
+            EObject eObject = bRoots.get(0);
+            EList<EObject> bChild = (EList<EObject>) eObject.eGet(eObject.eClass().getEStructuralFeature("bChild"));
+            Assertions.assertEquals(2, bChild.size());
             assertTrue(bigraph.isDiscrete());
         });
 

@@ -1,7 +1,6 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.ecore.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import org.eclipse.emf.common.util.URI;
@@ -38,10 +37,11 @@ public class BigraphArtifactHelper {
         Collection<EObject> allresources = new ArrayList<>();
         // the child-parent relationship is automatically considered as well as "ports"
         // that is way we don't need to call getNodes() and getSites()
-        bigraph.getRoots().forEach((x) -> allresources.add(x.getInstance()));
-        bigraph.getOuterNames().forEach((x) -> allresources.add(x.getInstance()));
-        bigraph.getInnerNames().forEach((x) -> allresources.add(x.getInstance()));
-        bigraph.getEdges().forEach((x) -> allresources.add(x.getInstance()));
+//        bigraph.getRoots().forEach((x) -> allresources.add(x.getInstance()));
+//        bigraph.getOuterNames().forEach((x) -> allresources.add(x.getInstance()));
+//        bigraph.getInnerNames().forEach((x) -> allresources.add(x.getInstance()));
+//        bigraph.getEdges().forEach((x) -> allresources.add(x.getInstance()));
+        allresources.add(bigraph.getModel());
         return allresources;
     }
 

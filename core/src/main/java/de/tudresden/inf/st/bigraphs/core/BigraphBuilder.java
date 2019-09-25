@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.Signature;
 
@@ -8,4 +8,6 @@ public interface BigraphBuilder<S extends Signature> {
 //    class Hierarchy {
 //
 //    }
+
+
 }
