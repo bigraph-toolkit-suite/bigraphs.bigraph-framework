@@ -37,9 +37,10 @@ Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framew
 
 ```xml
 <dependency>
-  <groupId></groupId>
-  <artifactId></artifactId>
+  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <artifactId>bigraph-core</artifactId>
   <version>${revision}</version>
+  <type>pom</type>
 </dependency>
 ```
 
