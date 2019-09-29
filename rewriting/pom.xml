@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>framework-parent</artifactId>
         <groupId>de.tudresden.inf.st.bigraphs</groupId>
-        <version>0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rewriting</artifactId>
+    <artifactId>bigraph-rewriting</artifactId>
+    <name>Bigraph Framework - Rewriting</name>
     <description>
-        A generic matching algorithms for the subtree isomorphism problem.
-        It provides adapter classes that can be used for incorporating other graph data structures.
+        Rewriting functionality of the Bigraph Framework for implementing bigraphical reactive systems.
+        A matching algorithms for the subtree isomorphism problem adapted to bigraphs is included.
     </description>
 
     <dependencies>
         <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>bigraph-store</artifactId>
+            <artifactId>bigraph-core</artifactId>
         </dependency>
         <!-- ONLY FOR TESTING REMOVE LATER-->
         <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>visualization</artifactId>
+            <artifactId>bigraph-visualization</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -54,6 +50,24 @@
             <artifactId>jmh-generator-annprocess</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bintray-deploy</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

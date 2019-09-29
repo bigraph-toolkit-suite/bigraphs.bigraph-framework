@@ -1,11 +1,8 @@
 # Bigraphical Framework 
 
-<hr/>
-<small>
-Internal project name: FrogLab - Piweka (Arch) <br/>
-Version: 0.1-SNAPSHOT
-</small>
-<hr/>
+**Version:** ${revision}
+
+-----
 
 A framework for the creation and simulation of bigraphs to expedite the experimental evaluation of the bigraph theory in
 real-world applications.
@@ -16,80 +13,168 @@ The high level API eases the programming of bigraphical systems for real-world a
 
 **Features**
 
-- dynamic creation of bigraphs at runtime based on an Ecore meta model
-- bigraph matching (beta) 
-- visualization (beta)
-- reaction system (= transition system, but no minimal transition system, alpha)
-- simple model file store (WIP)
+- Dynamic creation of bigraphs at runtime based on an Ecore meta model
+- Bigraph matching (beta) 
+- Visualization (beta)
+- Reaction system (= transition system, but no minimal transition system) (alpha)
+- Read and write meta and instance model to file system (WIP)
 
-## Bigraph Meta Model 
 
-Internally, bigraphs are described by a meta model based on Ecore.
-This meta model is extended when creating a new bigraphical signature 
-which is then called "meta model over a signature" of an abstract bigraph.
-We say that the signature is mapped to the meta model over a signature.
-From that, multiple instance models can be created where the instance bigraph
-relates to the signature _S_, thus, corresponds to the meta model over the signature _S_.
-
-This meta model serves only as a data model for the *Bigraph Framework* which provides  additional functionalities 
-and a user-friendly API for the creation and simulation of bigraphical reactive systems.
-
-Separation of concerns: 
-The meta model itself is implementation-agnostic. 
-The Bigraph Framework adds specific behavior superimposed upon this meta model.
-Meaning, the implementation-specific details are kept out from the meta model.
 
 ## Getting Started
 
-### User-Friendly API:
+Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java:
 
-- Extending the model with a signature by hand is time-consuming especially when many models are created.
-The framework allows to create bigraphs dynamically at runtime by letting the user providing a description of the 
-signature. The meta model over a signature is kept in memory and instances can be created from it.
-As a result, the bigraph meta model must not be touched manually.
-Both the meta model over a signature and the instance model can be stored on the filesystem.
- 
+```java
+// create factory
+
+// create signature
+
+// create instance of a pure bigraph
+```
+
 ### Maven configuration
 
 ```xml
 <dependency>
   <groupId></groupId>
   <artifactId></artifactId>
-  <version>${version}</version>
+  <version>${revision}</version>
 </dependency>
 ```
 
-The following Maven repository must be added as well:
+The following remote Maven repository must be added as well. There are two options:
+- A) Within the `pom.xml` of a Maven project:
+```xml
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-st-tu-dresden-maven-repository</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
+        </repository>
+    </repositories>
+```
+
+- B) Via the `settings.xml` of your Maven local repository `~/.m2/`:
 
 ```xml
-<dependency>
-  <groupId></groupId>
-  <artifactId></artifactId>
-  <version>${version}</version>
-</dependency>
+    <profiles>
+        <!-- possibly other profiles -->
+        <profile>
+            <repositories>
+                <repository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>bintray-st-tu-dresden-maven-repository</id>
+                    <name>bintray</name>
+                    <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
+                </repository>
+            </repositories>
+            <id>bintray-st-tu-dresden</id>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>bintray-st-tu-dresden</activeProfile>
+    </activeProfiles>
 ```
 
-(See Section [Deployment](#Deployment) for further information on that) 
+The [Bintray](https://bintray.com/) service is used for hosting Maven artifacts.
+
+## Details
+
+### Bigraph Meta Model 
+
+**User-Friendly API**
+
+- Internally, bigraphs are described by a meta model based on Ecore. The project can be found in [this](https://git-st.inf.tu-dresden.de/bigraphs/ecore-bigraph-meta-model) Gitlab repository. To create concrete bigraphs, a signature must be provided. To do so, this meta model is extended when creating a new bigraphical signature which is then called "meta model over a signature" of an abstract bigraph (described by the Ecore model). We say that the signature is mapped to the meta model over a signature. From that, multiple instance models can be created where the instance bigraph
+relates to the signature _S_, thus, corresponds to the meta model over the signature _S_.
+- Extending the meta model with a signature by hand is time-consuming especially when many models are created.
+The framework allows to create bigraphs dynamically at runtime by letting the user providing a description of the 
+signature. The meta model over a signature is kept in memory and instances can be created from it.
+As a result, the bigraph meta model must not be touched manually.
+Both the meta model over a signature and the instance model can be stored on the filesystem.
+- That very meta model serves only as a data model for the *Bigraph Framework* which provides additional functionalities 
+and a user-friendly API for the creation and simulation of bigraphical reactive systems. 
+Furthermore, we achieve Separation of concerns: The meta model itself is implementation-agnostic. The Bigraph Framework adds specific behavior superimposed upon this meta model. Meaning, the implementation-specific details are kept out from the meta model.
 
 
-## Project Setup
+### Modules
 
-### Deploy the bigraph model jar
+TODO
 
-A bigraph is an Ecore model that is developed within EMF. 
-The model needs to be deployed to the local maven repository.
+#### core
 
-Change to the root folder of this project and execute:
+Provides builder, factories and interfaces to create concrete bigraphs and elementary bigraphs.
+
+Concrete Bigraphs and their meta model (with the signature only) can be written to the file system for inspection.
+
+#### rewriting
+
+Create reaction rules and bigraphical reactive systems. Simulate bigraphs. Define Predicates.
+
+#### visualization
+
+Provides simple means to export bigraphs and transition systems as graphic files.
+
+Graphviz is used as format. Can be exported as png and jpg. 
+
+### Reaction Graph / Transition System
+
+TODO: some details about the algorithm
+
+### Bigraph Matching
+
+TODO: outline algorithm
+
+## Building from Source
+
+It is not necessary to build from source to use the bigraphical meta model but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper). In this case, JDK 1.8 is needed.
+
+```bash
+$ ./mvnw clean install
 ```
-mvn install:install-file -Dfile=./libs/bigraphModel.jar -DgroupId=de.tudresden.inf.st.bigraphs.model \
-    -DartifactId=bigraph-ecore-model -Dversion=1.0 -Dpackaging=jar
+
+If you want to build with the regular `mvn` command, you will need [Maven v3.5.0 or above](https://maven.apache.org/run-maven/index.html).
+
+### Building reference documentation
+
+TODO 
+
+Building the documentation builds also the project without running tests.
+
+```bash
+$ ./mvnw clean install -Pdistribute
 ```
-This will install the bigraph model in your local Maven repository.
-Do this only once or when the model changes. 
 
-The model can now be used as a Maven dependency in other modules of this project and will be exported also in the 
-generated *.jar later.
+The generated documentation is available from target/.../index.html.
 
-_v3: current
-_v5: cdo migrated model
-_v6: with extra BBigraph container object
+The documentation is built using mkdocs.
+
+### Development and Deployment
+
+See the document [DEPLOYMENT](DEPLOYMENT.md) for more issues regarding the development
+and deployment of _Bigraph Framework_. 
+
+## License
+
+Bigraph Framework is Open Source software released under the Apache 2.0 license.
+
+```text
+   Copyright [2019] Dominik Grzelak
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. 
+```

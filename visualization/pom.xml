@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>framework-parent</artifactId>
         <groupId>de.tudresden.inf.st.bigraphs</groupId>
-        <version>0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>visualization</artifactId>
-    <description>Simple visualization support for bigraphical reactive systems.</description>
+    <artifactId>bigraph-visualization</artifactId>
+    <name>Bigraph Framework - Visualization</name>
+    <description>Simple visualization support for bigraphs and bigraphical reactive systems.</description>
 
 
     <dependencies>
         <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>bigraph-core</artifactId>
         </dependency>
         <dependency>
             <groupId>guru.nidi</groupId>
@@ -37,6 +37,24 @@
             <artifactId>junit-jupiter-api</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bintray-deploy</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

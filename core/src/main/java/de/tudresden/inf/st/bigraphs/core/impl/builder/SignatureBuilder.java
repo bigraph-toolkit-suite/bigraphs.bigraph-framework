@@ -46,10 +46,6 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
     private static <C extends ControlBuilder> C createControlBuilder(Class<C> clazz) {
         try {
             return clazz.newInstance();
-//            new Class<C>. clazz;
-//            String className = ((ParameterizedType) SignatureBuilder.class.getGenericSuperclass()).getActualTypeArguments()[0].getTypeName();
-//            Class<?> clazz = Class.forName(className);
-//            return (C) clazz.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
         }

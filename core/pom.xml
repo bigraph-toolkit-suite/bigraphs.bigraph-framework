@@ -3,12 +3,14 @@
     <parent>
         <groupId>de.tudresden.inf.st.bigraphs</groupId>
         <artifactId>framework-parent</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>core</artifactId>
+    <artifactId>bigraph-core</artifactId>
+    <name>Bigraph Framework - Core</name>
     <packaging>jar</packaging>
+    <description>Core module of the Bigraph Framework.</description>
 
     <build>
         <plugins>
@@ -35,23 +37,20 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
+            <!-- Deployment -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bintray-deploy</id>
+                    </execution>
+                </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <checkModificationExcludes>
-                        <checkModificationExclude>core/pom.xml</checkModificationExclude>
-                        <checkModificationExclude>core/src/main/java/de/tudresden/inf/st/bigraphs/core/impl/builder/SignatureBuilder.java</checkModificationExclude>
-                    </checkModificationExcludes>
-                </configuration>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -112,8 +111,4 @@
         </dependency>
     </dependencies>
 
-
-  <scm>
-    <tag>core-0.1</tag>
-  </scm>
 </project>

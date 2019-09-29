@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.tudresden.inf.st.bigraphs</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
@@ -15,8 +13,9 @@
 
     <modules>
         <module>core</module>
-        <module>rewriting</module>
         <module>visualization</module>
+<!--        <module>core</module>-->
+        <module>rewriting</module>
     </modules>
 
     <properties>
@@ -34,9 +33,41 @@
         <junit.version>5.4.0</junit.version>
         <log4j.version>2.11.1</log4j.version>
         <graphviz.version>0.8.3</graphviz.version>
+        <bintray.organization>st-tu-dresden</bintray.organization>
+        <bintray.repo>maven-repository</bintray.repo>
+        <bintray.package>${project.artifactId}</bintray.package>
     </properties>
 
+    <developers>
+        <developer>
+            <id>dgrzelak</id>
+            <name>Dominik Grzelak</name>
+            <email>dominik.grzelak@tu-dresden.de</email>
+            <organization>Technische Universität Dresden</organization>
+            <organizationUrl>https://tu-dresden.de/ing/informatik/smt/st</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework.git</connection>
+        <developerConnection>scm:git@git-st.inf.tu-dresden.de:bigraphs/bigraph-framework.git</developerConnection>
+        <url>https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-st-tu-dresden-maven-repository</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
+        </repository>
         <repository>
             <id>Eclipse</id>
             <layout>p2</layout>
@@ -50,19 +81,123 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>bintray-st-tu-dresden-maven-repository</id>
+            <name>st-tu-dresden-maven-repository</name>
+            <url>
+                https://api.bintray.com/maven/${bintray.organization}/${bintray.repo}/${bintray.package}/;publish=1
+            </url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <configuration>
+                        <!-- disable the default existing mapping -->
+                        <skip>true</skip>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <configuration>
+                                <url>
+                                    https://api.bintray.com/maven/${bintray.organization}/${bintray.repo}/${bintray.package}/;publish=1
+                                </url>
+                                <repositoryId>bintray-st-tu-dresden-maven-repository</repositoryId>
+                                <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                                <artifactId>${project.artifactId}</artifactId>
+                                <groupId>${project.groupId}</groupId>
+                                <version>${project.version}</version>
+                                <packaging>jar</packaging>
+                            </configuration>
+                            <phase>deploy</phase>
+                            <id>bintray-deploy</id>
+                            <goals>
+                                <goal>deploy-file</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+
+                </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencyManagement>
@@ -70,26 +205,21 @@
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
                 <artifactId>bigraph-ecore-model</artifactId>
-                <version>6.0</version>
+                <version>1.1.0</version>
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
-                <artifactId>core</artifactId>
+                <artifactId>bigraph-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
-                <artifactId>rewriting</artifactId>
+                <artifactId>bigraph-visualization</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
-                <artifactId>bigraph-store</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.tudresden.inf.st.bigraphs</groupId>
-                <artifactId>visualization</artifactId>
+                <artifactId>bigraph-rewriting</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- EMF -->
@@ -205,6 +335,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 
 </project>
