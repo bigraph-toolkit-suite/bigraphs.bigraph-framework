@@ -14,7 +14,6 @@
     <modules>
         <module>core</module>
         <module>visualization</module>
-<!--        <module>core</module>-->
         <module>rewriting</module>
     </modules>
 
