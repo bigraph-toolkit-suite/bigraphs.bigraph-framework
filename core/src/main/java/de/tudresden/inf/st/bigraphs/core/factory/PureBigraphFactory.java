@@ -31,8 +31,8 @@ public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
 
     @Override
     @SuppressWarnings("unchecked")
-    public <SB extends SignatureBuilder> SB createSignatureBuilder() {
-        return (SB) new DynamicSignatureBuilder<NT, FT>();
+    public DynamicSignatureBuilder<NT, FT> createSignatureBuilder() {
+        return new DynamicSignatureBuilder<>();
     }
 
     @Override

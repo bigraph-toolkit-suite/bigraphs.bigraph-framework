@@ -45,7 +45,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     protected EPackage loadedEPackage;
     private PureBigraph bigraph;
 
-    private AtomicBoolean isCompleted = new AtomicBoolean(false);
     private S signature;
 
     /**
@@ -114,14 +113,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return new MutableBuilder<>(signature);
     }
 
-//    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature,
-//                                                                            Supplier<String> nodeNameSupplier)
-//            throws BigraphMetaModelLoadingFailedException {
-//        return new PureBigraphBuilder<>(signature, nodeNameSupplier); //TODO: provide a random URI namespace here
-//    }
-
-
-    //MOVE/change return type
     public Hierarchy createRoot() {
         BigraphEntity.RootEntity currentRoot = createRootEntity();
 //        currentNode = currentRoot;
@@ -142,11 +133,15 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return hierarchy;
     }
 
+    public Hierarchy newHierarchy(String controlLabel) {
+        return newHierarchy(signature.getControlByName(controlLabel));
+    }
+
     /**
      * A bigraph consists of many node hierarchy. This inner class represents one of these.
      * These hierarchies can be built independently and added to the bigraph later.
      */
-    public class Hierarchy {
+    public class Hierarchy implements NodeHierarchy {
         final Hierarchy parentHierarchy;
         final BigraphEntity<Control> parent;
 
@@ -183,13 +178,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             return last;
         }
 
-        /**
-         * Creates a new hierarchy builder where the last created node is the parent of this new hierarchy.
-         * <p>
-         * One can go to the previous hierarchy by calling the {@link Hierarchy#goBack()} method.
-         *
-         * @return the new hierarchy
-         */
         //CHECK if something was created...
         public Hierarchy withNewHierarchy() throws ControlIsAtomicException {
             assertControlIsNonAtomic(getLastCreatedNode());
@@ -232,6 +220,8 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             PureBigraphBuilder.this.connectNodeToInnerNames(getLastCreatedNode(), innerNames);
             return this;
         }
+
+        // Support
 
         /**
          * Throws an exception if the given node has an atomic control
@@ -277,7 +267,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             return getLastCreatedNode();
         }
 
-        //BLEIBT - HELPER
+        // support
         private boolean checkSameSignature(Control control) {
             return Lists.newArrayList(signature.getControls()).contains(control);
         }
@@ -298,14 +288,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             }
         }
 
-        /**
-         * Adds a site to the current parent.
-         * <p>
-         * An {@link ControlIsAtomicException} is thrown if the parent's control is <i>atomic</i>.
-         *
-         * @return adds a site to the current parent
-         * @see ControlIsAtomicException
-         */
         public Hierarchy addSite() {
             assertControlIsNonAtomic(getParent());
             final int ix = siteIdxSupplier.get();
@@ -695,17 +677,44 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return this;
     }
 
-    private void disconnectInnerNamesFromEdge(EObject edge) {
-        if (Objects.isNull(edge) || !edge.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE)))
-            return;
-        EList<EObject> bPoints1 = (EList<EObject>) edge.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
-        if (Objects.nonNull(bPoints1)) {
-            Iterator<EObject> iterator = bPoints1.iterator();
-            while (iterator.hasNext()) {
-                EObject x = iterator.next();
-                if (x.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME))) {
-                    bPoints1.remove(x);
-                    break;
+    /**
+     * Removes all inner names of an edge
+     *
+     * @param edge the edge who's inner names shall be removed
+     */
+    private void disconnectAllInnerNamesFromEdge(EObject edge) {
+        if (isEdge(edge)) {
+            EList<EObject> bPoints1 = (EList<EObject>) edge.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
+            if (Objects.nonNull(bPoints1)) {
+                Iterator<EObject> iterator = bPoints1.iterator();
+                while (iterator.hasNext()) {
+                    EObject x = iterator.next();
+                    if (x.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME))) {
+                        bPoints1.remove(x);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes the given inner name {@code objectToRemove} from {@code edge}.
+     *
+     * @param edge           the edge who's inner names shall be removed
+     * @param objectToRemove the inner name to be removed from the edge
+     */
+    private void disconnectInnerNameFromEdge(EObject edge, EObject objectToRemove) {
+        if (isEdge(edge)) {
+            EList<EObject> bPoints1 = (EList<EObject>) edge.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
+            if (Objects.nonNull(bPoints1)) {
+                Iterator<EObject> iterator = bPoints1.iterator();
+                while (iterator.hasNext()) {
+                    EObject x = iterator.next();
+                    if (x.equals(objectToRemove)) {
+                        bPoints1.remove(x);
+                        break;
+                    }
                 }
             }
         }
@@ -957,13 +966,13 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return edge;
     }
 
+    @SuppressWarnings("unchecked")
     public PureBigraph createBigraph() {
-        if (!isCompleted.get()) {
+        if (Objects.isNull(bigraph)) {
             InstanceParameter meta = new InstanceParameter(loadedEPackage,
                     signature, availableRoots, availableSites,
                     availableNodes, availableInnerNames, availableOuterNames, availableEdges);
             bigraph = new PureBigraph(meta);
-            isCompleted.set(true);
         }
         return bigraph;
     }
@@ -996,7 +1005,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     /**
      * Closes all inner names and doesn't keep idle edges and idle inner names.
      */
-    public PureBigraphBuilder<S> closeAllInnerNames() {
+    public synchronized PureBigraphBuilder<S> closeAllInnerNames() {
         Iterator<Map.Entry<String, BigraphEntity.InnerName>> iterator = availableInnerNames.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, BigraphEntity.InnerName> next = iterator.next();
@@ -1027,37 +1036,39 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
                 !availableInnerNames.get(innerName.getName()).equals(innerName))
             throw new InnerNameNotExistsException();
         EObject blink = (EObject) innerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK));
-        if (blink != null && blink.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
-//            if (blink.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
-            EList<EObject> bPorts = (EList<EObject>) blink.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
-            for (int i = 0, n = bPorts.size(); i < n; i++) {
-                if (bPorts.get(i).equals(innerName.getInstance())) {
-                    bPorts.remove(innerName.getInstance());
+        // is connected to an outer name
+        if (isOuterName(blink)) {
+            EList<EObject> pointsOfLink = (EList<EObject>) blink.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
+            for (int i = 0, n = pointsOfLink.size(); i < n; i++) {
+                if (pointsOfLink.get(i).equals(innerName.getInstance())) {
+                    pointsOfLink.remove(innerName.getInstance());
                     break;
                 }
             }
-        } else {
-            //remove the inner name from connected edge but leave the edge intact
-            disconnectInnerNamesFromEdge(blink);
+        } else { // is connected to an edge
+            // remove the inner name from connected edge but leave the edge intact
+            disconnectInnerNameFromEdge(blink, innerName.getInstance());
         }
 
         if (!keepIdleName)
             availableInnerNames.remove(innerName.getName());
-
     }
-
 
     /**
      * Closes all outer names. See {@link PureBigraphBuilder#closeOuterName(BigraphEntity.OuterName)}.
      *
      * @throws TypeNotExistsException if the outer name doesn't exists
      */
-    public synchronized void closeAllOuterNames() throws TypeNotExistsException {
+    public synchronized PureBigraphBuilder<S> closeAllOuterNames() {
         Iterator<Map.Entry<String, BigraphEntity.OuterName>> iterator = availableOuterNames.entrySet().iterator();
         // don't replace the while loop with the iterator, because the outer name is removed too
         while (iterator.hasNext()) {
-            closeOuterName(iterator.next().getValue(), false);
+            try {
+                closeOuterName(iterator.next().getValue(), false);
+            } catch (TypeNotExistsException ignored) {
+            }
         }
+        return this;
     }
 
     /**
@@ -1119,7 +1130,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         }
     }
 
-    //TODO: important: change namespace etc.: since instance model will refer to this namespace later
     public void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
         try {
             loadedEPackage = BigraphArtifactHelper.loadInternalBigraphMetaModel();
@@ -1177,25 +1187,5 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     private Supplier<Integer> siteIdxSupplier = createIndexSupplier();
 
-    private static Supplier<String> createNameSupplier(final String prefix) {
-        return new Supplier<String>() {
-            private int id = 0;
 
-            @Override
-            public String get() {
-                return prefix + id++;
-            }
-        };
-    }
-
-    private static Supplier<Integer> createIndexSupplier() {
-        return new Supplier<Integer>() {
-            private int id = 0;
-
-            @Override
-            public Integer get() {
-                return id++;
-            }
-        };
-    }
 }

@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public abstract class AbstractSignature<C extends Control<? extends NamedType, ? extends FiniteOrdinal>> implements Signature<C> {
-    //collection of controls of type C
+    // collection of controls of type C
     protected Set<C> controls;
 
     protected AbstractSignature() {
@@ -43,5 +43,5 @@ public abstract class AbstractSignature<C extends Control<? extends NamedType, ?
                 "controls=" + controls +
                 '}';
     }
-    
+
 }

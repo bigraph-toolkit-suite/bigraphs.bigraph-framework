@@ -1,10 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
-
 import java.util.Iterator;
 import java.util.Set;
 
@@ -14,9 +9,21 @@ import java.util.Set;
  * @param <C> type of the control
  * @author Dominik Grzelak
  */
-public interface Signature<C extends Control<? extends NamedType, ? extends FiniteOrdinal>> {
+public interface Signature<C extends Control> {
+
+    /**
+     * Get the controls of the signature.
+     *
+     * @return control set of the signature
+     */
     Set<C> getControls();
 
+    /**
+     * Get the control by its string identifier
+     *
+     * @param name the identifier of the control
+     * @return the corresponding control
+     */
     default C getControlByName(String name) {
         C selected = null;
         Iterator<C> iterator = getControls().iterator();

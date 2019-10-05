@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -7,10 +8,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Supporting base class for concrete bigraph builder implementations.
@@ -28,6 +27,16 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
     protected abstract Map<String, EClass> getAvailableEClasses();
 
     protected abstract Map<String, EReference> getAvailableEReferences();
+
+    public abstract void closeInnerName(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException;
+
+    protected boolean isOuterName(EObject eObject) {
+        return Objects.nonNull(eObject) && eObject.eClass().equals(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_OUTERNAME));
+    }
+
+    protected boolean isEdge(EObject eObject) {
+        return Objects.nonNull(eObject) && eObject.eClass().equals(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_EDGE));
+    }
 
     protected EObject createBBigraphContainer(Collection<BigraphEntity.RootEntity> roots,
                                               Collection<BigraphEntity.Edge> edges,
@@ -123,5 +132,27 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
             return nodes;
         }
 
+    }
+
+    protected static Supplier<String> createNameSupplier(final String prefix) {
+        return new Supplier<String>() {
+            private int id = 0;
+
+            @Override
+            public String get() {
+                return prefix + id++;
+            }
+        };
+    }
+
+    protected static Supplier<Integer> createIndexSupplier() {
+        return new Supplier<Integer>() {
+            private int id = 0;
+
+            @Override
+            public Integer get() {
+                return id++;
+            }
+        };
     }
 }
