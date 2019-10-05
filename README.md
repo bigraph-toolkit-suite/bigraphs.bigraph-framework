@@ -25,13 +25,69 @@ The high level API eases the programming of bigraphical systems for real-world a
 
 Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java:
 
+
+### Factory
+A factory is necessary for accessing related builder instances for a specific kind of bigraph.
+The factory depends on the kind of bigraph and its _signature_.
+Depending on the bigraph type, the factory will return specialized methods.  
+
 ```java
-// create factory
-
-// create signature
-
-// create instance of a pure bigraph
+// create factory for pure bigraphs (signatures and concrete bigraph instances)
+PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 ```
+
+### Signature and Bigraph Builder
+
+The builder is responsible for instantiating and configuring concrete bigraph instances,
+depending on the specific _signature_.
+```java
+// create signature
+DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+signatureBuilder   
+    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
+    .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(0)).assign()
+    .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
+;
+
+Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = signatureBuilder.create();
+// create a bigraph builder and supply the signature
+PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+BigraphEntity.OuterName a = builder.createOuterName("a");
+BigraphEntity.InnerName b = builder.createInnerName("b");
+builder.createRoot().addChild("Room").connectNodeToOuterName(a)
+.addChild(signature.getControlByName("User")).connectNodeToInnerName(b);
+
+// create a concrete bigraph instance
+PureBigraph bigraph = builder.createBigraph();
+```
+
+### Other APIs
+
+The bigraph builder provides many more utility methods helping to build more
+complex structures easily
+
+Create nodes and at the same time connect them all with an edge:
+```java
+builder.createRoot().connectByEdge(signature.getControlByName("Job"),
+                                signature.getControlByName("Job"),
+                                signature.getControlByName("Job")); 
+```
+
+Connect nodes within different "places" through an inner name, and
+after, close the link to automatically transform it to an edge:
+```java
+// First, create an inner name
+BigraphEntity.OuterName tmp_link = builder.createInnerName("link");
+
+// Create two nodes within different hierarchies
+builder.createRoot().addChild("Printer").connectNodeToInnerName(tmp_link);
+builder.createRoot().addChild("Computer").connectNodeToInnerName(tmp_link);
+
+// Finally, close the inner name. This will leave the edge intact.
+builder.closeInnerName(tmp_link);
+```
+
+See the reference and documentation for a more comprehensive overview.
 
 ### Maven configuration
 
