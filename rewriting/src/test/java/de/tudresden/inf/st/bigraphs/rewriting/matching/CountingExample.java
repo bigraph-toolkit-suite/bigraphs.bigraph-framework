@@ -72,7 +72,7 @@ public class CountingExample {
         opts
                 .and(transitionOpts()
                         .setMaximumTransitions(8)
-                        .setMaximumTime(TimeUnit.SECONDS)
+                        .setMaximumTime(30)
                         .create()
                 )
                 .setMeasureTime(true)

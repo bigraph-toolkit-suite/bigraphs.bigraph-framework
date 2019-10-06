@@ -10,15 +10,17 @@
         <module name="bigraphstore" />
         <module name="bigraph-visualization" />
         <module name="bigraph-core" />
-        <module name="rewriting" />
-        <module name="core" />
-        <module name="visualization" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="bigraph-store" target="1.8" />
+      <module name="BigraphFramework" target="1.5" />
+      <module name="core" target="1.8" />
       <module name="distribution" target="1.5" />
       <module name="matching" target="1.8" />
+      <module name="rewriting" target="1.8" />
+      <module name="uberjar" target="1.5" />
+      <module name="visualization" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

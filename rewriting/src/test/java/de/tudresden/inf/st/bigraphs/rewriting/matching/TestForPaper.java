@@ -32,7 +32,7 @@ public class TestForPaper {
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex_model_test_0, redex_model_test_0);
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class); //new PureBigraphMatcher();
-        MatchIterable match = matcher.match(agent_model_test_0, (PureBigraph) rr.getRedex());
+        MatchIterable match = matcher.match(agent_model_test_0, rr.getRedex());
         Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();

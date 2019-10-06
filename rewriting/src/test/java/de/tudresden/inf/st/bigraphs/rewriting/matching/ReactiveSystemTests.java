@@ -23,7 +23,10 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionR
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.MatchPredicate;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,29 +60,8 @@ public class ReactiveSystemTests {
         reactiveSystem.simulate(agent, opts);
     }
 
-    @Test
-    void create_reactionsystem_options_test() {
-        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
-        opts.and(transitionOpts()
-                .setMaximumTransitions(4)
-                .setMaximumTime(TimeUnit.SECONDS)
-                .create()
-        ).and(ReactiveSystemOptions.exportOpts()
-                .setOutputStatesFolder(new File(""))
-                .setTraceFile(new File(""))
-                .create()
-        );
 
 
-        opts.and(transitionOpts()
-                .setMaximumTransitions(4)
-                .setMaximumTime(TimeUnit.SECONDS)
-                .create());
-
-        ReactiveSystemOptions.TransitionOptions opts1 = opts.get(ReactiveSystemOptions.Options.TRANSITION);
-        assertEquals(opts1.getMaximumTransitions(), 4);
-
-    }
 
     @Test
     void create_transition_system_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
@@ -102,7 +84,7 @@ public class ReactiveSystemTests {
         opts
                 .and(transitionOpts()
                         .setMaximumTransitions(4)
-                        .setMaximumTime(TimeUnit.SECONDS)
+                        .setMaximumTime(30)
                         .create()
                 )
                 .setMeasureTime(true)
@@ -115,6 +97,36 @@ public class ReactiveSystemTests {
         MatchPredicate<PureBigraph> pred1 = MatchPredicate.create((PureBigraph) createAgent_A_Final());
 
         reactiveSystem.computeTransitionSystem(agent, opts, Arrays.asList(pred1));
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("Create Reactive System options")
+    class ReactiveSystemOptionTests {
+        @Test
+        void reactionsystem_options_test() {
+            ReactiveSystemOptions opts = ReactiveSystemOptions.create();
+            opts.and(transitionOpts()
+                    .setMaximumTransitions(4)
+                    .setMaximumTime(60, TimeUnit.SECONDS)
+                    .create()
+            ).and(ReactiveSystemOptions.exportOpts()
+                    .setOutputStatesFolder(new File(""))
+                    .setTraceFile(new File(""))
+                    .create()
+            );
+
+            // overwrite old settings
+            opts.and(transitionOpts()
+                    .setMaximumTransitions(5)
+                    .setMaximumTime(30, TimeUnit.MILLISECONDS)
+                    .create());
+
+            ReactiveSystemOptions.TransitionOptions opts1 = opts.get(ReactiveSystemOptions.Options.TRANSITION);
+            assertEquals(opts1.getMaximumTransitions(), 5);
+            assertEquals(opts1.getMaximumTimeUnit(), TimeUnit.MILLISECONDS);
+            assertEquals(opts1.getMaximumTime(), 30);
+        }
     }
 
     public static Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {

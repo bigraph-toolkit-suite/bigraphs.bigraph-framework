@@ -8,6 +8,14 @@ import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.TransitionPredicates;
 
 /**
+ * Default implementation of a simple predicate to just match a bigraph.
+ * <p>
+ * A predicate can be created by using the static methods the class provides.
+ * <p>
+ * Internally a bigraph matcher instance for the concrete bigraph kind is created automatically.
+ * Therefore, {@link AbstractBigraphMatcher} is used. The {@code matcher} is used inside the
+ * {@link MatchPredicate#test(Bigraph)} method.
+ *
  * @author Dominik Grzelak
  */
 public class MatchPredicate<B extends Bigraph<? extends Signature<?>>> extends TransitionPredicates<B> {

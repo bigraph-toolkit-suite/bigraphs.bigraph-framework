@@ -73,18 +73,24 @@ public class ReactiveSystemOptions {
 
     public static final class TransitionOptions implements Opts {
         private int maximumTransitions;
-        private TimeUnit maximumTime;
+        private long maximumTime;
+        private TimeUnit maximumTimeUnit;
 
-        TransitionOptions(int maximumTransitions, TimeUnit maximumTime) {
+        TransitionOptions(int maximumTransitions, long maximumTime, TimeUnit maximumTimeUnit) {
             this.maximumTransitions = maximumTransitions;
             this.maximumTime = maximumTime;
+            this.maximumTimeUnit = maximumTimeUnit;
         }
 
         public int getMaximumTransitions() {
             return maximumTransitions;
         }
 
-        public TimeUnit getMaximumTime() {
+        public TimeUnit getMaximumTimeUnit() {
+            return maximumTimeUnit;
+        }
+
+        public long getMaximumTime() {
             return maximumTime;
         }
 
@@ -95,20 +101,27 @@ public class ReactiveSystemOptions {
 
         public static class Builder {
             private int maximumTransitions;
-            private TimeUnit maximumTime;
+            private TimeUnit maximumTimeUnit = TimeUnit.SECONDS;
+            private long maximumTime = 30;
 
             public Builder setMaximumTransitions(int maximumTransitions) {
                 this.maximumTransitions = maximumTransitions;
                 return this;
             }
 
-            public Builder setMaximumTime(TimeUnit maximumTime) {
+            public Builder setMaximumTime(long maximumTime, TimeUnit maximumTimeUnit) {
+                this.maximumTime = maximumTime;
+                this.maximumTimeUnit = maximumTimeUnit;
+                return this;
+            }
+
+            public Builder setMaximumTime(long maximumTime) {
                 this.maximumTime = maximumTime;
                 return this;
             }
 
             public ReactiveSystemOptions.TransitionOptions create() {
-                return new ReactiveSystemOptions.TransitionOptions(maximumTransitions, maximumTime);
+                return new ReactiveSystemOptions.TransitionOptions(maximumTransitions, maximumTime, maximumTimeUnit);
             }
         }
     }
@@ -128,6 +141,7 @@ public class ReactiveSystemOptions {
 
         /**
          * The file to store for the trace of the transition graph
+         *
          * @return
          */
         public File getTraceFile() {
