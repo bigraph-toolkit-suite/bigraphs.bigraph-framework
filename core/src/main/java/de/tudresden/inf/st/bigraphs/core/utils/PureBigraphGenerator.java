@@ -22,7 +22,7 @@ import static de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator.Lin
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphGeneration extends RandomBigraphGenerator {
+public class PureBigraphGenerator extends RandomBigraphGenerator {
 
     private HashMap<Integer, BigraphEntity.RootEntity> myRoots = new LinkedHashMap<>();
     private HashMap<String, BigraphEntity.NodeEntity> myNodes = new LinkedHashMap<>();

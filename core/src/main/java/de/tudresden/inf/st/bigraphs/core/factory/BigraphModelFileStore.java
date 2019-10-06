@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.factory;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifactHelper;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -46,35 +45,37 @@ public class BigraphModelFileStore {
      * Export the instance model of a bigraph.
      *
      * @param bigraph      the bigraph to export
-     * @param baseFilename the base filename of the exported model file
      * @param outputStream the output stream
      * @throws IOException
      */
-    public static void exportAsInstanceModel(Bigraph<?> bigraph, String baseFilename, OutputStream outputStream) throws IOException {
-        Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph);
-        BigraphModelFileStore.writeDynamicInstanceModel(bigraph.getModelPackage(), allresources, baseFilename, outputStream);
+    public static void exportAsInstanceModel(Bigraph<?> bigraph, OutputStream outputStream) throws IOException {
+//        Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph);
+        BigraphModelFileStore.writeDynamicInstanceModel(bigraph.getModelPackage(), bigraph.getModel(), outputStream);
     }
 
     /**
      * Meta-model of a bigraph is exported
      *
      * @param bigraph
-     * @param filename
      * @param outputStream
      * @throws IOException
      */
-    public static void exportAsMetaModel(Bigraph<?> bigraph, String filename, OutputStream outputStream) throws IOException {
-        BigraphModelFileStore.writeDynamicMetaModel(bigraph.getModelPackage(), filename, outputStream);
+    public static void exportAsMetaModel(Bigraph<?> bigraph, OutputStream outputStream) throws IOException {
+        BigraphModelFileStore.writeDynamicMetaModel(bigraph.getModelPackage(), outputStream);
+    }
+
+    private static void writeDynamicInstanceModel(EPackage ePackage, EObject object, OutputStream outputStream) throws IOException {
+        writeDynamicInstanceModel(ePackage, Collections.singleton(object), outputStream);
     }
 
     //TODO: add UTF-8
-    private static void writeDynamicInstanceModel(EPackage ePackage, Collection<EObject> objects, String name, OutputStream outputStream) throws IOException {
+    private static void writeDynamicInstanceModel(EPackage ePackage, Collection<EObject> objects, OutputStream outputStream) throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         final ResourceSet resourceSet = new ResourceSetImpl();
 //        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceImpl());
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 //        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        final Resource outputRes = resourceSet.createResource(URI.createFileURI(name + ".xmi")); //
+        final Resource outputRes = resourceSet.createResource(URI.createFileURI(ePackage.getName() + ".xmi")); //
         // add our new package to resource contents
         objects.forEach(x -> outputRes.getContents().add(x));
 //        outputRes.getContents().add(ePackage); //TODO then the meta model is also included in the instance model
@@ -93,14 +94,19 @@ public class BigraphModelFileStore {
     }
 
 
-    public static void writeDynamicMetaModel(EPackage ePackage, String filename, OutputStream outputStream) throws IOException {
+    public static void writeDynamicMetaModel(EPackage ePackage, OutputStream outputStream) throws IOException {
+//        Path path = Paths.get("D:/workspace/AmanCV.docx");
+        // call getFileName() and get FileName path object
+//        Path fileName = path.getFileName();
         ResourceSet metaResourceSet = new ResourceSetImpl();
         metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMLResourceFactoryImpl());
-        Resource metaResource = metaResourceSet.createResource(URI.createURI(filename + ".ecore"));
+
+        Resource metaResource = metaResourceSet.createResource(URI.createURI(ePackage.getName()+".ecore")); //URI.createURI(ePackage.getName())); //URI.createURI(filename + ".ecore"));
         metaResource.getContents().add(ePackage);
         Map options = new HashMap();
         options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
         metaResource.save(outputStream, options);
+        outputStream.close();
     }
 
     public static EList<EObject> loadInstanceModel(EPackage metaModelPackageWithSignature, java.net.URI file) throws IOException {

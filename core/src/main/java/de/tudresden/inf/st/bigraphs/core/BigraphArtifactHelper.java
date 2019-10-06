@@ -1,10 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -15,7 +13,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
 
 import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
 
@@ -26,24 +24,6 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAP
  * @author Dominik Grzelak
  */
 public class BigraphArtifactHelper {
-
-    /**
-     * Get all {@link EObject} instances of a bigraph. Necessary when exporting an Ecore model.
-     *
-     * @param bigraph the bigraphs whos {@link EObject} instances should be collected
-     * @return a collection of the {@link EObject} instances for the given bigraph
-     */
-    public static Collection<EObject> getResourcesFromBigraph(Bigraph<?> bigraph) {
-        Collection<EObject> allresources = new ArrayList<>();
-        // the child-parent relationship is automatically considered as well as "ports"
-        // that is way we don't need to call getNodes() and getSites()
-//        bigraph.getRoots().forEach((x) -> allresources.add(x.getInstance()));
-//        bigraph.getOuterNames().forEach((x) -> allresources.add(x.getInstance()));
-//        bigraph.getInnerNames().forEach((x) -> allresources.add(x.getInstance()));
-//        bigraph.getEdges().forEach((x) -> allresources.add(x.getInstance()));
-        allresources.add(bigraph.getModel());
-        return allresources;
-    }
 
     public static EPackage loadInternalBigraphMetaModel() throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary

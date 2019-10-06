@@ -110,14 +110,14 @@ public class OperationsTest {
         PureBigraph F = builderForF.createBigraph();
         PureBigraph G = builderForG.createBigraph();
         PureBigraph H = builderForH.createBigraph();
-        BigraphModelFileStore.exportAsInstanceModel((PureBigraph) F, "F",
+        BigraphModelFileStore.exportAsInstanceModel((PureBigraph) F,
                 new FileOutputStream(TARGET_TEST_PATH + "F.xmi"));
-        BigraphModelFileStore.exportAsInstanceModel((PureBigraph) G, "G",
+        BigraphModelFileStore.exportAsInstanceModel((PureBigraph) G,
                 new FileOutputStream(TARGET_TEST_PATH + "G.xmi"));
 
         BigraphComposite<DefaultDynamicSignature> juxtapose = factory.asBigraphOperator(F).parallelProduct(G);
         Bigraph<DefaultDynamicSignature> result = juxtapose.getOuterBigraph();
-        BigraphModelFileStore.exportAsInstanceModel(result, "result",
+        BigraphModelFileStore.exportAsInstanceModel(result,
                 new FileOutputStream(TARGET_TEST_PATH + "result.xmi"));
 //        System.out.println(result.getSupport());
 

@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  *
  * @author Dominik Grzelak
  */
-public class RandomBigraphGenerator {
+public abstract class RandomBigraphGenerator {
     protected SecureRandom rnd;
     LinkStrategy linkStrategy;
 

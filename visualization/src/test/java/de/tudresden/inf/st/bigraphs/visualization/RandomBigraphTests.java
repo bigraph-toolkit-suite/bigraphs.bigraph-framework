@@ -13,7 +13,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGeneration;
+import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ public class RandomBigraphTests {
     @Test
     void basic() throws IOException {
         DefaultDynamicSignature exampleSignature = createExampleSignature();
-        PureBigraph generated = new PureBigraphGeneration().generate(exampleSignature, 1, 20, 1.0f);
+        PureBigraph generated = new PureBigraphGenerator().generate(exampleSignature, 1, 20, 1.0f);
 
         String convert = GraphvizConverter.toPNG(generated,
                 true,
@@ -71,7 +71,7 @@ public class RandomBigraphTests {
 
         StringBuilder sb = new StringBuilder();
 
-        PureBigraphGeneration generator = new PureBigraphGeneration();
+        PureBigraphGenerator generator = new PureBigraphGenerator();
         int nTimes = 10000;//maximum number of nSize
         for (Float p : probs) {
             for (Integer n : nSize) {
@@ -127,7 +127,7 @@ public class RandomBigraphTests {
 
         StringBuilder sb = new StringBuilder();
 
-        PureBigraphGeneration generator = new PureBigraphGeneration();
+        PureBigraphGenerator generator = new PureBigraphGenerator();
         int nTimes = 10;
         for (Integer t : tSize) {
             for (Integer n : nSize) {
@@ -170,7 +170,7 @@ public class RandomBigraphTests {
 
         StringBuilder sb = new StringBuilder();
 
-        PureBigraphGeneration generator = new PureBigraphGeneration();
+        PureBigraphGenerator generator = new PureBigraphGenerator();
         generator.setLinkStrategy(RandomBigraphGenerator.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE);
 //        generator.setLinkStrategy(RandomBigraphGenerator.LinkStrategy.MAXIMAL_DEGREE_DISASSORTATIVE);
         int nTimes = 1;

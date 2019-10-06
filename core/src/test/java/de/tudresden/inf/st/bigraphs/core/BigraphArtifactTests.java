@@ -19,10 +19,9 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -31,20 +30,26 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphArtifactTests {
+
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
-    private final static String TARGET_TEST_PATH = "src/test/exported-models/";
+    private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
+
+    @BeforeAll
+    static void setUp() {
+        File file = new File(TARGET_TEST_PATH);
+        file.mkdirs();
+    }
 
     @Test
-    void load_instance_model_test() {
+    @DisplayName("Write the meta-model and instance model of a bigraph")
+    void write_model_test() {
         assertAll(() -> {
-
             PureBigraph bigraph = (PureBigraph) createSampleBigraph();
 
-            BigraphModelFileStore.exportAsMetaModel(bigraph, "test_meta",
-                    new FileOutputStream("src/test/exported-models/test_meta.ecore"));
-            BigraphModelFileStore.exportAsInstanceModel(bigraph, "test",
-                    new FileOutputStream("src/test/exported-models/test.xmi"));
-
+            BigraphModelFileStore.exportAsMetaModel(bigraph,
+                    new FileOutputStream(TARGET_TEST_PATH + "test_meta-model.ecore"));
+            BigraphModelFileStore.exportAsInstanceModel(bigraph,
+                    new FileOutputStream(TARGET_TEST_PATH + "test_instance-model.xmi"));
         });
     }
 
@@ -78,14 +83,14 @@ public class BigraphArtifactTests {
             PureBigraph F = builderForF.createBigraph();
             PureBigraph G = builderForG.createBigraph();
 
-            BigraphModelFileStore.exportAsInstanceModel(F, "f", new FileOutputStream(TARGET_TEST_PATH + "f.xmi"));
+            BigraphModelFileStore.exportAsInstanceModel(F, new FileOutputStream(TARGET_TEST_PATH + "f.xmi"));
             BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
             BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
-            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) composedBigraph.getOuterBigraph(), "composetest",
+            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) composedBigraph.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "composetest.xmi"));
 
             BigraphComposite<DefaultDynamicSignature> juxtapose = compositor.juxtapose(F);
-            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) juxtapose.getOuterBigraph(), "juxtatest",
+            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) juxtapose.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "juxtatest.xmi"));
 
         });
@@ -115,18 +120,18 @@ public class BigraphArtifactTests {
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
             builderForG.createRoot().addChild(signature.getControlByName("User")).connectNodeToInnerName(zInner);
             PureBigraph simpleBigraph = builderForG.createBigraph();
-            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) simpleBigraph, "compose_test_2a",
+            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) simpleBigraph,
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_2a.xmi"));
             Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
             BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(simpleBigraph);
             BigraphComposite<DefaultDynamicSignature> compose1 = compose.compose(substitution);
-            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) compose1.getOuterBigraph(), "compose_test_2b",
+            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) compose1.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_2b.xmi"));
 
             Linkings<DefaultDynamicSignature>.Substitution a1 = linkings.substitution(StringTypedName.of("a"), StringTypedName.of("b"), StringTypedName.of("c"));
             Linkings<DefaultDynamicSignature>.Substitution a2 = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("a"));
             Bigraph<DefaultDynamicSignature> a3 = factory.asBigraphOperator(a2).compose(a1).getOuterBigraph();
-            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) a3, "compose_test_3",
+            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) a3,
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_3.xmi"));
 
         } catch (LinkTypeNotExistsException | IOException | IncompatibleSignatureException | IncompatibleInterfaceException | InvalidConnectionException | ControlIsAtomicException e) {

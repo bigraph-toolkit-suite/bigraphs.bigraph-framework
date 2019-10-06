@@ -114,3 +114,4 @@ buildNumber.properties
 gen-test-resources/*
 #!gen-test-resources/.gitkeep
 /TODO
+**/resources/dump/exported-models/*
