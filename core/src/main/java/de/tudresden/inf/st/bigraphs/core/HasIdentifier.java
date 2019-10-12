@@ -3,11 +3,12 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 
 /**
- * Interface for entities that can be labelled, e.g., nodes or names.
+ * Interface for entities that have an identifier, meaning,
+ * they can be labelled. Entities can be, e.g., nodes.
  *
  * @param <NT> type of the named value
  * @author Dominik Grzelak
  */
-public interface NamedEntity<NT extends NamedType> {
+public interface HasIdentifier<NT extends NamedType> {
     NT getNamedType();
 }
