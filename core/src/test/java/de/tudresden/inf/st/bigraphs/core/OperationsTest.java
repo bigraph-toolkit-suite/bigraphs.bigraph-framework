@@ -8,7 +8,6 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.BigraphModelFileStore;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
@@ -29,6 +28,8 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OperationsTest {
+
+    private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
 
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
@@ -75,8 +76,6 @@ public class OperationsTest {
 //        System.out.println("index=" + index + " __ equals= " + parent0.equals(parent));
     }
 
-    private final static String TARGET_TEST_PATH = "src/test/exported-models/";
-
     @Test
     void parallelProduct() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
@@ -107,17 +106,18 @@ public class OperationsTest {
             builderForH.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
                     .addChild(signature.getControlByName("Printer"));
         }
+        
         PureBigraph F = builderForF.createBigraph();
         PureBigraph G = builderForG.createBigraph();
         PureBigraph H = builderForH.createBigraph();
-        BigraphModelFileStore.exportAsInstanceModel((PureBigraph) F,
+        BigraphArtifacts.exportAsInstanceModel((PureBigraph) F,
                 new FileOutputStream(TARGET_TEST_PATH + "F.xmi"));
-        BigraphModelFileStore.exportAsInstanceModel((PureBigraph) G,
+        BigraphArtifacts.exportAsInstanceModel((PureBigraph) G,
                 new FileOutputStream(TARGET_TEST_PATH + "G.xmi"));
 
         BigraphComposite<DefaultDynamicSignature> juxtapose = factory.asBigraphOperator(F).parallelProduct(G);
         Bigraph<DefaultDynamicSignature> result = juxtapose.getOuterBigraph();
-        BigraphModelFileStore.exportAsInstanceModel(result,
+        BigraphArtifacts.exportAsInstanceModel(result,
                 new FileOutputStream(TARGET_TEST_PATH + "result.xmi"));
 //        System.out.println(result.getSupport());
 
