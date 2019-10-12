@@ -41,7 +41,7 @@ public class BigraphEntity<C extends Control> {
         this.type = type;
     }
 
-    BigraphEntity(@NonNull EObject instance, BigraphEntityType type) {
+    BigraphEntity(EObject instance, BigraphEntityType type) {
         this(instance, null, type);
     }
 
@@ -67,7 +67,7 @@ public class BigraphEntity<C extends Control> {
 //        this.instance = instance;
 //        return this;
 //    }
-    
+
     public C getControl() {
         return control;
     }
@@ -179,19 +179,24 @@ public class BigraphEntity<C extends Control> {
     }
 
     public static class SiteEntity extends BigraphEntity {
+        int index;
 
         public SiteEntity() {
             super(null, BigraphEntityType.SITE);
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            Object name = getInstance().eGet(nameAttr);
+            index = (Integer) name;
         }
 
         SiteEntity(@NonNull EObject instance) {
             super(instance, BigraphEntityType.SITE);
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            Object name = getInstance().eGet(nameAttr);
+            index = (Integer) name;
         }
 
         public int getIndex() {
-            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
-            Object name = getInstance().eGet(nameAttr);
-            return (Integer) name;
+            return index;
         }
 
     }
@@ -221,19 +226,24 @@ public class BigraphEntity<C extends Control> {
 
 
     public static class RootEntity extends BigraphEntity {
+        int index;
 
         RootEntity() {
             super(null, BigraphEntityType.ROOT);
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            Object name = getInstance().eGet(nameAttr);
+            index = (Integer) name;
         }
 
         RootEntity(@NonNull EObject instance) {
             super(instance, BigraphEntityType.ROOT);
+            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            Object name = getInstance().eGet(nameAttr);
+            index = (Integer) name;
         }
 
         public int getIndex() {
-            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
-            Object name = getInstance().eGet(nameAttr);
-            return (Integer) name;
+            return index;
         }
     }
 }

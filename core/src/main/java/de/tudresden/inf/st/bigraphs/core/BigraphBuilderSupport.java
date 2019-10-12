@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -81,6 +82,7 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
         private EObject bBigraphObject;
 
         public InstanceParameter(EPackage loadedEPackage,
+                                 EObject instanceModel,
                                  S signature,
                                  Map<Integer, BigraphEntity.RootEntity> availableRoots,
                                  Map<Integer, BigraphEntity.SiteEntity> availableSites,
@@ -97,7 +99,23 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
             this.outerNames = new LinkedHashSet<>(availableOuterNames.values());
             this.innerNames = new LinkedHashSet<>(availableInnerNames.values());
             this.nodes = new LinkedHashSet<>(availableNodes.values());
-            this.bBigraphObject = createBBigraphContainer(this.roots, this.edges, this.innerNames, this.outerNames);
+            if (Objects.isNull(instanceModel))
+                this.bBigraphObject = createBBigraphContainer(this.roots, this.edges, this.innerNames, this.outerNames);
+            else
+                this.bBigraphObject = instanceModel;
+        }
+
+        public InstanceParameter(EPackage loadedEPackage,
+                                 S signature,
+                                 Map<Integer, BigraphEntity.RootEntity> availableRoots,
+                                 Map<Integer, BigraphEntity.SiteEntity> availableSites,
+                                 Map<String, BigraphEntity.NodeEntity> availableNodes,
+                                 Map<String, BigraphEntity.InnerName> availableInnerNames,
+                                 Map<String, BigraphEntity.OuterName> availableOuterNames,
+                                 Map<String, BigraphEntity.Edge> availableEdges
+        ) {
+            this(loadedEPackage, null, signature, availableRoots, availableSites, availableNodes,
+                    availableInnerNames, availableOuterNames, availableEdges);
         }
 
         public Signature<Control<?, ?>> getSignature() {

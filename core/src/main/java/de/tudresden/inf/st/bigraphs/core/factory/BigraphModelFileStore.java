@@ -49,7 +49,7 @@ public class BigraphModelFileStore {
      * @throws IOException
      */
     public static void exportAsInstanceModel(Bigraph<?> bigraph, OutputStream outputStream) throws IOException {
-//        Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph);
+//        Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph); // old method
         BigraphModelFileStore.writeDynamicInstanceModel(bigraph.getModelPackage(), bigraph.getModel(), outputStream);
     }
 
@@ -64,8 +64,8 @@ public class BigraphModelFileStore {
         BigraphModelFileStore.writeDynamicMetaModel(bigraph.getModelPackage(), outputStream);
     }
 
-    private static void writeDynamicInstanceModel(EPackage ePackage, EObject object, OutputStream outputStream) throws IOException {
-        writeDynamicInstanceModel(ePackage, Collections.singleton(object), outputStream);
+    private static void writeDynamicInstanceModel(EPackage metaModelPackage, EObject instanceModel, OutputStream outputStream) throws IOException {
+        writeDynamicInstanceModel(metaModelPackage, Collections.singleton(instanceModel), outputStream);
     }
 
     //TODO: add UTF-8
@@ -101,47 +101,11 @@ public class BigraphModelFileStore {
         ResourceSet metaResourceSet = new ResourceSetImpl();
         metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMLResourceFactoryImpl());
 
-        Resource metaResource = metaResourceSet.createResource(URI.createURI(ePackage.getName()+".ecore")); //URI.createURI(ePackage.getName())); //URI.createURI(filename + ".ecore"));
+        Resource metaResource = metaResourceSet.createResource(URI.createURI(ePackage.getName() + ".ecore")); //URI.createURI(ePackage.getName())); //URI.createURI(filename + ".ecore"));
         metaResource.getContents().add(ePackage);
         Map options = new HashMap();
         options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
         metaResource.save(outputStream, options);
         outputStream.close();
-    }
-
-    public static EList<EObject> loadInstanceModel(EPackage metaModelPackageWithSignature, java.net.URI file) throws IOException {
-        ResourceSet load_resourceSet = new ResourceSetImpl();
-        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
-        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-
-        // register the dynamic package locally
-        load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
-        //Also the basemetamodel?
-
-        URI uri = URI.createFileURI(new File(file).getAbsolutePath());
-        Resource load_resource = load_resourceSet.createResource(uri);
-//        Resource load_resource = load_resourceSet.getResource(URI.createURI(filename), true);
-        //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
-//        load_resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
-//        Resource load_resource = load_resourceSet.getResource(URI.createPlatformResourceURI(filename, true), true);
-
-        load_resource.load(Collections.EMPTY_MAP);
-        return load_resource.getContents();
-    }
-
-    public static EPackage loadEcoreMetaModel(java.net.URI path) throws IOException {
-        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
-        ResourceSet resourceSet = new ResourceSetImpl();
-
-        URI uri = URI.createFileURI(new File(path).getAbsolutePath());
-
-        // resource factories
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
-
-        Resource resource = resourceSet.createResource(uri);
-//        Resource resource = resourceSet.getResource(uri, true);
-        resource.load(Collections.EMPTY_MAP);
-        return (EPackage) resource.getContents().get(0);
     }
 }
