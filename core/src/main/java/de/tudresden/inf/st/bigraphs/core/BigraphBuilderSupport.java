@@ -64,6 +64,10 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
         return eObject;
     }
 
+    //TODO: add method "fromFile/Model/": args are instance (EObject) and meta-model (EPackage)
+    // we need to reconstruct the internal object structure
+    // do also validation against the meta-model
+
     //DTO?
     public class InstanceParameter {
         private EPackage modelPackage;

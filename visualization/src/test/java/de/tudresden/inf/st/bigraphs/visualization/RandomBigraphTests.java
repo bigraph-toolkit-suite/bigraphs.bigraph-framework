@@ -94,6 +94,7 @@ public class RandomBigraphTests {
 //        long count = collectedStats.stream().mapToDouble(x -> x[0])
 //                .filter(x -> x != 0)
 //                .count();
+                // collect the node count (having positive arity)
                 List<Double> collect = collectedStats.stream()
                         .map(x -> x[0])
                         .collect(Collectors.toList());

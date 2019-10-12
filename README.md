@@ -25,8 +25,9 @@ The high level API eases the programming of bigraphical systems for real-world a
 
 Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java:
 
+### Creating Bigraphs
 
-### Factory
+#### Factory
 A factory is necessary for accessing related builder instances for a specific kind of bigraph.
 The factory depends on the kind of bigraph and its _signature_.
 Depending on the bigraph type, the factory will return specialized methods.  
@@ -36,7 +37,7 @@ Depending on the bigraph type, the factory will return specialized methods.
 PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 ```
 
-### Signature and Bigraph Builder
+#### Signature and Bigraph Builder
 
 The builder is responsible for instantiating and configuring concrete bigraph instances,
 depending on the specific _signature_.
@@ -63,18 +64,22 @@ PureBigraph bigraph = builder.createBigraph();
 
 ### Other APIs
 
-The bigraph builder provides many more utility methods helping to build more
-complex structures easily
+**Connecting nodes by links**
 
-Create nodes and at the same time connect them all with an edge:
+The bigraph builder provides more utility methods helping to build more
+complex structures easily.
+
+The following one shows, how to create nodes, and at the same time connecting them all with an edge:
+
 ```java
 builder.createRoot().connectByEdge(signature.getControlByName("Job"),
                                 signature.getControlByName("Job"),
                                 signature.getControlByName("Job")); 
 ```
 
-Connect nodes within different "places" through an inner name, and
-after, close the link to automatically transform it to an edge:
+Now, we want to connect nodes located at different "places". Therefore, we
+link them through an inner name, and
+after, close the link to automatically to transform it to an edge:
 ```java
 // First, create an inner name
 BigraphEntity.OuterName tmp_link = builder.createInnerName("link");
@@ -87,14 +92,37 @@ builder.createRoot().addChild("Computer").connectNodeToInnerName(tmp_link);
 builder.closeInnerName(tmp_link);
 ```
 
+**Exporting the meta-model and instance model**
+
+```java
+PureBigraph bigraph = ...;
+BigraphModelFileStore.exportAsMetaModel(bigraph, new FileOutputStream("./meta-model.ecore"));
+BigraphModelFileStore.exportAsInstanceModel(bigraph, new FileOutputStream("./instance-model.xmi"));
+```
+
 See the reference and documentation for a more comprehensive overview.
 
 ### Maven configuration
 
 ```xml
+<!-- the core module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-core</artifactId>
+  <version>${revision}</version>
+  <type>pom</type>
+</dependency>
+<!-- the rewriting module -->
+<dependency>
+  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <artifactId>bigraph-rewriting</artifactId>
+  <version>${revision}</version>
+  <type>pom</type>
+</dependency>
+<!-- the visualization module -->
+<dependency>
+  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <artifactId>bigraph-visualization</artifactId>
   <version>${revision}</version>
   <type>pom</type>
 </dependency>

@@ -7,7 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.*;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifactHelper;
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.BigraphBuilderSupport;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.impl.EClassImpl;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
@@ -1132,7 +1131,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     public void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
         try {
-            loadedEPackage = BigraphArtifactHelper.loadInternalBigraphMetaModel();
+            loadedEPackage = BigraphArtifacts.loadInternalBigraphMetaModel();
             loadedEPackage.setNsPrefix(modelData.getNsPrefix());
             loadedEPackage.setNsURI(modelData.getNsUri());
             loadedEPackage.setName(modelData.getName());

@@ -23,7 +23,7 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAP
  *
  * @author Dominik Grzelak
  */
-public class BigraphArtifactHelper {
+public class BigraphArtifacts {
 
     public static EPackage loadInternalBigraphMetaModel() throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary

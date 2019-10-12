@@ -11,5 +11,7 @@ package de.tudresden.inf.st.bigraphs.core.factory;
  */
 public class FilesystemBigraphFactory {
 
+    //TODO: load the meta-model and instance model, return both. can be used then with the builder
+    //maybe merge this class with BigraphArtifactHelper
 
 }

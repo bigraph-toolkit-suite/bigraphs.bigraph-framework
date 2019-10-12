@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 import static de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator.LinkStrategy.NONE;
 
 /**
+ * A concrete implementation of {@link RandomBigraphGenerator} for <i>pure bigraphs</i>.
+ *
  * @author Dominik Grzelak
  */
 public class PureBigraphGenerator extends RandomBigraphGenerator {
@@ -35,12 +37,17 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
     private MutableBuilder<Signature<? extends Control>> builder;
     private int numOfLinkings;
     private int cntE = 0, cntO = 0;
-    private Set<BigraphEntity> tmpFiltered;
+    private Set<BigraphEntity> nodesWithPositiveArity;
 
+    /**
+     * @param signature the signature of the bigraph
+     * @param t         number of roots
+     * @param n         number of nodes (inclusive t)
+     * @param p         proportion of the nodes (n) being used for linking at all
+     * @return
+     */
     public PureBigraph generate(DefaultDynamicSignature signature, int t, int n, float p) {
-//        rnd = new Random();
         drng = new DistributedRandomNumberGenerator();
-//        Random mRandom = new Random();
         myRoots.clear();
         myNodes.clear();
         mySites.clear();
@@ -105,19 +112,19 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
 
         edgeLblSupplier = edgeLabelSupplier();
 
-        tmpFiltered =
+        nodesWithPositiveArity =
                 myNodes.values().stream()
                         .filter(x -> Objects.nonNull(x.getControl()) &&
                                 x.getControl().getArity().getValue().intValue() > 0)
                         .collect(Collectors.toSet());
-        numOfLinkings = (int) Math.floor((tmpFiltered.size() * p) / 2);
+        numOfLinkings = (int) Math.floor((nodesWithPositiveArity.size() * p) / 2);
 //        System.out.println("#ofEdges: " + numOfLinkings);
         cntE = 0;
         cntO = 0;
         if (linkStrategy != NONE && numOfLinkings >= 1) {
             switch (linkStrategy) {
                 case MIN_LINKING:
-                    minLinking();
+                    pairwiseLinking(numOfLinkings);
                     break;
                 case MAXIMAL_DEGREE_ASSORTATIVE:
                 case MAXIMAL_DEGREE_DISASSORTATIVE:
@@ -128,7 +135,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
             }
         }
 
-        stats = new double[]{tmpFiltered.size(), cntO, cntE, numOfLinkings};
+        stats = new double[]{nodesWithPositiveArity.size(), cntO, cntE, numOfLinkings};
 
         PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
                 builder.getLoadedEPackage(),
@@ -142,7 +149,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
     }
 
     private void maximalDegreeLinking() {
-        List<BigraphEntity> collect = new ArrayList<>(tmpFiltered);
+        List<BigraphEntity> collect = new ArrayList<>(nodesWithPositiveArity);
         HashMap<BigraphEntity, Boolean> visited = new HashMap<>();
         int n = (int) Math.sqrt(collect.size());
         System.out.println("N iterations=" + n);
@@ -264,14 +271,18 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
 
     }
 
-
-    private void minLinking() {
-        int connections = 0;
-        List<BigraphEntity> collect = new ArrayList<>(tmpFiltered);
+    /**
+     * Creates at maximum only one connection between two nodes for the given number of nodes
+     * {@code numOfLinkings}, generated before.
+     *
+     * @param numOfLinkings maximum number of pairwise connections to create
+     */
+    private void pairwiseLinking(final int numOfLinkings) {
+        int connectionCount = 0;
+        List<BigraphEntity> collect = new ArrayList<>(nodesWithPositiveArity);
 //            System.out.println("#nodes= " + collect.size());
         //solange connection != max || keine nodes mehr vorhanden
-//            Collections.shuffle(collect);
-        while ((connections < numOfLinkings)) { //collect.size() >= 2 &&
+        while ((connectionCount < numOfLinkings)) {
             int i1 = rnd.nextInt(collect.size());
             int i2 = rnd.nextInt(collect.size());
             if (i1 == i2) continue;
@@ -298,7 +309,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
             }
             collect.remove(a);
             collect.remove(b);
-            connections++;
+            connectionCount++;
 
         }
     }

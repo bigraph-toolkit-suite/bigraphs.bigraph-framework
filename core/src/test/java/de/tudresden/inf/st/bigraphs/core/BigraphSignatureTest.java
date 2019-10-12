@@ -146,7 +146,7 @@ public class BigraphSignatureTest {
 //        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         try {
-            EPackage metapackage = BigraphArtifactHelper.loadInternalBigraphMetaModel();
+            EPackage metapackage = BigraphArtifacts.loadInternalBigraphMetaModel();
             System.out.println("Model loaded");
 
 //            EPackage metapackage = (EPackage) resource.getContents().get(0);

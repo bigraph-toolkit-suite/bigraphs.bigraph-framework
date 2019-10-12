@@ -18,6 +18,8 @@ import java.lang.reflect.Type;
 import java.util.Set;
 
 /**
+ * Abstract factory class for all kind of bigraphs.
+ *
  * @author Dominik Grzelak
  */
 public abstract class AbstractBigraphFactory<S extends Signature, NT extends NamedType, FT extends FiniteOrdinal> implements BigraphFactoryElement {
@@ -28,9 +30,28 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
         return successorClass;
     }
 
-    //TODO move outside this class
+    /**
+     * Create a pure bigraph factory with default types for the control's label ({@link StringTypedName}) and
+     * arity ({@link FiniteOrdinal<Integer>}.
+     *
+     * @return a pure bigraph factory
+     */
     public static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> createPureBigraphFactory() {
         return new PureBigraphFactory<>();
+    }
+
+    /**
+     * Create a pure bigraph factory
+     * <p>
+     * //     * @param nameTypeClass    class of the control's labels
+     * //     * @param ordinalTypeClass class of the control's arity
+     *
+     * @param <NT> type of the control's labels
+     * @param <FT> type of the control's arity
+     * @return a pure bigraph factory with the provided types
+     */
+    public static <NT extends NamedType, FT extends Number> PureBigraphFactory<NT, FiniteOrdinal<FT>> createPureBigraphFactory(Class<NT> nameTypeClass, Class<FT> ordinalTypeClass) {
+        return new PureBigraphFactory<NT, FiniteOrdinal<FT>>();
     }
 
     /**

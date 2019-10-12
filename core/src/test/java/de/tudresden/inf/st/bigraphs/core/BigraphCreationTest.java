@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BigraphCreationTest {
 
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factoryWithArgs = AbstractBigraphFactory.createPureBigraphFactory(StringTypedName.class, Integer.class);
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)

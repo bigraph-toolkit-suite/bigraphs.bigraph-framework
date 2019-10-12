@@ -1,6 +1,13 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-public abstract class BigraphHandler {
+/**
+ * Contains generic methods that may be used by concrete implementations of {@link Bigraph}.
+ * The methods are applicable for every kind of bigraph and, thus, should not dependent on
+ * a specific bigraph structure (pure, with sharing, etc.).
+ *
+ * @author Dominik Grzelak
+ */
+public abstract class BigraphSupport {
 
 //    default boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2) {
 ////        EStructuralFeature portsRef = place1.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
