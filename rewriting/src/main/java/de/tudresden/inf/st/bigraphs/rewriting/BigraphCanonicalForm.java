@@ -11,6 +11,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 /**
  * This helper class creates a unique (canonical) label for a place graph of a bigraph such that two isomorphic place graphs
@@ -89,17 +93,58 @@ public class BigraphCanonicalForm {
                 //in der reihenfolge wie oben: lexicographic "from small to large", and bfs from left to right
                 Map<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> collect1 = collect.entrySet().stream()
                         .sorted(Comparator.comparing(k -> k.getKey().getControl().getNamedType().stringValue()))
-                        .collect(Collectors.groupingBy(e -> bigraph.getParent(e.getKey()), Collectors.toCollection(LinkedList::new)));
+                        .collect(groupingBy(e -> bigraph.getParent(e.getKey()), Collectors.toCollection(LinkedList::new)));
                 LinkedHashMap<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> collect2 = collect1.entrySet().stream()
                         .sorted(Map.Entry.comparingByValue(BigraphCanonicalForm::compareByControl))
                         .collect(Collectors.toMap(
                                 Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
                 //build string
                 collect2.entrySet().stream()
-                        .sorted(BigraphCanonicalForm::compareByControlThenChildrenSize)
+                        .sorted(
+//                                this::compareByControlThenChildrenSize
+                                (lhs, rhs) -> {
+                                    if (lhs.getKey().getControl().getNamedType().stringValue().equals(rhs.getKey().getControl().getNamedType().stringValue())) {
+                                        // child count
+                                        if (rhs.getValue().size() - lhs.getValue().size() == 0) {
+                                            // port count
+                                            int count1 = lhs.getValue().stream().map(x -> bigraph.getPorts(x.getKey()).size()).reduce(0, Integer::sum);
+                                            int count = rhs.getValue().stream().map(x -> bigraph.getPorts(x.getKey()).size()).reduce(0, Integer::sum);
+                                            return (int) (count1 - count);
+//                                            if (count1 - count == 0) {
+//                                                return lhs.getKey().getControl().getNamedType().stringValue().compareTo(rhs.getKey().getControl().getNamedType().stringValue()); //(int) (count1 - count);
+//                                            }
+//                                            return bigraph.getPorts(lhs.getKey()).size() - bigraph.getPorts(rhs.getKey()).size();
+                                        }
+                                        return rhs.getValue().size() - lhs.getValue().size();
+                                    } else {
+                                        return lhs.getKey().getControl().getNamedType().stringValue().compareTo(rhs.getKey().getControl().getNamedType().stringValue());
+                                    }
+                                }
+                        )
+//                        .collect(groupingBy(bigraphEntityLinkedListEntry -> {
+//                            if (Objects.isNull(bigraphEntityLinkedListEntry.getKey().getControl()))
+//                                return "0";
+//                            return bigraphEntityLinkedListEntry.getKey().getControl().getNamedType().stringValue();
+////                            return bigraphEntityLinkedListEntry.getValue().stream().map(x -> bigraph.getPorts(x.getKey()).size()).reduce(0, Integer::sum);
+//                        }, LinkedHashMap::new, toList()))
+//                        .values().stream()
+//                        .collect(groupingBy(x -> x % 2 == 0,
+//                                groupingBy(x, LinkedHashMap::new, toList()))
+//                        )
                         .forEachOrdered(e -> {
-                            e.getValue().stream()
+                            e.getValue()
+//                                    .stream().flatMap(x -> x.getValue().stream())
+                                    .stream()
                                     .sorted(
+//                                            Comparator.comparing(
+//                                                    (Map.Entry<BigraphEntity, Control> k) ->
+//                                                            bigraph.getPorts(k.getKey()).size()
+//                                            ).reversed()
+//                                                    .thenComparing(
+//                                                            (Map.Entry<BigraphEntity, Control> k) ->
+//                                                                    k.getKey().getControl().getNamedType().stringValue()
+//                                                    )
+//
                                             Comparator.comparing((Map.Entry<BigraphEntity, Control> k) ->
                                                     k.getKey().getControl().getNamedType().stringValue() //+ "" + bigraph.getPorts(k.getKey()).size()
                                             ).thenComparing(Comparator.comparing((Map.Entry<BigraphEntity, Control> k) ->
@@ -152,8 +197,11 @@ public class BigraphCanonicalForm {
      * @param rhs right-hand side
      * @return integer indicating the ordering
      */
-    public static int compareByControlThenChildrenSize(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
+    public int compareByControlThenChildrenSize(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
         if (lhs.getKey().getControl().getNamedType().stringValue().equals(rhs.getKey().getControl().getNamedType().stringValue())) {
+//            if (rhs.getValue().size() - lhs.getValue().size() == 0) {
+//                return bigraph.getPorts(rhs.getKey()).size();
+//            }
             return rhs.getValue().size() - lhs.getValue().size();
         } else {
             return lhs.getKey().getControl().getNamedType().stringValue().compareTo(rhs.getKey().getControl().getNamedType().stringValue());

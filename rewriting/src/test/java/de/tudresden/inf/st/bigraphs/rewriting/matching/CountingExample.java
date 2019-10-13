@@ -21,6 +21,8 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -36,7 +38,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dominik Grzelak
  */
 public class CountingExample {
+    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/counting/";
     private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+
+    @BeforeAll
+    static void setUp() {
+        File dump = new File(TARGET_DUMP_PATH);
+        dump.mkdirs();
+    }
 
     @Test
     void create_transition_system_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
@@ -46,7 +55,7 @@ public class CountingExample {
         PureBigraph agent_a = createAgent_A(3, 4);
         GraphvizConverter.toPNG(agent_a,
                 true,
-                new File("counting_agent.png")
+                new File(TARGET_DUMP_PATH + "counting_agent.png")
         );
 
 //        PureBigraph agent = (PureBigraph) createAgent_A();
@@ -67,7 +76,7 @@ public class CountingExample {
         reactiveSystem.addReactionRule(rr_3);
         assertTrue(reactiveSystem.isSimple());
         Path currentRelativePath = Paths.get("");
-        Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), "transition_graph_2.png");
+        Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), TARGET_DUMP_PATH, "transition_graph_2.png");
         ReactiveSystemOptions opts = ReactiveSystemOptions.create();
         opts
                 .and(transitionOpts()

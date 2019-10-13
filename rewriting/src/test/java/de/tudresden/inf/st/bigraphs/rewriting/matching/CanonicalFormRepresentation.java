@@ -18,6 +18,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -32,7 +34,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Dominik Grzelak
  */
 public class CanonicalFormRepresentation {
+    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/";
+
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+
+    @BeforeAll
+    static void setUp() {
+        File dump = new File(TARGET_DUMP_PATH);
+        dump.mkdirs();
+    }
 
     @Test
     void simple_canonical_form_test() throws IOException, InvalidConnectionException, LinkTypeNotExistsException {
@@ -43,7 +53,7 @@ public class CanonicalFormRepresentation {
         System.out.println(bfcs);
         GraphvizConverter.toPNG(biesingerSampleBigraph,
                 true,
-                new File("sampleBigraph_biesinger.png")
+                new File(TARGET_DUMP_PATH + "sampleBigraph_biesinger.png")
         );
 
         AtomicInteger cnt2 = new AtomicInteger(0);
@@ -52,7 +62,7 @@ public class CanonicalFormRepresentation {
                     try {
                         GraphvizConverter.toPNG(x,
                                 true,
-                                new File("sampleBigraph2_" + cnt2.incrementAndGet() + ".png")
+                                new File(TARGET_DUMP_PATH + "sampleBigraph2_" + cnt2.incrementAndGet() + ".png")
                         );
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -70,7 +80,7 @@ public class CanonicalFormRepresentation {
                     try {
                         GraphvizConverter.toPNG(x,
                                 true,
-                                new File("sampleBigraph0_" + cnt0.incrementAndGet() + ".png")
+                                new File(TARGET_DUMP_PATH + "sampleBigraph0_" + cnt0.incrementAndGet() + ".png")
                         );
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -89,7 +99,7 @@ public class CanonicalFormRepresentation {
                     try {
                         GraphvizConverter.toPNG(x,
                                 true,
-                                new File("sampleBigraph1_" + cnt1.incrementAndGet() + ".png")
+                                new File(TARGET_DUMP_PATH + "sampleBigraph1_" + cnt1.incrementAndGet() + ".png")
                         );
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -110,7 +120,7 @@ public class CanonicalFormRepresentation {
         Bigraph l1 = createSampleBigraph_with_Links();
         GraphvizConverter.toPNG(l1,
                 true,
-                new File("sampleBigraph_L_1.png")
+                new File(TARGET_DUMP_PATH + "sampleBigraph_L_1.png")
         );
         String bfcs = BigraphCanonicalForm.getInstance().bfcs(l1);
         System.out.println(bfcs);
