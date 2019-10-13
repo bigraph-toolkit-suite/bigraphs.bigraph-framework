@@ -21,17 +21,26 @@ import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Graph;
 import guru.nidi.graphviz.model.MutableGraph;
-
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
-public class Test {
+public class VisualizationUnitTests {
+    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/graphviz/";
+
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
-    @org.junit.jupiter.api.Test
+    @BeforeAll
+    static void setUp() {
+        File dump = new File(TARGET_DUMP_PATH);
+        dump.mkdirs();
+    }
+
+    @Test
     void placegraph_export2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
 //        PureBigraph bigraph_a = createBigraph_b();
 
@@ -41,21 +50,21 @@ public class Test {
 
         String convert = GraphvizConverter.toPNG(createSimpleBigraphHierarchy(),
                 true,
-                new File("src/test/resources/graphviz/ex_simple_tree.png")
+                new File(TARGET_DUMP_PATH + "ex_simple_tree.png")
         );
         System.out.println(convert);
         String convert2 = GraphvizConverter.toPNG(createSimpleBigraphHierarchy(),
                 false,
-                new File("src/test/resources/graphviz/ex_simple_nesting.png")
+                new File(TARGET_DUMP_PATH + "ex_simple_nesting.png")
         );
         System.out.println(convert2);
-        GraphvizConverter.toPNG(createBigraph_A(), true, new File("src/test/resources/graphviz/ex_A_tree.png"));
-        GraphvizConverter.toPNG(createBigraph_A(), false, new File("src/test/resources/graphviz/ex_A_nesting.png"));
-        GraphvizConverter.toPNG(createBigraph_b(), true, new File("src/test/resources/graphviz/ex_b_tree.png"));
-        GraphvizConverter.toPNG(createBigraph_b(), false, new File("src/test/resources/graphviz/ex_b_nesting.png"));
+        GraphvizConverter.toPNG(createBigraph_A(), true, new File(TARGET_DUMP_PATH + "ex_A_tree.png"));
+        GraphvizConverter.toPNG(createBigraph_A(), false, new File(TARGET_DUMP_PATH + "ex_A_nesting.png"));
+        GraphvizConverter.toPNG(createBigraph_b(), true, new File(TARGET_DUMP_PATH + "ex_b_tree.png"));
+        GraphvizConverter.toPNG(createBigraph_b(), false, new File(TARGET_DUMP_PATH + "ex_b_nesting.png"));
 
-        GraphvizConverter.toPNG(bigraphWithTwoRoots(), true, new File("src/test/resources/graphviz/ex_2roots_tree.png"));
-        GraphvizConverter.toPNG(bigraphWithTwoRoots(), false, new File("src/test/resources/graphviz/ex_2roots_nesting.png"));
+        GraphvizConverter.toPNG(bigraphWithTwoRoots(), true, new File(TARGET_DUMP_PATH + "ex_2roots_tree.png"));
+        GraphvizConverter.toPNG(bigraphWithTwoRoots(), false, new File(TARGET_DUMP_PATH + "ex_2roots_nesting.png"));
     }
 
     private MutableGraph makeHierarchyCluster(Bigraph bigraph, BigraphEntity nodeEntity, MutableGraph currentParent, GraphicalFeatureSupplier<String> labelSupplier) {
@@ -80,7 +89,7 @@ public class Test {
         return currentParent;
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void graphviz_hierarchy_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         PureBigraph simpleBigraphHierarchy = createSimpleBigraphHierarchy();
 
@@ -101,7 +110,7 @@ public class Test {
         Graph mega = graph("mega").with(rootGraphs);
 
         System.out.println(mega.toString());
-        Graphviz.fromGraph(mega).height(800).render(Format.PNG).toFile(new File("src/test/resources/graphviz/ex_hierarchy.png"));
+        Graphviz.fromGraph(mega).height(800).render(Format.PNG).toFile(new File(TARGET_DUMP_PATH + "ex_hierarchy.png"));
     }
 
     public PureBigraph createSimpleBigraphHierarchy() {

@@ -207,9 +207,16 @@ public class GraphvizConverter {
                 switch (point.getType()) {
                     case PORT:
                         BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);
-                        theGraph.nodes().stream().filter(x -> x.name().toString().equals(labelSupplier.with(nodeOfPort).get()))
-                                .findFirst().get()
-                                .addLink(Link.to(grOuter).with(Color.GREEN));
+                        Optional<MutableNode> first = theGraph.nodes().stream().filter(x -> x.name().toString().equals(labelSupplier.with(nodeOfPort).get()))
+                                .findFirst();
+                        if (first.isPresent()) {
+                            first.get().addLink(Link.to(grOuter).with(Color.GREEN));
+                        } else {
+                            theGraph.add(mutNode(labelSupplier.with(nodeOfPort).get()).addLink(Link.to(grOuter).with(Color.GREEN)));
+                        }
+
+                        //.get()
+                        //      .addLink(Link.to(grOuter).with(Color.GREEN));
                         break;
                     case INNER_NAME:
                         String label = labelSupplier.with(point).get();
