@@ -7,8 +7,6 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.*;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
-import de.tudresden.inf.st.bigraphs.core.BigraphBuilderSupport;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
@@ -25,21 +23,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
-//TODO guided+nested builder: https://blog.crisp.se/2013/10/09/perlundholm/another-builder-pattern-for-java
-//  vereinfacht das bauen von ecore model - more fluent
-//inside a root: offer only nodes of control types and sites to add at every level.
-//can go into a node to add hierarchy (starthierarchy()/endHierarchy())
-//offer finish method: than we are at the root level again to start from the beginning.
-//-> builder here is kind of the multi-scale modeling approach from gassara.
-
 /**
+ * A concrete implementation of {@link BigraphBuilder} for <b>pure bigraphs</b>.
+ * <p>
  * This bigraph builder offers a multi-scale approach for building bigraphs. From top to bottom.
  * Beginning with the outer and inner names. Create places and connect on the fly.
- * <p>
- * // * @param <C> the type of the control
+ *
+ * @author Dominik Grzelak
  */
-//<C extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>, S extends Signature<C>>
-public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSupport<S> {// implements BigraphBuilder<S> {
+public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSupport<S> {
 
     protected EPackage loadedEPackage;
     protected EObject loadedInstanceModel;
@@ -48,6 +40,12 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     private S signature;
 
     private boolean loadedFromFile = false;
+
+    private static final String DEFAULT_EDGE_PREFIX = "e";
+    private static final String DEFAULT_VERTEX_PREFIX = "v";
+    private Supplier<String> edgeNameSupplier = createNameSupplier(DEFAULT_EDGE_PREFIX);
+    private Supplier<Integer> rootIdxSupplier = createIndexSupplier();
+    private Supplier<Integer> siteIdxSupplier = createIndexSupplier();
 
     /**
      * Complete map of all EClasses of the bigraph to be constructed
@@ -93,52 +91,61 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         this.bigraphicalSignatureAsTypeGraph(metaModelData);
     }
 
+    protected PureBigraphBuilder(S signature, EPackage metaModel, EObject instanceModel) {
+        this.signature = signature;
+        this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
+        this.loadedEPackage = metaModel;
+        this.initReferencesAndEClasses(false);
+        this.loadedInstanceModel = instanceModel;
+        // acquire all entities from the instance model and map them to our maps
+        this.updateAllMaps();
+        this.loadedFromFile = true;
+    }
+
     protected PureBigraphBuilder(S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
         try {
             this.loadSignatureAsTypeGraph(metaModelFilePath);
             List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(loadedEPackage, instanceModelFilePath);
-            //TODO rebuild member variables
-            loadedInstanceModel = eObjects.get(0);
-            loadedInstanceModel.eContents().stream()
-                    .forEach(each -> {
-                        if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT))) {
-//                            availableRoots
-//                            EAttribute indexAttr = EMFUtils.findAttribute(each.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
-//                            EAttribute nameAttr = EMFUtils.findAttribute(each.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-//                            each.eGet(indexAttr);
-//                            each.eGet(nameAttr);
-                            BigraphEntity.RootEntity rootEntity = BigraphEntity.create(each, BigraphEntity.RootEntity.class);
-                            availableRoots.put(rootEntity.getIndex(), rootEntity);
-                        }
-                        if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE))) {
-                            BigraphEntity.Edge edge = BigraphEntity.create(each, BigraphEntity.Edge.class);
-                            availableEdges.put(edge.getName(), edge);
-                        }
-                        if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
-                            BigraphEntity.OuterName edge = BigraphEntity.create(each, BigraphEntity.OuterName.class);
-                            availableOuterNames.put(edge.getName(), edge);
-                        }
-                        if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME))) {
-                            BigraphEntity.InnerName edge = BigraphEntity.create(each, BigraphEntity.InnerName.class);
-                            availableInnerNames.put(edge.getName(), edge);
-                        }
-                        if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE))) {
-                            BigraphEntity.SiteEntity edge = BigraphEntity.create(each, BigraphEntity.SiteEntity.class);
-                            availableSites.put(edge.getIndex(), edge);
-                        }
-                    });
-
-            availableRoots.values().forEach(eachRoot -> {
-                EObject rootInstance = eachRoot.getInstance();
-                recursiveUpdateNodeMap(rootInstance.eContents());
-            });
-
-            loadedFromFile = true;
+            this.loadedInstanceModel = eObjects.get(0);
+            // acquire all entities from the instance model and map them to our maps
+            this.updateAllMaps();
+            this.loadedFromFile = true;
         } catch (IOException e) {
             throw new BigraphMetaModelLoadingFailedException(e);
         }
+    }
+
+    private void updateAllMaps() {
+        loadedInstanceModel.eContents().stream()
+                .forEach(each -> {
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT))) {
+                        BigraphEntity.RootEntity rootEntity = BigraphEntity.create(each, BigraphEntity.RootEntity.class);
+                        availableRoots.put(rootEntity.getIndex(), rootEntity);
+                    }
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE))) {
+                        BigraphEntity.Edge edge = BigraphEntity.create(each, BigraphEntity.Edge.class);
+                        availableEdges.put(edge.getName(), edge);
+                    }
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
+                        BigraphEntity.OuterName edge = BigraphEntity.create(each, BigraphEntity.OuterName.class);
+                        availableOuterNames.put(edge.getName(), edge);
+                    }
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME))) {
+                        BigraphEntity.InnerName edge = BigraphEntity.create(each, BigraphEntity.InnerName.class);
+                        availableInnerNames.put(edge.getName(), edge);
+                    }
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE))) {
+                        BigraphEntity.SiteEntity edge = BigraphEntity.create(each, BigraphEntity.SiteEntity.class);
+                        availableSites.put(edge.getIndex(), edge);
+                    }
+                });
+        // find all node entities, starting from each found root in a recursive fashion
+        availableRoots.values().forEach(eachRoot -> {
+            EObject rootInstance = eachRoot.getInstance();
+            recursiveUpdateNodeMap(rootInstance.eContents());
+        });
     }
 
     /**
@@ -180,6 +187,10 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return new PureBigraphBuilder<>(signature, metaModelFilePath, instanceModelFilePath);
     }
 
+    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel) {
+        return new PureBigraphBuilder<>(signature, metaModel, instanceModel);
+    }
+
     /**
      * Should not be directly called by the user. Instead use the {@link de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory}.
      *
@@ -214,7 +225,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     public Hierarchy createRoot() {
         BigraphEntity.RootEntity currentRoot = createRootEntity();
-//        currentNode = currentRoot;
         return new Hierarchy(currentRoot);
     }
 
@@ -320,8 +330,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             return this;
         }
 
-        // Support
-
         /**
          * Throws an exception if the given node has an atomic control
          *
@@ -334,7 +342,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
                 throw new ControlIsAtomicException();
             }
         }
-
 
         /**
          * Creates a new dynamic hierarchy where the parent is the current one.
@@ -1001,7 +1008,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return false;
     }
 
-    //BLEIBT - HELPER
     private boolean areNodesConnected(BigraphEntity.NodeEntity<Control> place1, BigraphEntity.NodeEntity<Control> place2) {
         EClass eClassPort = availableEClasses.get(BigraphMetaModelConstants.CLASS_PORT);
         EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
@@ -1024,7 +1030,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return false;
     }
 
-    //BLEIBT - HELPER
     protected EObject createNodeOfEClass(String name, @NonNull Control control) {
         return this.createNodeOfEClass(name, control, vertexNameSupplier.get());
     }
@@ -1243,11 +1248,21 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         } catch (IOException e) {
             throw new BigraphMetaModelLoadingFailedException(e);
         }
+        initReferencesAndEClasses(false);
+    }
+
+    private void initReferencesAndEClasses(boolean createNewNodesForMetaModel) {
         Iterable<Control<?, ?>> controls = signature.getControls();
         StreamSupport.stream(controls.spliterator(), false)
                 .forEach(x -> {
                     EClass entityClass = (EClass) loadedEPackage.getEClassifier(BigraphMetaModelConstants.CLASS_NODE);
-                    controlMap.put(x.getNamedType().stringValue(), entityClass);
+                    String s = x.getNamedType().stringValue();
+                    if (createNewNodesForMetaModel) {
+                        EClass newControlClass = EMFUtils.createEClass(s);
+                        EMFUtils.addSuperType(newControlClass, loadedEPackage, entityClass.getName());
+                        loadedEPackage.getEClassifiers().add(newControlClass);
+                    }
+                    controlMap.put(s, entityClass);
                 });
         Set<EReference> allrefs = new HashSet<>();
         EList<EObject> eObjects = loadedEPackage.eContents();
@@ -1258,7 +1273,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         allrefs.forEach(x -> availableReferences.put(x.getName(), x));
     }
 
-    public void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
+    private void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
         try {
             loadedEPackage = BigraphArtifacts.loadInternalBigraphMetaModel();
             loadedEPackage.setNsPrefix(modelData.getNsPrefix());
@@ -1267,24 +1282,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         } catch (IOException e) {
             throw new BigraphMetaModelLoadingFailedException(e);
         }
-
-        Iterable<Control<?, ?>> controls = signature.getControls();
-        StreamSupport.stream(controls.spliterator(), false)
-                .forEach(x -> {
-                    EClass entityClass = (EClass) loadedEPackage.getEClassifier(BigraphMetaModelConstants.CLASS_NODE);
-                    String s = x.getNamedType().stringValue();
-                    EClass newControlClass = EMFUtils.createEClass(s);
-                    EMFUtils.addSuperType(newControlClass, loadedEPackage, entityClass.getName());
-                    loadedEPackage.getEClassifiers().add(newControlClass);
-                    controlMap.put(s, newControlClass);
-                });
-        Set<EReference> allrefs = new HashSet<>();
-        EList<EObject> eObjects = loadedEPackage.eContents();
-        for (EObject each : eObjects) {
-            availableEClasses.put(((EClassImpl) each).getName(), (EClassImpl) each);
-            allrefs.addAll(EMFUtils.findAllReferences((EClass) each));
-        }
-        allrefs.forEach(x -> availableReferences.put(x.getName(), x));
+        initReferencesAndEClasses(true);
     }
 
     /**
@@ -1304,16 +1302,4 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         this.rootIdxSupplier = createIndexSupplier();
         this.siteIdxSupplier = createIndexSupplier();
     }
-
-    private static final String DEFAULT_EDGE_PREFIX = "e";
-    private static final String DEFAULT_VERTEX_PREFIX = "v";
-
-
-    private Supplier<String> edgeNameSupplier = createNameSupplier(DEFAULT_EDGE_PREFIX);
-
-    private Supplier<Integer> rootIdxSupplier = createIndexSupplier();
-
-    private Supplier<Integer> siteIdxSupplier = createIndexSupplier();
-
-
 }

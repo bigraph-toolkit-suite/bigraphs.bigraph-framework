@@ -13,10 +13,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="BigraphFramework" target="1.5" />
-      <module name="bigraph-core" target="1.8" />
-      <module name="bigraph-visualization" target="1.8" />
       <module name="uberjar" target="1.5" />
-      <module name="bigraph-visualization" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
