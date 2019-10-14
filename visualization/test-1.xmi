@@ -18,6 +18,7 @@
     </bRoots>
     <bRoots index="1">
         <bChild xsi:type="sample:Room" name="v5">
+            <bChild xsi:type="sample:BSite"/>
         </bChild>
     </bRoots>
     <bEdges name="e0" bPoints="//@bInnerNames.1 //@bRoots.0/@bChild.0/@bChild.2/@bPorts.0"/>

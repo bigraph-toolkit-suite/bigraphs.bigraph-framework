@@ -206,24 +206,24 @@ public class GXLDocumentHandler implements XmlHandler {
         // for the place graph
         if (!elementStack2.isEmpty()) {
             ChldPrntRel peek = elementStack2.peek();
-            if (peek.type.contains("node") || peek.type.contains("root")) {
+            if (peek.type.contains(BigraphMetaModelConstants.CLASS_NODE) || peek.type.contains(BigraphMetaModelConstants.CLASS_ROOT) || peek.type.contains(BigraphMetaModelConstants.CLASS_SITE)) {
                 if (name.contains("name")) {
                     peek.id = value;
                 }
                 if (name.contains("xsi:type")) {
                     peek.name = value;
-                    if (value.contains(BigraphMetaModelConstants.CLASS_SITE)) {
+                    if (value.contains(BigraphMetaModelConstants.CLASS_SITE)) { //rectify element type
                         peek.type = BigraphMetaModelConstants.CLASS_SITE;
                     }
                 }
                 if (peek.type.contains(BigraphMetaModelConstants.CLASS_ROOT) || peek.type.contains(BigraphMetaModelConstants.CLASS_SITE)) {
                     if (name.contains("index")) {
-                        if (!elementStack2.isEmpty()) {
-                            ChldPrntRel pop = elementStack2.peek();
-                            String prefix = peek.type.contains(BigraphMetaModelConstants.CLASS_SITE) ? "s_" : "r_";
-                            pop.idTargetLink = prefix + value;
-                            pop.id = prefix + value;
-                        }
+//                    if (!elementStack2.isEmpty()) {
+//                        ChldPrntRel pop = elementStack2.peek();
+                        String prefix = peek.type.contains(BigraphMetaModelConstants.CLASS_SITE) ? "s_" : "r_";
+                        peek.idTargetLink = prefix + value;
+                        peek.id = prefix + value;
+//                    }
                     }
                 }
             }
@@ -243,9 +243,9 @@ public class GXLDocumentHandler implements XmlHandler {
             con.setAttributeValue("hypergraph", "true");
             con.setAttributeValue("edgemode", "undirected");
         } else if (name.contains(BigraphMetaModelConstants.REFERENCE_BROOTS)) {
-            elementStack2.push(new ChldPrntRel("root", "", "r_0", "r_0"));
+            elementStack2.push(new ChldPrntRel(BigraphMetaModelConstants.CLASS_ROOT, "", "r_0", "r_0"));
         } else if (name.contains(BigraphMetaModelConstants.REFERENCE_CHILD)) {
-            elementStack2.push(new ChldPrntRel("node", "", "s_0", "s_0")); //if not a site, the values will be overridden
+            elementStack2.push(new ChldPrntRel(BigraphMetaModelConstants.CLASS_NODE, "", "s_0", "s_0")); //if not a site, the values will be overridden
         } else if (name.contains(BigraphMetaModelConstants.REFERENCE_PORT)) {
             ChldPrntRel peek = elementStack2.peek();
             elementStackLinks.push(new BLinkRel(BigraphMetaModelConstants.REFERENCE_PORT, peek.id, "", "", "", 0));
