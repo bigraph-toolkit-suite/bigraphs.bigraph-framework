@@ -41,7 +41,7 @@ public class RandomBigraphTests {
 
         String convert = GraphvizConverter.toPNG(generated,
                 true,
-                new File("src/test/resources/graphviz/generated.png")
+                new File("src/test/resources/dump/graphviz/generated.png")
         );
 
 

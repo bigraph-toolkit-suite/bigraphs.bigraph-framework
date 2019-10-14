@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sample:BBigraph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sample="http://www.example.org"
+                 xsi:schemaLocation="http://www.example.org bigraphBaseModel.ecore">
+    <bRoots>
+        <bChild xsi:type="sample:Room" name="v0">
+            <bChild xsi:type="sample:User" name="v1">
+                <bChild xsi:type="sample:Job" name="v4"/>
+                <bPorts bLink="//@bOuterNames.0"/>
+            </bChild>
+            <bChild xsi:type="sample:Job" name="v2"/>
+            <bChild xsi:type="sample:Printer" name="v3">
+                <bChild xsi:type="sample:BSite" index="23"/>
+                <bPorts bLink="//@bEdges.0"/>
+                <bPorts bLink="//@bEdges.1" index="1"/>
+            </bChild>
+        </bChild>
+    </bRoots>
+    <bRoots index="1">
+        <bChild xsi:type="sample:Room" name="v5">
+        </bChild>
+    </bRoots>
+    <bEdges name="e0" bPoints="//@bInnerNames.1 //@bRoots.0/@bChild.0/@bChild.2/@bPorts.0"/>
+    <bEdges name="e1" bPoints="//@bInnerNames.0 //@bRoots.0/@bChild.0/@bChild.2/@bPorts.1"/>
+    <bInnerNames bLink="//@bEdges.1" name="y_f"/>
+    <bInnerNames bLink="//@bEdges.0" name="x_f"/>
+    <bInnerNames bLink="//@bOuterNames.0" name="abc"/>
+    <bOuterNames name="jeff" bPoints="//@bRoots.0/@bChild.0/@bChild.0/@bPorts.0"/>
+</sample:BBigraph>

@@ -1,0 +1,94 @@
+<!-- GXL DTD -->
+<!-- Extensions -->
+<!ENTITY % gxl-extension "">
+<!ENTITY % graph-extension "">
+<!ENTITY % node-extension "">
+<!ENTITY % edge-extension "">
+<!ENTITY % rel-extension "">
+<!ENTITY % value-extension "">
+<!ENTITY % link-extension "">
+<!-- Attribute values -->
+<!ENTITY % val "
+           %value-extension;
+           locator |
+           bool    |
+           int     |
+           float   |
+           string  |
+           seq     |
+           set     |
+           bag     |
+           tup      ">
+<!-- gxl -->
+<!ELEMENT gxl (%gxl-extension; graph*) >
+<!ATTLIST gxl
+	xmlns:xlink CDATA #FIXED "www.w3.org/1999/xlink"
+>
+<!-- type -->
+<!ELEMENT type EMPTY>
+<!ATTLIST type
+	xlink:type (simple) #FIXED "simple"
+	xlink:href CDATA #REQUIRED
+>
+<!-- graph -->
+<!ELEMENT graph (%graph-extension; type? , attr* , ( node | edge | rel )*) >
+<!ATTLIST graph
+	id ID #REQUIRED
+	role NMTOKEN #IMPLIED
+	edgeids (true | false) "false"
+	hypergraph (true | false) "false"
+	orientation (directed | undirected) "directed"
+>
+<!-- node -->
+<!ELEMENT node (%node-extension; type? , attr*, graph*) >
+<!ATTLIST node
+	id ID #REQUIRED
+>
+<!-- edge -->
+<!ELEMENT edge (%edge-extension; type?, attr*, graph*) >
+<!ATTLIST edge
+	id ID #IMPLIED
+	from IDREF #REQUIRED
+	to IDREF #REQUIRED
+	fromorder CDATA #IMPLIED
+	toorder CDATA #IMPLIED
+	orientation (directed | undirected) #IMPLIED
+>
+<!-- rel -->
+<!ELEMENT rel (%rel-extension; type? , attr*, graph*, link* ) >
+<!ATTLIST rel
+	id ID #IMPLIED
+	orientation (directed | undirected) #IMPLIED
+>
+<!-- link -->
+<!ELEMENT link (%link-extension; attr)* >
+<!ATTLIST link
+	ref IDREF #REQUIRED
+	role NMTOKEN #IMPLIED
+	direction (in | out | none) #IMPLIED
+	startorder CDATA #IMPLIED
+	endorder CDATA #IMPLIED
+>
+<!-- attr -->
+<!ELEMENT attr (type?, attr*, (%val;))>
+<!ATTLIST attr
+	id IDREF #IMPLIED
+	name NMTOKEN #REQUIRED
+	kind NMTOKEN #IMPLIED
+>
+<!-- locator -->
+<!ELEMENT locator EMPTY>
+<!ATTLIST locator
+	xlink:type (simple) #FIXED "simple"
+	xlink:href CDATA #IMPLIED
+>
+<!-- atomic values -->
+<!ELEMENT bool (#PCDATA)>
+<!ELEMENT int (#PCDATA)>
+<!ELEMENT float (#PCDATA)>
+<!ELEMENT string (#PCDATA)>
+<!-- composite values -->
+<!ELEMENT seq (%val;)*>
+<!ELEMENT set (%val;)*>
+<!ELEMENT bag (%val;)*>
+<!ELEMENT tup (%val;)*>

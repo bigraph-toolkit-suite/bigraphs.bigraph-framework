@@ -1,0 +1,138 @@
+package GCF.DefaultImpl3;
+
+/**
+ * An abstract class to represent the tup-Construct of the GXL-DTD.
+ * See "inherited" for further information on the provided methods.
+ */
+public class GXLTupAPIImpl extends GXLUntypedStandardValueContainerAPI {
+
+
+    
+    /*
+     * inherited: public abstract void setAttributeValue(String attributeName,String value);
+     *            public abstract void close();
+     *            public abstract Object createLocator();
+     *            public abstract Object createSeq();
+     *            public abstract Object createSet();
+     *            public abstract Object createBag();
+     *            public abstract Object createTup();
+     *            public abstract Object createBool();
+     *            public abstract Object createString();
+     *            public abstract Object createInt();
+     *            public abstract Object createFloat();
+     *            public abstract Object createEnum();   
+     *            public abstract void closeLocator();
+     *            public abstract void closeSeq();
+     *            public abstract void closeSet();
+     *            public abstract void closeBag();
+     *            public abstract void closeTup();
+     *            public abstract void closeBool();
+     *            public abstract void closeString();
+     *            public abstract void closeInt();
+     *            public abstract void closeFloat();
+     *            public abstract void closeEnum();  
+     */
+    
+    /** Empty constructor. */
+    public GXLTupAPIImpl() {
+    }
+    
+    /**
+     * Method to create a child-element of type attr (see GXL-DTD).
+     */
+    public Object createAttr() {
+        return new GXLAttrAPIImpl();
+    }
+    
+    /**
+     * Method to create a child-element of type type (see GXL-DTD).
+     */
+    public Object createType() {
+        return new GXLTypeAPIImpl();
+
+    }
+        
+    /**
+     * Method to create a child-element of type locator (see GXL-DTD).
+     */
+    public Object createLocator(){
+       return new GXLLocatorAPIImpl();
+    }
+    
+    /**
+     * Method to create a child-element of type seq (see GXL-DTD).
+     */
+    public Object createSeq() {
+        return new GXLSeqAPIImpl();
+    }
+    
+    /**
+     * Method to create a child-element of type set (see GXL-DTD).
+     */
+    public Object createSet() {
+       return new GXLSetAPIImpl();
+    }
+    
+    /**
+     * Method to create a child-element of type bag (see GXL-DTD).
+     */
+    public Object createBag() {
+       return new GXLBagAPIImpl();
+    }
+    
+    /**
+     * Method to create a child-element of type tup (see GXL-DTD).
+     */
+    public Object createTup() {
+        return null;
+    }
+    
+    /**
+     * Method to create a child-element of type bool (see GXL-DTD).
+     */
+    public Object createBool() {
+        return null;
+    }
+    
+    /**
+     * Method to create a child-element of type int (see GXL-DTD).*/
+    public Object createInt() {
+        return null;
+    }
+    
+    /**
+     * Method to create a child-element of type float (see GXL-DTD).
+     */
+    public Object createFloat() {
+        return null;
+    }
+    
+    /**
+     * Method to create a child-element of type string (see GXL-DTD).
+     */
+    public Object createString() {
+        return null;
+    }
+    
+    /**
+     * Method to create a child-element of type enum (see GXL-DTD).
+     */
+    public Object createEnum() {
+        return null;
+    }
+    
+    /**
+     * Method to print a CDATA-section.
+     */
+    public void printData(String data) {           
+
+    }
+    
+   /**
+     * Overwrites method toString() of class Object.
+     */
+    public String toString() {
+        return null;
+    }
+
+}

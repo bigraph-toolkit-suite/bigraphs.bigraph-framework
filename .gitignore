@@ -115,4 +115,5 @@ gen-test-resources/*
 #!gen-test-resources/.gitkeep
 /TODO
 **/resources/dump/exported-models/*
-**/resources/dump/*
+#**/resources/dump/graphviz/*
+!/etc/auxlibs/Gcf.zip

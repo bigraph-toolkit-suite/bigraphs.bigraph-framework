@@ -22,7 +22,9 @@ import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Graph;
 import guru.nidi.graphviz.model.MutableGraph;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -41,7 +43,7 @@ public class VisualizationUnitTests {
     }
 
     @Test
-    void placegraph_export2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    void simple_bigraph_visualization_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
 //        PureBigraph bigraph_a = createBigraph_b();
 
         final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
@@ -67,29 +69,9 @@ public class VisualizationUnitTests {
         GraphvizConverter.toPNG(bigraphWithTwoRoots(), false, new File(TARGET_DUMP_PATH + "ex_2roots_nesting.png"));
     }
 
-    private MutableGraph makeHierarchyCluster(Bigraph bigraph, BigraphEntity nodeEntity, MutableGraph currentParent, GraphicalFeatureSupplier<String> labelSupplier) {
-        //if children: iterate and check
-        List<BigraphEntity> childrenOf = new ArrayList<>(bigraph.getChildrenOf(nodeEntity));
-
-        List<MutableGraph> graphList = new LinkedList<>();
-        for (BigraphEntity each : childrenOf) {
-            Collection childrenOfEach = bigraph.getChildrenOf(each);
-            //create a child
-            if (childrenOfEach.size() == 0) {
-                currentParent.add(node(labelSupplier.with(each).get()));
-            } else { //create a new hierarchy graph
-                MutableGraph cluster = mutGraph(labelSupplier.with(each).get()).setCluster(true)
-                        .setDirected(true)
-                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), RankDir.BOTTOM_TO_TOP, Style.BOLD);
-                MutableGraph mutableGraph = makeHierarchyCluster(bigraph, each, cluster, labelSupplier);
-                graphList.add(mutableGraph);
-            }
-        }
-        graphList.forEach(currentParent::add);
-        return currentParent;
-    }
 
     @Test
+    @DisplayName("Creating containment structure using graphviz-java directly")
     void graphviz_hierarchy_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
         PureBigraph simpleBigraphHierarchy = createSimpleBigraphHierarchy();
 
@@ -113,7 +95,29 @@ public class VisualizationUnitTests {
         Graphviz.fromGraph(mega).height(800).render(Format.PNG).toFile(new File(TARGET_DUMP_PATH + "ex_hierarchy.png"));
     }
 
-    public PureBigraph createSimpleBigraphHierarchy() {
+    private MutableGraph makeHierarchyCluster(Bigraph bigraph, BigraphEntity nodeEntity, MutableGraph currentParent, GraphicalFeatureSupplier<String> labelSupplier) {
+        //if children: iterate and check
+        List<BigraphEntity> childrenOf = new ArrayList<>(bigraph.getChildrenOf(nodeEntity));
+
+        List<MutableGraph> graphList = new LinkedList<>();
+        for (BigraphEntity each : childrenOf) {
+            Collection childrenOfEach = bigraph.getChildrenOf(each);
+            //create a child
+            if (childrenOfEach.size() == 0) {
+                currentParent.add(node(labelSupplier.with(each).get()));
+            } else { //create a new hierarchy graph
+                MutableGraph cluster = mutGraph(labelSupplier.with(each).get()).setCluster(true)
+                        .setDirected(true)
+                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), RankDir.BOTTOM_TO_TOP, Style.BOLD);
+                MutableGraph mutableGraph = makeHierarchyCluster(bigraph, each, cluster, labelSupplier);
+                graphList.add(mutableGraph);
+            }
+        }
+        graphList.forEach(currentParent::add);
+        return currentParent;
+    }
+
+    private PureBigraph createSimpleBigraphHierarchy() {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
