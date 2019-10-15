@@ -9,23 +9,21 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * "A placing is a bigraph m → n with no nodes".
- * Three kinds of placing exist:
+ * A placing is a node-free bigraph. The three elementary placing exist:
  * <ul>
  * <li>A barren root: 1</li>
- * <li>Join</li>
- * <li>gamma_{m,n}</li>
+ * <li><i>join</i></li>
+ * <li><i>gamma</i><sub>m,n</sub></li>
  * </ul>
  * <p>
  * By that a special placing called merge_m: m -> 1 can be derived and is implemented here for
@@ -35,6 +33,7 @@ public class Placings<S extends Signature> implements Serializable {
     private volatile S emptySignature;
     private volatile MutableBuilder<S> mutableBuilder;
     private EPackage loadedModelPacakge;
+    private EObject instanceModel;
 
     @Deprecated
     public Placings(AbstractBigraphFactory factory) {
@@ -103,6 +102,14 @@ public class Placings<S extends Signature> implements Serializable {
             super(null);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
 
+            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
+                    emptySignature, new HashMap<Integer, BigraphEntity.RootEntity>() {{
+                        put(0, root);
+                    }}, Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap());
         }
 
         @Override
@@ -145,11 +152,16 @@ public class Placings<S extends Signature> implements Serializable {
         public EPackage getModelPackage() {
             return loadedModelPacakge;
         }
+
+        @Override
+        public EObject getModel() {
+            return instanceModel;
+        }
     }
 
     public class Join extends ElementaryBigraph<S> {
         private final BigraphEntity.RootEntity root;
-        private final Collection<BigraphEntity.SiteEntity> sites = new ArrayList<>(2);
+        private final List<BigraphEntity.SiteEntity> sites = new ArrayList<>(2);
 
         Join() {
             super(null);
@@ -157,6 +169,18 @@ public class Placings<S extends Signature> implements Serializable {
             sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(0));
             sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(1));
             sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
+
+            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
+                    emptySignature, new HashMap<Integer, BigraphEntity.RootEntity>() {{
+                        put(0, root);
+                    }}, new HashMap<Integer, BigraphEntity.SiteEntity>() {{
+                        put(0, sites.get(0));
+                        put(1, sites.get(1));
+                    }},
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap());
         }
 
         @Override
@@ -199,6 +223,11 @@ public class Placings<S extends Signature> implements Serializable {
         public EPackage getModelPackage() {
             return loadedModelPacakge;
         }
+
+        @Override
+        public EObject getModel() {
+            return instanceModel;
+        }
     }
 
     /**
@@ -206,14 +235,28 @@ public class Placings<S extends Signature> implements Serializable {
      */
     public class Merge extends ElementaryBigraph<S> {
         private final BigraphEntity.RootEntity root;
-        private final Collection<BigraphEntity.SiteEntity> sites;
+        private final List<BigraphEntity.SiteEntity> sites;
 
         Merge(final int m) {
             super(null);
+            HashMap<Integer, BigraphEntity.SiteEntity> sitesMap = new HashMap<>();
             sites = new ArrayList<>(m);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
-            IntStream.range(0, m).forEach(value -> sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(value)));
+            IntStream.range(0, m).forEach(value -> {
+                sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(value));
+                sitesMap.put(value, sites.get(value));
+            });
             sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
+
+            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
+                    emptySignature, new HashMap<Integer, BigraphEntity.RootEntity>() {{
+                        put(0, root);
+                    }}, sitesMap,
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap());
+
         }
 
         @Override
@@ -256,6 +299,11 @@ public class Placings<S extends Signature> implements Serializable {
         public EPackage getModelPackage() {
             return loadedModelPacakge;
         }
+
+        @Override
+        public EObject getModel() {
+            return instanceModel;
+        }
     }
 
     /**
@@ -272,6 +320,8 @@ public class Placings<S extends Signature> implements Serializable {
             super(null);
             roots = new ArrayList<>(n);
             sites = new ArrayList<>(n);
+            HashMap<Integer, BigraphEntity.RootEntity> rootsMap = new HashMap<>();
+            HashMap<Integer, BigraphEntity.SiteEntity> sitesMap = new HashMap<>();
 
             for (int i = 0; i < n; i++) {
                 BigraphEntity.RootEntity newRoot = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(i);
@@ -279,7 +329,16 @@ public class Placings<S extends Signature> implements Serializable {
                 setParentOfNode(newSite, newRoot);
                 roots.add(newRoot);
                 sites.add(newSite);
+                rootsMap.put(i, newRoot);
+                sitesMap.put(i, newSite);
             }
+
+            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
+                    emptySignature, rootsMap, sitesMap,
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap());
         }
 
         @Override
@@ -305,6 +364,11 @@ public class Placings<S extends Signature> implements Serializable {
         @Override
         public EPackage getModelPackage() {
             return loadedModelPacakge;
+        }
+
+        @Override
+        public EObject getModel() {
+            return instanceModel;
         }
     }
 
@@ -327,14 +391,24 @@ public class Placings<S extends Signature> implements Serializable {
 
         Symmetry(int n) {
             super(0);
-
+            HashMap<Integer, BigraphEntity.RootEntity> rootsMap = new HashMap<>();
+            HashMap<Integer, BigraphEntity.SiteEntity> sitesMap = new HashMap<>();
             for (int i = 0, j = 1; i < n; i++, j--) {
                 BigraphEntity.RootEntity newRoot = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(i);
                 BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(j);
                 setParentOfNode(newSite, newRoot);
                 roots.add(newRoot);
                 sites.add(newSite);
+                rootsMap.put(i, newRoot);
+                sitesMap.put(j, newSite);
             }
+
+            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
+                    emptySignature, rootsMap, sitesMap,
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyMap());
         }
 
         @Override
@@ -360,6 +434,11 @@ public class Placings<S extends Signature> implements Serializable {
         @Override
         public EPackage getModelPackage() {
             return loadedModelPacakge;
+        }
+
+        @Override
+        public EObject getModel() {
+            return instanceModel;
         }
     }
 

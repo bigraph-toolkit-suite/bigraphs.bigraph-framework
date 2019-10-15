@@ -24,6 +24,7 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
 //    public abstract <B extends Bigraph> B createInstance(S signature, EMetaModelData metaModelData);
 
     protected abstract EPackage getLoadedEPackage();
+    protected abstract EObject getInstanceModel();
 
     protected abstract Map<String, EClass> getAvailableEClasses();
 

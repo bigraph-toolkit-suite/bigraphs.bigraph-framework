@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphBuilderSupport;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -34,6 +35,7 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
         super(signature, metaModelData);
     }
 
+    @Override
     public EPackage getLoadedEPackage() {
         return loadedEPackage;
     }
@@ -125,6 +127,20 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
             EStructuralFeature lnkRef = newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
             newPortWithIndex.getInstance().eSet(lnkRef, outerName.getInstance());
         }
+    }
+
+    public EObject createInstanceModel(EPackage loadedEPackage,
+                                          S signature,
+                                          Map<Integer, BigraphEntity.RootEntity> availableRoots,
+                                          Map<Integer, BigraphEntity.SiteEntity> availableSites,
+                                          Map<String, BigraphEntity.NodeEntity> availableNodes,
+                                          Map<String, BigraphEntity.InnerName> availableInnerNames,
+                                          Map<String, BigraphEntity.OuterName> availableOuterNames,
+                                          Map<String, BigraphEntity.Edge> availableEdges) {
+        InstanceParameter meta = new InstanceParameter(loadedEPackage,
+                signature, availableRoots, availableSites,
+                availableNodes, availableInnerNames, availableOuterNames, availableEdges);
+        return meta.getbBigraphObject();
     }
 
 }

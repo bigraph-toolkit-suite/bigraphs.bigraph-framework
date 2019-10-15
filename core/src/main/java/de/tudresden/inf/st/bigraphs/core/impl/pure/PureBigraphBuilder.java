@@ -76,6 +76,11 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     }
 
     @Override
+    protected EObject getInstanceModel() {
+        return loadedInstanceModel;
+    }
+
+    @Override
     protected Map<String, EClass> getAvailableEClasses() {
         return this.availableEClasses;
     }
@@ -1083,6 +1088,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
                 meta = new InstanceParameter(loadedEPackage,
                         signature, availableRoots, availableSites,
                         availableNodes, availableInnerNames, availableOuterNames, availableEdges);
+                loadedInstanceModel = meta.getbBigraphObject();
             }
             bigraph = new PureBigraph(meta);
         }

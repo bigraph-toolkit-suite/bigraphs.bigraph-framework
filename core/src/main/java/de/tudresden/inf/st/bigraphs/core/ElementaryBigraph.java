@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
