@@ -10,7 +10,7 @@
             </bChild>
             <bChild xsi:type="sample:Job" name="v2"/>
             <bChild xsi:type="sample:Printer" name="v3">
-                <bChild xsi:type="sample:BSite" index="23"/>
+                <bChild xsi:type="sample:BSite" index="1"/>
                 <bPorts bLink="//@bEdges.0"/>
                 <bPorts bLink="//@bEdges.1" index="1"/>
             </bChild>

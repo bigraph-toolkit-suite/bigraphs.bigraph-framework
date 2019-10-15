@@ -16,6 +16,7 @@
         <module>core</module>
         <module>visualization</module>
         <module>rewriting</module>
+        <module>converter</module>
     </modules>
 
     <properties>
@@ -220,6 +221,11 @@
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
                 <artifactId>bigraph-rewriting</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                <artifactId>bigraph-converter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- EMF -->

@@ -2,6 +2,7 @@ package GCF;
 
 import java.net.*;
 import java.lang.reflect.*;
+import java.util.Objects;
 
 /**
  * The GCF.GXLConnector's tasks is simply to provide a handler-method for each event
@@ -116,11 +117,15 @@ public class GXLConnector extends Object {
         // save the root object
         this.GXLObject = GXLObject;
 
-        if ((location != null) && (packageName != null)) {
+        if ((packageName != null)) {
 
             // load the defined classes and methods
             url[0] = location;
-            cl = new URLClassLoader(url);
+            if (Objects.nonNull(url[0])) {
+                cl = new URLClassLoader(url);
+            } else {
+                cl = getClass().getClassLoader();
+            }
 
             /**********************************************************************************************/
             /* Initialization of all needed methods (including all create() and close() methods of the    */

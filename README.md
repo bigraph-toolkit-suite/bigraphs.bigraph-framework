@@ -126,6 +126,13 @@ See the reference and documentation for a more comprehensive overview.
   <version>${revision}</version>
   <type>pom</type>
 </dependency>
+<!-- the visualization module -->
+<dependency>
+  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <artifactId>bigraph-converter</artifactId>
+  <version>${revision}</version>
+  <type>pom</type>
+</dependency>
 ```
 
 The following remote Maven repository must be added as well. There are two options:
@@ -168,6 +175,8 @@ The following remote Maven repository must be added as well. There are two optio
 ```
 
 The [Bintray](https://bintray.com/) service is used for hosting Maven artifacts.
+See also [Building from Source](#Building-from-Source) if you want to build the source
+by yourself and host them in the local Maven repository. Then, both steps _A)_ and _B)_ are not needed.
 
 ## Details
 
@@ -205,7 +214,12 @@ Create reaction rules and bigraphical reactive systems. Simulate bigraphs. Defin
 
 Provides simple means to export bigraphs and transition systems as graphic files.
 
-Graphviz is used as format. Can be exported as png and jpg. 
+Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`. 
+
+#### Converters
+
+Provides several mechanism to convert bigraphs into other representations.
+For example, Bigraphs to GXL (Graph Exchange Language).
 
 ### Reaction Graph / Transition System
 
