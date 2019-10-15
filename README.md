@@ -14,10 +14,11 @@ The high level API eases the programming of bigraphical systems for real-world a
 **Features**
 
 - Dynamic creation of bigraphs at runtime based on an Ecore meta model
-- Bigraph matching (beta) 
 - Visualization (beta)
-- Reaction system (= transition system, but no minimal transition system) (alpha)
-- Read and write meta and instance model to file system (WIP)
+- Bigraph matching (beta) 
+- Bigraphical reactive system support: simulation of bigraphs by reaction rules (= transition system) (alpha)
+- Read and write meta and instance model to file system
+- Model transformation (WIP)
 
 
 
@@ -255,7 +256,7 @@ The documentation is built using mkdocs.
 
 ### Development and Deployment
 
-See the document [DEPLOYMENT](DEPLOYMENT.md) for more issues regarding the development
+See the document [DEPLOYMENT](etc/ci/DEPLOYMENT.md) for more issues regarding the development
 and deployment of _Bigraph Framework_. 
 
 ## License
