@@ -29,6 +29,8 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAP
  */
 public class BigraphArtifacts {
 
+    private final static String DEFAULT_ENCODING = "UTF-8";
+
     public static EPackage loadInternalBigraphMetaModel() throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         BigraphBaseModelPackage.eINSTANCE.eClass();
@@ -119,7 +121,6 @@ public class BigraphArtifacts {
 
         //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
 //        resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
-        //TODO throw error if resource is not available!
 //        Resource resource = resourceSet.getResource(uri, true);
 
         Resource resource = resourceSet.createResource(uri);
@@ -155,7 +156,6 @@ public class BigraphArtifacts {
         writeDynamicInstanceModel(metaModelPackage, Collections.singleton(instanceModel), outputStream);
     }
 
-    //TODO: add UTF-8
     private static void writeDynamicInstanceModel(EPackage ePackage, Collection<EObject> objects, OutputStream outputStream) throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         final ResourceSet resourceSet = new ResourceSetImpl();
@@ -165,7 +165,7 @@ public class BigraphArtifacts {
         final Resource outputRes = resourceSet.createResource(URI.createFileURI(ePackage.getName() + ".xmi")); //
         // add our new package to resource contents
         objects.forEach(x -> outputRes.getContents().add(x));
-//        outputRes.getContents().add(ePackage); //TODO then the meta model is also included in the instance model
+//        outputRes.getContents().add(ePackage); //(!) then the meta model is also included in the instance model
         outputRes.getResourceSet().getPackageRegistry().put(ePackage.getNsURI(), ePackage);
 
         /*
@@ -176,18 +176,20 @@ public class BigraphArtifacts {
         Map<String, Object> options = new HashMap<>();
         options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, "THROW"); //see: https://books.google.de/books?id=ff-9ZYhvPwwC&pg=PA317&lpg=PA317&dq=emf+OPTION_PROCESS_DANGLING_HREF&source=bl&ots=yBXkH3qSpD&sig=ACfU3U3uEGX_DCnDa2DAnjRboybhyGsKng&hl=en&sa=X&ved=2ahUKEwiCg-vI7_DgAhXDIVAKHU1PAIgQ6AEwBHoECAYQAQ#v=onepage&q=emf%20OPTION_PROCESS_DANGLING_HREF&f=false
+        options.put(XMLResource.OPTION_ENCODING, DEFAULT_ENCODING);
         outputRes.save(outputStream, options);
 
     }
 
-    public static void writeDynamicMetaModel(EPackage ePackage, OutputStream outputStream) throws IOException {
+    private static void writeDynamicMetaModel(EPackage ePackage, OutputStream outputStream) throws IOException {
         ResourceSet metaResourceSet = new ResourceSetImpl();
         metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMLResourceFactoryImpl());
 
         Resource metaResource = metaResourceSet.createResource(URI.createURI(ePackage.getName() + ".ecore")); //URI.createURI(ePackage.getName())); //URI.createURI(filename + ".ecore"));
         metaResource.getContents().add(ePackage);
-        Map options = new HashMap();
+        Map<String, Object> options = new HashMap<>();
         options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
+        options.put(XMLResource.OPTION_ENCODING, DEFAULT_ENCODING);
         metaResource.save(outputStream, options);
         outputStream.close();
     }

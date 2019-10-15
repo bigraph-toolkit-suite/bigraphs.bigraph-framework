@@ -79,7 +79,7 @@ builder.createRoot().connectByEdge(signature.getControlByName("Job"),
 
 Now, we want to connect nodes located at different "places". Therefore, we
 link them through an inner name, and
-after, close the link to automatically to transform it to an edge:
+after, close the link to automatically transform it to an edge:
 ```java
 // First, create an inner name
 BigraphEntity.OuterName tmp_link = builder.createInnerName("link");
