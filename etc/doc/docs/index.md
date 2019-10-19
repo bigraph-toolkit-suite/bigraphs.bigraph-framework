@@ -1,0 +1,155 @@
+# Welcome to Bigraph Framework
+
+A Complete Guide to the Bigraph Framework.
+
+Version: ${revision}
+
+## What is Bigraph Framework
+
+**Bigraph Framework** is a software framework for the creation and simulation of bigraphs 
+to expedite the experimental evaluation of the bigraph theory in real-world applications.
+
+The goal of this framework is to facilitate the implementation of context-aware and agent-based systems.
+It provides means for model-driven software development based on the bigraph theory.
+The high level API eases the programming of bigraphical systems for real-world application.
+
+**Bigraphs** are an emerging graph theory and meta-model for global ubiquitous systems, 
+mobile computing and Internet of Things (IoT). 
+The theory provides a unifying framework of existing process calculi for concurrency, 
+including ambient calculus, action calculi, petri nets, Calculi of communicating 
+systems and π-calculus.
+The mathematical theory enables equally the modeling of static structures 
+and dynamics of complex systems.
+
+## Overview of the Features
+
+- Dynamic creation of bigraphs at runtime based on an Ecore meta model
+- Visualization (beta)
+- Bigraph matching (beta) 
+- Bigraphical reactive system support: simulation of bigraphs by reaction rules (= transition system) (alpha)
+- Read and write meta and instance model to file system
+- Model transformation (WIP)
+
+## Requirements
+
+- Java
+- Optionally Maven or Gradle
+
+## Dependency Settings
+
+Artifacts are deployed to Bintray.
+
+### Packages
+
+Depending to the build or package management tool you are using, one of the following
+configuration for Maven or Gradle is necessary.
+
+#### Maven
+
+```xml
+<!-- the core module -->
+<dependency>
+  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <artifactId>bigraph-core</artifactId>
+  <version>${revision}</version>
+  <type>pom</type>
+</dependency>
+<!-- the rewriting module -->
+<dependency>
+  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <artifactId>bigraph-rewriting</artifactId>
+  <version>${revision}</version>
+  <type>pom</type>
+</dependency>
+<!-- the visualization module -->
+<dependency>
+  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <artifactId>bigraph-visualization</artifactId>
+  <version>${revision}</version>
+  <type>pom</type>
+</dependency>
+<!-- the converter module -->
+<dependency>
+  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <artifactId>bigraph-converter</artifactId>
+  <version>${revision}</version>
+  <type>pom</type>
+</dependency>
+```
+
+#### Gradle
+
+```gradle
+// the core module
+compile 'de.tudresden.inf.st.bigraphs:bigraph-core:${revision}'
+// the rewriting module
+compile 'de.tudresden.inf.st.bigraphs:bigraph-rewriting:${revision}'
+// the visualization module 
+compile 'de.tudresden.inf.st.bigraphs:bigraph-visualization:${revision}'
+// the converter module 
+compile 'de.tudresden.inf.st.bigraphs:bigraph-converter:${revision}'
+```
+
+#### Manually by Classpath
+
+not recommended 
+
+### Repository Setup
+
+In order to resolve the dependencies above, the following custom repository
+must be added as well. We provide the configuration for Maven and Gradle below.
+
+#### Maven
+
+The following Maven repository settings must be added to the user's `settings.xml`, usually found
+in `~/.m2/`. 
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<settings xsi:schemaLocation='http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd'
+          xmlns='http://maven.apache.org/SETTINGS/1.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+    
+    <profiles>
+        <profile>
+            <repositories>
+                <repository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>bintray-st-tu-dresden-maven-repository</id>
+                    <name>bintray</name>
+                    <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>bintray-st-tu-dresden-maven-repository</id>
+                    <name>bintray-plugins</name>
+                    <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
+                </pluginRepository>
+            </pluginRepositories>
+            <id>bintray</id>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>bintray</activeProfile>
+    </activeProfiles>
+</settings>
+```
+
+#### Gradle
+
+Add this to the project's build gradle file:
+
+```gradle
+repositories {
+    maven {
+        url  "https://dl.bintray.com/st-tu-dresden/maven-repository" 
+    }
+}
+```
+
+  

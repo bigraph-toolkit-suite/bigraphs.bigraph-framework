@@ -7,14 +7,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="bigraph-rewriting" />
-        <module name="converter" />
+        <module name="bigraph-converter" />
         <module name="bigraph-visualization" />
         <module name="bigraph-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="BigraphFramework" target="1.5" />
-      <module name="uberjar" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

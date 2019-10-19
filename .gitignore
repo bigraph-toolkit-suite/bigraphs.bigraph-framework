@@ -117,3 +117,4 @@ gen-test-resources/*
 **/resources/dump/exported-models/*
 #**/resources/dump/graphviz/*
 !/etc/auxlibs/Gcf.zip
+/etc/doc/site/*

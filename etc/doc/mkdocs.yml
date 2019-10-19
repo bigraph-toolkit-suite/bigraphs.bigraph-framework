@@ -1,0 +1,43 @@
+site_name: Bigraph Framework - User Manual
+repo_url: https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework
+repo_name: See on Git
+site_author: Dominik Grzelak
+
+theme: simplex
+#theme:
+#  name: null
+#  custom_dir: './theme/mkdocs_windmill'
+#  static_templates: [404.html]
+#  search_index_only: true
+#  include_search_page: true
+#  use_directory_urls: false
+
+nav:
+  - Introduction: index.md
+  - Getting Started: basics.md
+  - Modelling: factories.md
+  - Simulation: simulation.md
+  - Persistence: persistence.md
+  - Converter: converter.md
+  - Visualization: visualization.md
+  - About: about.md
+
+#pages:
+#  - 'Introduction': 'index.md'
+#  - 'User Guide': 'basics.md'
+#  - Persistence: persistence.md
+#  - 'About': 'about.md'
+
+extra:
+  version: 1.0
+
+markdown_extensions:
+  - smarty
+  - tables
+  - attr_list
+  - toc:
+      permalink: True
+  - sane_lists
+
+plugins: []
+

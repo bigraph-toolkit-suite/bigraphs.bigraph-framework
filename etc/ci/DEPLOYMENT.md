@@ -1,38 +1,61 @@
 # Development
 
-for dev: git-flow
+## Git workflow
+- The Git workflow *Gitflow* as described [here](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) 
+is applied for the development 
+
+## Versioning
+
+- [Semantic Versioning](https://semver.org/) is employed as versioning scheme for all modules 
+
+- The version of the parent determines also the version of each sub module.
+Version are increased simultaneously for all sub modules to indicate which dependencies
+can be used together.
+
+## Modules
 
 Each module represents a concrete subset of the framework's whole functionality.
 Thus, it makes it easy to include a certain dependency in external projects for
-specific needs, at the same time decreasing the overall project size.
-
-The version of the parent determines also the version of each sub modules.
-Version are increased simultaneously for all sub modules to indicate which dependencies
-can be used together. 
-
-<!--## Project Setup (old approach)-->
-
-<!--### Deploy the bigraph model jar-->
-
-<!--A bigraph is an Ecore model that is developed within EMF. -->
-<!--The model needs to be deployed to the local maven repository.-->
-
-<!--Change to the root folder of this project and execute:-->
-
-<!--```-->
-<!--mvn install:install-file -Dfile=./libs/bigraphModel.jar -DgroupId=de.tudresden.inf.st.bigraphs.model \-->
-<!--    -DartifactId=bigraph-ecore-model -Dversion=1.0 -Dpackaging=jar-->
-<!--```-->
-
-<!--This will install the bigraph model in your local Maven repository.-->
-<!--Do this only once or when the model changes. -->
-
-<!--The model can now be used as a Maven dependency in other modules of this project and will be exported also in the -->
-<!--generated *.jar later.-->
+specific needs, at the same time logically organizing the whole project.
 
 <!--_v3: current-->
 <!--_v5: cdo migrated model-->
 <!--_v6: with extra BBigraph container object-->
+
+## Documentation
+
+- We are employing [MkDocs](https://www.mkdocs.org), a static site generator, for building the documentation
+- Must be installed on the machine:
+    - MkDocs, see [installation instructions](https://www.mkdocs.org/#installation)
+    - Theme: [Bootstrap](https://mkdocs.readthedocs.io/en/0.15.3/user-guide/styling-your-docs/#bootstrap-and-bootswatch-themes)
+<!--        - the theme is provided with the project and resides within `etc/doc/theme/mkdocs_windmill`-->
+    
+- The corresponding documentation files are stored in `etc/doc/`
+
+### Building the documention
+
+#### Using Maven
+
+- Available Maven goals from the root folder of the project:
+```bash
+$ ./mvnw clean install -Pdistribute
+```
+The generated documentation is available from `target/site/reference/html/index.html`.
+
+#### Using Mkdocs directly
+
+- for testing purposes only
+
+You can also manually build the documentation using `mkdocs` directly:
+
+```bash
+# change into the 'etc/doc/' folder
+$ cd ./etc/doc/
+# start the build process: the html files are placed into the sub folder 'sites'
+$ mkdocs build
+# to publish them on a locally created web server (with auto-reload on changes)
+$ mkdocs serve
+```
 
 # Deployment
 

@@ -7,7 +7,7 @@
 A framework for the creation and simulation of bigraphs to expedite the experimental evaluation of the bigraph theory in
 real-world applications.
 
-The goal of this framework is to facilitate the implementation of context-aware or agent-based systems.
+The goal of this framework is to facilitate the implementation of context-aware and agent-based systems.
 It provides means for model-driven software development based on the bigraph theory.
 The high level API eases the programming of bigraphical systems for real-world application.
 
@@ -127,7 +127,7 @@ See the reference and documentation for a more comprehensive overview.
   <version>${revision}</version>
   <type>pom</type>
 </dependency>
-<!-- the visualization module -->
+<!-- the converter module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-converter</artifactId>
@@ -250,9 +250,10 @@ Building the documentation builds also the project without running tests.
 $ ./mvnw clean install -Pdistribute
 ```
 
-The generated documentation is available from target/.../index.html.
+The generated documentation is available from `target/site/reference/html/index.html`.
 
-The documentation is built using mkdocs.
+The documentation is built using mkdocs and must be installed on the system (see [DEPLOYMENT](etc/ci/DEPLOYMENT.md)
+for further instructions).
 
 ### Development and Deployment
 
