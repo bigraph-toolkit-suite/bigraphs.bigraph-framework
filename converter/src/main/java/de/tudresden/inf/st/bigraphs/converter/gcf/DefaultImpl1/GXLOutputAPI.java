@@ -1,4 +1,4 @@
-package GCF.DefaultImpl1;
+package de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1;
 
 import java.io.*;
 /**
@@ -41,7 +41,7 @@ public class GXLOutputAPI extends Object {
             outWriter = new OutputStreamWriter (out);
         }
         catch (java.lang.NullPointerException npe) {
-            System.out.println ("NullPointerException occured in GCF.DefaultImpl1.GXLOutputAPI!");
+            System.out.println ("NullPointerException occured in de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1.GXLOutputAPI!");
         }
         catch (java.io.FileNotFoundException fnfe) { 
             System.out.println ("File "+outFile+" could not be opened/created!");
@@ -59,10 +59,10 @@ public class GXLOutputAPI extends Object {
             outWriter.flush();                      // enforce instant writing of the text
         }
         catch (java.io.IOException ioe) {
-            System.out.println ("IOException occured in GCF.DefaultImpl1.GXLOutputAPI!");
+            System.out.println ("IOException occured in de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1.GXLOutputAPI!");
         }
         catch (java.lang.NullPointerException npe) {
-            System.out.println ("NullPointerException occured in GCF.DefaultImpl1.GXLOutputAPI!");
+            System.out.println ("NullPointerException occured in de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1.GXLOutputAPI!");
         }
     }
     
@@ -78,10 +78,10 @@ public class GXLOutputAPI extends Object {
             outWriter.flush();          // enforce instant writing of the text
         }
         catch (java.io.IOException ioe) {
-            System.out.println ("IOException occured in GCF.DefaultImpl1.GXLOutputAPI!");
+            System.out.println ("IOException occured in de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1.GXLOutputAPI!");
         }
         catch (java.lang.NullPointerException npe) {
-            System.out.println ("NullPointerException occured in GCF.DefaultImpl1.GXLOutputAPI!");
+            System.out.println ("NullPointerException occured in de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1.GXLOutputAPI!");
         }
     }
     
@@ -94,10 +94,10 @@ public class GXLOutputAPI extends Object {
             outWriter.write("\r",0,1);
         }
         catch (java.io.IOException ioe) {
-            System.out.println ("IOException occured in GCF.DefaultImpl1.GXLOutputAPI!");
+            System.out.println ("IOException occured in de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1.GXLOutputAPI!");
         }
         catch (java.lang.NullPointerException npe) {
-            System.out.println ("NullPointerException occured in GCF.DefaultImpl1.GXLOutputAPI!");
+            System.out.println ("NullPointerException occured in de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1.GXLOutputAPI!");
         }
     }
     
@@ -112,7 +112,7 @@ public class GXLOutputAPI extends Object {
             System.out.println ("Error ! Could not close output file");
         }
         catch (java.lang.NullPointerException npe) {
-            System.out.println ("NullPointerException occured in GCF.DefaultImpl1.GXLOutputAPI!");
+            System.out.println ("NullPointerException occured in de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1.GXLOutputAPI!");
         }
     }
     

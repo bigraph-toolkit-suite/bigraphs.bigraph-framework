@@ -1,4 +1,4 @@
-package GCF.DefaultImpl1;
+package de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1;
 /**
  * An abstract class to represent the gxl-Construct of the GXL-DTD.
  * See "inherited" for further information on the provided methods.

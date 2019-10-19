@@ -1,4 +1,4 @@
-package GCF.DefaultImpl1;
+package de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1;
 /**
  * Abstract class to provide the create-and close-methods for any GXL-construct that is a 
  * graph-container. For further information see the GXL-DTD, inherited and the 

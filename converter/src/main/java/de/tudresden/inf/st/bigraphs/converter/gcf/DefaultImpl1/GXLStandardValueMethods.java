@@ -1,4 +1,4 @@
-package GCF.DefaultImpl1;
+package de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1;
 /**
  * Interface to define the create-and close-methods and the printData-method for 
  * the standard values.

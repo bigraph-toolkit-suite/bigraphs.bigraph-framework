@@ -1,4 +1,4 @@
-package GCF.DefaultImpl1;
+package de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1;
 /**
  * Abstract class to provide the setAttributeValue() and close()-method for any 
  * GXL-construct except the atomic Values. It is the superior class of the GXL-

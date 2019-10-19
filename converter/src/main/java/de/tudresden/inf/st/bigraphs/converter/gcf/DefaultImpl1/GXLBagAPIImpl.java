@@ -1,9 +1,9 @@
-package GCF.DefaultImpl1;
+package de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1;
 /**
- * An abstract class to represent the tup-Construct of the GXL-DTD.
+ * An abstract class to represent the bag-Construct of the GXL-DTD.
  * See "inherited" for further information on the provided methods.
  */
-public class GXLTupAPIImpl extends GXLUntypedStandardValueContainerAPI {
+public class GXLBagAPIImpl extends GXLUntypedStandardValueContainerAPI {
 
     /*
      * inherited: public abstract void setAttributeValue(String attributeName,String value);
@@ -31,14 +31,14 @@ public class GXLTupAPIImpl extends GXLUntypedStandardValueContainerAPI {
      */
     
     /** Empty constructor. */
-    public GXLTupAPIImpl() {
+    public GXLBagAPIImpl() {
     }
     
     public void close() {
         GXLOutputAPI.writeln(">");
         int depth=GXLOutputAPI.getCurrentDepth()-1;
         for (int i=1; i<=depth; i++) GXLOutputAPI.write("  ");
-        GXLOutputAPI.write("</tup");
+        GXLOutputAPI.write("</bag");
     }
 
 }

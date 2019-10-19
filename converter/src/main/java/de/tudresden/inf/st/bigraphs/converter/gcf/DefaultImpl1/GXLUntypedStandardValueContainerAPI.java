@@ -1,47 +1,23 @@
-package GCF.DefaultImpl1;
+package de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1;
 /**
- * An abstract class to represent the attr-Construct of the GXL-DTD.
- * See "inherited" for further information on the provided methods.
+ * Abstract class to provide the printData()-method and the create()-and close() methods for 
+ * any GXL-construct that is an untyped standard-value-container (e.g. set, seq, ...).
+ * For further information see the GXL-DTD, inherited and the class-hierarchy of the 
+ * GXL-Converter-Framework.
  */
-public class GXLAttrAPIImpl extends GXLTypedAndAttributedAPI implements GXLStandardValueMethods {
+public abstract class GXLUntypedStandardValueContainerAPI extends GXLStandardAPI implements GXLStandardValueMethods {
+
+    int depth=GXLOutputAPI.getCurrentDepth()+1;
     
     /*
-    * inherited : public abstract void setAttributeValue(String attributeName,String value);    
+    * inherited : public abstract void setAttributValue (String attributeName, String value);
     *             public abstract void close();
-    *             public abstract Object createAttr();
-    *             public abstract Object createType();
-    *             public abstract Object createLocator();
-    *            public abstract Object createSeq();
-     *            public abstract Object createSet();
-     *            public abstract Object createBag();
-     *            public abstract Object createTup();
-    *             public abstract Object createBool();
-    *             public abstract Object createInt();
-    *             public abstract Object createFloat();
-    *             public abstract Object createString();
-    *             public abstract Object createEnum();
-     *            public abstract void closeLocator();
-     *            public abstract void closeSeq();
-     *            public abstract void closeSet();
-     *            public abstract void closeBag();
-     *            public abstract void closeTup();
-     *            public abstract void closeBool();
-     *            public abstract void closeString();
-     *            public abstract void closeInt();
-     *            public abstract void closeFloat();
-     *            public abstract void closeEnum();  
     */
     
-    /** Empty constructor */
-    public GXLAttrAPIImpl() {
+    /** Empty constructor. */
+    public GXLUntypedStandardValueContainerAPI() {
     }
     
-    public void close() {
-        GXLOutputAPI.writeln(">");
-        int depth=GXLOutputAPI.getCurrentDepth()-1;
-        for (int i=1; i<=depth; i++) GXLOutputAPI.write("  ");
-        GXLOutputAPI.write ("</attr");
-    }
     
     /**
      * Method to create a child-element of type locator (see GXL-DTD).
@@ -51,7 +27,7 @@ public class GXLAttrAPIImpl extends GXLTypedAndAttributedAPI implements GXLStand
         for (int i=1; i<=depth; i++) GXLOutputAPI.write("  ");
         GXLOutputAPI.write ("<locator");
         return (Object)new GXLLocatorAPIImpl();
-    }
+    }        
     
     /**
      * Method to create a child-element of type seq (see GXL-DTD).
