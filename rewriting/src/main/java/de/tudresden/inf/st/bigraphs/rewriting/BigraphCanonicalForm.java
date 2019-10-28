@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.rewriting;
 
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
@@ -10,11 +11,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 /**
  * This helper class creates a unique (canonical) label for a place graph of a bigraph such that two isomorphic place graphs
@@ -61,6 +61,10 @@ public class BigraphCanonicalForm {
     public <B extends Bigraph<?>> String bfcs(B bigraph) {
         assertBigraphIsGroundAndPrime(bigraph);
         final StringBuilder sb = new StringBuilder();
+
+        Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e");
+        HashBiMap<String, BigraphEntity.Edge> E = HashBiMap.create();
+
         Map<BigraphEntity, BigraphEntity> parentMap = new LinkedHashMap<>();
         List<BigraphEntity> frontier = new LinkedList<>();
         List<BigraphEntity> next = new LinkedList<>();
@@ -156,10 +160,20 @@ public class BigraphCanonicalForm {
                                         int num;
                                         if ((num = bigraph.getPorts(val.getKey()).size()) > 0) {
                                             sb.append("{"); //.append(num).append(":");
-
+//                                            String edgeName = E.inverse().get(linkQofF);
                                             bigraph.getPorts(val.getKey()).stream()
                                                     .map(bigraph::getLinkOfPoint)
-                                                    .map(l -> BigraphEntityType.isEdge(l) ? ((BigraphEntity.Edge) l).getName() : ((BigraphEntity.OuterName) l).getName())
+                                                    .map(l -> {
+                                                        if (BigraphEntityType.isEdge(l)) {
+                                                            if (E.inverse().get(l) == null) {
+                                                                E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) l);
+                                                            }
+//                                                            E.inverse().putIfAbsent((BigraphEntity.Edge) l, rewriteEdgeNameSupplier.get());
+                                                            return E.inverse().get(l);
+                                                        } else {
+                                                            return ((BigraphEntity.OuterName) l).getName();
+                                                        }
+                                                    })
                                                     .sorted()
                                                     .forEachOrdered(n -> sb.append(n).append("|"));
                                             sb.deleteCharAt(sb.length() - 1);
@@ -267,6 +281,17 @@ public class BigraphCanonicalForm {
         if (!bigraph.isGround() || !bigraph.isPrime()) {
             throw new BigraphIsNotGroundException();
         }
+    }
+
+    private Supplier<String> createNameSupplier(final String prefix) {
+        return new Supplier<String>() {
+            private int id = 0;
+
+            @Override
+            public String get() {
+                return prefix + id++;
+            }
+        };
     }
 //    public static int compareByControl(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
 //        String s1 = lhs.getValue().stream().map(x -> x.getValue().getNamedType().stringValue()).collect(Collectors.joining(""));
