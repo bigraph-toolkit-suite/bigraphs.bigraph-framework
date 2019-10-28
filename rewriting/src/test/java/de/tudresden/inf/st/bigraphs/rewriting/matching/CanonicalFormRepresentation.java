@@ -18,6 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,12 +119,20 @@ public class CanonicalFormRepresentation {
     @Test
     void simple_canonical_form_with_links_test() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {
         Bigraph l1 = createSampleBigraph_with_Links();
+        Bigraph l2 = createSampleBigraph_with_Links_v2();
         GraphvizConverter.toPNG(l1,
                 true,
-                new File(TARGET_DUMP_PATH + "sampleBigraph_L_1.png")
+                new File(TARGET_DUMP_PATH + "sampleBigraphL_1.png")
+        );
+        GraphvizConverter.toPNG(l2,
+                true,
+                new File(TARGET_DUMP_PATH + "sampleBigraphL_2.png")
         );
         String bfcs = BigraphCanonicalForm.getInstance().bfcs(l1);
+        String bfcs2 = BigraphCanonicalForm.getInstance().bfcs(l2);
         System.out.println(bfcs);
+        System.out.println(bfcs2);
+        Assertions.assertEquals(bfcs, bfcs2);
     }
 
     /**
@@ -279,6 +288,30 @@ public class CanonicalFormRepresentation {
                 .addChild("A").connectNodeToInnerName(edge)
                 .addChild("J").connectNodeToInnerName(edge2)
 //                .addChild("C")
+        ;
+        b1.closeAllInnerNames();
+        return b1.createBigraph();
+    }
+
+    public Bigraph createSampleBigraph_with_Links_v2() throws InvalidConnectionException, LinkTypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.InnerName edge = b1.createInnerName("e1");
+        BigraphEntity.InnerName edge2 = b1.createInnerName("e2");
+        BigraphEntity.OuterName o1 = b1.createOuterName("o1");
+
+        b1.createRoot()
+                .addChild("R")
+                .withNewHierarchy()
+                .addChild("A").connectNodeToInnerName(edge)
+                .addChild("J").connectNodeToInnerName(edge2)
+                .top()
+                .addChild("R")
+                .withNewHierarchy()
+                .addChild("A")
+                .addChild("A").connectNodeToInnerName(edge2).connectNodeToOuterName(o1)
+                .addChild("J").connectNodeToInnerName(edge2)
         ;
         b1.closeAllInnerNames();
         return b1.createBigraph();

@@ -10,9 +10,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Class represents the result of a match. Contains all necessary elements to perform the rewriting step later.
+ *
+ * @author Dominik Grzelak
+ * @see de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.AbstractReactiveSystem
+ */
 public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
 
-    //TODO add bigraphbuilder/factory for composition
     private Collection<Bigraph> parameters = new ArrayList<>();
     private PureBigraph context;
     private ElementaryBigraph identity;
@@ -27,8 +32,6 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
         this.identity = identity;
         this.redex = redex;
         this.contextIdentity = contextIdentity;
-//        PureBigraphComposite<DefaultDynamicSignature> redexComposite = AbstractBigraphFactory.createPureBigraphFactory().asBigraphOperator(this.redex);
-        //TODO: calculate redexImage
     }
 
     @Override

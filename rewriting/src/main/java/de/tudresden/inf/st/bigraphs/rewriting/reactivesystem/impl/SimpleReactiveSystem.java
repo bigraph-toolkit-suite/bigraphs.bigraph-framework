@@ -32,7 +32,7 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<PureBigraph> {
                     .asBigraphOperator(match.getContext())
                     .juxtapose(match.getContextIdentity())
                     .getOuterBigraph();
-            System.out.println(outerBigraph);
+//            System.out.println(outerBigraph);
 //            GraphvizConverter.toPNG(outerBigraph,
 //                    true,
 //                    new File("contextimage.png")
