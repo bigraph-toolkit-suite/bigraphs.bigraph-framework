@@ -65,7 +65,7 @@ PureBigraph bigraph = builder.createBigraph();
 
 ### Other APIs
 
-**Connecting nodes by links**
+#### **Bigraph Builder: Connecting nodes by links**
 
 The bigraph builder provides more utility methods helping to build more
 complex structures easily.
@@ -93,7 +93,7 @@ builder.createRoot().addChild("Computer").connectNodeToInnerName(tmp_link);
 builder.closeInnerName(tmp_link);
 ```
 
-**Exporting the meta-model and instance model**
+#### **Exporting the meta-model and instance model**
 
 ```java
 PureBigraph bigraph = ...;
@@ -102,6 +102,20 @@ BigraphModelFileStore.exportAsInstanceModel(bigraph, new FileOutputStream("./ins
 ```
 
 See the reference and documentation for a more comprehensive overview.
+
+#### **Bigraph Composition**
+
+To get the composition and tensor product of two bigraphs:
+```java
+PureBigraph G = ...;
+PureBigraph F = ...;
+PureBigraph H = ...;
+BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
+
+BigraphComposite<DefaultDynamicSignature> result = compositor.compose(F);
+compositor.juxtapose(F);
+compositor.juxtapose(F).parallelProduct(H);
+```
 
 ### Maven configuration
 
