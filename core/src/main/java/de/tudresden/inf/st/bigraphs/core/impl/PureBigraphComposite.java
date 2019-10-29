@@ -22,13 +22,35 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-//TODO originalen bigraph type class zurückgeben falls user casten sicher will
-public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<S> implements BigraphComposite<S> {
+/**
+ * Composable bigraph implementation of {@link BigraphComposite} for <b>pure bigraphs</b>.
+ * <p>
+ * Equips the bigraph with some categorical operators to compute the product of two bigraphs.
+ * Operators can only be used by bigraphs of the same type and signature, except with elementary ones.
+ *
+ * @param <S> type of the signature.
+ * @author Dominik Grzelak
+ */
+public class PureBigraphComposite<S extends Signature> extends BigraphCompositeSupport<S> {//BigraphDelegator<S> implements BigraphComposite<S> {
 
     private MutableBuilder<S> builder;
 
-    public PureBigraphComposite(Bigraph<S> bigraphDelegate) {
-        super(bigraphDelegate);
+    /**
+     * Constructor creates a composable bigraph from the given bigraph.
+     * The bigraph is then equipped with some categorical operators, such as composition and tensor product, to compute
+     * the product of two bigraphs.
+     * <p>
+     * This "operational wrapper" can only be used with and by instances with the superclass/superinterface of {@link PureBigraph},
+     * {@link ElementaryBigraph}, or this wrapper class itself.
+     * <p>
+     * The type of the argument is still {@link Bigraph} because {@link PureBigraph}s can be composed with another classes to,
+     * for example, elementary ones. So we don't restrict the type here to not force casting or checking upon the developer.
+     *
+     * @param bigraph the bigraph which is being equipped with categorical operators
+     */
+    public PureBigraphComposite(Bigraph<S> bigraph) {
+        super(bigraph);
+        assert bigraph instanceof PureBigraphComposite || bigraph instanceof PureBigraph || bigraph instanceof ElementaryBigraph;
         // this is safe: S is inferred from the bigraph too where S is the same type as the builder's type S (they will have the same type thus)
         this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature()); //new PureBigraphFactory().createBigraphBuilder(getBigraphDelegate().getSignature());
     }
@@ -36,7 +58,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
     /**
      * Function that makes the nodes disjunct in terms of there names. This is needed for composition.
      */
-//    private Consumer<BigraphEntity.NodeEntity> rewriteNodeNames = nodeEntity -> nodeEntity.setName(supplier.get());
     @Override
     public Bigraph<S> getOuterBigraph() {
         return getBigraphDelegate();
@@ -84,7 +105,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
                 myNodes.put(each.getKey(), newNode);
             }
 
-//            BigraphEntity.NodeEntity nodeEntity = V.get(each.getKey());
             BigraphEntity parent = null;
             if (V_F.containsKey(each.getKey())) {
                 parent = f.getParent(each.getValue());
@@ -114,9 +134,9 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
                 mySites.put(each.getKey(), newSite);
             }
 
-            BigraphEntity parent = f.getParent(each.getValue()); //S.get(each.getKey())); //each.getValue());
+            BigraphEntity parent = f.getParent(each.getValue());
             if (Objects.isNull(parent)) {
-                parent = g.getParent(each.getValue()); //S.get(each.getKey()));
+                parent = g.getParent(each.getValue());
             }
             assert parent != null;
             BigraphEntity theParentToSet = null;
@@ -136,7 +156,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
         HashMap<String, BigraphEntity.OuterName> myOuterNames = new LinkedHashMap<>();
         Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e");
         HashBiMap<String, BigraphEntity.Edge> E = HashBiMap.create();
-//        HashBiMap<String, BigraphEntity.InnerName> I = HashBiMap.create();
         List<BigraphEntity.InnerName> I = new ArrayList<>();
         I.addAll(g.getInnerNames());
         I.addAll(f.getInnerNames());
@@ -147,10 +166,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
         E.putAll(E_G);
         E.putAll(E_F);
 
-//        I.putAll(g.getInnerNames().stream().collect(Collectors.toMap(s -> s.getName(), Function.identity())));
-//        I.putAll(f.getInnerNames().stream().collect(Collectors.toMap(s -> s.getName(), Function.identity())));
-        O.putAll(g.getOuterNames().stream().collect(Collectors.toMap(s -> s.getName(), Function.identity())));
-        O.putAll(f.getOuterNames().stream().collect(Collectors.toMap(s -> s.getName(), Function.identity())));
+        O.putAll(g.getOuterNames().stream().collect(Collectors.toMap(BigraphEntity.OuterName::getName, Function.identity())));
+        O.putAll(f.getOuterNames().stream().collect(Collectors.toMap(BigraphEntity.OuterName::getName, Function.identity())));
 
         for (Map.Entry<String, BigraphEntity.NodeEntity> each : V.entrySet()) {
             if (each.getValue().getControl().getArity().compareTo(FiniteOrdinal.ofInteger(0)) == 0) continue;
@@ -314,7 +331,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
                 myNodes.put(each.getKey(), newNode);
             }
 
-//            BigraphEntity.NodeEntity nodeEntity = V.get(each.getKey());
             BigraphEntity parent = null;
             if (V_F.containsKey(each.getKey())) {
                 parent = f.getParent(each.getValue());
@@ -384,7 +400,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
 
         Map<String, Long> innerNamegroupCounter = I.stream().collect(Collectors.groupingBy(e -> e.getName(), Collectors.counting()));
         Map<String, String> collectGroup = new ConcurrentHashMap<>();
-//        collect00.keySet().stream().collect(Collectors.toMap(s -> s, s -> rewriteEdgeNameSupplier.get()));
+
         for (BigraphEntity.InnerName eachInner : I) {
             Collection<BigraphEntity.InnerName> siblingsOfInnerName = g.getSiblingsOfInnerName(eachInner);
             if (siblingsOfInnerName.size() == 0) {
@@ -542,7 +558,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
     public BigraphComposite<S> compose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph<S> g = getBigraphDelegate();
         assertSignaturesAreSame(g, f);
-//        assertBigraphsAreNotSame(); //TODO disjoint support of bigraphs is not important here as we are re-creating everything
+        // "disjoint support" of bigraphs is not really important (relevant) here as we are re-creating everything anyway
+        // assertBigraphsAreNotSame();
         assertInterfaceCompatibleForCompose(g, f);
 
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
@@ -605,16 +622,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
 
 
         for (BigraphEntity w : W_set) {
-//            if (BigraphEntityType.isNode(w)) {
-//                String s = supplier2.get();
-////                s = ((BigraphEntity.NodeEntity) w).getName();
-//                BigraphEntity.NodeEntity newNode = (BigraphEntity.NodeEntity) builder.createNewNode(w.getControl(), s);
-//                myNodes.put(s, newNode);
-//            } else {
-//                BigraphEntity.SiteEntity newNode = (BigraphEntity.SiteEntity) builder.createNewSite(((BigraphEntity.SiteEntity) w).getIndex());
-//                mySites.put(((BigraphEntity.SiteEntity) w).getIndex(), newNode);
-//            }
-
             BigraphEntity p = null;
             BigraphEntity prntFofW = f.getParent(w);
             FiniteOrdinal<Integer> j = Objects.nonNull(prntFofW) && BigraphEntityType.isRoot(prntFofW) ? FiniteOrdinal.ofInteger(((BigraphEntity.RootEntity) prntFofW).getIndex()) : null;
@@ -636,11 +643,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
             if (BigraphEntityType.isNode(w)) {
                 String name = V.inverse().get(w); // get the rewritten name of the "old" node first
                 w0 = myNodes.get(name); // get the new corresponding one
-//                if (Objects.isNull(w0)) {
-//                    String s = supplier2.get();
-//                    w0 = (BigraphEntity.NodeEntity) builder.createNewNode(w.getControl(), s);
-//                    myNodes.put(s, (BigraphEntity.NodeEntity) w0);
-//                }
             } else {
                 w0 = mySites.get(((BigraphEntity.SiteEntity) w).getIndex());
             }
@@ -692,9 +694,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
 
         Collection<BigraphEntity.InnerName> X = new LinkedHashSet<>(f.getInnerNames());
 
-//        HashBiMap<BigraphEntity, BigraphEntity.Port> allPorts_FG = HashBiMap.create();
-//        HashBiMap<BigraphEntity, BigraphEntity.Port> portsF2 = HashBiMap.create();
-//        HashBiMap<BigraphEntity, BigraphEntity.Port> portsG2 = HashBiMap.create();
         List<AbstractMap.SimpleImmutableEntry<BigraphEntity.NodeEntity, BigraphEntity.Port>> portsF2 = V_F.values()
                 .stream()
                 .filter(n -> f.getPorts(n).size() != 0)
@@ -715,7 +714,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
         allPorts_FG.addAll(portsF2);
         allPorts_FG.addAll(portsG2);
 
-        Set<BigraphEntity> Q_set = new LinkedHashSet<>(); // these are only points (inner names or ports
+        Set<BigraphEntity> Q_set = new LinkedHashSet<>(); // these are only points (inner names and ports)
         Q_set.addAll(X);
         Q_set.addAll(portsF2.stream().map(AbstractMap.SimpleImmutableEntry::getValue).collect(Collectors.toList()));
         Q_set.addAll(portsG2.stream().map(AbstractMap.SimpleImmutableEntry::getValue).collect(Collectors.toList()));
@@ -741,7 +740,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
             outerNames_F.put(each.getName(), each); //(BigraphEntity.InnerName) builder.createNewInnerName(eachInnerName.getName()));
         }
 
-        //TODO zweite condition muss holden
+        //TODO 2nd condition must hold
         for (BigraphEntity q : Q_set) {
 //            System.out.println(q);
 
@@ -924,33 +923,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
         return null;
     }
 
-    private Supplier<String> createNameSupplier(final String prefix) {
-        return new Supplier<String>() {
-            private int id = 0;
-
-            @Override
-            public String get() {
-                return prefix + id++;
-            }
-        };
-    }
-
-    private Supplier<Integer> createNameSupplier() {
-        return new Supplier<Integer>() {
-            private int id = 0;
-
-            @Override
-            public Integer get() {
-                return id++;
-            }
-        };
-    }
-
-    private void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
-        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-        node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
-    }
-
     protected void assertSignaturesAreSame(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleSignatureException {
         //special handling if one is an elementary bigraph
         if (inner instanceof DiscreteIon || outer instanceof DiscreteIon) {
@@ -973,35 +945,6 @@ public class PureBigraphComposite<S extends Signature> extends BigraphDelegator<
         }
         if (!outer.getSignature().equals(inner.getSignature())) {
             throw new IncompatibleSignatureException();
-        }
-    }
-
-    protected void assertInterfaceCompatibleForCompose(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleInterfaceException {
-        Set<FiniteOrdinal<Integer>> siteOrdinals = outer.getInnerFace().getKey();
-        Set<FiniteOrdinal<Integer>> rootOrdinals = inner.getOuterFace().getKey();
-        Set<StringTypedName> nameSetLeft = outer.getInnerFace().getValue();
-        Set<StringTypedName> nameSetRight = inner.getOuterFace().getValue();
-        boolean disjoint = Collections.disjoint(nameSetLeft, nameSetRight);
-        if ((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() == 0 && nameSetRight.size() == 0)
-            disjoint = false; // this is legit if they are only place graphs
-        boolean disjoint2 = siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals);
-        if (siteOrdinals.size() == 0 && rootOrdinals.size() == 0) disjoint2 = false;
-        if (disjoint || disjoint2) {
-            throw new IncompatibleInterfaceException();
-        }
-    }
-
-    protected void assertInterfaceCompatibleForJuxtaposition(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleInterfaceException {
-        Set<StringTypedName> innerNamesOuter = outer.getInnerFace().getValue();
-        Set<StringTypedName> innerNamesInner = inner.getInnerFace().getValue();
-
-        Set<StringTypedName> outerNamesOuter = outer.getOuterFace().getValue();
-        Set<StringTypedName> outerNamesInner = inner.getOuterFace().getValue();
-
-        boolean disjointInnerNames = Collections.disjoint(innerNamesOuter, innerNamesInner);
-        boolean disjointOuterNames = Collections.disjoint(outerNamesOuter, outerNamesInner);
-        if (!disjointInnerNames || !disjointOuterNames) {
-            throw new IncompatibleInterfaceException("Common inner names or outer names ...");
         }
     }
 }

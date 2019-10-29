@@ -228,10 +228,11 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         if (!BigraphEntityType.isNode(node)) return Collections.emptyList();
         EObject instance = node.getInstance();
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
+        if (Objects.isNull(portRef)) return Collections.emptyList();
         EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
         List<BigraphEntity.Port> portsList = new LinkedList<>();
         for (EObject eachPort : portList) { // are ordered anyway
-            //TODO: don't create new class everytime!
+            //TODO: don't create new class everytime! maybe put inside map...
             BigraphEntity.Port port = BigraphEntity.create(eachPort, BigraphEntity.Port.class);
             port.setIndex(portList.indexOf(eachPort)); //eachPort.eGet(eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_INDEX))
             portsList.add(port);

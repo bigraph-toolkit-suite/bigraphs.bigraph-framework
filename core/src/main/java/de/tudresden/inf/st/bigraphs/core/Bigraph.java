@@ -209,6 +209,13 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      */
     int getLevelOf(BigraphEntity place);
 
+    /**
+     * Gets the neighborhood of the given node of the place graph. The neighborhood is the set containing the its
+     * children and its parent (without the node in question itself).
+     *
+     * @param node the nodes who's neighborhood should be returned
+     * @return the neighborhood of the node of the place graph
+     */
     List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node);
 
     Collection<BigraphEntity.RootEntity> getRoots();
