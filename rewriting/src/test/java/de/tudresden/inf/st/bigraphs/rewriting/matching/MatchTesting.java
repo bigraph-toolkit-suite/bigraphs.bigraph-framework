@@ -250,6 +250,7 @@ public class MatchTesting {
     }
 
     @Test
+    @DisplayName("matches should exist")
     void model_test_7() throws InvalidConnectionException, LinkTypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         PureBigraph agent_model_test_7 = createAgent_model_test_7();
         GraphvizConverter.toPNG(agent_model_test_7,

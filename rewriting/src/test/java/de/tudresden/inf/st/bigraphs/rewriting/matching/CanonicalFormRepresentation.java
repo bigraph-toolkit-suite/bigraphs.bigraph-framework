@@ -276,12 +276,15 @@ public class CanonicalFormRepresentation {
         BigraphEntity.InnerName edge = b1.createInnerName("edge");
         BigraphEntity.InnerName edge2 = b1.createInnerName("edge2");
         BigraphEntity.OuterName o1 = b1.createOuterName("o1");
+        BigraphEntity.InnerName x1 = b1.createInnerName("x1");
 
         b1.createRoot().addChild("R")
                 .withNewHierarchy()
                 .addChild("J").connectNodeToInnerName(edge2)
                 .addChild("A").connectNodeToInnerName(edge2).connectNodeToOuterName(o1)
                 .addChild("A")
+                .addSite()
+                .addChild("J").connectNodeToInnerName(x1)
                 .goBack()
                 .addChild("R")
                 .withNewHierarchy()
@@ -289,7 +292,8 @@ public class CanonicalFormRepresentation {
                 .addChild("J").connectNodeToInnerName(edge2)
 //                .addChild("C")
         ;
-        b1.closeAllInnerNames();
+        b1.closeInnerName(edge);
+        b1.closeInnerName(edge2);
         return b1.createBigraph();
     }
 
@@ -300,6 +304,7 @@ public class CanonicalFormRepresentation {
         BigraphEntity.InnerName edge = b1.createInnerName("e1");
         BigraphEntity.InnerName edge2 = b1.createInnerName("e2");
         BigraphEntity.OuterName o1 = b1.createOuterName("o1");
+        BigraphEntity.InnerName x1 = b1.createInnerName("x1");
 
         b1.createRoot()
                 .addChild("R")
@@ -312,8 +317,11 @@ public class CanonicalFormRepresentation {
                 .addChild("A")
                 .addChild("A").connectNodeToInnerName(edge2).connectNodeToOuterName(o1)
                 .addChild("J").connectNodeToInnerName(edge2)
+                .addChild("J").connectNodeToInnerName(x1)
+                .addSite()
         ;
-        b1.closeAllInnerNames();
+        b1.closeInnerName(edge);
+        b1.closeInnerName(edge2);
         return b1.createBigraph();
     }
 

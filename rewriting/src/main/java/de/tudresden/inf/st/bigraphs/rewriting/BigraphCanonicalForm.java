@@ -1,18 +1,19 @@
 package de.tudresden.inf.st.bigraphs.rewriting;
 
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
-import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -48,18 +49,22 @@ public class BigraphCanonicalForm {
     private BigraphCanonicalForm() {
     }
 
+    //TODO problem with alphabet, consider control "LL" and and control "L". one node "LL" and two nodes "L" and "L"
+    // would be same but there aren't!: controls must be atomic!
+
     /**
-     * Build a breadth-first canonical string (BFCS) for a bigraph's place graph
-     * according to the lexicographic order. The representation is unique.
+     * Build a breadth-first canonical string (BFCS) for a pure bigraph
+     * according to the lexicographic order of the control's labels. The representation is unique.
      * <p>
-     * The bigraph must be prime, i.e., the place graph must only have one root.
+     * //     * The bigraph must be prime, i.e., the place graph must only have one root.
      *
      * @param bigraph the bigraph
      * @param <B>     the type of the bigraph
      * @return the BFCS of the place graph of the given bigraph
      */
     public <B extends Bigraph<?>> String bfcs(B bigraph) {
-        assertBigraphIsGroundAndPrime(bigraph);
+//        assertBigraphIsPrime(bigraph);
+        assertControlsAreAtomic(bigraph);
         final StringBuilder sb = new StringBuilder();
 
         Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e");
@@ -69,12 +74,23 @@ public class BigraphCanonicalForm {
         List<BigraphEntity> frontier = new LinkedList<>();
         List<BigraphEntity> next = new LinkedList<>();
         BigraphEntity.RootEntity theParent = bigraph.getRoots().iterator().next();
-        sb.append("r0$");
+        sb.append('r').append(theParent.getIndex()).append('$');
         parentMap.put(theParent, theParent);
         frontier.add(theParent);
+
+        List<BigraphEntity> places = Stream.concat(bigraph.getNodes().stream(), bigraph.getSites().stream())
+                .collect(Collectors.toList());
         while (!frontier.isEmpty()) {
-            for (BigraphEntity u : bigraph.getNodes()) {
+            for (BigraphEntity u : places) { //bigraph.getNodes()) {
                 if (parentMap.get(u) == null) {
+                    if (u.getType() == BigraphEntityType.SITE) {
+                        DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> defaultDynamicControl = DefaultDynamicControl.createDefaultDynamicControl(StringTypedName.of("" + ((BigraphEntity.SiteEntity) u).getIndex()),
+                                FiniteOrdinal.ofInteger(0), ControlKind.ATOMIC);
+                        BigraphEntity parent = bigraph.getParent(u);
+                        //rewrite parent
+                        u = BigraphEntity.createNode(u.getInstance(), defaultDynamicControl);
+                        setParentOfNode(u, parent);
+                    }
                     for (BigraphEntity v : bigraph.getOpenNeighborhoodOfVertex(u)) {
                         if (frontier.contains(v)) {
                             next.add(u);
@@ -192,13 +208,41 @@ public class BigraphCanonicalForm {
         }
         sb.insert(sb.length(), "#");
 
-        // add outernamesnames
-//        if (bigraph.getOuterNames().size() > 0) {
-//            bigraph.getOuterNames().stream().sorted(Comparator.comparing(k -> k.getName()))
-//                    .forEachOrdered(o -> sb.insert(0, o.getName()));
-//        }
-
+        List<BigraphEntity.InnerName> collect = bigraph.getInnerNames().stream()
+                .sorted(Comparator.comparing(BigraphEntity.InnerName::getName))
+                .collect(Collectors.toList());
+        //TODO: sort inner names
+        for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
+            BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(each);
+            switch (linkOfPoint.getType()) {
+                case EDGE:
+                    String name; // = ((BigraphEntity.Edge) linkOfPoint).getName();
+                    if (E.inverse().get(linkOfPoint) == null) {
+                        E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) linkOfPoint);
+                    }
+                    name = E.inverse().get(linkOfPoint);
+                    sb.append(name).append('$').append(each.getName()).append("|");
+                    break;
+            }
+        }
+        for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
+            BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(each);
+            switch (linkOfPoint.getType()) {
+                case OUTER_NAME:
+                    String name = ((BigraphEntity.OuterName) linkOfPoint).getName();
+                    sb.append(name).append('$').append(each.getName()).append('|');
+                    break;
+            }
+        }
+        if (sb.charAt(sb.length() - 1) == '|') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
         return sb.toString();
+    }
+
+    private void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
+        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
     /**
@@ -235,51 +279,27 @@ public class BigraphCanonicalForm {
 //        }
     }
 
-    /**
-     * Create a breadth-first canonical form (BFCF) for a bigraph's place graph
-     * according to the lexicographic order of the control labels
-     * <p>
-     * The form is not be necessarily unique.
-     *
-     * @param bigraph the bigraph
-     * @param <B>     the type of the bigraph
-     * @return the BFCF of the place graph of the given bigraph
-     */
-    @Deprecated
-    public <B extends Bigraph<?>> String anyBfcf(B bigraph) {
-        getInstance().assertBigraphIsGroundAndPrime(bigraph);
-        final StringBuilder sb = new StringBuilder();
-        sb.append("r0$");
-        Set<BigraphEntity> visited = new HashSet<>();
-        Traverser<BigraphEntity> childrenTraverser2 = Traverser.forTree(x -> {
-            Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(x);
-            if (!visited.contains(x)) {
-                childrenOf.stream()
-                        .filter(x3 -> Objects.nonNull(x3.getControl()))
-                        .map(x3 -> x3.getControl().getNamedType().stringValue())
-                        //bigraph.getPorts((BigraphEntity) x3).size()
-                        .sorted()
-                        .forEach(sb::append);
-                if (childrenOf.size() != 0)
-                    sb.append("$"); // "backtrack" character
-                visited.add(x);
-            }
-            return childrenOf;
-        });
-
-
-        BigraphEntity.RootEntity firstRoot = bigraph.getRoots().iterator().next();
-        Lists.newArrayList(childrenTraverser2.depthFirstPostOrder(firstRoot));
-        if (sb.charAt(sb.length() - 1) == '$') {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        sb.insert(sb.length(), "#"); // "end-of-sequence" character
-        return sb.toString();
-    }
-
     private <B extends Bigraph<?>> void assertBigraphIsGroundAndPrime(B bigraph) {
         if (!bigraph.isGround() || !bigraph.isPrime()) {
             throw new BigraphIsNotGroundException();
+        }
+    }
+
+    /**
+     * Checks if the alphabet of the signature contains only atomic labels.
+     * Otherwise the BFCS method isn't reliable.
+     *
+     * @param bigraph the bigraph
+     * @param <B>     the type of the bigraph
+     */
+    private <B extends Bigraph<?>> void assertControlsAreAtomic(B bigraph) {
+        //TODO: check
+    }
+
+
+    private <B extends Bigraph<?>> void assertBigraphIsPrime(B bigraph) {
+        if (!bigraph.isPrime()) {
+            throw new BigraphIsNotPrimeException();
         }
     }
 
