@@ -49,6 +49,11 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
     }
 
     @Override
+    public int getPortCount(BigraphEntity node) {
+        return 0;
+    }
+
+    @Override
     public BigraphEntity getParent(BigraphEntity node) {
         EObject instance = node.getInstance();
         EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);

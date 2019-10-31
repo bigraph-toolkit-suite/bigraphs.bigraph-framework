@@ -1,16 +1,12 @@
 package de.tudresden.inf.st.bigraphs.core.utils;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -152,7 +148,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
         List<BigraphEntity> collect = new ArrayList<>(nodesWithPositiveArity);
         HashMap<BigraphEntity, Boolean> visited = new HashMap<>();
         int n = (int) Math.sqrt(collect.size());
-        System.out.println("N iterations=" + n);
+//        System.out.println("N iterations=" + n);
         while (collect.size() >= 4) {
 
             int a, b, c, d;
@@ -189,14 +185,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
 //                if (getPortCount(each) >= each.getControl().getArity().getValue().longValue())
             }
             if (!good) continue;
-//            x.getControl().getArity().compareTo(y.getControl().getArity())
-//            if (random == 1) {
-//                BigraphEntity.OuterName newOuterName = (BigraphEntity.OuterName) builder.createNewOuterName(edgeName);
-//                myOutername.put(edgeName, newOuterName);
-//                builder.connectNodeToOuterName2(a, newOuterName);
-//                builder.connectNodeToOuterName2(b, newOuterName);
-//                cntO++;
-//            } else if (random == 2) {
+
             if (linkStrategy == LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE) {
                 try {
                     builder.checkIfNodeIsConnectable(entityList.get(0));
@@ -242,20 +231,12 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
 //                    e.printStackTrace();
                 }
             }
-
-
-//            collect.remove(entity2);
-//            collect.remove(entity3);
-//            collect.remove(entity4);
         }
     }
 
-    public int getPortCount(BigraphEntity node) {
-//        if (!BigraphEntityType.isNode(node)) return 0;
-        EObject instance = node.getInstance();
-        EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
-        EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
-        return portList.size();
+    @Override
+    public PureBigraphGenerator setLinkStrategy(LinkStrategy linkStrategy) {
+        return (PureBigraphGenerator) super.setLinkStrategy(linkStrategy);
     }
 
     boolean areNotEqual(int... nums) {

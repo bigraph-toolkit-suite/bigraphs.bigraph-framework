@@ -45,12 +45,15 @@ public abstract class RandomBigraphGenerator {
         return linkStrategy;
     }
 
-    public void setLinkStrategy(LinkStrategy linkStrategy) {
+    public RandomBigraphGenerator setLinkStrategy(LinkStrategy linkStrategy) {
         this.linkStrategy = linkStrategy;
+        return this;
     }
 
+
     // function to split a list into two sublists in Java
-    public static List<BigraphEntity>[] split(List<BigraphEntity> list) {
+    //TODO try with eclipse collections
+    protected static List<BigraphEntity>[] split(List<BigraphEntity> list) {
         int size = list.size();
         List<BigraphEntity> first = new ArrayList<>(list.subList(0, (size) / 2));
         List<BigraphEntity> second = new ArrayList<>(list.subList((size) / 2, size));

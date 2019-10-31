@@ -240,6 +240,14 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         return portsList;
     }
 
+    public int getPortCount(BigraphEntity node) {
+        if (!BigraphEntityType.isNode(node)) return 0;
+        EObject instance = node.getInstance();
+        EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
+        if (Objects.isNull(portRef)) return 0;
+        return ((EList<EObject>) instance.eGet(portRef)).size();
+    }
+
     @Override
     public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
         if (Objects.isNull(linkEntity) || !isBLink(linkEntity.getInstance()))

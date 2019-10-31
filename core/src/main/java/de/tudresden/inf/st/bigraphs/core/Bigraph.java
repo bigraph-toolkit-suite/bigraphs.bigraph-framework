@@ -275,6 +275,15 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      */
     Collection<BigraphEntity.Port> getPorts(BigraphEntity node);
 
+    /**
+     * Get the number of "blocked/occupied" ports by links of a node of the place graph.
+     * Check with the control's arity.
+     *
+     * @param node the node
+     * @return the port count of the node which are already used by links
+     */
+    int getPortCount(BigraphEntity node);
+
     <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port);
 
     /**
