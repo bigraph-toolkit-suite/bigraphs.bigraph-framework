@@ -25,6 +25,8 @@ public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
      */
     Collection<ReactionRule<B>> getReactionRules();
 
+    B getAgent();
+
     /**
      * Checks whether the bigraphical reactive system is simple. A BRS is simple if all its reaction rules are so.
      *

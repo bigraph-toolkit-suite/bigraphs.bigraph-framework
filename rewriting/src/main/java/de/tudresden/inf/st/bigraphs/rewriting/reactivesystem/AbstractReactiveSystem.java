@@ -51,6 +51,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
     protected ReactiveSystemListener<B> reactiveSystemListener;
 
     protected BiMap<String, ReactionRule<B>> reactionRules = HashBiMap.create();
+    protected B initialAgent;
     protected ReactiveSystemOptions options;
     protected AbstractBigraphMatcher<B> matcher;
     protected ReactionGraph<B> reactionGraph;
@@ -77,6 +78,20 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
         return false;
     }
 
+    public Signature<?> getSignature() {
+        assert initialAgent != null;
+        return initialAgent.getSignature();
+    }
+
+    /**
+     * Use the agent which must be not {@code null}, before calling this method.
+     *
+     * @param options additional options
+     */
+    public synchronized void computeTransitionSystem(final ReactiveSystemOptions options) {
+        computeTransitionSystem(getAgent(), options, Collections.emptyList());
+    }
+
     /**
      * Compute the transition system of a bigraph with all added reaction rules so far.
      *
@@ -85,7 +100,6 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
      */
     public synchronized void computeTransitionSystem(final B agent, final ReactiveSystemOptions options) {
         computeTransitionSystem(agent, options, Collections.emptyList());
-
     }
 
     /**
@@ -96,6 +110,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
      * @param predicates additional predicates to check at each states
      */
     public synchronized void computeTransitionSystem(final B agent, final ReactiveSystemOptions options, final Collection<TransitionPredicates<B>> predicates) {
+        this.initialAgent = agent;
         this.predicateChecker = new PredicateChecker<>(predicates);
         this.options = options;
         this.reactionGraph.reset();
@@ -174,6 +189,15 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
         if (Objects.nonNull(opts.getTraceFile())) {
             exportGraph(reactionGraph.getGraph(), opts.getTraceFile());
         }
+    }
+
+    public B getAgent() {
+        return initialAgent;
+    }
+
+    public AbstractReactiveSystem<B> setAgent(B initialAgent) {
+        this.initialAgent = initialAgent;
+        return this;
     }
 
     public <A> A watch(Supplier<A> function) {

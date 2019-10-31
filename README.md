@@ -13,12 +13,12 @@ The high level API eases the programming of bigraphical systems for real-world a
 
 **Features**
 
-- Dynamic creation of bigraphs at runtime based on an Ecore meta model
+- Dynamic creation of bigraphs at runtime based on an EMOF-based meta model
 - Visualization (beta)
 - Bigraph matching (beta) 
 - Bigraphical reactive system support: simulation of bigraphs by reaction rules (= transition system) (alpha)
 - Read and write meta and instance model to file system
-- Model transformation (WIP)
+- Model transformation / Conversions (WIP) (e.g., GXL, BigMC)
 
 
 
