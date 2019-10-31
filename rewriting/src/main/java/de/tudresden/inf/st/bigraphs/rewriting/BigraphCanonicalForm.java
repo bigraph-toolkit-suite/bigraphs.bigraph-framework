@@ -49,8 +49,11 @@ public class BigraphCanonicalForm {
     private BigraphCanonicalForm() {
     }
 
-    //TODO problem with alphabet, consider control "LL" and and control "L". one node "LL" and two nodes "L" and "L"
+    //TODO check whether controls are atomic or not:
+    // problem with alphabet, consider control "LL" and and control "L". one node "LL" and two nodes "L" and "L"
     // would be same but there aren't!: controls must be atomic!
+
+    //TODO choose different prefix for edge name rewriting than what outer names have.
 
     /**
      * Build a breadth-first canonical string (BFCS) for a pure bigraph
@@ -65,6 +68,7 @@ public class BigraphCanonicalForm {
     public <B extends Bigraph<?>> String bfcs(B bigraph) {
 //        assertBigraphIsPrime(bigraph);
         assertControlsAreAtomic(bigraph);
+
         final StringBuilder sb = new StringBuilder();
 
         Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e");
@@ -78,20 +82,30 @@ public class BigraphCanonicalForm {
         parentMap.put(theParent, theParent);
         frontier.add(theParent);
 
+        //TODO eclipse collection bfs search impl. vorher nachher messen
         List<BigraphEntity> places = Stream.concat(bigraph.getNodes().stream(), bigraph.getSites().stream())
                 .collect(Collectors.toList());
+        int maxDegree = bigraph.getOpenNeighborhoodOfVertex(theParent).size();
         while (!frontier.isEmpty()) {
             for (BigraphEntity u : places) { //bigraph.getNodes()) {
                 if (parentMap.get(u) == null) {
+                    // special case for sites: re-assign label
                     if (u.getType() == BigraphEntityType.SITE) {
-                        DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> defaultDynamicControl = DefaultDynamicControl.createDefaultDynamicControl(StringTypedName.of("" + ((BigraphEntity.SiteEntity) u).getIndex()),
-                                FiniteOrdinal.ofInteger(0), ControlKind.ATOMIC);
+                        String newLabel = "" + ((BigraphEntity.SiteEntity) u).getIndex();
+                        DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> defaultDynamicControl =
+                                DefaultDynamicControl.createDefaultDynamicControl(StringTypedName.of(newLabel),
+                                        FiniteOrdinal.ofInteger(0), ControlKind.ATOMIC);
                         BigraphEntity parent = bigraph.getParent(u);
                         //rewrite parent
                         u = BigraphEntity.createNode(u.getInstance(), defaultDynamicControl);
                         setParentOfNode(u, parent);
                     }
-                    for (BigraphEntity v : bigraph.getOpenNeighborhoodOfVertex(u)) {
+                    //single-step bottom-up approach
+                    List<BigraphEntity> openNeighborhoodOfVertex = bigraph.getOpenNeighborhoodOfVertex(u);
+                    if (maxDegree < openNeighborhoodOfVertex.size()) {
+                        maxDegree = openNeighborhoodOfVertex.size();
+                    }
+                    for (BigraphEntity v : openNeighborhoodOfVertex) {
                         if (frontier.contains(v)) {
                             next.add(u);
                             parentMap.put(u, v);
@@ -127,8 +141,8 @@ public class BigraphCanonicalForm {
                                         // child count
                                         if (rhs.getValue().size() - lhs.getValue().size() == 0) {
                                             // port count
-                                            int count1 = lhs.getValue().stream().map(x -> bigraph.getPorts(x.getKey()).size()).reduce(0, Integer::sum);
-                                            int count = rhs.getValue().stream().map(x -> bigraph.getPorts(x.getKey()).size()).reduce(0, Integer::sum);
+                                            int count1 = lhs.getValue().stream().map(x -> bigraph.getPortCount(x.getKey())).reduce(0, Integer::sum);
+                                            int count = rhs.getValue().stream().map(x -> bigraph.getPortCount(x.getKey())).reduce(0, Integer::sum);
                                             return (int) (count1 - count);
 //                                            if (count1 - count == 0) {
 //                                                return lhs.getKey().getControl().getNamedType().stringValue().compareTo(rhs.getKey().getControl().getNamedType().stringValue()); //(int) (count1 - count);
@@ -168,13 +182,13 @@ public class BigraphCanonicalForm {
                                             Comparator.comparing((Map.Entry<BigraphEntity, Control> k) ->
                                                     k.getKey().getControl().getNamedType().stringValue() //+ "" + bigraph.getPorts(k.getKey()).size()
                                             ).thenComparing(Comparator.comparing((Map.Entry<BigraphEntity, Control> k) ->
-                                                    bigraph.getPorts(k.getKey()).size()).reversed())
+                                                    bigraph.getPortCount(k.getKey())).reversed())
                                     )
                                     .forEachOrdered(val -> {
                                         sb.append(val.getValue().getNamedType().stringValue());
 //                                        String suffix = "";
                                         int num;
-                                        if ((num = bigraph.getPorts(val.getKey()).size()) > 0) {
+                                        if ((num = bigraph.getPortCount(val.getKey())) > 0) {
                                             sb.append("{"); //.append(num).append(":");
 //                                            String edgeName = E.inverse().get(linkQofF);
                                             bigraph.getPorts(val.getKey()).stream()
@@ -237,6 +251,7 @@ public class BigraphCanonicalForm {
         if (sb.charAt(sb.length() - 1) == '|') {
             sb.deleteCharAt(sb.length() - 1);
         }
+//        System.out.println("maxDegree=" + maxDegree);
         return sb.toString();
     }
 
