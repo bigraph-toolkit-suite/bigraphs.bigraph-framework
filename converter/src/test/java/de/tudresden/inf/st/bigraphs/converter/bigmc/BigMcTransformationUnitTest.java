@@ -19,11 +19,9 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
-import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -49,7 +47,7 @@ public class BigMcTransformationUnitTest {
         reactiveSystem.addReactionRule(createReactionRule_2());
         reactiveSystem.addReactionRule(createReactionRule_3());
 
-        BigMcPrettyPrinter prettyPrinter = new BigMcPrettyPrinter();
+        BigMcTransformator prettyPrinter = new BigMcTransformator();
         String s = prettyPrinter.toString(reactiveSystem);
         System.out.println(s);
 
