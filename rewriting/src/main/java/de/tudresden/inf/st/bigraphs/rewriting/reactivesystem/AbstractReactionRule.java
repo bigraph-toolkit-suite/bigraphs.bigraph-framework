@@ -16,6 +16,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
  * Other checks are also performed checking the reaction rule for conformity: Interfaces and "simpleness".
  *
  * @param <B> type of the bigraph
+ * @author Dominik Grzelak
  */
 public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature>> implements ReactionRule<B> {
     protected final Signature signature;
@@ -39,14 +40,6 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     public AbstractReactionRule(final B redex, final B reactum) throws InvalidReactionRuleException {
         this(redex, reactum, InstantiationMap.create(redex.getSites().size()));
     }
-
-    @Override
-    public boolean isRedexSimple() {
-        return getRedex().isEpimorphic() && getRedex().isMonomorphic() &&
-                getRedex().isGuarding() && //"doesn't contain inner names" is checked in the guarding clause
-                getRedex().getEdges().size() == 0; // every link is open
-    }
-
 
     protected boolean hasIdleOuterNames(B redex) {
         boolean isIdle = false;
@@ -133,8 +126,7 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         return this.reactum;
     }
 
-//    @Override
-//    public S getSignature() {
-//        return this.signature;
-//    }
+    public Signature getSignature() {
+        return this.signature;
+    }
 }

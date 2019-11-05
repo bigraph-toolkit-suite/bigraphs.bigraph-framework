@@ -61,8 +61,6 @@ public class ReactiveSystemTests {
     }
 
 
-
-
     @Test
     void create_transition_system_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
         // Create reaction rulesname

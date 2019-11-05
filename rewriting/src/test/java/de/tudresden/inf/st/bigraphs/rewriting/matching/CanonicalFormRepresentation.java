@@ -21,6 +21,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.BigraphIsoPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,6 +56,20 @@ public class CanonicalFormRepresentation {
     static void setUp() {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
+    }
+
+    @Test
+    void with_predicate_test() {
+        DefaultDynamicSignature randomSignature = createRandomSignature(26, 1f);
+        PureBigraph g0 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
+        BigraphIsoPredicate<PureBigraph> pureBigraphBigraphIsoPredicate = BigraphIsoPredicate.create(g0);
+        boolean test = pureBigraphBigraphIsoPredicate.test(g0);
+        Assertions.assertTrue(test);
+
+        PureBigraph g1 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
+        boolean test2 = pureBigraphBigraphIsoPredicate.negate().test(g1);
+        Assertions.assertTrue(test2);
+
     }
 
     @Test
