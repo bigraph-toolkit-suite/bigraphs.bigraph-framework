@@ -22,7 +22,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.MatchPredicate;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.SubBigraphMatchPredicate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -94,7 +94,7 @@ public class ReactiveSystemTests {
                 )
         ;
 
-        MatchPredicate<PureBigraph> pred1 = MatchPredicate.create((PureBigraph) createAgent_A_Final());
+        SubBigraphMatchPredicate<PureBigraph> pred1 = SubBigraphMatchPredicate.create((PureBigraph) createAgent_A_Final());
 
         reactiveSystem.computeTransitionSystem(agent, opts, Arrays.asList(pred1));
     }

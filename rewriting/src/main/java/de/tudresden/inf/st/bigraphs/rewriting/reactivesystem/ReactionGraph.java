@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
- * A data structure to build a reaction graph, similar to a transition system.
+ * A data structure to build up a reaction graph, similar to a transition system.
  * <p>
  * This is not to be compared with bigraphical LTS - the reaction graph is not minimal according to the context of a transition.
  * Here the arrows are reaction rules, and the nodes are states (i.e., bigraphs, represented by their unique label).

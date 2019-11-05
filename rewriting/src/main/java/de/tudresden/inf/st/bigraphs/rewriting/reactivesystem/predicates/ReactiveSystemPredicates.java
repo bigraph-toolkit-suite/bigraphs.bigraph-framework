@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem;
+package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -15,7 +15,9 @@ import java.util.function.Predicate;
  *
  * @author Dominik Grzelak
  */
-public abstract class TransitionPredicates<B extends Bigraph<? extends Signature<?>>> implements Predicate<B> {
+public abstract class ReactiveSystemPredicates<B extends Bigraph<? extends Signature<?>>> implements Predicate<B> {
+
+    protected boolean negate = false;
 
     /**
      * This method is responsible to test the current state of a transition system of a BRS
@@ -26,4 +28,12 @@ public abstract class TransitionPredicates<B extends Bigraph<? extends Signature
      */
     @Override
     public abstract boolean test(B o);
+
+    public boolean isNegate() {
+        return negate;
+    }
+
+    public void setNegate(boolean negate) {
+        this.negate = negate;
+    }
 }

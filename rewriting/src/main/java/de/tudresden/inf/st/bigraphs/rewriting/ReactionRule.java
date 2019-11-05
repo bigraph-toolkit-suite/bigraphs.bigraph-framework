@@ -33,7 +33,11 @@ public interface ReactionRule<B extends Bigraph<? extends Signature>> {
      *
      * @return {@code true} if the redex of the reaction rule is simple, otherwise {@code false}
      */
-    boolean isRedexSimple();
+    default boolean isRedexSimple() {
+        return getRedex().isEpimorphic() && getRedex().isMonomorphic() &&
+                getRedex().isGuarding() && //"doesn't contain inner names" is checked in the guarding clause
+                getRedex().getEdges().size() == 0; // every link is open
+    }
 
     boolean isReversable();
 

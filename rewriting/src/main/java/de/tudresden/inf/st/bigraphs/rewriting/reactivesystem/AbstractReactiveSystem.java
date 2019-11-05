@@ -15,6 +15,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.ReactionRuleSupplier;
 import org.jgrapht.Graph;
@@ -109,7 +110,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
      * @param options    additional options
      * @param predicates additional predicates to check at each states
      */
-    public synchronized void computeTransitionSystem(final B agent, final ReactiveSystemOptions options, final Collection<TransitionPredicates<B>> predicates) {
+    public synchronized void computeTransitionSystem(final B agent, final ReactiveSystemOptions options, final Collection<ReactiveSystemPredicates<B>> predicates) {
         this.initialAgent = agent;
         this.predicateChecker = new PredicateChecker<>(predicates);
         this.options = options;
@@ -164,7 +165,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
 //                DijkstraShortestPath<String, String> dijkstraShortestPath = new DijkstraShortestPath<>(reactionGraph.getGraph());
                     GraphPath<String, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(reactionGraph.getGraph(), bfcfOfW, rootBfcs);
                     //TODO: report violation of the predicates
-                    for (Map.Entry<TransitionPredicates<B>, Boolean> eachPredciate : predicateChecker.getChecked().entrySet()) {
+                    for (Map.Entry<ReactiveSystemPredicates<B>, Boolean> eachPredciate : predicateChecker.getChecked().entrySet()) {
                         if (!eachPredciate.getValue()) {
                             System.out.println("Counter-example trace for predicate violation: " + pathBetween);
 //                        System.out.println("Violation of predicate = " + eachPredciate.getKey());
