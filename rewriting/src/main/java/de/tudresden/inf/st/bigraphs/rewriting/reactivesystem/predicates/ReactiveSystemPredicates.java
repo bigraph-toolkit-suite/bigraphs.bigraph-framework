@@ -23,11 +23,11 @@ public abstract class ReactiveSystemPredicates<B extends Bigraph<? extends Signa
      * This method is responsible to test the current state of a transition system of a BRS
      * with the predicate at hand (which is provided by the concrete subclass).
      *
-     * @param o the current state of a transition system of a BRS to test the predicate against
+     * @param agent the current state of a transition system of a BRS to test the predicate against
      * @return {@code true} if the predicate matches, otherwise {@code false}
      */
     @Override
-    public abstract boolean test(B o);
+    public abstract boolean test(B agent);
 
     public boolean isNegate() {
         return negate;

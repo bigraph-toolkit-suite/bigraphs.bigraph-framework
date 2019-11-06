@@ -39,8 +39,8 @@ public class BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>> exte
     }
 
     @Override
-    public boolean test(B o) {
-        String bfcs = this.canonicalForm.bfcs(o);
+    public boolean test(B agent) {
+        String bfcs = this.canonicalForm.bfcs(agent);
         return bigraphEncoded.equals(bfcs);
     }
 

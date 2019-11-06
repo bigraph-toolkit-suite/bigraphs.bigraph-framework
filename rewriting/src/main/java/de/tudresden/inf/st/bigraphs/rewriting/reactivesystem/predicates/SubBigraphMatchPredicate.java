@@ -41,11 +41,8 @@ public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>>
     }
 
     @Override
-    public boolean test(B o) {
-        MatchIterable<BigraphMatch<B>> match = matcher.match(o, bigraphToMatch);
-//        if (negate) {
-//            return !match.iterator().hasNext();
-//        }
+    public boolean test(B agent) {
+        MatchIterable<BigraphMatch<B>> match = matcher.match(agent, bigraphToMatch);
         return match.iterator().hasNext();
     }
 
