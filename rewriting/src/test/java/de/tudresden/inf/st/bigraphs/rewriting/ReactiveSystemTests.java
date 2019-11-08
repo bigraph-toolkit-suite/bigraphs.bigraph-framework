@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting.matching;
+package de.tudresden.inf.st.bigraphs.rewriting;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Control;

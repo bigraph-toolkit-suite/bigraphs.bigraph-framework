@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting.matching;
+package de.tudresden.inf.st.bigraphs.rewriting;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -16,20 +16,16 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
-import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
 
 import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,7 +49,7 @@ public class CountingExample {
         SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
 
         PureBigraph agent_a = createAgent_A(3, 4);
-        GraphvizConverter.toPNG(agent_a,
+        BigraphGraphvizExporter.toPNG(agent_a,
                 true,
                 new File(TARGET_DUMP_PATH + "counting_agent.png")
         );

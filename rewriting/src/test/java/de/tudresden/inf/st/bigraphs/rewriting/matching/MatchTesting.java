@@ -20,7 +20,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.GroundReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
-import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -51,7 +51,7 @@ public class MatchTesting {
         PureBigraph contextComposed = (PureBigraph) factory.asBigraphOperator(context).parallelProduct(contextIdentity).getOuterBigraph();
 //            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
 //                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
-        GraphvizConverter.toPNG(contextComposed,
+        BigraphGraphvizExporter.toPNG(contextComposed,
                 true,
                 new File(path + "contextComposed.png")
         );
@@ -61,24 +61,24 @@ public class MatchTesting {
         System.out.println("Create png's");
         Stopwatch timer = Stopwatch.createStarted();
         try {
-            String convert = GraphvizConverter.toPNG(context,
+            String convert = BigraphGraphvizExporter.toPNG(context,
                     true,
                     new File(path + "context.png")
             );
 //            System.out.println(convert);
-            GraphvizConverter.toPNG(agent,
+            BigraphGraphvizExporter.toPNG(agent,
                     true,
                     new File(path + "agent.png")
             );
-            GraphvizConverter.toPNG(redex,
+            BigraphGraphvizExporter.toPNG(redex,
                     true,
                     new File(path + "redex.png")
             );
-            GraphvizConverter.toPNG(contextIdentity,
+            BigraphGraphvizExporter.toPNG(contextIdentity,
                     true,
                     new File(path + "identityForContext.png")
             );
-            GraphvizConverter.toPNG(identityForParams,
+            BigraphGraphvizExporter.toPNG(identityForParams,
                     true,
                     new File(path + "identityForParams.png")
             );
@@ -93,7 +93,7 @@ public class MatchTesting {
             AtomicInteger cnt = new AtomicInteger(0);
             next.getParameters().forEach(x -> {
                 try {
-                    GraphvizConverter.toPNG((PureBigraph) x,
+                    BigraphGraphvizExporter.toPNG((PureBigraph) x,
                             true,
                             new File(path + "param_" + cnt.incrementAndGet() + ".png")
                     );
@@ -231,7 +231,7 @@ public class MatchTesting {
     void match_test_6_counting() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleInterfaceException, InvalidReactionRuleException, IOException {
         PureBigraph agent = createAgent_A(-1, 1);
 //        createGraphvizOutput(agent_a, null, "src/test/resources/graphviz/model6/");
-        GraphvizConverter.toPNG(agent,
+        BigraphGraphvizExporter.toPNG(agent,
                 true,
                 new File("src/test/resources/graphviz/model6/agent.png")
         );
@@ -253,12 +253,12 @@ public class MatchTesting {
     @DisplayName("matches should exist")
     void model_test_7() throws InvalidConnectionException, LinkTypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         PureBigraph agent_model_test_7 = createAgent_model_test_7();
-        GraphvizConverter.toPNG(agent_model_test_7,
+        BigraphGraphvizExporter.toPNG(agent_model_test_7,
                 true,
                 new File("src/test/resources/graphviz/model7/agent_7.png")
         );
         PureBigraph redex_7 = createRedex_7();
-        GraphvizConverter.toPNG(redex_7,
+        BigraphGraphvizExporter.toPNG(redex_7,
                 true,
                 new File("src/test/resources/graphviz/model7/redex_7.png")
         );
@@ -277,12 +277,12 @@ public class MatchTesting {
     @Test
     void idle_edge_test() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
         PureBigraph agent = createAgent_idle_edge_test();
-        GraphvizConverter.toPNG(agent,
+        BigraphGraphvizExporter.toPNG(agent,
                 true,
                 new File("src/test/resources/graphviz/model_idleedge/agent.png")
         );
         PureBigraph redex = createRedex_idle_edge_test();
-        GraphvizConverter.toPNG(redex,
+        BigraphGraphvizExporter.toPNG(redex,
                 true,
                 new File("src/test/resources/graphviz/model_idleedge/redex.png")
         );

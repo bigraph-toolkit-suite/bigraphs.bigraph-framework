@@ -8,6 +8,7 @@ import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
@@ -18,6 +19,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.ReactionRuleSupplier;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
@@ -144,6 +146,14 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
                                 //TODO: beachte instantiation map
                                 reaction = buildParametricReaction(theAgent, next, eachRule);
                             }
+                            try {
+                                BigraphGraphvizExporter.toPNG((PureBigraph) reaction,
+                                        false,
+                                        new File("/home/dominik/git/BigraphFramework/rewriting/src/test/resources/dump/cars/reaction.png")
+                                );
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 //                            assert Objects.nonNull(reaction);
                             if (Objects.nonNull(reaction)) {
                                 String bfcf = canonicalForm.bfcs(reaction);
@@ -159,18 +169,24 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
                     });
             if (predicateChecker.getPredicates().size() > 0) {
                 // "Check each property p ∈ P against w."
+                //TODO evaluate in options what should happen here: violation or stop criteria?
+                // this is connected to the predicates (changes its "intent", what they are used for)
                 if (!predicateChecker.checkAll(theAgent)) {
                     // compute counter-example trace from w back to the root
 
+                    try {
 //                DijkstraShortestPath<String, String> dijkstraShortestPath = new DijkstraShortestPath<>(reactionGraph.getGraph());
-                    GraphPath<String, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(reactionGraph.getGraph(), bfcfOfW, rootBfcs);
-                    //TODO: report violation of the predicates
-                    for (Map.Entry<ReactiveSystemPredicates<B>, Boolean> eachPredciate : predicateChecker.getChecked().entrySet()) {
-                        if (!eachPredciate.getValue()) {
-                            System.out.println("Counter-example trace for predicate violation: " + pathBetween);
+                        GraphPath<String, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(reactionGraph.getGraph(), bfcfOfW, rootBfcs);
+                        //TODO: report violation of the predicates
+                        for (Map.Entry<ReactiveSystemPredicates<B>, Boolean> eachPredciate : predicateChecker.getChecked().entrySet()) {
+                            if (!eachPredciate.getValue()) {
+                                System.out.println("Counter-example trace for predicate violation: " + pathBetween);
 //                        System.out.println("Violation of predicate = " + eachPredciate.getKey());
-                            reactiveSystemListener.onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
+                                reactiveSystemListener.onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace(); //TODO report this with a listener
                     }
                 } else {
 //                System.out.println("Matched");

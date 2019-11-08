@@ -11,7 +11,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.AbstractReactiveSystem;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,14 +76,22 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<PureBigraph> {
         try {
 
             //OK
+            try {
+                BigraphGraphvizExporter.toPNG(match.getContext(),
+                        true,
+                        new File("context.png")
+                );
+                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
+                        true,
+                        new File("contextIdentity.png")
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Bigraph outerBigraph = factory
                     .asBigraphOperator(match.getContext())
                     .juxtapose(match.getContextIdentity())
                     .getOuterBigraph();
-//            GraphvizConverter.toPNG(outerBigraph,
-//                    true,
-//                    new File("outerBigraph.png")
-//            );
 
             Bigraph d = null;
             List<PureBigraph> parameters = new ArrayList<>(match.getParameters());

@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting.matching;
+package de.tudresden.inf.st.bigraphs.rewriting;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
@@ -20,12 +20,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.BigraphIsoPredicate;
-import de.tudresden.inf.st.bigraphs.visualization.GraphvizConverter;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -79,7 +77,7 @@ public class CanonicalFormRepresentation {
         String bfcs = BigraphCanonicalForm.getInstance().bfcs(biesingerSampleBigraph);
         assertEquals(bfcs, "r0$" + "A$BB$CD$E$FG$E#");
         System.out.println(bfcs);
-        GraphvizConverter.toPNG(biesingerSampleBigraph,
+        BigraphGraphvizExporter.toPNG(biesingerSampleBigraph,
                 true,
                 new File(TARGET_DUMP_PATH + "sampleBigraph_biesinger.png")
         );
@@ -88,7 +86,7 @@ public class CanonicalFormRepresentation {
         long count2 = Stream.of(createSampleBigraphB1(), createSampleBigraphB2())
                 .peek(x -> {
                     try {
-                        GraphvizConverter.toPNG(x,
+                        BigraphGraphvizExporter.toPNG(x,
                                 true,
                                 new File(TARGET_DUMP_PATH + "sampleBigraph2_" + cnt2.incrementAndGet() + ".png")
                         );
@@ -106,7 +104,7 @@ public class CanonicalFormRepresentation {
         long count = Stream.of(createSampleBigraphA1(), createSampleBigraphA2())
                 .peek(x -> {
                     try {
-                        GraphvizConverter.toPNG(x,
+                        BigraphGraphvizExporter.toPNG(x,
                                 true,
                                 new File(TARGET_DUMP_PATH + "sampleBigraph0_" + cnt0.incrementAndGet() + ".png")
                         );
@@ -125,7 +123,7 @@ public class CanonicalFormRepresentation {
         long num = sampleGraphs.stream()
                 .peek(x -> {
                     try {
-                        GraphvizConverter.toPNG(x,
+                        BigraphGraphvizExporter.toPNG(x,
                                 true,
                                 new File(TARGET_DUMP_PATH + "sampleBigraph1_" + cnt1.incrementAndGet() + ".png")
                         );
@@ -148,7 +146,7 @@ public class CanonicalFormRepresentation {
 //        RandomBigraphGenerator.split()
         DefaultDynamicSignature randomSignature = createRandomSignature(26, 1f);
         PureBigraph g0 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
-        GraphvizConverter.toPNG(g0,
+        BigraphGraphvizExporter.toPNG(g0,
                 true,
                 new File(TARGET_DUMP_PATH + "randomBigraph.png")
         );
@@ -182,11 +180,11 @@ public class CanonicalFormRepresentation {
     void simple_canonical_form_with_links_test() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {
         Bigraph l1 = createSampleBigraph_with_Links();
         Bigraph l2 = createSampleBigraph_with_Links_v2();
-        GraphvizConverter.toPNG(l1,
+        BigraphGraphvizExporter.toPNG(l1,
                 true,
                 new File(TARGET_DUMP_PATH + "sampleBigraphL_1.png")
         );
-        GraphvizConverter.toPNG(l2,
+        BigraphGraphvizExporter.toPNG(l2,
                 true,
                 new File(TARGET_DUMP_PATH + "sampleBigraphL_2.png")
         );

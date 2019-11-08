@@ -112,7 +112,23 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
 //        return bigraphEntities;
 //    }
 
-    public List<BigraphEntity> getNodesOfLink(BigraphEntity.OuterName outerName) {
+//    public List<BigraphEntity> getNodesOfLink(BigraphEntity.OuterName outerName) {
+//        EObject instance = outerName.getInstance();
+//        List<BigraphEntity> linkedNodes = new ArrayList<>();
+//        EStructuralFeature pointsRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+//        if (Objects.isNull(pointsRef)) return linkedNodes;
+//        EList<EObject> pointsList = (EList<EObject>) instance.eGet(pointsRef);
+//        for (EObject eachPoint : pointsList) {
+//            if (isBPort(eachPoint)) {
+//                EStructuralFeature nodeRef = eachPoint.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
+//                EObject node = (EObject) eachPoint.eGet(nodeRef);
+//                addPlaceToList(linkedNodes, node, false);
+//            }
+//        }
+//        return linkedNodes;
+//    }
+
+    public List<BigraphEntity> getNodesOfLink(BigraphEntity.Link outerName) {
         EObject instance = outerName.getInstance();
         List<BigraphEntity> linkedNodes = new ArrayList<>();
         EStructuralFeature pointsRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
