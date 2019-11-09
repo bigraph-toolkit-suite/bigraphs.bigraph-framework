@@ -43,6 +43,17 @@ public class MatchTesting {
         org.openjdk.jmh.Main.main(args);
     }
 
+    void exportGraph(Bigraph<?> big, String path) {
+        try {
+            BigraphGraphvizExporter.toPNG((PureBigraph) big,
+                    true,
+                    new File(path)
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next, String path) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
         PureBigraph context = (PureBigraph) next.getContext();
         PureBigraph redex = (PureBigraph) next.getRedex();
@@ -151,29 +162,32 @@ public class MatchTesting {
     public void model_test_2() throws Exception {
         PureBigraph agent_model_test_2 = (PureBigraph) createAgent_model_test_2();
         PureBigraph redex_model_test_2a = (PureBigraph) createRedex_model_test_2a();
+        exportGraph(redex_model_test_2a, "src/test/resources/graphviz/model2/redex_model_test_2a.png");
+        exportGraph(agent_model_test_2, "src/test/resources/graphviz/model2/agent_model_test_2.png");
         //the second root of the redex will create many occurrences because a distinct match isn't possible
         PureBigraph redex_model_test_2b = (PureBigraph) createRedex_model_test_2b();
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-//        MatchIterable match = matcher.match(agent_model_test_2, redex_model_test_2a);
-//        Iterator<BigraphMatch<?>> iterator = match.iterator();
-//        while (iterator.hasNext()) {
-//            BigraphMatch next = iterator.next();
-//            System.out.println(next);
+        MatchIterable match = matcher.match(agent_model_test_2, redex_model_test_2a);
+        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            BigraphMatch next = iterator.next();
+            System.out.println(next);
+            createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
+        }
+
+
+//        Stopwatch timer0 = Stopwatch.createStarted();
+//        MatchIterable<BigraphMatch<PureBigraph>> match2 = matcher.match(agent_model_test_2, redex_model_test_2b);
+//        Iterator<BigraphMatch<PureBigraph>> iterator2 = match2.iterator();
+//        while (iterator2.hasNext()) {
+//            BigraphMatch<?> next = iterator2.next();
+//            long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
+//            System.out.println("Match time FULL (millisecs) " + (elapsed0 / 1e+6f));
+//            createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
+////                System.out.println(next);
 //        }
 
-        for (int i = 0; i < 1; i++) {
-            Stopwatch timer0 = Stopwatch.createStarted();
-            MatchIterable<BigraphMatch<PureBigraph>> match2 = matcher.match(agent_model_test_2, redex_model_test_2b);
-            Iterator<BigraphMatch<PureBigraph>> iterator2 = match2.iterator();
-            while (iterator2.hasNext()) {
-                BigraphMatch<?> next = iterator2.next();
-                long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
-                System.out.println("Match time FULL (millisecs) " + (elapsed0 / 1e+6f));
-                createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
-//                System.out.println(next);
-            }
-        }
 
     }
 
@@ -205,7 +219,7 @@ public class MatchTesting {
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
 //            createGraphvizOutput(agent_model_test_4, next, "src/test/resources/graphviz/model4/");
-            System.out.println(next);
+            System.out.println("MATCH: " + next);
         }
 
     }
@@ -222,7 +236,7 @@ public class MatchTesting {
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
 //            createGraphvizOutput(agent_model_test_4, next, "src/test/resources/graphviz/model4/");
-            System.out.println(next);
+            System.out.println("MATCH: " + next);
         }
     }
 
@@ -245,12 +259,12 @@ public class MatchTesting {
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
             createGraphvizOutput(agent, next, "src/test/resources/graphviz/model6/");
-            System.out.println(next);
+            System.out.println("MATCH: " + next);
         }
     }
 
     @Test
-    @DisplayName("matches should exist")
+    @DisplayName("Only Place Graph Matching: Match should exist")
     void model_test_7() throws InvalidConnectionException, LinkTypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         PureBigraph agent_model_test_7 = createAgent_model_test_7();
         BigraphGraphvizExporter.toPNG(agent_model_test_7,
@@ -270,7 +284,7 @@ public class MatchTesting {
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
             createGraphvizOutput(agent_model_test_7, next, "src/test/resources/graphviz/model7/");
-            System.out.println(next);
+            System.out.println("MATCH: " + next);
         }
     }
 
@@ -595,7 +609,8 @@ public class MatchTesting {
     }
 
     /**
-     * Ground reaction rule that doesn't matches.
+     * Ground reaction rule: find a user with two jobs.
+     * RR: User has a link and also an idle outer to match.
      *
      * @return
      * @throws LinkTypeNotExistsException
@@ -609,17 +624,17 @@ public class MatchTesting {
 
 
         // (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1));
-//        builder.
-//                createRoot()
-//                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
-//                .withNewHierarchy().addSite().goBack()
-//                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(jeff)
-//                .addChild(signature.getControlByName("Job"))
+        builder.
+                createRoot()
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .withNewHierarchy().addSite().goBack()
+                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(jeff)
+                .addChild(signature.getControlByName("Job"))
         ;
-        builder.createRoot()
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
-        ;
+//        builder.createRoot()
+//                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
+//                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
+//        ;
         return builder.createBigraph();
     }
 
