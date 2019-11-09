@@ -320,6 +320,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         return this.nodes;
     }
 
+    @Override
     public BigraphEntity getTopLevelRoot(BigraphEntity node) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         if (node.getInstance().eGet(prntRef) != null) {
@@ -328,13 +329,23 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         return node;
     }
 
-//    public EObject getTopLevelRoot(EObject node) {
-//        EStructuralFeature prntRef = node.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-//        if (node.eGet(prntRef) != null) {
-//            return getTopLevelRoot((EObject) node.eGet(prntRef));
-//        }
-//        return node;
-//    }
+    @Override
+    public boolean isParentOf(BigraphEntity node, BigraphEntity possibleParent) {
+        if (Objects.isNull(node) || Objects.isNull(possibleParent)) return false;
+        if (node.equals(possibleParent)) return true;
+        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        if (Objects.isNull(prntRef)) return false;
+        EObject parent = (EObject) node.getInstance().eGet(prntRef);
+        if (Objects.isNull(parent)) return false;
+        if (isBRoot(parent) && !parent.equals(possibleParent.getInstance())) return false;
+        if (parent.equals(possibleParent.getInstance())) {
+            return true;
+        } else if (!parent.equals(possibleParent.getInstance())) {
+            Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> first = getNodes().stream().filter(x -> x.getInstance().equals(parent)).findFirst();
+            return isParentOf(first.orElse(null), possibleParent);
+        }
+        return false;
+    }
 
     @Override
     public boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2) {
@@ -362,6 +373,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         return false;
     }
 
+    //TODO move this to another util class, same with method "setParentOfNode"
     protected boolean isBPort(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
     }

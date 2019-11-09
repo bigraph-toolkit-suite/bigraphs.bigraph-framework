@@ -13,6 +13,7 @@ import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.com.google.common.collect.Lists;
+import org.eclipse.collections.api.block.function.primitive.IntToObjectFunction;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EClassImpl;
@@ -438,6 +439,14 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 //            child.addAll((Collection<? extends BigraphEntity<Control<?, ?>>>) nodes); // now its safe, after above
             nodes.forEach(this::addChildToParent);
             return this;
+        }
+
+        public final Hierarchy connectByEdge(final String... controls) throws InvalidArityOfControlException {
+            return connectByEdge(
+                    Arrays.stream(controls)
+                            .map(x -> (Control<?, ?>) signature.getControlByName(x))
+                            .toArray((IntToObjectFunction<Control[]>) Control[]::new)
+            );
         }
 
         //To be used to call toe enclosing class' methods for passing the nodes as arguments
@@ -1147,6 +1156,16 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      */
     public void closeInnerName(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException {
         closeInnerName(innerName, false);
+    }
+
+    public void closeInnerNames(BigraphEntity.InnerName... innerName) throws LinkTypeNotExistsException {
+        Arrays.stream(innerName).forEach(x -> {
+            try {
+                closeInnerName(x, false);
+            } catch (LinkTypeNotExistsException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void closeInnerName(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException {

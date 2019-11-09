@@ -54,6 +54,11 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
     }
 
     @Override
+    public boolean isParentOf(BigraphEntity node, BigraphEntity possibleParent) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
     public BigraphEntity getParent(BigraphEntity node) {
         EObject instance = node.getInstance();
         EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);

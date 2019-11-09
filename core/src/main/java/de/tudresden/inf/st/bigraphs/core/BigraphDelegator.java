@@ -96,6 +96,11 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
+    public boolean isParentOf(BigraphEntity node, BigraphEntity possibleParent) {
+        return bigraphDelegate.isParentOf(node, possibleParent);
+    }
+
+    @Override
     public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
         return bigraphDelegate.getSiblingsOfInnerName(innerName);
     }

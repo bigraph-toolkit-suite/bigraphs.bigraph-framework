@@ -240,6 +240,14 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     BigraphEntity getTopLevelRoot(BigraphEntity node);
 
     /**
+     * Checks, if the node has the given node as parent.
+     * @param node
+     * @param possibleParent
+     * @return
+     */
+    boolean isParentOf(BigraphEntity node, BigraphEntity possibleParent);
+
+    /**
      * Returns the set of children of a given node (including sites). <br/>
      * If the node has no children, then an empty set is returned.
      *
@@ -276,7 +284,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     Collection<BigraphEntity.Port> getPorts(BigraphEntity node);
 
     /**
-     * Get the number of "blocked/occupied" ports by links of a node of the place graph.
+     * Get the number of "blocked/occupied" ports by links of a node.
      * Check with the control's arity.
      *
      * @param node the node

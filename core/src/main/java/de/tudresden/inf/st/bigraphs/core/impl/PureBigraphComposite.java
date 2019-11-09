@@ -739,7 +739,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
         for (BigraphEntity.OuterName each : f.getOuterNames()) {
             outerNames_F.put(each.getName(), each); //(BigraphEntity.InnerName) builder.createNewInnerName(eachInnerName.getName()));
         }
-
+        //innerNames_G und outerNames_F können schonmal verbunden werden?
         //TODO 2nd condition must hold
         for (BigraphEntity q : Q_set) {
 //            System.out.println(q);
@@ -824,7 +824,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
                     BigraphEntity.OuterName outerNameF = outerNames_F.get(nameValue.stringValue());
 
                     BigraphEntity link = g.getLinkOfPoint(innerNameG);
-
+                    // ((BigraphEntity.OuterName) link).getName() == outerNameF.getName()
                     BigraphEntity newLink = null;
                     //is it an edge or an outer name?
                     if (BigraphEntityType.isEdge(link)) {
@@ -883,11 +883,12 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
                     //outer names are already created, they remain the same
                     BigraphEntity.OuterName outerName = myOuterNames.get(((BigraphEntity.OuterName) linkQofG).getName());
 //                    System.out.println(outerName);
-                    BigraphEntity newPortWithIndex = builder.createNewPortWithIndex(thePort.getIndex());
-                    newPortWithIndex.getInstance().eSet(
-                            newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK),
-                            outerName.getInstance()
-                    );
+//                    BigraphEntity newPortWithIndex = builder.createNewPortWithIndex(thePort.getIndex());
+//                    newPortWithIndex.getInstance().eSet(
+//                            newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK),
+//                            outerName.getInstance()
+//                    );
+                    builder.connectToLinkUsingIndex(nodeEntity, outerName, thePort.getIndex());
                 } else if (BigraphEntityType.isEdge(linkQofG)) {
                     String edgeName = E.inverse().get(linkQofG);
                     BigraphEntity.Edge edge = myEdges.get(edgeName); //((BigraphEntity.Edge) linkQofG).getName());

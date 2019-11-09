@@ -133,10 +133,10 @@ public class BigraphEntity<C extends Control> {
         }
     }
 
-    public static class OuterName extends BigraphEntity {
+    public static class Link extends BigraphEntity {
 
-        OuterName(@NonNull EObject instance) {
-            super(instance, BigraphEntityType.OUTER_NAME);
+        Link(@NonNull EObject instance, BigraphEntityType type) {
+            super(instance, type);
         }
 
         public String getName() {
@@ -147,16 +147,17 @@ public class BigraphEntity<C extends Control> {
 
     }
 
-    public static class Edge extends BigraphEntity {
+    public static class OuterName extends Link {
+
+        OuterName(@NonNull EObject instance) {
+            super(instance, BigraphEntityType.OUTER_NAME);
+        }
+    }
+
+    public static class Edge extends Link {
 
         Edge(EObject instance) {
             super(instance, BigraphEntityType.EDGE);
-        }
-
-        public String getName() {
-            EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-            Object name = getInstance().eGet(nameAttr);
-            return String.valueOf(name);
         }
     }
 
@@ -175,6 +176,13 @@ public class BigraphEntity<C extends Control> {
         public void setName(String nodeName) {
             EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             getInstance().eSet(nameAttr, nodeName);
+        }
+
+        @Override
+        public String toString() {
+            return "NodeEntity{" + getName() +
+                    ", control=" + getControl().getNamedType().stringValue() + ", " + getControl().getArity().getValue() +
+                    '}';
         }
     }
 
