@@ -24,7 +24,7 @@ public class PureMatchIteratorImpl<B extends PureBigraph> implements Iterator<Bi
     private PureBigraphMatchingEngine<B> matchingEngine;
 
     PureMatchIteratorImpl(PureBigraphMatchingEngine<B> matchingEngine) {
-        this.matchingEngine = matchingEngine; //(PureBigraphMatchingEngine<PureBigraph>) matchingEngine;
+        this.matchingEngine = matchingEngine;
         this.findMatches();
     }
 

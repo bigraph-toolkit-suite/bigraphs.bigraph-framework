@@ -19,6 +19,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractDynamicMatchAdapter;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatchEngine;
 import de.tudresden.inf.st.bigraphs.rewriting.util.Permutations;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jgrapht.Graph;
@@ -34,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PureBigraphMatchingEngine<B extends PureBigraph> {
+public class PureBigraphMatchingEngine<B extends PureBigraph> implements BigraphMatchEngine<B> {
 
     private PureBigraphRedexAdapter redexAdapter;
     private PureBigraphAgentAdapter agentAdapter;
@@ -65,6 +66,11 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         this.init();
         long elapsed = timer.stop().elapsed(TimeUnit.NANOSECONDS);
         System.out.println("INITTIME (millisecs) " + (elapsed / 1e+6f));
+    }
+
+    @Override
+    public List<BigraphMatch<B>> getMatches() {
+        return matches;
     }
 
     private void init() {
@@ -857,7 +863,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
                 boolean hasSite = redexAdapter.getChildrenWithSites(eachRedex).stream().anyMatch(BigraphEntityType::isSite);
                 boolean b = isSameControl(eachAgent, eachRedex) && hasSameSpatialStructure3(eachAgent, eachRedex, hasSite); //hasSameSpatialStructure(eachAgent, eachRedex, true);
-                boolean bigraphEntities1 = checkLinkIdentityOfNodes(eachAgent, eachRedex);
+//                boolean bigraphEntities1 = checkLinkIdentityOfNodes(eachAgent, eachRedex);
                 boolean big1 = checkLinksForNode(eachRedex, eachAgent); // this is a very basic/simply link checking, later we do something more concretely
                 //this is just to pre-filter
                 if (b) {
@@ -961,11 +967,6 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         // die places fallen raus, wenn ...
 //        aus.clear();
         return mapping;
-    }
-
-    public List<BigraphEntity> getSubBigraphFrom(BigraphEntity node, AbstractDynamicMatchAdapter adapter) {
-        Traverser<BigraphEntity> childTraverser = Traverser.forTree(xx -> adapter.getChildren(xx));
-        return Lists.newArrayList(childTraverser.breadthFirst(node));
     }
 
     public static class CrossPairLink {
@@ -1074,28 +1075,12 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
 
     }
 
-    /**
-     * Helper method to check whether two nodes have the same control
-     *
-     * @param node1 first node
-     * @param node2 second node
-     * @return {@code true} if both nodes have the same control, otherwise {@code false}
-     */
-    private boolean isSameControl(BigraphEntity node1, BigraphEntity node2) {
-        return node1.getControl().equals(node2.getControl());
-    }
-
     // TODO: UTIL MACHEN: wird häufig verwendet!
     private void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
-    public List<BigraphMatch<B>> getMatches() {
-        return matches;
-    }
-
-    //TODO: move to linkgraph matching
     private boolean linkMatching() {
         Set<BigraphEntity> bigraphEntities2 = results.rowMap().keySet();
         Set<BigraphEntity> bigraphEntities = results.columnMap().keySet();
@@ -1116,7 +1101,7 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         return areLinksOK;
     }
 
-    //TODO: move to linkgraph matching
+
     private boolean areLinksOK(List<BigraphEntity> redexPartition, List<BigraphEntity> agentPartition) {
         //TODO only arity > 0
         HashMap<BigraphEntity, Boolean> lnk = new HashMap<>();
@@ -1194,17 +1179,13 @@ public class PureBigraphMatchingEngine<B extends PureBigraph> {
         return false;
     }
 
-    //TODO: move to linkgraph matching
     private boolean checkLinksForNode(BigraphEntity u, BigraphEntity v) {
         List<BigraphEntity> bigraphEntities = S.get(v, u);//corresponding?
         if (Objects.nonNull(bigraphEntities) && bigraphEntities.size() != 0) {
 //            System.out.println(v.getControl() + " // " + u.getControl());
-//            if (v.getControl().equals(u.getControl())) {
 
-            // TODO Option adden um idle edges und edges trotzdem zu beachten
-
-            // edges werden nicht berücksichtigt, methode gibt nur outernames zurück
-            // edges means "closed links" no reaction permitted
+            // Edges mean "closed links" (reaction denied), outer are "open links" (reaction permitted)
+            // However, both outer and edges are considered by method "getLinksOfNode" (same as in bigraphER)
             List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkAgent = agentAdapter.getLinksOfNode(v);
             List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkRedex = redexAdapter.getLinksOfNode(u);
 

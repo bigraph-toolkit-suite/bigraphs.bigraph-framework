@@ -37,7 +37,6 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
     public static <B extends Bigraph<? extends Signature<?>>> AbstractBigraphMatcher<B> create(Class<B> bigraphClass) {
         if (bigraphClass == PureBigraph.class) {
             try {
-//            return (AbstractBigraphMatcher<B>) new PureBigraphMatcher();
                 return (AbstractBigraphMatcher<B>) Class.forName(PureBigraphMatcher.class.getCanonicalName()).newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
@@ -47,6 +46,8 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
     }
 
     public abstract MatchIterable<BigraphMatch<B>> match(B agent, B redex);
+
+    public abstract BigraphMatchEngine<B> instantiateEngine();
 
     /**
      * Returns the supplied agent passed via the {@link AbstractBigraphMatcher#match(Bigraph, Bigraph)} method.

@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatchEngine;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
 
 import java.util.concurrent.TimeUnit;
@@ -22,12 +23,17 @@ public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
     public MatchIterable<BigraphMatch<PureBigraph>> match(PureBigraph agent, PureBigraph redex) {
         super.agent = agent;
         super.redex = redex;
-        PureBigraphMatchingEngine<PureBigraph> matchingEngine = new PureBigraphMatchingEngine<>(this.agent, this.redex);
+        PureBigraphMatchingEngine<PureBigraph> matchingEngine = instantiateEngine();
         Stopwatch timer0 = Stopwatch.createStarted();
         MatchIterable<BigraphMatch<PureBigraph>> bigraphMatches = new MatchIterable<BigraphMatch<PureBigraph>>(new PureMatchIteratorImpl(matchingEngine));
         long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
         System.out.println("INITTIME2 (millisecs) " + (elapsed0 / 1e+6f));
         return bigraphMatches;
+    }
+
+    @Override
+    public PureBigraphMatchingEngine<PureBigraph> instantiateEngine() {
+        return new PureBigraphMatchingEngine<>(this.agent, this.redex);
     }
 
 }
