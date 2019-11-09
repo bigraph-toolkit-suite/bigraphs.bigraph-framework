@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ * A generic pretty printer interface for bigraphical reactive systems.
+ *
  * @param <R> type of the reactive system
  * @author Dominik Grzelak
  */

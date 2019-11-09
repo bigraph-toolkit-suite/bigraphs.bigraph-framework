@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ * A pretty printer interface for just bigraphs.
+ *
  * @author Dominik Grzelak
  */
 public interface BigraphPrettyPrinter<B extends Bigraph<? extends Signature<?>>, R extends ReactiveSystem<B>>
