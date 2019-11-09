@@ -39,7 +39,7 @@ public class RandomBigraphTests {
         DefaultDynamicSignature exampleSignature = createExampleSignature();
         PureBigraph generated = new PureBigraphGenerator().generate(exampleSignature, 1, 20, 1.0f);
 
-        String convert = GraphvizConverter.toPNG(generated,
+        String convert = BigraphGraphvizExporter.toPNG(generated,
                 true,
                 new File("src/test/resources/dump/graphviz/generated.png")
         );

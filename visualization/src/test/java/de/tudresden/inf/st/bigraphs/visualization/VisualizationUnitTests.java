@@ -50,23 +50,23 @@ public class VisualizationUnitTests {
         final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
         final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
 
-        String convert = GraphvizConverter.toPNG(createSimpleBigraphHierarchy(),
+        String convert = BigraphGraphvizExporter.toPNG(createSimpleBigraphHierarchy(),
                 true,
                 new File(TARGET_DUMP_PATH + "ex_simple_tree.png")
         );
         System.out.println(convert);
-        String convert2 = GraphvizConverter.toPNG(createSimpleBigraphHierarchy(),
+        String convert2 = BigraphGraphvizExporter.toPNG(createSimpleBigraphHierarchy(),
                 false,
                 new File(TARGET_DUMP_PATH + "ex_simple_nesting.png")
         );
         System.out.println(convert2);
-        GraphvizConverter.toPNG(createBigraph_A(), true, new File(TARGET_DUMP_PATH + "ex_A_tree.png"));
-        GraphvizConverter.toPNG(createBigraph_A(), false, new File(TARGET_DUMP_PATH + "ex_A_nesting.png"));
-        GraphvizConverter.toPNG(createBigraph_b(), true, new File(TARGET_DUMP_PATH + "ex_b_tree.png"));
-        GraphvizConverter.toPNG(createBigraph_b(), false, new File(TARGET_DUMP_PATH + "ex_b_nesting.png"));
+        BigraphGraphvizExporter.toPNG(createBigraph_A(), true, new File(TARGET_DUMP_PATH + "ex_A_tree.png"));
+        BigraphGraphvizExporter.toPNG(createBigraph_A(), false, new File(TARGET_DUMP_PATH + "ex_A_nesting.png"));
+        BigraphGraphvizExporter.toPNG(createBigraph_b(), true, new File(TARGET_DUMP_PATH + "ex_b_tree.png"));
+        BigraphGraphvizExporter.toPNG(createBigraph_b(), false, new File(TARGET_DUMP_PATH + "ex_b_nesting.png"));
 
-        GraphvizConverter.toPNG(bigraphWithTwoRoots(), true, new File(TARGET_DUMP_PATH + "ex_2roots_tree.png"));
-        GraphvizConverter.toPNG(bigraphWithTwoRoots(), false, new File(TARGET_DUMP_PATH + "ex_2roots_nesting.png"));
+        BigraphGraphvizExporter.toPNG(bigraphWithTwoRoots(), true, new File(TARGET_DUMP_PATH + "ex_2roots_tree.png"));
+        BigraphGraphvizExporter.toPNG(bigraphWithTwoRoots(), false, new File(TARGET_DUMP_PATH + "ex_2roots_nesting.png"));
     }
 
 

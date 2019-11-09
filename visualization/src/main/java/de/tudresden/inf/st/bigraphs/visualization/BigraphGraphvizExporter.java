@@ -21,29 +21,29 @@ import static guru.nidi.graphviz.model.Factory.*;
 import static guru.nidi.graphviz.model.Factory.node;
 
 /**
- * This class visualizes a bigraph by means of Graphviz.
+ * This class visualizes a bigraph by means of GraphViz.
  * <p>
  * Several styling can be configured, such as color, shape and the label format of each node.
  */
-public class GraphvizConverter {
+public class BigraphGraphvizExporter {
 
     private static final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
     private static final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
     private static final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
 
     public static <S extends Signature> String toPNG(Bigraph<S> bigraph, boolean asTree, File output) throws IOException {
-        return new GraphvizConverter().convert(bigraph, output, Format.PNG, asTree, labelSupplier, colorSupplier, shapeSupplier);
+        return new BigraphGraphvizExporter().convert(bigraph, output, Format.PNG, asTree, labelSupplier, colorSupplier, shapeSupplier);
     }
 
     public static <S extends Signature> String toDOT(Bigraph<S> bigraph) {
         try {
-            return new GraphvizConverter().convert(bigraph, null, null, true, labelSupplier, colorSupplier, shapeSupplier);
+            return new BigraphGraphvizExporter().convert(bigraph, null, null, true, labelSupplier, colorSupplier, shapeSupplier);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private GraphvizConverter() {
+    private BigraphGraphvizExporter() {
 
     }
 
