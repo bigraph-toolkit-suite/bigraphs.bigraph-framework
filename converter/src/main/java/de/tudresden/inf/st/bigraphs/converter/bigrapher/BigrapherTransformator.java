@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
-import de.tudresden.inf.st.bigraphs.converter.PrettyPrinter;
+import de.tudresden.inf.st.bigraphs.converter.ReactiveSystemPrettyPrinter;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ControlKind;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Implementation of {@link PrettyPrinter} for the transformation of pure EMOF-based bigraphs to
+ * Implementation of {@link ReactiveSystemPrettyPrinter} for the transformation of pure EMOF-based bigraphs to
  * bigraphER's specification language. The whole bigraphical reactive system is encoded.
  * Only one agent is printed.
  * <p>
@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
  *
  * @author Dominik Grzelak
  */
-public class BigrapherTransformator implements PrettyPrinter<SimpleReactiveSystem> {
+public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, SimpleReactiveSystem> {
 
     public static final String LINE_SEP = System.getProperty("line.separator");
 

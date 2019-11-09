@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.converter.bigmc;
 
-import de.tudresden.inf.st.bigraphs.converter.PrettyPrinter;
+import de.tudresden.inf.st.bigraphs.converter.ReactiveSystemPrettyPrinter;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ControlKind;
@@ -17,14 +17,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Implementation of {@link PrettyPrinter} for the transformation of pure EMOF-based bigraphs to
+ * Implementation of {@link ReactiveSystemPrettyPrinter} for the transformation of pure EMOF-based bigraphs to
  * BigMC's term language. The whole bigraphical reactive system is encoded.
  * <p>
  * Code is mostly adapted from the library jLibBig to our EMOF-based bigraph structure.
  *
  * @author Dominik Grzelak
  */
-public class BigMcTransformator implements PrettyPrinter<SimpleReactiveSystem> {
+public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, SimpleReactiveSystem> {
 
     public static final String LINE_SEP = System.getProperty("line.separator");
 
