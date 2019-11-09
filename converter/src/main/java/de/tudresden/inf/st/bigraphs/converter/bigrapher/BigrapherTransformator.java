@@ -220,7 +220,7 @@ public class BigrapherTransformator implements PrettyPrinter<SimpleReactiveSyste
         Set<Control<?, ?>> controls = sig.getControls();
         for (Control ctrl : controls) {
             s
-                    .append(ctrl.getControlKind().equals(ControlKind.ATOMIC) ? "" : "atomic ")
+                    .append(ctrl.getControlKind().equals(ControlKind.ATOMIC) ? "atomic " : "")
                     .append("ctrl ")
                     .append(ctrl.getNamedType().stringValue()).append(" = ")
                     .append(ctrl.getArity().getValue()).append(";")
