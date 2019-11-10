@@ -30,9 +30,8 @@
         <emf.codegen.version>2.16.0</emf.codegen.version>
         <emf.cdo.version>4.7.0</emf.cdo.version>
         <eclipse.mirror>http://download.eclipse.org/</eclipse.mirror>
-        <!--        <eclipse.mirror>http://mirror.ibcp.fr/pub/eclipse/</eclipse.mirror>-->
         <junit.version>5.4.0</junit.version>
-        <log4j.version>2.11.1</log4j.version>
+        <log4j.version>1.7.29</log4j.version>
         <graphviz.version>0.8.3</graphviz.version>
         <bintray.organization>st-tu-dresden</bintray.organization>
         <bintray.repo>maven-repository</bintray.repo>
@@ -340,13 +339,13 @@
             </dependency>
             <!-- Logging -->
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
             <dependency>
@@ -364,6 +363,17 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <profile>

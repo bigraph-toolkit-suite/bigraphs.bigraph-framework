@@ -4,6 +4,8 @@ import com.google.common.base.Stopwatch;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author Dominik Grzelak
  */
 public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
+    Logger logger = LoggerFactory.getLogger(PureBigraphMatcher.class);
 
     public PureBigraphMatcher() {
         super();
@@ -25,10 +28,13 @@ public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
         super.agent = agent;
         super.redex = redex;
         PureBigraphMatchingEngine matchingEngine = instantiateEngine();
-        Stopwatch timer0 = Stopwatch.createStarted();
+
+        Stopwatch timer0 = logger.isDebugEnabled() ? Stopwatch.createStarted() : null;
         MatchIterable<PureBigraphParametricMatch> bigraphMatches = new MatchIterable<>(new PureMatchIteratorImpl(matchingEngine));
-        long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
-        System.out.println("INITTIME2 (millisecs) " + (elapsed0 / 1e+6f));
+        if (logger.isDebugEnabled()) {
+            long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
+            logger.debug("Complete Matching Time: {} ms", (elapsed0 / 1e+6f));
+        }
         return bigraphMatches;
     }
 
