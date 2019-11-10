@@ -21,6 +21,8 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionR
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -45,10 +47,10 @@ public class BigrapherTransformationUnitTest {
         BigrapherTransformator prettyPrinter = new BigrapherTransformator();
         String s = prettyPrinter.toString(reactiveSystem);
         System.out.println(s);
-//
-//        FileOutputStream fout = new FileOutputStream(new File("/home/dominik/git/BigraphFramework/converter/src/test/resources/dump/couting.bgm"));
-//        prettyPrinter.toOutputStream(reactiveSystem, fout);
-//        fout.close();
+
+        FileOutputStream fout = new FileOutputStream(new File("/home/dominik/git/BigraphFramework/converter/src/test/resources/dump/test.big"));
+        prettyPrinter.toOutputStream(reactiveSystem, fout);
+        fout.close();
     }
 
     public static PureBigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
@@ -57,10 +59,12 @@ public class BigrapherTransformationUnitTest {
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
+        BigraphEntity.OuterName a = builder.createOuterName("a");
+        BigraphEntity.OuterName b = builder.createOuterName("b");
         BigraphEntity.InnerName e1 = builder.createInnerName("e1");
 
         builder.createRoot()
-//                .addChild("Printer")
+                .addChild("Printer").connectNodeToOuterName(a).connectNodeToOuterName(b)
                 .addChild(signature.getControlByName("Room")).connectNodeToInnerName(e1)
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
@@ -85,11 +89,13 @@ public class BigrapherTransformationUnitTest {
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
+        BigraphEntity.OuterName a = builder.createOuterName("a");
+        BigraphEntity.OuterName b = builder.createOuterName("b");
 
         //(Computer{b1}.(Job.1) | User{jeff2}.1) || Computer{b1}.(Job.1 | User{jeff2}.1);
 
         builder.createRoot()
-//                .addChild("Printer")
+                .addChild("Printer").connectNodeToOuterName(a).connectNodeToOuterName(b)
                 .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
                 .withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
                 .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff1);

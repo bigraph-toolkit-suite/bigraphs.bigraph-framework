@@ -14,12 +14,18 @@ The high level API eases the programming of bigraphical systems for real-world a
 **Features**
 
 - Dynamic creation of bigraphs at runtime based on an EMOF-based meta model
+- Read and write meta and instance model to file system
 - Visualization (beta)
+    - graphical export via GraphViz, DOT
+    - PNG, JPG, ...
 - Bigraph matching (beta) 
 - Bigraphical reactive system support: simulation of the evolution of 
 bigraphs by reaction rules (synthesizing a labelled transition system) (alpha)
-- Read and write meta and instance model to file system
-- Model transformation / Conversions (WIP) (e.g., GXL, BigMC)
+    - simulation
+    - predicate checking
+    - order of reaction rules
+- Model transformation / Conversions (WIP) 
+    - e.g., GXL, BigMC, BigraphER
 
 
 

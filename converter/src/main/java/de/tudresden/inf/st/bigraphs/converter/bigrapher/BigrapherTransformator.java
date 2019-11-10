@@ -37,8 +37,15 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     public BigrapherTransformator() {
     }
 
+    private void reset() {
+        reactionRuleCounter = 0;
+        reactionLabels.clear();
+        randomLinkNames.clear();
+    }
+
     @Override
     public String toString(SimpleReactiveSystem system) {
+        reset();
         StringBuilder s = new StringBuilder();
 
         s.append(toString(system.getSignature()));
@@ -60,6 +67,13 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         s.append(LINE_SEP);
 
         return s.toString();
+    }
+
+    @Override
+    public void toOutputStream(SimpleReactiveSystem system, OutputStream outputStream) throws IOException {
+        reset();
+        String s = toString(system);
+        outputStream.write(s.getBytes(), 0, s.length());
     }
 
     private String toString(Collection<ReactionRule<PureBigraph>> reactionRules) {
@@ -207,12 +221,6 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
 
     private String closeFakeLinks(List<String> linkNames) {
         return linkNames.stream().collect(Collectors.joining(" /", "/", ""));
-    }
-
-    @Override
-    public void toOutputStream(SimpleReactiveSystem system, OutputStream outputStream) throws IOException {
-        String s = toString(system);
-        outputStream.write(s.getBytes(), 0, s.length());
     }
 
     public static String toString(Signature sig) {
