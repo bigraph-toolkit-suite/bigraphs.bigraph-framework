@@ -143,7 +143,7 @@ public class ReactiveSystemTests {
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_A() throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
+    public static Bigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
@@ -156,7 +156,7 @@ public class ReactiveSystemTests {
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_A_Final() throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
+    public static Bigraph createAgent_A_Final() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
