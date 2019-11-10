@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
@@ -22,19 +23,86 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class OperationsTest {
+public class BigraphCompositionUnitTests {
 
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
 
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @BeforeEach
     void setUp() {
+    }
+
+    @Test
+    void compose_test_0() throws InvalidArityOfControlException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature_compose_test_0());
+        BigraphEntity.OuterName fromD2 = builderReactum.createOuterName("fromD");
+        BigraphEntity.OuterName fromS2 = builderReactum.createOuterName("fromS");
+        BigraphEntity.OuterName target2 = builderReactum.createOuterName("target");
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builderReactum.newHierarchy("Car").connectNodeToOuterName(target2).addSite();
+        builderReactum.createRoot()
+                .addChild("Place").connectNodeToOuterName(fromD2).withNewHierarchy().addSite().addChild(car2).top()
+                .addChild("Place").connectNodeToOuterName(fromS2).withNewHierarchy().addChild("Road").connectNodeToOuterName(fromD2).addSite().top()
+        ;
+        PureBigraph reactum = builderReactum.createBigraph();
+
+        PureBigraphBuilder<DefaultDynamicSignature> builderParams = factory.createBigraphBuilder(createSignature_compose_test_0());
+
+        builderParams.createRoot().addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel");
+        BigraphEntity.OuterName p4 = builderParams.createOuterName("p4");
+        BigraphEntity.OuterName p7 = builderParams.createOuterName("p7");
+        builderParams.createRoot().addChild("Road").connectNodeToOuterName(p4).addChild("Road").connectNodeToOuterName(p7);
+        BigraphEntity.OuterName p1 = builderParams.createOuterName("p1");
+        builderParams.createRoot().addChild("Road").connectNodeToOuterName(p1);
+        PureBigraph parameters = builderParams.createBigraph();
+
+        PureBigraphBuilder<DefaultDynamicSignature> builderRenaming = factory.createBigraphBuilder(createSignature_compose_test_0());
+        Linkings<DefaultDynamicSignature>.Identity identity = factory.createLinkings(createSignature_compose_test_0()).identity(StringTypedName.of("p1"), StringTypedName.of("p4"), StringTypedName.of("p7"));
+
+        Bigraph<DefaultDynamicSignature> reactumImage = factory.asBigraphOperator(identity).parallelProduct(reactum).getOuterBigraph();
+
+        Bigraph<DefaultDynamicSignature> reacted = factory.asBigraphOperator(reactumImage).compose(parameters).getOuterBigraph();
+
+        assertEquals(0, reacted.getInnerNames().size());
+        assertEquals(0, reacted.getSites().size());
+        assertEquals(14, reacted.getNodes().size());
+        assertEquals(1, reacted.getRoots().size());
+        assertEquals(6, reacted.getOuterNames().size());
+        long count = reacted.getOuterNames().stream().filter(x -> reacted.getPointsFromLink(x).size() == 0).count();
+        assertEquals(0, count);
+
+        // Check whether outer names are connected to the correct nodes
+        BigraphEntity.OuterName fromS = reacted.getOuterNames().stream().filter(x -> x.getName().equals("fromS")).findFirst().get();
+        assertEquals(1, reacted.getPointsFromLink(fromS).size());
+        assertEquals("Place", reacted.getNodeOfPort((BigraphEntity.Port) new ArrayList<>(reacted.getPointsFromLink(fromS)).get(0)).getControl().getNamedType().stringValue());
+
+        BigraphEntity.OuterName target = reacted.getOuterNames().stream().filter(x -> x.getName().equals("target")).findFirst().get();
+        assertEquals(1, reacted.getPointsFromLink(target).size());
+        assertEquals("Car", reacted.getNodeOfPort((BigraphEntity.Port) new ArrayList<>(reacted.getPointsFromLink(target)).get(0)).getControl().getNamedType().stringValue());
+
+        BigraphEntity.OuterName fromD = reacted.getOuterNames().stream().filter(x -> x.getName().equals("fromD")).findFirst().get();
+        assertEquals(2, reacted.getPointsFromLink(fromD).size());
+        assertEquals("Place", reacted.getNodeOfPort((BigraphEntity.Port) new ArrayList<>(reacted.getPointsFromLink(fromD)).get(0)).getControl().getNamedType().stringValue());
+        assertEquals("Road", reacted.getNodeOfPort((BigraphEntity.Port) new ArrayList<>(reacted.getPointsFromLink(fromD)).get(1)).getControl().getNamedType().stringValue());
+
+    }
+
+    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature_compose_test_0() {
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        defaultBuilder
+                .newControl().identifier(StringTypedName.of("Car")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Fuel")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("Place")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Road")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Target")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        ;
+        return (S) defaultBuilder.create();
     }
 
     @Test
@@ -106,7 +174,7 @@ public class OperationsTest {
             builderForH.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
                     .addChild(signature.getControlByName("Printer"));
         }
-        
+
         PureBigraph F = builderForF.createBigraph();
         PureBigraph G = builderForG.createBigraph();
         PureBigraph H = builderForH.createBigraph();
