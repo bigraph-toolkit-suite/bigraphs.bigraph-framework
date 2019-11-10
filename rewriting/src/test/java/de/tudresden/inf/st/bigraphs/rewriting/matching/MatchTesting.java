@@ -17,6 +17,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.pure.PureBigraphParametricMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.GroundReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
@@ -127,13 +128,13 @@ public class MatchTesting {
         PureBigraph redex_model_test_0 = (PureBigraph) createRedex_model_test_0();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex_model_test_0, redex_model_test_0);
 
-        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class); //new PureBigraphMatcher();
-        MatchIterable match = matcher.match(agent_model_test_0, rr.getRedex());
-        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_0, rr.getRedex());
+        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         int transition = 0;
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + transition++ + "/");
+            createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + (transition++) + "/");
             System.out.println("NEXT: " + next);
         }
 
@@ -145,12 +146,12 @@ public class MatchTesting {
         PureBigraph redex_model_test_1 = (PureBigraph) createRedex_model_test_1();
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable match = matcher.match(agent_model_test_1, redex_model_test_1);
-        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_1, redex_model_test_1);
+        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
             createGraphvizOutput(agent_model_test_1, next, "src/test/resources/graphviz/model1/");
-            System.out.println(next);
+            System.out.println("Match found: " + next);
         }
 
     }
@@ -168,8 +169,8 @@ public class MatchTesting {
         PureBigraph redex_model_test_2b = (PureBigraph) createRedex_model_test_2b();
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable match = matcher.match(agent_model_test_2, redex_model_test_2a);
-        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent_model_test_2, redex_model_test_2a);
+        Iterator<PureBigraphParametricMatch> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch next = iterator.next();
             System.out.println(next);
@@ -197,8 +198,8 @@ public class MatchTesting {
         PureBigraph redex_model_test_3 = (PureBigraph) createRedex_model_test_3();
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 
-        MatchIterable match = matcher.match(agent_model_test_3, redex_model_test_3);
-        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_3, redex_model_test_3);
+        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
             createGraphvizOutput(agent_model_test_3, next, "src/test/resources/graphviz/model3/");
@@ -214,8 +215,8 @@ public class MatchTesting {
         PureBigraph redex_model_test_4 = (PureBigraph) createRedex_model_test_4();
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 
-        MatchIterable match = matcher.match(agent_model_test_4, redex_model_test_4);
-        Iterator<BigraphMatch<?>> iterator = match.iterator();
+        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent_model_test_4, redex_model_test_4);
+        Iterator<PureBigraphParametricMatch> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
 //            createGraphvizOutput(agent_model_test_4, next, "src/test/resources/graphviz/model4/");

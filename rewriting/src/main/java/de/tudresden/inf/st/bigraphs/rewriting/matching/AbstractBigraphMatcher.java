@@ -45,9 +45,9 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
         throw new RuntimeException("Not Implemented Yet");
     }
 
-    public abstract MatchIterable<BigraphMatch<B>> match(B agent, B redex);
+    public abstract <M extends BigraphMatch<B>> MatchIterable<M> match(B agent, B redex);
 
-    public abstract BigraphMatchEngine<B> instantiateEngine();
+    public abstract BigraphMatchingEngine<B> instantiateEngine();
 
     /**
      * Returns the supplied agent passed via the {@link AbstractBigraphMatcher#match(Bigraph, Bigraph)} method.

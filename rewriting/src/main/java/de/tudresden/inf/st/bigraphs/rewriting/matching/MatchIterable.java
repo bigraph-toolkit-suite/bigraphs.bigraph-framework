@@ -11,7 +11,7 @@ import java.util.Iterator;
  * @param <T> type of the bigraph within a {@link BigraphMatch} "container" holding the match result
  * @author Dominik Grzelak
  */
-public class MatchIterable<T extends BigraphMatch<? extends Bigraph<? extends Signature<?>>>> implements Iterable<T> {
+public class MatchIterable<T extends BigraphMatch<? extends Bigraph>> implements Iterable<T> {
 
     private Iterator<T> iterator;
 

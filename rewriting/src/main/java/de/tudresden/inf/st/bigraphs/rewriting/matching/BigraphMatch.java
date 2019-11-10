@@ -7,19 +7,25 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import java.util.Collection;
 
 /**
- * A result of a matching of type {@code B}.
+ * This interface represents a result of a bigraph matching and is used by the {@link BigraphMatchingEngine}.
  *
  * @param <B> the bigraph type of the match
  * @author Dominik Grzelak
+ * @see BigraphMatchingEngine
  */
 public interface BigraphMatch<B extends Bigraph<? extends Signature<?>>> {
 
+    /**
+     * The context of the match
+     *
+     * @return the context
+     */
     B getContext();
 
     /**
-     * Identity link graph for the composition of the context and the redex image (with params)
+     * Identity link graph for the composition of the context and the redex image (i.e., redex composed with parameters).
      *
-     * @return
+     * @return the identity link graph for the context
      */
     Bigraph<? extends Signature<?>> getContextIdentity();
 
@@ -33,17 +39,22 @@ public interface BigraphMatch<B extends Bigraph<? extends Signature<?>>> {
     /**
      * juxtaposition of the redex and a suitable identity is called the redex image
      *
-     * @return
+     * @return the composed redex and identity link graph
      */
     B getRedexImage();
 
     /**
-     * identity for the redex image
+     * Get the identity link graph of the redex to build the "redex image".
      *
-     * @return
+     * @return the identity link graph of the redex
      */
     ElementaryBigraph getRedexIdentity();
 
+    /**
+     * Get all parameters of the reaction rules as a list
+     *
+     * @return the parameters of the reaction rule
+     */
     Collection<B> getParameters();
 
 }

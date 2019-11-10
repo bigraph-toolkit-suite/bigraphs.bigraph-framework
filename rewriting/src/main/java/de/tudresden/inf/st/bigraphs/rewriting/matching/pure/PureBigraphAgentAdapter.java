@@ -26,17 +26,19 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
     }
 
     /**
-     * includes also edges+outernames
+     * In the list are included edges and outer names.
      *
-     * @param node
-     * @return
+     * @param node the node
+     * @return a list of all links connected to the given node
      */
+
     public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
         EObject instance = node.getInstance();
         LinkedList<AbstractDynamicMatchAdapter.ControlLinkPair> children = new LinkedList<>();
 
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         if (Objects.nonNull(portRef)) {
+            @SuppressWarnings("unchecked")
             EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
             for (EObject eachPort : portList) {
                 //bPoints: for links

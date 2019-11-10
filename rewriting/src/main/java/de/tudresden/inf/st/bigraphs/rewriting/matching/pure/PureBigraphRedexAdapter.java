@@ -25,16 +25,12 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
         return (DefaultDynamicSignature) super.getSignature();
     }
 
-//    @Override
-//    protected PureBigraph getBigraphDelegate() {
-//        return (Bigraph<DefaultDynamicSignature>) super.getBigraphDelegate();
-//    }
-
     public List<BigraphEntity> getChildrenWithSites(BigraphEntity node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
         List<BigraphEntity> children = new ArrayList<>();
         if (Objects.nonNull(chldRef)) {
+            @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             //control can be acquired by the class name + signature
             for (EObject eachChild : childs) {
@@ -45,11 +41,11 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
     }
 
     /**
-     * Only outer names are returned, edges are not considered for the result.
+     * Only outer names are returned, edges are <b>not</b> considered for the result.
      * The order plays a role for checking (also in theory)
      *
-     * @param node
-     * @return
+     * @param node the node
+     * @return a list of all links connected to the given node
      */
     public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
         EObject instance = node.getInstance();
@@ -57,6 +53,7 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
 
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         if (Objects.nonNull(portRef)) {
+            @SuppressWarnings("unchecked")
             EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
             for (EObject eachPort : portList) {
                 //bPoints: for links
@@ -83,12 +80,11 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
     }
 
     /**
+     * Get the number of all in- and out-going edges of a node within the place graph. <br/>
      * Sites are not included in the count
-     * <p>
-     * All in/out-going edges of a node within the place graph.
      *
-     * @param nodeEntity
-     * @return
+     * @param nodeEntity the node
+     * @return the degree of the node
      */
     public int degreeOf(BigraphEntity nodeEntity) {
         //get all edges
@@ -96,6 +92,7 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
         int cnt = 0;
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
         if (Objects.nonNull(chldRef)) {
+            @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject eObject : childs) {
                 if (!isSite(eObject))

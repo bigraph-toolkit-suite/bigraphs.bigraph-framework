@@ -3,7 +3,6 @@ package de.tudresden.inf.st.bigraphs.rewriting.matching;
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -25,16 +24,17 @@ import java.util.stream.StreamSupport;
  *
  * @author Dominik Grzelak
  */
-public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynamicSignature>> extends BigraphDelegator<DefaultDynamicSignature> {
+public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Signature>> extends BigraphDelegator<Signature> {
 
-    public AbstractDynamicMatchAdapter(Bigraph<DefaultDynamicSignature> bigraph) {
-        super(bigraph);
+    @SuppressWarnings("unchecked")
+    public AbstractDynamicMatchAdapter(Bigraph<? extends Signature> bigraph) {
+        super((Bigraph<Signature>) bigraph);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public B getBigraphDelegate() {
-        return super.getBigraphDelegate();
+        return (B) super.getBigraphDelegate();
     }
 
     @Override
@@ -42,6 +42,9 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         return new ArrayList<>(super.getRoots());
     }
 
+    /**
+     * Data structure to represent a pair
+     */
     public static class ControlLinkPair {
         Control control;
         BigraphEntity link;
@@ -75,10 +78,10 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
     }
 
     /**
-     * <b>IMPORTANT</b> ONLY the port indices are important for the order not the name itself
+     * <b>Note:</b> Only the port indices are important for the order, not the name itself.
      *
-     * @param node
-     * @return
+     * @param node the node
+     * @return a list of all links connected to the given node
      */
     public abstract AbstractSequentialList<ControlLinkPair> getLinksOfNode(BigraphEntity node);
 
@@ -89,44 +92,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         bigraphEntities.remove(node);
         return bigraphEntities;
     }
-
-//    public List<BigraphEntity> getChildrenWithSites(BigraphEntity node) {
-//        EObject instance = node.getInstance();
-//        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-//        List<BigraphEntity> children = new ArrayList<>();
-//        if (Objects.nonNull(chldRef)) {
-//            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
-//            //control can be acquired by the class name + signature
-//            for (EObject eachChild : childs) {
-//                addPlaceToList(children, eachChild, true);
-//            }
-//        }
-//        return children;
-//    }
-
-//    public List<BigraphEntity> getAllChildrenFromNodeWithSites(BigraphEntity node) {
-//        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(this::getChildrenWithSites);
-//        Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(node);
-//        ArrayList<BigraphEntity> bigraphEntities = Lists.newArrayList(v0);
-//        bigraphEntities.remove(node);
-//        return bigraphEntities;
-//    }
-
-//    public List<BigraphEntity> getNodesOfLink(BigraphEntity.OuterName outerName) {
-//        EObject instance = outerName.getInstance();
-//        List<BigraphEntity> linkedNodes = new ArrayList<>();
-//        EStructuralFeature pointsRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-//        if (Objects.isNull(pointsRef)) return linkedNodes;
-//        EList<EObject> pointsList = (EList<EObject>) instance.eGet(pointsRef);
-//        for (EObject eachPoint : pointsList) {
-//            if (isBPort(eachPoint)) {
-//                EStructuralFeature nodeRef = eachPoint.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
-//                EObject node = (EObject) eachPoint.eGet(nodeRef);
-//                addPlaceToList(linkedNodes, node, false);
-//            }
-//        }
-//        return linkedNodes;
-//    }
 
     public List<BigraphEntity> getNodesOfLink(BigraphEntity.Link outerName) {
         EObject instance = outerName.getInstance();
@@ -145,11 +110,11 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
     }
 
     /**
-     * All in/out-going edges of a node within the place graph.
+     * Get the number of all in- and out-going edges of a node within the place graph. <br/>
      * Sites are included in the count.
      *
-     * @param nodeEntity
-     * @return
+     * @param nodeEntity the node
+     * @return degree of the node
      */
     public int degreeOf(BigraphEntity nodeEntity) {
         //get all edges
@@ -157,6 +122,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         int cnt = 0;
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
         if (Objects.nonNull(chldRef)) {
+            @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             cnt += childs.size();
         }
@@ -182,6 +148,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
             EObject each = (EObject) instance.eGet(prntRef);
             //get all childs
             EStructuralFeature childRef = each.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+            @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) each.eGet(childRef);
             assert childs != null;
             for (EObject eachChild : childs) {
@@ -197,6 +164,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         // first check the children of the node
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
         if (Objects.nonNull(chldRef)) {
+            @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject each : childs) {
                 addPlaceToList(neighbors, each, false);
@@ -217,8 +185,9 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
      * <p>
      * Throws a runtime exception of the node couldn't be found.
      *
-     * @param neighbors
-     * @param each
+     * @param neighbors neighbors
+     * @param each      node entity (root, node or site)
+     * @param withSites flag to consider sites or not
      */
     protected void addPlaceToList(final List<BigraphEntity> neighbors, final EObject each, boolean withSites) {
         try {
@@ -263,7 +232,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
      * This method is used solely for the matching algorithm. Sites are excluded in the list.
      * Doesn't include the node itself. Opposite is the closed neighborhood which includes the node itself.
      *
-     * @param node
+     * @param node the node
      * @return
      */
     public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
@@ -275,7 +244,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
     /**
      * Get all vertices (roots and nodes) without sites.
      *
-     * @return
+     * @return all vertices of the bigraph without sites
      */
     public Collection<BigraphEntity> getAllVertices() {
         List<BigraphEntity> allNodes = new ArrayList<>(getNodes().size() + getRoots().size());
@@ -284,7 +253,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         return allNodes;
     }
 
-    //TODO: root at last
     public List<BigraphEntity> getAllInternalVerticesPostOrder() {
         Iterable<BigraphEntity> allVerticesPostOrder = getAllVerticesPostOrder();
         List<BigraphEntity> collect = StreamSupport.stream(allVerticesPostOrder.spliterator(), false)
@@ -297,8 +265,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
         Iterable<BigraphEntity> allVerticesPostOrder = getAllVerticesPostOrder();
         return StreamSupport.stream(allVerticesPostOrder.spliterator(), false)
                 .filter(x -> getChildren(x).size() > 0);
-//                .collect(Collectors.toList());
-//        return collect;
     }
 
     public Iterable<BigraphEntity> getAllVerticesPostOrder() {
@@ -329,8 +295,8 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
      * Get all children of a bigraph node precluding all sites.
      * This method is used solely for the matching algorithm.
      *
-     * @param node
-     * @return
+     * @param node the node
+     * @return all children of the given node
      */
     public List<BigraphEntity> getChildren(BigraphEntity node) {
         return getBigraphDelegate().getChildrenOf(node)
@@ -342,7 +308,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<DefaultDynam
      * Get all leaves of a the bigraph's place graph (i.e., a tree).
      * This method is used solely for the matching algorithm.
      *
-     * @return
+     * @return all leaves of the place graph
      */
     public Collection<BigraphEntity> getAllLeaves() {
         List<BigraphEntity> leaves = new ArrayList<>();

@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
- * A data structure to build up a reaction graph, similar to a transition system.
+ * A data structure to build up a reaction graph, similar to a labelled transition system.
  * <p>
  * This is not to be compared with bigraphical LTS - the reaction graph is not minimal according to the context of a transition.
  * Here the arrows are reaction rules, and the nodes are states (i.e., bigraphs, represented by their unique label).
@@ -62,8 +62,25 @@ public class ReactionGraph<B extends Bigraph<?>> {
         graph = buildEmptySimpleDirectedGraph();
     }
 
+    /**
+     * Check if a bigraph is present in the graph as a state. The bigraph is identified by its label.
+     * <p>
+     * The label of a bigraph must be unique.
+     *
+     * @param label The unique label of a bigraph to find in the reaction graph.
+     * @return {@code true}, if the bigraph is contained in the graph, otherwise {@code false}
+     */
     public boolean containsBigraph(String label) {
         return bigraphMap.containsKey(label);
+    }
+
+    /**
+     * Get the data structure of the reaction graph
+     *
+     * @return the reaction graph
+     */
+    public Graph<String, LabeledEdge> getGraph() {
+        return graph;
     }
 
     private Graph<String, LabeledEdge> buildEmptySimpleDirectedGraph() {
@@ -74,9 +91,6 @@ public class ReactionGraph<B extends Bigraph<?>> {
                 .buildGraph();
     }
 
-    public Graph<String, LabeledEdge> getGraph() {
-        return graph;
-    }
 
     public static class LabeledEdge
             extends

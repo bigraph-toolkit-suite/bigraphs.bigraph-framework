@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * The task of the class is to evaluate a given set of predicates of class {@link ReactiveSystemPredicates}.
  * <p>
- * After evaluation a map can be acquired to see which predicates evaluated to {@code true} or {@code false}.
+ * After evaluation, a map can be acquired to see which predicates evaluated to {@code true} or {@code false}.
  * <p>
  * This class is thread-safe.
  *
