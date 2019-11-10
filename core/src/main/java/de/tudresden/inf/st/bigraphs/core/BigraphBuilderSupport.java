@@ -20,10 +20,12 @@ import java.util.function.Supplier;
  * @author Dominik Grzelak
  */
 public abstract class BigraphBuilderSupport<S extends Signature> implements BigraphBuilder<S> {
-
-//    public abstract <B extends Bigraph> B createInstance(S signature, EMetaModelData metaModelData);
+    
+    protected static final String DEFAULT_EDGE_PREFIX = "e";
+    protected static final String DEFAULT_VERTEX_PREFIX = "v";
 
     protected abstract EPackage getLoadedEPackage();
+
     protected abstract EObject getInstanceModel();
 
     protected abstract Map<String, EClass> getAvailableEClasses();

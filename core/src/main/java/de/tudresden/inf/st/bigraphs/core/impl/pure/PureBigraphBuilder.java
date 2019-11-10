@@ -17,6 +17,8 @@ import org.eclipse.collections.api.block.function.primitive.IntToObjectFunction;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EClassImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,6 +35,7 @@ import java.util.stream.StreamSupport;
  * @author Dominik Grzelak
  */
 public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSupport<S> {
+    private Logger logger = LoggerFactory.getLogger(PureBigraphBuilder.class);
 
     protected EPackage loadedEPackage;
     protected EObject loadedInstanceModel;
@@ -42,8 +45,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     private boolean loadedFromFile = false;
 
-    private static final String DEFAULT_EDGE_PREFIX = "e";
-    private static final String DEFAULT_VERTEX_PREFIX = "v";
     private Supplier<String> edgeNameSupplier = createNameSupplier(DEFAULT_EDGE_PREFIX);
     private Supplier<Integer> rootIdxSupplier = createIndexSupplier();
     private Supplier<Integer> siteIdxSupplier = createIndexSupplier();
@@ -71,25 +72,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     private final Map<Integer, BigraphEntity.SiteEntity> availableSites = new ConcurrentHashMap<>();
     private final Map<String, BigraphEntity.NodeEntity> availableNodes = new ConcurrentHashMap<>();
 
-    @Override
-    protected EPackage getLoadedEPackage() {
-        return this.loadedEPackage;
-    }
-
-    @Override
-    protected EObject getInstanceModel() {
-        return loadedInstanceModel;
-    }
-
-    @Override
-    protected Map<String, EClass> getAvailableEClasses() {
-        return this.availableEClasses;
-    }
-
-    @Override
-    protected Map<String, EReference> getAvailableEReferences() {
-        return this.availableReferences;
-    }
 
     protected PureBigraphBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
@@ -123,6 +105,83 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         }
     }
 
+    protected PureBigraphBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
+        this(signature, new EMetaModelData.MetaModelDataBuilder()
+                .setNsPrefix("bigraphMetaModel")
+                .setName("SAMPLE")
+                .create());
+    }
+
+    /**
+     * Should not be directly called by the user. Instead use the {@link de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory}.
+     *
+     * @param instanceModelFilePath file path to the instance model
+     * @return a configured builder with the bigraph instance loaded
+     * @throws BigraphMetaModelLoadingFailedException when the model couldn't be loaded
+     */
+    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
+        return new PureBigraphBuilder<>(signature, metaModelFilePath, instanceModelFilePath);
+    }
+
+    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel) {
+        return new PureBigraphBuilder<>(signature, metaModel, instanceModel);
+    }
+
+    /**
+     * Should not be directly called by the user. Instead use the {@link de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory}.
+     *
+     * @param signature the signature for the builder
+     * @param <S>       type of the signature
+     * @return a pure bigraph builder with the given signature
+     * @throws BigraphMetaModelLoadingFailedException when the model couldn't be loaded
+     */
+    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature)
+            throws BigraphMetaModelLoadingFailedException {
+        return new PureBigraphBuilder<>(signature);
+    }
+
+    /**
+     * Should not be directly called by the user. Instead use the {@link de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory}.
+     *
+     * @param signature
+     * @param metaModelData
+     * @param <S>
+     * @return
+     * @throws BigraphMetaModelLoadingFailedException
+     */
+    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
+            throws BigraphMetaModelLoadingFailedException {
+        return new PureBigraphBuilder<>(signature, metaModelData);
+    }
+
+    public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature);
+    }
+
+    @Override
+    protected EPackage getLoadedEPackage() {
+        return this.loadedEPackage;
+    }
+
+    @Override
+    protected EObject getInstanceModel() {
+        return loadedInstanceModel;
+    }
+
+    @Override
+    protected Map<String, EClass> getAvailableEClasses() {
+        return this.availableEClasses;
+    }
+
+    @Override
+    protected Map<String, EReference> getAvailableEReferences() {
+        return this.availableReferences;
+    }
+
+    /**
+     * Method is used to update all necessary entity maps when a bigraph is loaded from the file system.
+     */
     private void updateAllMaps() {
         loadedInstanceModel.eContents().stream()
                 .forEach(each -> {
@@ -156,9 +215,9 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     /**
      * Used when the model was loaded from the file system. Then we also want to update our
-     * {@code availableNodes} and {@code availableSites}.
+     * {@code availableNodes} and {@code availableSites}. Roots are not considered here.
      *
-     * @param objectList
+     * @param objectList list of place nodes
      */
     private void recursiveUpdateNodeMap(List<EObject> objectList) {
         objectList.stream().forEach(each -> {
@@ -173,60 +232,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             }
             recursiveUpdateNodeMap(each.eContents());
         });
-    }
-
-    protected PureBigraphBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
-        this(signature, new EMetaModelData.MetaModelDataBuilder()
-                .setNsPrefix("bigraphMetaModel")
-                .setName("SAMPLE")
-                .create());
-    }
-
-    /**
-     * Should not be directly called by the user. Instead use the {@link de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory}.
-     *
-     * @param instanceModelFilePath file path to the instance model
-     * @return a configured builder with the bigraph instance loaded
-     * @throws IOException
-     */
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
-        return new PureBigraphBuilder<>(signature, metaModelFilePath, instanceModelFilePath);
-    }
-
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel) {
-        return new PureBigraphBuilder<>(signature, metaModel, instanceModel);
-    }
-
-    /**
-     * Should not be directly called by the user. Instead use the {@link de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory}.
-     *
-     * @param signature
-     * @param <S>
-     * @return
-     * @throws BigraphMetaModelLoadingFailedException
-     */
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature)
-            throws BigraphMetaModelLoadingFailedException {
-        return new PureBigraphBuilder<>(signature);
-    }
-
-    /**
-     * Should not be directly called by the user. Instead use the {@link de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory}.
-     *
-     * @param signature
-     * @param metaModelData
-     * @param <S>
-     * @return
-     * @throws BigraphMetaModelLoadingFailedException
-     */
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
-            throws BigraphMetaModelLoadingFailedException {
-        return new PureBigraphBuilder<>(signature, metaModelData);
-    }
-
-    public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
-            throws BigraphMetaModelLoadingFailedException {
-        return new MutableBuilder<>(signature);
     }
 
     public Hierarchy createRoot() {
@@ -305,10 +310,9 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             assertControlIsNonAtomic(thisOne.getParent());
             // First, check if node is not already in the list or being put under a different name
             // the node itself and the name is searched
-            if (
-                // ensures that the correct builder was used (because of the node name supplier)
-                    Objects.isNull(availableNodes.get(((BigraphEntity.NodeEntity) thisOne.getParent()).getName()))
-                            && availableNodes.values().stream().noneMatch(x -> x.equals(thisOne.getParent()))
+            // Ensures that the correct builder was used (because of the node name supplier)
+            if (Objects.isNull(availableNodes.get(((BigraphEntity.NodeEntity) thisOne.getParent()).getName())) &&
+                    availableNodes.values().stream().noneMatch(x -> x.equals(thisOne.getParent()))
             ) {
                 addChildToParent(thisOne.getParent());
             }
@@ -323,7 +327,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         public Hierarchy addChild(Control control) {
             assertControlIsNonAtomic(getParent());
             if (!checkSameSignature(control)) {
-                //TODO debug output or something ...
+                logger.debug("Control {} couldn't be added because it isn't in the signature", control);
                 return this;
             }
             final BigraphEntity.NodeEntity<Control> child = createChild(control);
@@ -357,7 +361,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
          */
         private Hierarchy withNewHierarchyOn(BigraphEntity.NodeEntity<Control> entity) {
             if (!child.contains(entity)) {
-                throw new RuntimeException("Not possible - A child must first be created");
+                throw new RuntimeException("withNewHierarchyOn(*) isn't possible - a child must first be created");
             }
             return new Hierarchy(entity, this);
         }
@@ -449,26 +453,49 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             );
         }
 
-        //To be used to call toe enclosing class' methods for passing the nodes as arguments
+        // To be used to call the enclosing class' methods for passing the nodes as arguments
         public Collection<BigraphEntity<Control>> nodes() {
             return child;
         }
 
 
-        public Hierarchy connectNodeToOuterName(BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidArityOfControlException {
+        /**
+         * Connect the previously created node to the given outer name.
+         *
+         * @param outerName the outer name to connect the node to
+         * @return the current working node-hierarchy
+         * @throws LinkTypeNotExistsException     the given outer name doesn't exist
+         * @throws InvalidArityOfControlException link couldn't be established because of the control's arity
+         */
+        public Hierarchy connectNodeToOuterName(BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidConnectionException {
             PureBigraphBuilder.this.connectNodeToOuterName(getLastCreatedNode(), outerName);
             return this;
         }
 
         /**
-         * Creates new nodes with the given controls and connects them to the inner name of the current bigraph.
+         * Connect the previously created node to the given inner name.
+         *
+         * @param innerName the inner name to connect the node to
+         * @return the current working node-hierarchy
+         * @throws LinkTypeNotExistsException     the given inner name doesn't exist
+         * @throws InvalidArityOfControlException link couldn't be established because of the control's arity
+         */
+        public Hierarchy connectNodeToInnerName(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+            PureBigraphBuilder.this.connectNodeToInnerName(getLastCreatedNode(), innerName);
+            return this;
+        }
+
+        /**
+         * Creates new nodes with the given controls and connects them to the inner name of the current bigraph.<br/>
+         * Controls must not be <i>atomic</i>.
          *
          * @param innerName an existing inner name of the bigraph
          * @param controls  the nodes to be created under the given controls
-         * @throws InvalidConnectionException
-         * @throws LinkTypeNotExistsException
+         * @throws InvalidConnectionException link couldn't be established because of the control's arity
+         * @throws LinkTypeNotExistsException the given inner name doesn't exist
+         * @throws ControlIsAtomicException   if one of the given controls is atomic
          */
-        public void connectNodesToInnerName(BigraphEntity.InnerName innerName, Control... controls) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
+        public void connectNodesToInnerName(BigraphEntity.InnerName innerName, Control... controls) throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
             if (controls == null || controls.length == 0) return;
             for (Control each : controls) {
                 connectNodeToInnerName(innerName, each);
@@ -480,22 +507,14 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
          *
          * @param innerName an existing inner name of the bigraph
          * @param control   the node to be created under the given control
-         * @throws InvalidConnectionException
-         * @throws LinkTypeNotExistsException
+         * @throws InvalidConnectionException link couldn't be established because of the control's arity
+         * @throws LinkTypeNotExistsException the given inner name doesn't exist
          */
         public void connectNodeToInnerName(BigraphEntity.InnerName innerName, Control control) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
             addChild(control);
             connectNodeToInnerName(innerName);
         }
 
-        /**
-         * non-javadoc
-         * //TODO
-         */
-        public Hierarchy connectNodeToInnerName(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidArityOfControlException, InvalidConnectionException {
-            PureBigraphBuilder.this.connectNodeToInnerName(getLastCreatedNode(), innerName);
-            return this;
-        }
 
         public BigraphEntity.NodeEntity<Control> getLastCreatedNode() {
             return lastCreatedNode;
@@ -590,18 +609,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         bPorts.add(portObject);
     }
 
-//    protected boolean isConnectedWithLink(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge edge) {
-//        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
-//        for (EObject eObject : bPorts) {
-//            EReference linkReference = availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK);
-//            EObject theLink = (EObject) eObject.eGet(linkReference);
-//            if (Objects.nonNull(theLink) && theLink.equals(edge.getInstance())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     protected void connectToLinkUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity theLink, int customPortIndex) {
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         //create port with index
@@ -632,15 +639,14 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      *
      * @param innerName the inner name to be connected to the outer name
      * @param outerName the outer name
-     * @return this builder
-     * @throws InvalidConnectionException
+     * @return this builder instance
+     * @throws InvalidConnectionException link couldn't be established because of already existing connection of the
+     *                                    provided links
      */
     public PureBigraphBuilder<S> connectInnerToOuterName(BigraphEntity innerName, BigraphEntity outerName) throws InvalidConnectionException {
         // check if the inner name and outer name are coming from this builder
         if (availableInnerNames.values().stream().anyMatch(x -> x.equals(innerName)) &&
                 availableOuterNames.values().stream().anyMatch(x -> x.equals(outerName))) {
-
-
             EObject edgeFromInnerName = getEdgeFromInnerName(innerName);
             if (edgeFromInnerName != null) throw new InnerNameConnectedToEdgeException();
 
@@ -652,6 +658,9 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return this;
     }
 
+    /**
+     * Ecore specific - only called by methods of this builder internally
+     */
     protected void connectInnerToOuterName0(BigraphEntity innerName, BigraphEntity outerName) {
         EList<EObject> pointsOfOuterName = (EList<EObject>) outerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
         pointsOfOuterName.add(innerName.getInstance());
@@ -712,7 +721,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         checkIfNodeIsConnectable(node1);
         BigraphEntity.Edge newEdge = createEdgeOfEClass();
         connectToEdge(node1, newEdge);
-//        EClass eClassEdge = availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE);
         for (BigraphEntity.InnerName innerName : innerNames) {
             if (availableInnerNames.get(innerName.getName()) == null) {
                 throw new InnerNameNotExistsException();
