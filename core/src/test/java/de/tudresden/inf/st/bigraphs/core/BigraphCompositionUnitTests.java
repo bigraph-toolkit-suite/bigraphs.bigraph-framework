@@ -4,7 +4,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
@@ -45,10 +44,10 @@ public class BigraphCompositionUnitTests {
         BigraphEntity.OuterName fromD2 = builderReactum.createOuterName("fromD");
         BigraphEntity.OuterName fromS2 = builderReactum.createOuterName("fromS");
         BigraphEntity.OuterName target2 = builderReactum.createOuterName("target");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builderReactum.newHierarchy("Car").connectNodeToOuterName(target2).addSite();
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builderReactum.newHierarchy("Car").linkToOuter(target2).addSite();
         builderReactum.createRoot()
-                .addChild("Place").connectNodeToOuterName(fromD2).withNewHierarchy().addSite().addChild(car2).top()
-                .addChild("Place", "fromS").withNewHierarchy().addChild("Road").connectNodeToOuterName(fromD2).addSite().top()
+                .addChild("Place").linkToOuter(fromD2).withNewHierarchy().addSite().addChild(car2).top()
+                .addChild("Place", "fromS").withNewHierarchy().addChild("Road").linkToOuter(fromD2).addSite().top()
 //                .addChild("Place").connectNodeToOuterName(fromS2).withNewHierarchy().addChild("Road").connectNodeToOuterName(fromD2).addSite().top()
         ;
         PureBigraph reactum = builderReactum.createBigraph();
@@ -58,9 +57,9 @@ public class BigraphCompositionUnitTests {
         builderParams.createRoot().addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel");
         BigraphEntity.OuterName p4 = builderParams.createOuterName("p4");
         BigraphEntity.OuterName p7 = builderParams.createOuterName("p7");
-        builderParams.createRoot().addChild("Road").connectNodeToOuterName(p4).addChild("Road").connectNodeToOuterName(p7);
+        builderParams.createRoot().addChild("Road").linkToOuter(p4).addChild("Road").linkToOuter(p7);
         BigraphEntity.OuterName p1 = builderParams.createOuterName("p1");
-        builderParams.createRoot().addChild("Road").connectNodeToOuterName(p1);
+        builderParams.createRoot().addChild("Road").linkToOuter(p1);
         PureBigraph parameters = builderParams.createBigraph();
 
         PureBigraphBuilder<DefaultDynamicSignature> builderRenaming = factory.createBigraphBuilder(createSignature_compose_test_0());
@@ -117,13 +116,13 @@ public class BigraphCompositionUnitTests {
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
                 builderForF.newHierarchy(signature.getControlByName("Room"));
-        room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"));
+        room.addChild(signature.getControlByName("User")).linkToOuter(jeff).addChild(signature.getControlByName("Job"));
         builderForF.createRoot()
                 .addChild(room);
 
         builderForG.createRoot()
                 .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite().goBack()
-                .addChild(signature.getControlByName("User")).connectNodeToInnerName(jeffG);
+                .addChild(signature.getControlByName("User")).linkToInner(jeffG);
 
 
         PureBigraph F = builderForF.createBigraph();
@@ -161,9 +160,9 @@ public class BigraphCompositionUnitTests {
 //        BigraphEntity.InnerName networkH = builderForH.createInnerName("wifi");
         if (true) {
             builderForF.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
-                    .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(networkF);//.connectNodeToInnerName(ethernetF);
+                    .addChild(signature.getControlByName("Computer")).linkToOuter(networkF);//.connectNodeToInnerName(ethernetF);
             builderForG.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
-                    .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(networkG);//.connectNodeToInnerName(ethernetG);
+                    .addChild(signature.getControlByName("Computer")).linkToOuter(networkG);//.connectNodeToInnerName(ethernetG);
 
 //            builderForF.connectInnerToOuterName(ethernetF, networkF);
 //            builderForG.connectInnerToOuterName(ethernetG, networkG);
@@ -171,7 +170,7 @@ public class BigraphCompositionUnitTests {
             builderForF.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
                     .addChild(signature.getControlByName("Computer")).connectInnerNamesToNode(ethernetF, ethernetF2);
             builderForG.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
-                    .addChild(signature.getControlByName("Computer")).connectNodeToInnerName(ethernetG);
+                    .addChild(signature.getControlByName("Computer")).linkToInner(ethernetG);
             builderForH.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
                     .addChild(signature.getControlByName("Printer"));
         }
@@ -246,7 +245,7 @@ public class BigraphCompositionUnitTests {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
-            builderForG.createRoot().addChild(signature.getControlByName("User")).connectNodeToInnerName(zInner);
+            builderForG.createRoot().addChild(signature.getControlByName("User")).linkToInner(zInner);
             PureBigraph simpleBigraph = builderForG.createBigraph();
             Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
             BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(simpleBigraph);

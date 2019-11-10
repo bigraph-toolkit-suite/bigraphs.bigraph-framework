@@ -30,7 +30,7 @@ public class DiscreteIon<S extends Signature, NT extends NamedType, FT extends F
             PureBigraphBuilder<S>.Hierarchy hierarchy = builder.createRoot().addChild(signature.getControlByName(name.stringValue()));
             outerNames.forEach(x -> {
                 try {
-                    hierarchy.connectNodeToOuterName(builder.createOuterName(x.stringValue()));
+                    hierarchy.linkToOuter(builder.createOuterName(x.stringValue()));
                 } catch (LinkTypeNotExistsException | InvalidConnectionException e) {
                     throw new RuntimeException(e);
                 }

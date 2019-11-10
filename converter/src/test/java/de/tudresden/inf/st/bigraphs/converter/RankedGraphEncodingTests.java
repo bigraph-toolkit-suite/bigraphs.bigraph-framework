@@ -23,11 +23,9 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 // Place graph hierarchy is encoded as attribute "parent"
 // hierarchy is als reflected by the id of the nodes (to maintain the parent relationship)
@@ -160,9 +158,9 @@ public class RankedGraphEncodingTests {
         BigraphEntity.InnerName e1 = builder.createInnerName("e1");
 
         builder.createRoot()
-                .addChild("K").connectNodeToInnerName(e0).withNewHierarchy().addChild("K").connectNodeToInnerName(e0).withNewHierarchy().addSite().goBack().goBack()
-                .addChild("M").connectNodeToInnerName(e0).connectNodeToInnerName(e1);
-        builder.createRoot().addChild("L").connectNodeToInnerName(e1).addSite(); //.withNewHierarchy()
+                .addChild("K").linkToInner(e0).withNewHierarchy().addChild("K").linkToInner(e0).withNewHierarchy().addSite().goBack().goBack()
+                .addChild("M").linkToInner(e0).linkToInner(e1);
+        builder.createRoot().addChild("L").linkToInner(e1).addSite(); //.withNewHierarchy()
         builder.closeInnerName(e0);
         builder.closeInnerName(e1);
 

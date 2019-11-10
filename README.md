@@ -63,8 +63,9 @@ Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signat
 PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 BigraphEntity.OuterName a = builder.createOuterName("a");
 BigraphEntity.InnerName b = builder.createInnerName("b");
-builder.createRoot().addChild("Room").connectNodeToOuterName(a)
-.addChild(signature.getControlByName("User")).connectNodeToInnerName(b);
+builder.createRoot().addChild("User").linkToOuter(a)
+.addChild("User", "a")
+.addChild(signature.getControlByName("User")).linkToInner(b);
 
 // create a concrete bigraph instance
 PureBigraph bigraph = builder.createBigraph();
@@ -93,8 +94,8 @@ after, close the link to automatically transform it to an edge:
 BigraphEntity.OuterName tmp_link = builder.createInnerName("link");
 
 // Create two nodes within different hierarchies
-builder.createRoot().addChild("Printer").connectNodeToInnerName(tmp_link);
-builder.createRoot().addChild("Computer").connectNodeToInnerName(tmp_link);
+builder.createRoot().addChild("Printer").linkToInner(tmp_link);
+builder.createRoot().addChild("Computer").linkToInner(tmp_link);
 
 // Finally, close the inner name. This will leave the edge intact.
 builder.closeInnerName(tmp_link);

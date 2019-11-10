@@ -64,18 +64,18 @@ public class BigrapherTransformationUnitTest {
         BigraphEntity.InnerName e1 = builder.createInnerName("e1");
 
         builder.createRoot()
-                .addChild("Printer").connectNodeToOuterName(a).connectNodeToOuterName(b)
-                .addChild(signature.getControlByName("Room")).connectNodeToInnerName(e1)
+                .addChild("Printer").linkToOuter(a).linkToOuter(b)
+                .addChild(signature.getControlByName("Room")).linkToInner(e1)
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
                 .withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff1)
+                .addChild(signature.getControlByName("User")).linkToOuter(jeff1)
                 .goBack()
 
-                .addChild(signature.getControlByName("Room")).connectNodeToInnerName(e1)
+                .addChild(signature.getControlByName("Room")).linkToInner(e1)
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff2)
+                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
+                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2)
                 .goBack().goBack();
 
         builder.closeAllInnerNames();
@@ -95,14 +95,14 @@ public class BigrapherTransformationUnitTest {
         //(Computer{b1}.(Job.1) | User{jeff2}.1) || Computer{b1}.(Job.1 | User{jeff2}.1);
 
         builder.createRoot()
-                .addChild("Printer").connectNodeToOuterName(a).connectNodeToOuterName(b)
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
+                .addChild("Printer").linkToOuter(a).linkToOuter(b)
+                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
                 .withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff1);
+                .addChild(signature.getControlByName("User")).linkToOuter(jeff1);
 
         builder.createRoot()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff2);
+                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
+                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2);
 
 //        builder.makeGround();
         PureBigraph redex = builder.createBigraph();

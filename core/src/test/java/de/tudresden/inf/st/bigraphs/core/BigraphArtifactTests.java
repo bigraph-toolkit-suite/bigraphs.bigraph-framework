@@ -96,15 +96,15 @@ public class BigraphArtifactTests {
 
             PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
                     builderForF.newHierarchy(signature.getControlByName("Room"));
-            room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"))
-                    .addChild(signature.getControlByName("Printer")).connectNodeToInnerName(f1).connectNodeToInnerName(f2)
+            room.addChild(signature.getControlByName("User")).linkToOuter(jeff).addChild(signature.getControlByName("Job"))
+                    .addChild(signature.getControlByName("Printer")).linkToInner(f1).linkToInner(f2)
             ;
             builderForF.createRoot()
                     .addChild(room);
 
             builderForG.createRoot()
                     .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite().goBack()
-                    .addChild(signature.getControlByName("User")).connectNodeToInnerName(jeffG);
+                    .addChild(signature.getControlByName("User")).linkToInner(jeffG);
 
 
             builderForF.createBigraph();
@@ -138,8 +138,8 @@ public class BigraphArtifactTests {
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
                 builderForF.newHierarchy(signature.getControlByName("Room"));
-        room.addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff).addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("Printer")).connectNodeToInnerName(f1).connectNodeToInnerName(f2).withNewHierarchy().addSite()
+        room.addChild(signature.getControlByName("User")).linkToOuter(jeff).addChild(signature.getControlByName("Job"))
+                .addChild(signature.getControlByName("Printer")).linkToInner(f1).linkToInner(f2).withNewHierarchy().addSite()
                 .goBack()
                 .addSite()
         ;
@@ -176,7 +176,7 @@ public class BigraphArtifactTests {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
-            builderForG.createRoot().addChild(signature.getControlByName("User")).connectNodeToInnerName(zInner);
+            builderForG.createRoot().addChild(signature.getControlByName("User")).linkToInner(zInner);
             PureBigraph simpleBigraph = builderForG.createBigraph();
             BigraphArtifacts.exportAsInstanceModel((PureBigraph) simpleBigraph,
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_2a.xmi"));
@@ -224,13 +224,13 @@ public class BigraphArtifactTests {
 
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
-        room.connectNodeToInnerName(tmp1)
-                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
+        room.linkToInner(tmp1)
+                .addChild(signature.getControlByName("User")).linkToOuter(jeff)
                 .addChild(signature.getControlByName("Job"));
 
         builder.createRoot()
                 .addChild(room)
-                .addChild(signature.getControlByName("Room")).connectNodeToInnerName(tmp1);
+                .addChild(signature.getControlByName("Room")).linkToInner(tmp1);
 
         builder.closeInnerName(tmp1);
 

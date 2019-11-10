@@ -18,9 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.SubBigraphMatchPredicate;
 import org.junit.jupiter.api.DisplayName;
@@ -136,7 +134,7 @@ public class ReactiveSystemTests {
         builder.createRoot()
                 .addChild(signature.getControlByName("Room"))
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(network)
+                .addChild(signature.getControlByName("Computer")).linkToOuter(network)
         ;
 
         builder.closeAllInnerNames();
@@ -152,7 +150,7 @@ public class ReactiveSystemTests {
         builder.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild("Computer").connectNodeToOuterName(network)
+                .addChild("Computer").linkToOuter(network)
         ;
         builder.makeGround();
         return builder.createBigraph();
@@ -165,7 +163,7 @@ public class ReactiveSystemTests {
         builder.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild("Computer").connectNodeToOuterName(network)
+                .addChild("Computer").linkToOuter(network)
                 .withNewHierarchy()
                 .addChild("Job").addChild("Job")
         ;
@@ -187,14 +185,14 @@ public class ReactiveSystemTests {
         builder.createRoot()
                 .addChild(signature.getControlByName("Room"))
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(network)
+                .addChild(signature.getControlByName("Computer")).linkToOuter(network)
         ;
 
         BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder2.createRoot()
                 .addChild(signature.getControlByName("Room"))
                 .withNewHierarchy()
-                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(network2)
+                .addChild(signature.getControlByName("Computer")).linkToOuter(network2)
                 .withNewHierarchy()
                 .addChild(signature.getControlByName("Job"))
         ;
@@ -216,12 +214,12 @@ public class ReactiveSystemTests {
         builder.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild("Computer").connectNodeToOuterName(network)
+                .addChild("Computer").linkToOuter(network)
         ;
         builder2.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild("Computer").connectNodeToOuterName(network2)
+                .addChild("Computer").linkToOuter(network2)
         ;
 //        builder.closeAllInnerNames();
         builder.makeGround();
@@ -242,12 +240,12 @@ public class ReactiveSystemTests {
         builder.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild("Computer").connectNodeToOuterName(network)
+                .addChild("Computer").linkToOuter(network)
         ;
         builder2.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild("Computer").connectNodeToOuterName(network2)
+                .addChild("Computer").linkToOuter(network2)
                 .withNewHierarchy()
                 .addChild("Job")
         ;
@@ -270,14 +268,14 @@ public class ReactiveSystemTests {
         builder.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild("Computer").connectNodeToOuterName(network)
+                .addChild("Computer").linkToOuter(network)
                 .withNewHierarchy()
                 .addChild("Job")
         ;
         builder2.createRoot()
                 .addChild("Room")
                 .withNewHierarchy()
-                .addChild("Computer").connectNodeToOuterName(network2)
+                .addChild("Computer").linkToOuter(network2)
                 .withNewHierarchy()
                 .addChild("Job").addChild("Job")
         ;

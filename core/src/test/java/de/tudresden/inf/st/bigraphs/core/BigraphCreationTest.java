@@ -58,7 +58,7 @@ public class BigraphCreationTest {
                 builder.createRoot()
                         .addSite()
                         .addChild(selected)
-                        .connectNodeToOuterName(jeff);
+                        .linkToOuter(jeff);
             });
             PureBigraph bigraph = builder.createBigraph();
             System.out.println(bigraph);
@@ -76,9 +76,9 @@ public class BigraphCreationTest {
 
                 builder.createRoot()
                         .addChild(selected)
-                        .connectNodeToOuterName(jeff)
-                        .connectNodeToOuterName(jeff)
-                        .connectNodeToOuterName(bob);
+                        .linkToOuter(jeff)
+                        .linkToOuter(jeff)
+                        .linkToOuter(bob);
             });
 //            am2.printStackTrace();
         }
@@ -93,8 +93,8 @@ public class BigraphCreationTest {
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
             BigraphEntity.OuterName b = builder.createOuterName("b");
-            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
-                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(b);
+            builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
+                    .addChild(signature.getControlByName("User")).linkToOuter(b);
             PureBigraph bigraph = builder.createBigraph();
             EObject model = bigraph.getModel();
             EList<EObject> bRoots = (EList<EObject>) model.eGet(model.eClass().getEStructuralFeature("bRoots"));
@@ -108,7 +108,7 @@ public class BigraphCreationTest {
         assertAll(() -> {
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
-            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
+            builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
                     .addChild(signature.getControlByName("User"));
             PureBigraph bigraph = builder.createBigraph();
             assertFalse(bigraph.isDiscrete());
@@ -117,16 +117,16 @@ public class BigraphCreationTest {
         assertAll(() -> {
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
-            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
-                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(a);
+            builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
+                    .addChild(signature.getControlByName("User")).linkToOuter(a);
             PureBigraph bigraph = builder.createBigraph();
             assertFalse(bigraph.isDiscrete());
         });
         assertAll(() -> {
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName a = builder.createInnerName("a");
-            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToInnerName(a)
-                    .addChild(signature.getControlByName("User")).connectNodeToInnerName(a);
+            builder.createRoot().addChild(signature.getControlByName("Room")).linkToInner(a)
+                    .addChild(signature.getControlByName("User")).linkToInner(a);
             builder.closeInnerName(a);
             PureBigraph bigraph = builder.createBigraph();
             assertFalse(bigraph.isDiscrete());
@@ -138,9 +138,9 @@ public class BigraphCreationTest {
             BigraphEntity.OuterName b = builder.createOuterName("b");
             BigraphEntity.OuterName c = builder.createOuterName("c");
             BigraphEntity.OuterName d = builder.createOuterName("d");
-            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
-                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(b)
-                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(c)
+            builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
+                    .addChild(signature.getControlByName("User")).linkToOuter(b)
+                    .addChild(signature.getControlByName("User")).linkToOuter(c)
             ;
             PureBigraph bigraph = builder.createBigraph();
             assertFalse(bigraph.isDiscrete());
@@ -150,9 +150,9 @@ public class BigraphCreationTest {
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
             BigraphEntity.OuterName b = builder.createOuterName("b");
-            builder.createRoot().addChild(signature.getControlByName("Room")).connectNodeToOuterName(a)
-                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(b)
-                    .addChild(signature.getControlByName("User")).connectNodeToOuterName(b)
+            builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
+                    .addChild(signature.getControlByName("User")).linkToOuter(b)
+                    .addChild(signature.getControlByName("User")).linkToOuter(b)
             ;
             PureBigraph bigraph = builder.createBigraph();
             assertFalse(bigraph.isDiscrete());
@@ -210,27 +210,27 @@ public class BigraphCreationTest {
             assertAll(() -> {
                 builder.createRoot()
                         .addChild(signature.getControlByName("Printer"))
-                        .connectNodeToInnerName(x)
-                        .connectNodeToInnerName(y)
+                        .linkToInner(x)
+                        .linkToInner(y)
 
                         .addChild(signature.getControlByName("Printer"))
-                        .connectNodeToInnerName(z)
-                        .connectNodeToInnerName(z)
-                        .connectNodeToOuterName(jeff)
-                        .connectNodeToOuterName(jeff);
+                        .linkToInner(z)
+                        .linkToInner(z)
+                        .linkToOuter(jeff)
+                        .linkToOuter(jeff);
             });
 
             assertAll(() -> {
                 builder.createRoot()
                         .addChild(signature.getControlByName("Printer"))
-                        .connectNodeToInnerName(x)
-                        .connectNodeToInnerName(y)
+                        .linkToInner(x)
+                        .linkToInner(y)
 
                         .addChild(signature.getControlByName("Printer"))
-                        .connectNodeToInnerName(z)
-                        .connectNodeToInnerName(z)
-                        .connectNodeToOuterName(jeff)
-                        .connectNodeToOuterName(jeff);
+                        .linkToInner(z)
+                        .linkToInner(z)
+                        .linkToOuter(jeff)
+                        .linkToOuter(jeff);
             });
 
             assertThrows(InvalidConnectionException.class, () -> {
@@ -252,12 +252,12 @@ public class BigraphCreationTest {
             assertAll(() -> {
                 builder.createRoot()
                         .addChild(signature.getControlByName("Printer"))
-                        .connectNodeToInnerName(x1)
-                        .connectNodeToInnerName(x2)
+                        .linkToInner(x1)
+                        .linkToInner(x2)
                         .connectByEdge(signature.getControlByName("Printer"), signature.getControlByName("Printer"))
-                        .connectNodeToInnerName(x1)
+                        .linkToInner(x1)
                         .addChild(signature.getControlByName("Printer"))
-                        .connectNodeToOuterName(jeff);
+                        .linkToOuter(jeff);
 
             });
 
@@ -278,14 +278,14 @@ public class BigraphCreationTest {
                 builder.connectInnerToOuterName(x, jeff);
                 builder.createRoot()
                         .addChild(signature.getControlByName("Printer"))
-                        .connectNodeToOuterName(jeff);
+                        .linkToOuter(jeff);
                 builder.closeInnerName(x, true);
 //                builder.closeInnerName(x);
 
 
                 builder.createRoot()
                         .addChild(signature.getControlByName("Computer"))
-                        .connectNodeToInnerName(x);
+                        .linkToInner(x);
 
                 builder.closeAllInnerNames();
                 PureBigraph bigraph = builder.createBigraph();
@@ -303,8 +303,8 @@ public class BigraphCreationTest {
                 builder.connectInnerToOuterName(x, jeff);
                 builder.createRoot()
                         .addChild(signature.getControlByName("Printer"))
-                        .connectNodeToOuterName(jeff)
-                        .connectNodeToOuterName(jeff2);
+                        .linkToOuter(jeff)
+                        .linkToOuter(jeff2);
 
                 builder.closeOuterName(jeff);
                 builder.closeInnerName(x);
@@ -416,14 +416,14 @@ public class BigraphCreationTest {
             assertAll(() -> {
 
                 PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
-                room.connectNodeToInnerName(tmp1)
-                        .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
+                room.linkToInner(tmp1)
+                        .addChild(signature.getControlByName("User")).linkToOuter(jeff)
                         .addChild(signature.getControlByName("Job"));
 
                 builder.createRoot()
                         .addChild(room) // easily build complex hierarchies of many different parts
                         .addChild(room) // easily build complex hierarchies of many different parts
-                        .addChild(signature.getControlByName("Room")).connectNodeToInnerName(tmp1);
+                        .addChild(signature.getControlByName("Room")).linkToInner(tmp1);
 
                 builder.closeInnerName(tmp1);
             });

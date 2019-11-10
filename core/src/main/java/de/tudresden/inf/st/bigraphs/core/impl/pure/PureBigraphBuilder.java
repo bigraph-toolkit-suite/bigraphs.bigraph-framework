@@ -331,7 +331,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         public Hierarchy addChild(String controlName, String outerName) throws InvalidConnectionException {
             BigraphEntity.OuterName outerName1 = createOuterName(outerName);
             try {
-                addChild(signature.getControlByName(controlName)).connectNodeToOuterName(outerName1);
+                addChild(signature.getControlByName(controlName)).linkToOuter(outerName1);
             } catch (LinkTypeNotExistsException ignored) {
                 // this exception is never thrown in this case because we created the outer name
             }
@@ -484,7 +484,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
          * @throws LinkTypeNotExistsException     the given outer name doesn't exist
          * @throws InvalidArityOfControlException link couldn't be established because of the control's arity
          */
-        public Hierarchy connectNodeToOuterName(BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+        public Hierarchy linkToOuter(BigraphEntity.OuterName outerName) throws LinkTypeNotExistsException, InvalidConnectionException {
             PureBigraphBuilder.this.connectNodeToOuterName(getLastCreatedNode(), outerName);
             return this;
         }
@@ -497,7 +497,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
          * @throws LinkTypeNotExistsException     the given inner name doesn't exist
          * @throws InvalidArityOfControlException link couldn't be established because of the control's arity
          */
-        public Hierarchy connectNodeToInnerName(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+        public Hierarchy linkToInner(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
             PureBigraphBuilder.this.connectNodeToInnerName(getLastCreatedNode(), innerName);
             return this;
         }
@@ -529,7 +529,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
          */
         public void connectNodeToInnerName(BigraphEntity.InnerName innerName, Control control) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
             addChild(control);
-            connectNodeToInnerName(innerName);
+            linkToInner(innerName);
         }
 
 
