@@ -282,10 +282,12 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             return parent;
         }
 
+        @Override
         public Hierarchy goBack() {
             return Objects.isNull(this.parentHierarchy) ? this : this.parentHierarchy;
         }
 
+        @Override
         public Hierarchy top() {
             Hierarchy tmp = this.parentHierarchy;
             if (Objects.isNull(tmp)) return this;
@@ -299,6 +301,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         }
 
         //CHECK if something was created...
+        @Override
         public Hierarchy withNewHierarchy() throws ControlIsAtomicException {
             assertControlIsNonAtomic(getLastCreatedNode());
             return withNewHierarchyOn(getLastCreatedNode());
@@ -319,11 +322,24 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             return this;
         }
 
+        @Override
         public Hierarchy addChild(String controlName) {
             return addChild(signature.getControlByName(controlName));
         }
 
+        @Override
+        public Hierarchy addChild(String controlName, String outerName) throws InvalidConnectionException {
+            BigraphEntity.OuterName outerName1 = createOuterName(outerName);
+            try {
+                addChild(signature.getControlByName(controlName)).connectNodeToOuterName(outerName1);
+            } catch (LinkTypeNotExistsException ignored) {
+                // this exception is never thrown in this case because we created the outer name
+            }
+            return this;
+        }
+
         //this implies: added to a parent (see lastCreatedNode)
+        @Override
         public Hierarchy addChild(Control control) {
             assertControlIsNonAtomic(getParent());
             if (!checkSameSignature(control)) {
@@ -332,6 +348,18 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             }
             final BigraphEntity.NodeEntity<Control> child = createChild(control);
             addChildToParent(child);
+            return this;
+        }
+
+        @Override
+        public Hierarchy addSite() {
+            assertControlIsNonAtomic(getParent());
+            final int ix = siteIdxSupplier.get();
+            EObject eObject = createSiteOfEClass(ix);
+            BigraphEntity.SiteEntity siteEntity = BigraphEntity.create(eObject, BigraphEntity.SiteEntity.class);
+            addChildToParent(siteEntity);
+            child.add(siteEntity);
+            availableSites.put(ix, siteEntity);
             return this;
         }
 
@@ -402,17 +430,6 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
                 Object o = node.getInstance().eGet(name);
                 availableNodes.put(String.valueOf(o), (BigraphEntity.NodeEntity) node);
             }
-        }
-
-        public Hierarchy addSite() {
-            assertControlIsNonAtomic(getParent());
-            final int ix = siteIdxSupplier.get();
-            EObject eObject = createSiteOfEClass(ix);
-            BigraphEntity.SiteEntity siteEntity = BigraphEntity.create(eObject, BigraphEntity.SiteEntity.class);
-            addChildToParent(siteEntity);
-            child.add(siteEntity);
-            availableSites.put(ix, siteEntity);
-            return this;
         }
 
         //TODO
@@ -560,7 +577,8 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     }
 
     /**
-     * Returns the same outer name if it already exists under the same {@code name}
+     * This method returns the same outer name if it already exists under
+     * the same {@code name}, otherwise it will be created and returned.
      *
      * @param name the name for the outer name
      * @return a new outer name or an existing one with the same name

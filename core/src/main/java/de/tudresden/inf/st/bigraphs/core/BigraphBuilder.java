@@ -1,7 +1,15 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 
+/**
+ * Common bigraph builder interface.
+ *
+ * @param <S> type of the signature
+ * @author Dominik Grzelak
+ */
 public interface BigraphBuilder<S extends Signature> {
 
     /**
@@ -41,6 +49,17 @@ public interface BigraphBuilder<S extends Signature> {
         NodeHierarchy addChild(Control control);
 
         NodeHierarchy addChild(String controlName);
+
+        /**
+         * Creates a child node for the current node hierarchy with the given control label and
+         * connects it automatically to the given outer name. The outer name is automatically created
+         * if it doesn't exists.
+         *
+         * @param controlName the control of the newly created node.
+         * @param outerName   the outer name to connect the newly created node
+         * @return the same node hierarchy instance
+         */
+        NodeHierarchy addChild(String controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException;
 
         /**
          * Adds a site to the current parent.

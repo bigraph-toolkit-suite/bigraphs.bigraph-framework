@@ -40,7 +40,7 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
-    void compose_test_0() throws InvalidArityOfControlException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
+    void compose_test_0() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
         PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature_compose_test_0());
         BigraphEntity.OuterName fromD2 = builderReactum.createOuterName("fromD");
         BigraphEntity.OuterName fromS2 = builderReactum.createOuterName("fromS");
@@ -48,7 +48,8 @@ public class BigraphCompositionUnitTests {
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builderReactum.newHierarchy("Car").connectNodeToOuterName(target2).addSite();
         builderReactum.createRoot()
                 .addChild("Place").connectNodeToOuterName(fromD2).withNewHierarchy().addSite().addChild(car2).top()
-                .addChild("Place").connectNodeToOuterName(fromS2).withNewHierarchy().addChild("Road").connectNodeToOuterName(fromD2).addSite().top()
+                .addChild("Place", "fromS").withNewHierarchy().addChild("Road").connectNodeToOuterName(fromD2).addSite().top()
+//                .addChild("Place").connectNodeToOuterName(fromS2).withNewHierarchy().addChild("Road").connectNodeToOuterName(fromD2).addSite().top()
         ;
         PureBigraph reactum = builderReactum.createBigraph();
 
