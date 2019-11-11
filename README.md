@@ -73,6 +73,30 @@ PureBigraph bigraph = builder.createBigraph();
 
 ### Other APIs
 
+#### Lean Bigraph API
+
+Here is a brief summary of the new lean bigraph API which allows faster
+bigraph creation and composition.
+
+To following usage assumes the import statement `import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*`.
+
+```java
+DefaultDynamicSignature signature = ...; // create signature as above
+
+// create two bigraphs
+PureBigraph bigraph1 = pureBuilder(signature)
+    .createRoot()
+    .addChild("A").addChild("C")
+    .createBigraph();
+
+PureBigraph bigraph2 = pureBuilder(signature)
+    .createRoot().addChild("User", "alice").addSite()
+    .createBigraph();
+
+// compose two bigraphs
+BigraphComposite bigraphComposite = ops(bigraph2).compose(bigraph1);
+```
+
 #### **Bigraph Builder: Connecting nodes by links**
 
 The bigraph builder provides more utility methods helping to build more

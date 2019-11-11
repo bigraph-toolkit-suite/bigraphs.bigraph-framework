@@ -44,7 +44,7 @@ public interface BigraphBuilder<S extends Signature> {
      * <p>
      * Can only be used with the {@link BigraphBuilder} instance which created it.
      */
-    interface NodeHierarchy {
+    interface NodeHierarchy<S extends Signature> {
 
         NodeHierarchy addChild(Control control);
 
@@ -93,6 +93,8 @@ public interface BigraphBuilder<S extends Signature> {
          * @return the same hierarchy
          */
         NodeHierarchy top();
+
+        <B extends Bigraph<S>> B createBigraph();
 
     }
 

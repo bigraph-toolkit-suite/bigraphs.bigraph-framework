@@ -300,6 +300,11 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             return last;
         }
 
+        @Override
+        public PureBigraph createBigraph() {
+            return PureBigraphBuilder.this.createBigraph();
+        }
+
         //CHECK if something was created...
         @Override
         public Hierarchy withNewHierarchy() throws ControlIsAtomicException {

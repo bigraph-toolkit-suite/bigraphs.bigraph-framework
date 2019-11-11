@@ -3,9 +3,11 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
@@ -21,6 +23,8 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+
 /**
  * @author Dominik Grzelak
  */
@@ -30,6 +34,32 @@ public class BigraphCreationTest {
 
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factoryWithArgs = AbstractBigraphFactory.createPureBigraphFactory(StringTypedName.class, Integer.class);
+
+    @Test
+    void lean_factory_creation() throws IncompatibleSignatureException, IncompatibleInterfaceException, InvalidConnectionException {
+        pure();
+        DefaultDynamicSignature signature = createExampleSignature();
+
+        PureBigraph bigraph = pureBuilder(signature)
+                .createRoot()
+                .addChild("A").addChild("C")
+                .createBigraph();
+
+        PureBigraph bigraph2 = pureBuilder(signature)
+                .createRoot().addChild("User", "alice").addSite()
+                .createBigraph();
+
+        BigraphComposite bigraphComposite = ops(bigraph2).compose(bigraph);
+        assertNotNull(bigraphComposite);
+        assertEquals(0, bigraphComposite.getOuterBigraph().getSites().size());
+        assertEquals(1, bigraphComposite.getOuterBigraph().getRoots().size());
+        assertEquals(3, bigraphComposite.getOuterBigraph().getNodes().size());
+        assertEquals(4, bigraphComposite.getOuterBigraph().getAllPlaces().size());
+        assertEquals(1, bigraphComposite.getOuterBigraph().getOuterNames().size());
+        assertEquals(0, bigraphComposite.getOuterBigraph().getInnerNames().size());
+
+        end();
+    }
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -511,7 +541,7 @@ public class BigraphCreationTest {
                 .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().kind(ControlKind.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
         ;
-
-        return (S) signatureBuilder.create();
+        Signature<Control<StringTypedName, FiniteOrdinal<Integer>>> controlSignature = signatureBuilder.create();
+        return (S) controlSignature;
     }
 }
