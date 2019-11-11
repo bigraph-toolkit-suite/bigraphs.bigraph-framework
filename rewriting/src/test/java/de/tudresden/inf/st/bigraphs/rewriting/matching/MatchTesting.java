@@ -22,6 +22,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.GroundReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -34,6 +35,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //TODO write better tests here: the redex output should conform to the expected output - this makes observing things easier
 // to the equivalent bigraphER output result (means, check for num. of outer names etc.)
@@ -132,6 +135,7 @@ public class MatchTesting {
         MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_0, rr.getRedex());
         Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         int transition = 0;
+        assertTrue(iterator.hasNext());
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
             createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + (transition++) + "/");
@@ -148,6 +152,7 @@ public class MatchTesting {
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
         MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_1, redex_model_test_1);
         Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
+        assertTrue(iterator.hasNext());
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
             createGraphvizOutput(agent_model_test_1, next, "src/test/resources/graphviz/model1/");

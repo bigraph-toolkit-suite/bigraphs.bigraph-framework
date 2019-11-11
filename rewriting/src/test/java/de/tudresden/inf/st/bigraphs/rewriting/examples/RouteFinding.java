@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.rewriting.examples;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -26,6 +27,7 @@ import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,6 +51,10 @@ public class RouteFinding {
         );
 
         PureBigraph map = createMap(8);
+//        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream("meta-model.ecore"));
+//        PureBigraphBuilder.create(createSignature(),
+//                "/home/dominik/git/BigraphFramework/rewriting/meta-model.ecore",
+//                "/home/dominik/git/BigraphFramework/rewriting/instance-model_3.xmi");
         BigraphGraphvizExporter.toPNG(map,
                 true,
                 new File(TARGET_DUMP_PATH + "map_car.png")

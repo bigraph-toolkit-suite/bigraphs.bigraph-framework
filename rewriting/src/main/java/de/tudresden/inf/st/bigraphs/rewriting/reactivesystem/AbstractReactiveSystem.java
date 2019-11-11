@@ -16,6 +16,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.pure.PureBigraphMatchingEngine;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.reactions.ReactionRuleSupplier;
@@ -25,6 +26,8 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -49,6 +52,7 @@ import java.util.stream.Stream;
  * @author Dominik Grzelak
  */
 public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signature<?>>> implements ReactiveSystem<B> {
+    private Logger logger = LoggerFactory.getLogger(AbstractReactiveSystem.class);
     private final static ReactiveSystem.ReactiveSystemListener DEFAULT_LISTENER = new EmptyReactiveSystemListener();
 
     protected ReactiveSystemListener<B> reactiveSystemListener;
@@ -146,14 +150,6 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
                                 //TODO: beachte instantiation map
                                 reaction = buildParametricReaction(theAgent, next, eachRule);
                             }
-                            try {
-                                BigraphGraphvizExporter.toPNG((PureBigraph) reaction,
-                                        false,
-                                        new File("/home/dominik/git/BigraphFramework/rewriting/src/test/resources/dump/cars/reaction.png")
-                                );
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
 //                            assert Objects.nonNull(reaction);
                             if (Objects.nonNull(reaction)) {
                                 String bfcf = canonicalForm.bfcs(reaction);
@@ -178,13 +174,18 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
 //                DijkstraShortestPath<String, String> dijkstraShortestPath = new DijkstraShortestPath<>(reactionGraph.getGraph());
                         GraphPath<String, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(reactionGraph.getGraph(), bfcfOfW, rootBfcs);
                         //TODO: report violation of the predicates
-                        for (Map.Entry<ReactiveSystemPredicates<B>, Boolean> eachPredciate : predicateChecker.getChecked().entrySet()) {
+                        predicateChecker.getChecked().entrySet().stream().forEach(eachPredciate -> {
                             if (!eachPredciate.getValue()) {
-                                System.out.println("Counter-example trace for predicate violation: " + pathBetween);
-//                        System.out.println("Violation of predicate = " + eachPredciate.getKey());
+                                logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());
                                 reactiveSystemListener.onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
                             }
-                        }
+                        });
+//                        for (Map.Entry<ReactiveSystemPredicates<B>, Boolean> eachPredciate : predicateChecker.getChecked().entrySet()) {
+//                            if (!eachPredciate.getValue()) {
+//                                logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());
+//                                reactiveSystemListener.onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
+//                            }
+//                        }
                     } catch (Exception e) {
                         e.printStackTrace(); //TODO report this with a listener
                     }

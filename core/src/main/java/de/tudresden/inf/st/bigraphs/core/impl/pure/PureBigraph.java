@@ -349,6 +349,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     @Override
     public boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2) {
+        if(Objects.isNull(place1) || Objects.isNull(place2)) return false;
         EStructuralFeature portsRef = place1.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         if (Objects.isNull(portsRef)) return false;
         EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(portsRef);
