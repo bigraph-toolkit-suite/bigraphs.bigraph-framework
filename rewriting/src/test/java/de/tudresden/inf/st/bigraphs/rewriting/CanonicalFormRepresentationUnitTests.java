@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.rewriting;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Control;
@@ -19,22 +18,19 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.BigraphIsoPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -45,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Dominik Grzelak
  */
-public class CanonicalFormRepresentation {
+public class CanonicalFormRepresentationUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/";
 
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
@@ -57,9 +53,11 @@ public class CanonicalFormRepresentation {
     }
 
     @Test
-    void with_predicate_test() {
+    @DisplayName("Using the Bigraph BFCS computation within the 'BigraphIsoPredicate'")
+    void using_iso_predicate_test() {
         DefaultDynamicSignature randomSignature = createRandomSignature(26, 1f);
         PureBigraph g0 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
+
         BigraphIsoPredicate<PureBigraph> pureBigraphBigraphIsoPredicate = BigraphIsoPredicate.create(g0);
         boolean test = pureBigraphBigraphIsoPredicate.test(g0);
         Assertions.assertTrue(test);
@@ -67,7 +65,6 @@ public class CanonicalFormRepresentation {
         PureBigraph g1 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
         boolean test2 = pureBigraphBigraphIsoPredicate.negate().test(g1);
         Assertions.assertTrue(test2);
-
     }
 
     @Test
@@ -141,40 +138,6 @@ public class CanonicalFormRepresentation {
         assertEquals(num, 1);
     }
 
-    @Test
-    void compute_canonical_of_random_bigraph() throws IOException {
-//        RandomBigraphGenerator.split()
-        DefaultDynamicSignature randomSignature = createRandomSignature(26, 1f);
-        PureBigraph g0 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
-        BigraphGraphvizExporter.toPNG(g0,
-                true,
-                new File(TARGET_DUMP_PATH + "randomBigraph.png")
-        );
-        System.out.println(BigraphCanonicalForm.getInstance().bfcs(g0));
-        StringBuilder values = new StringBuilder();
-        for (int i = 1000; i < 10000; i += 100) {
-            PureBigraph generate = new PureBigraphGenerator()
-                    .setLinkStrategy(RandomBigraphGenerator.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE)
-                    .generate(randomSignature, 1, i, 1f);
-//        O(k² c log c): k = num of vertices, c maximal degree of vertices
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            String bfcs = BigraphCanonicalForm.getInstance().bfcs(generate);
-            long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-//            System.out.println("Time taken: " + elapsed + ", nodes=" + generate.getNodes().size());
-            values.append(elapsed).append(",");
-        }
-        if (values.charAt(values.length() - 1) == ',') {
-            values.deleteCharAt(values.length() - 1);
-        }
-//        System.out.println(values.toString());
-
-        Files.write(
-//                                        Paths.get("/home/dominik/Documents/PhD/Papers/Concept/RandomBigraphGeneration/analysis/node_dissa.data"),
-                Paths.get("/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/time.data"),
-                values.toString().getBytes());
-//        System.out.println(generate.getEdges().size());
-//        System.out.println(bfcs);
-    }
 
     @Test
     void simple_canonical_form_with_links_test() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {

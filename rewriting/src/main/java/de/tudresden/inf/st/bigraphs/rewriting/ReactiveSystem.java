@@ -11,7 +11,7 @@ import java.util.Collection;
 /**
  * Base interface for bigraphical reactive systems.
  * <p>
- * When a reactive system is executed based on a rule set then it creates a labelled transition system which
+ * When a reactive system is executed based on a rule set then it synthesizes a labelled transition system which
  * represents the behavior of the bigraphical reactive system.
  *
  * @author Dominik Grzelak

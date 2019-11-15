@@ -25,9 +25,9 @@ import static java.util.stream.Collectors.groupingBy;
  * The string representations are the minimal of all these possible breadth-first/depth-first representation according
  * to the lexicographic order (= constraint). This guarantees the uniques of the string representation.
  * <p>
- * This implementation works only for ground bigraphs (i.e. agents).
+ * <b>Note:</b> This implementation only considers the first root of a bigraph.
  * <p>
- * The algorithm used to generate the canonical form is adopted from {@code [1]}. The needed top-down BFS is an implementation
+ * <b>Note on the Implementation:</b> The algorithm used to generate the canonical form is adopted from {@code [1]}. The needed top-down BFS is an implementation
  * described in {@code [2]} (a sequential bottom-up BFS algorithm).
  * <p>
  * <b>References</b>
@@ -155,42 +155,21 @@ public class BigraphCanonicalForm {
                                     }
                                 }
                         )
-//                        .collect(groupingBy(bigraphEntityLinkedListEntry -> {
-//                            if (Objects.isNull(bigraphEntityLinkedListEntry.getKey().getControl()))
-//                                return "0";
-//                            return bigraphEntityLinkedListEntry.getKey().getControl().getNamedType().stringValue();
-////                            return bigraphEntityLinkedListEntry.getValue().stream().map(x -> bigraph.getPorts(x.getKey()).size()).reduce(0, Integer::sum);
-//                        }, LinkedHashMap::new, toList()))
-//                        .values().stream()
-//                        .collect(groupingBy(x -> x % 2 == 0,
-//                                groupingBy(x, LinkedHashMap::new, toList()))
-//                        )
                         .forEachOrdered(e -> {
                             e.getValue()
 //                                    .stream().flatMap(x -> x.getValue().stream())
                                     .stream()
                                     .sorted(
-//                                            Comparator.comparing(
-//                                                    (Map.Entry<BigraphEntity, Control> k) ->
-//                                                            bigraph.getPorts(k.getKey()).size()
-//                                            ).reversed()
-//                                                    .thenComparing(
-//                                                            (Map.Entry<BigraphEntity, Control> k) ->
-//                                                                    k.getKey().getControl().getNamedType().stringValue()
-//                                                    )
-//
                                             Comparator.comparing((Map.Entry<BigraphEntity, Control> k) ->
-                                                    k.getKey().getControl().getNamedType().stringValue() //+ "" + bigraph.getPorts(k.getKey()).size()
+                                                    k.getValue().getNamedType().stringValue() //+ "" + bigraph.getPorts(k.getKey()).size()
                                             ).thenComparing(Comparator.comparing((Map.Entry<BigraphEntity, Control> k) ->
                                                     bigraph.getPortCount(k.getKey())).reversed())
                                     )
                                     .forEachOrdered(val -> {
                                         sb.append(val.getValue().getNamedType().stringValue());
-//                                        String suffix = "";
                                         int num;
                                         if ((num = bigraph.getPortCount(val.getKey())) > 0) {
                                             sb.append("{"); //.append(num).append(":");
-//                                            String edgeName = E.inverse().get(linkQofF);
                                             bigraph.getPorts(val.getKey()).stream()
                                                     .map(bigraph::getLinkOfPoint)
                                                     .map(l -> {
@@ -251,7 +230,6 @@ public class BigraphCanonicalForm {
         if (sb.charAt(sb.length() - 1) == '|') {
             sb.deleteCharAt(sb.length() - 1);
         }
-//        System.out.println("maxDegree=" + maxDegree);
         return sb.toString();
     }
 
@@ -332,59 +310,6 @@ public class BigraphCanonicalForm {
 //        String s1 = lhs.getValue().stream().map(x -> x.getValue().getNamedType().stringValue()).collect(Collectors.joining(""));
 //        String s2 = rhs.getValue().stream().map(x -> x.getValue().getNamedType().stringValue()).collect(Collectors.joining(""));
 //        return s1.compareTo(s2);
-//    }
-
-//    public <B extends Bigraph<?>> String bfcs3(B bigraph) {
-//        getInstance().assertBigraphIsGroundAndPrime(bigraph);
-//        final StringBuilder sb = new StringBuilder();
-//        BigraphEntity.RootEntity firstRoot = bigraph.getRoots().iterator().next();
-//        Traverser<BigraphEntity> childrenTraverser = Traverser.forTree(bigraph::getChildrenOf);
-//
-//        Map<BigraphEntity, Integer> collect = StreamSupport
-//                .stream(childrenTraverser.breadthFirst(firstRoot).spliterator(), false)
-//                .collect(Collectors.toMap(p -> p, bigraph::getLevelOf));
-//        Integer max = Collections.max(collect.values());
-//        for (int i = max; i > 0; i--) {
-//            int finalI = i;
-//
-////                Map<BigraphEntity, Control> collect =
-//            LinkedHashMap<BigraphEntity, Control> collect1 = collect.entrySet().stream()
-//                    .filter(x2 -> x2.getValue().equals(finalI))
-////                        .sorted(Comparator.comparing(bigraphEntity -> bigraphEntity.getKey().getControl().getNamedType().stringValue()))
-//                    .map(e -> e.getKey())
-//                    .collect(Collectors.toMap(Function.identity(),
-//                            BigraphEntity::getControl,
-//                            (v1, v2) -> v1,
-//                            LinkedHashMap::new));
-//            Map<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> collect2 = collect1.entrySet().stream()
-////                        .sorted(Comparator.comparing(k -> k.getKey().getControl().getNamedType().stringValue())) // keine auswirkung
-//                    .collect(Collectors.groupingBy(e -> bigraph.getParent(e.getKey()), Collectors.toCollection(LinkedList::new)));
-//
-//            collect2.entrySet().stream()
-//                    .sorted(Comparator.comparing(k -> k.getKey().getControl().getNamedType().stringValue()))
-//                    .forEachOrdered(e -> {
-//                        e.getValue().stream()
-//                                .sorted(Comparator.comparing(k -> k.getKey().getControl().getNamedType().stringValue()))
-//                                .forEachOrdered(val -> sb.append(val.getValue().getNamedType().stringValue()));
-//                        sb.append("$");
-//                    });
-////                List<String> controlList = collect.entrySet().stream()
-////                        .filter(x2 -> x2.getValue().equals(finalI))
-////                        .map(x3 -> x3.getKey().getControl())
-////                        .filter(Objects::nonNull)
-////                        .map(x3 -> x3.getNamedType().stringValue()).sorted().collect(Collectors.toList());
-////                controlList.stream().forEach(s -> sb.insert(0, s));
-////                sb.append("$");
-//        }
-//        sb.insert(0, "r0$");
-////            .collect(Collectors.groupingBy(e -> e, Collectors.toCollection(ArrayList::new)));
-//
-//
-//        if (sb.charAt(sb.length() - 1) == '$') {
-//            sb.deleteCharAt(sb.length() - 1);
-//        }
-//        sb.insert(sb.length(), "#");
-//        return sb.toString();
 //    }
 
 }
