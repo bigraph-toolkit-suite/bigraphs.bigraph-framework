@@ -1,7 +1,8 @@
-package de.tudresden.inf.st.bigraphs.visualization;
+package de.tudresden.inf.st.bigraphs.core.random;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -18,6 +19,7 @@ import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,9 +31,11 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
+ * This test class is used to compute some statistical measures such as node degree or node assortativity.
+ *
  * @author Dominik Grzelak
  */
-public class RandomBigraphTests {
+public class RandomBigraphStatisticalMeasurements {
     private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
@@ -39,11 +43,7 @@ public class RandomBigraphTests {
         DefaultDynamicSignature exampleSignature = createExampleSignature();
         PureBigraph generated = new PureBigraphGenerator().generate(exampleSignature, 1, 20, 1.0f);
 
-        String convert = BigraphGraphvizExporter.toPNG(generated,
-                true,
-                new File("src/test/resources/dump/graphviz/generated.png")
-        );
-
+        BigraphArtifacts.exportAsInstanceModel(generated, new FileOutputStream(new File("src/test/resources/dump/exported-models/randomly-generated.xmi")));
 
         //the richer get more rich... theorem proven
         for (BigraphEntity.RootEntity each : generated.getRoots()) {

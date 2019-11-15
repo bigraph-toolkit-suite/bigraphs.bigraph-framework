@@ -7,6 +7,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -21,13 +23,14 @@ import static de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator.Lin
  * @author Dominik Grzelak
  */
 public class PureBigraphGenerator extends RandomBigraphGenerator {
+    private final Logger logger = LoggerFactory.getLogger(PureBigraphGenerator.class);
 
-    private HashMap<Integer, BigraphEntity.RootEntity> myRoots = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.NodeEntity> myNodes = new LinkedHashMap<>();
-    private HashMap<Integer, BigraphEntity.SiteEntity> mySites = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.Edge> myEdges = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.OuterName> myOutername = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.InnerName> myInnername = new LinkedHashMap<>();
+    private HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
+    private HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
+    private HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
+    private HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
+    private HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
+    private HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
     private DistributedRandomNumberGenerator drng;
     private Supplier<String> edgeLblSupplier;
     private MutableBuilder<Signature<? extends Control>> builder;
@@ -35,33 +38,51 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
     private int cntE = 0, cntO = 0;
     private Set<BigraphEntity> nodesWithPositiveArity;
 
+    public PureBigraph generate(DefaultDynamicSignature signature, int t, int n, float p) {
+        return this.generate(signature, t, n, p, 0.5f, 0.5f);
+    }
+
     /**
+     * Number of roots t must be greater or equal 0.
+     * <p>
+     * Nodes that are not root nodes: m = n - t.
+     *
      * @param signature the signature of the bigraph
      * @param t         number of roots
      * @param n         number of nodes (inclusive t)
      * @param p         proportion of the nodes (n) being used for linking at all
      * @return
      */
-    public PureBigraph generate(DefaultDynamicSignature signature, int t, int n, float p) {
+    public PureBigraph generate(DefaultDynamicSignature signature, int t, int n, float p, float p_l, float p_e) {
         drng = new DistributedRandomNumberGenerator();
-        myRoots.clear();
-        myNodes.clear();
-        mySites.clear();
-        myEdges.clear();
-        myOutername.clear();
-        myInnername.clear();
+        newRoots.clear();
+        newNodes.clear();
+        newSites.clear();
+        newEdges.clear();
+        newOuterNames.clear();
+        newInnerNames.clear();
         builder = PureBigraphBuilder.newMutableBuilder(signature);
         builder.reset();
         Supplier<Control> controlSupplier = provideControlSupplier(signature);
         Supplier<String> vertexLabelSupplier = vertexLabelSupplier();
+        edgeLblSupplier = edgeLabelSupplier();
         List<BigraphEntity> nodes = new ArrayList<>(n);
+
+        if (t <= 0) {
+            throw new RuntimeException("Number of roots t must be greater or equal zero.");
+        }
+
+        logger.debug("Number of roots: {}", t);
+        logger.debug("Number of nodes: {}", (n-t));
+
+        // Place graph generation
         int i;
         for (i = 0; i < t; ++i) {
             BigraphEntity newRoot = builder.createNewRoot(i);
-            myRoots.put(i, (BigraphEntity.RootEntity) newRoot);
+            newRoots.put(i, (BigraphEntity.RootEntity) newRoot);
             nodes.add(newRoot);
         }
-        int edgeCnt = 0, nodeCnt = t;
+
         for (i = t; i < n; i++) {
             // create a new node with a random control
 //                    V v = target.addVertex();
@@ -82,39 +103,32 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
 //            if(!created_edge) continue;
             String vlbl = vertexLabelSupplier.get();
             BigraphEntity newNode = builder.createNewNode(controlSupplier.get(), vertexLabelSupplier.get());
-            myNodes.put(vlbl, (BigraphEntity.NodeEntity) newNode);
+            newNodes.put(vlbl, (BigraphEntity.NodeEntity) newNode);
 
             //add as parent
             setParentOfNode(newNode, entity);
             nodes.add(newNode);
-//            if (i > 1) {
-//                nodes.add(entity);
+//            if (i > 1) { // not necessary since we check for t >= 0
+            nodes.add(entity);
 //            }
-            edgeCnt++;
-            nodeCnt++;
         }
 
+
+        // Link graph generation
         // select number of percentage for linking, check if possible
-//        float p = 1f;
-        float p_l = 0.5f;
-        float p_e = 0.8f;
         drng.addNumber(1, p_l);
         drng.addNumber(2, p_e);
-
-        //TODO switch between different linking strategies:
+        logger.debug("Probability that outer names will be created: {}", p_l);
+        logger.debug("Probability that edges will be created: {}", p_e);
 
         // default: maximum one linking between two nodes
-
-
-        edgeLblSupplier = edgeLabelSupplier();
-
         nodesWithPositiveArity =
-                myNodes.values().stream()
+                newNodes.values().stream()
                         .filter(x -> Objects.nonNull(x.getControl()) &&
                                 x.getControl().getArity().getValue().intValue() > 0)
                         .collect(Collectors.toSet());
         numOfLinkings = (int) Math.floor((nodesWithPositiveArity.size() * p) / 2);
-//        System.out.println("#ofEdges: " + numOfLinkings);
+        logger.debug("Total number of links being created: {}", numOfLinkings);
         cntE = 0;
         cntO = 0;
         if (linkStrategy != NONE && numOfLinkings >= 1) {
@@ -136,19 +150,18 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
         PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
                 builder.getLoadedEPackage(),
                 signature,
-                myRoots,
-                mySites,
-                myNodes,
-                Collections.emptyMap(), myOutername, myEdges);
-//        builder.reset();
+                newRoots,
+                newSites,
+                newNodes,
+                Collections.emptyMap(), newOuterNames, newEdges);
+        builder.reset();
         return new PureBigraph(meta);
     }
 
     private void maximalDegreeLinking() {
         List<BigraphEntity> collect = new ArrayList<>(nodesWithPositiveArity);
         HashMap<BigraphEntity, Boolean> visited = new HashMap<>();
-        int n = (int) Math.sqrt(collect.size());
-//        System.out.println("N iterations=" + n);
+
         while (collect.size() >= 4) {
 
             int a, b, c, d;
@@ -163,11 +176,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
             BigraphEntity.NodeEntity<Control> entity2 = (BigraphEntity.NodeEntity<Control>) collect.get(b);
             BigraphEntity.NodeEntity<Control> entity3 = (BigraphEntity.NodeEntity<Control>) collect.get(c);
             BigraphEntity.NodeEntity<Control> entity4 = (BigraphEntity.NodeEntity<Control>) collect.get(d);
-//            List<BigraphEntity.NodeEntity<Control>> entityList = new ArrayList<>();
-//            entityList.add(entity1);
-//            entityList.add(entity2);
-//            entityList.add(entity3);
-//            entityList.add(entity4);
+
             List<BigraphEntity.NodeEntity<Control>> entityList = Stream.of(entity1, entity2, entity3, entity4)
 //                    .sorted(Comparator.comparingInt(this::getPortCount))
                     .sorted(Comparator.comparingInt(x -> x.getControl().getArity().getValue().intValue()))
@@ -193,7 +202,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
                     BigraphEntity.Edge edge = (BigraphEntity.Edge) builder.createNewEdge(edgeLblSupplier.get());
                     builder.connectToEdge(entityList.get(0), edge); // lowest degree
                     builder.connectToEdge(entityList.get(1), edge); // lowest degree
-                    myEdges.put(edge.getName(), edge);
+                    newEdges.put(edge.getName(), edge);
                 } catch (Exception e) {
 //                    e.printStackTrace();
                 }
@@ -204,7 +213,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
                     BigraphEntity.Edge edge = (BigraphEntity.Edge) builder.createNewEdge(edgeLblSupplier.get());
                     builder.connectToEdge(entityList.get(2), edge); // highest degree
                     builder.connectToEdge(entityList.get(3), edge); // highest degree
-                    myEdges.put(edge.getName(), edge);
+                    newEdges.put(edge.getName(), edge);
                 } catch (Exception e) {
 //                    e.printStackTrace();
                 }
@@ -215,7 +224,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
                     BigraphEntity.Edge edge = (BigraphEntity.Edge) builder.createNewEdge(edgeLblSupplier.get());
                     builder.connectToEdge(entityList.get(0), edge); // lowest degree
                     builder.connectToEdge(entityList.get(3), edge); // highest degree
-                    myEdges.put(edge.getName(), edge);
+                    newEdges.put(edge.getName(), edge);
                 } catch (Exception e) {
 //                    e.printStackTrace();
                 }
@@ -226,7 +235,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
                     BigraphEntity.Edge edge = (BigraphEntity.Edge) builder.createNewEdge(edgeLblSupplier.get());
                     builder.connectToEdge(entityList.get(1), edge); // low-high degree
                     builder.connectToEdge(entityList.get(2), edge); // low-high degree
-                    myEdges.put(edge.getName(), edge);
+                    newEdges.put(edge.getName(), edge);
                 } catch (Exception e) {
 //                    e.printStackTrace();
                 }
@@ -239,7 +248,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
         return (PureBigraphGenerator) super.setLinkStrategy(linkStrategy);
     }
 
-    boolean areNotEqual(int... nums) {
+    private boolean areNotEqual(int... nums) {
         Arrays.sort(nums);
         for (int i = 0; i < nums.length - 1; i++) {
             if (nums[i] == nums[i + 1])
@@ -261,8 +270,7 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
     private void pairwiseLinking(final int numOfLinkings) {
         int connectionCount = 0;
         List<BigraphEntity> collect = new ArrayList<>(nodesWithPositiveArity);
-//            System.out.println("#nodes= " + collect.size());
-        //solange connection != max || keine nodes mehr vorhanden
+
         while ((connectionCount < numOfLinkings)) {
             int i1 = rnd.nextInt(collect.size());
             int i2 = rnd.nextInt(collect.size());
@@ -276,14 +284,14 @@ public class PureBigraphGenerator extends RandomBigraphGenerator {
             String edgeName = edgeLblSupplier.get();
             if (random == 1) {
                 BigraphEntity.OuterName newOuterName = (BigraphEntity.OuterName) builder.createNewOuterName(edgeName);
-                myOutername.put(edgeName, newOuterName);
+                newOuterNames.put(edgeName, newOuterName);
                 builder.connectNodeToOuterName2(a, newOuterName);
                 builder.connectNodeToOuterName2(b, newOuterName);
                 cntO++;
             } else if (random == 2) {
                 BigraphEntity.Edge edge;
                 edge = (BigraphEntity.Edge) builder.createNewEdge(edgeName);
-                myEdges.put(edge.getName(), edge);
+                newEdges.put(edge.getName(), edge);
                 builder.connectToEdge(a, edge);
                 builder.connectToEdge(b, edge);
                 cntE++;

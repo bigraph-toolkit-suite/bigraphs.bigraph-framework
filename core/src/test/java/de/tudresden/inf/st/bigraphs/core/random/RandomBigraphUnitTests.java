@@ -1,37 +1,33 @@
-package de.tudresden.inf.st.bigraphs.core;
+package de.tudresden.inf.st.bigraphs.core.random;
 
+import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BBigraph;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BRoot;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.end;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 
 /**
  * @author Dominik Grzelak
  */
-public class RandomBigraphTests {
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+public class RandomBigraphUnitTests {
 
-    @Test
-    void apiestt() {
-        BBigraph bBigraph = BigraphBaseModelFactory.eINSTANCE.createBBigraph();
-        BRoot bRoot = BigraphBaseModelFactory.eINSTANCE.createBRoot();
-        bBigraph.getBRoots().add(bRoot);
-        System.out.println(bRoot.getBBigraph().hashCode());
-        System.out.println(bBigraph.getBRoots().size());
-        BBigraph bBigraph2 = BigraphBaseModelFactory.eINSTANCE.createBBigraph();
-        bBigraph2.getBRoots().add(bRoot);
+    @BeforeEach
+    void setUp() {
+        pure();
+    }
 
-        System.out.println(bRoot.getBBigraph().hashCode());
-        System.out.println(bBigraph.getBRoots().size());
-        System.out.println(bBigraph2.getBRoots().size());
+    @AfterEach
+    void tearDown() {
+        end();
     }
 
     @Test
@@ -41,7 +37,7 @@ public class RandomBigraphTests {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = pure().createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

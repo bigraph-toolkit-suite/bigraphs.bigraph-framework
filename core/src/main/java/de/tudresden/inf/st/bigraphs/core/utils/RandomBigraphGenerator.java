@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * @author Dominik Grzelak
  */
 public abstract class RandomBigraphGenerator {
-    protected SecureRandom rnd;
+    SecureRandom rnd;
     LinkStrategy linkStrategy;
 
     public enum LinkStrategy {
@@ -117,18 +117,5 @@ public abstract class RandomBigraphGenerator {
                 return "e" + id++;
             }
         };
-    }
-
-    protected static Graph<String, DefaultEdge> buildEmptySimpleDirectedGraph(Supplier<String> controlSupplier) {
-//        vSupplier.get();
-//        return GraphTypeBuilder.<String, DefaultEdge>directed()
-        return GraphTypeBuilder.<String, DefaultEdge>undirected()
-//                .vertexClass()
-                .vertexSupplier(controlSupplier)
-                .allowingMultipleEdges(false)
-                .allowingSelfLoops(false)
-                .edgeClass(DefaultEdge.class)
-                .weighted(false)
-                .buildGraph();
     }
 }

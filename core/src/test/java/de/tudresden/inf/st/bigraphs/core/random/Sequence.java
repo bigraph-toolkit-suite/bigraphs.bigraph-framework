@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.visualization;
+package de.tudresden.inf.st.bigraphs.core.random;
 
 import com.google.common.collect.AbstractIterator;
 
