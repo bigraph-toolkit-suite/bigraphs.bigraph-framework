@@ -47,7 +47,7 @@ public class CanonicalPerformanceTests {
                 true,
                 new File(TARGET_DUMP_PATH + "randomBigraph.png")
         );
-        System.out.println(BigraphCanonicalForm.getInstance().bfcs(g0));
+        System.out.println(BigraphCanonicalForm.createInstance().bfcs(g0));
 
         StringBuilder values = new StringBuilder();
         for (int numOfNodes = 1000; numOfNodes < 10000; numOfNodes += 100) {
@@ -56,7 +56,7 @@ public class CanonicalPerformanceTests {
                     .generate(randomSignature, 1, numOfNodes, 1f);
 //        O(k² c log c): k = num of vertices, c maximal degree of vertices
             Stopwatch stopwatch = Stopwatch.createStarted();
-            String bfcs = BigraphCanonicalForm.getInstance().bfcs(generate);
+            String bfcs = BigraphCanonicalForm.createInstance().bfcs(generate);
             long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 //            System.out.println("Time taken: " + elapsed + ", nodes=" + generate.getNodes().size());
 //            System.out.println(generate.getEdges().size());

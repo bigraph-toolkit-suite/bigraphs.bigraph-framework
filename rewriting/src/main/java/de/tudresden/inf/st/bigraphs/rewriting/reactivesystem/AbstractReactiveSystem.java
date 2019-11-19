@@ -59,7 +59,7 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
     protected ReactiveSystemOptions options;
     protected AbstractBigraphMatcher<B> matcher;
     protected ReactionGraph<B> reactionGraph;
-    protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.getInstance();
+    protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.createInstance();
     private PredicateChecker<B> predicateChecker = null;
 
     public AbstractReactiveSystem() {

@@ -26,7 +26,7 @@ public class BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>> exte
     private BigraphIsoPredicate(B bigraphToMatch, boolean negate) {
         this.bigraphToMatch = bigraphToMatch;
         super.negate = negate;
-        this.canonicalForm = BigraphCanonicalForm.getInstance();
+        this.canonicalForm = BigraphCanonicalForm.createInstance();
         this.bigraphEncoded = this.canonicalForm.bfcs(this.bigraphToMatch);
     }
 

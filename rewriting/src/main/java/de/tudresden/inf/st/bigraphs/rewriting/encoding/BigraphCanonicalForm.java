@@ -7,6 +7,8 @@ import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.LinkedList;
@@ -36,12 +38,12 @@ import java.util.stream.Collectors;
  * @author Dominik Grzelak
  */
 public class BigraphCanonicalForm {
-
-    private static BigraphCanonicalForm instance = new BigraphCanonicalForm();
+    
     private BigraphCanonicalFormStrategy canonicalFormStrategy;
+    private MutableMap<Class, BigraphCanonicalFormStrategy> strategyMap = Maps.mutable.of(PureBigraph.class, new PureCanonicalForm(this));
 
-    public static BigraphCanonicalForm getInstance() {
-        return instance;
+    public static BigraphCanonicalForm createInstance() {
+        return new BigraphCanonicalForm();
     }
 
     private BigraphCanonicalForm() {
@@ -65,7 +67,7 @@ public class BigraphCanonicalForm {
      */
     public <B extends Bigraph<?>> String bfcs(B bigraph) {
         if (bigraph instanceof PureBigraph) {
-            canonicalFormStrategy = new PureCanonicalForm(this);
+            canonicalFormStrategy = strategyMap.getOrDefault(bigraph.getClass(), new PureCanonicalForm(this));
         } else {
             throw new RuntimeException("Not implemented yet");
         }

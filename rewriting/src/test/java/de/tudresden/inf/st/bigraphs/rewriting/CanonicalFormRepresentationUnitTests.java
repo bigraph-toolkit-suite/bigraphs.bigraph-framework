@@ -72,7 +72,7 @@ public class CanonicalFormRepresentationUnitTests {
     void simple_canonical_form_test() throws IOException, InvalidConnectionException, LinkTypeNotExistsException {
 
         Bigraph biesingerSampleBigraph = createBiesingerSampleBigraph();
-        String bfcs = BigraphCanonicalForm.getInstance().bfcs(biesingerSampleBigraph);
+        String bfcs = BigraphCanonicalForm.createInstance().bfcs(biesingerSampleBigraph);
         assertEquals(bfcs, "r0$" + "A$BB$CD$E$FG$E#");
         System.out.println(bfcs);
         BigraphGraphvizExporter.toPNG(biesingerSampleBigraph,
@@ -92,7 +92,7 @@ public class CanonicalFormRepresentationUnitTests {
                         e.printStackTrace();
                     }
                 })
-                .map(x -> BigraphCanonicalForm.getInstance().bfcs(x))
+                .map(x -> BigraphCanonicalForm.createInstance().bfcs(x))
                 .peek(System.out::println)
                 .distinct()
                 .count();
@@ -110,7 +110,7 @@ public class CanonicalFormRepresentationUnitTests {
                         e.printStackTrace();
                     }
                 })
-                .map(x -> BigraphCanonicalForm.getInstance().bfcs(x))
+                .map(x -> BigraphCanonicalForm.createInstance().bfcs(x))
                 .peek(System.out::println)
                 .distinct()
                 .count();
@@ -129,7 +129,7 @@ public class CanonicalFormRepresentationUnitTests {
                         e.printStackTrace();
                     }
                 })
-                .map(x -> BigraphCanonicalForm.getInstance().bfcs(x))
+                .map(x -> BigraphCanonicalForm.createInstance().bfcs(x))
                 .peek(System.out::println)
                 .distinct()
                 .count();
@@ -152,8 +152,8 @@ public class CanonicalFormRepresentationUnitTests {
                 true,
                 new File(TARGET_DUMP_PATH + "sampleBigraphL_2.png")
         );
-        String bfcs = BigraphCanonicalForm.getInstance().bfcs(l1);
-        String bfcs2 = BigraphCanonicalForm.getInstance().bfcs(l2);
+        String bfcs = BigraphCanonicalForm.createInstance().bfcs(l1);
+        String bfcs2 = BigraphCanonicalForm.createInstance().bfcs(l2);
         System.out.println(bfcs);
         System.out.println(bfcs2);
         Assertions.assertEquals(bfcs, bfcs2);

@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.rewriting.encoding;
 
 import com.google.common.collect.HashBiMap;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ControlKind;
@@ -20,6 +19,8 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
+ * The concrete strategy to compute the canonical string of a pure bigraph ({@link PureBigraph}).
+ *
  * @author Dominik Grzelak
  */
 public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph> {
@@ -172,24 +173,20 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         //TODO: sort inner names
         for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
             BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(each);
-            switch (linkOfPoint.getType()) {
-                case EDGE:
-                    String name; // = ((BigraphEntity.Edge) linkOfPoint).getName();
-                    if (E.inverse().get(linkOfPoint) == null) {
-                        E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) linkOfPoint);
-                    }
-                    name = E.inverse().get(linkOfPoint);
-                    sb.append(name).append('$').append(each.getName()).append("|");
-                    break;
+            if (linkOfPoint.getType() == BigraphEntityType.EDGE) {
+                String name; // = ((BigraphEntity.Edge) linkOfPoint).getName();
+                if (E.inverse().get(linkOfPoint) == null) {
+                    E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) linkOfPoint);
+                }
+                name = E.inverse().get(linkOfPoint);
+                sb.append(name).append('$').append(each.getName()).append("|");
             }
         }
         for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
             BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(each);
-            switch (linkOfPoint.getType()) {
-                case OUTER_NAME:
-                    String name = ((BigraphEntity.OuterName) linkOfPoint).getName();
-                    sb.append(name).append('$').append(each.getName()).append('|');
-                    break;
+            if (linkOfPoint.getType() == BigraphEntityType.OUTER_NAME) {
+                String name = ((BigraphEntity.OuterName) linkOfPoint).getName();
+                sb.append(name).append('$').append(each.getName()).append('|');
             }
         }
         if (sb.charAt(sb.length() - 1) == '|') {
