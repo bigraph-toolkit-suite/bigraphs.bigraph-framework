@@ -18,6 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
+import de.tudresden.inf.st.bigraphs.rewriting.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.BigraphIsoPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Assertions;

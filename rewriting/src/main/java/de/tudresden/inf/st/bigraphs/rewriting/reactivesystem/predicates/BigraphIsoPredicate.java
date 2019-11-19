@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.rewriting.BigraphCanonicalForm;
+import de.tudresden.inf.st.bigraphs.rewriting.encoding.BigraphCanonicalForm;
 
 /**
  * Predicate implementation that returns {@code true} if two bigraphs are isomorphic (i.e., structurally equivalent).
