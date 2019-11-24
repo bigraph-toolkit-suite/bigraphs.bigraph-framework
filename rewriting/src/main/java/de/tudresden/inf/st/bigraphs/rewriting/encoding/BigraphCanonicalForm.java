@@ -38,8 +38,7 @@ import java.util.stream.Collectors;
  * @author Dominik Grzelak
  */
 public class BigraphCanonicalForm {
-    
-    private BigraphCanonicalFormStrategy canonicalFormStrategy;
+
     private MutableMap<Class, BigraphCanonicalFormStrategy> strategyMap = Maps.mutable.of(PureBigraph.class, new PureCanonicalForm(this));
 
     public static BigraphCanonicalForm createInstance() {
@@ -66,6 +65,7 @@ public class BigraphCanonicalForm {
      * @return the BFCS of the place graph of the given bigraph
      */
     public <B extends Bigraph<?>> String bfcs(B bigraph) {
+        BigraphCanonicalFormStrategy canonicalFormStrategy;
         if (bigraph instanceof PureBigraph) {
             canonicalFormStrategy = strategyMap.getOrDefault(bigraph.getClass(), new PureCanonicalForm(this));
         } else {
@@ -90,7 +90,7 @@ public class BigraphCanonicalForm {
      * @param rhs right-hand side
      * @return integer indicating the ordering
      */
-    public int compareByControlThenChildrenSize(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
+    public static int compareByControlThenChildrenSize(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
         if (lhs.getKey().getControl().getNamedType().stringValue().equals(rhs.getKey().getControl().getNamedType().stringValue())) {
 //            if (rhs.getValue().size() - lhs.getValue().size() == 0) {
 //                return bigraph.getPorts(rhs.getKey()).size();
@@ -102,16 +102,34 @@ public class BigraphCanonicalForm {
     }
 
     static int compareByControl(LinkedList<Map.Entry<BigraphEntity, Control>> lhs, LinkedList<Map.Entry<BigraphEntity, Control>> rhs) {
-        String s1 = lhs.stream().map(x -> x.getValue().getNamedType().stringValue()).sorted().collect(Collectors.joining(""));
-        String s2 = rhs.stream().map(x -> x.getValue().getNamedType().stringValue()).sorted().collect(Collectors.joining(""));
-        return s1.compareTo(s2);
-//        if (s1.equals(s2)) {
-//            return rhs.size() - lhs.size();
-//        } else {
-//            String prefix1 = lhs.size() >= rhs.size() ? "1" : "0";
-//            String prefix2 = rhs.size() >= lhs.size() ? "1" : "0";
-//            return (prefix1 + s1).compareTo(prefix2 + s2);
-//        }
+        if (rhs.size() - lhs.size() == 0) {
+            String s1 = "";
+            String s2 = "";
+            s1 = lhs.stream()
+                    .sorted((lhs1, rhs2) -> {
+                        return lhs1.getKey().getControl().getNamedType().stringValue().compareTo(lhs1.getKey().getControl().getNamedType().stringValue());
+                    })
+                    .map(x -> x.getValue().getNamedType().stringValue())
+                    .collect(Collectors.joining(""));
+
+            s2 = rhs.stream()
+                    .sorted((lhs1, rhs2) -> {
+                        return lhs1.getKey().getControl().getNamedType().stringValue().compareTo(lhs1.getKey().getControl().getNamedType().stringValue());
+                    })
+                    .map(x -> x.getValue().getNamedType().stringValue())
+                    .collect(Collectors.joining(""));
+            return s1.compareTo(s2);
+        }
+        return Integer.compare(lhs.size(), rhs.size());
+
+
+        //also working but different ordering
+//        String s1 = lhs.stream()
+//                .map(x -> x.getValue().getNamedType().stringValue())
+//                .sorted()
+//                .collect(Collectors.joining(""));
+//        String s2 = rhs.stream().map(x -> x.getValue().getNamedType().stringValue()).sorted().collect(Collectors.joining(""));
+//        return s1.compareTo(s2);
     }
 
     <B extends Bigraph<?>> void assertBigraphIsGroundAndPrime(B bigraph) {
