@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting.examples;
+package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -39,6 +39,13 @@ public class RouteFinding {
     private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/";
 
+    /**
+     * bigrapher full -d ./cars -f svg -s states -M 10 -t trans.svg -v carsconverted.big
+     * @throws InvalidConnectionException
+     * @throws LinkTypeNotExistsException
+     * @throws IOException
+     * @throws InvalidReactionRuleException
+     */
     @Test
     void name() throws InvalidConnectionException, LinkTypeNotExistsException, IOException, InvalidReactionRuleException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
@@ -85,7 +92,12 @@ public class RouteFinding {
         SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
-        reactiveSystem.computeTransitionSystem(map, opts, Collections.singleton(predicate));
+
+        BigrapherTransformator prettyPrinter = new BigrapherTransformator();
+        String s = prettyPrinter.toString(reactiveSystem);
+        System.out.println(s);
+
+//        reactiveSystem.computeTransitionSystem(map, opts, Collections.singleton(predicate));
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, LinkTypeNotExistsException {
