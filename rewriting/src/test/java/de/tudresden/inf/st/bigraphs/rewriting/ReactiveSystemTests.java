@@ -42,21 +42,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ReactiveSystemTests {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
-    @Test
-    void simulation_test_wip() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
-        // Create reaction rules
-        PureBigraph agent = (PureBigraph) createAgent_model_test_0();
-        ReactionRule<PureBigraph> rr = createReactionRule();
-
-        SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
-        reactiveSystem.addReactionRule(rr);
-        reactiveSystem.addReactionRule(rr);
-        assertEquals(1, reactiveSystem.getReactionRules().size());
-        assertTrue(reactiveSystem.isSimple());
-
-        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
-        reactiveSystem.simulate(agent, opts);
-    }
+//    @Test
+//    void simulation_test_wip() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
+//        // Create reaction rules
+//        PureBigraph agent = (PureBigraph) createAgent_model_test_0();
+//        ReactionRule<PureBigraph> rr = createReactionRule();
+//
+//        SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
+//        reactiveSystem.addReactionRule(rr);
+//        reactiveSystem.addReactionRule(rr);
+//        assertEquals(1, reactiveSystem.getReactionRules().size());
+//        assertTrue(reactiveSystem.isSimple());
+//
+//        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
+//        reactiveSystem.simulate(agent, opts);
+//    }
 
 
     @Test

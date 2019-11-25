@@ -104,19 +104,20 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareControlByKey2 =
                         Comparator.comparing((entry) -> {
                             String s1 = entry.getValue().stream()
-                                    .sorted(Comparator.comparing(lhs -> lhs.getControl().getNamedType().stringValue()))
-                                    .map(x -> x.getControl().getNamedType().stringValue())
+                                    .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : lhs.getControl().getNamedType().stringValue()))
+                                    .map(x -> BigraphEntityType.isSite(x) ? String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) : x.getControl().getNamedType().stringValue())
                                     .collect(Collectors.joining(""));
                             String o = entry.getKey().getControl().getNamedType().stringValue() + s1;
                             return o;
                         });
                 Comparator<BigraphEntity> compareControlByKey3 =
                         Comparator.comparing((entry) -> {
+//                            System.out.println(entry);
                             String s1 = bigraph.getChildrenOf(entry).stream()
-//                            String s1 = entry.getValue().stream()
-                                    .sorted(Comparator.comparing(lhs -> lhs.getControl().getNamedType().stringValue()))
-                                    .map(x -> x.getControl().getNamedType().stringValue())
+                                    .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : lhs.getControl().getNamedType().stringValue()))
+                                    .map(x -> BigraphEntityType.isSite(x) ? String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) : x.getControl().getNamedType().stringValue())
                                     .collect(Collectors.joining(""));
+//                            System.out.println(entry);
                             String o = entry.getControl().getNamedType().stringValue() + s1;
                             return o;
                         });
@@ -125,10 +126,10 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                         Comparator.comparing(entry -> {
                             return entry.getValue().size();
                         });
-//                Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenPortSum =
-//                        Comparator.comparing(entry -> {
-//                            return (int) entry.getValue().stream().map(x -> bigraph.getPortCount(x)).reduce(0, Integer::sum);
-//                        });
+                Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenPortSum =
+                        Comparator.comparing(entry -> {
+                            return (int) entry.getValue().stream().map(x -> bigraph.getPortCount(x)).reduce(0, Integer::sum);
+                        });
                 //                Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareFirstByControlByValue =
 //                        Comparator.comparing(entry -> {
 //                            return entry.getValue().stream().sorted(controlComp).findAny().get().getControl().getNamedType().stringValue();
@@ -151,9 +152,11 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //                Map<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> collect1 =
                 Map<BigraphEntity, LinkedList<BigraphEntity>> collect = next
                         .stream()
-                        .sorted(compareControl.thenComparing(compareChildrenSize.reversed()))
+//                        .sorted(compareControl.thenComparing(compareChildrenSize.reversed()))
                         .collect(groupingBy(e -> bigraph.getParent(e), Collectors.toCollection(LinkedList::new)));
                 final AtomicInteger atLevelCnt;
+                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator = compareControlByKey2.thenComparing(compareChildrenSizeByValue.reversed().thenComparing(compareChildrenPortSum.reversed()));
+                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator2 = (compareChildrenPortSum.reversed());
                 if (lastOrdering.size() != 0) {
                     atLevelCnt = new AtomicInteger(lastOrdering.size() - collect.size());
                     //order collect as in lastOrdering and order all childs properly
@@ -161,16 +164,11 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                     LinkedHashMap<BigraphEntity, LinkedList<BigraphEntity>> collectTmp = new LinkedHashMap<>();
                     for (BigraphEntity eachOrder : lastOrdering) {
                         if (parentChildMap.get(eachOrder) != null) {
-//                            System.out.println("insert this!");
                             collectTmp.put(eachOrder, new LinkedList<>());
                         }
                         if (collect.get(eachOrder) == null) continue;
-                        long distinctLabels = collect.get(eachOrder).stream().map(x -> x.getControl().getNamedType().stringValue()).distinct().count();
-//                        if (collect.get(eachOrder).size() >= 2 && distinctLabels >= 2) {
-//                            collectTmp.put(eachOrder, collect.get(eachOrder).stream().sorted(compareChildrenSize.reversed().thenComparing(compareControl.thenComparing(comparePortCount.reversed()))).collect(Collectors.toCollection(LinkedList::new)));
-//                        } else {
+//                        long distinctLabels = collect.get(eachOrder).stream().map(x -> x.getControl().getNamedType().stringValue()).distinct().count();
                         collectTmp.put(eachOrder, collect.get(eachOrder).stream().sorted(compareControl.thenComparing(compareChildrenSize.reversed().thenComparing(comparePortCount.reversed()))).collect(Collectors.toCollection(LinkedList::new)));
-//                        }
                     }
                     collect = collectTmp;
                     lastOrdering.clear();
@@ -178,7 +176,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                     atLevelCnt = new AtomicInteger(0);
                     collect = collect.entrySet()
                             .stream()
-                            .sorted(compareControlByKey2.thenComparing(compareChildrenSizeByValue.reversed()))
+//                            .sorted(compareControlByKey2.thenComparing(compareChildrenSizeByValue.reversed().thenComparing(compareChildrenPortSum.reversed())))
+                            .sorted(levelComparator)
 //                            .peek(x -> lastOrdering.addAll(x.getValue()))
                             .collect(Collectors.toMap(Entry::getKey, Entry::getValue,
                                     (e1, e2) -> e1, LinkedHashMap::new));
@@ -216,20 +215,13 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 final AtomicInteger ixCnt = new AtomicInteger(0);
 
                 blu.entrySet().stream()
+                        .sorted(levelComparator2)
                         .forEachOrdered(e -> {
-                            if (e.getValue().size() == 0 && parentChildMap.get(e.getKey()) != null) {
+                            if (e.getValue().size() == 0 && parentChildMap.get(e.getKey()) != null) { //
                                 sb.append("$");
                                 parentChildMap.remove(e.getKey());
                                 return;
                             }
-//                            if (checkNextRound.get()) { //checkNextRound.get()) { //e.getValue().size() >= 2 &&
-//                                int ix = ixCnt.get();
-//                                BigraphEntity any = parentChildMap.flip().get(ix).getAny();
-//                                if (any != null) {
-//                                    sb.append("$");
-//                                    parentChildMap.remove(any);
-//                                }
-//                            }
                             e.getValue()
                                     .stream()
                                     .sorted(

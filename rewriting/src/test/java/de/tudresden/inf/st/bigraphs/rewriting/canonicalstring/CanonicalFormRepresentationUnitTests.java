@@ -54,9 +54,21 @@ public class CanonicalFormRepresentationUnitTests {
     }
 
     @Test
-    void test0() {
-        //        PureBigraph bigraph = createFirst();
+    void test0() throws Exception {
+
+        PureBigraph bigraph = new LinkGraphCanonicalFormTest().createFirstLG();
+        PureBigraph bigraph2 = new LinkGraphCanonicalFormTest().createSecondLG();
+        BigraphGraphvizExporter.toPNG(bigraph2,
+                true,
+                new File(TARGET_DUMP_PATH + "paperbigraph2.png")
+        );
 //        PureBigraph bigraph2 = createSecond();
+
+        String bfcs = BigraphCanonicalForm.createInstance().bfcs(bigraph);
+        String bfcs2 = BigraphCanonicalForm.createInstance().bfcs(bigraph2);
+        System.out.println(bfcs);
+        System.out.println(bfcs2);
+
     }
 
 
@@ -398,7 +410,7 @@ public class CanonicalFormRepresentationUnitTests {
             Assertions.assertEquals(bfcs, bfcs2);
 
             AtomicInteger cnt2 = new AtomicInteger(0);
-            long count2 = Stream.of(createSampleBigraphB1(), createSampleBigraphB2())
+            long count2 = Stream.of(createSampleBigraphB1(),createSampleBigraphB2())//
                     .peek(x -> {
                         try {
                             BigraphGraphvizExporter.toPNG(x,
@@ -511,7 +523,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
 
-        private PureBigraph createFirstLG() throws Exception {
+        public PureBigraph createFirstLG() throws Exception {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName x1 = b1.createInnerName("x1");
@@ -532,7 +544,7 @@ public class CanonicalFormRepresentationUnitTests {
             return b1.createBigraph();
         }
 
-        private PureBigraph createSecondLG() throws Exception {
+        public PureBigraph createSecondLG() throws Exception {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName x1 = b1.createInnerName("x1");
