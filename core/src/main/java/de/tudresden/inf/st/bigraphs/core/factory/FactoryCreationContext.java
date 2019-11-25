@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
@@ -75,14 +76,22 @@ public final class FactoryCreationContext {
 
     private static AbstractBigraphFactory findFactoryFor(Class<? extends Bigraph> bigraphClass) {
         if (bigraphClass.isAssignableFrom(PureBigraph.class)) {
-            return new PureBigraphFactory<>();
+            return new PureBigraphFactory();
         }
         throw new RuntimeException("Not implemented yet");
     }
 
 
-    static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> createPureBigraphFactory() {
+    static PureBigraphFactory createPureBigraphFactory() {
         return current().map(FactoryCreationContext::newPureBigraphFactory).orElseGet(PureBigraphFactory::new);
+    }
+
+    static <S extends Signature> Object createSignatureBuilder(Class<PureBigraph> bigraphClass) {
+        return current().map((ctx) -> {
+            return ctx.newSignatureBuilder();
+        }).orElseGet(() -> {
+            return begin(findFactoryFor(bigraphClass)).newSignatureBuilder();
+        });
     }
 
     static BigraphComposite createOperator(Bigraph bigraph) {
@@ -110,7 +119,11 @@ public final class FactoryCreationContext {
         return this.factory.asBigraphOperator(bigraph);
     }
 
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> newPureBigraphFactory() {
-        return (PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>>) factory;
+    private SignatureBuilder newSignatureBuilder() {
+        return this.factory.createSignatureBuilder();
+    }
+
+    private PureBigraphFactory newPureBigraphFactory() {
+        return (PureBigraphFactory) factory;
     }
 }

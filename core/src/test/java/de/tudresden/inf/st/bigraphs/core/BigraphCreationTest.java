@@ -15,6 +15,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import org.eclipse.emf.common.util.EList;
@@ -32,8 +33,8 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 //@Disabled
 public class BigraphCreationTest {
 
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factoryWithArgs = AbstractBigraphFactory.createPureBigraphFactory(StringTypedName.class, Integer.class);
+    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factoryWithArgs = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
     void lean_factory_creation() throws IncompatibleSignatureException, IncompatibleInterfaceException, InvalidConnectionException {
@@ -59,6 +60,40 @@ public class BigraphCreationTest {
         assertEquals(0, bigraphComposite.getOuterBigraph().getInnerNames().size());
 
         end();
+    }
+
+    @Test
+    void lean_bigraph_api_signature_creation_test() {
+        pure();
+
+        DefaultDynamicSignature signature = pureSignatureBuilder()
+                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .create();
+
+        end();
+    }
+
+    @Test
+    void lean_bigraph_usage_from_readme() throws InvalidConnectionException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        DefaultDynamicSignature signature = pureSignatureBuilder()
+                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .create();
+
+        // create two bigraphs
+        PureBigraph bigraph1 = pureBuilder(signature)
+                .createRoot()
+                .addChild("A").addChild("C")
+                .createBigraph();
+
+        PureBigraph bigraph2 = pureBuilder(signature)
+                .createRoot().addChild("User", "alice").addSite()
+                .createBigraph();
+
+        // compose two bigraphs
+        BigraphComposite bigraphComposite = ops(bigraph2).compose(bigraph1);
     }
 
     @Nested
@@ -368,7 +403,7 @@ public class BigraphCreationTest {
             DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Long>> signatureBuilder = new DefaultSignatureBuilder<>();
             signatureBuilder
                     .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofLong(2)).assign();
-            Signature signature2 = signatureBuilder.createSignature();
+//            Signature signature2 = signatureBuilder.createSignature();
 //            builder.createRoot().addChild(signature2.getControlByName("Printer"));
 
             BigraphEntity.InnerName x1 = builder.createInnerName("x1");
@@ -529,7 +564,7 @@ public class BigraphCreationTest {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

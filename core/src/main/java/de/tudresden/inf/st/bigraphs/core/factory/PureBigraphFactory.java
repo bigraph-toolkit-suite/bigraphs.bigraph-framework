@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.PureBigraphComposite;
@@ -21,18 +22,18 @@ import java.util.Set;
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
-        extends AbstractBigraphFactory<DefaultDynamicSignature, NT, FT> {
+public class PureBigraphFactory
+        extends AbstractBigraphFactory<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> {
 
     PureBigraphFactory() {
-        super.successorClass = new TypeToken<DefaultDynamicControl<NT, FT>>() {
+        super.successorClass = new TypeToken<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>>() {
         }.getType();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public DynamicSignatureBuilder<NT, FT> createSignatureBuilder() {
-        return new DynamicSignatureBuilder<>();
+    public DynamicSignatureBuilder createSignatureBuilder() {
+        return new DynamicSignatureBuilder();
     }
 
     @Override
@@ -66,7 +67,7 @@ public class PureBigraphFactory<NT extends NamedType, FT extends FiniteOrdinal>
     }
 
     @Override
-    public DiscreteIon<DefaultDynamicSignature, NT, FT> createDiscreteIon(NT name, Set<NT> outerNames, DefaultDynamicSignature signature) {
+    public DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> createDiscreteIon(StringTypedName name, Set<StringTypedName> outerNames, DefaultDynamicSignature signature) {
         return new DiscreteIon<>(
                 name,
                 outerNames,

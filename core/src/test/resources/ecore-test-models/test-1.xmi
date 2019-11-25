@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <sample:BBigraph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sample="http://www.example.org" xsi:schemaLocation="http://www.example.org test-1.ecore">
   <bRoots>
     <bChild xsi:type="sample:Room" name="v0">

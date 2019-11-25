@@ -36,7 +36,7 @@ import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.trans
  * @author Dominik Grzelak
  */
 public class RouteFinding {
-    private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/";
 
     @Test
@@ -171,7 +171,7 @@ public class RouteFinding {
     }
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Car")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Fuel")).arity(FiniteOrdinal.ofInteger(0)).assign()

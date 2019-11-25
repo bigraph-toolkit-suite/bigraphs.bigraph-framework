@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 //TODO write better tests here: the redex output should conform to the expected output - this makes observing things easier
 // to the equivalent bigraphER output result (means, check for num. of outer names etc.)
 public class MatchTesting {
-    private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     public static void main(String[] args) throws Exception {
         org.openjdk.jmh.Main.main(args);
@@ -730,7 +730,7 @@ public class MatchTesting {
     }
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
@@ -746,7 +746,7 @@ public class MatchTesting {
     }
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature2() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Age")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("S")).arity(FiniteOrdinal.ofInteger(0)).assign()
@@ -761,7 +761,7 @@ public class MatchTesting {
     }
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createSignatureABC() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).assign()

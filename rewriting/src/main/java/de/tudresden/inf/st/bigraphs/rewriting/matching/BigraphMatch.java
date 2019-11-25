@@ -27,7 +27,7 @@ public interface BigraphMatch<B extends Bigraph<? extends Signature<?>>> {
      *
      * @return the identity link graph for the context
      */
-    Bigraph<? extends Signature<?>> getContextIdentity();
+    Bigraph<? extends Signature> getContextIdentity();
 
     /**
      * Returns the redex of the reaction rule.

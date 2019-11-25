@@ -29,7 +29,7 @@ import java.io.IOException;
  * @author Dominik Grzelak
  */
 public class BigrapherTransformationUnitTest {
-    private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     /**
      * bigrapher full -d ./test -f svg -s states -M 10 -t trans.svg -v test.big
@@ -111,7 +111,7 @@ public class BigrapherTransformationUnitTest {
     }
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()

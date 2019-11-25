@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.groupingBy;
  * @author Dominik Grzelak
  */
 public class RandomBigraphStatisticalMeasurements {
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
     void basic() throws IOException {
@@ -290,7 +290,7 @@ public class RandomBigraphStatisticalMeasurements {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -303,26 +303,26 @@ public class RandomBigraphStatisticalMeasurements {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignature(int n, float probOfPositiveArity) {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
                 .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();
 
         int floorNum = (int) Math.ceil(n * probOfPositiveArity);
         for (int i = 0; i < floorNum; i++) {
-            signatureBuilder = (DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>>) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(1)).assign();
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(1)).assign();
         }
         for (int i = floorNum; i < n; i++) {
-            signatureBuilder = (DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>>) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
         }
         S s = (S) signatureBuilder.create();
         ArrayList<C> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignaturePortVariation(int n, float probOfPositiveArity) {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
 
 //        char[] chars = IntStream.rangeClosed('A', 'Z')
 //                .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();
@@ -335,19 +335,19 @@ public class RandomBigraphStatisticalMeasurements {
 //            rand = rand == 0 ? 1 : rand;
 //            System.out.println(rand);
             String s = sequence.computeNext();
-            signatureBuilder = (DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>>) signatureBuilder.newControl()
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl()
                     .identifier(StringTypedName.of(String.valueOf(s)))
                     .arity(FiniteOrdinal.ofInteger(i)).assign();
         }
         for (int i = floorNum; i < n; i++) {
             String s = sequence.computeNext();
-            signatureBuilder = (DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>>) signatureBuilder
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder
                     .newControl().identifier(StringTypedName.of(String.valueOf(s)))
                     .arity(FiniteOrdinal.ofInteger(0)).assign();
         }
         S s = (S) signatureBuilder.create();
         ArrayList<C> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
     }
 }

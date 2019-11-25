@@ -42,7 +42,7 @@ Depending on the bigraph type, the factory will return specialized methods.
 
 ```java
 // create factory for pure bigraphs (signatures and concrete bigraph instances)
-PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 ```
 
 #### Signature and Bigraph Builder
@@ -51,14 +51,14 @@ The builder is responsible for instantiating and configuring concrete bigraph in
 depending on the specific _signature_.
 ```java
 // create signature
-DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
 signatureBuilder   
     .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
     .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(0)).assign()
     .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
 ;
 
-Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = signatureBuilder.create();
+DefaultDynamicSignature signature = signatureBuilder.create();
 // create a bigraph builder and supply the signature
 PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 BigraphEntity.OuterName a = builder.createOuterName("a");
@@ -81,7 +81,12 @@ bigraph creation and composition.
 To following usage assumes the import statement `import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*`.
 
 ```java
-DefaultDynamicSignature signature = ...; // create signature as above
+// create the signature
+DefaultDynamicSignature signature = pureSignatureBuilder()
+    .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
+    .newControl().identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
+    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
+    .create();
 
 // create two bigraphs
 PureBigraph bigraph1 = pureBuilder(signature)

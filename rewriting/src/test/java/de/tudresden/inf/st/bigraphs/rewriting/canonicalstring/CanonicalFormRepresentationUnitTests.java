@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class CanonicalFormRepresentationUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/";
 
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @BeforeAll
     static void setUp() {
@@ -556,7 +556,7 @@ public class CanonicalFormRepresentationUnitTests {
 
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createAlphabeticSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(5)).assign()
                 .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(5)).assign()
@@ -576,21 +576,21 @@ public class CanonicalFormRepresentationUnitTests {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignature(int n, float probOfPositiveArity) {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
                 .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();
 
         int floorNum = (int) Math.ceil(n * probOfPositiveArity);
         for (int i = 0; i < floorNum; i++) {
-            signatureBuilder = (DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>>) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(1)).assign();
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(1)).assign();
         }
         for (int i = floorNum; i < n; i++) {
-            signatureBuilder = (DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>>) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
         }
         S s = (S) signatureBuilder.create();
         ArrayList<C> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
     }
 }

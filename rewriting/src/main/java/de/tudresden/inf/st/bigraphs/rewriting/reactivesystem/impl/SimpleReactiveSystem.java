@@ -8,6 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
@@ -35,7 +36,7 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<PureBigraph> {
         try {
             Bigraph outerBigraph = factory
                     .asBigraphOperator(match.getContext())
-                    .juxtapose(match.getContextIdentity())
+                    .juxtapose((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
 //            System.out.println(outerBigraph);
 //            GraphvizConverter.toPNG(outerBigraph,
@@ -94,7 +95,7 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<PureBigraph> {
             //NOTE: juxtapose changed to parallelProduct (check if this is right)
             Bigraph outerBigraph = factory
                     .asBigraphOperator(match.getContext())
-                    .parallelProduct(match.getContextIdentity())
+                    .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
             try {
                 BigraphGraphvizExporter.toPNG(outerBigraph,

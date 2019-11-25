@@ -34,7 +34,7 @@ import static guru.nidi.graphviz.model.Factory.*;
 public class VisualizationUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/graphviz/";
 
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @BeforeAll
     static void setUp() {
@@ -233,7 +233,7 @@ public class VisualizationUnitTests {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

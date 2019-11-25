@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphArtifactTests {
 
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
     private final static String TARGET_TEST_EXPORT_PATH = "src/test/resources/ecore-test-models/";
 
@@ -149,7 +149,7 @@ public class BigraphArtifactTests {
         PureBigraph F = builderForF.createBigraph();
 
         BigraphArtifacts.exportAsInstanceModel(F,
-                new FileOutputStream(TARGET_TEST_EXPORT_PATH + "test-1.xmi"));
+                new FileOutputStream(TARGET_TEST_EXPORT_PATH + "test-1.xmi"), "test-1.ecore");
         BigraphArtifacts.exportAsMetaModel(F,
                 new FileOutputStream(TARGET_TEST_EXPORT_PATH + "test-1.ecore"));
     }
@@ -198,7 +198,7 @@ public class BigraphArtifactTests {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

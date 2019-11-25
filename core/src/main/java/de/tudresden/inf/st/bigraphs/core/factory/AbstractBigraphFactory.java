@@ -36,23 +36,23 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
      *
      * @return a pure bigraph factory
      */
-    public static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> createPureBigraphFactory() {
-        return new PureBigraphFactory<>();
+    public static PureBigraphFactory createPureBigraphFactory() {
+        return new PureBigraphFactory();
     }
 
-    /**
-     * Create a pure bigraph factory
-     * <p>
-     * //     * @param nameTypeClass    class of the control's labels
-     * //     * @param ordinalTypeClass class of the control's arity
-     *
-     * @param <NT> type of the control's labels
-     * @param <FT> type of the control's arity
-     * @return a pure bigraph factory with the provided types
-     */
-    public static <NT extends NamedType, FT extends Number> PureBigraphFactory<NT, FiniteOrdinal<FT>> createPureBigraphFactory(Class<NT> nameTypeClass, Class<FT> ordinalTypeClass) {
-        return new PureBigraphFactory<NT, FiniteOrdinal<FT>>();
-    }
+//    /**
+//     * Create a pure bigraph factory
+//     * <p>
+//     * //     * @param nameTypeClass    class of the control's labels
+//     * //     * @param ordinalTypeClass class of the control's arity
+//     *
+//     * @param <NT> type of the control's labels
+//     * @param <FT> type of the control's arity
+//     * @return a pure bigraph factory with the provided types
+//     */
+//    public static <NT extends NamedType, FT extends Number> PureBigraphFactory createPureBigraphFactory(Class<NT> nameTypeClass, Class<FT> ordinalTypeClass) {
+//        return new PureBigraphFactory();
+//    }
 
     /**
      * Creates a builder for creating signatures.

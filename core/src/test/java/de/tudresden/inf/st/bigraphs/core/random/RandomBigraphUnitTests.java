@@ -37,7 +37,7 @@ public class RandomBigraphUnitTests {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = pure().createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = pure().createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

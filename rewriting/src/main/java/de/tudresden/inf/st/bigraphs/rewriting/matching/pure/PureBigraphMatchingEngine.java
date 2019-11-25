@@ -417,7 +417,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
         // Compute the context, and the parameters
         Map<Integer, Bigraph> parameters = new LinkedHashMap<>();
-        PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> pureBigraphFactory =
+        PureBigraphFactory pureBigraphFactory =
                 AbstractBigraphFactory.createPureBigraphFactory();
 
         //when no params are necessary then a barren is all that is needed

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Dominik Grzelak
  */
 public class ReactiveSystemTests {
-    private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
     void simulation_test_wip() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
@@ -290,7 +290,7 @@ public class ReactiveSystemTests {
     }
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()

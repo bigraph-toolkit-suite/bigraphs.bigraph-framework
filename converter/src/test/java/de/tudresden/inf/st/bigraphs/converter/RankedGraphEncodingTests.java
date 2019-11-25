@@ -41,7 +41,7 @@ import java.util.*;
  */
 public class RankedGraphEncodingTests {
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/";
-    private PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
     void name2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
@@ -172,7 +172,7 @@ public class RankedGraphEncodingTests {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("M")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("K")).arity(FiniteOrdinal.ofInteger(1)).assign()

@@ -42,9 +42,9 @@ public class BigraphSignatureTest {
         defaultBuilder.newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign();
         Signature<Control<StringTypedName, FiniteOrdinal<Integer>>> defaultSignature = defaultBuilder.create();
         // Create signature with dynamic controls
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Long>> dynamicBuilder = new DynamicSignatureBuilder<>();
+        DynamicSignatureBuilder dynamicBuilder = new DynamicSignatureBuilder();
         dynamicBuilder
-                .newControl().arity(FiniteOrdinal.ofLong(1)).identifier(StringTypedName.of("Spool")).assign();
+                .newControl().arity(FiniteOrdinal.ofInteger(1)).identifier(StringTypedName.of("Spool")).assign();
         Signature<Control<StringTypedName, FiniteOrdinal<Long>>> controlSignature = dynamicBuilder.create();
 
 

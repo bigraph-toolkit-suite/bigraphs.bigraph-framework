@@ -29,7 +29,7 @@ import java.io.IOException;
  * @author Dominik Grzelak
  */
 public class BigMcTransformationUnitTest {
-    private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     /**
      *
@@ -154,7 +154,7 @@ public class BigMcTransformationUnitTest {
 
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Age")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("S")).arity(FiniteOrdinal.ofInteger(0)).assign()

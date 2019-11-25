@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ElementaryBigraphTests {
-    private static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
     void barren() {
@@ -151,7 +151,7 @@ public class ElementaryBigraphTests {
 
         for (int arity = 0; arity < maxArityCount; arity++) {
             System.out.println("Create Discrete Ion " + nodeName + " with artiy " + arity);
-            DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder =
+            DynamicSignatureBuilder signatureBuilder =
                     factory.createSignatureBuilder();
             Signature signature = signatureBuilder
                     .newControl().identifier(controlName).arity(FiniteOrdinal.ofInteger(arity)).assign()

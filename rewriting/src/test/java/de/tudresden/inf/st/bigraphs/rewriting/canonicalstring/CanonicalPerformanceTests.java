@@ -11,11 +11,9 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.rewriting.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -103,7 +101,7 @@ public class CanonicalPerformanceTests {
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignature(int n, float probOfPositiveArity, int maxArity) {
         ;
-        DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = pure().createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = pure().createSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
                 .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();
@@ -111,15 +109,15 @@ public class CanonicalPerformanceTests {
         int floorNum = (int) Math.ceil(n * probOfPositiveArity);
         for (int i = 0; i < floorNum; i++) {
             int ar = new Random().nextInt(maxArity) + 1;
-            signatureBuilder = (DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>>) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(ar)).assign();
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(ar)).assign();
         }
         for (int i = floorNum; i < n; i++) {
-            signatureBuilder = (DynamicSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>>) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
         }
         S s = (S) signatureBuilder.create();
         ArrayList<C> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
     }
 
 

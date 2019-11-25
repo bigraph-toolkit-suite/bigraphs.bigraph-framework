@@ -62,19 +62,18 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return self();
     }
 
-    public abstract <S extends Signature> S createSignature(Iterable<? extends Control> controls); //, Class<S> type);
+    public abstract Signature createSignature(Iterable<? extends Control> controls);
 
     /**
      * Creates an empty signature, meaning that the control set is empty.<br/>
      * Needed for the interaction of elementary bigraphs and user-defined bigraphs.
      *
-     * @param <S>
+//     * @param <S>
      * @return an empty signature of type {@code S}.
      */
     public abstract <S extends Signature> S createSignature();
 
 //    protected  abstract <S extends Signature> Class<S> getSignatureClass();
-
     @SuppressWarnings("unchecked")
     final B self() {
         return (B) this;
@@ -84,7 +83,7 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return this.controls;
     }
 
-    public <CT extends Control<NT, FO>, S extends Signature<CT>> S create() {
-        return createSignature(getControls()); //, getSignatureClass());
-    }
+    public <S extends Signature> S create() {
+        return (S) createSignature(getControls()); //, getSignatureClass());
+    } //CT extends Control<NT, FO>,
 }

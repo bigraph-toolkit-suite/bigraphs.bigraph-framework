@@ -25,9 +25,9 @@ public class DefaultSignatureBuilder<NT extends NamedType, FO extends FiniteOrdi
     }
 
     @Override
-    public <S extends Signature> S createSignature(Iterable<? extends Control> controls) {
+    public BasicSignature createSignature(Iterable<? extends Control> controls) {
 //        Collections.emptyList().addAll(controls);
-        return (S) new BasicSignature((Set<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>>) controls);
+        return new BasicSignature((Set<DefaultControl<? extends NamedType, ? extends FiniteOrdinal>>) controls);
     }
 
     @Override

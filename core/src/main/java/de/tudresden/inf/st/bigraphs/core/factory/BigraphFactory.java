@@ -5,6 +5,8 @@ import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 
@@ -21,15 +23,19 @@ public final class BigraphFactory {
         return (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
     }
 
+    public static DynamicSignatureBuilder pureSignatureBuilder() {
+        return (DynamicSignatureBuilder) FactoryCreationContext.createSignatureBuilder(PureBigraph.class);
+    }
+
     /**
      * Create a pure bigraph factory with default types for the control's label ({@link StringTypedName}) and
      * arity ({@link FiniteOrdinal<Integer>}.
      *
      * @return a pure bigraph factory
      */
-    public static PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>> pure() {
+    public static PureBigraphFactory pure() {
         FactoryCreationContext.begin(FactoryCreationContext.createPureBigraphFactory());
-        return (PureBigraphFactory<StringTypedName, FiniteOrdinal<Integer>>) FactoryCreationContext.current().get().getFactory();
+        return (PureBigraphFactory) FactoryCreationContext.current().get().getFactory();
     }
 
     public static void end() {

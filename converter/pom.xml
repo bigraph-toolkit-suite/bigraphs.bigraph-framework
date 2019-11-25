@@ -25,6 +25,17 @@
         <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
             <artifactId>bigraph-rewriting</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                    <artifactId>bigraph-visualization</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-visualization</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

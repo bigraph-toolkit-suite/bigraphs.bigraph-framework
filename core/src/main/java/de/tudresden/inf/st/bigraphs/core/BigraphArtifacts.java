@@ -6,12 +6,15 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
 import java.io.File;
@@ -52,7 +55,6 @@ public class BigraphArtifacts {
         Resource resource = resourceSet.createResource(uri);
         try {
             resource.load(Collections.EMPTY_MAP);
-//            System.out.println("Model loaded");
             return (EPackage) resource.getContents().get(0);
         } catch (
                 IOException e) {
@@ -138,7 +140,11 @@ public class BigraphArtifacts {
      */
     public static void exportAsInstanceModel(Bigraph<?> bigraph, OutputStream outputStream) throws IOException {
 //        Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph); // old method
-        writeDynamicInstanceModel(bigraph.getModelPackage(), bigraph.getModel(), outputStream);
+        writeDynamicInstanceModel(bigraph.getModelPackage(), bigraph.getModel(), outputStream, null);
+    }
+
+    public static void exportAsInstanceModel(Bigraph<?> bigraph, OutputStream outputStream, String newNamespaceLocation) throws IOException {
+        writeDynamicInstanceModel(bigraph.getModelPackage(), bigraph.getModel(), outputStream, newNamespaceLocation);
     }
 
     /**
@@ -152,33 +158,40 @@ public class BigraphArtifacts {
         writeDynamicMetaModel(bigraph.getModelPackage(), outputStream);
     }
 
-    private static void writeDynamicInstanceModel(EPackage metaModelPackage, EObject instanceModel, OutputStream outputStream) throws IOException {
-        writeDynamicInstanceModel(metaModelPackage, Collections.singleton(instanceModel), outputStream);
+    private static void writeDynamicInstanceModel(EPackage metaModelPackage, EObject instanceModel, OutputStream outputStream, String newNamespaceLocation) throws IOException {
+        writeDynamicInstanceModel(metaModelPackage, Collections.singleton(instanceModel), outputStream, newNamespaceLocation);
     }
 
-    private static void writeDynamicInstanceModel(EPackage ePackage, Collection<EObject> objects, OutputStream outputStream) throws IOException {
+    private static void writeDynamicInstanceModel(EPackage ePackage, Collection<EObject> objects, OutputStream outputStream, String newNamespaceLocation) throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         final ResourceSet resourceSet = new ResourceSetImpl();
-//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceImpl());
+
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
-//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
         final Resource outputRes = resourceSet.createResource(URI.createFileURI(ePackage.getName() + ".xmi")); //
         // add our new package to resource contents
         objects.forEach(x -> outputRes.getContents().add(x));
 //        outputRes.getContents().add(ePackage); //(!) then the meta model is also included in the instance model
         outputRes.getResourceSet().getPackageRegistry().put(ePackage.getNsURI(), ePackage);
 
-        /*
-         * Save the resource using OPTION_SCHEMA_LOCATION save option to produce
-         * xsi:schemaLocation attribute in the document
-         */
-//        org.eclipse.emf.ecore.xmi.XMLResource.OPTION_PROCESS_DANGLING_HREF
         Map<String, Object> options = new HashMap<>();
         options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, "THROW"); //see: https://books.google.de/books?id=ff-9ZYhvPwwC&pg=PA317&lpg=PA317&dq=emf+OPTION_PROCESS_DANGLING_HREF&source=bl&ots=yBXkH3qSpD&sig=ACfU3U3uEGX_DCnDa2DAnjRboybhyGsKng&hl=en&sa=X&ved=2ahUKEwiCg-vI7_DgAhXDIVAKHU1PAIgQ6AEwBHoECAYQAQ#v=onepage&q=emf%20OPTION_PROCESS_DANGLING_HREF&f=false
         options.put(XMLResource.OPTION_ENCODING, DEFAULT_ENCODING);
-        outputRes.save(outputStream, options);
-
+        URI oldURI = ePackage.eResource().getURI();
+        if (Objects.nonNull(newNamespaceLocation)) {
+            ePackage.eResource().setURI(URI.createURI(newNamespaceLocation));
+            resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
+            // Uusing OPTION_SCHEMA_LOCATION save option to produce "xsi:schemaLocation" attribute in the XMI document
+            options.put(XMIResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
+        }
+        try {
+            outputRes.save(outputStream, options);
+        } finally {
+            if (Objects.nonNull(newNamespaceLocation)) {
+                ePackage.eResource().setURI(oldURI);
+            }
+        }
     }
 
     private static void writeDynamicMetaModel(EPackage ePackage, OutputStream outputStream) throws IOException {

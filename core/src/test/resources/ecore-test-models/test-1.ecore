@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="F" nsURI="http://www.example.org" nsPrefix="sample">
   <eClassifiers xsi:type="ecore:EClass" name="BPlace" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bChild" upperBound="-1" eType="//BPlace" containment="true" eOpposite="//BPlace/bPrnt"/>
