@@ -38,7 +38,7 @@ public class CanonicalPerformanceTests {
         RandomBigraphGenerator.LinkStrategy linkStrategy = RandomBigraphGenerator.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE;
 
         String p = "/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/A2time-" + linkStrategy + ".data";
-        measureTimeComplexity(new float[]{100f, 1000f, 10f, 0.1f}, p, randomSignature, linkStrategy);
+        measureTimeComplexity(new float[]{100f, 1000f, 10f, 0.1f}, p, randomSignature, linkStrategy, null);
     }
 
     @Test
@@ -55,13 +55,52 @@ public class CanonicalPerformanceTests {
 //        );
 //        System.out.println(BigraphCanonicalForm.createInstance().bfcs(g0));
 
-        String p = "/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/D2time-" + linkStrategy + ".data";
-        measureTimeComplexity(new float[]{100f, 1000f, 10f, 0.1f}, p, randomSignature, linkStrategy);
+        String filePath = "/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/D2time-" + linkStrategy + ".data";
+        measureTimeComplexity(new float[]{100f, 1000f, 10f, 0.1f}, filePath, randomSignature, linkStrategy, null);
+    }
+
+    @Test
+    void multiParam_timeComplexity_test() throws IOException {
+        String filePath = "/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/results0.data";
+        // Hängt die komplexität mit der anzahl der links ab?
+        String suffix = "";
+        float p = 0.0f;
+        int maxArity = 2;
+
+        StringBuilder results = new StringBuilder();
+        for (int a = 1; a < maxArity; a++) {
+            suffix = "ar" + a;
+            DefaultDynamicSignature signature = createRandomSignatureFixedArity(6, 1f, a);
+            RandomBigraphGenerator.LinkStrategy linkStrategy = RandomBigraphGenerator.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE;
+            String s = measureTimeComplexity(new float[]{1000f, 10000f, 100f, p}, signature, linkStrategy, suffix);
+            results.append(s).append("\n");
+            System.out.println("Created results for ar=" + a);
+        }
+
+        if (Objects.nonNull(filePath)) {
+            Files.write(
+                    Paths.get(filePath),
+                    results.toString().getBytes());
+        }
+
     }
 
     public void measureTimeComplexity(
-            float[] params, String filePath, DefaultDynamicSignature randomSignature, RandomBigraphGenerator.LinkStrategy linkStrategy
+            float[] params, String filePath, DefaultDynamicSignature randomSignature, RandomBigraphGenerator.LinkStrategy linkStrategy, String suffix
     ) throws IOException {
+        if (suffix == null) suffix = "";
+        String values = measureTimeComplexity(params, randomSignature, linkStrategy, suffix);
+
+        if (Objects.nonNull(filePath)) {
+            Files.write(
+                    Paths.get(filePath),
+                    values.toString().getBytes());
+        }
+    }
+
+    public String measureTimeComplexity(
+            float[] params, DefaultDynamicSignature randomSignature, RandomBigraphGenerator.LinkStrategy linkStrategy, String suffix
+    ) {
         Objects.requireNonNull(params, "Parameters must not be null");
         if (params.length != 4) {
             throw new RuntimeException("Length of parameter array is not correct.");
@@ -83,7 +122,9 @@ public class CanonicalPerformanceTests {
 //            System.out.println("Time taken: " + elapsed + ", nodes=" + generate.getNodes().size());
 //            System.out.println(generate.getEdges().size());
 //            System.out.println(bfcs);
-            values.append(numOfNodes).append(',').append(elapsed).append("\n");
+            values.append(numOfNodes).append(',').append(elapsed).append(',').append(suffix).append("\n");
+            if (numOfNodes % (stepSize * 5) == 0)
+                System.out.println("\tCreated values for n=" + numOfNodes + "/" + end);
         }
         if (values.charAt(values.length() - 1) == ',') {
             values.deleteCharAt(values.length() - 1);
@@ -91,11 +132,7 @@ public class CanonicalPerformanceTests {
 //        values.append("\n");
 //        System.out.println(values.toString());
 
-        if (Objects.nonNull(filePath)) {
-            Files.write(
-                    Paths.get(filePath),
-                    values.toString().getBytes());
-        }
+        return values.toString();
     }
 
 
@@ -110,6 +147,26 @@ public class CanonicalPerformanceTests {
         for (int i = 0; i < floorNum; i++) {
             int ar = new Random().nextInt(maxArity) + 1;
             signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(ar)).assign();
+        }
+        for (int i = floorNum; i < n; i++) {
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
+        }
+        S s = (S) signatureBuilder.create();
+        ArrayList<C> cs = new ArrayList<>(s.getControls());
+        Collections.shuffle(cs);
+        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+    }
+
+    private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignatureFixedArity(int n, float probOfPositiveArity, int arity) {
+        ;
+        DynamicSignatureBuilder signatureBuilder = pure().createSignatureBuilder();
+
+        char[] chars = IntStream.rangeClosed('A', 'Z')
+                .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();
+
+        int floorNum = (int) Math.ceil(n * probOfPositiveArity);
+        for (int i = 0; i < floorNum; i++) {
+            signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(arity)).assign();
         }
         for (int i = floorNum; i < n; i++) {
             signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();

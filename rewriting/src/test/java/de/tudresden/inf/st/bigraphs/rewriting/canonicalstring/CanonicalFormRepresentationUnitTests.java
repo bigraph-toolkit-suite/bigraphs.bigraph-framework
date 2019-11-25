@@ -410,7 +410,7 @@ public class CanonicalFormRepresentationUnitTests {
             Assertions.assertEquals(bfcs, bfcs2);
 
             AtomicInteger cnt2 = new AtomicInteger(0);
-            long count2 = Stream.of(createSampleBigraphB1(),createSampleBigraphB2())//
+            long count2 = Stream.of(createSampleBigraphB1(), createSampleBigraphB2())//
                     .peek(x -> {
                         try {
                             BigraphGraphvizExporter.toPNG(x,
@@ -522,6 +522,43 @@ public class CanonicalFormRepresentationUnitTests {
             return b1.createBigraph();
         }
 
+
+        // for the paper some example bigraphs
+        @Test
+        void name() throws InvalidConnectionException, LinkTypeNotExistsException {
+            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> b2 = factory.createBigraphBuilder(signature);
+            BigraphEntity.InnerName x1 = b1.createInnerName("x1");
+            BigraphEntity.InnerName x2 = b1.createInnerName("x2");
+            BigraphEntity.InnerName x3 = b1.createInnerName("x3");
+            BigraphEntity.InnerName x4 = b1.createInnerName("x4");
+            BigraphEntity.InnerName x11 = b2.createInnerName("x1");
+            BigraphEntity.InnerName x21 = b2.createInnerName("x2");
+            BigraphEntity.InnerName x31 = b2.createInnerName("x3");
+            BigraphEntity.InnerName x41 = b2.createInnerName("x4");
+            b1.createRoot()
+                    .addChild("B").withNewHierarchy().addChild("F").linkToInner(x1).linkToInner(x2).addChild("D").linkToInner(x1).addChild("E").linkToInner(x2).goBack()
+                    .addChild("B").withNewHierarchy().addChild("D").linkToInner(x3).addChild("E").linkToInner(x3).linkToInner(x4).addChild("F").linkToInner(x4).goBack()
+            ;
+            b1.closeInnerNames(x1, x2, x3, x4);
+
+            b2.createRoot()
+                    .addChild("B").withNewHierarchy().addChild("F").linkToInner(x11).addChild("D").linkToInner(x11).linkToInner(x21).addChild("E").linkToInner(x21).goBack()
+                    .addChild("B").withNewHierarchy().addChild("D").linkToInner(x31).addChild("E").linkToInner(x31).linkToInner(x41).addChild("F").linkToInner(x41).goBack()
+            ;
+            b2.closeInnerNames(x11, x21, x31, x41);
+
+            PureBigraph bigraph = b1.createBigraph();
+            PureBigraph bigraph1 = b2.createBigraph();
+
+            String bfcs = BigraphCanonicalForm.createInstance().bfcs(bigraph);
+            String bfcs1 = BigraphCanonicalForm.createInstance().bfcs(bigraph1);
+            System.out.println(bfcs);
+            System.out.println(bfcs1);
+
+            assertNotEquals(bfcs, bfcs1);
+        }
 
         public PureBigraph createFirstLG() throws Exception {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
