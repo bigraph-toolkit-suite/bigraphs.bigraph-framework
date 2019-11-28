@@ -262,8 +262,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                                         }
                                                     })
                                                     .sorted()
-                                                    .forEachOrdered(n -> sb.append(n).append("|"));
-                                            sb.deleteCharAt(sb.length() - 1);
+                                                    .forEachOrdered(n -> sb.append(n)); //.append("|")
+//                                            sb.deleteCharAt(sb.length() - 1);
                                             sb.append("}");
                                         }
                                     });

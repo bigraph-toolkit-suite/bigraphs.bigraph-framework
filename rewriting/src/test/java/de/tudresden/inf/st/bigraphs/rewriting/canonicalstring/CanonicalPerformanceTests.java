@@ -59,6 +59,7 @@ public class CanonicalPerformanceTests {
         measureTimeComplexity(new float[]{100f, 1000f, 10f, 0.1f}, filePath, randomSignature, linkStrategy, null);
     }
 
+    //TODO: rewrite also inner and outer names with x and y (e < x < y und y taucht nur am ende auf)
     @Test
     void multiParam_timeComplexity_test() throws IOException {
         String filePath = "/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/results0.data";
