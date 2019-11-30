@@ -110,7 +110,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
     }
 
     /**
-     * Get the number of all in- and out-going edges of a node within the place graph. <br/>
+     * Get the number of all in- and out-going edges of a node within the place graph. <br>
      * Sites are included in the count.
      *
      * @param nodeEntity the node

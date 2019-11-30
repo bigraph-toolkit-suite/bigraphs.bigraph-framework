@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -392,7 +393,7 @@ public class CanonicalFormRepresentationUnitTests {
     class LinkGraphCanonicalFormTest {
 
         @Test
-        void simple_canonical_form_with_links_test() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {
+        void simple_canonical_form_with_links_test() throws InvalidConnectionException, TypeNotExistsException, IOException {
             Bigraph l1 = createSampleBigraph_with_Links();
             Bigraph l2 = createSampleBigraph_with_Links_v2();
             BigraphGraphvizExporter.toPNG(l1,
@@ -466,7 +467,7 @@ public class CanonicalFormRepresentationUnitTests {
             return builder.closeAllInnerNames().createBigraph();
         }
 
-        public Bigraph createSampleBigraph_with_Links() throws InvalidConnectionException, LinkTypeNotExistsException {
+        public Bigraph createSampleBigraph_with_Links() throws InvalidConnectionException, TypeNotExistsException {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
 
@@ -494,7 +495,7 @@ public class CanonicalFormRepresentationUnitTests {
             return b1.createBigraph();
         }
 
-        public Bigraph createSampleBigraph_with_Links_v2() throws InvalidConnectionException, LinkTypeNotExistsException {
+        public Bigraph createSampleBigraph_with_Links_v2() throws InvalidConnectionException, TypeNotExistsException {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
 

@@ -29,7 +29,7 @@ public final class BigraphFactory {
 
     /**
      * Create a pure bigraph factory with default types for the control's label ({@link StringTypedName}) and
-     * arity ({@link FiniteOrdinal<Integer>}.
+     * arity ({@link FiniteOrdinal}).
      *
      * @return a pure bigraph factory
      */

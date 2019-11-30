@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
@@ -128,7 +129,7 @@ public class BigraphArtifactTests {
 
     // change nsURI in to "http:///ecore_file_name.ecore" and nsPrefix into "ecore_file_name" after
     @Test
-    void export_sample_model() throws IOException, InvalidConnectionException, LinkTypeNotExistsException {
+    void export_sample_model() throws IOException, InvalidConnectionException, TypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         EMetaModelData modelData = EMetaModelData.builder().setName("F").setNsUri("http://www.example.org").setNsPrefix("sample").create();
         PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature, modelData);
@@ -210,7 +211,7 @@ public class BigraphArtifactTests {
         return (S) signatureBuilder.create();
     }
 
-    public Bigraph createSampleBigraph() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createSampleBigraph() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         EMetaModelData metaModelData = new EMetaModelData.MetaModelDataBuilder()
                 .setName("sampleModel")

@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphBuilderSupport;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -8,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFailedException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.common.util.EList;
@@ -23,7 +23,8 @@ import java.util.Map;
 /**
  * A generic mutable builder intended to be used for all bigraph types
  *
- * @param <S>
+ * @param <S> type of the signature.
+ * @author Dominik Grzelak
  */
 public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
 
@@ -102,7 +103,7 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
     public void connectNodeToOuterName(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.OuterName outerName) {
         try {
             super.connectNodeToOuterName(node1, outerName);
-        } catch (LinkTypeNotExistsException | InvalidArityOfControlException e) {
+        } catch (TypeNotExistsException | InvalidArityOfControlException e) {
             e.printStackTrace();
         }
     }
@@ -130,13 +131,13 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
     }
 
     public EObject createInstanceModel(EPackage loadedEPackage,
-                                          S signature,
-                                          Map<Integer, BigraphEntity.RootEntity> availableRoots,
-                                          Map<Integer, BigraphEntity.SiteEntity> availableSites,
-                                          Map<String, BigraphEntity.NodeEntity> availableNodes,
-                                          Map<String, BigraphEntity.InnerName> availableInnerNames,
-                                          Map<String, BigraphEntity.OuterName> availableOuterNames,
-                                          Map<String, BigraphEntity.Edge> availableEdges) {
+                                       S signature,
+                                       Map<Integer, BigraphEntity.RootEntity> availableRoots,
+                                       Map<Integer, BigraphEntity.SiteEntity> availableSites,
+                                       Map<String, BigraphEntity.NodeEntity> availableNodes,
+                                       Map<String, BigraphEntity.InnerName> availableInnerNames,
+                                       Map<String, BigraphEntity.OuterName> availableOuterNames,
+                                       Map<String, BigraphEntity.Edge> availableEdges) {
         InstanceParameter meta = new InstanceParameter(loadedEPackage,
                 signature, availableRoots, availableSites,
                 availableNodes, availableInnerNames, availableOuterNames, availableEdges);

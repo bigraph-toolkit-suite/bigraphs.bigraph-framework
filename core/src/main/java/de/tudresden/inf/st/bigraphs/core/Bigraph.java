@@ -248,7 +248,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     boolean isParentOf(BigraphEntity node, BigraphEntity possibleParent);
 
     /**
-     * Returns the set of children of a given node (including sites). <br/>
+     * Returns the set of children of a given node (including sites). <br>
      * If the node has no children, then an empty set is returned.
      *
      * @param node the node whose children should be returned

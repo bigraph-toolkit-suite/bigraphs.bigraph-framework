@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
@@ -39,7 +40,7 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
-    void compose_test_0() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
+    void compose_test_0() throws InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
         PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature_compose_test_0());
         BigraphEntity.OuterName fromD2 = builderReactum.createOuterName("fromD");
         BigraphEntity.OuterName fromS2 = builderReactum.createOuterName("fromS");
@@ -106,7 +107,7 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
-    void compose_test() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, ControlIsAtomicException {
+    void compose_test() throws InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
@@ -145,7 +146,7 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
-    void parallelProduct() throws InvalidConnectionException, LinkTypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
+    void parallelProduct() throws InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);

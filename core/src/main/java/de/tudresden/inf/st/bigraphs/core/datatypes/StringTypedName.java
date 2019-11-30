@@ -4,8 +4,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Default implementation for an element of a name set.
- * An element of such a name set is represent as a string.
+ * Default implementation for an element of a name set. An element of such a name set is represent as a string.
+ * This class is used to represent the type of the control labels of a signature (see {@link de.tudresden.inf.st.bigraphs.core.Signature}).
  *
  * @author Dominik Grzelak
  */

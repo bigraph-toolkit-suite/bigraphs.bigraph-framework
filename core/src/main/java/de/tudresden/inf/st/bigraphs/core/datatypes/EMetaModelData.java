@@ -65,7 +65,7 @@ public class EMetaModelData {
         /**
          * Creates an instance of {@link EMetaModelData}.
          * <p>
-         * When only {@code name} is set, the other values are being changed to: <br/>
+         * When only {@code name} is set, the other values are being changed to: <br>
          * nsURI := "http:///{@code name}.ecore", nsPrefix := "{@code name}".
          *
          * @return a meta model data object with the provided parameters

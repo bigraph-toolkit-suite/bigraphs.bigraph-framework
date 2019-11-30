@@ -8,6 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -35,7 +36,7 @@ public class BigrapherTransformationUnitTest {
      * bigrapher full -d ./test -f svg -s states -M 10 -t trans.svg -v test.big
      */
     @Test
-    void name() throws InvalidConnectionException, LinkTypeNotExistsException, InvalidReactionRuleException, IOException {
+    void name() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException {
         SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
 
         PureBigraph agent_a = createAgent_A();
@@ -53,7 +54,7 @@ public class BigrapherTransformationUnitTest {
         fout.close();
     }
 
-    public static PureBigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
+    public static PureBigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
@@ -83,7 +84,7 @@ public class BigrapherTransformationUnitTest {
         return builder.createBigraph();
     }
 
-    public static ReactionRule<PureBigraph> createReactionRule_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public static ReactionRule<PureBigraph> createReactionRule_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");

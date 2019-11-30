@@ -22,8 +22,8 @@ public class DefaultDynamicControl<NT extends NamedType, FO extends FiniteOrdina
     /**
      * Status will be set to {@link ControlKind#ACTIVE}
      *
-     * @param name
-     * @param arity
+     * @param name  the label of the control
+     * @param arity the arity of the control
      */
     protected DefaultDynamicControl(NT name, FO arity) {
         this(name, arity, ControlKind.ACTIVE);

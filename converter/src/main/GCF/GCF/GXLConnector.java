@@ -240,7 +240,7 @@ public class GXLConnector extends Object {
     }
 
     /**
-     * Calls the "create<nodeName>"-method of the currently opened GXL construct.
+     * Calls the {@literal create"<nodeName>"()}-method of the currently opened GXL construct.
      */
     public void create(String nodeName) {
 
@@ -321,7 +321,7 @@ public class GXLConnector extends Object {
 
     /**
      * Calls the close() method of the currently opened GXL construct and
-     * the close<nodeName>() method of the parent construct.
+     * the {@literal close"<nodeName>"()} method of the parent construct.
      */
     public void close(String nodeName) {
         // call the close() method of the current GXL construct

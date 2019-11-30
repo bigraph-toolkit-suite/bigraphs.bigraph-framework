@@ -8,6 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -40,7 +41,7 @@ public class RouteFinding {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/";
 
     @Test
-    void name() throws InvalidConnectionException, LinkTypeNotExistsException, IOException, InvalidReactionRuleException {
+    void name() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
         BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
                 true,
@@ -88,7 +89,7 @@ public class RouteFinding {
         reactiveSystem.computeTransitionSystem(map, opts, Collections.singleton(predicate));
     }
 
-    private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, LinkTypeNotExistsException {
+    private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
 
         BigraphEntity.OuterName p0 = builder.createOuterName("p0");
@@ -127,7 +128,7 @@ public class RouteFinding {
     /**
      * react r1 = Left.S | Right.S -> Left | Right;
      */
-    public static ReactionRule<PureBigraph> createReactionRule() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public static ReactionRule<PureBigraph> createReactionRule() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
 
@@ -157,7 +158,7 @@ public class RouteFinding {
         return rr;
     }
 
-    private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, LinkTypeNotExistsException {
+    private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
 
         BigraphEntity.OuterName from = builder.createOuterName("from");

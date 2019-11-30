@@ -26,8 +26,8 @@ import java.util.stream.IntStream;
  * <li><i>gamma</i><sub>m,n</sub></li>
  * </ul>
  * <p>
- * By that a special placing called merge_m: m -> 1 can be derived and is implemented here for
- * convenience. merge_0 = 1, merge_1 = id_1, merge_2 = join, hence, merge_{m+1} = join o (id_1 + merge_m).
+ * By that a special placing called {@literal merge_m: m -> 1} can be derived and is implemented here for
+ * convenience. merge_0 = 1, merge_1 = id_1, merge_2 = join, hence, {@literal merge_{m+1} = join o (id_1 + merge_m)}.
  */
 public class Placings<S extends Signature> implements Serializable {
     private volatile S emptySignature;
@@ -88,7 +88,7 @@ public class Placings<S extends Signature> implements Serializable {
      * Create an "equally distributed permutation", similiar to an identity place graph.
      * Each site will be mapped exactly to one root where the indices match.
      *
-     * @param n number of sites respectively roots mapped to each other n_i -> n_i, i in 1..n
+     * @param n number of sites respectively roots mapped to each other {@literal n_i -> n_i, i in 1..n}
      * @return an "equally distributed permutation"
      */
     public Placings<S>.Permutation permutation(int n) {
@@ -231,7 +231,7 @@ public class Placings<S extends Signature> implements Serializable {
     }
 
     /**
-     * A merge maps m sites to a single root where m > 0. Otherwise merge_0 = 1
+     * A merge maps m sites to a single root where {@literal m  > 0}. Otherwise {@literal merge_0 = 1}.
      */
     public class Merge extends ElementaryBigraph<S> {
         private final BigraphEntity.RootEntity root;

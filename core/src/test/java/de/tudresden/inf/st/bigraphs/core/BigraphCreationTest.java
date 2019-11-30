@@ -400,9 +400,9 @@ public class BigraphCreationTest {
 
         @Test
         void makeGround() throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
-            DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Long>> signatureBuilder = new DefaultSignatureBuilder<>();
+            DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = new DefaultSignatureBuilder<>();
             signatureBuilder
-                    .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofLong(2)).assign();
+                    .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign();
 //            Signature signature2 = signatureBuilder.createSignature();
 //            builder.createRoot().addChild(signature2.getControlByName("Printer"));
 

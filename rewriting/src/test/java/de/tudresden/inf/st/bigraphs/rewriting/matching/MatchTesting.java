@@ -403,7 +403,7 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public Bigraph createAgent_model_test_4() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createAgent_model_test_4() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         DefaultDynamicSignature signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -432,7 +432,7 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public Bigraph createRedex_model_test_4() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createRedex_model_test_4() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         DefaultDynamicSignature signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
@@ -450,7 +450,7 @@ public class MatchTesting {
     }
 
 
-    public Bigraph createAgent_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createAgent_model_test_3() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -483,7 +483,7 @@ public class MatchTesting {
 
     }
 
-    public Bigraph createRedex_model_test_3() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createRedex_model_test_3() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -495,7 +495,7 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public Bigraph createAgent_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createAgent_model_test_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
@@ -527,7 +527,7 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public Bigraph createRedex_model_test_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createRedex_model_test_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
@@ -550,7 +550,7 @@ public class MatchTesting {
 
     }
 
-    public static Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public static Bigraph createRedex_model_test_0() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName a = builder.createOuterName("a");
@@ -575,7 +575,7 @@ public class MatchTesting {
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
+    public static Bigraph createAgent_model_test_0() throws TypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -622,7 +622,7 @@ public class MatchTesting {
      * @throws LinkTypeNotExistsException
      * @throws InvalidConnectionException
      */
-    public Bigraph createRedex_model_test_2a() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createRedex_model_test_2a() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff1");
@@ -652,7 +652,7 @@ public class MatchTesting {
      * @throws LinkTypeNotExistsException
      * @throws InvalidConnectionException
      */
-    public Bigraph createRedex_model_test_2b() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createRedex_model_test_2b() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName b1 = builder.createOuterName("b1");
@@ -676,7 +676,7 @@ public class MatchTesting {
     }
 
 
-    public Bigraph createAgent_model_test_2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+    public Bigraph createAgent_model_test_2() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 

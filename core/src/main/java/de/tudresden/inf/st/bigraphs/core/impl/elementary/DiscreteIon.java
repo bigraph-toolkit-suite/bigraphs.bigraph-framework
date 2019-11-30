@@ -9,6 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
@@ -31,7 +32,7 @@ public class DiscreteIon<S extends Signature, NT extends NamedType, FT extends F
             outerNames.forEach(x -> {
                 try {
                     hierarchy.linkToOuter(builder.createOuterName(x.stringValue()));
-                } catch (LinkTypeNotExistsException | InvalidConnectionException e) {
+                } catch (TypeNotExistsException | InvalidConnectionException e) {
                     throw new RuntimeException(e);
                 }
             });

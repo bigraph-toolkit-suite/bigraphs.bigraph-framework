@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
@@ -60,7 +61,7 @@ public class ReactiveSystemTests {
 
 
     @Test
-    void create_transition_system_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
+    void create_transition_system_test() throws TypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
         // Create reaction rulesname
         SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();
@@ -125,7 +126,7 @@ public class ReactiveSystemTests {
         }
     }
 
-    public static Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
+    public static Bigraph createAgent_model_test_0() throws TypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -143,7 +144,7 @@ public class ReactiveSystemTests {
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
+    public static Bigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
@@ -156,7 +157,7 @@ public class ReactiveSystemTests {
         return builder.createBigraph();
     }
 
-    public static Bigraph createAgent_A_Final() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
+    public static Bigraph createAgent_A_Final() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
@@ -176,7 +177,7 @@ public class ReactiveSystemTests {
      * <p>
      * react r1 = rleft --> rright;
      */
-    public static ReactionRule<PureBigraph> createReactionRule() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public static ReactionRule<PureBigraph> createReactionRule() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
@@ -205,7 +206,7 @@ public class ReactiveSystemTests {
         return rr;
     }
 
-    public static ReactionRule<PureBigraph> createReactionRule_A_SelfApply() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public static ReactionRule<PureBigraph> createReactionRule_A_SelfApply() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
@@ -231,7 +232,7 @@ public class ReactiveSystemTests {
     }
 
 
-    public static ReactionRule<PureBigraph> createReactionRule_A() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public static ReactionRule<PureBigraph> createReactionRule_A() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
@@ -259,7 +260,7 @@ public class ReactiveSystemTests {
         return rr;
     }
 
-    public static ReactionRule<PureBigraph> createReactionRule_A2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public static ReactionRule<PureBigraph> createReactionRule_A2() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);

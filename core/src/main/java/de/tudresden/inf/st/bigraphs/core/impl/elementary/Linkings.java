@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * A linking is a node-free bigraph.
  *
- * @param <S>
+ * @param <S> type of the signature
  * @author Dominik Grzelak
  */
 public class Linkings<S extends Signature> implements Serializable {
@@ -51,9 +51,9 @@ public class Linkings<S extends Signature> implements Serializable {
     }
 
     /**
-     * Empty identity link graph
+     * Constructs an empty "identity" link graph.
      *
-     * @return
+     * @return an empty link graph of type {@link IdentityEmpty}.
      */
     public Linkings<S>.IdentityEmpty identity_e() {
         return new IdentityEmpty();

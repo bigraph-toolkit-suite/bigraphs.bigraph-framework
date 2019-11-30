@@ -32,7 +32,7 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
 
     /**
      * Create a pure bigraph factory with default types for the control's label ({@link StringTypedName}) and
-     * arity ({@link FiniteOrdinal<Integer>}.
+     * arity ({@link FiniteOrdinal}.
      *
      * @return a pure bigraph factory
      */

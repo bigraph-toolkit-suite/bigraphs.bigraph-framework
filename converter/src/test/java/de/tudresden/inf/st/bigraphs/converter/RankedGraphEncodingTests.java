@@ -9,6 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -44,14 +45,14 @@ public class RankedGraphEncodingTests {
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
-    void name2() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    void name2() throws TypeNotExistsException, InvalidConnectionException, IOException {
         PureBigraph bigraph = createBigraphA();
         PureBigraphRankedGraphEncoding graphEncoding = new PureBigraphRankedGraphEncoding(bigraph);
         graphEncoding.encode();
     }
 
     @Test
-    void name() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {
+    void name() throws InvalidConnectionException, TypeNotExistsException, IOException {
         PureBigraph bigraph = createBigraphA();
 
         Map<BigraphEntity, String> idMap = new HashMap<>();
@@ -147,7 +148,7 @@ public class RankedGraphEncodingTests {
     }
 
 
-    private PureBigraph createBigraphA() throws InvalidConnectionException, LinkTypeNotExistsException, IOException {
+    private PureBigraph createBigraphA() throws InvalidConnectionException, TypeNotExistsException, IOException {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
         signature = createExampleSignature();

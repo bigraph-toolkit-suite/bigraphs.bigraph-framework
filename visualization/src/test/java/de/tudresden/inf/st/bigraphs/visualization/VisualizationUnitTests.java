@@ -8,6 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
@@ -43,7 +44,7 @@ public class VisualizationUnitTests {
     }
 
     @Test
-    void simple_bigraph_visualization_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException {
+    void simple_bigraph_visualization_test() throws TypeNotExistsException, InvalidConnectionException, IOException {
 //        PureBigraph bigraph_a = createBigraph_b();
 
         final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
@@ -133,7 +134,7 @@ public class VisualizationUnitTests {
         return builder.createBigraph();
     }
 
-    public PureBigraph bigraphWithTwoRoots() throws InvalidConnectionException, LinkTypeNotExistsException {
+    public PureBigraph bigraphWithTwoRoots() throws InvalidConnectionException, TypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
@@ -155,7 +156,7 @@ public class VisualizationUnitTests {
     }
 
     public PureBigraph createBigraph_A() throws
-            LinkTypeNotExistsException, InvalidConnectionException, IOException {
+            TypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -196,7 +197,7 @@ public class VisualizationUnitTests {
     }
 
     public PureBigraph createBigraph_b() throws
-            LinkTypeNotExistsException, InvalidConnectionException, IOException {
+            TypeNotExistsException, InvalidConnectionException, IOException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 

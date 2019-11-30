@@ -11,12 +11,13 @@ import java.util.Set;
 
 
 /**
- * Brdige pattern: abstraction is signature and implementor is controls or rather a strategy here?
+ * Abstract builder class for all kind of signatures.
  *
- * @param <NT>
- * @param <FO>
- * @param <C>
- * @param <B>
+ * @param <NT> type of the name representation
+ * @param <FO> type of the finite ordinal representation
+ * @param <C>  type of the control builder
+ * @param <B>  type of the signature builder
+ * @author Dominik Grzelak
  */
 public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOrdinal, C extends ControlBuilder<NT, FO, C>, B extends SignatureBuilder> { //<C extends ControlBuilder, B extends SignatureBuilder<C, B>> {
     private Set<Control<NT, FO>> controls;
@@ -65,15 +66,15 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
     public abstract Signature createSignature(Iterable<? extends Control> controls);
 
     /**
-     * Creates an empty signature, meaning that the control set is empty.<br/>
+     * Creates an empty signature, meaning that the control set is empty.<br>
      * Needed for the interaction of elementary bigraphs and user-defined bigraphs.
      *
-//     * @param <S>
-     * @return an empty signature of type {@code S}.
+     * @param <S> type of the signature
+     * @return an empty signature of type {@literal <S>}.
      */
     public abstract <S extends Signature> S createSignature();
 
-//    protected  abstract <S extends Signature> Class<S> getSignatureClass();
+    //    protected  abstract <S extends Signature> Class<S> getSignatureClass();
     @SuppressWarnings("unchecked")
     final B self() {
         return (B) this;

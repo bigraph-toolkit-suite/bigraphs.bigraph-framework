@@ -5,9 +5,10 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidOrdinalTypeException;
 import java.util.Objects;
 
 /**
- * Data type for a finite ordinal which is used within an interface of a bigraph.
+ * Data type for a finite ordinal which is used to represent the arity of a control
+ * or a value in the interface of a bigraph.
  *
- * @param <T> type of the ordinal. Either Integer or Long are supported
+ * @param <T> type of the ordinal. Integer is currently supported.
  * @author Dominik Grzelak
  */
 public class FiniteOrdinal<T extends Number> implements Comparable<FiniteOrdinal<T>> {
@@ -29,12 +30,6 @@ public class FiniteOrdinal<T extends Number> implements Comparable<FiniteOrdinal
     }
 
     public static FiniteOrdinal<Integer> ofInteger(int v) {
-        return new FiniteOrdinal<>(v);
-    }
-
-    //TODO erstmal nicht (keine generics erlauben (wg. EList capacity)
-    @Deprecated
-    public static FiniteOrdinal<Long> ofLong(long v) {
         return new FiniteOrdinal<>(v);
     }
 
