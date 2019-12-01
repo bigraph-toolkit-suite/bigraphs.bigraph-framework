@@ -3,7 +3,7 @@ image: maven:latest
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
   MAVEN_OPTS: "-Ddoclint=none"
-  CHANGELOG_FILE: "changelog.txt"
+  CHANGELOG_FILE: "changelog_v0.6-SNAPSHOT.txt"
 
 stages:
   - build
@@ -29,7 +29,7 @@ changelogs:
   only: [branches]
   image: docker:19.03.0-git
   artifacts:
-    name: "changelog_v0.6-SNAPSHOT.txt"
+    name: "changelog.txt"
     paths:
       - ${CHANGELOG_FILE}
   script:
