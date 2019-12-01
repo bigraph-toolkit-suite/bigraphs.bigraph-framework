@@ -12,7 +12,11 @@ is applied for the development
 Version are increased simultaneously for all sub modules to indicate which dependencies
 can be used together.
 
-## Modules
+## Changelog
+
+Changelogs are generated via the `changelog.sh` bash script. Also see [Deployment](#Deployment)
+
+## Separation by Modules
 
 Each module represents a concrete subset of the framework's whole functionality.
 Thus, it makes it easy to include a certain dependency in external projects for
@@ -22,17 +26,18 @@ specific needs, at the same time logically organizing the whole project.
 <!--_v5: cdo migrated model-->
 <!--_v6: with extra BBigraph container object-->
 
-## Documentation
+# Documentation
 
-- We are employing [MkDocs](https://www.mkdocs.org), a static site generator, for building the documentation
-- Must be installed on the machine:
-    - MkDocs, see [installation instructions](https://www.mkdocs.org/#installation)
-    - Theme: [Bootstrap](https://mkdocs.readthedocs.io/en/0.15.3/user-guide/styling-your-docs/#bootstrap-and-bootswatch-themes)
+- The documentation includes javadoc and a separate user manual (static website).
+- We are employing [MkDocs](https://www.mkdocs.org), a static site generator, for building the user manual
+    - Must be installed on the machine:
+        - MkDocs, see [installation instructions](https://www.mkdocs.org/#installation)
+        - Theme: [Bootstrap](https://mkdocs.readthedocs.io/en/0.15.3/user-guide/styling-your-docs/#bootstrap-and-bootswatch-themes)
 <!--        - the theme is provided with the project and resides within `etc/doc/theme/mkdocs_windmill`-->
     
 - The corresponding documentation files are stored in `etc/doc/`
 
-### Building the documention
+### Building the Documention
 
 #### Using Maven
 
@@ -40,7 +45,8 @@ specific needs, at the same time logically organizing the whole project.
 ```bash
 $ ./mvnw clean install -Pdistribute
 ```
-The generated documentation is available from `target/site/reference/html/index.html`.
+The generated user manual is available from `target/site/reference/html/index.html`.
+The generated java documentation is available from `target/site/apidocs/index.html`.
 
 #### Using Mkdocs directly
 

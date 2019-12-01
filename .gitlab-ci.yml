@@ -26,7 +26,10 @@ build:
 
 changelogs:
   stage: build
-  only: [branches]
+#  only: [branches]
+  only:
+    - master
+    - ^v[0-9]+(?:.[0-9]+)+$
   image: docker:19.03.0-git
   artifacts:
     name: "changelog.txt"
