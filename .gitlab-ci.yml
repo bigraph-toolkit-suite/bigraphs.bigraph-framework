@@ -11,13 +11,17 @@ stages:
 
 build:
   stage: build
+  only: [branches]
   script:
     - mvn $MAVEN_CLI_OPTS clean compile
 
-test:
-  stage: test
-  script:
-    - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
+#test:
+#  stage: test
+#  script:
+#    - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
+
+#docs:
+# stage: build
 
 #deploy:
 #  stage: deploy
