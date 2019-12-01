@@ -36,6 +36,7 @@
         <bintray.organization>st-tu-dresden</bintray.organization>
         <bintray.repo>maven-repository</bintray.repo>
         <bintray.package>${project.artifactId}</bintray.package>
+        <doclint>none</doclint>
     </properties>
 
     <developers>
@@ -166,7 +167,7 @@
                         </goals>
                         <configuration>
                             <!-- all, none, html-->
-                            <doclint>none</doclint>
+                            <doclint>${doclint}</doclint>
                         </configuration>
                     </execution>
                 </executions>

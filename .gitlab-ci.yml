@@ -1,0 +1,28 @@
+image: maven:latest
+
+variables:
+  MAVEN_CLI_OPTS: "--batch-mode"
+  MAVEN_OPTS: "-Ddoclint=none"
+
+stages:
+  - build
+#  - test
+#  - deploy
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS clean compile
+
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
+
+#deploy:
+#  stage: deploy
+#  only:
+#    - master
+#    - ^v[0-9]+(?:.[0-9]+)+$
+#  script:
+#    - mvn $MAVEN_CLI_OPTS deploy

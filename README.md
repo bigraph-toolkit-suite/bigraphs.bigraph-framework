@@ -1,6 +1,7 @@
 # Bigraphical Framework 
 
 **Version:** ${revision}
+[![pipeline status](/../badges/master/pipeline.svg)](/../pipelines)
 
 -----
 

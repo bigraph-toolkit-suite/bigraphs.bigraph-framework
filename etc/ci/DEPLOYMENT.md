@@ -59,6 +59,11 @@ $ mkdocs serve
 
 # Deployment
 
+The basic workflow looks like this.
+Automated tests are executed on all branches.
+The deployment process is executed after every merge into master or a 
+version tag is created.
+
 ## Build configuration
 
 - Goals to execute ... to run the build
@@ -70,7 +75,8 @@ CI Friendly Versions: https://maven.apache.org/maven-ci-friendly.html
     - file-based version change with Maven: https://blog.soebes.de/blog/2016/08/08/maven-how-to-create-a-release/ 
 
 mvn clean package install
-mvn versions:set -DremoveSnapshot
+mvn versions:set -DremoveSnapshot=true
+mvn versions:set -DnextSnapshot=true
     mvn mod1 deploy
     mvn mod2 deploy
     mvn release:update-versions -DautoVersionSubmodules=true
