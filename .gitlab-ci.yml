@@ -3,6 +3,7 @@ image: maven:latest
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
   MAVEN_OPTS: "-Ddoclint=none"
+  CHANGELOG_FILE: "changelog.txt"
 
 stages:
   - build
@@ -22,6 +23,20 @@ build:
 
 #docs:
 # stage: build
+
+changelogs:
+  stage: build
+  only: [branches]
+  image: docker:19.03.0-git
+  artifacts:
+    name: "changelog_v0.6-SNAPSHOT.txt"
+    paths:
+      - ${CHANGELOG_FILE}
+  script:
+    - apk update
+    - apk add bash
+    - ./etc/ci/changelog.sh .mvn/maven.config
+
 
 #deploy:
 #  stage: deploy
