@@ -1,0 +1,28 @@
+# cd /home/dominik/git/BigraphFramework/rewriting/src/test/resources/rewriting-test/
+# rm -rf ./model_idle_edges/* && bigrapher full -d ./model_idle_edges -f svg -s model_idle_edges -M 10 -t trans.svg -v model_idle_edges.big
+ctrl Building = 0;
+ctrl Room = 0;
+ctrl Printer = 2; 
+ctrl Comp = 1; 
+ctrl Job = 0;
+
+
+
+big s0 = Building . (Room.(Printer{a,b}.1));
+
+react nil = Job --> Job;
+
+
+big rleft = /a (Room.(Printer{a,b}.1)); 
+big rright = (Room.(Comp{a}.Job.1));
+big rright2 = (Room.(Comp{a}.Job.1)) | {q};
+# big rright2 = Printer{n}.1;
+react r1 = rleft --> rleft;
+react r2 = rright --> rright;
+
+# Reactive system
+begin brs
+  init s0;
+  # rules = [ {nil} ];
+ rules = [ {r1} ];
+end

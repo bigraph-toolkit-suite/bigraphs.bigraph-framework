@@ -1,0 +1,26 @@
+# cd /home/dominik/git/BigraphFramework/rewriting/src/test/resources/rewriting-test/
+# bigrapher full -d ./model_building -f svg -s model_building -M 10 -t trans.svg -v model_building.big
+ctrl Building = 0;
+ctrl Room = 0;
+ctrl Comp = 1; 
+ctrl Job = 0;
+
+
+
+big s0 = Building . (Room.(Comp{n}.1));
+
+react nil = Job --> Job;
+
+
+big rleft = (Room.(Comp{n}.1)); 
+big rright = (Room.(Comp{n}.Job.1));
+big rright2 = Comp{n}.1;
+react r1 = rleft --> rright;
+react r2 = rleft --> rright2;
+
+# Reactive system
+begin brs
+  init s0;
+  # rules = [ {nil} ];
+ rules = [ {r1, r2} ];
+end

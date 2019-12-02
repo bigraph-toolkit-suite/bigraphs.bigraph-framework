@@ -1,0 +1,11 @@
+# BigraphER
+bigrapher sim -s -t blub -f svg -S 2 model2.big
+bigrapher validate -d ./ -f svg -v model2.big
+bigrapher full -d ./states -f svg -s states -M 10 -t trans.svg -v model2.big
+
+# /home/dominik/git/BigraphFramework/rewriting/src/test/resources/rewriting-test/
+
+# model_building.big
+bigrapher full -d ./model_building -f svg -s model_building -M 10 -t trans.svg -v model_building.big
+
+
