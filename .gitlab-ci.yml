@@ -12,7 +12,10 @@ stages:
 
 build:
   stage: build
-  only: [branches]
+  only:
+    - branches
+  except:
+    - /^feature.*$/
   script:
     - mvn $MAVEN_CLI_OPTS clean compile
 
@@ -26,7 +29,6 @@ build:
 
 changelogs:
   stage: build
-#  only: [branches]
   only:
     - master
     - ^v[0-9]+(?:.[0-9]+)+$
