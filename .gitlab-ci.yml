@@ -39,6 +39,9 @@ changelogs:
     - apk update
     - apk add bash
     - ./etc/ci/changelog.sh .mvn/maven.config
+#    - cp ${CHANGELOG_FILE} etc/doc/docs/changelogs/
+#    - git push stremotegit master
+# https://gitlab.com/gitlab-org/gitlab-foss/issues/18106
 
 
 #deploy:

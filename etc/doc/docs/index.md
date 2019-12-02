@@ -152,4 +152,6 @@ repositories {
 }
 ```
 
-  
+## Changelogs
+
+- Version: [v0.6-SNAPSHOT](changelogs/changelog_v0.6-SNAPSHOT.txt)
