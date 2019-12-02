@@ -1,8 +1,8 @@
 # Bigraphical Framework 
 
 **Version:** ${revision}
-[![pipeline status](/../badges/master/pipeline.svg)](/../pipelines)
-[![pipeline status](/../badges/develop/pipeline.svg)](/../pipelines)
+Master: [![pipeline status](/../badges/master/pipeline.svg)](/../pipelines)
+Develop: [![pipeline status](/../badges/develop/pipeline.svg)](/../pipelines)
 
 -----
 
