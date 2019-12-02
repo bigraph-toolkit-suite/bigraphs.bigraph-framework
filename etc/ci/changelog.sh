@@ -37,7 +37,7 @@ echo "[*] Writing changelog now ..."
 
 echo "## [${version}] - $(date '+%F')" >${filename}
 
-#git log --oneline --pretty=format:'<li> <a href="commit/%H">view commit &bull;</a> %s</li> ' --reverse | grep ^added: >>${filename}
+#git log v0.6.0-SNAPSHOT --oneline --pretty=format:'<li> <a href="commit/%H">view commit &bull;</a> %s</li> ' --reverse | grep ^added: >>${filename}
 
 echo "### Added" >>${filename}
 echo "$(getGitLogsFor 'added')" >> ${filename}
