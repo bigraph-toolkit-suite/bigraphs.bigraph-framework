@@ -3,7 +3,7 @@ image: maven:latest
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
   MAVEN_OPTS: "-Ddoclint=none"
-  CHANGELOG_FILE: "changelog_v0.6.0-SNAPSHOT.md"
+  CHANGELOG_FILE: "changelog_v0.6.1-SNAPSHOT.md"
 
 stages:
   - build
