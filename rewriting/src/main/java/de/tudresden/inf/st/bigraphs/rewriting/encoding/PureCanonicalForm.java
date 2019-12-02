@@ -356,13 +356,13 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                         name = O2.flip().get((BigraphEntity.OuterName) linkOfPoint).getOnly();
                         break;
                 }
-                sb.append(each.getName()).append(name).append("$");
+                sb.append(I2.flip().get(each).getOnly()).append(name).append("$");
             } else {
-                sb.append(each.getName()).append("$");
+                sb.append(I2.flip().get(each).getOnly()).append("$");
             }
         }
         for (BigraphEntity.OuterName each : idleOuterNames) {
-            sb.append(each.getName()).append("$");
+            sb.append(O2.flip().get(each).getOnly()).append("$");
         }
         if (bigraph.getOuterNames().size() > 0 || bigraph.getInnerNames().size() > 0) {
             if (sb.charAt(sb.length() - 1) == '$') {
