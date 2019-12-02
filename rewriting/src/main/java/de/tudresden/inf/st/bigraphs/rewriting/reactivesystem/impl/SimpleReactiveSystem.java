@@ -78,33 +78,33 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<PureBigraph> {
         //first build parallel product of the parameters using the instantiation map
         try {
 
-            //OK
-            try {
-                BigraphGraphvizExporter.toPNG(match.getContext(),
-                        true,
-                        new File(String.format("context_%s.png", cnt))
-                );
-                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
-                        true,
-                        new File(String.format("contextIdentity_%s.png", cnt))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            //OK
+//            try {
+//                BigraphGraphvizExporter.toPNG(match.getContext(),
+//                        true,
+//                        new File(String.format("context_%s.png", cnt))
+//                );
+//                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
+//                        true,
+//                        new File(String.format("contextIdentity_%s.png", cnt))
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
             //NOTE: juxtapose changed to parallelProduct (check if this is right)
             Bigraph outerBigraph = factory
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
-            try {
-                BigraphGraphvizExporter.toPNG(outerBigraph,
-                        true,
-                        new File(String.format("outerBigraph_%s.png", cnt))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                BigraphGraphvizExporter.toPNG(outerBigraph,
+//                        true,
+//                        new File(String.format("outerBigraph_%s.png", cnt))
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             Bigraph d_Params = null;
             List<PureBigraph> parameters = new ArrayList<>(match.getParameters());
             if (parameters.size() >= 2) {
@@ -119,60 +119,60 @@ public class SimpleReactiveSystem extends AbstractReactiveSystem<PureBigraph> {
                 d_Params = parameters.get(0);
             }
 
-            try {
-                BigraphGraphvizExporter.toPNG(d_Params,
-                        true,
-                        new File(String.format("parameters_%s.png", cnt))
-                );
-                BigraphGraphvizExporter.toPNG(match.getRedexIdentity(),
-                        true,
-                        new File(String.format("redex-identity_%s.png", cnt))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                BigraphGraphvizExporter.toPNG(d_Params,
+//                        true,
+//                        new File(String.format("parameters_%s.png", cnt))
+//                );
+//                BigraphGraphvizExporter.toPNG(match.getRedexIdentity(),
+//                        true,
+//                        new File(String.format("redex-identity_%s.png", cnt))
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
             //id_X || R) * d_Params <=> R . d_Params
             BigraphComposite reactumImage = factory.asBigraphOperator(match.getRedexIdentity()).parallelProduct(rule.getReactum());//.compose(d_Params).getOuterBigraph();
             BigraphComposite compose = reactumImage.compose(d_Params);
 
-            try {
-                BigraphGraphvizExporter.toPNG(reactumImage.getOuterBigraph(),
-                        true,
-                        new File(String.format("reactumImage_%s.png", cnt))
-                );
-                BigraphGraphvizExporter.toPNG(compose.getOuterBigraph(),
-                        true,
-                        new File(String.format("reactumImage-composed_%s.png", cnt))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                BigraphGraphvizExporter.toPNG(reactumImage.getOuterBigraph(),
+//                        true,
+//                        new File(String.format("reactumImage_%s.png", cnt))
+//                );
+//                BigraphGraphvizExporter.toPNG(compose.getOuterBigraph(),
+//                        true,
+//                        new File(String.format("reactumImage-composed_%s.png", cnt))
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
 
             Bigraph agentReacted = factory.asBigraphOperator(outerBigraph)
                     .compose(compose)
                     .getOuterBigraph();
 //
-            try {
-//                Bigraph test = factory.asBigraphOperator(outerBigraph).compose(rule.getReactum()).getOuterBigraph();
-//                BigraphGraphvizExporter.toPNG(test,
+//            try {
+////                Bigraph test = factory.asBigraphOperator(outerBigraph).compose(rule.getReactum()).getOuterBigraph();
+////                BigraphGraphvizExporter.toPNG(test,
+////                        true,
+////                        new File("test" + (cnt) + ".png")
+////                );
+//                BigraphGraphvizExporter.toPNG(agentReacted,
 //                        true,
-//                        new File("test" + (cnt) + ".png")
+//                        new File(String.format("agentReacted_%s.png", cnt))
 //                );
-                BigraphGraphvizExporter.toPNG(agentReacted,
-                        true,
-                        new File(String.format("agentReacted_%s.png", cnt))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
-            try {
-                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             cnt++;
 
             return (PureBigraph) agentReacted;

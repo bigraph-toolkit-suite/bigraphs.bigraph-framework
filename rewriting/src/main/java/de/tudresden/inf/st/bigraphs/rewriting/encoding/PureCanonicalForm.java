@@ -10,8 +10,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.collections.impl.factory.SortedMaps;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -43,15 +45,20 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         final StringBuilder sb = new StringBuilder();
 
         Supplier<String> rewriteEdgeNameSupplier = getBigraphCanonicalForm().createNameSupplier("e");
+        Supplier<String> rewriteInnerNameSupplier = getBigraphCanonicalForm().createNameSupplier("x");
+        Supplier<String> rewriteOuterNameSupplier = getBigraphCanonicalForm().createNameSupplier("y");
 
 //        HashBiMap<String, BigraphEntity.Edge> E = HashBiMap.create();
-        MutableMap<String, BigraphEntity.Edge> E2 = Maps.mutable.with();
+        MutableSortedMap<String, BigraphEntity.Edge> E2 = SortedMaps.mutable.with();
+        MutableSortedMap<String, BigraphEntity.InnerName> I2 = SortedMaps.mutable.with();
+        MutableSortedMap<String, BigraphEntity.OuterName> O2 = SortedMaps.mutable.with();
 
 //        Map<BigraphEntity, BigraphEntity> parentMap = new LinkedHashMap<>();
         MutableMap<BigraphEntity, BigraphEntity> parentMap = Maps.mutable.with();
         MutableMap<BigraphEntity, Integer> parentChildMap = Maps.mutable.with();
 //        List<BigraphEntity> frontier = new LinkedList<>();
 //        List<BigraphEntity> next = new LinkedList<>();
+        MutableList<BigraphEntity.OuterName> idleOuterNames = Lists.mutable.empty();
         MutableList<BigraphEntity> frontier = Lists.mutable.empty();
         MutableList<BigraphEntity> next = Lists.mutable.empty();
         BigraphEntity.RootEntity theParent = bigraph.getRoots().iterator().next();
@@ -59,7 +66,16 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         parentMap.put(theParent, theParent);
         frontier.add(theParent);
 
-        //TODO eclipse collection bfs search impl. vorher nachher messen
+
+        // rewrite all "idle outer names" first, order is not important
+        for (BigraphEntity.OuterName each : bigraph.getOuterNames()) {
+            if (bigraph.getPointsFromLink(each).size() == 0 &&
+                    !O2.flip().get(each).getFirstOptional().isPresent()) {
+                O2.put(rewriteOuterNameSupplier.get(), each);
+                idleOuterNames.add(each);
+            }
+        }
+
 //        List<BigraphEntity> places = Stream.concat(bigraph.getNodes().stream(), bigraph.getSites().stream())
 //                .collect(Collectors.toList());
         final AtomicBoolean checkNextRound = new AtomicBoolean(false);
@@ -252,13 +268,17 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //                                                            E.inverse().putIfAbsent((BigraphEntity.Edge) l, rewriteEdgeNameSupplier.get());
 //                                                            return E.inverse().get(l);
 //                                                        }
-                                                            if (E2.flip().get((BigraphEntity.Edge) l).getAny() == null) {
+                                                            if (!E2.flip().get((BigraphEntity.Edge) l).getFirstOptional().isPresent()) {
 //                                                                E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) l);
                                                                 E2.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) l);
                                                             }
                                                             return E2.flip().get((BigraphEntity.Edge) l).getOnly();
                                                         } else {
-                                                            return ((BigraphEntity.OuterName) l).getName();
+                                                            if (!O2.flip().get((BigraphEntity.OuterName) l).getFirstOptional().isPresent()) {
+//                                                                E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) l);
+                                                                O2.put(rewriteOuterNameSupplier.get(), (BigraphEntity.OuterName) l);
+                                                            }
+                                                            return O2.flip().get((BigraphEntity.OuterName) l).getOnly();
                                                         }
                                                     })
                                                     .sorted()
@@ -290,35 +310,67 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             sb.replace(i, sb.length(), "#");
         }
 
-        List<BigraphEntity.InnerName> collect = bigraph.getInnerNames().stream()
-                .sorted(Comparator.comparing(BigraphEntity.InnerName::getName))
-                .collect(Collectors.toList());
-        //TODO: sort inner names
+        //
+        // Rest of the Link Encoding concerning the idleness of links, and inner to edge/outer connections
+        //
+
+        // first: idle inner names, order is not important
         for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
+            if (Objects.isNull(bigraph.getLinkOfPoint(each)) &&
+                    !I2.flip().get(each).getFirstOptional().isPresent()) {
+                I2.put(rewriteInnerNameSupplier.get(), each);
+            }
+        }
+        // second: inner names connected to edges, order is important
+        MutableList<BigraphEntity.InnerName> innerNames = E2.flatCollect(edge ->
+                bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
+                        .map(x -> {
+                            if (!I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isPresent()) {
+                                I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
+                            }
+                            return (BigraphEntity.InnerName) x;
+                        })
+                        .collect(Collectors.toList())
+        );
+        // third: inner names connected to outer names, order is important
+        MutableList<BigraphEntity.InnerName> innerNames2 = O2.flatCollect(edge ->
+                bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
+                        .map(x -> {
+                            if (!I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isPresent()) {
+                                I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
+                            }
+                            return (BigraphEntity.InnerName) x;
+                        })
+                        .collect(Collectors.toList())
+        );
+        // first idle inner names, then those which are connected to edges, lastly links from inner to outer
+        for (BigraphEntity.InnerName each : I2.values()) {
             BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(each);
-            if (Objects.nonNull(linkOfPoint) && linkOfPoint.getType() == BigraphEntityType.EDGE) {
-                String name; // = ((BigraphEntity.Edge) linkOfPoint).getName();
-//                if (E.inverse().get(linkOfPoint) == null) {
-//                    E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) linkOfPoint);
-//                }
-//                name = E.inverse().get(linkOfPoint);
-                if (E2.flip().get((BigraphEntity.Edge) linkOfPoint).getAny() == null) {
-                    E2.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) linkOfPoint);
+            if (Objects.nonNull(linkOfPoint)) {
+                String name = null;
+                switch (linkOfPoint.getType()) {
+                    case EDGE:
+                        name = E2.flip().get((BigraphEntity.Edge) linkOfPoint).getOnly();
+                        break;
+                    case OUTER_NAME:
+                        name = O2.flip().get((BigraphEntity.OuterName) linkOfPoint).getOnly();
+                        break;
                 }
-                name = E2.flip().get((BigraphEntity.Edge) linkOfPoint).getOnly();
-                sb.append(name).append('$').append(each.getName()).append("|");
+                sb.append(each.getName()).append(name).append("$");
+            } else {
+                sb.append(each.getName()).append("$");
             }
         }
-        for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
-            BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(each);
-            if (Objects.nonNull(linkOfPoint) && linkOfPoint.getType() == BigraphEntityType.OUTER_NAME) {
-                String name = ((BigraphEntity.OuterName) linkOfPoint).getName();
-                sb.append(name).append('$').append(each.getName()).append('|');
+        for (BigraphEntity.OuterName each : idleOuterNames) {
+            sb.append(each.getName()).append("$");
+        }
+        if (bigraph.getOuterNames().size() > 0 || bigraph.getInnerNames().size() > 0) {
+            if (sb.charAt(sb.length() - 1) == '$') {
+                sb.deleteCharAt(sb.length() - 1);
             }
+            sb.insert(sb.length(), "#");
         }
-        if (sb.charAt(sb.length() - 1) == '|') {
-            sb.deleteCharAt(sb.length() - 1);
-        }
+
         return sb.toString();
     }
 }

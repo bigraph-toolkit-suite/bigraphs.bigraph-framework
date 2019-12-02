@@ -85,7 +85,9 @@ public class CanonicalFormRepresentationUnitTests {
 
         PureBigraph g1 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
         boolean test2 = pureBigraphBigraphIsoPredicate.negate().test(g1);
+        boolean test3 = pureBigraphBigraphIsoPredicate.test(g1);
         Assertions.assertTrue(test2);
+        Assertions.assertFalse(test3);
     }
 
     @Nested
