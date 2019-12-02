@@ -4,6 +4,8 @@
 - The Git workflow *Gitflow* as described [here](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) 
 is applied for the development 
 
+- push tags only: `git push origin --tags`
+
 ## Versioning
 
 - [Semantic Versioning](https://semver.org/) is employed as versioning scheme for all modules 
