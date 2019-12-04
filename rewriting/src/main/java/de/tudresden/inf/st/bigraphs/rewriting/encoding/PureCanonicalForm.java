@@ -75,6 +75,13 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 idleOuterNames.add(each);
             }
         }
+        // rewrite all idle inner names first, order is not important
+        for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
+            if (Objects.isNull(bigraph.getLinkOfPoint(each)) &&
+                    !I2.flip().get(each).getFirstOptional().isPresent()) {
+                I2.put(rewriteInnerNameSupplier.get(), each);
+            }
+        }
 
 //        List<BigraphEntity> places = Stream.concat(bigraph.getNodes().stream(), bigraph.getSites().stream())
 //                .collect(Collectors.toList());
@@ -113,11 +120,11 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             }
 
             if (next.size() > 0) {
-                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareControlByKey =
-                        Comparator.comparing(entry -> {
-                            return entry.getKey().getControl().getNamedType().stringValue() + entry.getValue().size();
-                        });
-                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareControlByKey2 =
+//                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareControlByKey =
+//                        Comparator.comparing(entry -> {
+//                            return entry.getKey().getControl().getNamedType().stringValue() + entry.getValue().size();
+//                        });
+                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareControlByKeyAndValue =
                         Comparator.comparing((entry) -> {
                             String s1 = entry.getValue().stream()
                                     .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : lhs.getControl().getNamedType().stringValue()))
@@ -171,7 +178,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //                        .sorted(compareControl.thenComparing(compareChildrenSize.reversed()))
                         .collect(groupingBy(e -> bigraph.getParent(e), Collectors.toCollection(LinkedList::new)));
                 final AtomicInteger atLevelCnt;
-                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator = compareControlByKey2.thenComparing(compareChildrenSizeByValue.reversed().thenComparing(compareChildrenPortSum.reversed()));
+                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator = compareControlByKeyAndValue.thenComparing(compareChildrenSizeByValue.reversed().thenComparing(compareChildrenPortSum.reversed()));
                 Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator2 = (compareChildrenPortSum.reversed());
                 if (lastOrdering.size() != 0) {
                     atLevelCnt = new AtomicInteger(lastOrdering.size() - collect.size());
@@ -313,14 +320,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         //
         // Rest of the Link Encoding concerning the idleness of links, and inner to edge/outer connections
         //
-
-        // first: idle inner names, order is not important
-        for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
-            if (Objects.isNull(bigraph.getLinkOfPoint(each)) &&
-                    !I2.flip().get(each).getFirstOptional().isPresent()) {
-                I2.put(rewriteInnerNameSupplier.get(), each);
-            }
-        }
+        // first: idle inner names are already rewritten (see beginning of the algo)
         // second: inner names connected to edges, order is important
         MutableList<BigraphEntity.InnerName> innerNames = E2.flatCollect(edge ->
                 bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
@@ -371,6 +371,6 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             sb.insert(sb.length(), "#");
         }
 
-        return sb.toString();
+        return sb.toString().replaceAll("\\$#", "#").replaceAll("##", "#");
     }
 }

@@ -55,6 +55,109 @@ public class CanonicalFormRepresentationUnitTests {
     }
 
     @Test
+    void paper_bigraphs() throws InvalidConnectionException, TypeNotExistsException, IOException {
+        PureBigraph bigraph_a = createBigraph_a();
+        PureBigraph bigraph_b = createBigraph_b();
+        PureBigraph bigraph_c = createBigraph_c();
+        PureBigraph bigraph_d = createBigraph_d();
+
+        String bfcs0 = BigraphCanonicalForm.createInstance().bfcs(bigraph_a);
+        String bfcs1 = BigraphCanonicalForm.createInstance().bfcs(bigraph_b);
+        String bfcs2 = BigraphCanonicalForm.createInstance().bfcs(bigraph_c);
+        String bfcs3 = BigraphCanonicalForm.createInstance().bfcs(bigraph_d);
+        System.out.println(bfcs0);
+        System.out.println(bfcs1);
+        System.out.println(bfcs2);
+        System.out.println(bfcs3);
+
+        assertNotEquals(bfcs0, bfcs1);
+        assertNotEquals(bfcs2, bfcs3);
+
+        assertEquals(bfcs0, "r0$Q$ABC$D{e0}E{e0}F{y0}$D{e1}E{e1}F{y1}$AB$$$GH$$$$$1$0#x0y1#");
+        assertEquals(bfcs1, "r0$Q$ABC$D{e0}E{e0}F{y0}$D{e1}E{e1}F{y0}$AB$$$GH$$$$$$0#");
+        assertEquals(bfcs2, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2}E{e3}F{e2e3}$G$$H$G$$H#");
+        assertEquals(bfcs3, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2e3}E{e3}F{e2}$G$$H$G$$H#");
+
+//        BigraphGraphvizExporter.toPNG(bigraph_b,
+//                true,
+//                new File(TARGET_DUMP_PATH + "bigraph_a.png")
+//        );
+
+//        BigraphGraphvizExporter.toPNG(bigraph_c,
+//                true,
+//                new File(TARGET_DUMP_PATH + "bigraph_c.png")
+//        );
+//        BigraphGraphvizExporter.toPNG(bigraph_d,
+//                true,
+//                new File(TARGET_DUMP_PATH + "bigraph_d.png")
+//        );
+    }
+
+    public PureBigraph createBigraph_a() throws InvalidConnectionException, TypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+        BigraphEntity.InnerName b = b1.createInnerName("b");
+        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
+        BigraphEntity.OuterName y2 = b1.createOuterName("y2");
+
+        PureBigraphBuilder.Hierarchy left = b1.newHierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).withNewHierarchy().addChild("H").addChild("G").withNewHierarchy().addSite().top();
+        PureBigraphBuilder.Hierarchy middle = b1.newHierarchy("C").addChild("A").addChild("B").withNewHierarchy().addSite().top();
+        PureBigraphBuilder.Hierarchy right = b1.newHierarchy("B").connectByEdge("D", "E").addChild("F").linkToOuter(y2).top();
+        b1.connectInnerToOuterName(b, y2);
+        b1.createRoot().addChild("Q").withNewHierarchy().addChild(left).addChild(middle).addChild(right);
+        return b1.createBigraph();
+    }
+
+    public PureBigraph createBigraph_b() throws InvalidConnectionException, TypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
+
+        PureBigraphBuilder.Hierarchy left = b1.newHierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).withNewHierarchy().addChild("H").addChild("G").withNewHierarchy().addSite().top();
+        PureBigraphBuilder.Hierarchy middle = b1.newHierarchy("C").addChild("A").addChild("B").top();
+        PureBigraphBuilder.Hierarchy right = b1.newHierarchy("B").connectByEdge("D", "E").addChild("F").linkToOuter(y1).top();
+
+        b1.createRoot().addChild("Q").withNewHierarchy().addChild(left).addChild(middle).addChild(right);
+        PureBigraph bigraph = b1.createBigraph();
+        return bigraph;
+    }
+
+    public PureBigraph createBigraph_c() throws InvalidConnectionException, TypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.InnerName e0 = b1.createInnerName("e0");
+        BigraphEntity.InnerName e1 = b1.createInnerName("e1");
+        BigraphEntity.InnerName e2 = b1.createInnerName("e2");
+        BigraphEntity.InnerName e3 = b1.createInnerName("e3");
+
+        b1.createRoot()
+                .addChild("B").withNewHierarchy()
+                .addChild("D").linkToInner(e0).withNewHierarchy().addChild("G").goBack().addChild("F").linkToInner(e0).linkToInner(e1).withNewHierarchy().addChild("H").goBack().addChild("E").linkToInner(e1).goBack()
+                .addChild("B").withNewHierarchy()
+                .addChild("D").linkToInner(e2).withNewHierarchy().addChild("G").goBack().addChild("E").linkToInner(e2).linkToInner(e3).addChild("F").linkToInner(e3).withNewHierarchy().addChild("H").goBack().goBack()
+        ;
+        b1.closeInnerNames(e0, e1, e2, e3);
+        return b1.createBigraph();
+    }
+
+
+    public PureBigraph createBigraph_d() throws InvalidConnectionException, TypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+        BigraphEntity.InnerName e0 = b1.createInnerName("e0");
+        BigraphEntity.InnerName e1 = b1.createInnerName("e1");
+        BigraphEntity.InnerName e2 = b1.createInnerName("e2");
+        BigraphEntity.InnerName e3 = b1.createInnerName("e3");
+        b1.createRoot()
+                .addChild("B").withNewHierarchy().addChild("D").linkToInner(e0).linkToInner(e1).withNewHierarchy().addChild("G").goBack().addChild("E").linkToInner(e1).addChild("F").linkToInner(e0).withNewHierarchy().addChild("H").goBack().goBack()
+                .addChild("B").withNewHierarchy().addChild("D").linkToInner(e2).withNewHierarchy().addChild("G").goBack().addChild("E").linkToInner(e2).linkToInner(e3).addChild("F").linkToInner(e3).withNewHierarchy().addChild("H").goBack().goBack()
+        ;
+        b1.closeInnerNames(e0, e1, e2, e3);
+        return b1.createBigraph();
+    }
+
+    @Test
     void test0() throws Exception {
 
         PureBigraph bigraph = new LinkGraphCanonicalFormTest().createFirstLG();
