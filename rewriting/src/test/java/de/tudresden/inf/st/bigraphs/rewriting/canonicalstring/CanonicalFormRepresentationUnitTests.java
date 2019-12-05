@@ -78,19 +78,25 @@ public class CanonicalFormRepresentationUnitTests {
         assertEquals(bfcs2, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2}E{e3}F{e2e3}$G$$H$G$$H#");
         assertEquals(bfcs3, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2e3}E{e3}F{e2}$G$$H$G$$H#");
 
-//        BigraphGraphvizExporter.toPNG(bigraph_b,
-//                true,
-//                new File(TARGET_DUMP_PATH + "bigraph_a.png")
-//        );
+        PureBigraph subbigraph_b = createSubbigraph_b();
+        String s1 = BigraphCanonicalForm.createInstance().bfcs(subbigraph_b);
+        System.out.println(s1);
+    }
 
-//        BigraphGraphvizExporter.toPNG(bigraph_c,
-//                true,
-//                new File(TARGET_DUMP_PATH + "bigraph_c.png")
-//        );
-//        BigraphGraphvizExporter.toPNG(bigraph_d,
-//                true,
-//                new File(TARGET_DUMP_PATH + "bigraph_d.png")
-//        );
+    public PureBigraph createSubbigraph_b() throws InvalidConnectionException, TypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
+        BigraphEntity.InnerName e0 = b1.createInnerName("e0");
+//        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
+
+        b1.createRoot().addChild("B")
+                .withNewHierarchy()
+                .addChild("D", "y1").linkToInner(e0)
+                .addChild("F", "y1").withNewHierarchy().addChild("H").addChild("G").withNewHierarchy().addSite().goBack().goBack()
+                .addChild("E", "y1").linkToInner(e0)
+                ;
+        b1.closeAllInnerNames();
+        return b1.createBigraph();
     }
 
     public PureBigraph createBigraph_a() throws InvalidConnectionException, TypeNotExistsException {

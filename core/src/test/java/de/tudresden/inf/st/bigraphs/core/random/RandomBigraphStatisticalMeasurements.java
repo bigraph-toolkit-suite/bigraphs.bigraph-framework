@@ -15,7 +15,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGenerator;
+import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGeneratorSupport;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -172,7 +172,7 @@ public class RandomBigraphStatisticalMeasurements {
         StringBuilder sb = new StringBuilder();
 
         PureBigraphGenerator generator = new PureBigraphGenerator();
-        generator.setLinkStrategy(RandomBigraphGenerator.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE);
+        generator.setLinkStrategy(RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE);
 //        generator.setLinkStrategy(RandomBigraphGenerator.LinkStrategy.MAXIMAL_DEGREE_DISASSORTATIVE);
         int nTimes = 1;
         for (Integer t : tSize) {

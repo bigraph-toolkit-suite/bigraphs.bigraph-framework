@@ -7,9 +7,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -22,7 +19,7 @@ import java.util.function.Supplier;
  *
  * @author Dominik Grzelak
  */
-public abstract class RandomBigraphGenerator {
+public abstract class RandomBigraphGeneratorSupport {
     SecureRandom rnd;
     LinkStrategy linkStrategy;
 
@@ -30,11 +27,11 @@ public abstract class RandomBigraphGenerator {
         MAXIMAL_DEGREE_ASSORTATIVE, MAXIMAL_DEGREE_DISASSORTATIVE, MIN_LINKING, NONE;
     }
 
-    public RandomBigraphGenerator() {
+    public RandomBigraphGeneratorSupport() {
         this(LinkStrategy.MIN_LINKING);
     }
 
-    public RandomBigraphGenerator(LinkStrategy linkStrategy) {
+    public RandomBigraphGeneratorSupport(LinkStrategy linkStrategy) {
         this.linkStrategy = linkStrategy;
         this.rnd = new SecureRandom();
     }
@@ -45,7 +42,7 @@ public abstract class RandomBigraphGenerator {
         return linkStrategy;
     }
 
-    public RandomBigraphGenerator setLinkStrategy(LinkStrategy linkStrategy) {
+    public RandomBigraphGeneratorSupport setLinkStrategy(LinkStrategy linkStrategy) {
         this.linkStrategy = linkStrategy;
         return this;
     }
