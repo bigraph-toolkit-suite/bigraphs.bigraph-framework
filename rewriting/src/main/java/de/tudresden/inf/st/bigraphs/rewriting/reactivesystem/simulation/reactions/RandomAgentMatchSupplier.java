@@ -21,7 +21,7 @@ public final class RandomAgentMatchSupplier<B extends Bigraph<? extends Signatur
     protected RandomAgentMatchSupplier(Collection<B> availableAgents) {
         randomSelection = new Random();
         agents = Lists.immutable.withAll(availableAgents);
-        size = (agents.size() - 1 == 0) ? 1 : agents.size() - 1;
+        size = (agents.size() - 1 == 0) ? 1 : agents.size();
     }
 
     @Override

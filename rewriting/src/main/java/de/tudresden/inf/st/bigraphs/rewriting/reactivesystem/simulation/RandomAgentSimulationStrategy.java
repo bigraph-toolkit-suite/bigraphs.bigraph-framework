@@ -25,7 +25,7 @@ import java.util.stream.Stream;
  */
 public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature<?>>> extends SimulationStrategySupport<B> {
     private Logger logger = LoggerFactory.getLogger(RandomAgentSimulationStrategy.class);
-    
+
     public RandomAgentSimulationStrategy(BigraphModelChecker<B> modelChecker) {
         super(modelChecker);
     }
@@ -45,13 +45,14 @@ public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature
             final B theAgent = workingQueue.remove();
             final String bfcfOfW = canonicalForm.bfcs(theAgent);
             final InOrderReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.<B>createInOrder(modelChecker.getReactiveSystem().getReactionRules());
+            MutableList<B> rewrittenAgents = Lists.mutable.empty();
             Stream.generate(inOrder)
                     .limit(modelChecker.getReactiveSystem().getReactionRules().size())
                     .forEachOrdered(eachRule -> {
                         modelChecker.reactiveSystemListener.onCheckingReactionRule(eachRule);
                         MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule.getRedex()));
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
-                        MutableList<B> rewrittenAgents = Lists.mutable.empty();
+
                         while (iterator.hasNext()) {
                             BigraphMatch<B> next = iterator.next();
                             B reaction = null;
@@ -63,9 +64,9 @@ public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature
                             if (Objects.nonNull(reaction)) {
                                 String bfcf = canonicalForm.bfcs(reaction);
                                 String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(eachRule);
+                                rewrittenAgents.add(reaction);
                                 if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
                                     modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction, bfcf, next.getRedex(), reactionLbl);
-                                    rewrittenAgents.add(reaction);
                                 } else {
                                     modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction, bfcf, next.getRedex(), reactionLbl);
                                 }
@@ -73,11 +74,11 @@ public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature
                                 modelChecker.reactiveSystemListener.onReactionIsNull();
                             }
                         }
-                        if (rewrittenAgents.size() > 0) {
-                            RandomAgentMatchSupplier<B> randomSupplier = ReactionRuleSupplier.createRandom(rewrittenAgents);
-                            workingQueue.add(randomSupplier.get());
-                        }
                     });
+            if (rewrittenAgents.size() > 0) {
+                RandomAgentMatchSupplier<B> randomSupplier = ReactionRuleSupplier.createRandom(rewrittenAgents);
+                workingQueue.add(randomSupplier.get());
+            }
 
             // "Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty."
             transitionCnt++;
