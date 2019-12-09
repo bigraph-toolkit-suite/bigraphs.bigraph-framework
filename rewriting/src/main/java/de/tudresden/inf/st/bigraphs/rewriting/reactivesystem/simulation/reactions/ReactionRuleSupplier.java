@@ -3,8 +3,9 @@ package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.reactio
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
@@ -14,18 +15,22 @@ import java.util.function.Supplier;
  */
 public abstract class ReactionRuleSupplier<B extends Bigraph<? extends Signature<?>>> implements Supplier<ReactionRule<B>> {
 
-    protected List<ReactionRule<B>> availableRules;
+    protected final ImmutableList<ReactionRule<B>> availableRules;
 
     protected ReactionRuleSupplier(Collection<ReactionRule<B>> availableRules) {
-        this.availableRules = new ArrayList<>(availableRules);
+        this.availableRules = Lists.immutable.withAll(availableRules);
     }
 
     public static <B extends Bigraph<? extends Signature<?>>> InOrderReactionRuleSupplier createInOrder(Collection<ReactionRule<B>> availableRules) {
         return new InOrderReactionRuleSupplier(availableRules);
     }
 
+    public static <B extends Bigraph<? extends Signature<?>>> RandomReactionRuleSupplier createRandom(Collection<ReactionRule<B>> availableRules) {
+        return new RandomReactionRuleSupplier(availableRules);
+    }
+
 
     public List<ReactionRule<B>> getAvailableRules() {
-        return availableRules;
+        return availableRules.castToList();
     }
 }
