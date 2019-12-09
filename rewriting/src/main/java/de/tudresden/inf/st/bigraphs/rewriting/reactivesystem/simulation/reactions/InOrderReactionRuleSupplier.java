@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * @author Dominik Grzelak
  */
-public class InOrderReactionRuleSupplier<B extends Bigraph<? extends Signature<?>>> extends ReactionRuleSupplier<B> {
+public final class InOrderReactionRuleSupplier<B extends Bigraph<? extends Signature<?>>> extends ReactionRuleSupplier<B> {
     private int currentCounter = 0;
 
     InOrderReactionRuleSupplier(Collection<ReactionRule<B>> availableRules) {

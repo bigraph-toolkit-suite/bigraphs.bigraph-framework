@@ -25,8 +25,8 @@ public abstract class ReactionRuleSupplier<B extends Bigraph<? extends Signature
         return new InOrderReactionRuleSupplier(availableRules);
     }
 
-    public static <B extends Bigraph<? extends Signature<?>>> RandomReactionRuleSupplier createRandom(Collection<ReactionRule<B>> availableRules) {
-        return new RandomReactionRuleSupplier(availableRules);
+    public static <B extends Bigraph<? extends Signature<?>>> RandomAgentMatchSupplier createRandom(Collection<B> availableRules) {
+        return new RandomAgentMatchSupplier(availableRules);
     }
 
 

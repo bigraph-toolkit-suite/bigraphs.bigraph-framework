@@ -76,7 +76,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //        }
         return null;
     }
-
+    //TODO: beachte instantiation map
     @Override
     protected PureBigraph buildParametricReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         //first build parallel product of the parameters using the instantiation map

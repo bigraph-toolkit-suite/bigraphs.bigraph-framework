@@ -50,6 +50,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     public static class SimulationType {
 
         public static final SimulationType BREADTH_FIRST = new SimulationType(BreadthFirstStrategy.class);
+        public static final SimulationType RANDOM_STATE = new SimulationType(RandomAgentSimulationStrategy.class);
 
         private Class<? extends SimulationStrategy> strategyClass;
 
@@ -72,8 +73,8 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     protected ReactiveSystemOptions options;
     protected AbstractBigraphMatcher<B> matcher;
 
-    protected final ReactiveSystem<B> reactiveSystem;
-    protected ReactionGraph<B> reactionGraph;
+    final ReactiveSystem<B> reactiveSystem;
+    ReactionGraph<B> reactionGraph;
 //    protected MutableList<ReactiveSystemPredicates<B>> predicates = Lists.mutable.empty();
 
     public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationType simulationType, ReactiveSystemOptions options) {
@@ -104,6 +105,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         assertReactionSystemValid();
         //TODO strategy execute in future
         simulationStrategy.synthesizeTransitionSystem();
+        prepareOutput();
     }
 
     protected void assertReactionSystemValid() throws BigraphSimulationException {
@@ -115,11 +117,19 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
+    public ReactiveSystem<B> getReactiveSystem() {
+        return reactiveSystem;
+    }
+
     public List<ReactiveSystemPredicates<B>> getPredicates() {
         return reactiveSystem.getPredicates();
     }
 
-//    public void setPredicates(MutableList<ReactiveSystemPredicates<B>> predicates) {
+    public AbstractBigraphMatcher<B> getMatcher() {
+        return matcher;
+    }
+
+    //    public void setPredicates(MutableList<ReactiveSystemPredicates<B>> predicates) {
 //        this.predicates = predicates;
 //    }
 

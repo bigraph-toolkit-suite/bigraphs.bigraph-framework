@@ -80,7 +80,10 @@ public class ReactiveSystemTests {
         reactiveSystem.addPredicate(pred1);
 //        reactiveSystem.computeTransitionSystem(agent, opts, Arrays.asList(pred1));
 
-        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
+//        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
+                BigraphModelChecker.SimulationType.RANDOM_STATE,
+                opts);
         modelChecker.execute();
     }
 
