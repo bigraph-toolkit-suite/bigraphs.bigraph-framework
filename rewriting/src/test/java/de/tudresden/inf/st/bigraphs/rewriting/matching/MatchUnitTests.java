@@ -1,7 +1,10 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import com.google.common.base.Stopwatch;
-import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
@@ -10,19 +13,18 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.pure.PureBigraphParametricMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.GroundReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -40,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //TODO write better tests here: the redex output should conform to the expected output - this makes observing things easier
 // to the equivalent bigraphER output result (means, check for num. of outer names etc.)
-public class MatchTesting {
+public class MatchUnitTests {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/matching/framework/";
 

@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting;
+package de.tudresden.inf.st.bigraphs.rewriting.examples;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -16,12 +16,15 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -41,9 +44,10 @@ public class CountingExample {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws IOException {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
+        FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
     }
 
     @Test

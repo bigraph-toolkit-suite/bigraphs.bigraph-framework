@@ -23,10 +23,8 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.BigraphM
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.SubBigraphMatchPredicate;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,20 +38,28 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Dominik Grzelak
  */
-public class ReactiveSystemTests {
+public class ReactiveSystemUnitTests {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/basic/";
 
+    @BeforeAll
+    static void setUp() throws IOException {
+        File dump = new File(TARGET_DUMP_PATH);
+        dump.mkdirs();
+        FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+    }
+
     @Test
+    @DisplayName("BFS simulation test")
     void create_transition_system_test() throws TypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
         // Create reaction rulesname
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();
         reactiveSystem.setAgent(agent);
-        ReactionRule<PureBigraph> rr = createReactionRule_A();
-        ReactionRule<PureBigraph> rrsame = createReactionRule_A();
+        ReactionRule<PureBigraph> rr = createReactionRule_AddJob();
+        ReactionRule<PureBigraph> rrsame = createReactionRule_AddJob();
         ReactionRule<PureBigraph> rrSelf = createReactionRule_A_SelfApply();
-        ReactionRule<PureBigraph> rr2 = createReactionRule_A2();
+        ReactionRule<PureBigraph> rr2 = createReactionRule_AddOneJob();
 
         reactiveSystem.addReactionRule(rr);
         reactiveSystem.addReactionRule(rrSelf);
@@ -80,7 +86,44 @@ public class ReactiveSystemTests {
         reactiveSystem.addPredicate(pred1);
 //        reactiveSystem.computeTransitionSystem(agent, opts, Arrays.asList(pred1));
 
-//        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
+        modelChecker.execute();
+    }
+
+    @Test
+    @DisplayName("Random simulation test: Agent is randomly chosen")
+    void random_simulation_test() throws BigraphSimulationException, TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException {
+        // Create reaction rulesname
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        PureBigraph agent = (PureBigraph) createAgent_A();
+        reactiveSystem.setAgent(agent);
+        ReactionRule<PureBigraph> rr = createReactionRule_AddJob();
+        ReactionRule<PureBigraph> rr1 = createReactionRule_AddOneJob();
+        ReactionRule<PureBigraph> rr2 = createReactionRule_AddTwoJobs();
+        ReactionRule<PureBigraph> rr3 = createReactionRule_AddThreeJobs();
+        ReactionRule<PureBigraph> rr4 = createReactionRule_AddJob2();
+
+        reactiveSystem.addReactionRule(rr);
+        reactiveSystem.addReactionRule(rr1);
+        reactiveSystem.addReactionRule(rr2);
+        reactiveSystem.addReactionRule(rr3);
+        reactiveSystem.addReactionRule(rr4);
+
+        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png");
+        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
+        opts
+                .and(transitionOpts()
+                        .setMaximumTransitions(4)
+                        .setMaximumTime(30)
+                        .create()
+                )
+                .doMeasureTime(true)
+                .and(ReactiveSystemOptions.exportOpts()
+                        .setTraceFile(new File(completePath.toUri()))
+                        .create()
+                )
+        ;
+
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
                 BigraphModelChecker.SimulationType.RANDOM_STATE,
                 opts);
@@ -222,8 +265,36 @@ public class ReactiveSystemTests {
         return rr;
     }
 
+    public static ReactionRule<PureBigraph> createReactionRule_AddJob2() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
+        builder.createRoot()
+                .addChild("Room")
+                .withNewHierarchy()
+                .addChild("Computer").linkToOuter(network)
+        ;
+        builder2.createRoot()
+                .addChild("Room")
+                .withNewHierarchy()
+                .addChild("Computer").linkToOuter(network2)
+                .withNewHierarchy()
+                .addChild("Job").addChild("Job")
+        ;
 
-    public static ReactionRule<PureBigraph> createReactionRule_A() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+//        builder.closeAllInnerNames();
+        builder.makeGround();
+        builder2.makeGround();
+        PureBigraph redex = builder.createBigraph();
+        PureBigraph reactum = builder2.createBigraph();
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        return rr;
+    }
+
+
+    public static ReactionRule<PureBigraph> createReactionRule_AddJob() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
@@ -251,7 +322,7 @@ public class ReactiveSystemTests {
         return rr;
     }
 
-    public static ReactionRule<PureBigraph> createReactionRule_A2() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public static ReactionRule<PureBigraph> createReactionRule_AddOneJob() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
@@ -280,6 +351,67 @@ public class ReactiveSystemTests {
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
+
+    public static ReactionRule<PureBigraph> createReactionRule_AddTwoJobs() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
+        builder.createRoot()
+                .addChild("Room")
+                .withNewHierarchy()
+                .addChild("Computer").linkToOuter(network)
+                .withNewHierarchy()
+                .addChild("Job")
+        ;
+        builder2.createRoot()
+                .addChild("Room")
+                .withNewHierarchy()
+                .addChild("Computer").linkToOuter(network2)
+                .withNewHierarchy()
+                .addChild("Job").addChild("Job").addChild("Job")
+        ;
+
+//        builder.closeAllInnerNames();
+        builder.makeGround();
+        builder2.makeGround();
+        PureBigraph redex = builder.createBigraph();
+        PureBigraph reactum = builder2.createBigraph();
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        return rr;
+    }
+
+    public static ReactionRule<PureBigraph> createReactionRule_AddThreeJobs() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
+        builder.createRoot()
+                .addChild("Room")
+                .withNewHierarchy()
+                .addChild("Computer").linkToOuter(network)
+                .withNewHierarchy()
+                .addChild("Job")
+        ;
+        builder2.createRoot()
+                .addChild("Room")
+                .withNewHierarchy()
+                .addChild("Computer").linkToOuter(network2)
+                .withNewHierarchy()
+                .addChild("Job").addChild("Job").addChild("Job").addChild("Job")
+        ;
+
+//        builder.closeAllInnerNames();
+        builder.makeGround();
+        builder2.makeGround();
+        PureBigraph redex = builder.createBigraph();
+        PureBigraph reactum = builder2.createBigraph();
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        return rr;
+    }
+
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();

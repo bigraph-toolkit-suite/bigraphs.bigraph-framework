@@ -25,6 +25,8 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.PureBigr
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.SubBigraphMatchPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -40,6 +42,13 @@ import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.trans
 public class RouteFinding {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/framework/";
+
+    @BeforeAll
+    static void setUp() throws IOException {
+        File dump = new File(TARGET_DUMP_PATH);
+        dump.mkdirs();
+        FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+    }
 
     @Test
     void name() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException {
@@ -90,6 +99,8 @@ public class RouteFinding {
         reactiveSystem.addPredicate(predicate);
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST,
                 opts);
+//        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.RANDOM_STATE,
+//                opts);
         modelChecker.execute();
     }
 
