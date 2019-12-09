@@ -18,10 +18,9 @@ import java.util.function.Supplier;
 //TODO: add tactics/order/priorities for RR execution (here?): yes here we program our application.
 //then we can see how this rule-style interactions with different simulation-styles and can select the best simulation workflow
 
-//TODO: add inner class which has also a reaction graph. this class should be thread safe. it is the input and output of a program
-// and contains the result like witnesses, which predicate lead to which bigraph etc.
-
 /**
+ * Abstract class of a bigraphical reactive system (BRS).
+ *
  * @author Dominik Grzelak
  */
 public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signature<?>>> implements ReactiveSystem<B> {
@@ -40,12 +39,12 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
     }
 
     @Override
-    public BiMap<String, ReactionRule<B>> getReactionRulesMap() {
+    public synchronized BiMap<String, ReactionRule<B>> getReactionRulesMap() {
         return reactionRules;
     }
 
     @Override
-    public List<ReactiveSystemPredicates<B>> getPredicates() {
+    public synchronized List<ReactiveSystemPredicates<B>> getPredicates() {
         return predicates;
     }
 
@@ -67,16 +66,16 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
         return false;
     }
 
-    public Signature<?> getSignature() {
+    public synchronized Signature<?> getSignature() {
         assert initialAgent != null;
         return initialAgent.getSignature();
     }
 
-    public B getAgent() {
+    public synchronized B getAgent() {
         return initialAgent;
     }
 
-    public AbstractReactiveSystem<B> setAgent(B initialAgent) {
+    public synchronized AbstractReactiveSystem<B> setAgent(B initialAgent) {
         this.initialAgent = initialAgent;
         return this;
     }
@@ -89,4 +88,27 @@ public abstract class AbstractReactiveSystem<B extends Bigraph<? extends Signatu
             return "r" + id++;
         }
     };
+
+    /**
+     * A bigraphical reactive system (BRS) bounded to a reaction graph.
+     * This data object is usually generated as a result of a simulation process for evaluating the results later.
+     * <p>
+     * This class is thread-safe.
+     *
+     * @param <B> type of the bigraph
+     */
+    public static class TransitionSystemBoundReactiveSystem<B extends Bigraph<? extends Signature<?>>> extends AbstractReactiveSystem<B> {
+        private final AbstractReactiveSystem<B> reactiveSystem;
+        private final ReactionGraph<B> reactionGraph;
+        //TODO add predicate-witness bigraph map
+
+        public TransitionSystemBoundReactiveSystem(ReactionGraph<B> reactionGraph, AbstractReactiveSystem<B> reactiveSystem) {
+            this.reactiveSystem = reactiveSystem;
+            this.reactionGraph = reactionGraph;
+        }
+
+        public ReactionGraph<B> getReactionGraph() {
+            return reactionGraph;
+        }
+    }
 }
