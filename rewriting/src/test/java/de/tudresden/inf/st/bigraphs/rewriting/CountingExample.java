@@ -17,7 +17,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.BigraphModelChecker;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.PureBigraphModelChecker;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -44,9 +47,9 @@ public class CountingExample {
     }
 
     @Test
-    void create_transition_system_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
+    void create_transition_system_test() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
         // Create reaction rulesname
-        SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
         PureBigraph agent_a = createAgent_A(3, 4);
         BigraphGraphvizExporter.toPNG(agent_a,
@@ -80,7 +83,7 @@ public class CountingExample {
                         .setMaximumTime(30)
                         .create()
                 )
-                .setMeasureTime(true)
+                .doMeasureTime(true)
                 .and(ReactiveSystemOptions.exportOpts()
                         .setTraceFile(new File(completePath.toUri()))
                         .create()
@@ -89,7 +92,13 @@ public class CountingExample {
 //
 //        MatchPredicate<PureBigraph> pred1 = MatchPredicate.create((PureBigraph) createAgent_A_Final());
 //
-        reactiveSystem.computeTransitionSystem(agent_a, opts);
+//        reactiveSystem.computeTransitionSystem(agent_a, opts);
+        reactiveSystem.setAgent(agent_a);
+
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
+                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                opts);
+        modelChecker.execute();
     }
 
     /**

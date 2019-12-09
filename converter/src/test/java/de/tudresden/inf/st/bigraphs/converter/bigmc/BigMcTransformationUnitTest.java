@@ -18,7 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class BigMcTransformationUnitTest {
      */
     @Test
     void name() throws InvalidConnectionException, LinkTypeNotExistsException, InvalidReactionRuleException, IOException {
-        SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
         PureBigraph agent_a = createAgent_A(3, 4);
         ReactionRule<PureBigraph> rr_1 = createReactionRule_1();

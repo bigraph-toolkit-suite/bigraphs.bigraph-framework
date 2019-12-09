@@ -1,12 +1,13 @@
 package de.tudresden.inf.st.bigraphs.rewriting;
 
+import com.google.common.collect.BiMap;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ReactionGraph;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.ReactiveSystemPredicates;
-import org.jgrapht.GraphPath;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.ReactiveSystemPredicates;
+import org.eclipse.collections.api.list.MutableList;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Base interface for bigraphical reactive systems.
@@ -25,7 +26,11 @@ public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
      */
     Collection<ReactionRule<B>> getReactionRules();
 
+    BiMap<String, ReactionRule<B>> getReactionRulesMap();
+
     B getAgent();
+
+    List<ReactiveSystemPredicates<B>> getPredicates();
 
     /**
      * Checks whether the bigraphical reactive system is simple. A BRS is simple if all its reaction rules are so.
@@ -34,37 +39,5 @@ public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
      */
     default boolean isSimple() {
         return getReactionRules().stream().allMatch(ReactionRule::isRedexSimple);
-    }
-
-    void setReactiveSystemListener(ReactiveSystemListener<B> reactiveSystemListener);
-
-    interface ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>> {
-
-        default void onReactiveSystemStarted() {
-        }
-
-        default void onCheckingReactionRule(ReactionRule<B> reactionRule) {
-        }
-
-        default void onReactiveSystemFinished() {
-        }
-
-        default void onUpdateReactionRuleApplies() {
-        }
-
-        /**
-         * Reports a violation of a predicate and supplies a counter-example trace from the starting state to the violating state
-         * to the method.
-         *
-         * @param currentAgent
-         * @param predicate
-         * @param counterExampleTrace
-         */
-        default void onPredicateViolated(B currentAgent, ReactiveSystemPredicates<B> predicate, GraphPath<String, ReactionGraph.LabeledEdge> counterExampleTrace) {
-        }
-
-        default void onAllPredicateMatched(B currentAgent) {
-        }
-
     }
 }

@@ -7,7 +7,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
@@ -19,7 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -37,7 +36,7 @@ public class BigrapherTransformationUnitTest {
      */
     @Test
     void name() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException {
-        SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
         PureBigraph agent_a = createAgent_A();
         ReactionRule<PureBigraph> rr_1 = createReactionRule_1();

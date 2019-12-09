@@ -56,21 +56,32 @@ public class ReactiveSystemOptions {
         return measureTime;
     }
 
-    public ReactiveSystemOptions setMeasureTime(boolean measureTime) {
+    /**
+     * Instruct the simulation to measure the time for individual steps of the current used simulation algorithm.
+     * Defaults to {@code false}.
+     * Useful for debugging purposes.
+     *
+     * @param measureTime flag to enable or disable time measurement
+     * @return the current options instance
+     */
+    public ReactiveSystemOptions doMeasureTime(boolean measureTime) {
         this.measureTime = measureTime;
         return this;
     }
 
     public <T extends Opts> T get(Options kind) {
-//        optsMap.get(kind.getOptionClassType())
         return (T) kind.getOptionClassType().cast(optsMap.get(kind));
-//        return (T) optsMap.get(kind.getOptionClassType());
     }
 
     public interface Opts {
         Options getType();
     }
 
+    /**
+     * Class that represents simulation-specific options.
+     *
+     * @author Dominik Grzelak
+     */
     public static final class TransitionOptions implements Opts {
         private int maximumTransitions;
         private long maximumTime;
@@ -126,6 +137,12 @@ public class ReactiveSystemOptions {
         }
     }
 
+    /**
+     * This class represents export-specific options regarding the generated artifacts when synthesizing the transition
+     * system.
+     *
+     * @author Dominik Grzelak
+     */
     public static final class ExportOptions implements Opts {
         private final File outputStatesFolder;
         private final File traceFile;

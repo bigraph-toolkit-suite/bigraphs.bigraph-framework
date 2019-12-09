@@ -8,7 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
  *
  * @author Dominik Grzelak
  */
-public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, SimpleReactiveSystem> {
+public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, PureReactiveSystem> {
 
     public static final String LINE_SEP = System.getProperty("line.separator");
 
@@ -44,7 +44,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     }
 
     @Override
-    public String toString(SimpleReactiveSystem system) {
+    public String toString(PureReactiveSystem system) {
         reset();
         StringBuilder s = new StringBuilder();
 
@@ -70,7 +70,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     }
 
     @Override
-    public void toOutputStream(SimpleReactiveSystem system, OutputStream outputStream) throws IOException {
+    public void toOutputStream(PureReactiveSystem system, OutputStream outputStream) throws IOException {
         reset();
         String s = toString(system);
         outputStream.write(s.getBytes(), 0, s.length());

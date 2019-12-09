@@ -7,7 +7,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
@@ -20,8 +19,11 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.InstantiationMap;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.SubBigraphMatchPredicate;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.BigraphModelChecker;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.PureBigraphModelChecker;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.SubBigraphMatchPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 
 import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.transitionOpts;
 
@@ -38,10 +39,10 @@ import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.trans
  */
 public class RouteFinding {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
-    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/";
+    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/framework/";
 
     @Test
-    void name() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
+    void name() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
         BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
                 true,
@@ -67,8 +68,8 @@ public class RouteFinding {
                 true,
                 new File(TARGET_DUMP_PATH + "reactum_car.png")
         );
-        Path currentRelativePath = Paths.get("");
-        Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), TARGET_DUMP_PATH, "transition_graph.png");
+//        Path currentRelativePath = Paths.get("");
+        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ReactiveSystemOptions opts = ReactiveSystemOptions.create();
         opts
                 .and(transitionOpts()
@@ -76,17 +77,20 @@ public class RouteFinding {
                         .setMaximumTime(60)
                         .create()
                 )
-                .setMeasureTime(true)
+                .doMeasureTime(true)
                 .and(ReactiveSystemOptions.exportOpts()
                         .setTraceFile(new File(completePath.toUri()))
                         .create()
                 )
         ;
 
-        SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
-        reactiveSystem.computeTransitionSystem(map, opts, Collections.singleton(predicate));
+        reactiveSystem.addPredicate(predicate);
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                opts);
+        modelChecker.execute();
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {

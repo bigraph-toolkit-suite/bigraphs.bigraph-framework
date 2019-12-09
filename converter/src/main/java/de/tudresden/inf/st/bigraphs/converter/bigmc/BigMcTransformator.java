@@ -8,7 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * @author Dominik Grzelak
  */
-public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, SimpleReactiveSystem> {
+public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, PureReactiveSystem> {
 
     public static final String LINE_SEP = System.getProperty("line.separator");
 
@@ -32,7 +32,7 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
     }
 
     @Override
-    public String toString(SimpleReactiveSystem system) {
+    public String toString(PureReactiveSystem system) {
         StringBuilder s = new StringBuilder();
 
         s.append(toString(system.getSignature()));
@@ -154,7 +154,7 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
     }
 
     @Override
-    public void toOutputStream(SimpleReactiveSystem system, OutputStream outputStream) throws IOException {
+    public void toOutputStream(PureReactiveSystem system, OutputStream outputStream) throws IOException {
         String s = toString(system);
         outputStream.write(s.getBytes(), 0, s.length());
     }
