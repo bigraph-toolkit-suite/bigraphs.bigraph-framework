@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 // to the equivalent bigraphER output result (means, check for num. of outer names etc.)
 public class MatchTesting {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/matching/framework/";
 
     public static void main(String[] args) throws Exception {
         org.openjdk.jmh.Main.main(args);
@@ -138,7 +139,7 @@ public class MatchTesting {
         assertTrue(iterator.hasNext());
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent_model_test_0, next, "src/test/resources/graphviz/model0/" + (transition++) + "/");
+            createGraphvizOutput(agent_model_test_0, next, TARGET_DUMP_PATH + "model0/" + (transition++) + "/");
             System.out.println("NEXT: " + next);
         }
 
@@ -155,7 +156,7 @@ public class MatchTesting {
         assertTrue(iterator.hasNext());
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent_model_test_1, next, "src/test/resources/graphviz/model1/");
+            createGraphvizOutput(agent_model_test_1, next, TARGET_DUMP_PATH + "model1/");
             System.out.println("Match found: " + next);
         }
 
@@ -168,8 +169,8 @@ public class MatchTesting {
     public void model_test_2() throws Exception {
         PureBigraph agent_model_test_2 = (PureBigraph) createAgent_model_test_2();
         PureBigraph redex_model_test_2a = (PureBigraph) createRedex_model_test_2a();
-        exportGraph(redex_model_test_2a, "src/test/resources/graphviz/model2/redex_model_test_2a.png");
-        exportGraph(agent_model_test_2, "src/test/resources/graphviz/model2/agent_model_test_2.png");
+        exportGraph(redex_model_test_2a, TARGET_DUMP_PATH + "model2/redex_model_test_2a.png");
+        exportGraph(agent_model_test_2, TARGET_DUMP_PATH + "model2/agent_model_test_2.png");
         //the second root of the redex will create many occurrences because a distinct match isn't possible
         PureBigraph redex_model_test_2b = (PureBigraph) createRedex_model_test_2b();
 
@@ -179,7 +180,7 @@ public class MatchTesting {
         while (iterator.hasNext()) {
             BigraphMatch next = iterator.next();
             System.out.println(next);
-            createGraphvizOutput(agent_model_test_2, next, "src/test/resources/graphviz/model2/");
+            createGraphvizOutput(agent_model_test_2, next, TARGET_DUMP_PATH + "model2/");
         }
 
 
@@ -207,7 +208,7 @@ public class MatchTesting {
         Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent_model_test_3, next, "src/test/resources/graphviz/model3/");
+            createGraphvizOutput(agent_model_test_3, next, TARGET_DUMP_PATH + "model3/");
             System.out.println(next);
         }
 
@@ -224,7 +225,7 @@ public class MatchTesting {
         Iterator<PureBigraphParametricMatch> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-//            createGraphvizOutput(agent_model_test_4, next, "src/test/resources/graphviz/model4/");
+//            createGraphvizOutput(agent_model_test_4, next, TARGET_DUMP_PATH + "model4/");
             System.out.println("MATCH: " + next);
         }
 
@@ -241,7 +242,7 @@ public class MatchTesting {
         Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-//            createGraphvizOutput(agent_model_test_4, next, "src/test/resources/graphviz/model4/");
+//            createGraphvizOutput(agent_model_test_4, next, TARGET_DUMP_PATH + "model4/");
             System.out.println("MATCH: " + next);
         }
     }
@@ -253,7 +254,7 @@ public class MatchTesting {
 //        createGraphvizOutput(agent_a, null, "src/test/resources/graphviz/model6/");
         BigraphGraphvizExporter.toPNG(agent,
                 true,
-                new File("src/test/resources/graphviz/model6/agent.png")
+                new File(TARGET_DUMP_PATH + "model6/agent.png")
         );
         ReactionRule<PureBigraph> reactionRule_3 = createReactionRule_3();
         PureBigraph redex = reactionRule_3.getRedex();
@@ -264,7 +265,7 @@ public class MatchTesting {
         Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent, next, "src/test/resources/graphviz/model6/");
+            createGraphvizOutput(agent, next, TARGET_DUMP_PATH + "model6/");
             System.out.println("MATCH: " + next);
         }
     }
@@ -275,12 +276,12 @@ public class MatchTesting {
         PureBigraph agent_model_test_7 = createAgent_model_test_7();
         BigraphGraphvizExporter.toPNG(agent_model_test_7,
                 true,
-                new File("src/test/resources/graphviz/model7/agent_7.png")
+                new File(TARGET_DUMP_PATH + "model7/agent_7.png")
         );
         PureBigraph redex_7 = createRedex_7();
         BigraphGraphvizExporter.toPNG(redex_7,
                 true,
-                new File("src/test/resources/graphviz/model7/redex_7.png")
+                new File(TARGET_DUMP_PATH + "model7/redex_7.png")
         );
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
@@ -289,7 +290,7 @@ public class MatchTesting {
         Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent_model_test_7, next, "src/test/resources/graphviz/model7/");
+            createGraphvizOutput(agent_model_test_7, next, TARGET_DUMP_PATH + "model7/");
             System.out.println("MATCH: " + next);
         }
     }
@@ -299,12 +300,12 @@ public class MatchTesting {
         PureBigraph agent = createAgent_idle_edge_test();
         BigraphGraphvizExporter.toPNG(agent,
                 true,
-                new File("src/test/resources/graphviz/model_idleedge/agent.png")
+                new File(TARGET_DUMP_PATH + "model_idleedge/agent.png")
         );
         PureBigraph redex = createRedex_idle_edge_test();
         BigraphGraphvizExporter.toPNG(redex,
                 true,
-                new File("src/test/resources/graphviz/model_idleedge/redex.png")
+                new File(TARGET_DUMP_PATH + "model_idleedge/redex.png")
         );
 
         GroundReactionRule<PureBigraph> rr = new GroundReactionRule<>(redex, redex);
