@@ -37,6 +37,11 @@ public class OrPredicate<B extends Bigraph<? extends Signature<?>>> extends Reac
         this(false, predicates);
     }
 
+    @Override
+    public B getBigraph() {
+        return null;
+    }
+
     /**
      * Concatenates all given predicates with the <i>or</i> operator of the {@link ReactiveSystemPredicates} class and
      * evaluates them together.

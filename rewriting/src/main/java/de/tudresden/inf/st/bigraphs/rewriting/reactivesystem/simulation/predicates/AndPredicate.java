@@ -34,6 +34,11 @@ public class AndPredicate<B extends Bigraph<? extends Signature<?>>> extends Rea
         this(false, predicates);
     }
 
+    @Override
+    public B getBigraph() {
+        return null;
+    }
+
     /**
      * Concatenates all given predicates with the <i>and</i> operator of the {@link ReactiveSystemPredicates} class and
      * evaluates them together.

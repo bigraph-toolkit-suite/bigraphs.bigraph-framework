@@ -20,6 +20,14 @@ public abstract class ReactiveSystemPredicates<B extends Bigraph<? extends Signa
     protected boolean negate = false;
 
     /**
+     * Get the bigraph used in the predicate.
+     * If the predicate is a conditional predicate (e.g., {@link AndPredicate}), the methid returns {@code null}.
+     *
+     * @return the underlying bigraph of the predicate, or {@code null} for conditional predicates.
+     */
+    public abstract B getBigraph();
+
+    /**
      * This method is responsible to test the current state of a transition system of a BRS
      * with the predicate at hand (which is provided by the concrete subclass).
      *

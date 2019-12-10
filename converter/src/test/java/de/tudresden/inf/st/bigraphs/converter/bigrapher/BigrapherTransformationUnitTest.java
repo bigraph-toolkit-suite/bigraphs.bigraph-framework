@@ -19,6 +19,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.SubBigraphMatchPredicate;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -30,6 +32,8 @@ import java.io.IOException;
  */
 public class BigrapherTransformationUnitTest {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+
+    private static final String DUMP_TARGET = "src/test/resources/dump/";
 
     /**
      * bigrapher full -d ./test -f svg -s states -M 10 -t trans.svg -v test.big
@@ -43,17 +47,19 @@ public class BigrapherTransformationUnitTest {
 
         reactiveSystem.setAgent(agent_a);
         reactiveSystem.addReactionRule(rr_1);
+        reactiveSystem.addPredicate(createPredicate());
+        reactiveSystem.addPredicate(createPredicate());
 
         BigrapherTransformator prettyPrinter = new BigrapherTransformator();
         String s = prettyPrinter.toString(reactiveSystem);
         System.out.println(s);
 
-        FileOutputStream fout = new FileOutputStream(new File("/home/dominik/git/BigraphFramework/converter/src/test/resources/dump/test.big"));
+        FileOutputStream fout = new FileOutputStream(new File(DUMP_TARGET + "test.big"));
         prettyPrinter.toOutputStream(reactiveSystem, fout);
         fout.close();
     }
 
-    public static PureBigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
+    public PureBigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
@@ -83,7 +89,7 @@ public class BigrapherTransformationUnitTest {
         return builder.createBigraph();
     }
 
-    public static ReactionRule<PureBigraph> createReactionRule_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public ReactionRule<PureBigraph> createReactionRule_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
         Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
@@ -109,6 +115,21 @@ public class BigrapherTransformationUnitTest {
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, redex);
         return rr;
     }
+
+    public ReactiveSystemPredicates<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        BigraphEntity.OuterName door = builder.createOuterName("door");
+        BigraphEntity.OuterName user = builder.createOuterName("name:jeff");
+
+        builder.createRoot()
+                .addChild("Room").linkToOuter(door)
+                .withNewHierarchy().addSite().addChild("User", user);
+        PureBigraph bigraph = builder.createBigraph();
+        return SubBigraphMatchPredicate.create(bigraph);
+    }
+
 
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();

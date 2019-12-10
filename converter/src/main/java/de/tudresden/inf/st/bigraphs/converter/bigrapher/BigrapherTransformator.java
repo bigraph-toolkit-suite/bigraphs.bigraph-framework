@@ -9,6 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.ReactiveSystemPredicates;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.IOException;
@@ -31,15 +32,20 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     public static final String LINE_SEP = System.getProperty("line.separator");
 
     private List<String> reactionLabels = new ArrayList<>();
+    private List<String> predicateLabels = new ArrayList<>();
     private List<String> randomLinkNames = new ArrayList<>();
     private int reactionRuleCounter = 0;
+    private final String predicateVarPrefix = "pred";
+    private int predicateVarCnt = 0;
 
     public BigrapherTransformator() {
     }
 
     private void reset() {
         reactionRuleCounter = 0;
+        predicateVarCnt = 0;
         reactionLabels.clear();
+        predicateLabels.clear();
         randomLinkNames.clear();
     }
 
@@ -59,13 +65,34 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         s.append(toStringForAgent(system.getAgent())).append(" ;").append(LINE_SEP);
 
         s.append(LINE_SEP);
+
+        boolean hasPredicates = system.getPredicates().size() > 0;
+        if (hasPredicates) {
+            s.append(toString(system.getPredicates()));
+            s.append(LINE_SEP);
+        }
+
         s.append("begin brs").append(LINE_SEP);
         s.append("\tinit ").append(getAgentVarName(system.getAgent())).append(";").append(LINE_SEP);
         String rrSet = String.join(",", reactionLabels).toString();
         s.append("\trules = [{").append(rrSet).append("}];").append(LINE_SEP);
+        if (hasPredicates) {
+            String predLabels = String.join(",", predicateLabels).toString();
+            s.append("\tpreds = {").append(predLabels).append("};").append(LINE_SEP);
+        }
         s.append("end");
         s.append(LINE_SEP);
 
+        return s.toString();
+    }
+
+    private String toString(List<ReactiveSystemPredicates<PureBigraph>> predicates) {
+        //TODO
+        StringBuilder s = new StringBuilder();
+        for (ReactiveSystemPredicates<PureBigraph> predicate : predicates) {
+            s.append(toStringForAgent(predicate.getBigraph(), getPredicateVarName(predicate.getBigraph())))
+                    .append(";").append(LINE_SEP);
+        }
         return s.toString();
     }
 
@@ -126,8 +153,17 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         return bigraph.getModelPackage().getName().toLowerCase();
     }
 
+    private String getPredicateVarName(PureBigraph bigraph) {
+        predicateLabels.add(predicateVarPrefix + (predicateVarCnt++));
+        return predicateLabels.get(predicateLabels.size() - 1);
+    }
+
     private String toStringForAgent(PureBigraph bigraph) {
-        String varPrefix = "big " + getAgentVarName(bigraph) + " = ";
+        return toStringForAgent(bigraph, getAgentVarName(bigraph));
+    }
+
+    private String toStringForAgent(PureBigraph bigraph, String varName) {
+        String varPrefix = "big " + varName + " = ";
         StringBuilder s = new StringBuilder("");
         Iterator<BigraphEntity.RootEntity> iterator = bigraph.getRoots().iterator();
         if (!iterator.hasNext()) return s.append(";").toString();

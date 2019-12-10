@@ -42,6 +42,11 @@ public class BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>> exte
     }
 
     @Override
+    public B getBigraph() {
+        return bigraphToMatch;
+    }
+
+    @Override
     public boolean test(B agent) {
         if (this.hashFunction.hash(agent) != this.hashFunction.hash(this.bigraphToMatch)) {
             return false;
