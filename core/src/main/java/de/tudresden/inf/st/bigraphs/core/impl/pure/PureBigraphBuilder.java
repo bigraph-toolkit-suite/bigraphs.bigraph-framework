@@ -346,6 +346,12 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             return this;
         }
 
+        @Override
+        public Hierarchy addChild(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException {
+            addChild(signature.getControlByName(controlName)).linkToOuter(outerName);
+            return this;
+        }
+
         //this implies: added to a parent (see lastCreatedNode)
         @Override
         public Hierarchy addChild(Control control) {

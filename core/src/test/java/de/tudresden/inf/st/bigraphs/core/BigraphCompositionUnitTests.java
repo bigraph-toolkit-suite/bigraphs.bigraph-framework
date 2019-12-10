@@ -89,8 +89,8 @@ public class BigraphCompositionUnitTests {
 
         BigraphEntity.OuterName fromD = reacted.getOuterNames().stream().filter(x -> x.getName().equals("fromD")).findFirst().get();
         assertEquals(2, reacted.getPointsFromLink(fromD).size());
-        assertEquals("Place", reacted.getNodeOfPort((BigraphEntity.Port) new ArrayList<>(reacted.getPointsFromLink(fromD)).get(0)).getControl().getNamedType().stringValue());
-        assertEquals("Road", reacted.getNodeOfPort((BigraphEntity.Port) new ArrayList<>(reacted.getPointsFromLink(fromD)).get(1)).getControl().getNamedType().stringValue());
+//        assertEquals("Place", reacted.getNodeOfPort((BigraphEntity.Port) new ArrayList<>(reacted.getPointsFromLink(fromD)).get(0)).getControl().getNamedType().stringValue());
+//        assertEquals("Road", reacted.getNodeOfPort((BigraphEntity.Port) new ArrayList<>(reacted.getPointsFromLink(fromD)).get(1)).getControl().getNamedType().stringValue());
 
     }
 

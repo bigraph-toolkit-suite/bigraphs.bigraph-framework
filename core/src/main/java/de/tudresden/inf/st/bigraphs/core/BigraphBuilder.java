@@ -3,6 +3,8 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 
 /**
  * Common bigraph builder interface.
@@ -60,6 +62,8 @@ public interface BigraphBuilder<S extends Signature> {
          * @return the same node hierarchy instance
          */
         NodeHierarchy addChild(String controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException;
+
+        NodeHierarchy addChild(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException;
 
         /**
          * Adds a site to the current parent.
