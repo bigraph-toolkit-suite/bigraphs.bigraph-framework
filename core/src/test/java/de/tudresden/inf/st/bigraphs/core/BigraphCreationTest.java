@@ -10,21 +10,22 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsExc
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.jupiter.api.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Dominik Grzelak
@@ -304,6 +305,43 @@ public class BigraphCreationTest {
         }
 
         @Test
+        @DisplayName("Connect a node with three distinct inner names by one edge")
+        void connect_to_multiple_InnerNames() throws InvalidConnectionException, LinkTypeNotExistsException {
+            BigraphEntity.InnerName x1 = builder.createInnerName("x1");
+            BigraphEntity.InnerName x2 = builder.createInnerName("x2");
+            BigraphEntity.InnerName x3 = builder.createInnerName("x3");
+
+            builder.createRoot().addChild("D").connectInnerNamesToNode(x1, x2, x3);
+            PureBigraph bigraph = builder.createBigraph();
+
+            assertEquals(3, bigraph.getInnerNames().size());
+            assertEquals(3, bigraph.getInnerFace().getValue().size());
+            assertEquals(1, bigraph.getNodes().size());
+
+            BigraphEntity.NodeEntity<DefaultDynamicControl> D = bigraph.getNodes().iterator().next();
+            assertEquals(1, bigraph.getPortCount(D));
+            Collection<BigraphEntity.Port> ports = bigraph.getPorts(D);
+            assertEquals(1, ports.size());
+            BigraphEntity.Port port = new ArrayList<>(ports).get(0);
+            BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(port);
+            assertNotNull(linkOfPoint);
+            Collection<BigraphEntity> pointsFromLink = bigraph.getPointsFromLink(linkOfPoint);
+            assertEquals(4, pointsFromLink.size());
+            int portCnt = 0, innerCnt = 0;
+            for (BigraphEntity eachPoint : pointsFromLink) {
+                if (BigraphEntityType.isPort(eachPoint)) portCnt++;
+                if (BigraphEntityType.isInnerName(eachPoint)) {
+                    innerCnt++;
+                    String name = ((BigraphEntity.InnerName) eachPoint).getName();
+                    assertTrue(name.equals(x1.getName()) || name.equals(x2.getName()) || name.equals(x3.getName()));
+                }
+            }
+            assertEquals(1, portCnt);
+            assertEquals(3, innerCnt);
+
+        }
+
+        @Test
         void connect_to_inner_name_2() {
             BigraphEntity.InnerName x1 = builder.createInnerName("x1");
             BigraphEntity.InnerName x2 = builder.createInnerName("x2");
@@ -575,6 +613,7 @@ public class BigraphCreationTest {
                 .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().kind(ControlKind.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(4)).assign()
         ;
         Signature<Control<StringTypedName, FiniteOrdinal<Integer>>> controlSignature = signatureBuilder.create();
         return (S) controlSignature;
