@@ -51,8 +51,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
     public PureBigraphComposite(Bigraph<S> bigraph) {
         super(bigraph);
         assert bigraph instanceof PureBigraphComposite || bigraph instanceof PureBigraph || bigraph instanceof ElementaryBigraph;
-        // this is safe: S is inferred from the bigraph too where S is the same type as the builder's type S (they will have the same type thus)
-        this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature()); //new PureBigraphFactory().createBigraphBuilder(getBigraphDelegate().getSignature());
+        // this is safe: S is inferred from the bigraph to where S is the same type as the builder's type S (they will have the same type thus)
+        this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature());
     }
 
     /**

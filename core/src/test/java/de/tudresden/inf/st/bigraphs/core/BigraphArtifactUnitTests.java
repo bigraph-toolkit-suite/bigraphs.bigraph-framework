@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class BigraphArtifactTests {
+public class BigraphArtifactUnitTests {
 
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";

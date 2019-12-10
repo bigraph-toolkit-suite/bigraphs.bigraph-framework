@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ElementaryBigraphTests {
+public class ElementaryBigraphUnitTests {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test

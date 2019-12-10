@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 //@Disabled
-public class BigraphCreationTest {
+public class BigraphCreationUnitTest {
 
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private PureBigraphFactory factoryWithArgs = AbstractBigraphFactory.createPureBigraphFactory();

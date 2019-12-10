@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class BigraphSignatureTest {
+public class BigraphSignatureUnitTest {
 
     @BeforeAll
     static void init() {

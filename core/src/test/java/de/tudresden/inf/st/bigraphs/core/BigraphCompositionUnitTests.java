@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
@@ -18,7 +19,9 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileOutputStream;
@@ -27,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BigraphCompositionUnitTests {
@@ -37,6 +41,28 @@ public class BigraphCompositionUnitTests {
 
     @BeforeEach
     void setUp() {
+    }
+
+    @Test
+    @DisplayName("Compose two bigraphs and check their EMetaModel data")
+    void compose_test_with_emetamodel_check() throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        EMetaModelData metaData = EMetaModelData.builder().setName("model-check").setNsPrefix("model").setNsUri("org.example.check").create();
+        EMetaModelData metaData2 = EMetaModelData.builder().setName("model-check2").setNsPrefix("model2").setNsUri("org.example.check2").create();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature, metaData);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature, metaData2);
+
+        PureBigraph building = builder.createRoot().addChild("Room").addChild("Room").withNewHierarchy().addSite().createBigraph();
+        PureBigraph user = builder2.createRoot().addChild("User").createBigraph();
+
+        BigraphComposite<DefaultDynamicSignature> composed = ops(building).compose(user);
+        BigraphComposite<DefaultDynamicSignature> composed2 = ops(building).juxtapose(user);
+        assertNotNull(composed);
+        assertNotNull(composed2);
+
+        assertEquals(metaData.getName(), composed.getOuterBigraph().getModelPackage().getName());
+        assertEquals(metaData.getNsPrefix(), composed.getOuterBigraph().getModelPackage().getNsPrefix());
+        assertEquals(metaData.getNsUri(), composed.getOuterBigraph().getModelPackage().getNsURI());
     }
 
     @Test
@@ -128,6 +154,8 @@ public class BigraphCompositionUnitTests {
 
         PureBigraph F = builderForF.createBigraph();
         PureBigraph G = builderForG.createBigraph();
+
+        EPackage modelPackage = F.getModelPackage();
 
 
         BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
