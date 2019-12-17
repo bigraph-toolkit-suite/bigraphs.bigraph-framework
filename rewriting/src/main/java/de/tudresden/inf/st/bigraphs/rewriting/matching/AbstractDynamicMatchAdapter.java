@@ -85,7 +85,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      */
     public abstract AbstractSequentialList<ControlLinkPair> getLinksOfNode(BigraphEntity node);
 
-    public List<BigraphEntity> getAllChildrenFromNode(BigraphEntity node) {
+    public List<BigraphEntity> getSubtreeOfNode(BigraphEntity node) {
         Traverser<BigraphEntity> stringTraverser = Traverser.forTree(this::getChildren);
         Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(node);
         ArrayList<BigraphEntity> bigraphEntities = Lists.newArrayList(v0);

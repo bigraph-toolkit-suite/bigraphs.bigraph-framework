@@ -13,10 +13,12 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.BigraphModelChecker;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.SimulationStrategy;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An implementation of an {@link BigraphModelChecker} providing a simple model checking for BRS for pure bigraphs (see {@link PureBigraph}).
@@ -40,15 +42,36 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
     @Override
     protected PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         try {
+            //OK
+            try {
+                BigraphGraphvizExporter.toPNG(match.getContext(),
+                        true,
+                        new File(String.format("context_%s.png", cnt))
+                );
+                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
+                        true,
+                        new File(String.format("contextIdentity_%s.png", cnt))
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Bigraph outerBigraph = factory
                     .asBigraphOperator(match.getContext())
-                    .juxtapose((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
+                    .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
 //            System.out.println(outerBigraph);
-//            GraphvizConverter.toPNG(outerBigraph,
-//                    true,
-//                    new File("contextimage.png")
-//            );
+            try {
+                BigraphGraphvizExporter.toPNG(outerBigraph,
+                        true,
+                        new File("contextimage.png")
+                );
+                BigraphGraphvizExporter.toPNG(rule.getReactum(),
+                        true,
+                        new File("reactum.png")
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 //            Bigraph originAgent = factory.asBigraphOperator(outerBigraph).compose(match.getRedex()).getOuterBigraph();
 //            GraphvizConverter.toPNG(originAgent,
 //                    true,
@@ -65,6 +88,14 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //                    true,
 //                    new File("agentReacted.png")
 //            );
+            try {
+                BigraphGraphvizExporter.toPNG(agentReacted,
+                        true,
+                        new File("agent-reacted.png")
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return (PureBigraph) agentReacted;
         } catch (IncompatibleSignatureException e) {
             e.printStackTrace();
