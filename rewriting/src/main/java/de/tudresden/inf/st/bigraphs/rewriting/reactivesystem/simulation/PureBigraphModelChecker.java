@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
@@ -16,6 +17,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -132,14 +134,14 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
-//            try {
-//                BigraphGraphvizExporter.toPNG(outerBigraph,
-//                        true,
-//                        new File(String.format("outerBigraph_%s.png", cnt))
-//                );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                BigraphGraphvizExporter.toPNG(outerBigraph,
+                        true,
+                        new File(String.format("outerBigraph_%s.png", cnt))
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Bigraph d_Params = null;
             List<PureBigraph> parameters = new ArrayList<>(match.getParameters());
             if (parameters.size() >= 2) {
@@ -189,25 +191,25 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
                     .compose(compose)
                     .getOuterBigraph();
 //
-//            try {
-////                Bigraph test = factory.asBigraphOperator(outerBigraph).compose(rule.getReactum()).getOuterBigraph();
-////                BigraphGraphvizExporter.toPNG(test,
-////                        true,
-////                        new File("test" + (cnt) + ".png")
-////                );
-//                BigraphGraphvizExporter.toPNG(agentReacted,
+            try {
+//                Bigraph test = factory.asBigraphOperator(outerBigraph).compose(rule.getReactum()).getOuterBigraph();
+//                BigraphGraphvizExporter.toPNG(test,
 //                        true,
-//                        new File(String.format("agentReacted_%s.png", cnt))
+//                        new File("test" + (cnt) + ".png")
 //                );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+                BigraphGraphvizExporter.toPNG(agentReacted,
+                        true,
+                        new File(String.format("agentReacted_%s.png", cnt))
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-//            try {
-//                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             cnt++;
 
             return (PureBigraph) agentReacted;

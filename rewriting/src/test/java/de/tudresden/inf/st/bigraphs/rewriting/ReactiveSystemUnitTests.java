@@ -51,7 +51,7 @@ public class ReactiveSystemUnitTests {
 
     @Test
     @DisplayName("BFS simulation test")
-    void create_transition_system_test() throws TypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_basic_example() throws TypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
         // Create reaction rulesname
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();

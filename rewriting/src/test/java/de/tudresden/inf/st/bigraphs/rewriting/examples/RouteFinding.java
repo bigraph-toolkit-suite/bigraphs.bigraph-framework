@@ -51,7 +51,7 @@ public class RouteFinding {
     }
 
     @Test
-    void name() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_car_example() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
         BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
                 true,
@@ -97,10 +97,12 @@ public class RouteFinding {
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
         reactiveSystem.addPredicate(predicate);
-        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST,
-                opts);
 //        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.RANDOM_STATE,
 //                opts);
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
+                reactiveSystem,
+                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                opts);
         modelChecker.execute();
     }
 

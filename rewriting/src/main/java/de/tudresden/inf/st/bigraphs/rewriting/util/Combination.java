@@ -6,7 +6,6 @@ import java.util.List;
 //https://github.com/hmkcode/Java/blob/master/java-combinations/Combination.java
 public class Combination {
 
-
     public static List<Integer[]> combination(List<Integer> elements, int K) {
         List<Integer[]> combinations = new LinkedList<>();
         // get the length of the array
