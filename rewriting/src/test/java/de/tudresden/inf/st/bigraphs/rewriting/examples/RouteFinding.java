@@ -58,6 +58,7 @@ public class RouteFinding {
                 new File(TARGET_DUMP_PATH + "predicate_car.png")
         );
 
+//        PureBigraph map = createMapSimple(8);
         PureBigraph map = createMap(8);
 //        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream("meta-model.ecore"));
 //        PureBigraphBuilder.create(createSignature(),
@@ -96,7 +97,7 @@ public class RouteFinding {
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
-        reactiveSystem.addPredicate(predicate);
+//        reactiveSystem.addPredicate(predicate);
 //        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.RANDOM_STATE,
 //                opts);
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
@@ -134,6 +135,42 @@ public class RouteFinding {
 //                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
 //                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
                 .addChild("Place").linkToOuter(p7).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).goBack()
+//                .addChild("Place")
+        ;
+//        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);
+//        builder.closeInnerNames(target);
+        PureBigraph bigraph = builder.createBigraph();
+        return bigraph;
+    }
+
+    private PureBigraph createMapSimple(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+
+        BigraphEntity.OuterName p0 = builder.createOuterName("p0");
+        BigraphEntity.OuterName p1 = builder.createOuterName("p1");
+//        BigraphEntity.OuterName p2 = builder.createOuterName("p2");
+        BigraphEntity.OuterName p3 = builder.createOuterName("p3");
+        BigraphEntity.OuterName p4 = builder.createOuterName("p4");
+//        BigraphEntity.OuterName p5 = builder.createOuterName("p5");
+//        BigraphEntity.OuterName p6 = builder.createOuterName("p6");
+//        BigraphEntity.OuterName p7 = builder.createOuterName("p7");
+//        BigraphEntity.OuterName p8 = builder.createOuterName("p8");
+        BigraphEntity.OuterName target = builder.createOuterName("target");
+//        BigraphEntity.InnerName target = builder.createInnerName("target");
+
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.newHierarchy("Car").linkToOuter(target);
+        for (int i = 0; i < fuelLevel; i++) {
+            car = car.addChild("Fuel");
+        }
+        builder.createRoot()
+                .addChild("Place").linkToOuter(p0).withNewHierarchy().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).goBack()
+                .addChild("Place").linkToOuter(p1).withNewHierarchy().addChild("Road").addChild("Road").linkToOuter(p4).goBack()
+//                .addChild("Place").linkToOuter(p2).withNewHierarchy().addChild("Road").linkToOuter(p5).goBack()
+                .addChild("Place").linkToOuter(p3).withNewHierarchy().addChild("Road").linkToOuter(p4).addChild("Road").goBack()
+//                .addChild("Place").linkToOuter(p4).withNewHierarchy().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).goBack()
+//                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
+//                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
+//                .addChild("Place").linkToOuter(p7).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).goBack()
 //                .addChild("Place")
         ;
 //        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);

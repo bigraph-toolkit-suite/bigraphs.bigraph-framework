@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.AbstractSimpleReactiveSystem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +15,7 @@ import java.util.Collections;
  * Class represents the result of a match. Contains all necessary elements to perform the rewriting step later.
  *
  * @author Dominik Grzelak
- * @see de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.AbstractReactiveSystem
+ * @see AbstractSimpleReactiveSystem
  */
 public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
 

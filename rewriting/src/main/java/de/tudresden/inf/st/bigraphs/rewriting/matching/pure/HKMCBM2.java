@@ -48,12 +48,8 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     private PureBigraphRedexAdapter redexAdapter;
     private PureBigraphAgentAdapter agentAdapter;
 
-//    private Set<Control> availableControls = new LinkedHashSet<>();
-
-    //    private LinkedList<Control> availableControlsRedex;
-//    private LinkedList<Control> availableControlsAgent;
-    private Map<Control, Long> ctrlsRedex; // = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
-    private Map<Control, Long> ctrlsAgent; // = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+    private Map<Control, Long> ctrlsRedex;
+    private Map<Control, Long> ctrlsAgent;
 
     private boolean hasSite = false;
 
@@ -82,6 +78,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         }
 
         ctrlsRedex = new ConcurrentHashMap<>(this.partition1.size());
+//        Maps.immutable.
         ctrlsAgent = new ConcurrentHashMap<>(this.partition2.size());
     }
 

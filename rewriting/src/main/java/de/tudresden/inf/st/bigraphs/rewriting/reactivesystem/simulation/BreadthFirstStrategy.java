@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 //TODO: logger-based/export based breadthfirststrategy...via decorator
@@ -61,7 +62,10 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
         String rootBfcs = canonicalForm.bfcs(initialAgent);
         workingQueue.add(initialAgent);
         int transitionCnt = 0;
+        AtomicInteger CNT = new AtomicInteger(0);
+        AtomicInteger CNT2 = new AtomicInteger(0);
         ReactiveSystemOptions.TransitionOptions transitionOptions = this.options.get(ReactiveSystemOptions.Options.TRANSITION);
+        System.out.println("MAXIMUM: " + transitionOptions.getMaximumTransitions());
         while (!workingQueue.isEmpty() && transitionCnt < transitionOptions.getMaximumTransitions()) {
             // "Remove the first element w of the work queue Q."
             final B theAgent = workingQueue.remove();
@@ -71,12 +75,16 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             Stream.generate(inOrder)
                     .limit(modelChecker.getReactiveSystem().getReactionRules().size())
 //                    .peek(x -> modelChecker.reactiveSystemListener.onCheckingReactionRule(x))
+//                    .peek(x -> System.out.println("ABCDEFG"))
                     .forEachOrdered(eachRule -> {
-                        modelChecker.reactiveSystemListener.onCheckingReactionRule(eachRule);
+//                        modelChecker.reactiveSystemListener.onCheckingReactionRule(eachRule);
                         MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule.getRedex()));
+//                        MatchIterable<BigraphMatch<B>> match = modelChecker.getMatcher().match(theAgent, eachRule.getRedex()); //modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule.getRedex()));
 //                        MatchIterable<BigraphMatch<B>> match = matcher.match(theAgent, eachRule.getRedex());
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
+                        CNT.incrementAndGet();
                         while (iterator.hasNext()) {
+                            CNT2.incrementAndGet();
                             BigraphMatch<B> next = iterator.next();
 //                            System.out.println("NEXT: " + next);
                             B reaction = null;
@@ -86,7 +94,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                 //TODO: beachte instantiation map
                                 reaction = modelChecker.buildParametricReaction(theAgent, next, eachRule);
                             }
-//                            assert Objects.nonNull(reaction);
+                            assert Objects.nonNull(reaction);
                             if (Objects.nonNull(reaction)) {
                                 String bfcf = canonicalForm.bfcs(reaction);
                                 String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(eachRule);
@@ -131,6 +139,9 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             // "Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty."
             transitionCnt++;
         }
+        System.out.println("transitionCnt=" + transitionCnt);
+        System.out.println("Cnt=" + CNT.get());
+        System.out.println("Cnt2=" + CNT2.get());
 
 //        modelChecker.prepareOutput();
     }

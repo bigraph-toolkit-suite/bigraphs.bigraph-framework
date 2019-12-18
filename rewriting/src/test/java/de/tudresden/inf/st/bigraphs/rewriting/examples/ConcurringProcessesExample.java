@@ -46,7 +46,7 @@ public class ConcurringProcessesExample {
     }
 
     @Test
-    void simulate() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_concurrent_processes() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
         PureBigraph agent = createAgent();
         ReactionRule<PureBigraph> rule_resourceRegistrationPhase = createRule_ResourceRegistrationPhase();
         ReactionRule<PureBigraph> rule_processWorkingPhase = createRule_ProcessWorkingPhase();

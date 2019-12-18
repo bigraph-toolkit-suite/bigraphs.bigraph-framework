@@ -142,7 +142,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         return reactionGraph;
     }
 
-    public <A> A watch(Supplier<A> function) {
+    public synchronized <A> A watch(Supplier<A> function) {
         if (options.isMeasureTime()) {
             Stopwatch timer = Stopwatch.createStarted();
             A apply = function.get();

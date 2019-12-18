@@ -31,8 +31,6 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         this.instantiationMap = instantiationMap;
         this.assertSignaturesAreSame(this.redex.getSignature(), this.reactum.getSignature());
         this.assertInterfaceDefinitionIsCorrect(this.redex, this.reactum);
-        this.assertParametricRedexIsSimple(this.redex);
-        this.assertNoIdleOuterName(this.reactum); // redex is captured by "simple" constraint above
         this.signature = this.redex.getSignature();
     }
 
@@ -41,59 +39,12 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         this(redex, reactum, InstantiationMap.create(redex.getSites().size()));
     }
 
-    protected boolean hasIdleOuterNames(B redex) {
-        boolean isIdle = false;
-        for (BigraphEntity.OuterName eachOuter : redex.getOuterNames()) {
-            // check for idle links (bigraphER doesn't allows it either
-            if (redex.getPointsFromLink(eachOuter).size() == 0) {
-                isIdle = true;
-                break;
-            }
-        }
-        return isIdle;
-    }
-
     /**
-     * Checks if a parametric redex is <i>simple</i>. A parametric redex is simple if:
-     * <ul>
-     * <li>open: every link is open</li>
-     * <li>guarding: no site has a root as parent</li>
-     * <li>inner-injective: no two sites are siblings</li>
-     * </ul>
-     * (see Milner book Def. 8.12, pp. 95)
-     * <p>
-     * Throws a {@link RedexIsNotSimpleException} if the redex isn't simple.
-     *
-     * @param redex the redex of the reaction rule to be checked
-     */
-    private void assertParametricRedexIsSimple(B redex) throws RedexIsNotSimpleException {
-        //"openness": all links are interfaces (edges, and outer names)
-        //TODO must not be severe constraint, as we can internally model edges as outer names (in the matching as currently done)
-//        boolean isOpen = redex.getInnerNames().size() == 0 && redex.getEdges().size() == 0;
-
-        if (!isRedexSimple()) {
-            throw new RedexIsNotSimpleException();
-        }
-    }
-
-    /**
-     * Throws an {@link InvalidReactionRuleException} if an outer name of a given redex is idle (i.e., not connected to a point of the redex).
-     *
-     * @param redex the outer names of the redex to check
-     * @throws InvalidReactionRuleException if outer name is idle.
-     */
-    private void assertNoIdleOuterName(B redex) throws InvalidReactionRuleException {
-        if (hasIdleOuterNames(redex)) {
-            throw new OuterNameIsIdleException();
-        }
-    }
-
-    /**
-     * Check if the interfaces of the redex and reactum conforms to the following form: <br/>
-     * <i>R = (R, R'), R: m -> J and R': m' -> J</i>
+     * Check if the interfaces of the redex and reactum conform to the following form: <br>
+     * {@literal R = (R, R'), R: m -> J and R': m' -> J}
      */
     private void assertInterfaceDefinitionIsCorrect(B redex, B reactum) throws NonConformReactionRuleInterfaces {
-        //check same interface
+        // check if same interfaces
         if (!redex.getOuterFace().equals(reactum.getOuterFace())) {
             throw new NonConformReactionRuleInterfaces();
         }

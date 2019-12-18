@@ -47,6 +47,11 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
 
     public abstract <M extends BigraphMatch<B>> MatchIterable<M> match(B agent, B redex);
 
+    /**
+     * Provide the matching engine for the specific bigraph type implemented by the sub class
+     *
+     * @return concrete bigraph matching engine
+     */
     public abstract BigraphMatchingEngine<B> instantiateEngine();
 
     /**

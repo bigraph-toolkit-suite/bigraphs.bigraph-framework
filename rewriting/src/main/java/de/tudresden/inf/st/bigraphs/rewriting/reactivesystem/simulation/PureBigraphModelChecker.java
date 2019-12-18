@@ -42,38 +42,38 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 
 
     @Override
-    protected PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
+    protected synchronized PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         try {
             //OK
-            try {
-                BigraphGraphvizExporter.toPNG(match.getContext(),
-                        true,
-                        new File(String.format("context_%s.png", cnt))
-                );
-                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
-                        true,
-                        new File(String.format("contextIdentity_%s.png", cnt))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                BigraphGraphvizExporter.toPNG(match.getContext(),
+//                        true,
+//                        new File(String.format("context_%s.png", cnt))
+//                );
+//                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
+//                        true,
+//                        new File(String.format("contextIdentity_%s.png", cnt))
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             Bigraph outerBigraph = factory
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
 //            System.out.println(outerBigraph);
-            try {
-                BigraphGraphvizExporter.toPNG(outerBigraph,
-                        true,
-                        new File("contextimage.png")
-                );
-                BigraphGraphvizExporter.toPNG(rule.getReactum(),
-                        true,
-                        new File("reactum.png")
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                BigraphGraphvizExporter.toPNG(outerBigraph,
+//                        true,
+//                        new File("contextimage.png")
+//                );
+//                BigraphGraphvizExporter.toPNG(rule.getReactum(),
+//                        true,
+//                        new File("reactum.png")
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 //            Bigraph originAgent = factory.asBigraphOperator(outerBigraph).compose(match.getRedex()).getOuterBigraph();
 //            GraphvizConverter.toPNG(originAgent,
 //                    true,
@@ -111,7 +111,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
     }
     //TODO: beachte instantiation map
     @Override
-    protected PureBigraph buildParametricReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
+    protected synchronized PureBigraph buildParametricReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         //first build parallel product of the parameters using the instantiation map
         try {
 
@@ -134,14 +134,14 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
-            try {
-                BigraphGraphvizExporter.toPNG(outerBigraph,
-                        true,
-                        new File(String.format("outerBigraph_%s.png", cnt))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                BigraphGraphvizExporter.toPNG(outerBigraph,
+//                        true,
+//                        new File(String.format("outerBigraph_%s.png", cnt))
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             Bigraph d_Params = null;
             List<PureBigraph> parameters = new ArrayList<>(match.getParameters());
             if (parameters.size() >= 2) {
