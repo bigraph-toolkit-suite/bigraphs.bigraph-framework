@@ -38,9 +38,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Matching algorithm for pure bigraphs.
+ * Matching algorithm for pure bigraphs (see {@link PureBigraph}).
  *
  * @author Dominik Grzelak
+ * @see HKMCBM2
  */
 public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigraph> {
 
@@ -1066,60 +1067,6 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             return other;
         }
     }
-
-//    private boolean hasSameSpatialStructure2(BigraphEntity agent, BigraphEntity redex) {
-////        if(!S.columnMap().get(redex).containsValue(agent)) {
-//        if (S.get(agent, redex).size() == 0) {
-////        if (!S.rowMap().get(agent).containsKey(redex)) {
-//            return false;
-//        }
-//        return true;
-////        List<BigraphEntity> bigraphEntities = S.get(agent, redex);
-////        if (Objects.isNull(bigraphEntities)) return false;
-////        List<BigraphEntity> children = redexAdapter.getChildren(redex);
-//////        if (bigraphEntities.size() > 0) {
-////        for (BigraphEntity eachChild : children) {
-//////                boolean hasSite = redexAdapter.getChildrenWithSites(eachChild).stream().anyMatch(BigraphEntityType::isSite);
-////            if (!hasSameSpatialStructure2(agent, eachChild)) { // && !checkLinkIdentityByNodes(agent, eachChild)) {
-////                return false;
-////            }
-////        }
-////        return true;
-////        } else {
-////            return false;
-////        }
-//    }
-
-//    /**
-//     * find the "trace" of the subtree of the redex in the agent
-//     * No links are checked
-//     *
-//     * @param agent
-//     * @param redex
-//     * @param noExactMatch flag that assumes a site as sibling of the redex if set to {@code true}
-//     * @return
-//     */
-//    private boolean hasSameSpatialStructure(BigraphEntity agent, BigraphEntity redex, boolean noExactMatch) {
-//        List<BigraphEntity> bigraphEntities = S.get(agent, redex);
-//        if (Objects.isNull(bigraphEntities)) return false;
-//        List<BigraphEntity> children = redexAdapter.getChildren(redex);
-//        if (noExactMatch && children.size() == 0 && bigraphEntities.size() != 0) return true;
-//        //no site is assumed: the degree has to match then
-//        if (!noExactMatch && children.size() != agentAdapter.getChildren(agent).size() && bigraphEntities.size() != 0)
-//            return false;
-//        if (bigraphEntities.size() > 0) {
-//            for (BigraphEntity eachChild : children) {
-////                TODO: CHANGED: hasSiteVar added and passed..
-//                boolean hasSite = redexAdapter.getChildrenWithSites(eachChild).stream().anyMatch(BigraphEntityType::isSite);
-//                if (!hasSameSpatialStructure(agent, eachChild, hasSite) /*&& !checkLinkIdentityOfNodes(agent, eachChild) */) {
-//                    return false;
-//                }
-//            }
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
 
     //with link checking
     private boolean hasSameSpatialStructure3(BigraphEntity agent, BigraphEntity redex, boolean noExactMatch) {

@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Slightly modified version of the original {@link org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching}
- * algorithm.
+ * algorithm for our bigraph structure.
  *
  * @author Dominik Grzelak
  * @see org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching
@@ -83,27 +83,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 
         ctrlsRedex = new ConcurrentHashMap<>(this.partition1.size());
         ctrlsAgent = new ConcurrentHashMap<>(this.partition2.size());
-
-//        availableControlsRedex = new LinkedList<>();
-//        availableControlsAgent = new LinkedList<>();
-//        for (BigraphEntity each : partition1) {
-//            if (each.getControl() != null) {
-////                availableControlsRedex.add(each.getControl());
-////                ctrlsRedex.putIfAbsent(each.getControl(), 0L);
-//                ctrlsRedex.put(each.getControl(), ctrlsRedex.getOrDefault(each.getControl(), 0L) + 1);
-//            }
-//        }
-//        for (BigraphEntity each : partition2) {
-//            if (each.getControl() != null) {
-////                availableControlsAgent.add(each.getControl());
-////                ctrlsAgent.putIfAbsent(each.getControl(), 0L);
-//                ctrlsAgent.put(each.getControl(), ctrlsAgent.getOrDefault(each.getControl(), 0L) + 1);
-//            }
-//        }
-//        availableControlsRedex = partition1.stream().map((Function<BigraphEntity, Control>) BigraphEntity::getControl).filter(Objects::nonNull)
-//                .sorted(Comparator.comparing(bigraphEntity -> bigraphEntity.getNamedType().stringValue())).collect(Collectors.toCollection(LinkedList::new));
-//        availableControlsAgent = partition2.stream().map((Function<BigraphEntity, Control>) BigraphEntity::getControl).filter(Objects::nonNull)
-//                .sorted(Comparator.comparing(bigraphEntity -> bigraphEntity.getNamedType().stringValue())).collect(Collectors.toCollection(LinkedList::new));
     }
 
     public boolean isHasSite() {
@@ -230,15 +209,16 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 //                System.out.println("Control Redex = " + vertices.get(i).getControl());
 //                System.out.println("Control Agent = " + vertices.get(matching[i]).getControl());
                 edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
-            } else {
-                loserNodes.add(vertices.get(i));
             }
+//            else {
+//                loserNodes.add(vertices.get(i));
+//            }
         }
 
         return new MatchingImpl<>(graph, edges, edges.size());
     }
 
-    List<BigraphEntity> loserNodes = new ArrayList<>();
+//    List<BigraphEntity> loserNodes = new ArrayList<>();
 
     //TODO: think about to move this out from this class or integrate it better here
 
@@ -265,9 +245,8 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 ctrlsAgent.put(each.getControl(), ctrlsAgent.getOrDefault(each.getControl(), 0L) + 1);
             }
         }
-//        Map<Control, Long> ctrlsRedex = availableControlsRedex.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
-//        Map<Control, Long> ctrlsAgent = availableControlsAgent.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
-        if (hasSite) { //(!collect2.equals(collect)) {
+
+        if (hasSite) {
             boolean controlsAreGood = false;
             Iterator<Map.Entry<Control, Long>> redexIterator = ctrlsRedex.entrySet().iterator();
             while (redexIterator.hasNext()) {
