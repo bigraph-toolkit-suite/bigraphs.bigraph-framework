@@ -96,8 +96,9 @@ public class BigraphArtifacts {
 
         if (Objects.nonNull(metaModelPackageWithSignature)) {
             // register the dynamic package locally
-            load_resourceSet.getPackageRegistry().put(null, metaModelPackageWithSignature);
-            load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
+            load_resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
+            if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()))
+                load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
         }
         URI uri = URI.createFileURI(filePath);
         Resource load_resource = load_resourceSet.createResource(uri);

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -78,6 +79,11 @@ public class BigraphArtifactUnitTests {
             System.out.println(builder);
             PureBigraph bigraph = builder.createBigraph();
             BigraphArtifacts.exportAsInstanceModel(bigraph, new FileOutputStream(TARGET_TEST_PATH + "test-1_reloaded.xmi"));
+
+            PureBigraphBuilder<Signature> signaturePureBigraphBuilder = PureBigraphBuilder.create(createExampleSignature(), fileName, fileName2);
+            PureBigraph reloaded = signaturePureBigraphBuilder.createBigraph();
+            System.out.println(reloaded);
+            Collection<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes = reloaded.getNodes();
         });
     }
 

@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.impl.PureBigraphComposite;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphComposite;
 
 /**
  * Common interface for the composition of bigraphs.

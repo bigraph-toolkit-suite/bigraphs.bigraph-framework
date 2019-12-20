@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.impl;
+package de.tudresden.inf.st.bigraphs.core.impl.pure;
 
 import com.google.common.collect.HashBiMap;
 import de.tudresden.inf.st.bigraphs.core.*;
@@ -7,10 +7,9 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;

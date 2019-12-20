@@ -1,13 +1,16 @@
 package de.tudresden.inf.st.bigraphs.core.impl.pure;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import com.google.common.collect.Streams;
+import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.BigraphBuilderSupport;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.factory.Sets;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.set.ImmutableSet;
+import org.eclipse.collections.api.set.MutableSet;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
@@ -34,21 +37,21 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     private EPackage modelPackage;
     private EObject bigraphEModel;
 
-    private final Set<BigraphEntity.RootEntity> roots;
+    private final ImmutableSet<BigraphEntity.RootEntity> roots;
+    private final ImmutableList<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes;
+    private final Map<EObject, BigraphEntity.NodeEntity<DefaultDynamicControl>> nodesMap = new ConcurrentHashMap<>();
     private final Set<BigraphEntity.SiteEntity> sites;
     private final Set<BigraphEntity.InnerName> innerNames;
     private final Set<BigraphEntity.OuterName> outerNames;
     private final Set<BigraphEntity.Edge> edges;
-    private final List<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes;
-    private final Map<EObject, BigraphEntity.NodeEntity<DefaultDynamicControl>> nodesMap = new ConcurrentHashMap<>();
     private final DefaultDynamicSignature signature;
 
     public PureBigraph(BigraphBuilderSupport.InstanceParameter details) {
         this.modelPackage = details.getModelPackage();
         this.bigraphEModel = details.getbBigraphObject();
-        this.roots = Collections.unmodifiableSet(details.getRoots()); //roots;
+        this.roots = Sets.immutable.<BigraphEntity.RootEntity>ofAll(details.getRoots());//Collections.unmodifiableSet(details.getRoots()); //roots;
         this.sites = Collections.unmodifiableSet(details.getSites()); //sites;
-        this.nodes = new ArrayList<>(Collections.unmodifiableSet(details.getNodes())); //nodes;
+        this.nodes = Lists.immutable.ofAll(details.getNodes());//new ArrayList<>(Collections.unmodifiableSet(details.getNodes())); //nodes;
         this.nodesMap.putAll(this.nodes.stream().collect(Collectors.toMap(data -> data.getInstance(), data -> data)));
         this.outerNames = Collections.unmodifiableSet(details.getOuterNames()); //outerNames;
         this.innerNames = Collections.unmodifiableSet(details.getInnerNames()); //innerNames;
@@ -90,9 +93,11 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
     @Override
     public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
-        List<BigraphEntity> neighbors = new ArrayList<>();
-        neighbors = neighborhoodHook(neighbors, node);
-        return neighbors;
+        MutableList<BigraphEntity> neighbors = Lists.mutable.empty();
+//        neighborhoodHook(neighbors, node);
+//        List<BigraphEntity> neighbors = new ArrayList<>();
+//        neighbors = neighborhoodHook(neighbors, node);
+        return neighborhoodHook(neighbors, node);
     }
 
     private List<BigraphEntity> neighborhoodHook(List<BigraphEntity> neighbors, BigraphEntity node) {
@@ -114,22 +119,28 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         return neighbors;
     }
 
-    private void addPlaceToList(final List<BigraphEntity> neighbors, final EObject each) {
+    /**
+     * Convenient method that finds the corresponding 'node type' (e.g., root) of a given {@link EObject} instance and
+     * adds it to the given list {@code list}.
+     * <p>
+     * Throws a runtime exception of the node couldn't be found.
+     *
+     * @param list the list
+     * @param each node entity (e.g., root, node or site)
+     */
+    private void addPlaceToList(final List<BigraphEntity> list, final EObject each) {
         if (isBNode(each)) {
-            neighbors.add(
+            list.add(
                     nodesMap.get(each)
-//                    getNodes().stream()
-//                            .filter(x -> x.getInstance().equals(each))
-//                            .findFirst().get()
             );
         } else if (isBRoot(each)) {
-            neighbors.add(
+            list.add(
                     getRoots().stream()
                             .filter(x -> x.getInstance().equals(each))
                             .findFirst().get()
             );
         } else if (isBSite(each)) {
-            neighbors.add(
+            list.add(
                     getSites().stream()
                             .filter(x -> x.getInstance().equals(each))
                             .findFirst().get()
@@ -139,8 +150,8 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
 
 
     @Override
-    public Collection<BigraphEntity.RootEntity> getRoots() {
-        return this.roots;
+    public List<BigraphEntity.RootEntity> getRoots() {
+        return this.roots.toList();
     }
 
 
@@ -160,11 +171,12 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     }
 
     @Override
-    public Collection<BigraphEntity> getAllPlaces() {
-        Collection<BigraphEntity> list = new ArrayList<>(roots);
-        list.addAll(nodes);
-        list.addAll(sites);
-        return list;
+    public List<BigraphEntity> getAllPlaces() {
+//        MutableList<BigraphEntity> all = Lists.fixedSize.fromStream(Streams.concat(roots.stream(), nodes.stream(), sites.stream()));
+//        Collection<BigraphEntity> list = new ArrayList<>(roots);
+//        list.addAll(nodes);
+//        list.addAll(sites);
+        return Lists.fixedSize.fromStream(Streams.concat(roots.stream(), nodes.stream(), sites.stream()));
     }
 
     @Override
@@ -206,8 +218,10 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         if (BigraphEntityType.isRoot(node) || !isBPlace(node.getInstance())) return Collections.emptyList();
         BigraphEntity parent = getParent(node);
         if (Objects.isNull(parent)) return Collections.emptyList();
-        Collection<BigraphEntity> siblings = getChildrenOf(parent);
-        return siblings.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
+        List<BigraphEntity> siblings = getChildrenOf(parent);
+        siblings.remove(node);
+//        return siblings.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
+        return siblings;
     }
 
     @Override
@@ -293,10 +307,11 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
     }
 
     @Override
-    public Collection<BigraphEntity> getChildrenOf(BigraphEntity node) {
+    public List<BigraphEntity> getChildrenOf(BigraphEntity node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-        Set<BigraphEntity> children = new LinkedHashSet<>();
+//        Set<BigraphEntity> children = new LinkedHashSet<>();
+        MutableSet<BigraphEntity> children = Sets.mutable.empty();
         if (Objects.nonNull(chldRef)) {
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject eachChild : childs) {
@@ -312,12 +327,12 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
                 }
             }
         }
-        return children;
+        return children.toList(); //new ArrayList<>(children);
     }
 
     @Override
-    public Collection<BigraphEntity.NodeEntity<DefaultDynamicControl>> getNodes() {
-        return this.nodes;
+    public List<BigraphEntity.NodeEntity<DefaultDynamicControl>> getNodes() {
+        return this.nodes.castToList();
     }
 
     @Override
