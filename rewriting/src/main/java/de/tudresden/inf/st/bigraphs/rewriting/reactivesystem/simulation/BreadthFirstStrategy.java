@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 //TODO: logger-based/export based breadthfirststrategy...via decorator
@@ -62,8 +61,9 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
         String rootBfcs = canonicalForm.bfcs(initialAgent);
         workingQueue.add(initialAgent);
         int transitionCnt = 0;
-        AtomicInteger CNT = new AtomicInteger(0);
-        AtomicInteger CNT2 = new AtomicInteger(0);
+        resetOccurrenceCounter();
+//        AtomicInteger CNT = new AtomicInteger(0);
+//        AtomicInteger CNT2 = new AtomicInteger(0);
         ReactiveSystemOptions.TransitionOptions transitionOptions = this.options.get(ReactiveSystemOptions.Options.TRANSITION);
         System.out.println("MAXIMUM: " + transitionOptions.getMaximumTransitions());
         while (!workingQueue.isEmpty() && transitionCnt < transitionOptions.getMaximumTransitions()) {
@@ -82,9 +82,10 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 //                        MatchIterable<BigraphMatch<B>> match = modelChecker.getMatcher().match(theAgent, eachRule.getRedex()); //modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule.getRedex()));
 //                        MatchIterable<BigraphMatch<B>> match = matcher.match(theAgent, eachRule.getRedex());
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
-                        CNT.incrementAndGet();
+//                        CNT.incrementAndGet();
                         while (iterator.hasNext()) {
-                            CNT2.incrementAndGet();
+//                            CNT2.incrementAndGet();
+                            increaseOccurrenceCounter();
                             BigraphMatch<B> next = iterator.next();
 //                            System.out.println("NEXT: " + next);
                             B reaction = null;
@@ -139,9 +140,11 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             // "Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty."
             transitionCnt++;
         }
-        System.out.println("transitionCnt=" + transitionCnt);
-        System.out.println("Cnt=" + CNT.get());
-        System.out.println("Cnt2=" + CNT2.get());
+//        System.out.println("transitionCnt=" + transitionCnt);
+        logger.debug("Total Transitions: {}", transitionCnt);
+        logger.debug("Total Occurrences: {}", getOccurrenceCount());
+//        System.out.println("Cnt=" + CNT.get());
+//        System.out.println("Cnt2=" + CNT2.get());
 
 //        modelChecker.prepareOutput();
     }

@@ -11,10 +11,23 @@ import org.slf4j.LoggerFactory;
 public abstract class SimulationStrategySupport<B extends Bigraph<? extends Signature<?>>> implements SimulationStrategy<B> {
     private Logger logger = LoggerFactory.getLogger(SimulationStrategySupport.class);
 
+    protected int occurrenceCounter = 0;
+
     protected BigraphModelChecker<B> modelChecker;
 
     public SimulationStrategySupport(BigraphModelChecker<B> modelChecker) {
         this.modelChecker = modelChecker;
     }
 
+    protected void increaseOccurrenceCounter() {
+        occurrenceCounter++;
+    }
+
+    protected void resetOccurrenceCounter() {
+        occurrenceCounter = 0;
+    }
+
+    public int getOccurrenceCount() {
+        return occurrenceCounter;
+    }
 }

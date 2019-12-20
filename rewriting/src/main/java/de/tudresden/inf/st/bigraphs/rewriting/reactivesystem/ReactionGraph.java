@@ -8,6 +8,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -81,6 +82,10 @@ public class ReactionGraph<B extends Bigraph<?>> {
      */
     public Graph<String, LabeledEdge> getGraph() {
         return graph;
+    }
+
+    public boolean isEmpty() {
+        return !(Objects.nonNull(graph) && graph.vertexSet().size() != 0);
     }
 
     private Graph<String, LabeledEdge> buildEmptySimpleDirectedGraph() {

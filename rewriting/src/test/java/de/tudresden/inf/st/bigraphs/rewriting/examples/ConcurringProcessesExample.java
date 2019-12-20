@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.rewriting.examples;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -8,6 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -20,6 +22,9 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.BigraphM
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.rewriting.util.Combination;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.transitionOpts;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Dominik Grzelak
@@ -46,6 +52,55 @@ public class ConcurringProcessesExample {
     }
 
     @Test
+    void simulate_single_step() throws IOException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException {
+//        int num = 2;
+//        String fileNameMeta = "/home/dominik/git/BigraphFramework/rewriting/src/test/resources/dump/processes/meta-model_" + num + ".ecore";
+//        String fileNameInstance = "/home/dominik/git/BigraphFramework/rewriting/src/test/resources/dump/processes/instance-model_" + num + ".xmi";
+//        EPackage metaModel = BigraphArtifacts.loadBigraphMetaModel(fileNameMeta);
+//        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, fileNameInstance);
+//        assertEquals(1, eObjects.size());
+//        List<EObject> eObjects2 = BigraphArtifacts.loadBigraphInstanceModel(fileNameInstance);
+//        assertEquals(1, eObjects2.size());
+
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        builder.createRoot()
+                .addChild("Process", "access1")
+                .addChild("Process", "access2").withNewHierarchy().addChild("Working").goBack()
+                .addChild("Resource").withNewHierarchy().addChild("Token", "access2").goBack()
+        ;
+        PureBigraph agent2 = builder.createBigraph();
+        BigraphGraphvizExporter.toPNG(agent2,
+                true,
+                new File(TARGET_DUMP_PATH + "partial/agent-2.png")
+        );
+
+        ReactionRule<PureBigraph> rule_resourceDeregistrationPhase = createRule_ResourceDeregistrationPhase();
+
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        reactiveSystem.setAgent(agent2);
+        reactiveSystem.addReactionRule(rule_resourceDeregistrationPhase);
+
+        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
+        opts
+                .and(transitionOpts()
+                        .setMaximumTransitions(20)
+                        .setMaximumTime(30)
+                        .create()
+                )
+                .doMeasureTime(true)
+                .and(ReactiveSystemOptions.exportOpts()
+                        .setTraceFile(new File(TARGET_DUMP_PATH, "partial/transition_graph_agent-2.png"))
+                        .create()
+                )
+        ;
+
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
+                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                opts);
+        modelChecker.execute();
+    }
+
+    @Test
     void simulate_concurrent_processes() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
         PureBigraph agent = createAgent();
         ReactionRule<PureBigraph> rule_resourceRegistrationPhase = createRule_ResourceRegistrationPhase();
@@ -60,27 +115,27 @@ public class ConcurringProcessesExample {
 //        );
 //        BigraphGraphvizExporter.toPNG(rule_resourceRegistrationPhase.getRedex(),
 //                true,
-//                new File(TARGET_DUMP_PATH + "rule_1_redex.png")
+//                new File(TARGET_DUMP_PATH + "rule_0_redex.png")
 //        );
 //        BigraphGraphvizExporter.toPNG(rule_resourceRegistrationPhase.getReactum(),
 //                true,
-//                new File(TARGET_DUMP_PATH + "rule_1_reactum.png")
+//                new File(TARGET_DUMP_PATH + "rule_0_reactum.png")
 //        );
 //        BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getRedex(),
 //                true,
-//                new File(TARGET_DUMP_PATH + "rule_2_redex.png")
+//                new File(TARGET_DUMP_PATH + "rule_1_redex.png")
 //        );
 //        BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getReactum(),
 //                true,
-//                new File(TARGET_DUMP_PATH + "rule_2_reactum.png")
+//                new File(TARGET_DUMP_PATH + "rule_1_reactum.png")
 //        );
 //        BigraphGraphvizExporter.toPNG(rule_resourceDeregistrationPhase.getRedex(),
 //                true,
-//                new File(TARGET_DUMP_PATH + "rule_3_redex.png")
+//                new File(TARGET_DUMP_PATH + "rule_2_redex.png")
 //        );
 //        BigraphGraphvizExporter.toPNG(rule_resourceDeregistrationPhase.getReactum(),
 //                true,
-//                new File(TARGET_DUMP_PATH + "rule_3_reactum.png")
+//                new File(TARGET_DUMP_PATH + "rule_2_reactum.png")
 //        );
 
 
@@ -100,6 +155,7 @@ public class ConcurringProcessesExample {
                 .doMeasureTime(true)
                 .and(ReactiveSystemOptions.exportOpts()
                         .setTraceFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )
         ;

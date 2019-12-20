@@ -14,8 +14,8 @@ import de.tudresden.inf.st.bigraphs.rewriting.matching.pure.PureBigraphMatcher;
  * <p>
  * Matches are then returned via an iterator for easier access of the results The instances of the matches are of type
  * {@link BigraphMatch}.
- * For the iterator, the matching engine can get later also access a "custom constraints matching method"
- * (not yet implemented)
+ * The matching engine/iterator can later also access/override a so-called "custom constraint matching method"
+ * (not yet implemented) to additionally specify some user-defined constraints (e.g., match attributes).
  * <p>
  * With other words: This class works like a factory to return the matches as iterables of class {@link BigraphMatch}.
  *
@@ -52,7 +52,7 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
      *
      * @return concrete bigraph matching engine
      */
-    public abstract BigraphMatchingEngine<B> instantiateEngine();
+    protected abstract BigraphMatchingEngine<B> instantiateEngine();
 
     /**
      * Returns the supplied agent passed via the {@link AbstractBigraphMatcher#match(Bigraph, Bigraph)} method.

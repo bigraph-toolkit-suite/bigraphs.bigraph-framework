@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Supplier;
 
 import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.transitionOpts;
 
@@ -90,6 +91,7 @@ public class RouteFinding {
                 .doMeasureTime(true)
                 .and(ReactiveSystemOptions.exportOpts()
                         .setTraceFile(new File(completePath.toUri()))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )
         ;
@@ -190,18 +192,40 @@ public class RouteFinding {
         BigraphEntity.OuterName fromS = builder.createOuterName("fromS");
         BigraphEntity.OuterName target = builder.createOuterName("target");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.newHierarchy("Car").linkToOuter(target).addSite().addChild("Fuel");
+        Supplier<PureBigraphBuilder.Hierarchy> car = () -> {
+            PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car1 = null;
+            try {
+                car1 = builder.newHierarchy("Car").linkToOuter(target).addSite().addChild("Fuel");
+            } catch (TypeNotExistsException e) {
+                e.printStackTrace();
+            } catch (InvalidConnectionException e) {
+                e.printStackTrace();
+            }
+            return car1;
+        };
+
         builder.createRoot()
                 .addChild("Place").linkToOuter(fromD).withNewHierarchy().addSite().top()
-                .addChild("Place").linkToOuter(fromS).withNewHierarchy().addChild(car).addSite().addChild("Road").linkToOuter(fromD).top()
+                .addChild("Place").linkToOuter(fromS).withNewHierarchy().addChild(car.get()).addSite().addChild("Road").linkToOuter(fromD).top()
         ;
 
         BigraphEntity.OuterName fromD2 = builder2.createOuterName("fromD");
         BigraphEntity.OuterName fromS2 = builder2.createOuterName("fromS");
         BigraphEntity.OuterName target2 = builder2.createOuterName("target");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builder2.newHierarchy("Car").linkToOuter(target2).addSite();
+        Supplier<PureBigraphBuilder.Hierarchy> car2 = () -> {
+            PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car1 = null;
+            try {
+                car1 = builder2.newHierarchy("Car").linkToOuter(target2).addSite();
+            } catch (TypeNotExistsException e) {
+                e.printStackTrace();
+            } catch (InvalidConnectionException e) {
+                e.printStackTrace();
+            }
+            return car1;
+        };
+
         builder2.createRoot()
-                .addChild("Place").linkToOuter(fromD2).withNewHierarchy().addSite().addChild(car2).top()
+                .addChild("Place").linkToOuter(fromD2).withNewHierarchy().addSite().addChild(car2.get()).top()
                 .addChild("Place").linkToOuter(fromS2).withNewHierarchy().addChild("Road").linkToOuter(fromD2).addSite().top()
         ;
         PureBigraph redex = builder.createBigraph();

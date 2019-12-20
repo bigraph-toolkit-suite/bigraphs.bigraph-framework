@@ -4,6 +4,7 @@ package de.tudresden.inf.st.bigraphs.rewriting;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -70,6 +71,7 @@ public class ReactiveSystemOptions {
     }
 
     public <T extends Opts> T get(Options kind) {
+        if (Objects.isNull(optsMap.get(kind))) return null;
         return (T) kind.getOptionClassType().cast(optsMap.get(kind));
     }
 
@@ -154,6 +156,10 @@ public class ReactiveSystemOptions {
 
         public File getOutputStatesFolder() {
             return outputStatesFolder;
+        }
+
+        public boolean hasOutputStatesFolder() {
+            return Objects.nonNull(outputStatesFolder);
         }
 
         /**

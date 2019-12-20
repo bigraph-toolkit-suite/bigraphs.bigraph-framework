@@ -40,7 +40,7 @@ public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature
 
         modelChecker.reactionGraph.reset();
         workingQueue.add(modelChecker.getReactiveSystem().getAgent());
-
+        resetOccurrenceCounter();
         while (!workingQueue.isEmpty() && transitionCnt < transitionOptions.getMaximumTransitions()) {
             final B theAgent = workingQueue.remove();
             final String bfcfOfW = canonicalForm.bfcs(theAgent);
@@ -54,6 +54,7 @@ public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
 
                         while (iterator.hasNext()) {
+                            increaseOccurrenceCounter();
                             BigraphMatch<B> next = iterator.next();
                             B reaction = null;
                             if (next.getParameters().size() == 0) {
@@ -83,5 +84,8 @@ public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature
             // "Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty."
             transitionCnt++;
         }
+
+        logger.debug("Total Transitions: {}", transitionCnt);
+        logger.debug("Total Occurrences: {}", getOccurrenceCount());
     }
 }

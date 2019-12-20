@@ -18,10 +18,13 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptio
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.InvalidSimulationStrategy;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -31,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +50,8 @@ import java.util.function.Supplier;
  * @author Dominik Grzelak
  */
 public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<?>>> {
+
+    private Logger logger = LoggerFactory.getLogger(BigraphModelChecker.class);
 
     public static class SimulationType {
 
@@ -147,38 +153,30 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
             Stopwatch timer = Stopwatch.createStarted();
             A apply = function.get();
             long elapsed = timer.stop().elapsed(TimeUnit.MILLISECONDS);
-            System.out.println("Time (ms) " + elapsed);
+            logger.debug("Time (ms): {}", elapsed);
             return apply;
         } else {
             return function.get();
         }
     }
 
-
-//    /**
-//     * Use the agent which must be not {@code null}, before calling this method.
-//     *
-//     * @param options additional options
-//     */
-//    public synchronized void computeTransitionSystem(final ReactiveSystemOptions options) {
-//        computeTransitionSystem(reactiveSystem.getAgent(), options, Collections.emptyList());
-//    }
-//
-//    /**
-//     * Compute the transition system of a bigraph with all added reaction rules so far.
-//     *
-//     * @param agent   the initial agent
-//     * @param options additional options
-//     */
-//    public synchronized void computeTransitionSystem(final B agent, final ReactiveSystemOptions options) {
-//        computeTransitionSystem(agent, options, Collections.emptyList());
-//    }
-//
-//    public abstract void computeTransitionSystem(final B agent, final ReactiveSystemOptions options, final Collection<ReactiveSystemPredicates<B>> predicates);
-//
-//    public synchronized ReactiveSystemOptions getOptions() {
-//        return options;
-//    }
+    protected void exportState(B bigraph, String suffix) {
+        if (Objects.nonNull(options.get(ReactiveSystemOptions.Options.EXPORT))) {
+            ReactiveSystemOptions.ExportOptions opts = options.get(ReactiveSystemOptions.Options.EXPORT);
+            if (opts.hasOutputStatesFolder()) {
+                try {
+                    BigraphGraphvizExporter.toPNG(bigraph,
+                            true,
+                            Paths.get(opts.getOutputStatesFolder().toString(), String.format("state-%s.png", suffix)).toFile()
+                    );
+                    logger.debug("Exporting state {}", suffix);
+//                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
+                } catch (IOException e) {
+                    logger.error(e.toString());
+                }
+            }
+        }
+    }
 
     private void onAttachListener(BigraphModelChecker<B> reactiveSystem) {
         if (reactiveSystem instanceof BigraphModelChecker.ReactiveSystemListener) {
@@ -205,7 +203,13 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     void prepareOutput() {
         ReactiveSystemOptions.ExportOptions opts = options.get(ReactiveSystemOptions.Options.EXPORT);
         if (Objects.nonNull(opts.getTraceFile())) {
-            exportGraph(reactionGraph.getGraph(), opts.getTraceFile());
+            if (!reactionGraph.isEmpty()) {
+                exportGraph(reactionGraph.getGraph(), opts.getTraceFile());
+            } else {
+                logger.debug("Trace is not exported because reaction graph is empty.");
+            }
+        } else {
+            logger.debug("Output path for Trace wasn't set. Will not export.");
         }
     }
 
@@ -226,12 +230,13 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                 }
             }
             if (image == null) {
-                System.out.println("Image is null, cannot write image.");
+                logger.warn("Image is null, cannot write image.");
             } else {
                 ImageIO.write(image, "PNG", imgFile);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error(e.toString());
         }
     }
 

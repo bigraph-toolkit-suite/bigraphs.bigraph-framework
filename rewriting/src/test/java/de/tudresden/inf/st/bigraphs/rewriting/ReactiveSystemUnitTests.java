@@ -78,6 +78,7 @@ public class ReactiveSystemUnitTests {
                 .doMeasureTime(true)
                 .and(ReactiveSystemOptions.exportOpts()
                         .setTraceFile(new File(completePath.toUri()))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )
         ;

@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * An implementation of an {@link BigraphModelChecker} providing a simple model checking for BRS for pure bigraphs (see {@link PureBigraph}).
@@ -35,12 +36,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
     public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, SimulationType simulationType, ReactiveSystemOptions options) {
         super(reactiveSystem, simulationType, options);
     }
-
-//    public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, SimulationStrategy<PureBigraph> simulationStrategy, ReactiveSystemOptions options) {
-//        super(reactiveSystem, simulationStrategy, options);
-//    }
-
-
+    
     @Override
     protected synchronized PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         try {
@@ -90,14 +86,19 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //                    true,
 //                    new File("agentReacted.png")
 //            );
-            try {
-                BigraphGraphvizExporter.toPNG(agentReacted,
-                        true,
-                        new File("agent-reacted.png")
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            exportState((PureBigraph) agentReacted, String.valueOf(cnt));
+            cnt++;
+//            try {
+//                BigraphGraphvizExporter.toPNG(agentReacted,
+//                        true,
+//                        new File("agent-reacted-" + cnt + ".png")
+//                );
+////                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
+////                BigraphArtifacts.exportAsMetaModel(agentReacted, new FileOutputStream(String.format("meta-model_%s.ecore", cnt)));
+//                cnt++;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             return (PureBigraph) agentReacted;
         } catch (IncompatibleSignatureException e) {
             e.printStackTrace();
@@ -109,6 +110,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //        }
         return null;
     }
+
     //TODO: beachte instantiation map
     @Override
     protected synchronized PureBigraph buildParametricReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
@@ -190,26 +192,28 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
             Bigraph agentReacted = factory.asBigraphOperator(outerBigraph)
                     .compose(compose)
                     .getOuterBigraph();
-//
-            try {
-//                Bigraph test = factory.asBigraphOperator(outerBigraph).compose(rule.getReactum()).getOuterBigraph();
-//                BigraphGraphvizExporter.toPNG(test,
-//                        true,
-//                        new File("test" + (cnt) + ".png")
-//                );
-                BigraphGraphvizExporter.toPNG(agentReacted,
-                        true,
-                        new File(String.format("agentReacted_%s.png", cnt))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            try {
-                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            exportState((PureBigraph) agentReacted, String.valueOf(cnt));
+            //
+//            if (Objects.nonNull(options.get(ReactiveSystemOptions.Options.EXPORT))) {
+//                ReactiveSystemOptions.ExportOptions opts = options.get(ReactiveSystemOptions.Options.EXPORT);
+//                if (opts.hasOutputStatesFolder()) {
+//                    try {
+////                Bigraph test = factory.asBigraphOperator(outerBigraph).compose(rule.getReactum()).getOuterBigraph();
+////                BigraphGraphvizExporter.toPNG(test,
+////                        true,
+////                        new File("test" + (cnt) + ".png")
+////                );
+//                        BigraphGraphvizExporter.toPNG(agentReacted,
+//                                true,
+//                                new File(String.format("agentReacted_%s.png", cnt))
+//                        );
+////                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
             cnt++;
 
             return (PureBigraph) agentReacted;

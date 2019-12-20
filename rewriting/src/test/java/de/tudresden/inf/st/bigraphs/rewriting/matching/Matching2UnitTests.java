@@ -17,28 +17,61 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class TestForPaper {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class Matching2UnitTests {
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/matching/framework/testforpaper/";
+
+    void exportGraph(Bigraph<?> big, String path) {
+        try {
+            BigraphGraphvizExporter.toPNG((PureBigraph) big,
+                    true,
+                    new File(path)
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     void model_test_0() throws Exception {
         PureBigraph agent_model_test_0 = (PureBigraph) createAgent_model_test_0();
         PureBigraph redex_model_test_0 = (PureBigraph) createRedex_model_test_0();
+        PureBigraph redex_model_test_0v2 = (PureBigraph) createRedex_model_test_0v2();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex_model_test_0, redex_model_test_0);
+        ReactionRule<PureBigraph> rr2 = new ParametricReactionRule<>(redex_model_test_0v2, redex_model_test_0v2);
+        exportGraph(agent_model_test_0, TARGET_DUMP_PATH + "agent.png");
+        exportGraph(redex_model_test_0, TARGET_DUMP_PATH + "redex.png");
+        exportGraph(redex_model_test_0v2, TARGET_DUMP_PATH + "redexv2.png");
 
-        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class); //new PureBigraphMatcher();
-        MatchIterable match = matcher.match(agent_model_test_0, rr.getRedex());
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+        MatchIterable match = matcher.match(agent_model_test_0, rr2.getRedex());
         Iterator<BigraphMatch<?>> iterator = match.iterator();
+        int cnt = 0;
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            System.out.println(next);
+            System.out.println("Match next=" + next);
+            cnt++;
         }
+        assertEquals(2, cnt);
 
+        cnt = 0;
+        MatchIterable match2 = matcher.match(agent_model_test_0, rr.getRedex());
+        Iterator<BigraphMatch<?>> iterator2 = match2.iterator();
+        while (iterator2.hasNext()) {
+            BigraphMatch<?> next2 = iterator2.next();
+            System.out.println("Match next=" + next2);
+            cnt++;
+        }
+        assertEquals(2, cnt);
     }
 
 
@@ -90,6 +123,24 @@ public class TestForPaper {
         ;
 //        builder.makeGround();
 
+        PureBigraph bigraph = builder.createBigraph();
+        return bigraph;
+    }
+
+    //roots are separated
+    public Bigraph createRedex_model_test_0v2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+
+        builder.createRoot()
+                .addChild(signature.getControlByName("A"));
+        builder.createRoot()
+                .addChild(signature.getControlByName("B"))
+                .withNewHierarchy()
+                .addChild(signature.getControlByName("D"))
+                .addChild(signature.getControlByName("E"))
+                .addSite()
+        ;
         PureBigraph bigraph = builder.createBigraph();
         return bigraph;
     }
