@@ -40,6 +40,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     @Override
     public String compute(PureBigraph bigraph) {
         //        assertBigraphIsPrime(bigraph);
+        getBigraphCanonicalForm().assertBigraphHasRoots(bigraph);
         getBigraphCanonicalForm().assertControlsAreAtomic(bigraph);
 
         final StringBuilder sb = new StringBuilder();
@@ -127,21 +128,25 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareControlByKeyAndValue =
                         Comparator.comparing((entry) -> {
                             String s1 = entry.getValue().stream()
-                                    .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : lhs.getControl().getNamedType().stringValue()))
-                                    .map(x -> BigraphEntityType.isSite(x) ? String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) : x.getControl().getNamedType().stringValue())
+                                    .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : label(lhs)))
+                                    .map(x -> BigraphEntityType.isSite(x) ? String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) : label(x))
                                     .collect(Collectors.joining(""));
-                            String o = entry.getKey().getControl().getNamedType().stringValue() + s1;
+//                            String o = entry.getKey().getControl().getNamedType().stringValue() + s1;
+                            String o = label(entry.getKey()) + s1;
                             return o;
                         });
                 Comparator<BigraphEntity> compareControlByKey3 =
                         Comparator.comparing((entry) -> {
 //                            System.out.println(entry);
                             String s1 = bigraph.getChildrenOf(entry).stream()
-                                    .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : lhs.getControl().getNamedType().stringValue()))
-                                    .map(x -> BigraphEntityType.isSite(x) ? String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) : x.getControl().getNamedType().stringValue())
+//                                    .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : lhs.getControl().getNamedType().stringValue()))
+//                                    .map(x -> BigraphEntityType.isSite(x) ? String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) : x.getControl().getNamedType().stringValue())
+                                    .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : label(lhs)))
+                                    .map(x -> BigraphEntityType.isSite(x) ? String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) : label(x))
                                     .collect(Collectors.joining(""));
 //                            System.out.println(entry);
-                            String o = entry.getControl().getNamedType().stringValue() + s1;
+//                            String o = entry.getControl().getNamedType().stringValue() + s1;
+                            String o = label(entry) + s1;
                             return o;
                         });
 
@@ -159,7 +164,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //                        });
 
                 Comparator<BigraphEntity> compareControl = Comparator.comparing(entry -> {
-                    return entry.getControl().getNamedType().stringValue();
+//                    return entry.getControl().getNamedType().stringValue();
+                    return label(entry);
                 });
                 Comparator<BigraphEntity> compareChildrenSize = Comparator.comparing(entry -> {
                     return bigraph.getChildrenOf(entry).size(); //TODO: or also string concat of all children?
@@ -167,6 +173,11 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 
                 Comparator<BigraphEntity> comparePortCount = Comparator.comparing(entry -> {
                     return bigraph.getPortCount(entry);
+                });
+
+                Comparator<BigraphEntity> compareLinkNames = Comparator.comparing(entry -> {
+                    BigraphEntity.Link linkOfPoint = (BigraphEntity.Link) bigraph.getLinkOfPoint(entry);
+                    return Objects.nonNull(linkOfPoint) ? linkOfPoint.getName() : "";
                 });
 
 
@@ -250,12 +261,11 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                     .sorted(
 //                                            siblingCountComp.thenComparing
                                             compareControlByKey3.thenComparing(compareChildrenSize.reversed().thenComparing(comparePortCount.reversed()))
-//                                            compareControl2.thenComparing((comparePortCount.reversed()))
-//                                            )
                                     )
                                     .forEachOrdered(val -> {
                                         lastOrdering.add(val);
-                                        sb.append(val.getControl().getNamedType().stringValue());
+//                                        sb.append(val.getControl().getNamedType().stringValue());
+                                        sb.append(label(val));
                                         //&& e.getValue().size() >= 2
                                         if (!allNodesAreLeaves && bigraph.getChildrenOf(val).size() == 0) { // && bigraph.getSiblingsOfNode(val).size() != 0) {
 //                                            parentChildMap.put(val, ixCnt.get());
@@ -279,13 +289,15 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //                                                                E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) l);
                                                                 E2.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) l);
                                                             }
-                                                            return E2.flip().get((BigraphEntity.Edge) l).getOnly();
+//                                                            return E2.flip().get((BigraphEntity.Edge) l).getOnly();
+                                                            return labelE(E2, (BigraphEntity.Edge) l);
                                                         } else {
                                                             if (!O2.flip().get((BigraphEntity.OuterName) l).getFirstOptional().isPresent()) {
 //                                                                E.put(rewriteEdgeNameSupplier.get(), (BigraphEntity.Edge) l);
                                                                 O2.put(rewriteOuterNameSupplier.get(), (BigraphEntity.OuterName) l);
                                                             }
-                                                            return O2.flip().get((BigraphEntity.OuterName) l).getOnly();
+//                                                            return O2.flip().get((BigraphEntity.OuterName) l).getOnly();
+                                                            return labelO(O2, (BigraphEntity.OuterName) l);
                                                         }
                                                     })
                                                     .sorted()
@@ -350,10 +362,12 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 String name = null;
                 switch (linkOfPoint.getType()) {
                     case EDGE:
-                        name = E2.flip().get((BigraphEntity.Edge) linkOfPoint).getOnly();
+//                        name = E2.flip().get((BigraphEntity.Edge) linkOfPoint).getOnly();
+                        name = labelE(E2, (BigraphEntity.Edge) linkOfPoint);
                         break;
                     case OUTER_NAME:
-                        name = O2.flip().get((BigraphEntity.OuterName) linkOfPoint).getOnly();
+//                        name = O2.flip().get((BigraphEntity.OuterName) linkOfPoint).getOnly();
+                        name = labelO(O2, (BigraphEntity.OuterName) linkOfPoint);
                         break;
                 }
                 sb.append(I2.flip().get(each).getOnly()).append(name).append("$");
@@ -362,7 +376,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             }
         }
         for (BigraphEntity.OuterName each : idleOuterNames) {
-            sb.append(O2.flip().get(each).getOnly()).append("$");
+//            sb.append(O2.flip().get(each).getOnly()).append("$");
+            sb.append(labelO(O2, each)).append("$");
         }
         if (bigraph.getOuterNames().size() > 0 || bigraph.getInnerNames().size() > 0) {
             if (sb.charAt(sb.length() - 1) == '$') {
@@ -373,4 +388,30 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 
         return sb.toString().replaceAll("\\$#", "#").replaceAll("##", "#");
     }
+
+    String label(BigraphEntity val) {
+        if (printNodeIdentifiers) {
+            return val.getControl().getNamedType().stringValue() + ":" + ((BigraphEntity.NodeEntity) val).getName();
+        } else {
+            return val.getControl().getNamedType().stringValue();
+        }
+    }
+
+    String labelE(MutableSortedMap<String, BigraphEntity.Edge> map, BigraphEntity.Edge val) {
+        if (printNodeIdentifiers) {
+            return val.getName();
+        } else {
+            return map.flip().get(val).getOnly();
+        }
+    }
+
+    String labelO(MutableSortedMap<String, BigraphEntity.OuterName> map, BigraphEntity.OuterName val) {
+        if (printNodeIdentifiers) {
+            return val.getName();
+        } else {
+            return map.flip().get(val).getOnly();
+        }
+    }
+
+
 }

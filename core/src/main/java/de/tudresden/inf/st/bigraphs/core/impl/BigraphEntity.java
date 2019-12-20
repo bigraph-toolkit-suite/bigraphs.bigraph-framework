@@ -169,8 +169,9 @@ public class BigraphEntity<C extends Control> {
 
         public String getName() {
             EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-            Object name = getInstance().eGet(nameAttr);
-            return String.valueOf(name);
+//            Object name = getInstance().eGet(nameAttr);
+//            return String.valueOf(name);
+            return Objects.nonNull(nameAttr) ? String.valueOf(getInstance().eGet(nameAttr)) : "";
         }
 
         public void setName(String nodeName) {

@@ -3,7 +3,6 @@ package de.tudresden.inf.st.bigraphs.rewriting.encoding;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphIsNotPrimeException;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -11,10 +10,7 @@ import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * This helper class creates a unique (canonical) label for a place graph of a bigraph such that two isomorphic place graphs
@@ -40,19 +36,26 @@ import java.util.stream.Collectors;
 public class BigraphCanonicalForm {
 
     private MutableMap<Class, BigraphCanonicalFormStrategy> strategyMap = Maps.mutable.of(PureBigraph.class, new PureCanonicalForm(this));
+    boolean withNodeIdentifiers = false;
 
     public static BigraphCanonicalForm createInstance() {
         return new BigraphCanonicalForm();
     }
 
+    public static BigraphCanonicalForm createInstance(boolean withNodeIdentifiers) {
+        return new BigraphCanonicalForm(withNodeIdentifiers);
+    }
+
     private BigraphCanonicalForm() {
+    }
+
+    private BigraphCanonicalForm(boolean withNodeIdentifiers) {
+        this.withNodeIdentifiers = withNodeIdentifiers;
     }
 
     //TODO check whether controls are atomic or not:
     // problem with alphabet, consider control "LL" and and control "L". one node "LL" and two nodes "L" and "L"
     // would be same but there aren't!: controls must be atomic!
-
-    //TODO choose different prefix for edge name rewriting than what outer names have.
 
     /**
      * Build a breadth-first canonical string (BFCS) for a pure bigraph
@@ -67,7 +70,10 @@ public class BigraphCanonicalForm {
     public <B extends Bigraph<?>> String bfcs(B bigraph) {
         BigraphCanonicalFormStrategy canonicalFormStrategy;
         if (bigraph instanceof PureBigraph) {
-            canonicalFormStrategy = strategyMap.getOrDefault(bigraph.getClass(), new PureCanonicalForm(this));
+            canonicalFormStrategy = strategyMap.getOrDefault(
+                    bigraph.getClass(),
+                    new PureCanonicalForm(this)
+            ).setPrintNodeIdentifiers(withNodeIdentifiers);
         } else {
             throw new RuntimeException("Not implemented yet");
         }
@@ -80,57 +86,26 @@ public class BigraphCanonicalForm {
         node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
-    /**
-     * the children size is sorted in reversed order where control names sorting is in lexicographic order and has
-     * precedence of the children size.
-     * <p>
-     * This is for map entries where children nodes are grouped by their parents.
-     *
-     * @param lhs left-hand side
-     * @param rhs right-hand side
-     * @return integer indicating the ordering
-     */
-    public static int compareByControlThenChildrenSize(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
-        if (lhs.getKey().getControl().getNamedType().stringValue().equals(rhs.getKey().getControl().getNamedType().stringValue())) {
-//            if (rhs.getValue().size() - lhs.getValue().size() == 0) {
-//                return bigraph.getPorts(rhs.getKey()).size();
-//            }
-            return rhs.getValue().size() - lhs.getValue().size();
-        } else {
-            return lhs.getKey().getControl().getNamedType().stringValue().compareTo(rhs.getKey().getControl().getNamedType().stringValue());
-        }
-    }
-
-    static int compareByControl(LinkedList<Map.Entry<BigraphEntity, Control>> lhs, LinkedList<Map.Entry<BigraphEntity, Control>> rhs) {
-        if (rhs.size() - lhs.size() == 0) {
-            String s1 = "";
-            String s2 = "";
-            s1 = lhs.stream()
-                    .sorted((lhs1, rhs2) -> {
-                        return lhs1.getKey().getControl().getNamedType().stringValue().compareTo(lhs1.getKey().getControl().getNamedType().stringValue());
-                    })
-                    .map(x -> x.getValue().getNamedType().stringValue())
-                    .collect(Collectors.joining(""));
-
-            s2 = rhs.stream()
-                    .sorted((lhs1, rhs2) -> {
-                        return lhs1.getKey().getControl().getNamedType().stringValue().compareTo(lhs1.getKey().getControl().getNamedType().stringValue());
-                    })
-                    .map(x -> x.getValue().getNamedType().stringValue())
-                    .collect(Collectors.joining(""));
-            return s1.compareTo(s2);
-        }
-        return Integer.compare(lhs.size(), rhs.size());
-
-
-        //also working but different ordering
-//        String s1 = lhs.stream()
-//                .map(x -> x.getValue().getNamedType().stringValue())
-//                .sorted()
-//                .collect(Collectors.joining(""));
-//        String s2 = rhs.stream().map(x -> x.getValue().getNamedType().stringValue()).sorted().collect(Collectors.joining(""));
-//        return s1.compareTo(s2);
-    }
+//    /**
+//     * the children size is sorted in reversed order where control names sorting is in lexicographic order and has
+//     * precedence of the children size.
+//     * <p>
+//     * This is for map entries where children nodes are grouped by their parents.
+//     *
+//     * @param lhs left-hand side
+//     * @param rhs right-hand side
+//     * @return integer indicating the ordering
+//     */
+//    public static int compareByControlThenChildrenSize(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
+//        if (lhs.getKey().getControl().getNamedType().stringValue().equals(rhs.getKey().getControl().getNamedType().stringValue())) {
+////            if (rhs.getValue().size() - lhs.getValue().size() == 0) {
+////                return bigraph.getPorts(rhs.getKey()).size();
+////            }
+//            return rhs.getValue().size() - lhs.getValue().size();
+//        } else {
+//            return lhs.getKey().getControl().getNamedType().stringValue().compareTo(rhs.getKey().getControl().getNamedType().stringValue());
+//        }
+//    }
 
     <B extends Bigraph<?>> void assertBigraphIsGroundAndPrime(B bigraph) {
         if (!bigraph.isGround() || !bigraph.isPrime()) {
@@ -167,4 +142,9 @@ public class BigraphCanonicalForm {
         };
     }
 
+    public void assertBigraphHasRoots(PureBigraph bigraph) {
+        if (bigraph.getRoots().size() == 0) {
+            throw new RuntimeException("Bigraph has no roots. Cannot compute the canonical form");
+        }
+    }
 }
