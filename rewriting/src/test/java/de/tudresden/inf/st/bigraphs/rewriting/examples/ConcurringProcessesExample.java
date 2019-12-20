@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.rewriting.examples;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -9,7 +8,6 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -21,20 +19,14 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.PureReactiveSy
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
-import de.tudresden.inf.st.bigraphs.rewriting.util.Combination;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.transitionOpts;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Dominik Grzelak
@@ -64,21 +56,33 @@ public class ConcurringProcessesExample {
 
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
         builder.createRoot()
-                .addChild("Process", "access1")
-                .addChild("Process", "access2").withNewHierarchy().addChild("Working").goBack()
-                .addChild("Resource").withNewHierarchy().addChild("Token", "access2").goBack()
+                .addChild("Process", "access2")
+                .addChild("Process", "access1").withNewHierarchy().addChild("Working").goBack()
+                .addChild("Resource").withNewHierarchy().addChild("Token", "access1").goBack()
         ;
-        PureBigraph agent2 = builder.createBigraph();
-        BigraphGraphvizExporter.toPNG(agent2,
+        PureBigraph agent = createAgent();
+        PureBigraph agent2 = createAgentRegistered();
+        PureBigraph agent3 = createAgentWorking();
+        BigraphGraphvizExporter.toPNG(agent3,
                 true,
-                new File(TARGET_DUMP_PATH + "partial/agent-2.png")
+                new File(TARGET_DUMP_PATH + "partial/agent.png")
         );
 
+        ReactionRule<PureBigraph> rule_resourceRegistrationPhase = createRule_ResourceRegistrationPhase();
+        ReactionRule<PureBigraph> rule_processWorkingPhase = createRule_ProcessWorkingPhase();
         ReactionRule<PureBigraph> rule_resourceDeregistrationPhase = createRule_ResourceDeregistrationPhase();
+        BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getRedex(),
+                true,
+                new File(TARGET_DUMP_PATH + "partial/redex.png")
+        );
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
-        reactiveSystem.setAgent(agent2);
-        reactiveSystem.addReactionRule(rule_resourceDeregistrationPhase);
+//        reactiveSystem.setAgent(agent);
+//        reactiveSystem.setAgent(agent2);
+        reactiveSystem.setAgent(agent3);
+//        reactiveSystem.addReactionRule(rule_resourceRegistrationPhase);
+        reactiveSystem.addReactionRule(rule_processWorkingPhase);
+//        reactiveSystem.addReactionRule(rule_resourceDeregistrationPhase);
 
         ReactiveSystemOptions opts = ReactiveSystemOptions.create();
         opts
@@ -90,6 +94,7 @@ public class ConcurringProcessesExample {
                 .doMeasureTime(true)
                 .and(ReactiveSystemOptions.exportOpts()
                         .setTraceFile(new File(TARGET_DUMP_PATH, "partial/transition_graph_agent-2.png"))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "partial/states/"))
                         .create()
                 )
         ;
@@ -107,36 +112,35 @@ public class ConcurringProcessesExample {
         ReactionRule<PureBigraph> rule_processWorkingPhase = createRule_ProcessWorkingPhase();
         ReactionRule<PureBigraph> rule_resourceDeregistrationPhase = createRule_ResourceDeregistrationPhase();
 
-
 //        BigraphArtifacts.exportAsInstanceModel(agent, new FileOutputStream(new File(TARGET_DUMP_PATH + "agent.xmi")));
-//        BigraphGraphvizExporter.toPNG(agent,
-//                true,
-//                new File(TARGET_DUMP_PATH + "agent.png")
-//        );
-//        BigraphGraphvizExporter.toPNG(rule_resourceRegistrationPhase.getRedex(),
-//                true,
-//                new File(TARGET_DUMP_PATH + "rule_0_redex.png")
-//        );
-//        BigraphGraphvizExporter.toPNG(rule_resourceRegistrationPhase.getReactum(),
-//                true,
-//                new File(TARGET_DUMP_PATH + "rule_0_reactum.png")
-//        );
-//        BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getRedex(),
-//                true,
-//                new File(TARGET_DUMP_PATH + "rule_1_redex.png")
-//        );
-//        BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getReactum(),
-//                true,
-//                new File(TARGET_DUMP_PATH + "rule_1_reactum.png")
-//        );
-//        BigraphGraphvizExporter.toPNG(rule_resourceDeregistrationPhase.getRedex(),
-//                true,
-//                new File(TARGET_DUMP_PATH + "rule_2_redex.png")
-//        );
-//        BigraphGraphvizExporter.toPNG(rule_resourceDeregistrationPhase.getReactum(),
-//                true,
-//                new File(TARGET_DUMP_PATH + "rule_2_reactum.png")
-//        );
+        BigraphGraphvizExporter.toPNG(agent,
+                true,
+                new File(TARGET_DUMP_PATH + "agent.png")
+        );
+        BigraphGraphvizExporter.toPNG(rule_resourceRegistrationPhase.getRedex(),
+                true,
+                new File(TARGET_DUMP_PATH + "rule_0_redex.png")
+        );
+        BigraphGraphvizExporter.toPNG(rule_resourceRegistrationPhase.getReactum(),
+                true,
+                new File(TARGET_DUMP_PATH + "rule_0_reactum.png")
+        );
+        BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getRedex(),
+                true,
+                new File(TARGET_DUMP_PATH + "rule_1_redex.png")
+        );
+        BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getReactum(),
+                true,
+                new File(TARGET_DUMP_PATH + "rule_1_reactum.png")
+        );
+        BigraphGraphvizExporter.toPNG(rule_resourceDeregistrationPhase.getRedex(),
+                true,
+                new File(TARGET_DUMP_PATH + "rule_2_redex.png")
+        );
+        BigraphGraphvizExporter.toPNG(rule_resourceDeregistrationPhase.getReactum(),
+                true,
+                new File(TARGET_DUMP_PATH + "rule_2_reactum.png")
+        );
 
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
@@ -177,6 +181,27 @@ public class ConcurringProcessesExample {
         ;
         PureBigraph bigraph = builder.createBigraph();
         return bigraph;
+    }
+
+    PureBigraph createAgentRegistered() throws InvalidConnectionException {
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+
+        builder.createRoot()
+                .addChild("Process", "access2")
+                .addChild("Process", "access1")
+                .addChild("Resource").withNewHierarchy().addChild("Token", "access1")
+        ;
+        return builder.createBigraph();
+    }
+
+    PureBigraph createAgentWorking() throws InvalidConnectionException {
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        builder.createRoot()
+                .addChild("Process", "access2")
+                .addChild("Process", "access1").withNewHierarchy().addChild("Working").goBack()
+                .addChild("Resource").withNewHierarchy().addChild("Token", "access2").goBack()
+        ;
+        return builder.createBigraph();
     }
 
     ReactionRule<PureBigraph> createRule_ResourceRegistrationPhase() throws InvalidConnectionException, InvalidReactionRuleException {

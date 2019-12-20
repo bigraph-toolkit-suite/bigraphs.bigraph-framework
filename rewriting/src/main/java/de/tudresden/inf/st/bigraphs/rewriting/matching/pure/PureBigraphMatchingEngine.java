@@ -18,9 +18,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractDynamicMatchAdapter;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatchingEngine;
-import de.tudresden.inf.st.bigraphs.rewriting.util.Combination;
-import de.tudresden.inf.st.bigraphs.rewriting.util.CombinationMaps;
 import de.tudresden.inf.st.bigraphs.rewriting.util.Permutations;
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jgrapht.Graph;
@@ -33,14 +32,13 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static de.tudresden.inf.st.bigraphs.rewriting.util.CombinationMaps.combinations;
 import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Matching algorithm for pure bigraphs (see {@link PureBigraph}).
@@ -141,7 +139,8 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 //        });
         for (BigraphEntity eachV : internalVertsG) {
             List<BigraphEntity> childrenOfV = agentAdapter.getChildren(eachV);
-            List<BigraphEntity> u_vertsOfH = new ArrayList<>(allVerticesOfH);//TODO: create this in a stream-filter
+//            List<BigraphEntity> u_vertsOfH = new ArrayList<>(allVerticesOfH);//TODO: create this in a stream-filter
+            MutableList<BigraphEntity> u_vertsOfH = org.eclipse.collections.api.factory.Lists.mutable.ofAll(allVerticesOfH);
             //d(u) <= t + 1
             int t = childrenOfV.size();
             for (int i = u_vertsOfH.size() - 1; i >= 0; i--) {
@@ -255,13 +254,8 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 //                    if (treffer.get() < redexAdapter.getRoots().size())
                     if (results.get(eachV, eachU) == null)
                         results.put(eachV, eachU, i);
-//                    boolean isgoodcontrols = checkSubtreesControl(bigraphAdapter, eachV, redexAdapter, eachU, 0); //TODO prüfen ob mit site gemacht werden kann
-//                    System.out.println("Is good? => " + isgoodcontrols);
-//                    if (!isgoodcontrols) continue;
-//                    if (matchings3.contains(false)) continue;
 
                     boolean b = linkMatching();
-
                     if (b) {
                         int i1 = totalHits.incrementAndGet();
                         //save last eachU and eachV
@@ -285,16 +279,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             matchingTimer.reset().start();
         }
         // This is needed when there is not a distinct match of the redices roots to a agent's subtree
-        // Überprüfen ob die indexlisten disjoint sind dann ist das eindeutig (bzw. es sollte nur ein index dort drin stehn)
-        // ansonsten nicht und es gibt mehrere Möglichkeiten die Redex' roots auf die gematchten agent nodes
-        // zu legen
-        // Dann kann man permutieren: agent node einem root aus dem redex zuweisen
-
-
-        // ich muss zwischen allen paaren testen.
-//        Permutations.of(Arrays.asList(0, 1, 0, 1)).forEach(p -> { p.forEach(System.out::print); System.out.print(" "); });
-
-        //hier beginnt schon die kombination: ab hier weiß man wie viele occurrences-bedingte "mehr"-transitionen es gibt
+        // Anzahl an occurrence-bedingter "mehr"-transitionen
 
         final int numOfRoots = redexAdapter.getRoots().size();
         final boolean redexRootMatchIsUnique = numOfRoots == totalHits.get();
@@ -309,12 +294,8 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             }
             combination.add(comb);
         } else {
-            // is a combinatorial problem: is a anordnungs problem, ohne wiederholung
-            //for every redex root, where are the matches?
-//            List<Integer> nums = IntStream.rangeClosed(0, collect.size() - 1).boxed().collect(Collectors.toList());
-//            combination = Combination.combination(nums, new HashSet<>(collect).size());
-
-            //hier kann noch verbessert werden (ungueltige kombinationen werden auch aussortiert). der kombinationsraum
+            // is a combinatorial problem
+            // hier kann noch verbessert werden (ungueltige kombinationen werden auch aussortiert). der kombinationsraum
             // kann womöglich hier schon verkleinert werden
             List<Integer> nums2 = IntStream.range(0, numOfRoots).boxed().collect(toList());
             Permutations.of(nums2).forEach(p -> {
@@ -322,11 +303,11 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             });
         }
 
-        //generic loop for unique and non-unique matching of the redex root to agent's node
+        // generic loop for unique and non-unique matchings of the redex root to agent's node
         int validCounter = 0;
         // for every combination
         for (Integer[] eachCombination : combination) {
-            //redex root to agent node
+            // redex root to agent node
 //            BiMap<Integer, BigraphEntity> hitsV_new = HashBiMap.create();
             MutableMap<Integer, BigraphEntity> hitsV_new = org.eclipse.collections.api.factory.Maps.mutable.empty();
             for (int i = 0; i < eachCombination.length; i++) {
@@ -357,17 +338,10 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             }
 
             //Parameter: <redex root index, agent node, redex node>
-//            final Table<Integer, BigraphEntity, BigraphEntity> hitsV_newChildren = HashBasedTable.create();
-//            final List<Table<Integer, BigraphEntity, BigraphEntity>> hitsV_newChildrenStack = new LinkedList<>();
-            final List<Table<Integer, BigraphEntity, BigraphEntity>> hitsV_newChildrenStack2 = new ArrayList<>();
-//            hitsV_newChildrenStack.push(hitsV_newChildren);
-//            final List<Integer> elements = new LinkedList<>();
-//            int cntIx = 0;
-            // Iterate through the current redex root
-            // The structure of the Map.Entry: redex root index -> matched agent node
-//            Map<BigraphEntity, List<BigraphEntity>> mappy = new LinkedHashMap<>();
+            final List<Table<Integer, BigraphEntity, BigraphEntity>> hitsV_newChildrenStack2 = new LinkedList<>();
             List<MatchPairing> mapPairings = new LinkedList<>();
-            boolean multiMap = false;
+
+            // The structure of the Map.Entry: redex root index -> matched agent node
             for (Map.Entry<Integer, BigraphEntity> eachEntry : hitsV_new.entrySet()) {
                 int redexRootIx = eachEntry.getKey();
                 BigraphEntity agentMatch = eachEntry.getValue();
@@ -377,182 +351,92 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                 // Check that not one entry is empty, otherwise return and no match could be found
                 boolean incompleteMatch = nodeDiffByControlCheck.values().stream().filter(x -> x.size() == 0).anyMatch(Objects::nonNull);
                 if (incompleteMatch) return;
-                List<BigraphEntity> availableAgentMatchNodes = new LinkedList<>();
-
+//                List<BigraphEntity> availableAgentMatchNodes = new LinkedList<>();
 
                 //current impl: select the first possible agent node
                 for (Map.Entry<BigraphEntity, LinkedList<BigraphEntity>> eachMapping : nodeDiffByControlCheck.entrySet()) {
-                    //TODO make selection random and not only the first (or take all at best - clear availableAgentMatchNodes at the end of the outer loop and call buildMatches before)
                     //the agent-redex match is here already "good" (w/o considering the children yet - this is done later)
                     MatchPairing q = new MatchPairing(redexRootIx, eachMapping.getKey());
-                    if (!multiMap) {
-                        multiMap = eachMapping.getValue().size() > 1;
-                    }
                     for (BigraphEntity x : eachMapping.getValue()) {
 //                        if (!availableAgentMatchNodes.contains(x)) {
-                        //
-//                            elements.add(redexRootIx + cntIx);
-//                            cntIx++;
-//                            Table<Integer, BigraphEntity, BigraphEntity> tmp = HashBasedTable.create();
-//                            tmp.put(redexRootIx, x, eachMapping.getKey());
-//                            hitsV_newChildrenStack.add(tmp);
-//                            mappy.putIfAbsent(eachMapping.getKey(), new LinkedList<>());
-//                            mappy.get(eachMapping.getKey()).add(x);
                         q.getAgentMatches().add(x);
-                        //
-//                            hitsV_newChildren.put(redexRootIx, x, eachMapping.getKey());
-                        availableAgentMatchNodes.add(x);
-//                            break;
+//                        availableAgentMatchNodes.add(x);
+//                        break;
 //                        }
                     }
                     mapPairings.add(q);
-//                    cntIx = redexRootIx + cntIx - 1;
-//                    if (redexAdapter.getRoots().size() == 1) {
-//                        cntIx = redexRootIx + eachMapping.getValue().size();
-//                    } else {
-//                        cntIx = redexRootIx + eachMapping.getValue().size() - 1;
-//                    }
                 }
             }
 
-            HashMap<BigraphEntity, MatchPairing> collect2 = mapPairings.stream()
+            logger.debug("mapPairings={}", mapPairings);
+
+//            HashMap<BigraphEntity, MatchPairing> collect2 = mapPairings.stream()
+//                    .sorted(comparingInt(e -> e.getAgentMatches().size()))
+//                    .collect(toMap(f -> f.getRedexNode(),
+//                            x -> x,
+//                            (o1, o2) -> {
+//                                o1.getAgentMatches().addAll(o2.getAgentMatches());
+//                                return o1;
+//                            },
+//                            HashMap::new));
+//            Map<Integer, List<Map.Entry<BigraphEntity, MatchPairing>>> collect3 = collect2.entrySet().stream().collect(groupingBy(x -> x.getValue().getRootIndex()));
+//            Table<Integer, BigraphEntity, BigraphEntity> tmp = HashBasedTable.create();
+//            int size = 0;
+//            for (Integer ix : eachCombination) {
+////                List<MatchPairing> matchPairingIndex = mapPairings.stream().filter(x -> x.getRootIndex() == ix).collect(toList());
+////                List<MatchPairing> matchPairingIndex = collect3.get(ix).stream().collect(toList());
+//                // flatten the results: redex -> list of agents mappings
+//                HashMap<BigraphEntity, List<BigraphEntity>> collect1 = collect3.get(ix).stream()
+//                        .sorted(comparingInt(e -> e.getValue().getAgentMatches().size()))
+//                        .collect(toMap(f -> f.getKey(),
+//                                x -> x.getValue().getAgentMatches(),
+//                                (o1, o2) -> {
+//                                    o1.addAll(o2);
+//                                    return o1;
+//                                },
+//                                HashMap::new));
+//                // build all combinations
+//                List<Table<Integer, BigraphEntity, BigraphEntity>> recurs = recurs(ix, collect1);
+////                System.out.println(recurs);
+////                variations.put(ix, recurs);
+//                // first, ad // the non-distinct ones (multiple matches found) will add their result to every existing entry
+//                if (hitsV_newChildrenStack2.size() > 0) {
+//                    for (int i = 0; i < hitsV_newChildrenStack2.size(); i++) {
+//                        for (Table<Integer, BigraphEntity, BigraphEntity> obj : recurs) {
+//                            hitsV_newChildrenStack2.get(i).putAll(obj);
+//                        }
+//                    }
+//                } else {
+//                    hitsV_newChildrenStack2.addAll(recurs);
+//                }
+//            }
+
+            List<Map<MatchPairing, BigraphEntity>> combinations = new LinkedList<>();
+            HashMap<MatchPairing, List<BigraphEntity>> collect4 = mapPairings.stream()
                     .sorted(comparingInt(e -> e.getAgentMatches().size()))
-                    .collect(toMap(f -> f.getRedexNode(),
-                            x -> x,
+                    .collect(toMap(f -> f,
+                            x -> x.getAgentMatches(),
                             (o1, o2) -> {
-                                o1.getAgentMatches().addAll(o2.getAgentMatches());
+                                o1.addAll(o2);
                                 return o1;
                             },
                             HashMap::new));
-            Map<Integer, List<Map.Entry<BigraphEntity, MatchPairing>>> collect3 = collect2.entrySet().stream().collect(groupingBy(x -> x.getValue().getRootIndex()));
-            logger.debug("mapPairings={}", mapPairings);
-            Table<Integer, BigraphEntity, BigraphEntity> tmp = HashBasedTable.create();
-            Map<Integer, List<Table<Integer, BigraphEntity, BigraphEntity>>> variations = new LinkedHashMap<>();
-            for (Integer ix : eachCombination) {
-
-//                List<MatchPairing> matchPairingIndex = mapPairings.stream().filter(x -> x.getRootIndex() == ix).collect(toList());
-//                List<MatchPairing> matchPairingIndex = collect3.get(ix).stream().collect(toList());
-                HashMap<BigraphEntity, List<BigraphEntity>> collect1 = collect3.get(ix).stream()
-                        .sorted(comparingInt(e -> e.getValue().getAgentMatches().size()))
-                        .collect(toMap(f -> f.getKey(),
-                                x -> x.getValue().getAgentMatches(),
-                                (o1, o2) -> {
-                                    o1.addAll(o2);
-                                    return o1;
-                                },
-                                HashMap::new));
-
-//                List<Map<BigraphEntity, BigraphEntity>> klo = new LinkedList<>();
-//                combinations(collect1, klo);
-                List<Table<Integer, BigraphEntity, BigraphEntity>> recurs = recurs(eachCombination, ix, collect1, hitsV_newChildrenStack2);
-                System.out.println(recurs);
-                variations.put(ix, recurs);
-//                if (recurs.size() > 1) {
-                if (hitsV_newChildrenStack2.size() > 0) {
-//                    int cnt = 0;
-                    for (int i = 0; i < hitsV_newChildrenStack2.size(); i++) {
-                        for (Table<Integer, BigraphEntity, BigraphEntity> obj : recurs) {
-                            hitsV_newChildrenStack2.get(i).putAll(obj);
-//                            cnt++;
-                        }
-//                        hitsV_newChildrenStack2.get(i).putAll();
-                    }
-
-                } else {
-                    hitsV_newChildrenStack2.addAll(recurs);
-                }
-
-//                }
-
-//                if (redexAdapter.getRoots().size() == 1) {
-//                klo.stream().forEachOrdered(x -> {
-//                    Table<Integer, BigraphEntity, BigraphEntity> tmpinner = HashBasedTable.create();
-//                    x.entrySet().stream().forEachOrdered(y -> {
-//                        tmpinner.put(ix, y.getValue(), y.getKey());
-//                    });
-//                    if (hitsV_newChildrenStack2.size() == 0 || ix == 0)
-//                        hitsV_newChildrenStack2.add(ix, tmpinner);
-//                    else
-//                        hitsV_newChildrenStack2.get(ix).putAll(tmpinner);
-//
-//                });
-//                } else {
-////                    Table<Integer, BigraphEntity, BigraphEntity> tmp = HashBasedTable.create();
-//                    klo.stream().forEachOrdered(x -> {
-//                        x.entrySet().stream().forEachOrdered(y -> {
-//                            if (Objects.nonNull(collect1.get(y.getKey())) && collect1.get(y.getKey()).size() > 1) {
-////                                klo.stream().forEachOrdered(x2 -> {
-//                                Table<Integer, BigraphEntity, BigraphEntity> tmpinner = HashBasedTable.create();
-////                                    x.entrySet().stream().forEachOrdered(y2 -> {
-//                                tmpinner.put(ix, y.getValue(), y.getKey());
-////                                    });
-////                                if (hitsV_newChildrenStack2.size() == 0) {
-////                                    hitsV_newChildrenStack2.add(ix, tmpinner);
-////                                } else {
-//                                    hitsV_newChildrenStack2.add(tmpinner);
-////                                }
-////                                });
-//                            } else {
-//                                tmp.put(ix, y.getValue(), y.getKey());
-//                            }
-//                        });
-//                    });
-////                    hitsV_newChildrenStack2.add(tmp);
-//                }
-                System.out.println("s");
+            combinations(collect4, combinations);
+            for (int i = 0; i < combinations.size(); i++) {
+//                hitsV_newChildrenStack2.add()
+                final Table<Integer, BigraphEntity, BigraphEntity> matchTable = HashBasedTable.create();
+                Map<MatchPairing, BigraphEntity> matchPairingBigraphEntityMap = combinations.get(i);
+                matchPairingBigraphEntityMap.entrySet().stream().forEach(x -> {
+                    matchTable.put(x.getKey().getRootIndex(), x.getValue(), x.getKey().getRedexNode());
+                });
+                hitsV_newChildrenStack2.add(matchTable);
             }
-//            if (redexAdapter.getRoots().size() > 1) {
-//                hitsV_newChildrenStack2.add(tmp);
-//            }
-//            List<Map<BigraphEntity, BigraphEntity>> klo = new LinkedList<>();
-//            combinations(, klo);
 
-
-//            int indexSum = hitsV_newChildrenStack.stream().flatMap(x -> x.rowKeySet().stream()).reduce(0, Integer::sum).intValue();
-//            System.out.println("indexSum=" + indexSum);
-////            if (redexAdapter.getRoots().size() > 1) {
-//            final int rrr;
-//            List<Integer[]> combination1;
-////            if (redexAdapter.getRoots().size() == 1) {
-//            if (indexSum == 0) {
-//                rrr = redexAdapter.getChildren(redexAdapter.getRoots().get(0)).size();
-//                combination1 = Combination.combination(elements, rrr);
-//            } else {
-//                rrr = redexAdapter.getRoots().size();
-//                combination1 = Combination.combination(elements, rrr);
-//            }
-//            combination1.stream()
-//                    .filter(x -> {
-////                        if (redexAdapter.getRoots().size() == 1) {
-////                            return true;
-////                        } else {
-//                        //TODO: only if one redex root??
-//                        List<BigraphEntity> collect1 = Arrays.stream(x).sorted().flatMap(y -> {
-//                            return mappy.get(hitsV_newChildrenStack.get(y).values().iterator().next()).stream();
-//                        }).collect(toList());
-//                        if (collect1.size() > hitsV_newChildrenStack.size()) {
-//                            return false;
-//                        }
-//                        return Arrays.stream(x).reduce(0, Integer::sum) >= rrr;
-////                        }
-//                    })
-//                    .forEachOrdered(indexArray -> {
-//                        Table<Integer, BigraphEntity, BigraphEntity> tmp = HashBasedTable.create();
-//                        Arrays.stream(indexArray).forEachOrdered(ix -> {
-//                            tmp.putAll(hitsV_newChildrenStack.get(ix));
-//                        });
-//                        hitsV_newChildrenStack2.add(tmp);
-//                    });
-//            if (hitsV_newChildrenStack2.size() == 0 && hitsV_newChildren.size() != 0) {
-//                hitsV_newChildrenStack2.add(hitsV_newChildren);
-//            }
-
-
-            System.out.println("----------");
-            logger.debug("hitsV_newChildrenStack2={}", hitsV_newChildrenStack2);
-            System.out.println("Size,hitsV_newChildrenStack2=" + hitsV_newChildrenStack2.size());
-            logger.debug("hitsV_new={}", hitsV_new);
-            System.out.println("----------");
+//            System.out.println("----------");
+//            logger.debug("hitsV_newChildrenStack2={}", hitsV_newChildrenStack2);
+//            System.out.println("Size,hitsV_newChildrenStack2=" + hitsV_newChildrenStack2.size());
+//            logger.debug("hitsV_new={}", hitsV_new);
+//            System.out.println("----------");
 //            return;
             for (Table<Integer, BigraphEntity, BigraphEntity> each : hitsV_newChildrenStack2) {
 //                //TODO: make the following faster: this step tooks most of the time
@@ -574,27 +458,19 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         }
     }
 
-    private List<Table<Integer, BigraphEntity, BigraphEntity>> recurs(Integer[] combi, int ix, HashMap<BigraphEntity, List<BigraphEntity>> collect1, List<Table<Integer, BigraphEntity, BigraphEntity>> list) {
-        List<Map<BigraphEntity, BigraphEntity>> klo = new LinkedList<>();
-        combinations(collect1, klo);
-
+    private List<Table<Integer, BigraphEntity, BigraphEntity>> recurs(int ix, HashMap<BigraphEntity, List<BigraphEntity>> collect1) {
+        List<Map<BigraphEntity, BigraphEntity>> combinations = new LinkedList<>();
+        combinations(collect1, combinations);
         List<Table<Integer, BigraphEntity, BigraphEntity>> result = new LinkedList<>();
 //        for (int ix : combi) {
-        klo.stream().forEachOrdered(x -> {
-            Table<Integer, BigraphEntity, BigraphEntity> tmpinner = HashBasedTable.create();
+        combinations.stream().forEachOrdered(x -> {
+            final Table<Integer, BigraphEntity, BigraphEntity> matchTable = HashBasedTable.create();
             x.entrySet().stream().forEachOrdered(y -> {
-                tmpinner.put(ix, y.getValue(), y.getKey());
+                matchTable.put(ix, y.getValue(), y.getKey());
             });
-            result.add(tmpinner);
-//                if (hitsV_newChildrenStack2.size() == 0 || ix == 0)
-//                    hitsV_newChildrenStack2.add(ix, tmpinner);
-//                else
-//                    hitsV_newChildrenStack2.get(ix).putAll(tmpinner);
-
+            result.add(matchTable);
         });
-//        }
         return result;
-//        list.add(tmpinner);
     }
 
     /**
@@ -604,6 +480,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
      */
     public boolean hasMatched() {
         return totalHits.get() > 0 && totalHits.get() >= redexAdapter.getRoots().size() && (totalHits.get() % redexAdapter.getRoots().size() == 0);
+//        return totalHits.get() > 0 && (totalHits.get() % redexAdapter.getRoots().size() == 0);
     }
 
     /**
@@ -1088,14 +965,12 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             }
         }
         // reduce space here further: check if one redex has only one match: remove this from all the other with multiple ones (if it occurs in it as well)
-        //TODO check if we need to check all links from all children or "first-level" is enough (currently, we check the whole subbigraph)
-        // check of cross-links
         BiMap<BigraphEntity, List<CrossPairLink>> crossings2 = HashBiMap.create();
         if (redexNodes.size() > 1) {
             for (Map.Entry<BigraphEntity, LinkedList<BigraphEntity>> each : mapping.entrySet()) {
                 // only for those redexes which have multiple possible  matchings
                 if (each.getValue().size() <= 1) continue;
-                BigraphEntity redexCurrent = each.getKey();
+                BigraphEntity currentRedex = each.getKey();
                 List<BigraphEntity> rest = mapping.entrySet().stream().filter(x -> !x.getKey().equals(each.getKey()))
                         .map(Map.Entry::getKey)
                         .collect(toList());
@@ -1103,30 +978,31 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                 // First get all linked nodes under the current redex (a subbigraph)
                 // For that we get _all_ children of the current redex first, and then gather all their links.
                 // they are somehow "grouped" through this 2D list structure
-                List<List<BigraphEntity>> redexLinks = getSubBigraphFrom(redexCurrent, redexAdapter)
+                List<List<BigraphEntity>> redexLinks = getSubBigraphFrom(currentRedex, redexAdapter)
                         .stream().flatMap(x -> redexAdapter.getLinksOfNode(x).stream())
                         .map(x -> redexAdapter.getNodesOfLink((BigraphEntity.Link) x.getLink()))
                         .collect(toList());
 
-                // Ist alles was ich unter der Liste finde, der parent "redexCurrent"?
+                // Ist alles was ich unter der Liste finde, der parent "currentRedex"?
                 for (List<BigraphEntity> nodes : redexLinks) {
-//                    List<Map.Entry<BigraphEntity, Boolean>> result =
                     List<Map.Entry<? extends BigraphEntity, Boolean>> result = nodes.stream()
-                            .collect(Collectors.toMap(p -> p, p -> redexAdapter.isParentOf(p, redexCurrent)))
+                            .collect(Collectors.toMap(p -> p, p -> redexAdapter.isParentOf(p, currentRedex)))
                             .entrySet().stream()
                             .filter(x -> x.getValue() == false)
                             .collect(toList());
                     if (result.size() == 0) continue;
-                    //für "false": finde heraus welcher redex parent node
+                    // for "false": finde heraus welcher redex parent node
                     List<CrossPairLink> pairLinks = new ArrayList<>();
+                    // only nodes that are not connected are now in "result"
+                    // find out the corresponding parent
                     rest.forEach(x -> result.forEach(y -> {
                         if (redexAdapter.isParentOf(y.getKey(), x)) {
                             pairLinks.add(CrossPairLink.create(x, y.getKey()));
                         }
                     }));
                     for (CrossPairLink eachCross : pairLinks) {
-                        crossings2.putIfAbsent(redexCurrent, new ArrayList<>());
-                        crossings2.get(redexCurrent).add(eachCross);
+                        crossings2.putIfAbsent(currentRedex, new ArrayList<>());
+                        crossings2.get(currentRedex).add(eachCross);
                     }
                 }
             }
@@ -1178,6 +1054,12 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         return mapping;
     }
 
+    /**
+     * Structure that denotes a connection between two nodes.
+     * <p>
+     * Used to check a subtree for suitable node matches to another redex subtree, where a connection spans multiple
+     * hierarchies (and tree levels).
+     */
     public static class CrossPairLink {
         private BigraphEntity redex;
         private BigraphEntity other;
@@ -1240,7 +1122,11 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             allChildrenFromNodeU.addAll(redexAdapter.getSubtreeOfNode(eachU));
             allChildrenFromNodeU.add(eachU);
         }
-        boolean areLinksOK = areLinksOK(allChildrenFromNodeU, allChildrenFromNodeV);
+        List<BigraphEntity> uColl = allChildrenFromNodeU.stream().filter(x -> BigraphEntityType.isNode(x)).collect(toList());
+        List<BigraphEntity> vColl = allChildrenFromNodeV.stream().filter(x -> BigraphEntityType.isNode(x)).collect(toList()); // && agentAdapter.getPortCount(x) > 0
+        if (vColl.size() < uColl.size()) return false;
+//        boolean areLinksOK = areLinksOK(allChildrenFromNodeU, allChildrenFromNodeV);
+        boolean areLinksOK = areLinksOK(uColl, vColl);
         return areLinksOK;
     }
 
@@ -1263,6 +1149,12 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             }
         }
 
+        boolean allMatchesAreGood = false;
+        if (redexPartition.size() == lnk.size()) {
+            allMatchesAreGood = !lnk.values().stream().anyMatch(x -> !x);
+            logger.debug("allMatchesAreGood 3: " + allMatchesAreGood);
+        }
+
         // This statement leads to an overflow: "agentPartition.stream().allMatch(x -> lnkTab.columnMap().get(x).containsValue(true));"
         // so we have to do it via a traditional loop
         boolean b = true;
@@ -1272,11 +1164,16 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                 break;
             }
         }
+        logger.debug("NewNew link matching result: {}", allMatchesAreGood);
         logger.debug("New link matching result: {}", b);
         logger.debug("Old link matching result: {}", !lnk.containsValue(false));
 //        return b;
 //        return !lnk.containsValue(false);
-        return b || !lnk.containsValue(false);
+//        if (!b) return false;
+//        return !lnk.containsValue(false);
+//        return b; // || !lnk.containsValue(false);
+//        return allMatchesAreGood || (b && !lnk.containsValue(false));
+        return allMatchesAreGood;
     }
 
     //TODO make return more clear
@@ -1334,8 +1231,10 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 //            if (lnkRedex.size() != 0 && lnkAgent.size() != 0) {
                 if (lnkRedex.size() != lnkAgent.size()) return false;
                 for (int i = 0, n = lnkRedex.size(); i < n; i++) {
-                    List<BigraphEntity> agentLinksOfEachV = agentAdapter.getNodesOfLink((BigraphEntity.Link) lnkAgent.get(i).getLink());
-                    List<BigraphEntity> redexLinksOfEachU = redexAdapter.getNodesOfLink((BigraphEntity.Link) lnkRedex.get(i).getLink());
+                    Collection<BigraphEntity> redexLinksOfEachU = redexAdapter.getPointsFromLink(lnkRedex.get(i).getLink());
+                    Collection<BigraphEntity> agentLinksOfEachV = agentAdapter.getPointsFromLink((BigraphEntity.Link) lnkAgent.get(i).getLink());
+//                    List<BigraphEntity> redexLinksOfEachU = redexAdapter.getPointsFromLink((BigraphEntity.Link) lnkRedex.get(i).getLink());
+//                    List<BigraphEntity> agentLinksOfEachV = agentAdapter.getNodesOfLink((BigraphEntity.Link) lnkAgent.get(i).getLink());
                     boolean isDistinctLinkR = redexLinksOfEachU.size() == 1;
                     boolean isDistinctLinkA = agentLinksOfEachV.size() == 1;
                     if (isDistinctLinkA) {

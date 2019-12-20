@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
@@ -17,11 +16,9 @@ import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * An implementation of an {@link BigraphModelChecker} providing a simple model checking for BRS for pure bigraphs (see {@link PureBigraph}).
@@ -36,7 +33,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
     public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, SimulationType simulationType, ReactiveSystemOptions options) {
         super(reactiveSystem, simulationType, options);
     }
-    
+
     @Override
     protected synchronized PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         try {

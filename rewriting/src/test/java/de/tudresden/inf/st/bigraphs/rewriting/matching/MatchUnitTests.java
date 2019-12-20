@@ -110,17 +110,17 @@ public class MatchUnitTests {
 //            );
 
             AtomicInteger cnt = new AtomicInteger(0);
-            next.getParameters().forEach(x -> {
-                try {
-                    BigraphGraphvizExporter.toPNG((PureBigraph) x,
-                            true,
-                            new File(path + "param_" + cnt.incrementAndGet() + ".png")
-                    );
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            });
+//            next.getParameters().forEach(x -> {
+////                try {
+////                    BigraphGraphvizExporter.toPNG((PureBigraph) x,
+////                            true,
+////                            new File(path + "param_" + cnt.incrementAndGet() + ".png")
+////                    );
+////                } catch (IOException e) {
+////                    e.printStackTrace();
+////                }
+//
+//            });
             long elapsed = timer.stop().elapsed(TimeUnit.MILLISECONDS);
             System.out.println("Create png's took (millisecs) " + elapsed);
         } catch (IOException e) {
@@ -170,21 +170,21 @@ public class MatchUnitTests {
     @Fork(value = 1, warmups = 2)
     @BenchmarkMode(Mode.AverageTime)
     public void model_test_2() throws Exception {
-        PureBigraph agent_model_test_2 = (PureBigraph) createAgent_model_test_2();
-        PureBigraph redex_model_test_2a = (PureBigraph) createRedex_model_test_2a();
-        exportGraph(redex_model_test_2a, TARGET_DUMP_PATH + "model2/redex_model_test_2a.png");
-        exportGraph(agent_model_test_2, TARGET_DUMP_PATH + "model2/agent_model_test_2.png");
+//        PureBigraph agent_model_test_2 = (PureBigraph) createAgent_model_test_2();
+//        PureBigraph redex_model_test_2a = (PureBigraph) createRedex_model_test_2a();
+//        exportGraph(redex_model_test_2a, TARGET_DUMP_PATH + "model2/redex_model_test_2a.png");
+//        exportGraph(agent_model_test_2, TARGET_DUMP_PATH + "model2/agent_model_test_2.png");
         //the second root of the redex will create many occurrences because a distinct match isn't possible
-        PureBigraph redex_model_test_2b = (PureBigraph) createRedex_model_test_2b();
+//        PureBigraph redex_model_test_2b = (PureBigraph) createRedex_model_test_2b();
 
-        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent_model_test_2, redex_model_test_2a);
-        Iterator<PureBigraphParametricMatch> iterator = match.iterator();
-        while (iterator.hasNext()) {
-            BigraphMatch next = iterator.next();
-            System.out.println(next);
-            createGraphvizOutput(agent_model_test_2, next, TARGET_DUMP_PATH + "model2/");
-        }
+//        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+//        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent_model_test_2, redex_model_test_2a);
+//        Iterator<PureBigraphParametricMatch> iterator = match.iterator();
+//        while (iterator.hasNext()) {
+//            BigraphMatch next = iterator.next();
+//            System.out.println(next);
+//            createGraphvizOutput(agent_model_test_2, next, TARGET_DUMP_PATH + "model2/");
+//        }
 
 
 //        Stopwatch timer0 = Stopwatch.createStarted();
@@ -477,7 +477,7 @@ public class MatchUnitTests {
 
 
     public Bigraph createAgent_model_test_3() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        Signature<DefaultControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("door");
