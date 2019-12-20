@@ -4,6 +4,7 @@ import java.util.*;
 
 /**
  * @author Dominik Grzelak
+ * @see <a href="https://stackoverflow.com/a/8217761">https://stackoverflow.com/a/8217761</a>
  */
 public class CombinationMaps {
 
@@ -40,17 +41,17 @@ public class CombinationMaps {
                                       Map<K, Set<V>> map,
                                       List<Map<K, V>> list) {
 
-        if(index == map.size()) { // if we have gone through all keys in the map
+        if (index == map.size()) { // if we have gone through all keys in the map
             Map<K, V> newMap = new HashMap<K, V>();
             System.out.println(current);
-            for(K key: current.keySet()) {          // copy contents to new map.
-                newMap.put(key, current.get((K)key));
+            for (K key : current.keySet()) {          // copy contents to new map.
+                newMap.put(key, current.get((K) key));
             }
             list.add(newMap); // add to result.
         } else {
             Object currentKey = map.keySet().toArray()[index]; // take the current key
-            for(V value: map.get(currentKey)) {
-                current.put((K)currentKey, value); // put each value into the temporary map
+            for (V value : map.get(currentKey)) {
+                current.put((K) currentKey, value); // put each value into the temporary map
                 Combine(index + 1, current, map, list); // recursive call
                 current.remove(currentKey); // discard and try a new value
             }
