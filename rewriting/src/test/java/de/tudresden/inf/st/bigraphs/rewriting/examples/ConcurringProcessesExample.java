@@ -155,6 +155,7 @@ public class ConcurringProcessesExample {
                 .and(transitionOpts()
                         .setMaximumTransitions(20)
                         .setMaximumTime(30)
+                        .allowReduiceableClasses(true) // use symmetries to make the transition graph smaller?
                         .create()
                 )
                 .doMeasureTime(true)

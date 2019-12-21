@@ -74,7 +74,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     protected SimulationStrategy<B> simulationStrategy;
     protected SimulationType simulationType;
     protected BigraphModelChecker.ReactiveSystemListener<B> reactiveSystemListener;
-    protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.createInstance();
+    protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.createInstance(true);
     protected PredicateChecker<B> predicateChecker = null;
     protected ReactiveSystemOptions options;
     protected AbstractBigraphMatcher<B> matcher;
@@ -95,6 +95,11 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         this.options = options;
         this.reactionGraph = new ReactionGraph<>();
         this.matcher = AbstractBigraphMatcher.create(getGenericTypeClass());
+
+        ReactiveSystemOptions.TransitionOptions opts = options.get(ReactiveSystemOptions.Options.TRANSITION);
+        if (opts.allowReducibleClasses()) {
+            canonicalForm = BigraphCanonicalForm.createInstance();
+        }
     }
 
     private SimulationStrategy<B> createStrategy(SimulationType simulationType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {

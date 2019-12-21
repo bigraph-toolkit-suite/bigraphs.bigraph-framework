@@ -88,11 +88,13 @@ public class ReactiveSystemOptions {
         private int maximumTransitions;
         private long maximumTime;
         private TimeUnit maximumTimeUnit;
+        private boolean allowReducibleClasses;
 
-        TransitionOptions(int maximumTransitions, long maximumTime, TimeUnit maximumTimeUnit) {
+        TransitionOptions(int maximumTransitions, long maximumTime, TimeUnit maximumTimeUnit, boolean allowReducibleClasses) {
             this.maximumTransitions = maximumTransitions;
             this.maximumTime = maximumTime;
             this.maximumTimeUnit = maximumTimeUnit;
+            this.allowReducibleClasses = allowReducibleClasses;
         }
 
         public int getMaximumTransitions() {
@@ -107,15 +109,33 @@ public class ReactiveSystemOptions {
             return maximumTime;
         }
 
+        /**
+         * Flag that denotes whether to exploit the symmetries of the reaction graph or not.
+         * <p>
+         * Default value is {@code false}.
+         *
+         * @return {@code true} considers symmetries
+         */
+        public boolean allowReducibleClasses() {
+            return allowReducibleClasses;
+        }
+
         @Override
         public Options getType() {
             return Options.TRANSITION;
         }
 
+        /**
+         * Default values: <br>
+         * <ul>
+         *     <li>allow reducible classes: {@code false}</li>
+         * </ul>
+         */
         public static class Builder {
             private int maximumTransitions;
             private TimeUnit maximumTimeUnit = TimeUnit.SECONDS;
             private long maximumTime = 30;
+            private boolean reduceStates = false;
 
             public Builder setMaximumTransitions(int maximumTransitions) {
                 this.maximumTransitions = maximumTransitions;
@@ -133,8 +153,13 @@ public class ReactiveSystemOptions {
                 return this;
             }
 
+            public Builder allowReduiceableClasses(boolean reduceStates) {
+                this.reduceStates = reduceStates;
+                return this;
+            }
+
             public ReactiveSystemOptions.TransitionOptions create() {
-                return new ReactiveSystemOptions.TransitionOptions(maximumTransitions, maximumTime, maximumTimeUnit);
+                return new ReactiveSystemOptions.TransitionOptions(maximumTransitions, maximumTime, maximumTimeUnit, reduceStates);
             }
         }
     }
