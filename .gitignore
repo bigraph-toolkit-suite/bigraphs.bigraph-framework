@@ -121,3 +121,5 @@ gen-test-resources/*
 /etc/doc/site/*
 **/resources/dump/
 /.idea/modules.xml
+/.idea/markdown-navigator-enh.xml
+/.idea/markdown-navigator.xml
