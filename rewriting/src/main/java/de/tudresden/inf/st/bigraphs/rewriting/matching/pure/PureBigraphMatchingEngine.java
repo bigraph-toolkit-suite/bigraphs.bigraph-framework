@@ -968,7 +968,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         BiMap<BigraphEntity, List<CrossPairLink>> crossings2 = HashBiMap.create();
         if (redexNodes.size() > 1) {
             for (Map.Entry<BigraphEntity, LinkedList<BigraphEntity>> each : mapping.entrySet()) {
-                // only for those redexes which have multiple possible  matchings
+                // only for those redexes which have multiple possible matchings
                 if (each.getValue().size() <= 1) continue;
                 BigraphEntity currentRedex = each.getKey();
                 List<BigraphEntity> rest = mapping.entrySet().stream().filter(x -> !x.getKey().equals(each.getKey()))
