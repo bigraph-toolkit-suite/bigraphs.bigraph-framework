@@ -114,7 +114,7 @@ public class ReactiveSystemOptions {
          * <p>
          * Default value is {@code false}.
          *
-         * @return {@code true} considers symmetries
+         * @return {@code true} reaction graph considers symmetries
          */
         public boolean allowReducibleClasses() {
             return allowReducibleClasses;
@@ -153,7 +153,12 @@ public class ReactiveSystemOptions {
                 return this;
             }
 
-            public Builder allowReduiceableClasses(boolean reduceStates) {
+            /**
+             * Flag to set whether to allow reducible classes for the reaction graph.
+             * @param reduceStates if {@code true}, symmetries are exploited
+             * @return {@code true} reaction graph considers symmetries
+             */
+            public Builder allowReducibleClasses(boolean reduceStates) {
                 this.reduceStates = reduceStates;
                 return this;
             }
