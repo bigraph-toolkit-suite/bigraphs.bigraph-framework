@@ -23,6 +23,7 @@ import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.rewriting.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.BigraphIsoPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -49,9 +50,42 @@ public class CanonicalFormRepresentationUnitTests {
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws IOException {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
+        FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+    }
+
+    @Test
+    void symmetricProcesses() throws InvalidConnectionException {
+        PureBigraph agentProcess = createAgentProcess();
+//        String bfcs0 = BigraphCanonicalForm.createInstance().bfcs(agentProcess);
+        String bfcs1 = BigraphCanonicalForm.createInstance(true).bfcs(agentProcess);
+//        System.out.println(bfcs0);
+        System.out.println(bfcs1);
+
+    }
+
+    PureBigraph createAgentProcess() throws InvalidConnectionException {
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignatureProcess());
+
+        builder.createRoot()
+                .addChild("Process", "access2")
+                .addChild("Process", "access1")
+                .addChild("Resource").withNewHierarchy().addChild("Token").goBack()
+        ;
+        PureBigraph bigraph = builder.createBigraph();
+        return bigraph;
+    }
+    private <C extends Control<?, ?>, S extends Signature<C>> S createSignatureProcess() {
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+        defaultBuilder
+                .newControl().identifier(StringTypedName.of("Process")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Token")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Working")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Resource")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        ;
+        return (S) defaultBuilder.create();
     }
 
     @Test

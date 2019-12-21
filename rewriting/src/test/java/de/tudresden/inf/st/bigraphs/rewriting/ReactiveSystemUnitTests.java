@@ -110,7 +110,6 @@ public class ReactiveSystemUnitTests {
         reactiveSystem.addReactionRule(rr3);
         reactiveSystem.addReactionRule(rr4);
 
-        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png");
         ReactiveSystemOptions opts = ReactiveSystemOptions.create();
         opts
                 .and(transitionOpts()
@@ -120,7 +119,7 @@ public class ReactiveSystemUnitTests {
                 )
                 .doMeasureTime(true)
                 .and(ReactiveSystemOptions.exportOpts()
-                        .setTraceFile(new File(completePath.toUri()))
+                        .setTraceFile(Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png").toFile())
                         .create()
                 )
         ;

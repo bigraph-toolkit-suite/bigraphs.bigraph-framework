@@ -65,7 +65,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 //        AtomicInteger CNT = new AtomicInteger(0);
 //        AtomicInteger CNT2 = new AtomicInteger(0);
         ReactiveSystemOptions.TransitionOptions transitionOptions = this.options.get(ReactiveSystemOptions.Options.TRANSITION);
-        System.out.println("MAXIMUM: " + transitionOptions.getMaximumTransitions());
+        logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
         while (!workingQueue.isEmpty() && transitionCnt < transitionOptions.getMaximumTransitions()) {
             // "Remove the first element w of the work queue Q."
             final B theAgent = workingQueue.remove();
