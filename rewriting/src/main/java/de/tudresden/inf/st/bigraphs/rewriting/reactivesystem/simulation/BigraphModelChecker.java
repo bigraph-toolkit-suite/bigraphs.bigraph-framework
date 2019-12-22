@@ -6,6 +6,7 @@ import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
@@ -17,6 +18,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.AgentIsNullException;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.InvalidSimulationStrategy;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.ModelCheckerExecutorServiceNotProvided;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.jgrapht.Graph;
@@ -35,8 +37,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.ServiceLoader;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -52,7 +58,11 @@ import java.util.function.Supplier;
 public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<?>>> {
 
     private Logger logger = LoggerFactory.getLogger(BigraphModelChecker.class);
+    ExecutorService executorService;
 
+    /**
+     * Enum-like class that holds all kind of simulations.
+     */
     public static class SimulationType {
 
         public static final SimulationType BREADTH_FIRST = new SimulationType(BreadthFirstStrategy.class);
@@ -69,7 +79,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    private final static BigraphModelChecker.ReactiveSystemListener DEFAULT_LISTENER = new BigraphModelChecker.EmptyReactiveSystemListener();
+    private final static BigraphModelChecker.ReactiveSystemListener<?> DEFAULT_LISTENER = new BigraphModelChecker.EmptyReactiveSystemListener<>();
 
     protected SimulationStrategy<B> simulationStrategy;
     protected SimulationType simulationType;
@@ -85,20 +95,37 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
     public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationType simulationType, ReactiveSystemOptions options) {
         onAttachListener(this);
+        loadServiceExecutor();
+
+        this.reactiveSystem = reactiveSystem;
+        this.reactionGraph = new ReactionGraph<>();
+        this.matcher = AbstractBigraphMatcher.create(getGenericTypeClass());
+
+        this.options = options;
+        ReactiveSystemOptions.TransitionOptions opts = options.get(ReactiveSystemOptions.Options.TRANSITION);
+        if (opts.allowReducibleClasses()) {
+            canonicalForm = BigraphCanonicalForm.createInstance();
+        }
+
         this.simulationType = simulationType;
         try {
             this.simulationStrategy = createStrategy(this.simulationType);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new RuntimeException(e);
         }
-        this.reactiveSystem = reactiveSystem;
-        this.options = options;
-        this.reactionGraph = new ReactionGraph<>();
-        this.matcher = AbstractBigraphMatcher.create(getGenericTypeClass());
+    }
 
-        ReactiveSystemOptions.TransitionOptions opts = options.get(ReactiveSystemOptions.Options.TRANSITION);
-        if (opts.allowReducibleClasses()) {
-            canonicalForm = BigraphCanonicalForm.createInstance();
+    private void loadServiceExecutor() {
+        ServiceLoader<ExecutorServicePoolProvider> load = ServiceLoader.load(ExecutorServicePoolProvider.class);
+        load.reload();
+        Iterator<ExecutorServicePoolProvider> iterator = load.iterator();
+        if (iterator.hasNext()) {
+            ExecutorServicePoolProvider next = iterator.next();
+            executorService = next.provide();
+        }
+
+        if (Objects.isNull(executorService)) {
+            throw new ModelCheckerExecutorServiceNotProvided();
         }
     }
 
@@ -106,17 +133,28 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         return (SimulationStrategy<B>) simulationType.getStrategyClass().getConstructor(BigraphModelChecker.class).newInstance(this);
     }
 
-    // Compute transition system method
+    /**
+     * Perform the simulation based on the provided reactive system and options.
+     *
+     * @throws BigraphSimulationException if agent is {@code null} or the simulation strategy was not selected
+     */
+    public void execute() throws BigraphSimulationException {
+        assertReactionSystemValid();
+        simulationStrategy.synthesizeTransitionSystem();
+        prepareOutput();
+    }
+
     //TODO: tasks for parallel jobs
     // https://stackify.com/java-thread-pools/
     // https://www.baeldung.com/java-executor-service-tutorial
     // https://github.com/pivovarit/parallel-collectors
-    // https://www.baeldung.com/java-8-parallel-streams-custom-threadpool
-    public void execute() throws BigraphSimulationException {
+
+    public Future<ReactionGraph<B>> executeAsync() throws BigraphSimulationException {
         assertReactionSystemValid();
-        //TODO strategy execute in future
-        simulationStrategy.synthesizeTransitionSystem();
-        prepareOutput();
+        return executorService.submit(() -> {
+            simulationStrategy.synthesizeTransitionSystem();
+            return getReactionGraph();
+        });
     }
 
     protected void assertReactionSystemValid() throws BigraphSimulationException {
@@ -206,6 +244,10 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     }
 
     void prepareOutput() {
+        exportReactionGraph(getReactionGraph());
+    }
+
+    public void exportReactionGraph(ReactionGraph<B> reactionGraph) {
         ReactiveSystemOptions.ExportOptions opts = options.get(ReactiveSystemOptions.Options.EXPORT);
         if (Objects.nonNull(opts.getTraceFile())) {
             if (!reactionGraph.isEmpty()) {
