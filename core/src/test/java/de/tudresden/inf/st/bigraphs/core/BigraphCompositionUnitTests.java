@@ -6,7 +6,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
@@ -19,6 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -60,9 +60,9 @@ public class BigraphCompositionUnitTests {
         assertNotNull(composed);
         assertNotNull(composed2);
 
-        assertEquals(metaData.getName(), composed.getOuterBigraph().getModelPackage().getName());
-        assertEquals(metaData.getNsPrefix(), composed.getOuterBigraph().getModelPackage().getNsPrefix());
-        assertEquals(metaData.getNsUri(), composed.getOuterBigraph().getModelPackage().getNsURI());
+        assertEquals(metaData.getName(), ((PureBigraph)composed.getOuterBigraph()).getModelPackage().getName());
+        assertEquals(metaData.getNsPrefix(), ((PureBigraph)composed.getOuterBigraph()).getModelPackage().getNsPrefix());
+        assertEquals(metaData.getNsUri(), ((PureBigraph)composed.getOuterBigraph()).getModelPackage().getNsURI());
     }
 
     @Test
@@ -214,10 +214,8 @@ public class BigraphCompositionUnitTests {
 
         BigraphComposite<DefaultDynamicSignature> juxtapose = factory.asBigraphOperator(F).parallelProduct(G);
         Bigraph<DefaultDynamicSignature> result = juxtapose.getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel(result,
+        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result,
                 new FileOutputStream(TARGET_TEST_PATH + "result.xmi"));
-//        System.out.println(result.getSupport());
-
     }
 
     @Test

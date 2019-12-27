@@ -14,8 +14,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGeneratorSupport;
+import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
+import de.tudresden.inf.st.bigraphs.core.generators.RandomBigraphGeneratorSupport;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

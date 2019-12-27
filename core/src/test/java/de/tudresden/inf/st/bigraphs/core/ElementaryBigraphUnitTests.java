@@ -13,11 +13,13 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import java.io.FileOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -216,12 +218,12 @@ public class ElementaryBigraphUnitTests {
 
                 BigraphComposite<DefaultDynamicSignature> result = joinOp.compose(juxtaposed);
 
-                assertNotNull(result.getOuterBigraph().getModelPackage());
-                assertNotNull(result.getOuterBigraph().getModel());
+                assertNotNull(((EcoreBigraph) result.getOuterBigraph()).getModelPackage());
+                assertNotNull(((PureBigraph) result.getOuterBigraph()).getModel());
                 assertEquals(merge_nPlus1.getRoots().size(), result.getOuterBigraph().getRoots().size());
                 assertEquals(merge_nPlus1.getSites().size(), result.getOuterBigraph().getSites().size());
-                assertEquals(result.getOuterBigraph().getModel().eContents().size(), result.getOuterBigraph().getRoots().size());
-                assertEquals(result.getOuterBigraph().getModel().eContents().get(0).eContents().size(), result.getOuterBigraph().getSites().size());
+                assertEquals(((PureBigraph) result.getOuterBigraph()).getModel().eContents().size(), result.getOuterBigraph().getRoots().size());
+                assertEquals(((PureBigraph) result.getOuterBigraph()).getModel().eContents().get(0).eContents().size(), result.getOuterBigraph().getSites().size());
             }
         });
 
@@ -233,13 +235,13 @@ public class ElementaryBigraphUnitTests {
             assertEquals(0, isAlsoBarren.getOuterBigraph().getOuterNames().size());
             assertEquals(0, isAlsoBarren.getOuterBigraph().getInnerNames().size());
             assertTrue(isAlsoBarren.getOuterBigraph().isPrime());
-            assertNotNull(isAlsoBarren.getOuterBigraph().getModelPackage());
-            assertNotNull(isAlsoBarren.getOuterBigraph().getModel());
+            assertNotNull(((PureBigraph) isAlsoBarren.getOuterBigraph()).getModelPackage());
+            assertNotNull(((PureBigraph) isAlsoBarren.getOuterBigraph()).getModel());
 
             System.out.println("merge_1 * 1 = 1");
             BigraphComposite isAlsoBarren2 = factory.asBigraphOperator(placings.merge(1)).compose(barren);
-            assertNotNull(isAlsoBarren2.getOuterBigraph().getModelPackage());
-            assertNotNull(isAlsoBarren2.getOuterBigraph().getModel());
+            assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getModelPackage());
+            assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getModel());
             assertTrue(isAlsoBarren2.getOuterBigraph().isPrime());
             assertEquals(1, isAlsoBarren2.getOuterBigraph().getRoots().size());
             assertEquals(0, isAlsoBarren2.getOuterBigraph().getSites().size());
@@ -309,8 +311,8 @@ public class ElementaryBigraphUnitTests {
             Bigraph<DefaultDynamicSignature> composed = factory.asBigraphOperator(y).compose(yx).getOuterBigraph();
             Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
 
-            assertNotNull(composed.getModelPackage());
-            assertNotNull(composed.getModel());
+            assertNotNull(((PureBigraph) composed).getModelPackage());
+            assertNotNull(((PureBigraph) composed).getModel());
 
             assertEquals(composed.getInnerNames().size() == 1,
                     x.getInnerNames().size() == 1);
@@ -320,8 +322,7 @@ public class ElementaryBigraphUnitTests {
                     x.getInnerNames().stream().map(BigraphEntity.InnerName::getName).findFirst().get());
             assertEquals(composed.getInnerNames().stream().map(BigraphEntity.InnerName::getName).findFirst().get(),
                     "x");
-//            BigraphModelFileStore.exportAsInstanceModel((PureBigraph) composed, "./compose_test_2a",
-//                    new FileOutputStream("./composedcomposed.xmi"));
+            BigraphArtifacts.exportAsInstanceModel((PureBigraph) composed, new FileOutputStream("src/test/resources/dump/exported-models/composedcomposed.xmi"));
         });
 
         assertAll(() -> {
@@ -351,8 +352,8 @@ public class ElementaryBigraphUnitTests {
             assertEquals(z_over_XY.getInnerNames().size(), Y_and_X.size());
             Bigraph<DefaultDynamicSignature> composedRight = factory.asBigraphOperator(identity_Y).juxtapose(y_over_X).getOuterBigraph();
             Bigraph<DefaultDynamicSignature> result = factory.asBigraphOperator(z_over_Yy).compose(composedRight).getOuterBigraph();
-            assertNotNull(result.getModelPackage());
-            assertNotNull(result.getModel());
+            assertNotNull(((PureBigraph) result).getModelPackage());
+            assertNotNull(((PureBigraph) result).getModel());
             assertEquals(result.getOuterNames().size(), z_over_XY.getOuterNames().size());
             assertEquals(result.getOuterNames().size(), 1);
             assertEquals(result.getOuterNames().stream().findFirst().get().getName(), z.stringValue());
@@ -392,8 +393,8 @@ public class ElementaryBigraphUnitTests {
             assertFalse(resultIsJoin.isGround());
             assertEquals(2, resultIsJoin.getSites().size());
             assertEquals(0, Lists.newArrayList(resultIsJoin.getRoots()).get(0).getIndex());
-            assertNotNull(resultIsJoin.getModelPackage());
-            assertNotNull(resultIsJoin.getModel());
+            assertNotNull(((PureBigraph) resultIsJoin).getModelPackage());
+            assertNotNull(((PureBigraph) resultIsJoin).getModel());
 //            assertEquals(1, Lists.newArrayList(resultIsJoin.getSites()).get(1).getIndex());
         });
 
@@ -408,8 +409,8 @@ public class ElementaryBigraphUnitTests {
             assertTrue(isIdentity_1.getOuterBigraph().isPrime());
             assertEquals(0, isIdentity_1.getOuterBigraph().getInnerNames().size());
             assertEquals(0, isIdentity_1.getOuterBigraph().getOuterNames().size());
-            assertNotNull(isIdentity_1.getOuterBigraph().getModelPackage());
-            assertNotNull(isIdentity_1.getOuterBigraph().getModel());
+            assertNotNull(((PureBigraph) isIdentity_1.getOuterBigraph()).getModelPackage());
+            assertNotNull(((PureBigraph) isIdentity_1.getOuterBigraph()).getModel());
         });
 
         assertAll(() -> {
@@ -429,10 +430,10 @@ public class ElementaryBigraphUnitTests {
             assertEquals(outerBigraph1.getNodes().size(), outerBigraph2.getNodes().size());
             assertEquals(1, outerBigraph1.getRoots().size());
             assertEquals(3, outerBigraph1.getSites().size());
-            assertNotNull(outerBigraph1.getModelPackage());
-            assertNotNull(outerBigraph1.getModel());
-            assertNotNull(outerBigraph2.getModelPackage());
-            assertNotNull(outerBigraph2.getModel());
+            assertNotNull(((PureBigraph) outerBigraph1).getModelPackage());
+            assertNotNull(((PureBigraph) outerBigraph1).getModel());
+            assertNotNull(((PureBigraph) outerBigraph2).getModelPackage());
+            assertNotNull(((PureBigraph) outerBigraph2).getModel());
 
         });
     }

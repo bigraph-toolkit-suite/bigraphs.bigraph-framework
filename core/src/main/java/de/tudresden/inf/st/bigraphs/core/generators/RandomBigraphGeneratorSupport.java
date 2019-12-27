@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.utils;
+package de.tudresden.inf.st.bigraphs.core.generators;
 
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;

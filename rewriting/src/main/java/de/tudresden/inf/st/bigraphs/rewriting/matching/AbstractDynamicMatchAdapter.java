@@ -4,9 +4,11 @@ import com.google.common.collect.Streams;
 import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
@@ -25,7 +27,7 @@ import java.util.stream.StreamSupport;
  *
  * @author Dominik Grzelak
  */
-public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Signature>> extends BigraphDelegator<Signature> {
+public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Signature> & EcoreBigraph> extends BigraphDelegator<Signature> implements EcoreBigraph {
 
     @SuppressWarnings("unchecked")
     public AbstractDynamicMatchAdapter(Bigraph<? extends Signature> bigraph) {
@@ -42,6 +44,16 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
     public List<BigraphEntity.RootEntity> getRoots() {
         return org.eclipse.collections.api.factory.Lists.mutable.ofAll(super.getRoots());
 //        return new ArrayList<>(super.getRoots());
+    }
+
+    @Override
+    public EPackage getModelPackage() {
+        return getBigraphDelegate().getModelPackage();
+    }
+
+    @Override
+    public EObject getModel() {
+        return getBigraphDelegate().getModel();
     }
 
     /**
@@ -206,7 +218,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
                                 .findFirst()
                                 .orElseThrow(throwableSupplier)
                 );
-            } else if (isRoot(each)) {
+            } else if (isBRoot(each)) {
                 list.add(
                         getRoots().stream()
                                 .filter(x -> x.getInstance().equals(each))
@@ -214,7 +226,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
                                 .orElseThrow(throwableSupplier)
                 );
             }
-            if (withSites && isSite(each)) {
+            if (withSites && isBSite(each)) {
                 list.add(
                         getSites().stream()
                                 .filter(x -> x.getInstance().equals(each))
@@ -343,7 +355,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
     public List<BigraphEntity> getAllLeaves() {
         final MutableList<BigraphEntity> leaves = org.eclipse.collections.api.factory.Lists.mutable.empty();
         this.getAllVertices().forEach(each -> {
-            if (degreeOf(each) <= 1 && !isRoot(each.getInstance())) {
+            if (degreeOf(each) <= 1 && !isBRoot(each.getInstance())) {
                 leaves.add(each);
             }
         });
@@ -355,48 +367,4 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
 //        }
         return leaves;
     }
-
-    public boolean isOuterName(EObject eObject) {
-        return eObject.eClass().getClassifierID() ==
-                (((EPackageImpl) getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
-                eObject.eClass().equals(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
-    }
-
-    public boolean isBPlace(EObject eObject) {
-        return eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PLACE));
-    }
-
-    protected boolean isBEdge(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
-    }
-
-    //works only for elements of the calling class
-    protected boolean isOfEClass(EObject eObject, String eClassifier) {
-        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
-    }
-
-    public boolean isBPort(EObject eObject) {
-        return eObject.eClass().getClassifierID() ==
-                (((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT)).getClassifierID() ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_PORT));
-    }
-
-    public boolean isBNode(EObject eObject) {
-        return eObject.eClass().equals(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_NODE));
-    }
-
-    public boolean isRoot(EObject eObject) {
-        return eObject.eClass().equals(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_ROOT)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_ROOT));
-    }
-
-    public boolean isSite(EObject eObject) {
-        return eObject.eClass().equals(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_SITE)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) this.getBigraphDelegate().getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_SITE));
-    }
-
-
 }

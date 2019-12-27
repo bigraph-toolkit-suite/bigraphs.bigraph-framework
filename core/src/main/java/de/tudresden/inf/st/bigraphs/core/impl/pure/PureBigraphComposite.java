@@ -11,8 +11,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.*;
@@ -30,7 +32,7 @@ import java.util.stream.Collectors;
  * @param <S> type of the signature.
  * @author Dominik Grzelak
  */
-public class PureBigraphComposite<S extends Signature> extends BigraphCompositeSupport<S> {//BigraphDelegator<S> implements BigraphComposite<S> {
+public class PureBigraphComposite<S extends Signature> extends BigraphCompositeSupport<S> implements EcoreBigraph {//BigraphDelegator<S> implements BigraphComposite<S> {
 
     private MutableBuilder<S> builder;
 
@@ -946,5 +948,15 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
         if (!outer.getSignature().equals(inner.getSignature())) {
             throw new IncompatibleSignatureException();
         }
+    }
+
+    @Override
+    public EPackage getModelPackage() {
+        return ((EcoreBigraph)getBigraphDelegate()).getModelPackage();
+    }
+
+    @Override
+    public EObject getModel() {
+        return ((EcoreBigraph)getBigraphDelegate()).getModel();
     }
 }

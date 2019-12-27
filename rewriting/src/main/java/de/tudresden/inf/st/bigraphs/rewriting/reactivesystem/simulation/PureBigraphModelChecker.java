@@ -13,10 +13,9 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +26,11 @@ import java.util.List;
  * @see PureBigraph
  */
 public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
+
+    private Logger logger = LoggerFactory.getLogger(BigraphModelChecker.class);
+
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
-    private static int cnt = 1;
+//    private static int cnt = 1;
 
     public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, SimulationType simulationType, ReactiveSystemOptions options) {
         super(reactiveSystem, simulationType, options);
@@ -37,36 +39,36 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
     @Override
     protected synchronized PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         try {
-            //OK
-            try {
-                BigraphGraphvizExporter.toPNG(match.getContext(),
-                        true,
-                        new File(String.format("context_%s.png", 1))
-                );
-                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
-                        true,
-                        new File(String.format("contextIdentity_%s.png", 1))
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+//            try {
+//                BigraphGraphvizExporter.toPNG(match.getContext(),
+//                        true,
+//                        new File(String.format("context_%s.png", 1))
+//                );
+//                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
+//                        true,
+//                        new File(String.format("contextIdentity_%s.png", 1))
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             Bigraph outerBigraph = factory
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
 //            System.out.println(outerBigraph);
-            try {
-                BigraphGraphvizExporter.toPNG(outerBigraph,
-                        true,
-                        new File("contextimage.png")
-                );
-                BigraphGraphvizExporter.toPNG(rule.getReactum(),
-                        true,
-                        new File("reactum.png")
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                BigraphGraphvizExporter.toPNG(outerBigraph,
+//                        true,
+//                        new File("contextimage.png")
+//                );
+//                BigraphGraphvizExporter.toPNG(rule.getReactum(),
+//                        true,
+//                        new File("reactum.png")
+//                );
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 //            Bigraph originAgent = factory.asBigraphOperator(outerBigraph).compose(match.getRedex()).getOuterBigraph();
 //            GraphvizConverter.toPNG(originAgent,
 //                    true,
@@ -98,13 +100,10 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            }
             return (PureBigraph) agentReacted;
         } catch (IncompatibleSignatureException e) {
-            e.printStackTrace();
+            logger.error(e.toString());
         } catch (IncompatibleInterfaceException e) {
-            e.printStackTrace();
+            logger.error(e.toString());
         }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
         return null;
     }
 
@@ -211,10 +210,10 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //                    }
 //                }
 //            }
-            cnt++;
+//            cnt++;
             return (PureBigraph) agentReacted;
         } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
-            e.printStackTrace();
+            logger.error(e.toString());
             return null;
         }
     }

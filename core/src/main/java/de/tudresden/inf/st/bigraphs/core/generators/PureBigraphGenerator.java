@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.utils;
+package de.tudresden.inf.st.bigraphs.core.generators;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.utils.DistributedRandomNumberGenerator;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static de.tudresden.inf.st.bigraphs.core.utils.RandomBigraphGeneratorSupport.LinkStrategy.NONE;
+import static de.tudresden.inf.st.bigraphs.core.generators.RandomBigraphGeneratorSupport.LinkStrategy.NONE;
 
 /**
  * A random generator for <i>pure bigraphs</i>. Uses {@link RandomBigraphGeneratorSupport}.

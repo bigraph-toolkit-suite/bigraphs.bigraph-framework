@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -12,11 +13,9 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
  * @author Dominik Grzelak
  * @see BigraphBuilder
  */
-public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
+public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigraph {
     private EPackage modelPackage;
     private EObject bigraphEModel;
 
@@ -389,48 +388,48 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature> {
         return false;
     }
 
-    //TODO move this to another util class, same with method "setParentOfNode"
-    protected boolean isBPort(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
-    }
-
-    protected boolean isBInnerName(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_INNERNAME);
-    }
-
-    protected boolean isBPoint(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_POINT);
-    }
-
-    protected boolean isBNode(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_NODE);
-    }
-
-    protected boolean isBSite(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_SITE);
-    }
-
-    protected boolean isBRoot(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_ROOT);
-    }
-
-    protected boolean isBLink(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_LINK);
-    }
-
-    protected boolean isBEdge(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
-    }
-
-    public boolean isBPlace(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PLACE);
-    }
-
-    //works only for elements of the calling class
-    protected boolean isOfEClass(EObject eObject, String eClassifier) {
-        return eObject.eClass().getName().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName()) ||
-                eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
-                eObject.eClass().getEAllSuperTypes().stream().map(ENamedElement::getName).collect(Collectors.toList()).contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName())
-                || eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
-    }
+//    //TODO move this to another util class, same with method "setParentOfNode"
+//    protected boolean isBPort(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
+//    }
+//
+//    protected boolean isBInnerName(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_INNERNAME);
+//    }
+//
+//    protected boolean isBPoint(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_POINT);
+//    }
+//
+//    protected boolean isBNode(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_NODE);
+//    }
+//
+//    protected boolean isBSite(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_SITE);
+//    }
+//
+//    protected boolean isBRoot(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_ROOT);
+//    }
+//
+//    protected boolean isBLink(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_LINK);
+//    }
+//
+//    protected boolean isBEdge(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
+//    }
+//
+//    public boolean isBPlace(EObject eObject) {
+//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PLACE);
+//    }
+//
+//    //works only for elements of the calling class
+//    protected boolean isOfEClass(EObject eObject, String eClassifier) {
+//        return eObject.eClass().getName().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName()) ||
+//                eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
+//                eObject.eClass().getEAllSuperTypes().stream().map(ENamedElement::getName).collect(Collectors.toList()).contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName())
+//                || eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
+//    }
 }

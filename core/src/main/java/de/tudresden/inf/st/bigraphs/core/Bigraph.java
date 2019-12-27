@@ -241,6 +241,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
     /**
      * Checks, if the node has the given node as parent.
+     *
      * @param node
      * @param possibleParent
      * @return
@@ -311,10 +312,10 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName);
 
     /**
-     * get all point entities (i.e., ports and inner names) from a link entity (edges and outer names)
+     * Get all point entities (i.e., ports and inner names) of a link entity (i.e., edges and outer names).
      *
-     * @param linkEntity
-     * @return
+     * @param linkEntity the link entity who's connections shall be returned
+     * @return collection of points connected to the link entity
      */
     Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity);
 
@@ -329,9 +330,4 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @return true, if the two nodes are connected by an edge or outer name
      */
     boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2);
-
-    EPackage getModelPackage();
-
-    EObject getModel();
-
 }

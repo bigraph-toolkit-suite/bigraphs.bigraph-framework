@@ -62,7 +62,7 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
                     final EObject obj = (EObject) eachPort.eGet(linkRef);
 
                     try {
-                        if (isOuterName(obj)) {
+                        if (isBOuterName(obj)) {
                             Optional<BigraphEntity.OuterName> first = getOuterNames().stream()
                                     .filter(x -> x.getInstance().equals(obj))
                                     .findFirst();
@@ -95,7 +95,7 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
             @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject eObject : childs) {
-                if (!isSite(eObject))
+                if (!isBSite(eObject))
                     cnt++;
             }
         }

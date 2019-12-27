@@ -123,7 +123,7 @@ public class BigraphArtifactUnitTests {
             BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
             BigraphArtifacts.exportAsInstanceModel((PureBigraph) composedBigraph.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "composetest.xmi"));
-            BigraphArtifacts.exportAsMetaModel(composedBigraph.getOuterBigraph(),
+            BigraphArtifacts.exportAsMetaModel((PureBigraph) composedBigraph.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "composetest.ecore"));
 
             BigraphComposite<DefaultDynamicSignature> juxtapose = compositor.juxtapose(F);

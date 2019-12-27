@@ -19,7 +19,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.utils.PureBigraphGenerator;
+import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.rewriting.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.BigraphIsoPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;

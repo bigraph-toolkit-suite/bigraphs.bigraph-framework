@@ -46,7 +46,7 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
                 if (Objects.nonNull(linkRef) && Objects.nonNull(eachPort.eGet(linkRef))) {
                     final EObject obj = (EObject) eachPort.eGet(linkRef);
                     try {
-                        if (isOuterName(obj)) {
+                        if (isBOuterName(obj)) {
                             Optional<BigraphEntity.OuterName> first = getOuterNames().stream()
                                     .filter(x -> x.getInstance().equals(obj))
                                     .findFirst();
