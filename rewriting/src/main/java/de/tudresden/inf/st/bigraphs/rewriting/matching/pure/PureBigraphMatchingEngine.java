@@ -479,8 +479,9 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
      * @return {@code true}, if a correct match could be found, otherwise {@code false}
      */
     public boolean hasMatched() {
-        return totalHits.get() > 0 && totalHits.get() >= redexAdapter.getRoots().size() && (totalHits.get() % redexAdapter.getRoots().size() == 0);
+//        return totalHits.get() > 0 && totalHits.get() >= redexAdapter.getRoots().size() && (totalHits.get() % redexAdapter.getRoots().size() == 0);
 //        return totalHits.get() > 0 && (totalHits.get() % redexAdapter.getRoots().size() == 0);
+        return totalHits.get() > 0 && totalHits.get() >= redexAdapter.getRoots().size();
     }
 
     /**
@@ -703,21 +704,30 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
         ElementaryBigraph<DefaultDynamicSignature> identityForParams;
         Linkings<DefaultDynamicSignature> linkings = pureBigraphFactory.createLinkings(agentAdapter.getSignature());
-        if (parameters.size() == 0) {
-            // if we have no parameters the "renaming" link graph is empty
+//        if (parameters.size() == 0) {
+//            // if we have no parameters the "renaming" link graph is empty
+//            identityForParams = linkings.identity_e();
+//        } else {
+//            // build the "renaming link graph" from the given parameters
+//            List<StringTypedName> names = (List<StringTypedName>) parameters.values().stream().map(x -> x.getOuterNames())
+//                    .flatMap(x -> x.stream())
+//                    .map(x -> StringTypedName.of(((BigraphEntity.OuterName) x).getName()))
+//                    .collect(toList());
+////            System.out.println(names);
+//            if (names.size() > 0) {
+//                identityForParams = linkings.identity(names.toArray(new StringTypedName[0]));
+//            } else {
+//                identityForParams = linkings.identity_e();
+//            }
+//        }
+        List<StringTypedName> namesTmp = (List<StringTypedName>) parameters.values().stream().map(x -> x.getOuterNames())
+                .flatMap(x -> x.stream())
+                .map(x -> StringTypedName.of(((BigraphEntity.OuterName) x).getName()))
+                .collect(toList());
+        if (namesTmp.size() == 0 || parameters.size() == 0) {
             identityForParams = linkings.identity_e();
         } else {
-            // build the "renaming link graph" from the given parameters
-            List<StringTypedName> names = (List<StringTypedName>) parameters.values().stream().map(x -> x.getOuterNames())
-                    .flatMap(x -> x.stream())
-                    .map(x -> StringTypedName.of(((BigraphEntity.OuterName) x).getName()))
-                    .collect(toList());
-//            System.out.println(names);
-            if (names.size() > 0) {
-                identityForParams = linkings.identity(names.toArray(new StringTypedName[0]));
-            } else {
-                identityForParams = linkings.identity_e();
-            }
+            identityForParams = linkings.identity(namesTmp.toArray(new StringTypedName[0]));
         }
 
         //TODO: add to identityForContext: the artificial innernames to be closed.
@@ -749,9 +759,9 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             for (Map.Entry<String, List<String>> each : substitutionLinkingGraph.entrySet()) {
                 List<StringTypedName> tmp = each.getValue().stream().map(StringTypedName::of).collect(toList());
 
-                if (tmp.size() == 0) {
-                    tmp.add(StringTypedName.of(each.getKey()));
-                }
+//                if (tmp.size() == 0) {
+                tmp.add(StringTypedName.of(each.getKey()));
+//                }
                 Linkings<DefaultDynamicSignature>.Substitution tmpSub = linkings.substitution(StringTypedName.of(each.getKey()), tmp.toArray(new StringTypedName[0]));
                 identityForContext = pureBigraphFactory.asBigraphOperator(identityForContext).parallelProduct(tmpSub).getOuterBigraph();
             }
@@ -968,7 +978,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         BiMap<BigraphEntity, List<CrossPairLink>> crossings2 = HashBiMap.create();
         if (redexNodes.size() > 1) {
             for (Map.Entry<BigraphEntity, LinkedList<BigraphEntity>> each : mapping.entrySet()) {
-                // only for those redexes which have multiple possible matchings
+                // only for those redexes which have multiple possible  matchings
                 if (each.getValue().size() <= 1) continue;
                 BigraphEntity currentRedex = each.getKey();
                 List<BigraphEntity> rest = mapping.entrySet().stream().filter(x -> !x.getKey().equals(each.getKey()))
@@ -1026,6 +1036,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                         logger.debug("\t::Redex {} with parent={} ", otherRedexPair.getOther(), otherRedexPair.getRedex());
                         //now: find the corresponding agent nodes of otherRedexPair.getOther()
                         // check if redexInQuestion is connected to the corresponding findings of otherRedexPair.getOther()
+                        if(otherRedexAgents.size() == 0) continue;
                         List<BigraphEntity> allChildrenOf = getSubBigraphFrom(otherRedexAgents.get(0), agentAdapter)
                                 .stream()
                                 .filter(x -> agentAdapter.getPortCount(x) > 0)

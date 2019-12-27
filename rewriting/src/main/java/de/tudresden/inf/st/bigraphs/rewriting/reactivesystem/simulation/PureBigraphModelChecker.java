@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
-    private static int cnt = 0;
+    private static int cnt = 1;
 
     public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, SimulationType simulationType, ReactiveSystemOptions options) {
         super(reactiveSystem, simulationType, options);
@@ -38,35 +38,35 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
     protected synchronized PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         try {
             //OK
-//            try {
-//                BigraphGraphvizExporter.toPNG(match.getContext(),
-//                        true,
-//                        new File(String.format("context_%s.png", cnt))
-//                );
-//                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
-//                        true,
-//                        new File(String.format("contextIdentity_%s.png", cnt))
-//                );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                BigraphGraphvizExporter.toPNG(match.getContext(),
+                        true,
+                        new File(String.format("context_%s.png", 1))
+                );
+                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
+                        true,
+                        new File(String.format("contextIdentity_%s.png", 1))
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Bigraph outerBigraph = factory
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
 //            System.out.println(outerBigraph);
-//            try {
-//                BigraphGraphvizExporter.toPNG(outerBigraph,
-//                        true,
-//                        new File("contextimage.png")
-//                );
-//                BigraphGraphvizExporter.toPNG(rule.getReactum(),
-//                        true,
-//                        new File("reactum.png")
-//                );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                BigraphGraphvizExporter.toPNG(outerBigraph,
+                        true,
+                        new File("contextimage.png")
+                );
+                BigraphGraphvizExporter.toPNG(rule.getReactum(),
+                        true,
+                        new File("reactum.png")
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 //            Bigraph originAgent = factory.asBigraphOperator(outerBigraph).compose(match.getRedex()).getOuterBigraph();
 //            GraphvizConverter.toPNG(originAgent,
 //                    true,
@@ -83,8 +83,8 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //                    true,
 //                    new File("agentReacted.png")
 //            );
-            exportState((PureBigraph) agentReacted, String.valueOf(cnt));
-            cnt++;
+//            exportState((PureBigraph) agentReacted, String.valueOf(cnt));
+//            cnt++;
 //            try {
 //                BigraphGraphvizExporter.toPNG(agentReacted,
 //                        true,
@@ -118,11 +118,11 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            try {
 //                BigraphGraphvizExporter.toPNG(match.getContext(),
 //                        true,
-//                        new File(String.format("context_%s.png", cnt))
+//                        new File(String.format("context_%s.png", 1))
 //                );
 //                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
 //                        true,
-//                        new File(String.format("contextIdentity_%s.png", cnt))
+//                        new File(String.format("contextIdentity_%s.png", 1))
 //                );
 //            } catch (IOException e) {
 //                e.printStackTrace();
@@ -158,11 +158,11 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            try {
 //                BigraphGraphvizExporter.toPNG(d_Params,
 //                        true,
-//                        new File(String.format("parameters_%s.png", cnt))
+//                        new File(String.format("parameters_%s.png", 1))
 //                );
 //                BigraphGraphvizExporter.toPNG(match.getRedexIdentity(),
 //                        true,
-//                        new File(String.format("redex-identity_%s.png", cnt))
+//                        new File(String.format("redex-identity_%s.png", 1))
 //                );
 //            } catch (IOException e) {
 //                e.printStackTrace();
@@ -175,11 +175,11 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            try {
 //                BigraphGraphvizExporter.toPNG(reactumImage.getOuterBigraph(),
 //                        true,
-//                        new File(String.format("reactumImage_%s.png", cnt))
+//                        new File(String.format("reactumImage_%s.png", 1))
 //                );
 //                BigraphGraphvizExporter.toPNG(compose.getOuterBigraph(),
 //                        true,
-//                        new File(String.format("reactumImage-composed_%s.png", cnt))
+//                        new File(String.format("reactumImage-composed_%s.png", 1))
 //                );
 //            } catch (IOException e) {
 //                e.printStackTrace();
@@ -190,7 +190,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
                     .compose(compose)
                     .getOuterBigraph();
 
-            exportState((PureBigraph) agentReacted, String.valueOf(cnt));
+//            exportState((PureBigraph) agentReacted, String.valueOf(cnt));
             //
 //            if (Objects.nonNull(options.get(ReactiveSystemOptions.Options.EXPORT))) {
 //                ReactiveSystemOptions.ExportOptions opts = options.get(ReactiveSystemOptions.Options.EXPORT);
@@ -212,16 +212,11 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //                }
 //            }
             cnt++;
-
             return (PureBigraph) agentReacted;
         } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
             e.printStackTrace();
             return null;
         }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
     }
 
 

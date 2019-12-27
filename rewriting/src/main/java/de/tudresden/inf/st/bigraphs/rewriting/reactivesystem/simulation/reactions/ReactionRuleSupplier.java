@@ -21,14 +21,13 @@ public abstract class ReactionRuleSupplier<B extends Bigraph<? extends Signature
         this.availableRules = Lists.immutable.withAll(availableRules);
     }
 
-    public static <B extends Bigraph<? extends Signature<?>>> InOrderReactionRuleSupplier createInOrder(Collection<ReactionRule<B>> availableRules) {
-        return new InOrderReactionRuleSupplier(availableRules);
+    public static <B extends Bigraph<? extends Signature<?>>> InOrderReactionRuleSupplier<B> createInOrder(Collection<ReactionRule<B>> availableRules) {
+        return new InOrderReactionRuleSupplier<>(availableRules);
     }
 
-    public static <B extends Bigraph<? extends Signature<?>>> RandomAgentMatchSupplier createRandom(Collection<B> availableRules) {
-        return new RandomAgentMatchSupplier(availableRules);
+    public static <B extends Bigraph<? extends Signature<?>>> RandomAgentMatchSupplier<B> createRandom(Collection<B> availableRules) {
+        return new RandomAgentMatchSupplier<>(availableRules);
     }
-
 
     public List<ReactionRule<B>> getAvailableRules() {
         return availableRules.castToList();

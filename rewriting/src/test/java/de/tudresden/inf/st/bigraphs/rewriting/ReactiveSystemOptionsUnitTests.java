@@ -25,6 +25,10 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptio
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.SubBigraphMatchPredicate;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Mode;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +46,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dominik Grzelak
  */
 public class ReactiveSystemOptionsUnitTests {
+
+//    public static void main(String[] args) throws Exception {
+        //https://www.baeldung.com/java-microbenchmark-harness
+//        org.openjdk.jmh.Main.main(args);
+//    }
+
+//    @Benchmark
+//    @Fork(value = 1, warmups = 2)
+//    @BenchmarkMode(Mode.Throughput)
+//    @BenchmarkMode(Mode.AverageTime)
+//    public void init() {
+//        System.out.println("init");
+//    }
 
     @Test
     void reactionsystem_options_test() {

@@ -18,8 +18,8 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
  * @param <B> type of the bigraph
  * @author Dominik Grzelak
  */
-public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature>> implements ReactionRule<B> {
-    protected final Signature signature;
+public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature<?>>> implements ReactionRule<B> {
+    protected final Signature<?> signature;
     protected final B redex;
     protected final B reactum;
     protected boolean canReverse = false;
@@ -77,7 +77,7 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         return this.reactum;
     }
 
-    public Signature getSignature() {
+    public Signature<?> getSignature() {
         return this.signature;
     }
 }

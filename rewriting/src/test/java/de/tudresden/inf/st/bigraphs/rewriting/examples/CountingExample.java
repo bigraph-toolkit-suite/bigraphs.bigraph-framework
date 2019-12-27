@@ -51,7 +51,7 @@ public class CountingExample {
     }
 
     @Test
-    void simulate_example() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_counting_example() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
         // Create reaction rulesname
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
@@ -74,6 +74,8 @@ public class CountingExample {
 //                new File("rr_rhs_1.png")
 //        );
 
+        ReactiveSystemOptions.ExportOptions.Builder builder = ReactiveSystemOptions.exportOpts();
+        ReactiveSystemOptions.TransitionOptions.Builder builder1 = transitionOpts();
         reactiveSystem.addReactionRule(rr_1);
         reactiveSystem.addReactionRule(rr_2);
         reactiveSystem.addReactionRule(rr_3);

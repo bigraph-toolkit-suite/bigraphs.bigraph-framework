@@ -2,6 +2,8 @@ package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
+import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,5 +31,39 @@ public abstract class SimulationStrategySupport<B extends Bigraph<? extends Sign
 
     public int getOccurrenceCount() {
         return occurrenceCounter;
+    }
+
+    public MatchResult<B> createMatchResult(ReactionRule<B> reactionRule, BigraphMatch<B> next, B bigraph, int occurrenceCount) {
+        return new MatchResult<>(reactionRule, next, bigraph, occurrenceCount);
+    }
+
+    static class MatchResult<B extends Bigraph<? extends Signature<?>>> {
+        private final ReactionRule<B> reactionRule;
+        private final BigraphMatch<B> next;
+        private final B bigraph;
+        private final int occurrenceCount;
+
+        private MatchResult(ReactionRule<B> reactionRule, BigraphMatch<B> next, B bigraph, int occurrenceCount) {
+            this.reactionRule = reactionRule;
+            this.next = next;
+            this.bigraph = bigraph;
+            this.occurrenceCount = occurrenceCount;
+        }
+
+        public ReactionRule<B> getReactionRule() {
+            return reactionRule;
+        }
+
+        public BigraphMatch<B> getNext() {
+            return next;
+        }
+
+        public B getBigraph() {
+            return bigraph;
+        }
+
+        public int getOccurrenceCount() {
+            return occurrenceCount;
+        }
     }
 }

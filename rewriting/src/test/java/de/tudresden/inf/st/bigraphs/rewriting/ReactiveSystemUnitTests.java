@@ -74,6 +74,7 @@ public class ReactiveSystemUnitTests {
                 .and(transitionOpts()
                         .setMaximumTransitions(4)
                         .setMaximumTime(30)
+                        .allowReducibleClasses(true)
                         .create()
                 )
                 .doMeasureTime(true)

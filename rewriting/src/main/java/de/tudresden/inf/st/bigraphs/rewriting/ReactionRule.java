@@ -12,7 +12,7 @@ import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.InstantiationMap;
  * @param <B> type of the bigraph
  * @author Dominik Grzelak
  */
-public interface ReactionRule<B extends Bigraph<? extends Signature>> {
+public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
 
     /**
      * Return the redex of the reaction rule
