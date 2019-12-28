@@ -132,12 +132,9 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         if (logger.isDebugEnabled()) {
             matchingTimer = Stopwatch.createStarted();
         }
-        List<List<BigraphEntity>> partitionSets = new ArrayList<>();
-//        List<BigraphEntity> uSetAfterMatching = new ArrayList<>();
-//        agentAdapter.getAllInternalVerticesPostOrderAsStream().forEach(eachV -> {
 
-//        });
-        for (BigraphEntity eachV : internalVertsG) {
+        List<List<BigraphEntity>> partitionSets = new ArrayList<>();
+        for (BigraphEntity eachV : internalVertsG) {//TODO: create this in a stream-filter
             List<BigraphEntity> childrenOfV = agentAdapter.getChildren(eachV);
 //            List<BigraphEntity> u_vertsOfH = new ArrayList<>(allVerticesOfH);//TODO: create this in a stream-filter
             MutableList<BigraphEntity> u_vertsOfH = org.eclipse.collections.api.factory.Lists.mutable.ofAll(allVerticesOfH);
@@ -157,7 +154,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             for (BigraphEntity eachU : u_vertsOfH) {
                 boolean cs = true; //eachU.getControl().equals(eachV.getControl());
                 if (eachU.getControl() != null && eachV.getControl() != null) {
-                    cs = isSameControl(eachU, eachV); //eachU.getControl().equals(eachV.getControl());
+                    cs = isSameControl(eachU, eachV);
                 }
 //                System.out.println("Q: " + cs);
                 if (!cs) continue;
@@ -246,12 +243,11 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                 // Update map S
                 S.put(eachV, eachU, uSetAfterMatching);
                 if (S.get(eachV, eachU).contains(eachU)) {
-                    System.out.println("ABCDEF");
                     if (!BigraphEntityType.isRoot(eachU)) {
                         continue;
                     }
                     int i = redexAdapter.getRoots().indexOf(eachU);
-//                    if (treffer.get() < redexAdapter.getRoots().size())
+
                     if (results.get(eachV, eachU) == null)
                         results.put(eachV, eachU, i);
 
@@ -463,6 +459,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         if (needsParameters) {
             redexAdapter.getSites().forEach(x -> parameters.put(x.getIndex(), pureBigraphFactory.createPlacings(redexAdapter.getSignature()).barren()));
         }
+
         // agent->redex
         BiMap<BigraphEntity.NodeEntity, BigraphEntity.NodeEntity> matchDict = HashBiMap.create();
 //        hitsV_newChildren.columnKeySet().forEach(x -> matchDict.put((BigraphEntity.NodeEntity) x, null));
@@ -1032,6 +1029,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
     /**
      * with link checking
+     *
      * @param agent
      * @param redex
      * @param noExactMatch

@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem;
+package de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -26,6 +26,7 @@ public class ReactionGraph<B extends Bigraph<?>> {
     private Map<String, B> labelMap = new ConcurrentHashMap<>();
     private Graph<String, LabeledEdge> graph;
     private BiMap<String, String> agentMap = HashBiMap.create();
+    private ReactionGraphStats<B> graphStats;
 
     public ReactionGraph() {
         reset();
@@ -61,6 +62,7 @@ public class ReactionGraph<B extends Bigraph<?>> {
             }
         };
         graph = buildEmptySimpleDirectedGraph();
+        graphStats = new ReactionGraphStats<>(this);
     }
 
     /**
@@ -82,6 +84,11 @@ public class ReactionGraph<B extends Bigraph<?>> {
      */
     public Graph<String, LabeledEdge> getGraph() {
         return graph;
+    }
+
+    public ReactionGraphStats<B> getGraphStats() {
+        graphStats.computeStatistics();
+        return graphStats;
     }
 
     public boolean isEmpty() {

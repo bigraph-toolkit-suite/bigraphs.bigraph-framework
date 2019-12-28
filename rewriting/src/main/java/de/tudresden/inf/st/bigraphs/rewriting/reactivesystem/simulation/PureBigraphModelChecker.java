@@ -13,9 +13,12 @@ import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,9 +81,24 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //                    true,
 //                    new File("redex.png")
 //            );
+
+            PureBigraph reactum = rule.getReactum();
+//            Bigraph d_Params;
+//            List<PureBigraph> parameters = new ArrayList<>(match.getParameters());
+//            if (rule.getReactum().getSites().size() != 0) {
+//                BigraphComposite d1 = factory.asBigraphOperator(factory.createPlacings(rule.getReactum().getSignature()).barren());
+//                for (int i = 1, n = parameters.size(); i < n; i++) {
+//                    d1 = d1.parallelProduct(factory.createPlacings(rule.getReactum().getSignature()).barren());
+//                }
+////                d_Params = d1.getOuterBigraph();
+//                reactum = (PureBigraph) factory.asBigraphOperator(reactum).compose(d1).getOuterBigraph();
+//            }
+
             Bigraph agentReacted = factory.asBigraphOperator(outerBigraph)
-                    .compose(rule.getReactum())
+//                    .compose(rule.getReactum())
+                    .compose(reactum)
                     .getOuterBigraph();
+
 //            GraphvizConverter.toPNG(agentReacted,
 //                    true,
 //                    new File("agentReacted.png")
@@ -90,21 +108,19 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            try {
 //                BigraphGraphvizExporter.toPNG(agentReacted,
 //                        true,
-//                        new File("agent-reacted-" + cnt + ".png")
+//                        new File("agent-reacted-" + 1 + ".png")
 //                );
 ////                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
 ////                BigraphArtifacts.exportAsMetaModel(agentReacted, new FileOutputStream(String.format("meta-model_%s.ecore", cnt)));
-//                cnt++;
+////                cnt++;
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
             return (PureBigraph) agentReacted;
-        } catch (IncompatibleSignatureException e) {
+        } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
             logger.error(e.toString());
-        } catch (IncompatibleInterfaceException e) {
-            logger.error(e.toString());
+            return null;
         }
-        return null;
     }
 
     //TODO: beachte instantiation map
@@ -119,10 +135,10 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //                        true,
 //                        new File(String.format("context_%s.png", 1))
 //                );
-//                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
-//                        true,
-//                        new File(String.format("contextIdentity_%s.png", 1))
-//                );
+////                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
+////                        true,
+////                        new File(String.format("contextIdentity_%s.png", 1))
+////                );
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
@@ -135,7 +151,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            try {
 //                BigraphGraphvizExporter.toPNG(outerBigraph,
 //                        true,
-//                        new File(String.format("outerBigraph_%s.png", cnt))
+//                        new File(String.format("outerBigraph_%s.png", 1))
 //                );
 //            } catch (IOException e) {
 //                e.printStackTrace();

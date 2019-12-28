@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.RedexIsNotSimpleException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
 import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
+import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.predicates.ReactiveSystemPredicates;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
@@ -49,9 +50,10 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
      * </ul>
      * (see Milner book Def. 8.12, pp. 95)
      * <p>
-     * Throws a {@link RedexIsNotSimpleException} if the redex isn't simple.
+     * Note that the {@link AbstractReactionRule} class also checks if the redex is simple.
      *
      * @param reactionRule the reaction rule to be checked (redex is used)
+     * @throws RedexIsNotSimpleException if the redex is not simple
      */
     protected void assertParametricRedexIsSimple(ReactionRule<B> reactionRule) throws RedexIsNotSimpleException {
         //"openness": all links are interfaces (edges, and outer names)

@@ -31,6 +31,7 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         this.instantiationMap = instantiationMap;
         this.assertSignaturesAreSame(this.redex.getSignature(), this.reactum.getSignature());
         this.assertInterfaceDefinitionIsCorrect(this.redex, this.reactum);
+        this.assertRedexIsSimple();
         this.signature = this.redex.getSignature();
     }
 
@@ -47,6 +48,15 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         // check if same interfaces
         if (!redex.getOuterFace().equals(reactum.getOuterFace())) {
             throw new NonConformReactionRuleInterfaces();
+        }
+        if (redex.getSites().size() != reactum.getSites().size()) {
+            throw new NonConformReactionRuleInterfaces();
+        }
+    }
+
+    protected void assertRedexIsSimple() throws RedexIsNotSimpleException {
+        if (!isRedexSimple()) {
+            throw new RedexIsNotSimpleException();
         }
     }
 

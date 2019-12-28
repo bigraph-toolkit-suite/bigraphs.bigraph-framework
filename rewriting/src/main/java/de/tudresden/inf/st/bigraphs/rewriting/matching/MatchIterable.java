@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.rewriting.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 
 import java.util.Iterator;
 

@@ -84,8 +84,9 @@ public class RouteFinding {
         ReactiveSystemOptions opts = ReactiveSystemOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(18)
+                        .setMaximumTransitions(20)
                         .setMaximumTime(60)
+                        .allowReducibleClasses(false) //if true, the simulation is endless
                         .create()
                 )
                 .doMeasureTime(true)

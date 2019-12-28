@@ -14,7 +14,6 @@ import de.tudresden.inf.st.bigraphs.rewriting.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.PredicateChecker;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.AgentIsNullException;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.exceptions.InvalidSimulationStrategy;
@@ -141,6 +140,10 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     public void execute() throws BigraphSimulationException {
         assertReactionSystemValid();
         simulationStrategy.synthesizeTransitionSystem();
+        if (simulationStrategy instanceof SimulationStrategySupport) {
+            int occurrenceCount = ((SimulationStrategySupport) simulationStrategy).getOccurrenceCount();
+            getReactionGraph().getGraphStats().setOccurrenceCount(occurrenceCount);
+        }
         prepareOutput();
     }
 
@@ -153,6 +156,10 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         assertReactionSystemValid();
         return executorService.submit(() -> {
             simulationStrategy.synthesizeTransitionSystem();
+            if (simulationStrategy instanceof SimulationStrategySupport) {
+                int occurrenceCount = ((SimulationStrategySupport) simulationStrategy).getOccurrenceCount();
+                getReactionGraph().getGraphStats().setOccurrenceCount(occurrenceCount);
+            }
             return getReactionGraph();
         });
     }

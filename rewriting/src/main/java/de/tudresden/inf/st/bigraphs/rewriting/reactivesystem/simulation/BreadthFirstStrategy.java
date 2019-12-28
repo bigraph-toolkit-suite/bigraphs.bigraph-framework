@@ -7,7 +7,6 @@ import de.tudresden.inf.st.bigraphs.rewriting.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.rewriting.matching.MatchIterable;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.PredicateChecker;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.reactions.ReactionRuleSupplier;
 import org.eclipse.collections.api.factory.Lists;
@@ -19,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The algorithm implemented here to synthesize the "reaction graph" is adopted from [1].
@@ -58,11 +57,11 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
         String rootBfcs = canonicalForm.bfcs(initialAgent);
         workingQueue.add(initialAgent);
-        int transitionCnt = 0;
+        AtomicInteger transitionCnt = new AtomicInteger(0);
         resetOccurrenceCounter();
         ReactiveSystemOptions.TransitionOptions transitionOptions = this.options.get(ReactiveSystemOptions.Options.TRANSITION);
         logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
-        while (!workingQueue.isEmpty() && transitionCnt < transitionOptions.getMaximumTransitions()) {
+        while (!workingQueue.isEmpty() && transitionCnt.get() < transitionOptions.getMaximumTransitions()) {
             // "Remove the first element w of the work queue Q."
             final B theAgent = workingQueue.remove();
             // "For each reaction rule, find all matches m1 ...mn in w"
@@ -90,11 +89,12 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 
                             reactionResults.add(createMatchResult(eachRule, next, reaction, getOccurrenceCount()));
                         }
+                        transitionCnt.addAndGet(reactionResults.size());
                         return reactionResults.stream();
                     })
 //                    .filter(x -> x.getBigraph() != null)
                     .forEachOrdered(reaction -> {
-                        if (Objects.nonNull(reaction.getBigraph())) {
+                        if (Objects.nonNull(reaction) && Objects.nonNull(reaction.getBigraph())) {
                             modelChecker.exportState(reaction.getBigraph(), String.valueOf(reaction.getOccurrenceCount()));
                             String bfcf = canonicalForm.bfcs(reaction.getBigraph());
                             String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(reaction.getReactionRule());
@@ -133,12 +133,11 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     modelChecker.reactiveSystemListener.onAllPredicateMatched(theAgent);
                 }
             }
-
+//            transitionCnt.incrementAndGet();
             // "Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty."
-            transitionCnt++;
         }
 //        System.out.println("transitionCnt=" + transitionCnt);
-        logger.debug("Total Transitions: {}", transitionCnt);
+        logger.debug("Total States/Transitions: {}", transitionCnt.get());
         logger.debug("Total Occurrences: {}", getOccurrenceCount());
     }
 }

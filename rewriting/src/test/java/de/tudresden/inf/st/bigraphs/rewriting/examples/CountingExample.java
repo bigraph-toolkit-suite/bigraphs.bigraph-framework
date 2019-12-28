@@ -87,6 +87,7 @@ public class CountingExample {
                 .and(transitionOpts()
                         .setMaximumTransitions(8)
                         .setMaximumTime(30)
+//                        .allowReducibleClasses(true)
                         .create()
                 )
                 .doMeasureTime(true)
