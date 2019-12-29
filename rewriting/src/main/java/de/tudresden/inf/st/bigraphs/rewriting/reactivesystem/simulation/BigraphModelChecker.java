@@ -62,26 +62,28 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     /**
      * Enum-like class that holds all kind of simulations.
      */
-    public static class SimulationType {
+    public static class SimulationType<B extends Bigraph<? extends Signature<?>>> {
 
-        public static final SimulationType BREADTH_FIRST = new SimulationType(BreadthFirstStrategy.class);
-        public static final SimulationType RANDOM_STATE = new SimulationType(RandomAgentSimulationStrategy.class);
+        public static final SimulationType<Bigraph<? extends Signature<?>>> BREADTH_FIRST =
+                new SimulationType<>(BreadthFirstStrategy.class);
+        public static final SimulationType<Bigraph<? extends Signature<?>>> RANDOM_STATE =
+                new SimulationType<>(RandomAgentSimulationStrategy.class);
 
-        private Class<? extends SimulationStrategy> strategyClass;
+        private Class<? extends SimulationStrategy<B>> strategyClass;
 
         private SimulationType(Class<? extends SimulationStrategy> strategyClass) {
-            this.strategyClass = strategyClass;
+            this.strategyClass = (Class<? extends SimulationStrategy<B>>) strategyClass;
         }
 
-        protected Class<? extends SimulationStrategy> getStrategyClass() {
+        protected Class<? extends SimulationStrategy<B>> getStrategyClass() {
             return strategyClass;
         }
     }
 
-    private final static BigraphModelChecker.ReactiveSystemListener<?> DEFAULT_LISTENER = new BigraphModelChecker.EmptyReactiveSystemListener<>();
+    private final static BigraphModelChecker.ReactiveSystemListener<Bigraph<? extends Signature<?>>> DEFAULT_LISTENER = new BigraphModelChecker.EmptyReactiveSystemListener<>();
 
     protected SimulationStrategy<B> simulationStrategy;
-    protected SimulationType simulationType;
+    protected SimulationType<B> simulationType;
     protected BigraphModelChecker.ReactiveSystemListener<B> reactiveSystemListener;
     protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.createInstance(true);
     protected PredicateChecker<B> predicateChecker = null;
@@ -92,7 +94,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     ReactionGraph<B> reactionGraph;
 //    protected MutableList<ReactiveSystemPredicates<B>> predicates = Lists.mutable.empty();
 
-    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationType simulationType, ReactiveSystemOptions options) {
+    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationType<B> simulationType, ReactiveSystemOptions options) {
         onAttachListener(this);
         loadServiceExecutor();
 
@@ -128,8 +130,8 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    private SimulationStrategy<B> createStrategy(SimulationType simulationType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        return (SimulationStrategy<B>) simulationType.getStrategyClass().getConstructor(BigraphModelChecker.class).newInstance(this);
+    private SimulationStrategy<B> createStrategy(SimulationType<B> simulationType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        return simulationType.getStrategyClass().getConstructor(BigraphModelChecker.class).newInstance(this);
     }
 
     /**
@@ -139,11 +141,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
      */
     public void execute() throws BigraphSimulationException {
         assertReactionSystemValid();
-        simulationStrategy.synthesizeTransitionSystem();
-        if (simulationStrategy instanceof SimulationStrategySupport) {
-            int occurrenceCount = ((SimulationStrategySupport) simulationStrategy).getOccurrenceCount();
-            getReactionGraph().getGraphStats().setOccurrenceCount(occurrenceCount);
-        }
+        doWork();
         prepareOutput();
     }
 
@@ -155,13 +153,17 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     public Future<ReactionGraph<B>> executeAsync() throws BigraphSimulationException {
         assertReactionSystemValid();
         return executorService.submit(() -> {
-            simulationStrategy.synthesizeTransitionSystem();
-            if (simulationStrategy instanceof SimulationStrategySupport) {
-                int occurrenceCount = ((SimulationStrategySupport) simulationStrategy).getOccurrenceCount();
-                getReactionGraph().getGraphStats().setOccurrenceCount(occurrenceCount);
-            }
+            doWork();
             return getReactionGraph();
         });
+    }
+
+    private void doWork() {
+        simulationStrategy.synthesizeTransitionSystem();
+        if (simulationStrategy instanceof SimulationStrategySupport) {
+            int occurrenceCount = ((SimulationStrategySupport<B>) simulationStrategy).getOccurrenceCount();
+            getReactionGraph().getGraphStats().setOccurrenceCount(occurrenceCount);
+        }
     }
 
     protected void assertReactionSystemValid() throws BigraphSimulationException {
@@ -268,7 +270,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     }
 
     void exportGraph(Graph g, File imgFile) {
-        JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<String, DefaultEdge>(g);
+        JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<>(g);
 //        mxIGraphLayout layout = new mxCompactTreeLayout(graphAdapter);
         mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.NORTH);
 //        ((mxHierarchicalLayout)layout).setFineTuning(true);
@@ -294,7 +296,6 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    //    @Override
     public synchronized void setReactiveSystemListener(BigraphModelChecker.ReactiveSystemListener<B> reactiveSystemListener) {
         this.reactiveSystemListener = reactiveSystemListener;
     }
@@ -317,12 +318,12 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
 
         /**
-         * Reports a violation of a predicate and supplies a counter-example trace from the starting state to the violating state
-         * to the method.
+         * Reports a violation of a predicate and supplies a counterexample trace from the initial state to the
+         * violating state.
          *
-         * @param currentAgent
-         * @param predicate
-         * @param counterExampleTrace
+         * @param currentAgent        the agent
+         * @param predicate           the predicate
+         * @param counterExampleTrace the trace representing a counterexample
          */
         default void onPredicateViolated(B currentAgent, ReactiveSystemPredicates<B> predicate, GraphPath<String, ReactionGraph.LabeledEdge> counterExampleTrace) {
         }

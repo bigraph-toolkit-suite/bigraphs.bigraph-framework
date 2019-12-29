@@ -46,13 +46,14 @@ public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature
             final String bfcfOfW = canonicalForm.bfcs(theAgent);
             final InOrderReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.<B>createInOrder(modelChecker.getReactiveSystem().getReactionRules());
             MutableList<B> rewrittenAgents = Lists.mutable.empty();
-            Stream.generate(inOrder)
-                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
+//            Stream.generate(inOrder)
+//                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
+            modelChecker.getReactiveSystem().getReactionRules().stream()
+                    .parallel()
                     .forEachOrdered(eachRule -> {
                         modelChecker.reactiveSystemListener.onCheckingReactionRule(eachRule);
                         MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule.getRedex()));
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
-
                         while (iterator.hasNext()) {
                             increaseOccurrenceCounter();
                             BigraphMatch<B> next = iterator.next();

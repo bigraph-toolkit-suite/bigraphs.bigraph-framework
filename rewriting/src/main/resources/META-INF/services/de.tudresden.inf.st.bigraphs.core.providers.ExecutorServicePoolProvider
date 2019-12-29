@@ -1,1 +1,1 @@
-de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.FixedExecutorProvider
+de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.simulation.FixedThreadPoolExecutorProvider
