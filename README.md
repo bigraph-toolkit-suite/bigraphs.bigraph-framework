@@ -169,7 +169,7 @@ compositor.juxtapose(F).parallelProduct(H);
 <!-- the rewriting module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-rewriting</artifactId>
+  <artifactId>bigraph-simulation</artifactId>
   <version>${revision}</version>
   <type>pom</type>
 </dependency>

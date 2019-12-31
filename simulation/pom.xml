@@ -8,8 +8,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>bigraph-rewriting</artifactId>
-    <name>Bigraph Framework - Rewriting</name>
+    <artifactId>bigraph-simulation</artifactId>
+    <name>Bigraph Framework - Simulation</name>
     <description>
         Rewriting functionality of the Bigraph Framework for implementing bigraphical reactive systems.
         A matching algorithms for the subtree isomorphism problem adapted to bigraphs is included.

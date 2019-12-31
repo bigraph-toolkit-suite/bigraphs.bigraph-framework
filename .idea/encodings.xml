@@ -8,9 +8,8 @@
     <file url="file://$PROJECT_DIR$/core" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/core/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/rewriting" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/rewriting/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/rewriting/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/simulation/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/simulation/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/visualization" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/visualization/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/visualization/src/main/resources" charset="UTF-8" />

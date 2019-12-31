@@ -9,13 +9,13 @@
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
-        A complete bigraphical framework for creating bigraphs and simulation bigraphical reactive systems.
+        A complete framework for creating bigraphs and performing simulations on bigraphical reactive systems.
     </description>
 
     <modules>
         <module>core</module>
         <module>visualization</module>
-        <module>rewriting</module>
+        <module>simulation</module>
         <module>converter</module>
     </modules>
 
@@ -232,7 +232,7 @@
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
-                <artifactId>bigraph-rewriting</artifactId>
+                <artifactId>bigraph-simulation</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

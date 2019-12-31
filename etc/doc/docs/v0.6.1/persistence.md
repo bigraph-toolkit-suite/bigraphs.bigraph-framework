@@ -3,8 +3,8 @@
 The framework provides simple means for storing and loading bigraphical
 meta models and instance models.
 
-Therefore, the utility class `BigraphArtifacts` comprises methods to 
-persist bigraphical model files onto the filesystem.
+Therefore, the utility class `BigraphArtifacts` comprises methods for
+persisting bigraphical models to the filesystem.
 
 For a more sophisticated persistence solution, we refer the reader to 
 [Eclipse Connected Data Objects (CDO) Model Repository](https://projects.eclipse.org/projects/modeling.emf.cdo) 
