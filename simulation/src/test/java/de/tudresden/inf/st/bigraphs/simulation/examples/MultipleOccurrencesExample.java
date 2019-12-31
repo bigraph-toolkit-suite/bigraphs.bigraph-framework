@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.converter.bigrapher;
+package de.tudresden.inf.st.bigraphs.simulation.examples;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -15,18 +15,36 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ReactionGraphStats;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
 /**
  * @author Dominik Grzelak
  */
-public class MultiOccurrenceExample {
+public class MultipleOccurrencesExample {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/multiple/";
 
-    // bigrapher full -d ./model -f svg -s states -M 50 -t trans.svg -v model.big
+    @BeforeAll
+    static void setUp() throws IOException {
+        File dump = new File(TARGET_DUMP_PATH);
+        dump.mkdirs();
+        FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+    }
+
     @Test
     void simulate() throws TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException {
 
@@ -42,11 +60,32 @@ public class MultiOccurrenceExample {
         reactiveSystem.addReactionRule(reactionRuleJAC);
         reactiveSystem.addReactionRule(reactionRuleJBD);
 
-        BigrapherTransformator prettyPrinter = new BigrapherTransformator();
-        String s = prettyPrinter.toString(reactiveSystem);
-        System.out.println(s);
+        ModelCheckingOptions opts = ModelCheckingOptions.create();
+        opts
+                .and(transitionOpts()
+                        .setMaximumTransitions(50)
+                        .setMaximumTime(30)
+                        .allowReducibleClasses(true)
+                        .create()
+                )
+                .doMeasureTime(true)
+                .and(ModelCheckingOptions.exportOpts()
+                        .setTraceFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .create()
+                )
+        ;
 
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
+                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                opts);
+        modelChecker.execute();
+        ReactionGraphStats<PureBigraph> graphStats = modelChecker.getReactionGraph().getGraphStats();
+        System.out.println("Transitions: " + graphStats.getTransitionCount());
+        System.out.println("States: " + graphStats.getStateCount());
+        System.out.println("Occurrences: " + graphStats.getOccurrenceCount());
     }
+
 
     PureBigraph createAgent() {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
