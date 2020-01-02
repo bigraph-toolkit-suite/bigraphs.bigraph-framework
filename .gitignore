@@ -123,3 +123,4 @@ gen-test-resources/*
 /.idea/modules.xml
 /.idea/markdown-navigator-enh.xml
 /.idea/markdown-navigator.xml
+/etc/doc/docusaurus/website/static/apidocs/
