@@ -1,4 +1,9 @@
-# Some definitions
+---
+id: theory
+title: Theory - Some Definitions
+---
+
+<!--# Some definitions-->
 
 transition is engaged if |agent| and |Redex| != empty set
 

@@ -1,4 +1,9 @@
-# Persisting Bigraphs
+---
+id: persistence
+title: Persisting Bigraphs
+---
+
+<!--# Persisting Bigraphs-->
 
 The framework provides simple means for storing and loading bigraphical
 meta models and instance models.

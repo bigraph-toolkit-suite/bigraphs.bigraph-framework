@@ -37,6 +37,7 @@
         <bintray.repo>maven-repository</bintray.repo>
         <bintray.package>${project.artifactId}</bintray.package>
         <doclint>none</doclint>
+        <project.javadoc.outputDirectory>${project.basedir}/etc/doc/docusaurus/website/static/apidocs/</project.javadoc.outputDirectory>
     </properties>
 
     <developers>
@@ -185,31 +186,31 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.1.0</version>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>flatten-maven-plugin</artifactId>-->
+<!--                <version>1.1.0</version>-->
+<!--                <configuration>-->
+<!--                    <updatePomFile>true</updatePomFile>-->
+<!--                    <flattenMode>resolveCiFriendliesOnly</flattenMode>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>flatten</id>-->
+<!--                        <phase>process-resources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>flatten</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>flatten.clean</id>-->
+<!--                        <phase>clean</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>clean</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
@@ -396,23 +397,23 @@
 
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.shredzone.maven</groupId>
-                        <artifactId>mkdocs-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                                <configuration>
-                                    <strict>true</strict>
-                                    <directory>${project.basedir}/etc/doc/</directory>
-                                    <outputDirectory>${project.basedir}/target/site/reference/html/</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+<!--                    <plugin>-->
+<!--                        <groupId>org.shredzone.maven</groupId>-->
+<!--                        <artifactId>mkdocs-maven-plugin</artifactId>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <phase>install</phase>-->
+<!--                                <goals>-->
+<!--                                    <goal>build</goal>-->
+<!--                                </goals>-->
+<!--                                <configuration>-->
+<!--                                    <strict>true</strict>-->
+<!--                                    <directory>${project.basedir}/etc/doc/</directory>-->
+<!--                                    <outputDirectory>${project.basedir}/target/site/reference/html/</outputDirectory>-->
+<!--                                </configuration>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -424,7 +425,7 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
-                                    <outputDirectory>${project.root}/target/site/apidocs</outputDirectory>
+                                    <reportOutputDirectory>${project.javadoc.outputDirectory}</reportOutputDirectory>
                                 </configuration>
                             </execution>
                         </executions>

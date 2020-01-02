@@ -1,4 +1,9 @@
-# Converting Bigraphs
+---
+id: converter
+title: Converting Bigraphs
+---
+
+<!--# Converting Bigraphs-->
 
 A bigraph model may be converted to and from several different formats,
 including GraphML, [BigMC](http://bigraph.org/bigmc/), [GXL](http://www.gupro.de/GXL/) and

@@ -1,4 +1,9 @@
-# Getting Started
+---
+id: basics
+title: Getting Started
+---
+
+<!--# Getting Started-->
 
 Discover what Bigraph Framework is all about and learn the core concepts behind it.
 

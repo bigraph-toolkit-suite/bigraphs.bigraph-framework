@@ -1,4 +1,9 @@
-# Modelling Bigraphs
+---
+id: factories
+title: Modelling Bigraphs
+---
+
+<!--# Modelling Bigraphs-->
 
 
 ## What is a Factory?

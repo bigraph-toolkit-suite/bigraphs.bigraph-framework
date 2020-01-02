@@ -293,9 +293,7 @@ $ ./mvnw clean install
 
 If you want to build with the regular `mvn` command, you will need [Maven v3.5.0 or above](https://maven.apache.org/run-maven/index.html).
 
-### Building reference documentation
-
-TODO 
+### Building the Documentation
 
 Building the documentation builds also the project without running tests.
 
@@ -303,9 +301,11 @@ Building the documentation builds also the project without running tests.
 $ ./mvnw clean install -Pdistribute
 ```
 
-The generated documentation is available from `target/site/reference/html/index.html`.
+The generated apidoc is available from `etc/doc/docusaurus/website/static/apidocs`.
 
-The documentation is built using mkdocs and must be installed on the system (see [DEPLOYMENT](etc/ci/DEPLOYMENT.md)
+The generated user manual is available from `etc/doc/docusaurus/website/`
+by calling `npm start`. The manual is generated using docusaurus which
+must be installed on the system (see [DEPLOYMENT](etc/ci/DEPLOYMENT.md)
 for further instructions).
 
 ### Development and Deployment
