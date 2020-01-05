@@ -5,7 +5,6 @@ import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
@@ -123,12 +122,12 @@ public class VisualizationUnitTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         builder.createRoot().addChild(signature.getControlByName("Room"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
-                .goBack()
-                .goBack()
+                .up()
+                .up()
         ;
 
         return builder.createBigraph();
@@ -139,16 +138,16 @@ public class VisualizationUnitTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot().addChild(signature.getControlByName("Room"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer")).linkToOuter(network)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
         ;
 
         builder.createRoot().addChild(signature.getControlByName("Room"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer")).linkToOuter(network)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
         ;
 
@@ -169,24 +168,24 @@ public class VisualizationUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .withNewHierarchy()
+                .down()
                 .addSite()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .goBack()
-                .goBack()
+                .up()
+                .up()
 
                 .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy()
+                .down()
                 .addSite()
                 .addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .goBack()
-                .goBack()
+                .up()
+                .up()
         ;
         builder.connectInnerToOuterName(jeff, b2);
 //        builder.closeAllInnerNames();
@@ -208,21 +207,21 @@ public class VisualizationUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Printer")).linkToInner(spoolLink).linkToOuter(b1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
-                .goBack()
-                .goBack()
+                .up()
+                .up()
 
                 .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addSite().addChild(signature.getControlByName("Spool")).linkToInner(spoolLink)
-                .goBack()
+                .down().addSite().addChild(signature.getControlByName("Spool")).linkToInner(spoolLink)
+                .up()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .goBack()
+                .up()
         ;
         builder.closeInnerName(roomLink);
         builder.closeInnerName(spoolLink);

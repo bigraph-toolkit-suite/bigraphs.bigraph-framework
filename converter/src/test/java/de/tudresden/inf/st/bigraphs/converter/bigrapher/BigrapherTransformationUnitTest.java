@@ -72,17 +72,17 @@ public class BigrapherTransformationUnitTest {
         builder.createRoot()
                 .addChild("Printer").linkToOuter(a).linkToOuter(b)
                 .addChild(signature.getControlByName("Room")).linkToInner(e1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
+                .down().addChild(signature.getControlByName("Job")).up()
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff1)
-                .goBack()
+                .up()
 
                 .addChild(signature.getControlByName("Room")).linkToInner(e1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .goBack().goBack();
+                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .up().up();
 
         builder.closeAllInnerNames();
         builder.makeGround();
@@ -103,12 +103,12 @@ public class BigrapherTransformationUnitTest {
         builder.createRoot()
                 .addChild("Printer").linkToOuter(a).linkToOuter(b)
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
+                .down().addChild(signature.getControlByName("Job")).up()
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff1);
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2);
+                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2);
 
 //        builder.makeGround();
         PureBigraph redex = builder.createBigraph();
@@ -125,7 +125,7 @@ public class BigrapherTransformationUnitTest {
 
         builder.createRoot()
                 .addChild("Room").linkToOuter(door)
-                .withNewHierarchy().addSite().addChild("User", user);
+                .down().addSite().addChild("User", user);
         PureBigraph bigraph = builder.createBigraph();
         return SubBigraphMatchPredicate.create(bigraph);
     }

@@ -52,7 +52,7 @@ public class BigraphCompositionUnitTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature, metaData);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature, metaData2);
 
-        PureBigraph building = builder.createRoot().addChild("Room").addChild("Room").withNewHierarchy().addSite().createBigraph();
+        PureBigraph building = builder.createRoot().addChild("Room").addChild("Room").down().addSite().createBigraph();
         PureBigraph user = builder2.createRoot().addChild("User").createBigraph();
 
         BigraphComposite<DefaultDynamicSignature> composed = ops(building).compose(user);
@@ -71,10 +71,10 @@ public class BigraphCompositionUnitTests {
         BigraphEntity.OuterName fromD2 = builderReactum.createOuterName("fromD");
         BigraphEntity.OuterName fromS2 = builderReactum.createOuterName("fromS");
         BigraphEntity.OuterName target2 = builderReactum.createOuterName("target");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builderReactum.newHierarchy("Car").linkToOuter(target2).addSite();
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builderReactum.hierarchy("Car").linkToOuter(target2).addSite();
         builderReactum.createRoot()
-                .addChild("Place").linkToOuter(fromD2).withNewHierarchy().addSite().addChild(car2).top()
-                .addChild("Place", "fromS").withNewHierarchy().addChild("Road").linkToOuter(fromD2).addSite().top()
+                .addChild("Place").linkToOuter(fromD2).down().addSite().addChild(car2).top()
+                .addChild("Place", "fromS").down().addChild("Road").linkToOuter(fromD2).addSite().top()
 //                .addChild("Place").connectNodeToOuterName(fromS2).withNewHierarchy().addChild("Road").connectNodeToOuterName(fromD2).addSite().top()
         ;
         PureBigraph reactum = builderReactum.createBigraph();
@@ -142,13 +142,13 @@ public class BigraphCompositionUnitTests {
         BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
-                builderForF.newHierarchy(signature.getControlByName("Room"));
+                builderForF.hierarchy(signature.getControlByName("Room"));
         room.addChild(signature.getControlByName("User")).linkToOuter(jeff).addChild(signature.getControlByName("Job"));
         builderForF.createRoot()
                 .addChild(room);
 
         builderForG.createRoot()
-                .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite().goBack()
+                .addChild(signature.getControlByName("Job")).down().addSite().up()
                 .addChild(signature.getControlByName("User")).linkToInner(jeffG);
 
 
@@ -188,19 +188,19 @@ public class BigraphCompositionUnitTests {
 //        BigraphEntity.InnerName ethernetH = builderForH.createInnerName("ethernet");
 //        BigraphEntity.InnerName networkH = builderForH.createInnerName("wifi");
         if (true) {
-            builderForF.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+            builderForF.createRoot().addChild(signature.getControlByName("Room")).down()
                     .addChild(signature.getControlByName("Computer")).linkToOuter(networkF);//.connectNodeToInnerName(ethernetF);
-            builderForG.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+            builderForG.createRoot().addChild(signature.getControlByName("Room")).down()
                     .addChild(signature.getControlByName("Computer")).linkToOuter(networkG);//.connectNodeToInnerName(ethernetG);
 
 //            builderForF.connectInnerToOuterName(ethernetF, networkF);
 //            builderForG.connectInnerToOuterName(ethernetG, networkG);
         } else {
-            builderForF.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+            builderForF.createRoot().addChild(signature.getControlByName("Room")).down()
                     .addChild(signature.getControlByName("Computer")).connectInnerNamesToNode(ethernetF, ethernetF2);
-            builderForG.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+            builderForG.createRoot().addChild(signature.getControlByName("Room")).down()
                     .addChild(signature.getControlByName("Computer")).linkToInner(ethernetG);
-            builderForH.createRoot().addChild(signature.getControlByName("Room")).withNewHierarchy()
+            builderForH.createRoot().addChild(signature.getControlByName("Room")).down()
                     .addChild(signature.getControlByName("Printer"));
         }
 

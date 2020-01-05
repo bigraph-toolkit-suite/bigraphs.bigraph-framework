@@ -12,9 +12,6 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsExcepti
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Collection;
 import java.util.Set;
@@ -38,7 +35,7 @@ public class DiscreteIon<S extends Signature, NT extends NamedType, FT extends F
                     throw new RuntimeException(e);
                 }
             });
-            hierarchy.withNewHierarchy().addSite();
+            hierarchy.down().addSite();
         } catch (ControlIsAtomicException e) {
             throw new RuntimeException("Control shouldn't be atomic!");
         }

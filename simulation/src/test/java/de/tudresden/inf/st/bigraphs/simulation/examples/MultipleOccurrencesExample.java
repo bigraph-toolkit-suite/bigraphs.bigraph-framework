@@ -104,7 +104,7 @@ public class MultipleOccurrencesExample {
                 .addChild("Room"); //.withNewHierarchy().addSite().top()
         ;
         builder2.createRoot()
-                .addChild("Room").withNewHierarchy().addChild("JobA").top()
+                .addChild("Room").down().addChild("JobA").top()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -119,7 +119,7 @@ public class MultipleOccurrencesExample {
                 .addChild("Room"); //.withNewHierarchy().addSite().top()
         ;
         builder2.createRoot()
-                .addChild("Room").withNewHierarchy().addChild("JobB").top()
+                .addChild("Room").down().addChild("JobB").top()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -131,10 +131,10 @@ public class MultipleOccurrencesExample {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
 
         builder.createRoot()
-                .addChild("Room").withNewHierarchy().addChild("JobA").top()
+                .addChild("Room").down().addChild("JobA").top()
         ;
         builder2.createRoot()
-                .addChild("Room").withNewHierarchy().addChild("JobC").top()
+                .addChild("Room").down().addChild("JobC").top()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -146,10 +146,10 @@ public class MultipleOccurrencesExample {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
 
         builder.createRoot()
-                .addChild("Room").withNewHierarchy().addChild("JobB").top()
+                .addChild("Room").down().addChild("JobB").top()
         ;
         builder2.createRoot()
-                .addChild("Room").withNewHierarchy().addChild("JobD").top()
+                .addChild("Room").down().addChild("JobD").top()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();

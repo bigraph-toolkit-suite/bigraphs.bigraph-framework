@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.factory;
 
 import com.google.common.reflect.TypeToken;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
@@ -41,6 +42,11 @@ public class PureBigraphFactory
 
     @Override
     public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, EMetaModelData metaModelData) {
+        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelData);
+    }
+
+    @Override
+    public BigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, String metaModelData) {
         return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelData);
     }
 

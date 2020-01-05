@@ -8,7 +8,6 @@ import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
@@ -159,7 +158,7 @@ public class RankedGraphEncodingTests {
         BigraphEntity.InnerName e1 = builder.createInnerName("e1");
 
         builder.createRoot()
-                .addChild("K").linkToInner(e0).withNewHierarchy().addChild("K").linkToInner(e0).withNewHierarchy().addSite().goBack().goBack()
+                .addChild("K").linkToInner(e0).down().addChild("K").linkToInner(e0).down().addSite().up().up()
                 .addChild("M").linkToInner(e0).linkToInner(e1);
         builder.createRoot().addChild("L").linkToInner(e1).addSite(); //.withNewHierarchy()
         builder.closeInnerName(e0);

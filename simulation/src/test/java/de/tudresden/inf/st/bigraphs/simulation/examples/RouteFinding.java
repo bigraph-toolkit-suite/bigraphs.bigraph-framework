@@ -125,19 +125,19 @@ public class RouteFinding {
         BigraphEntity.OuterName target = builder.createOuterName("target");
 //        BigraphEntity.InnerName target = builder.createInnerName("target");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.newHierarchy("Car").linkToOuter(target);
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkToOuter(target);
         for (int i = 0; i < fuelLevel; i++) {
             car = car.addChild("Fuel");
         }
         builder.createRoot()
-                .addChild("Place").linkToOuter(p0).withNewHierarchy().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).goBack()
-                .addChild("Place").linkToOuter(p1).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Road").linkToOuter(p4).goBack()
-                .addChild("Place").linkToOuter(p2).withNewHierarchy().addChild("Road").linkToOuter(p5).goBack()
-                .addChild("Place").linkToOuter(p3).withNewHierarchy().addChild("Road").linkToOuter(p4).addChild("Road").linkToOuter(p7).goBack()
-                .addChild("Place").linkToOuter(p4).withNewHierarchy().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).goBack()
+                .addChild("Place").linkToOuter(p0).down().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).up()
+                .addChild("Place").linkToOuter(p1).down().addChild("Road").linkToOuter(p2).addChild("Road").linkToOuter(p4).up()
+                .addChild("Place").linkToOuter(p2).down().addChild("Road").linkToOuter(p5).up()
+                .addChild("Place").linkToOuter(p3).down().addChild("Road").linkToOuter(p4).addChild("Road").linkToOuter(p7).up()
+                .addChild("Place").linkToOuter(p4).down().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).up()
 //                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
 //                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
-                .addChild("Place").linkToOuter(p7).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).goBack()
+                .addChild("Place").linkToOuter(p7).down().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).up()
 //                .addChild("Place")
         ;
 //        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);
@@ -161,15 +161,15 @@ public class RouteFinding {
         BigraphEntity.OuterName target = builder.createOuterName("target");
 //        BigraphEntity.InnerName target = builder.createInnerName("target");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.newHierarchy("Car").linkToOuter(target);
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkToOuter(target);
         for (int i = 0; i < fuelLevel; i++) {
             car = car.addChild("Fuel");
         }
         builder.createRoot()
-                .addChild("Place").linkToOuter(p0).withNewHierarchy().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).goBack()
-                .addChild("Place").linkToOuter(p1).withNewHierarchy().addChild("Road").addChild("Road").linkToOuter(p4).goBack()
+                .addChild("Place").linkToOuter(p0).down().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).up()
+                .addChild("Place").linkToOuter(p1).down().addChild("Road").addChild("Road").linkToOuter(p4).up()
 //                .addChild("Place").linkToOuter(p2).withNewHierarchy().addChild("Road").linkToOuter(p5).goBack()
-                .addChild("Place").linkToOuter(p3).withNewHierarchy().addChild("Road").linkToOuter(p4).addChild("Road").goBack()
+                .addChild("Place").linkToOuter(p3).down().addChild("Road").linkToOuter(p4).addChild("Road").up()
 //                .addChild("Place").linkToOuter(p4).withNewHierarchy().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).goBack()
 //                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
 //                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
@@ -196,7 +196,7 @@ public class RouteFinding {
         Supplier<PureBigraphBuilder.Hierarchy> car = () -> {
             PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car1 = null;
             try {
-                car1 = builder.newHierarchy("Car").linkToOuter(target).addSite().addChild("Fuel");
+                car1 = builder.hierarchy("Car").linkToOuter(target).addSite().addChild("Fuel");
             } catch (TypeNotExistsException e) {
                 e.printStackTrace();
             } catch (InvalidConnectionException e) {
@@ -206,8 +206,8 @@ public class RouteFinding {
         };
 
         builder.createRoot()
-                .addChild("Place").linkToOuter(fromD).withNewHierarchy().addSite().top()
-                .addChild("Place").linkToOuter(fromS).withNewHierarchy().addChild(car.get()).addSite().addChild("Road").linkToOuter(fromD).top()
+                .addChild("Place").linkToOuter(fromD).down().addSite().top()
+                .addChild("Place").linkToOuter(fromS).down().addChild(car.get()).addSite().addChild("Road").linkToOuter(fromD).top()
         ;
 
         BigraphEntity.OuterName fromD2 = builder2.createOuterName("fromD");
@@ -216,7 +216,7 @@ public class RouteFinding {
         Supplier<PureBigraphBuilder.Hierarchy> car2 = () -> {
             PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car1 = null;
             try {
-                car1 = builder2.newHierarchy("Car").linkToOuter(target2).addSite();
+                car1 = builder2.hierarchy("Car").linkToOuter(target2).addSite();
             } catch (TypeNotExistsException e) {
                 e.printStackTrace();
             } catch (InvalidConnectionException e) {
@@ -226,8 +226,8 @@ public class RouteFinding {
         };
 
         builder2.createRoot()
-                .addChild("Place").linkToOuter(fromD2).withNewHierarchy().addSite().addChild(car2.get()).top()
-                .addChild("Place").linkToOuter(fromS2).withNewHierarchy().addChild("Road").linkToOuter(fromD2).addSite().top()
+                .addChild("Place").linkToOuter(fromD2).down().addSite().addChild(car2.get()).top()
+                .addChild("Place").linkToOuter(fromS2).down().addChild("Road").linkToOuter(fromD2).addSite().top()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -245,7 +245,7 @@ public class RouteFinding {
 
         builder.createRoot()
                 .addChild("Place").linkToOuter(from)
-                .withNewHierarchy().addSite().connectByEdge("Target", "Car").withNewHierarchy().addSite();
+                .down().addSite().connectByEdge("Target", "Car").down().addSite();
         PureBigraph bigraph = builder.createBigraph();
         return SubBigraphMatchPredicate.create(bigraph);
     }

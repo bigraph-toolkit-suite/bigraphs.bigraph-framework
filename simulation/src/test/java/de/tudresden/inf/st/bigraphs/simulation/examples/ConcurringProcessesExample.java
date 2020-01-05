@@ -58,8 +58,8 @@ public class ConcurringProcessesExample {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
         builder.createRoot()
                 .addChild("Process", "access2")
-                .addChild("Process", "access1").withNewHierarchy().addChild("Working").goBack()
-                .addChild("Resource").withNewHierarchy().addChild("Token", "access1").goBack()
+                .addChild("Process", "access1").down().addChild("Working").up()
+                .addChild("Resource").down().addChild("Token", "access1").up()
         ;
         PureBigraph agent = createAgent();
         PureBigraph agent2 = createAgentRegistered();
@@ -179,7 +179,7 @@ public class ConcurringProcessesExample {
         builder.createRoot()
                 .addChild("Process", "access1")
                 .addChild("Process", "access2")
-                .addChild("Resource").withNewHierarchy().addChild("Token")
+                .addChild("Resource").down().addChild("Token")
         ;
         PureBigraph bigraph = builder.createBigraph();
         return bigraph;
@@ -191,7 +191,7 @@ public class ConcurringProcessesExample {
         builder.createRoot()
                 .addChild("Process", "access2")
                 .addChild("Process", "access1")
-                .addChild("Resource").withNewHierarchy().addChild("Token", "access1")
+                .addChild("Resource").down().addChild("Token", "access1")
         ;
         return builder.createBigraph();
     }
@@ -200,8 +200,8 @@ public class ConcurringProcessesExample {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
         builder.createRoot()
                 .addChild("Process", "access2")
-                .addChild("Process", "access1").withNewHierarchy().addChild("Working").goBack()
-                .addChild("Resource").withNewHierarchy().addChild("Token", "access2").goBack()
+                .addChild("Process", "access1").down().addChild("Working").up()
+                .addChild("Resource").down().addChild("Token", "access2").up()
         ;
         return builder.createBigraph();
     }
@@ -211,10 +211,10 @@ public class ConcurringProcessesExample {
         PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
 
         builderRedex.createRoot().addChild("Process", "access");
-        builderRedex.createRoot().addChild("Resource").withNewHierarchy().addChild("Token");
+        builderRedex.createRoot().addChild("Resource").down().addChild("Token");
 
         builderReactum.createRoot().addChild("Process", "access");
-        builderReactum.createRoot().addChild("Resource").withNewHierarchy().addChild("Token", "access");
+        builderReactum.createRoot().addChild("Resource").down().addChild("Token", "access");
 
 
         PureBigraph redex = builderRedex.createBigraph();
@@ -227,11 +227,11 @@ public class ConcurringProcessesExample {
         PureBigraphBuilder<DefaultDynamicSignature> builderRedex = factory.createBigraphBuilder(createSignature());
         PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
 
-        builderRedex.createRoot().addChild("Process", "access").withNewHierarchy().addChild("Working").top();
-        builderRedex.createRoot().addChild("Resource").withNewHierarchy().addChild("Token", "access");
+        builderRedex.createRoot().addChild("Process", "access").down().addChild("Working").top();
+        builderRedex.createRoot().addChild("Resource").down().addChild("Token", "access");
 
         builderReactum.createRoot().addChild("Process", "access");
-        builderReactum.createRoot().addChild("Resource").withNewHierarchy().addChild("Token");
+        builderReactum.createRoot().addChild("Resource").down().addChild("Token");
 
         PureBigraph redex = builderRedex.createBigraph();
         PureBigraph reactum = builderReactum.createBigraph();
@@ -244,10 +244,10 @@ public class ConcurringProcessesExample {
         PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
 
         builderRedex.createRoot().addChild("Process", "access");
-        builderRedex.createRoot().addChild("Resource").withNewHierarchy().addChild("Token", "access");
+        builderRedex.createRoot().addChild("Resource").down().addChild("Token", "access");
 
-        builderReactum.createRoot().addChild("Process", "access").withNewHierarchy().addChild("Working").top();
-        builderReactum.createRoot().addChild("Resource").withNewHierarchy().addChild("Token", "access");
+        builderReactum.createRoot().addChild("Process", "access").down().addChild("Working").top();
+        builderReactum.createRoot().addChild("Resource").down().addChild("Token", "access");
 
         PureBigraph redex = builderRedex.createBigraph();
         PureBigraph reactum = builderReactum.createBigraph();

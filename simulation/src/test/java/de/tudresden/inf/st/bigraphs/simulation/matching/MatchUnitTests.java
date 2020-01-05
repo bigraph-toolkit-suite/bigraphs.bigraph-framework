@@ -360,8 +360,8 @@ public class MatchUnitTests {
         BigraphEntity.OuterName a = builder.createOuterName("a");
         BigraphEntity.OuterName b = builder.createOuterName("b");
         builder.createRoot()
-                .addChild("Building").withNewHierarchy().addChild("Room")
-                .withNewHierarchy().addChild("Printer").linkToOuter(a)
+                .addChild("Building").down().addChild("Room")
+                .down().addChild("Printer").linkToOuter(a)
                 .linkToOuter(b)
         ;
 
@@ -375,7 +375,7 @@ public class MatchUnitTests {
         BigraphEntity.OuterName a = builder.createOuterName("a");
         BigraphEntity.OuterName b = builder.createOuterName("b");
         builder.createRoot()
-                .addChild("Room").withNewHierarchy()
+                .addChild("Room").down()
                 .addChild("Printer").linkToOuter(a)
                 .linkToOuter(b)
         ;
@@ -388,13 +388,13 @@ public class MatchUnitTests {
         DefaultDynamicSignature signature = createSignatureABC();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy a = builder.newHierarchy(signature.getControlByName("A"));
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy b = builder.newHierarchy(signature.getControlByName("B"));
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy a = builder.hierarchy(signature.getControlByName("A"));
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy b = builder.hierarchy(signature.getControlByName("B"));
 
         a.addChild("B")
                 .addChild("C")
-                .withNewHierarchy().addChild("D").addChild("E");
-        b.addChild("F").addChild("G").withNewHierarchy().addChild("H").addChild("I");
+                .down().addChild("D").addChild("E");
+        b.addChild("F").addChild("G").down().addChild("H").addChild("I");
 
         builder.createRoot()
                 .addChild(a.top())
@@ -406,7 +406,7 @@ public class MatchUnitTests {
     public PureBigraph createRedex_7() {
         DefaultDynamicSignature signature = createSignatureABC();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-        builder.createRoot().addChild("G").withNewHierarchy().addChild("H").addChild("I");
+        builder.createRoot().addChild("G").down().addChild("H").addChild("I");
 
 //        builder.createRoot().addChild("C").withNewHierarchy().addChild("A").withNewHierarchy().addChild("D").addChild("E");
         return builder.createBigraph();
@@ -418,7 +418,7 @@ public class MatchUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Computer"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Room"))
                 .addChild(signature.getControlByName("Job"));
         return builder.createBigraph();
@@ -430,7 +430,7 @@ public class MatchUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer"))
                 .addChild(signature.getControlByName("Job"));
         return builder.createBigraph();
@@ -446,17 +446,17 @@ public class MatchUnitTests {
         BigraphEntity.OuterName a = builder.createOuterName("a");
         BigraphEntity.OuterName b = builder.createOuterName("b");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
-        room.addChild(signature.getControlByName("Computer")).linkToOuter(network).withNewHierarchy()
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
+        room.addChild(signature.getControlByName("Computer")).linkToOuter(network).down()
                 .addChild(signature.getControlByName("A"))
                 .addChild(signature.getControlByName("A")).linkToOuter(b)
                 .addChild(signature.getControlByName("A")).linkToOuter(b);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room2 = builder.newHierarchy(signature.getControlByName("Room"));
-        room2.addChild(signature.getControlByName("Computer")).linkToOuter(network).withNewHierarchy()
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room2 = builder.hierarchy(signature.getControlByName("Room"));
+        room2.addChild(signature.getControlByName("Computer")).linkToOuter(network).down()
                 .addChild(signature.getControlByName("A")).linkToOuter(a)
                 .addChild(signature.getControlByName("B")).linkToInner(innerLink)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
+                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).up()
                 .addChild(signature.getControlByName("A")).linkToInner(innerLink);
 
         builder.createRoot().addChild(room).addChild(room2);
@@ -470,12 +470,12 @@ public class MatchUnitTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
-        room.addChild(signature.getControlByName("Computer")).linkToOuter(network).withNewHierarchy()
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
+        room.addChild(signature.getControlByName("Computer")).linkToOuter(network).down()
                 .addSite();
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room2 = builder.newHierarchy(signature.getControlByName("Room"));
-        room2.addChild(signature.getControlByName("Computer")).linkToOuter(network).withNewHierarchy()
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room2 = builder.hierarchy(signature.getControlByName("Room"));
+        room2.addChild(signature.getControlByName("Computer")).linkToOuter(network).down()
                 .addSite();
 
         builder.createRoot().addChild(room).addChild(room2);
@@ -496,18 +496,18 @@ public class MatchUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .withNewHierarchy().addChild(signature.getControlByName("User")).linkToOuter(bob)
+                .down().addChild(signature.getControlByName("User")).linkToOuter(bob)
                 .addChild(signature.getControlByName("Computer")).linkToOuter(network)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
+                .down().addChild(signature.getControlByName("Job")).down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).up()
                 .addChild(signature.getControlByName("User")).linkToOuter(a)
-                .withNewHierarchy().addChild(signature.getControlByName("User")).linkToOuter(b)
-                .goBack()
-                .goBack()
-                .goBack()
+                .down().addChild(signature.getControlByName("User")).linkToOuter(b)
+                .up()
+                .up()
+                .up()
 
                 .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .withNewHierarchy().addChild(signature.getControlByName("User")).linkToOuter(jeff)
-                .goBack()
+                .down().addChild(signature.getControlByName("User")).linkToOuter(jeff)
+                .up()
         ;
 
         builder.closeAllInnerNames();
@@ -524,7 +524,7 @@ public class MatchUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(network)
-                .withNewHierarchy().addSite().addChild(signature.getControlByName("Job")).withNewHierarchy().addSite();
+                .down().addSite().addChild(signature.getControlByName("Job")).down().addSite();
         return builder.createBigraph();
     }
 
@@ -543,17 +543,17 @@ public class MatchUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).linkToInner(e1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
+                .down().addChild(signature.getControlByName("Job")).up()
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff1)
-                .goBack()
+                .up()
 
                 .addChild(signature.getControlByName("Room")).linkToInner(e1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .goBack().goBack();
+                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .up().up();
 
         builder.closeAllInnerNames();
         builder.makeGround();
@@ -571,12 +571,12 @@ public class MatchUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
+                .down().addChild(signature.getControlByName("Job")).up()
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff1);
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2);
+                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2);
 
         builder.makeGround();
         return builder.createBigraph();
@@ -593,14 +593,14 @@ public class MatchUnitTests {
         builder.
                 createRoot()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(a)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("User")).linkToOuter(d)
                 .addChild(signature.getControlByName("Job"))
 //                .goBack()
         ;
         builder.createRoot()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(c)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("User")).linkToOuter(b)
                 .addChild(signature.getControlByName("Job"))
 //                .goBack()
@@ -619,22 +619,22 @@ public class MatchUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .goBack()
-                .goBack()
+                .up()
+                .up()
 
                 .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .goBack()
-                .goBack()
+                .up()
+                .up()
 
 //                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
         ;
@@ -666,7 +666,7 @@ public class MatchUnitTests {
         builder.
                 createRoot()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addSite().goBack()
+                .down().addSite().up()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(jeff)
                 .addChild(signature.getControlByName("Job"))
         ;
@@ -697,13 +697,13 @@ public class MatchUnitTests {
         builder.
                 createRoot()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .withNewHierarchy().addSite().goBack()
+                .down().addSite().up()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(c)
                 .addChild(signature.getControlByName("Job"))
         ;
         builder.createRoot()
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff1)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
+                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).up()
         ;
         return builder.createBigraph();
     }
@@ -729,25 +729,25 @@ public class MatchUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room")).linkToInner(door)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")) //.connectNodeToOuterName(a)
                 .addChild(signature.getControlByName("Computer")).linkToOuter(a)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("Job")).withNewHierarchy().addChild(signature.getControlByName("Job")).goBack()
-                .addChild(signature.getControlByName("Job")).goBack()
+                .addChild(signature.getControlByName("Job")).down().addChild(signature.getControlByName("Job")).up()
+                .addChild(signature.getControlByName("Job")).up()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(a)
                 .addChild(signature.getControlByName("Computer")).linkToOuter(jeff1)
                 .addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("User"))
-                .goBack()
+                .up()
 
                 .addChild(signature.getControlByName("Spool")).linkToOuter(e0)
 
                 .addChild(signature.getControlByName("Room")).linkToOuter(e1)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
+                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).up()
                 .addChild(signature.getControlByName("Job"))
                 .addChild(signature.getControlByName("Job"))
 
@@ -821,24 +821,24 @@ public class MatchUnitTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy leftNode =
-                builder.newHierarchy(signature.getControlByName("Left"))
+                builder.hierarchy(signature.getControlByName("Left"))
                         .addChild("Z");
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rightNode =
-                builder.newHierarchy(signature.getControlByName("Right"))
+                builder.hierarchy(signature.getControlByName("Right"))
                         .addChild("S");
 //        for (int i = 0; i < left - 1; i++) {
 //            leftNode = leftNode.withNewHierarchy().addChild("S");
 //        }
 //        leftNode = leftNode.withNewHierarchy().addChild("Z").top();
         for (int i = 0; i < right - 1; i++) {
-            rightNode = rightNode.withNewHierarchy().addChild("S");
+            rightNode = rightNode.down().addChild("S");
         }
 //        rightNode = rightNode.withNewHierarchy().addChild("Z").top();
         rightNode = rightNode.top();
 
         builder.createRoot()
                 .addChild("Age")
-                .withNewHierarchy()
+                .down()
                 .addChild(leftNode)
                 .addChild(rightNode)
         ;
@@ -852,12 +852,12 @@ public class MatchUnitTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
 
         builder.createRoot()
-                .addChild("Left").withNewHierarchy().addSite()
+                .addChild("Left").down().addSite()
                 .top()
-                .addChild("Right").withNewHierarchy().addChild("Z")
+                .addChild("Right").down().addChild("Z")
         ;
         builder2.createRoot()
-                .addChild("False").withNewHierarchy().addSite()
+                .addChild("False").down().addSite()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();

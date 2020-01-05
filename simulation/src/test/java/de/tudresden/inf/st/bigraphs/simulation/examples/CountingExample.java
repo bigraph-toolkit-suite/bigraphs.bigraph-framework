@@ -119,10 +119,10 @@ public class CountingExample {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy leftNode =
-                builder.newHierarchy(signature.getControlByName("Left"))
+                builder.hierarchy(signature.getControlByName("Left"))
                         .addChild("S");
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rightNode =
-                builder.newHierarchy(signature.getControlByName("Right"))
+                builder.hierarchy(signature.getControlByName("Right"))
                         .addChild("S");
 //        IntStream.range(0, left).forEach(x -> {
 //            leftNode.withNewHierarchy().addChild("S");
@@ -140,17 +140,17 @@ public class CountingExample {
 //        s = s.withNewHierarchy().addChild(s2);
 //        s = s.addChild(s2);
         for (int i = 0; i < left - 1; i++) {
-            leftNode = leftNode.withNewHierarchy().addChild("S");
+            leftNode = leftNode.down().addChild("S");
         }
-        leftNode = leftNode.withNewHierarchy().addChild("Z").top();
+        leftNode = leftNode.down().addChild("Z").top();
         for (int i = 0; i < right - 1; i++) {
-            rightNode = rightNode.withNewHierarchy().addChild("S");
+            rightNode = rightNode.down().addChild("S");
         }
-        rightNode = rightNode.withNewHierarchy().addChild("Z").top();
+        rightNode = rightNode.down().addChild("Z").top();
 
         builder.createRoot()
                 .addChild("Age")
-                .withNewHierarchy()
+                .down()
                 .addChild(leftNode)
                 .addChild(rightNode)
 //                .addChild(s.top())
@@ -168,14 +168,14 @@ public class CountingExample {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
 
         builder.createRoot()
-                .addChild("Left").withNewHierarchy().addChild("S").withNewHierarchy().addSite()
+                .addChild("Left").down().addChild("S").down().addSite()
                 .top()
-                .addChild("Right").withNewHierarchy().addChild("S").withNewHierarchy().addSite()
+                .addChild("Right").down().addChild("S").down().addSite()
         ;
         builder2.createRoot()
-                .addChild("Left").withNewHierarchy().addSite()
+                .addChild("Left").down().addSite()
                 .top()
-                .addChild("Right").withNewHierarchy().addSite()
+                .addChild("Right").down().addSite()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -192,12 +192,12 @@ public class CountingExample {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
 
         builder.createRoot()
-                .addChild("Left").withNewHierarchy().addChild("Z")
+                .addChild("Left").down().addChild("Z")
                 .top()
-                .addChild("Right").withNewHierarchy().addChild("S").withNewHierarchy().addSite()
+                .addChild("Right").down().addChild("S").down().addSite()
         ;
         builder2.createRoot()
-                .addChild("True").withNewHierarchy().addSite()
+                .addChild("True").down().addSite()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -214,12 +214,12 @@ public class CountingExample {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
 
         builder.createRoot()
-                .addChild("Left").withNewHierarchy().addSite()
+                .addChild("Left").down().addSite()
                 .top()
-                .addChild("Right").withNewHierarchy().addChild("Z")
+                .addChild("Right").down().addChild("Z")
         ;
         builder2.createRoot()
-                .addChild("False").withNewHierarchy().addSite()
+                .addChild("False").down().addSite()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();

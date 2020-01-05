@@ -102,7 +102,7 @@ public class BigraphArtifactUnitTests {
             BigraphEntity.InnerName f2 = builderForF.createInnerName("y_f");
 
             PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
-                    builderForF.newHierarchy(signature.getControlByName("Room"));
+                    builderForF.hierarchy(signature.getControlByName("Room"));
             room.addChild(signature.getControlByName("User")).linkToOuter(jeff).addChild(signature.getControlByName("Job"))
                     .addChild(signature.getControlByName("Printer")).linkToInner(f1).linkToInner(f2)
             ;
@@ -110,7 +110,7 @@ public class BigraphArtifactUnitTests {
                     .addChild(room);
 
             builderForG.createRoot()
-                    .addChild(signature.getControlByName("Job")).withNewHierarchy().addSite().goBack()
+                    .addChild(signature.getControlByName("Job")).down().addSite().up()
                     .addChild(signature.getControlByName("User")).linkToInner(jeffG);
 
 
@@ -144,10 +144,10 @@ public class BigraphArtifactUnitTests {
         BigraphEntity.InnerName f2 = builderForF.createInnerName("y_f");
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
-                builderForF.newHierarchy(signature.getControlByName("Room"));
+                builderForF.hierarchy(signature.getControlByName("Room"));
         room.addChild(signature.getControlByName("User")).linkToOuter(jeff).addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("Printer")).linkToInner(f1).linkToInner(f2).withNewHierarchy().addSite()
-                .goBack()
+                .addChild(signature.getControlByName("Printer")).linkToInner(f1).linkToInner(f2).down().addSite()
+                .up()
                 .addSite()
         ;
         builderForF.createRoot()
@@ -230,7 +230,7 @@ public class BigraphArtifactUnitTests {
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
 
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
         room.linkToInner(tmp1)
                 .addChild(signature.getControlByName("User")).linkToOuter(jeff)
                 .addChild(signature.getControlByName("Job"));

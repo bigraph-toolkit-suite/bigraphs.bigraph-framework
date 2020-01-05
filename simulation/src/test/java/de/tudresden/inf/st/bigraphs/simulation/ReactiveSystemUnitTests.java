@@ -171,7 +171,7 @@ public class ReactiveSystemUnitTests {
 
         builder.createRoot()
                 .addChild(signature.getControlByName("Room"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(network)
         ;
 
@@ -187,7 +187,7 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network)
         ;
         builder.makeGround();
@@ -200,9 +200,9 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job").addChild("Job")
         ;
         return builder.createBigraph();
@@ -222,16 +222,16 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot()
                 .addChild(signature.getControlByName("Room"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(network)
         ;
 
         BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder2.createRoot()
                 .addChild(signature.getControlByName("Room"))
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Computer")).linkToOuter(network2)
-                .withNewHierarchy()
+                .down()
                 .addChild(signature.getControlByName("Job"))
         ;
 
@@ -251,12 +251,12 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network)
         ;
         builder2.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network2)
         ;
 //        builder.closeAllInnerNames();
@@ -276,14 +276,14 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network)
         ;
         builder2.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network2)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job").addChild("Job")
         ;
 
@@ -305,14 +305,14 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network)
         ;
         builder2.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network2)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job")
         ;
 
@@ -333,16 +333,16 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job")
         ;
         builder2.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network2)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job").addChild("Job")
         ;
 
@@ -363,16 +363,16 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job")
         ;
         builder2.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network2)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job").addChild("Job").addChild("Job")
         ;
 
@@ -393,16 +393,16 @@ public class ReactiveSystemUnitTests {
         BigraphEntity.OuterName network2 = builder2.createOuterName("network");
         builder.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job")
         ;
         builder2.createRoot()
                 .addChild("Room")
-                .withNewHierarchy()
+                .down()
                 .addChild("Computer").linkToOuter(network2)
-                .withNewHierarchy()
+                .down()
                 .addChild("Job").addChild("Job").addChild("Job").addChild("Job")
         ;
 

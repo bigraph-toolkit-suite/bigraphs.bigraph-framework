@@ -449,10 +449,10 @@ public class BigraphCreationUnitTest {
                     .addChild(this.signature.getControlByName("Computer"))
                     .addChild(this.signature.getControlByName("Computer"))
                     .addSite()
-                    .withNewHierarchy()
+                    .down()
                     .addChild(this.signature.getControlByName("Job"))
                     .addSite()
-                    .goBack()
+                    .up()
                     .connectNodeToInnerName(x1, this.signature.getControlByName("Printer"));
 
 //            builder.new Hierarchy(signature.getControlByName("User"));
@@ -487,10 +487,10 @@ public class BigraphCreationUnitTest {
             builder.createRoot()
                     .addChild(signature.getControlByName("Spool"))
                     .addChild(signature.getControlByName("Room"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("Computer"))
                     .addChild(signature.getControlByName("Printer"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("Room"));
         }
     }
@@ -518,7 +518,7 @@ public class BigraphCreationUnitTest {
 
             assertAll(() -> {
 
-                PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.newHierarchy(signature.getControlByName("Room"));
+                PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
                 room.linkToInner(tmp1)
                         .addChild(signature.getControlByName("User")).linkToOuter(jeff)
                         .addChild(signature.getControlByName("Job"));
@@ -560,27 +560,27 @@ public class BigraphCreationUnitTest {
                 builder.createRoot()
                         .addChild(signature.getControlByName("A"))
                         .addChild(signature.getControlByName("C"))
-                        .withNewHierarchy().addChild(signature.getControlByName("B"));
+                        .down().addChild(signature.getControlByName("B"));
             });
             assertThrows(ControlIsAtomicException.class, () -> {
                 builder.createRoot()
                         .addChild(signature.getControlByName("C"))
-                        .withNewHierarchy().addChild(signature.getControlByName("A"));
+                        .down().addChild(signature.getControlByName("A"));
             });
             assertThrows(ControlIsAtomicException.class, () -> {
                 builder.createRoot()
                         .addChild(signature.getControlByName("C"))
-                        .withNewHierarchy().addSite();
+                        .down().addSite();
             });
 
             assertAll(() -> {
                 builder.createRoot()
                         .addChild(signature.getControlByName("Room"))
-                        .withNewHierarchy().addChild(signature.getControlByName("Room"))
-                        .withNewHierarchy().addChild(signature.getControlByName("Room"))
+                        .down().addChild(signature.getControlByName("Room"))
+                        .down().addChild(signature.getControlByName("Room"))
                         .addSite()
-                        .withNewHierarchy().addChild(signature.getControlByName("Room"))
-                        .withNewHierarchy().addSite();
+                        .down().addChild(signature.getControlByName("Room"))
+                        .down().addSite();
             });
 
 

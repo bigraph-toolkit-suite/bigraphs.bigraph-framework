@@ -72,7 +72,7 @@ public class CanonicalFormRepresentationUnitTests {
         builder.createRoot()
                 .addChild("Process", "access2")
                 .addChild("Process", "access1")
-                .addChild("Resource").withNewHierarchy().addChild("Token").goBack()
+                .addChild("Resource").down().addChild("Token").up()
         ;
         PureBigraph bigraph = builder.createBigraph();
         return bigraph;
@@ -124,9 +124,9 @@ public class CanonicalFormRepresentationUnitTests {
 //        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
 
         b1.createRoot().addChild("B")
-                .withNewHierarchy()
+                .down()
                 .addChild("D", "y1").linkToInner(e0)
-                .addChild("F", "y1").withNewHierarchy().addChild("H").addChild("G").withNewHierarchy().addSite().goBack().goBack()
+                .addChild("F", "y1").down().addChild("H").addChild("G").down().addSite().up().up()
                 .addChild("E", "y1").linkToInner(e0)
                 ;
         b1.closeAllInnerNames();
@@ -140,11 +140,11 @@ public class CanonicalFormRepresentationUnitTests {
         BigraphEntity.OuterName y1 = b1.createOuterName("y1");
         BigraphEntity.OuterName y2 = b1.createOuterName("y2");
 
-        PureBigraphBuilder.Hierarchy left = b1.newHierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).withNewHierarchy().addChild("H").addChild("G").withNewHierarchy().addSite().top();
-        PureBigraphBuilder.Hierarchy middle = b1.newHierarchy("C").addChild("A").addChild("B").withNewHierarchy().addSite().top();
-        PureBigraphBuilder.Hierarchy right = b1.newHierarchy("B").connectByEdge("D", "E").addChild("F").linkToOuter(y2).top();
+        PureBigraphBuilder.Hierarchy left = b1.hierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).down().addChild("H").addChild("G").down().addSite().top();
+        PureBigraphBuilder.Hierarchy middle = b1.hierarchy("C").addChild("A").addChild("B").down().addSite().top();
+        PureBigraphBuilder.Hierarchy right = b1.hierarchy("B").connectByEdge("D", "E").addChild("F").linkToOuter(y2).top();
         b1.connectInnerToOuterName(b, y2);
-        b1.createRoot().addChild("Q").withNewHierarchy().addChild(left).addChild(middle).addChild(right);
+        b1.createRoot().addChild("Q").down().addChild(left).addChild(middle).addChild(right);
         return b1.createBigraph();
     }
 
@@ -153,11 +153,11 @@ public class CanonicalFormRepresentationUnitTests {
         PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName y1 = b1.createOuterName("y1");
 
-        PureBigraphBuilder.Hierarchy left = b1.newHierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).withNewHierarchy().addChild("H").addChild("G").withNewHierarchy().addSite().top();
-        PureBigraphBuilder.Hierarchy middle = b1.newHierarchy("C").addChild("A").addChild("B").top();
-        PureBigraphBuilder.Hierarchy right = b1.newHierarchy("B").connectByEdge("D", "E").addChild("F").linkToOuter(y1).top();
+        PureBigraphBuilder.Hierarchy left = b1.hierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).down().addChild("H").addChild("G").down().addSite().top();
+        PureBigraphBuilder.Hierarchy middle = b1.hierarchy("C").addChild("A").addChild("B").top();
+        PureBigraphBuilder.Hierarchy right = b1.hierarchy("B").connectByEdge("D", "E").addChild("F").linkToOuter(y1).top();
 
-        b1.createRoot().addChild("Q").withNewHierarchy().addChild(left).addChild(middle).addChild(right);
+        b1.createRoot().addChild("Q").down().addChild(left).addChild(middle).addChild(right);
         PureBigraph bigraph = b1.createBigraph();
         return bigraph;
     }
@@ -172,10 +172,10 @@ public class CanonicalFormRepresentationUnitTests {
         BigraphEntity.InnerName e3 = b1.createInnerName("e3");
 
         b1.createRoot()
-                .addChild("B").withNewHierarchy()
-                .addChild("D").linkToInner(e0).withNewHierarchy().addChild("G").goBack().addChild("F").linkToInner(e0).linkToInner(e1).withNewHierarchy().addChild("H").goBack().addChild("E").linkToInner(e1).goBack()
-                .addChild("B").withNewHierarchy()
-                .addChild("D").linkToInner(e2).withNewHierarchy().addChild("G").goBack().addChild("E").linkToInner(e2).linkToInner(e3).addChild("F").linkToInner(e3).withNewHierarchy().addChild("H").goBack().goBack()
+                .addChild("B").down()
+                .addChild("D").linkToInner(e0).down().addChild("G").up().addChild("F").linkToInner(e0).linkToInner(e1).down().addChild("H").up().addChild("E").linkToInner(e1).up()
+                .addChild("B").down()
+                .addChild("D").linkToInner(e2).down().addChild("G").up().addChild("E").linkToInner(e2).linkToInner(e3).addChild("F").linkToInner(e3).down().addChild("H").up().up()
         ;
         b1.closeInnerNames(e0, e1, e2, e3);
         return b1.createBigraph();
@@ -190,8 +190,8 @@ public class CanonicalFormRepresentationUnitTests {
         BigraphEntity.InnerName e2 = b1.createInnerName("e2");
         BigraphEntity.InnerName e3 = b1.createInnerName("e3");
         b1.createRoot()
-                .addChild("B").withNewHierarchy().addChild("D").linkToInner(e0).linkToInner(e1).withNewHierarchy().addChild("G").goBack().addChild("E").linkToInner(e1).addChild("F").linkToInner(e0).withNewHierarchy().addChild("H").goBack().goBack()
-                .addChild("B").withNewHierarchy().addChild("D").linkToInner(e2).withNewHierarchy().addChild("G").goBack().addChild("E").linkToInner(e2).linkToInner(e3).addChild("F").linkToInner(e3).withNewHierarchy().addChild("H").goBack().goBack()
+                .addChild("B").down().addChild("D").linkToInner(e0).linkToInner(e1).down().addChild("G").up().addChild("E").linkToInner(e1).addChild("F").linkToInner(e0).down().addChild("H").up().up()
+                .addChild("B").down().addChild("D").linkToInner(e2).down().addChild("G").up().addChild("E").linkToInner(e2).linkToInner(e3).addChild("F").linkToInner(e3).down().addChild("H").up().up()
         ;
         b1.closeInnerNames(e0, e1, e2, e3);
         return b1.createBigraph();
@@ -257,13 +257,13 @@ public class CanonicalFormRepresentationUnitTests {
 
             builder.createRoot()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
-                    .addChild(signature.getControlByName("B")).withNewHierarchy()
-                    .addChild("E").withNewHierarchy().addChild("A").goBack().goBack()
-                    .addChild(signature.getControlByName("C")).withNewHierarchy()
-                    .addChild("F").withNewHierarchy().addChild("B").addChild("D").goBack().addChild("A").goBack()
-                    .addChild(signature.getControlByName("D")).withNewHierarchy()
-                    .addChild("F").withNewHierarchy().addChild("C")
+                    .down()
+                    .addChild(signature.getControlByName("B")).down()
+                    .addChild("E").down().addChild("A").up().up()
+                    .addChild(signature.getControlByName("C")).down()
+                    .addChild("F").down().addChild("B").addChild("D").up().addChild("A").up()
+                    .addChild(signature.getControlByName("D")).down()
+                    .addChild("F").down().addChild("C")
             ;
             return builder.createBigraph();
         }
@@ -339,19 +339,19 @@ public class CanonicalFormRepresentationUnitTests {
 
             builder.createRoot()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("E"))
-                    .withNewHierarchy()
-                    .addChild(signature.getControlByName("E")).goBack().goBack()
+                    .down()
+                    .addChild(signature.getControlByName("E")).up().up()
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("D"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("G"))
                     .addChild(signature.getControlByName("F"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("C"));
             return builder.createBigraph();
         }
@@ -362,19 +362,19 @@ public class CanonicalFormRepresentationUnitTests {
 
             builder.createRoot()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("E"))
-                    .withNewHierarchy()
-                    .addChild(signature.getControlByName("E")).goBack().goBack()
+                    .down()
+                    .addChild(signature.getControlByName("E")).up().up()
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("C"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("G"))
                     .addChild(signature.getControlByName("F"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("D"));
             return builder.createBigraph();
         }
@@ -385,27 +385,27 @@ public class CanonicalFormRepresentationUnitTests {
 
             builder.createRoot()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("B"))
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("C"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("H"))
                     .addChild(signature.getControlByName("G"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("D"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("E"))
                     .addChild(signature.getControlByName("C"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("H"))
                     .addChild(signature.getControlByName("F"))
-                    .goBack()
-                    .goBack()
-                    .goBack()
+                    .up()
+                    .up()
+                    .up()
             ;
 
             return builder.createBigraph();
@@ -417,27 +417,27 @@ public class CanonicalFormRepresentationUnitTests {
 
             builder.createRoot()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("C"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("F"))
                     .addChild(signature.getControlByName("H"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("E"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("C"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("G"))
                     .addChild(signature.getControlByName("H"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("D"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("B"))
-                    .goBack()
+                    .up()
             ;
 
             return builder.createBigraph();
@@ -456,30 +456,30 @@ public class CanonicalFormRepresentationUnitTests {
 
             b1.createRoot()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
-                    .addChild(signature.getControlByName("B")).withNewHierarchy()
-                    .addChild(signature.getControlByName("C")).goBack()
+                    .down()
+                    .addChild(signature.getControlByName("B")).down()
+                    .addChild(signature.getControlByName("C")).up()
                     .addChild(signature.getControlByName("B"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("D")).addChild(signature.getControlByName("C"));
 
-            b2.createRoot().addChild(signature.getControlByName("A")).withNewHierarchy()
-                    .addChild(signature.getControlByName("B")).withNewHierarchy().addChild(signature.getControlByName("C"))
-                    .goBack()
-                    .addChild(signature.getControlByName("B")).withNewHierarchy()
+            b2.createRoot().addChild(signature.getControlByName("A")).down()
+                    .addChild(signature.getControlByName("B")).down().addChild(signature.getControlByName("C"))
+                    .up()
+                    .addChild(signature.getControlByName("B")).down()
                     .addChild(signature.getControlByName("C")).addChild(signature.getControlByName("D"));
 
-            b3.createRoot().addChild(signature.getControlByName("A")).withNewHierarchy()
-                    .addChild(signature.getControlByName("B")).withNewHierarchy()
+            b3.createRoot().addChild(signature.getControlByName("A")).down()
+                    .addChild(signature.getControlByName("B")).down()
                     .addChild(signature.getControlByName("D")).addChild(signature.getControlByName("C"))
-                    .goBack()
-                    .addChild(signature.getControlByName("B")).withNewHierarchy().addChild(signature.getControlByName("C"))
+                    .up()
+                    .addChild(signature.getControlByName("B")).down().addChild(signature.getControlByName("C"))
             ;
-            b4.createRoot().addChild(signature.getControlByName("A")).withNewHierarchy()
-                    .addChild(signature.getControlByName("B")).withNewHierarchy()
+            b4.createRoot().addChild(signature.getControlByName("A")).down()
+                    .addChild(signature.getControlByName("B")).down()
                     .addChild(signature.getControlByName("C")).addChild(signature.getControlByName("D"))
-                    .goBack()
-                    .addChild(signature.getControlByName("B")).withNewHierarchy().addChild(signature.getControlByName("C"))
+                    .up()
+                    .addChild(signature.getControlByName("B")).down().addChild(signature.getControlByName("C"))
             ;
 
             return Lists.newArrayList(b1.createBigraph(), b2.createBigraph(), b3.createBigraph(), b4.createBigraph());
@@ -510,10 +510,10 @@ public class CanonicalFormRepresentationUnitTests {
         private PureBigraph createA() throws Exception {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
-            b1.createRoot().addChild("A").withNewHierarchy()
-                    .addChild("B").withNewHierarchy().addChild("E").withNewHierarchy().addChild("G").goBack().addChild("D").addChild("F").withNewHierarchy().addChild("H").goBack().goBack()
-                    .addChild("B").withNewHierarchy().addChild("D").withNewHierarchy().addChild("G").goBack().addChild("E").addChild("F").withNewHierarchy().addChild("H").goBack().goBack()
-                    .addChild("B").withNewHierarchy().addChild("R").addChild("Q").top()
+            b1.createRoot().addChild("A").down()
+                    .addChild("B").down().addChild("E").down().addChild("G").up().addChild("D").addChild("F").down().addChild("H").up().up()
+                    .addChild("B").down().addChild("D").down().addChild("G").up().addChild("E").addChild("F").down().addChild("H").up().up()
+                    .addChild("B").down().addChild("R").addChild("Q").top()
             ;
             return b1.createBigraph();
         }
@@ -522,10 +522,10 @@ public class CanonicalFormRepresentationUnitTests {
             Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
 
-            b1.createRoot().addChild("A").withNewHierarchy()
-                    .addChild("B").withNewHierarchy().addChild("D").withNewHierarchy().addChild("G").goBack().addChild("E").addChild("F").withNewHierarchy().addChild("H").goBack().goBack()
-                    .addChild("B").withNewHierarchy().addChild("D").withNewHierarchy().addChild("G").goBack().addChild("E").addChild("F").withNewHierarchy().addChild("H").goBack().goBack()
-                    .addChild("B").withNewHierarchy().addChild("R").addChild("Q").top()
+            b1.createRoot().addChild("A").down()
+                    .addChild("B").down().addChild("D").down().addChild("G").up().addChild("E").addChild("F").down().addChild("H").up().up()
+                    .addChild("B").down().addChild("D").down().addChild("G").up().addChild("E").addChild("F").down().addChild("H").up().up()
+                    .addChild("B").down().addChild("R").addChild("Q").top()
             ;
             return b1.createBigraph();
         }
@@ -580,15 +580,15 @@ public class CanonicalFormRepresentationUnitTests {
             BigraphEntity.InnerName inner = builder.createInnerName("inner");
             builder.createRoot()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("B")).linkToInner(inner)
                     .addChild(signature.getControlByName("C")).linkToInner(inner)
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("B"))
                     .addChild(signature.getControlByName("C"))
-                    .goBack()
+                    .up()
             ;
             return builder.closeAllInnerNames().createBigraph();
         }
@@ -599,15 +599,15 @@ public class CanonicalFormRepresentationUnitTests {
             BigraphEntity.InnerName inner = builder.createInnerName("inner");
             builder.createRoot()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("B"))
                     .addChild(signature.getControlByName("C"))
-                    .goBack()
+                    .up()
                     .addChild(signature.getControlByName("A"))
-                    .withNewHierarchy()
+                    .down()
                     .addChild(signature.getControlByName("C")).linkToInner(inner)
                     .addChild(signature.getControlByName("B")).linkToInner(inner)
-                    .goBack()
+                    .up()
             ;
             return builder.closeAllInnerNames().createBigraph();
         }
@@ -622,15 +622,15 @@ public class CanonicalFormRepresentationUnitTests {
             BigraphEntity.InnerName x1 = b1.createInnerName("x1");
 
             b1.createRoot().addChild("R")
-                    .withNewHierarchy()
+                    .down()
                     .addChild("J").linkToInner(edge2)
                     .addChild("A").linkToInner(edge2).linkToOuter(o1)
                     .addChild("A")
                     .addSite()
                     .addChild("J").linkToInner(x1)
-                    .goBack()
+                    .up()
                     .addChild("R")
-                    .withNewHierarchy()
+                    .down()
                     .addChild("A").linkToInner(edge)
                     .addChild("J").linkToInner(edge2)
 //                .addChild("C")
@@ -651,12 +651,12 @@ public class CanonicalFormRepresentationUnitTests {
 
             b1.createRoot()
                     .addChild("R")
-                    .withNewHierarchy()
+                    .down()
                     .addChild("A").linkToInner(edge)
                     .addChild("J").linkToInner(edge2)
                     .top()
                     .addChild("R")
-                    .withNewHierarchy()
+                    .down()
                     .addChild("A")
                     .addChild("A").linkToInner(edge2).linkToOuter(o1)
                     .addChild("J").linkToInner(edge2)
@@ -684,14 +684,14 @@ public class CanonicalFormRepresentationUnitTests {
             BigraphEntity.InnerName x31 = b2.createInnerName("x3");
             BigraphEntity.InnerName x41 = b2.createInnerName("x4");
             b1.createRoot()
-                    .addChild("B").withNewHierarchy().addChild("F").linkToInner(x1).linkToInner(x2).addChild("D").linkToInner(x1).addChild("E").linkToInner(x2).goBack()
-                    .addChild("B").withNewHierarchy().addChild("D").linkToInner(x3).addChild("E").linkToInner(x3).linkToInner(x4).addChild("F").linkToInner(x4).goBack()
+                    .addChild("B").down().addChild("F").linkToInner(x1).linkToInner(x2).addChild("D").linkToInner(x1).addChild("E").linkToInner(x2).up()
+                    .addChild("B").down().addChild("D").linkToInner(x3).addChild("E").linkToInner(x3).linkToInner(x4).addChild("F").linkToInner(x4).up()
             ;
             b1.closeInnerNames(x1, x2, x3, x4);
 
             b2.createRoot()
-                    .addChild("B").withNewHierarchy().addChild("F").linkToInner(x11).addChild("D").linkToInner(x11).linkToInner(x21).addChild("E").linkToInner(x21).goBack()
-                    .addChild("B").withNewHierarchy().addChild("D").linkToInner(x31).addChild("E").linkToInner(x31).linkToInner(x41).addChild("F").linkToInner(x41).goBack()
+                    .addChild("B").down().addChild("F").linkToInner(x11).addChild("D").linkToInner(x11).linkToInner(x21).addChild("E").linkToInner(x21).up()
+                    .addChild("B").down().addChild("D").linkToInner(x31).addChild("E").linkToInner(x31).linkToInner(x41).addChild("F").linkToInner(x41).up()
             ;
             b2.closeInnerNames(x11, x21, x31, x41);
 
@@ -717,10 +717,10 @@ public class CanonicalFormRepresentationUnitTests {
             BigraphEntity.OuterName y1 = b1.createOuterName("y1");
             BigraphEntity.OuterName y2 = b1.createOuterName("y2");
 
-            b1.createRoot().addChild("A").withNewHierarchy()
-                    .addChild("B").withNewHierarchy().addChild("D").linkToInner(e0).linkToOuter(y1).addChild("E").linkToInner(e0).linkToOuter(y1).addChild("F").linkToOuter(y1).withNewHierarchy().addChild("G").addChild("H").goBack().goBack()
-                    .addChild("B").withNewHierarchy().addChild("D").linkToInner(e1).withNewHierarchy().addChild("G").goBack().addChild("E").linkToInner(e1).addChild("F").linkToOuter(y1).withNewHierarchy().addChild("H").goBack().goBack()
-                    .addChild("B").withNewHierarchy().addChild("R").linkToInner(x1).addChild("Q").linkToInner(x1).top()
+            b1.createRoot().addChild("A").down()
+                    .addChild("B").down().addChild("D").linkToInner(e0).linkToOuter(y1).addChild("E").linkToInner(e0).linkToOuter(y1).addChild("F").linkToOuter(y1).down().addChild("G").addChild("H").up().up()
+                    .addChild("B").down().addChild("D").linkToInner(e1).down().addChild("G").up().addChild("E").linkToInner(e1).addChild("F").linkToOuter(y1).down().addChild("H").up().up()
+                    .addChild("B").down().addChild("R").linkToInner(x1).addChild("Q").linkToInner(x1).top()
             ;
             b1.closeInnerNames(e0, e1);
             b1.connectInnerToOuterName(x2, y2);
@@ -738,10 +738,10 @@ public class CanonicalFormRepresentationUnitTests {
             BigraphEntity.OuterName y1 = b1.createOuterName("y1");
             BigraphEntity.OuterName y2 = b1.createOuterName("y2");
 
-            b1.createRoot().addChild("A").withNewHierarchy()
-                    .addChild("B").withNewHierarchy().addChild("D").linkToInner(x1).linkToOuter(y1).addChild("E").linkToInner(x1).linkToOuter(y1).addChild("F").linkToOuter(y1).withNewHierarchy().addChild("G").addChild("H").goBack().goBack()
-                    .addChild("B").withNewHierarchy().addChild("D").linkToInner(e1).withNewHierarchy().addChild("G").goBack().addChild("E").linkToInner(e1).addChild("F").linkToOuter(y1).withNewHierarchy().addChild("H").goBack().goBack()
-                    .addChild("B").withNewHierarchy().addChild("R").addChild("Q").top()
+            b1.createRoot().addChild("A").down()
+                    .addChild("B").down().addChild("D").linkToInner(x1).linkToOuter(y1).addChild("E").linkToInner(x1).linkToOuter(y1).addChild("F").linkToOuter(y1).down().addChild("G").addChild("H").up().up()
+                    .addChild("B").down().addChild("D").linkToInner(e1).down().addChild("G").up().addChild("E").linkToInner(e1).addChild("F").linkToOuter(y1).down().addChild("H").up().up()
+                    .addChild("B").down().addChild("R").addChild("Q").top()
             ;
             b1.closeInnerNames(e1);
             b1.connectInnerToOuterName(x2, y2);
