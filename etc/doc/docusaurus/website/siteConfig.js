@@ -29,8 +29,8 @@ const users = [
 ];
 
 const siteConfig = {
-    title: 'Test Site2', // Title for your website.
-    tagline: 'A website for testing',
+    title: 'Bigraph Framework', // Title for your website.
+    tagline: 'A framework written in Java for the creation and simulation of bigraphical reactive systems',
     url: 'https://your-docusaurus-test-site.com', // Your website URL
     baseUrl: '/', // Base URL for your project */
     // For github.io type URLs, you would set the url and baseUrl like:

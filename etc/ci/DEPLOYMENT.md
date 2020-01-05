@@ -59,10 +59,18 @@ The generated java documentation is available from `etc/doc/docusaurus/website/s
 
 ### Using Docusaurus
 
+You must `cd` into the `etc/doc/docusaurus/website/` folder.
+Then, to view and edit the manual:
 ```bash
 cd ./etc/doc/docusaurus/website
 npm start
 ```
+To actually build it:
+```bash
+npm run build
+```
+The output is located at `etc/doc/docusaurus/website/build/bigraph-framework/index.html`.
+
 <!--### Using Mkdocs directly-->
 
 <!--- for testing purposes only-->

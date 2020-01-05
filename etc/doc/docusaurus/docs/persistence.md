@@ -24,16 +24,40 @@ The ecore model includes a direct references to the meta model for validation.
 
 
 
-## Meta Model
+## Bigraphical Meta Model
 
-To store the meta model (i.e., an abstract bigraph over a signature):
+To only store the meta-model of a concrete bigraph (i.e., an abstract bigraph over a signature,
+also called *meta model over a signature*), we call the method `BigraphArtifacts#exportAsMetaModel()`.
+
+For demonstration, we create a simple signature and pass some additional
+meta data to the bigraph builder. This gives us the option to specify the namespace
+and the URI of the meta model.
 
 ```java
+DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+signatureBuilder
+    .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(2)).assign()
+    .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(1)).assign()
+    .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
+Signature signature = signatureBuilder.create();
+        
+PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = factory.createBigraphBuilder(
+    signature,
+    EMetaModelData.builder()
+        .setName("myMetaModel")
+        .setNsPrefix("example")
+        .setNsUri("http://example.org")
+        .create()
+);
+PureBigraph bigraph = bigraphBuilder.createBigraph();
 
+// Export the meta-model
+BigraphArtifacts.exportAsMetaModel(bigraph,
+    new FileOutputStream(new File("meta-model.ecore")));
 ```
 
 
-## Instance Model
+## Bigraphical Instance Model
 
 To store an instance model (i.e., a concrete bigraph over a signature):
 

@@ -54,7 +54,7 @@ The algorithm described in [\[1\]](#ref1) is implemented.
 The respective reaction graph of the above example is shown below after 
 the BFS simulation is finshed.
 
-![imgs](./images/home-example-reaction-graph.png)
+![imgs](assets/home-example-reaction-graph.png)
 
 ### Random simulation
 
@@ -65,7 +65,7 @@ only on path at random, until now further rules can be applied.
 It is unsure if the simulation ends.
 Provide some stop criteria. 
 
-![imgs](./images/transition_graph_random.png)
+![imgs](assets/transition_graph_random.png)
 In our example, rules (r0) and (r4) were applied on the agent. The algorithm
 was selecting the second agent (the one where (r4) points to), however, also 
 stops here, since no further rules could be applied. If the first agent 

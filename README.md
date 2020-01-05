@@ -238,16 +238,28 @@ by yourself and host them in the local Maven repository. Then, both steps _A)_ a
 
 **User-Friendly API**
 
-- Internally, bigraphs are described by a meta model based on Ecore. The project can be found in [this](https://git-st.inf.tu-dresden.de/bigraphs/ecore-bigraph-meta-model) Gitlab repository. To create concrete bigraphs, a signature must be provided. To do so, this meta model is extended when creating a new bigraphical signature which is then called "meta model over a signature" of an abstract bigraph (described by the Ecore model). We say that the signature is mapped to the meta model over a signature. From that, multiple instance models can be created where the instance bigraph
-relates to the signature _S_, thus, corresponds to the meta model over the signature _S_.
-- Extending the meta model with a signature by hand is time-consuming especially when many models are created.
-The framework allows to create bigraphs dynamically at runtime by letting the user providing a description of the 
-signature. The meta model over a signature is kept in memory and instances can be created from it.
-As a result, the bigraph meta model must not be touched manually.
-Both the meta model over a signature and the instance model can be stored on the filesystem.
-- That very meta model serves only as a data model for the *Bigraph Framework* which provides additional functionalities 
-and a user-friendly API for the creation and simulation of bigraphical reactive systems. 
-Furthermore, we achieve Separation of concerns: The meta model itself is implementation-agnostic. The Bigraph Framework adds specific behavior superimposed upon this meta model. Meaning, the implementation-specific details are kept out from the meta model.
+- Internally, bigraphs are described by a meta model based on Ecore. The project can
+be found in [this](https://git-st.inf.tu-dresden.de/bigraphs/ecore-bigraph-meta-model)
+Gitlab repository. To create concrete bigraphs, a signature must be provided.
+To do so, this meta model is extended when creating a new bigraphical signature
+which is then called "meta model over a signature" of an abstract bigraph
+(described by the Ecore model). We say that the signature is mapped to
+the meta model over a signature. From that, multiple instance models can
+be created where the instance bigraph relates to the signature _S_, thus,
+corresponds to the meta model over the signature _S_.
+- Extending the meta model with a signature by hand is time-consuming
+especially when many models are created. The framework allows to create
+bigraphs dynamically at runtime by letting the user providing a description
+of the signature. The meta model over a signature is kept in memory and
+instances can be created from it. As a result, the bigraph meta model must
+not be touched manually. Both the meta model over a signature and the
+instance model can be stored on the filesystem.
+- That very meta model serves only as a data model for the *Bigraph Framework*
+which provides additional functionality and a user-friendly API for the
+creation and simulation of bigraphical reactive systems. Furthermore, we
+achieve Separation of concerns: The meta model itself is implementation-agnostic.
+The Bigraph Framework adds specific behavior superimposed upon this meta
+model. Meaning, the implementation-specific details are kept out from the meta model.
 
 
 ### Modules

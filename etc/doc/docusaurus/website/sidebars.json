@@ -2,11 +2,11 @@
   "docs": {
     "Basics": [
       "index",
-      "basics",
-      "factories"
+      "basics"
     ],
     "Simulation": [
-      "simulation"
+      "simulation",
+      "verification"
     ],
     "Converter": [
       "converter"
@@ -18,7 +18,6 @@
       "visualization"
     ],
     "Advanced": [
-      "advanced/verification",
       "advanced/complex-modeling",
       "advanced/theory"
     ],

@@ -10,6 +10,8 @@ A Complete Guide to the Bigraph Framework.
 
 Version: ${revision}
 
+> **Notice:** The API is subject to change. Use at your own risk.
+
 ## What is Bigraph Framework
 
 **Bigraph Framework** is a software framework for the creation and simulation of bigraphs
@@ -39,11 +41,16 @@ and dynamics of complex systems.
 ## Requirements
 
 - Java
-- Optionally Maven or Gradle
+- Maven or Gradle
 
-## Dependency Settings
+## Install / Dependency Settings
 
 Artifacts are deployed to Bintray.
+
+> #### Building from Source
+> Otherwise, to build the source by yourself, follow the
+> [README.md](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/blob/master/README.md)
+> inside the repository.
 
 ### Packages
 
@@ -87,7 +94,7 @@ Add this inside the `<dependencies></dependencies>` section of your project `*.p
 
 <!--Gradle-->
 
-Add in your `build.gradle`:
+Append this in your `build.gradle` file:
 
 ```gradle
 // the core module
@@ -153,7 +160,7 @@ in `~/.m2/`.
     </activeProfiles>
 </settings>
 ```
-Alternateively, the project may be build manually. Please consult the `README.md` in the
+Alternatively, the project may be build manually. Please consult the `README.md` in the
 source repository on how to do so.
 
 <!--Gradle-->
