@@ -1,4 +1,4 @@
-image: maven:latest
+image: maven:3.6.3-jdk-8-slim
 
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
@@ -26,9 +26,6 @@ build:
 #  script:
 #    - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
 
-#docs:
-# stage: build
-
 changelogs:
   stage: build
   only:
@@ -50,16 +47,21 @@ changelogs:
 
 "Generate Documentation":
   stage: deploy
-  image: maven:3.6.3-jdk-8-slim
+#  image: maven:3.6.3-jdk-8-slim
   before_script:
     - apt-get update && apt-get install -y git
     - git config --global user.email "dominik.grzelak@tu-dresden.de"
     - git config --global user.name "Dominik Grzelak"
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
   #    - ./etc/ci/prepare_docs.sh
   script:
     - mvn $MAVEN_CLI_OPTS install -Pdistribute
     - cd ./etc/ci/
-    - git clone https://github.com/PioBeat/bigraphs.git
+    - git clone git@github.com:PioBeat/bigraphs.git #https://github.com/PioBeat/bigraphs.git
     - git remote -v
     - cd ./bigraphs
     - mkdir -p apidocs
