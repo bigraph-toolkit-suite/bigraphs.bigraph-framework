@@ -7,9 +7,9 @@ variables:
 
 stages:
   - build
-  - docgen
+#  - docgen
 #  - test
-#  - deploy
+  - deploy
 
 build:
   stage: build
@@ -48,17 +48,19 @@ changelogs:
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/18106
 
 
-docs:
-  stage: docgen
+"Generate Documentation":
+  stage: deploy
 #  image: ilyasemenov/gitlab-ci-git-push
 #  image: docker:19.03.0-git
   image: maven:3.6.3-jdk-8-slim
   before_script:
     - apt-get update && apt-get install -y git
+    - git config --global user.email "dominik.grzelak@tu-dresden.de"
+    - git config --global user.name "Dominik Grzelak"
 #    - chmod +x ./etc/ci/prepare_docs.sh
 #    - ./etc/ci/prepare_docs.sh
   script:
-    - mvn $MAVEN_CLI_OPTS clean install -Pdistribute
+    - mvn $MAVEN_CLI_OPTS install -Pdistribute
     - cd ./etc/ci/
     - git clone https://github.com/PioBeat/bigraphs.git
     - cd ./bigraphs
