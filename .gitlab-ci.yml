@@ -65,8 +65,8 @@ docs:
     - mkdir -p apidocs
     - cp -a ../../../target/site/. ./apidocs/
     - git remote -v
-#    - git commit -m "updated github pages"
-#    - git push origin gh-pages
+    - git commit -m "updated github pages"
+    - git push origin gh-pages
 #    - git-push user@git.host:repo branch
 #deploy:
 #  stage: deploy
