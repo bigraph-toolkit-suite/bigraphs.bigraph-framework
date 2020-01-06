@@ -7,9 +7,8 @@ variables:
 
 stages:
   - build
-  #  - docgen
   #  - test
-  - deploy
+#  - deploy
 
 build:
   stage: build
@@ -18,16 +17,15 @@ build:
   except:
     - /^feature.*$/
   script:
-    - echo "skip"
-#    - mvn $MAVEN_CLI_OPTS clean compile
+    - mvn $MAVEN_CLI_OPTS clean compile
 
-#test:
-#  stage: test
-#  script:
-#    - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
+"Running tests":
+  stage: test
+  script:
+    - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
 
-changelogs:
-  stage: build
+"Generate Changelog":
+  stage: deploy
   only:
     - master
     - ^v[0-9]+(?:.[0-9]+)+$
@@ -41,13 +39,13 @@ changelogs:
     - apk add bash
     - ./etc/ci/changelog.sh .mvn/maven.config
 #    - cp ${CHANGELOG_FILE} etc/doc/docs/changelogs/
-#    - git push stremotegit master
-# https://gitlab.com/gitlab-org/gitlab-foss/issues/18106
-
 
 "Generate Documentation":
   stage: deploy
-#  image: maven:3.6.3-jdk-8-slim
+  only:
+    - master
+    - develop
+    - ^v[0-9]+(?:.[0-9]+)+$
   before_script:
     - apt-get update && apt-get install -y git
     - git config --global user.email "dominik.grzelak@tu-dresden.de"
@@ -57,14 +55,14 @@ changelogs:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-#    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    #    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-  #    - ./etc/ci/prepare_docs.sh
+    #    - ./etc/ci/prepare_docs.sh
   script:
     - mvn $MAVEN_CLI_OPTS install -Pdistribute
     - cd ./etc/ci/
-    - git clone git@github.com:PioBeat/bigraphs.git #https://github.com/PioBeat/bigraphs.git
+    - git clone git@github.com:PioBeat/bigraphs.git
     - git remote -v
     - cd ./bigraphs
     - mkdir -p apidocs
