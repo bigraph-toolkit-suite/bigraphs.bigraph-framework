@@ -1,12 +1,12 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
 import java.io.File;
@@ -96,8 +95,9 @@ public class BigraphArtifacts {
 
         if (Objects.nonNull(metaModelPackageWithSignature)) {
             // register the dynamic package locally
-            load_resourceSet.getPackageRegistry().put(null, metaModelPackageWithSignature);
-            load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
+            load_resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
+            if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()))
+                load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
         }
         URI uri = URI.createFileURI(filePath);
         Resource load_resource = load_resourceSet.createResource(uri);
@@ -138,12 +138,12 @@ public class BigraphArtifacts {
      * @param outputStream the output stream
      * @throws IOException
      */
-    public static void exportAsInstanceModel(Bigraph<?> bigraph, OutputStream outputStream) throws IOException {
+    public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
 //        Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph); // old method
         writeDynamicInstanceModel(bigraph.getModelPackage(), bigraph.getModel(), outputStream, null);
     }
 
-    public static void exportAsInstanceModel(Bigraph<?> bigraph, OutputStream outputStream, String newNamespaceLocation) throws IOException {
+    public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream, String newNamespaceLocation) throws IOException {
         writeDynamicInstanceModel(bigraph.getModelPackage(), bigraph.getModel(), outputStream, newNamespaceLocation);
     }
 
@@ -154,7 +154,7 @@ public class BigraphArtifacts {
      * @param outputStream
      * @throws IOException
      */
-    public static void exportAsMetaModel(Bigraph<?> bigraph, OutputStream outputStream) throws IOException {
+    public static void exportAsMetaModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
         writeDynamicMetaModel(bigraph.getModelPackage(), outputStream);
     }
 

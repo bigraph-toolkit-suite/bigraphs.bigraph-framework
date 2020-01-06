@@ -105,6 +105,13 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         }
     }
 
+    protected PureBigraphBuilder(S signature, String metaModelFilePath) throws BigraphMetaModelLoadingFailedException {
+        this.signature = signature;
+        this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
+        this.loadSignatureAsTypeGraph(metaModelFilePath);
+//        this.loadedFromFile = true;
+    }
+
     protected PureBigraphBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
         this(signature, new EMetaModelData.MetaModelDataBuilder()
                 .setNsPrefix("bigraphMetaModel")
@@ -155,6 +162,11 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModelData);
+    }
+
+    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModel)
+            throws BigraphMetaModelLoadingFailedException {
+        return new PureBigraphBuilder<>(signature, metaModel);
     }
 
     public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
@@ -248,7 +260,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      * @param control the control of the parent for the new hierarchy
      * @return a new hierarchy for the current bigraph
      */
-    public Hierarchy newHierarchy(Control control) {
+    public Hierarchy hierarchy(Control control) {
         EObject childNode = createNodeOfEClass(control.getNamedType().stringValue(), control); // new Hierarchy()
         BigraphEntity.NodeEntity newParentNode = BigraphEntity.createNode(childNode, control);
         Hierarchy hierarchy = new Hierarchy(newParentNode);
@@ -256,8 +268,8 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return hierarchy;
     }
 
-    public Hierarchy newHierarchy(String controlLabel) {
-        return newHierarchy(signature.getControlByName(controlLabel));
+    public Hierarchy hierarchy(String controlLabel) {
+        return hierarchy(signature.getControlByName(controlLabel));
     }
 
     /**
@@ -286,7 +298,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         }
 
         @Override
-        public Hierarchy goBack() {
+        public Hierarchy up() {
             return Objects.isNull(this.parentHierarchy) ? this : this.parentHierarchy;
         }
 
@@ -310,7 +322,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
         //CHECK if something was created...
         @Override
-        public Hierarchy withNewHierarchy() throws ControlIsAtomicException {
+        public Hierarchy down() throws ControlIsAtomicException {
             assertControlIsNonAtomic(getLastCreatedNode());
             return withNewHierarchyOn(getLastCreatedNode());
         }
@@ -343,6 +355,12 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             } catch (TypeNotExistsException ignored) {
                 // this exception is never thrown in this case because we created the outer name
             }
+            return this;
+        }
+
+        @Override
+        public Hierarchy addChild(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException {
+            addChild(signature.getControlByName(controlName)).linkToOuter(outerName);
             return this;
         }
 

@@ -16,12 +16,12 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.InstantiationMap;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.predicates.SubBigraphMatchPredicate;
+import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
+import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.InstantiationMap;
+import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.SubBigraphMatchPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
@@ -29,9 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 
-import static de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystemOptions.transitionOpts;
+import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
 /**
  * @author Dominik Grzelak
@@ -48,13 +47,14 @@ public class RouteFinding {
      * @throws InvalidReactionRuleException
      */
     @Test
-    void name() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
+    void convert_car_example() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
         BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
                 true,
                 new File(TARGET_DUMP_PATH + "predicate_car.png")
         );
 
+//        PureBigraph map = createMapSimple(8);
         PureBigraph map = createMap(8);
 //        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream("meta-model.ecore"));
 //        PureBigraphBuilder.create(createSignature(),
@@ -76,21 +76,21 @@ public class RouteFinding {
         );
         Path currentRelativePath = Paths.get("");
         Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), TARGET_DUMP_PATH, "transition_graph.png");
-        ReactiveSystemOptions opts = ReactiveSystemOptions.create();
+        ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
                         .setMaximumTransitions(18)
                         .setMaximumTime(60)
                         .create()
                 )
-                .setMeasureTime(true)
-                .and(ReactiveSystemOptions.exportOpts()
+                .doMeasureTime(true)
+                .and(ModelCheckingOptions.exportOpts()
                         .setTraceFile(new File(completePath.toUri()))
                         .create()
                 )
         ;
 
-        SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
 
@@ -99,6 +99,42 @@ public class RouteFinding {
         System.out.println(s);
 
 //        reactiveSystem.computeTransitionSystem(map, opts, Collections.singleton(predicate));
+    }
+
+    private PureBigraph createMapSimple(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+
+        BigraphEntity.OuterName p0 = builder.createOuterName("p0");
+        BigraphEntity.OuterName p1 = builder.createOuterName("p1");
+//        BigraphEntity.OuterName p2 = builder.createOuterName("p2");
+        BigraphEntity.OuterName p3 = builder.createOuterName("p3");
+        BigraphEntity.OuterName p4 = builder.createOuterName("p4");
+//        BigraphEntity.OuterName p5 = builder.createOuterName("p5");
+//        BigraphEntity.OuterName p6 = builder.createOuterName("p6");
+//        BigraphEntity.OuterName p7 = builder.createOuterName("p7");
+//        BigraphEntity.OuterName p8 = builder.createOuterName("p8");
+        BigraphEntity.OuterName target = builder.createOuterName("target");
+//        BigraphEntity.InnerName target = builder.createInnerName("target");
+
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkToOuter(target);
+        for (int i = 0; i < fuelLevel; i++) {
+            car = car.addChild("Fuel");
+        }
+        builder.createRoot()
+                .addChild("Place").linkToOuter(p0).down().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).up()
+                .addChild("Place").linkToOuter(p1).down().addChild("Road").addChild("Road").linkToOuter(p4).up()
+//                .addChild("Place").linkToOuter(p2).withNewHierarchy().addChild("Road").linkToOuter(p5).goBack()
+                .addChild("Place").linkToOuter(p3).down().addChild("Road").linkToOuter(p4).addChild("Road").up()
+//                .addChild("Place").linkToOuter(p4).withNewHierarchy().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).goBack()
+//                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
+//                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
+//                .addChild("Place").linkToOuter(p7).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).goBack()
+//                .addChild("Place")
+        ;
+//        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);
+//        builder.closeInnerNames(target);
+        PureBigraph bigraph = builder.createBigraph();
+        return bigraph;
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
@@ -116,19 +152,19 @@ public class RouteFinding {
         BigraphEntity.OuterName target = builder.createOuterName("target");
 //        BigraphEntity.InnerName target = builder.createInnerName("target");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.newHierarchy("Car").linkToOuter(target);
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkToOuter(target);
         for (int i = 0; i < fuelLevel; i++) {
             car = car.addChild("Fuel");
         }
         builder.createRoot()
-                .addChild("Place").linkToOuter(p0).withNewHierarchy().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).goBack()
-                .addChild("Place").linkToOuter(p1).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Road").linkToOuter(p4).goBack()
-                .addChild("Place").linkToOuter(p2).withNewHierarchy().addChild("Road").linkToOuter(p5).goBack()
-                .addChild("Place").linkToOuter(p3).withNewHierarchy().addChild("Road").linkToOuter(p4).addChild("Road").linkToOuter(p7).goBack()
-                .addChild("Place").linkToOuter(p4).withNewHierarchy().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).goBack()
+                .addChild("Place").linkToOuter(p0).down().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).up()
+                .addChild("Place").linkToOuter(p1).down().addChild("Road").linkToOuter(p2).addChild("Road").linkToOuter(p4).up()
+                .addChild("Place").linkToOuter(p2).down().addChild("Road").linkToOuter(p5).up()
+                .addChild("Place").linkToOuter(p3).down().addChild("Road").linkToOuter(p4).addChild("Road").linkToOuter(p7).up()
+                .addChild("Place").linkToOuter(p4).down().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).up()
 //                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
 //                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
-                .addChild("Place").linkToOuter(p7).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).goBack()
+                .addChild("Place").linkToOuter(p7).down().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).up()
 //                .addChild("Place")
         ;
 //        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);
@@ -148,19 +184,19 @@ public class RouteFinding {
         BigraphEntity.OuterName fromS = builder.createOuterName("fromS");
         BigraphEntity.OuterName target = builder.createOuterName("target");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.newHierarchy("Car").linkToOuter(target).addSite().addChild("Fuel");
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkToOuter(target).addSite().addChild("Fuel");
         builder.createRoot()
-                .addChild("Place").linkToOuter(fromD).withNewHierarchy().addSite().top()
-                .addChild("Place").linkToOuter(fromS).withNewHierarchy().addChild(car).addSite().addChild("Road").linkToOuter(fromD).top()
+                .addChild("Place").linkToOuter(fromD).down().addSite().top()
+                .addChild("Place").linkToOuter(fromS).down().addChild(car).addSite().addChild("Road").linkToOuter(fromD).top()
         ;
 
         BigraphEntity.OuterName fromD2 = builder2.createOuterName("fromD");
         BigraphEntity.OuterName fromS2 = builder2.createOuterName("fromS");
         BigraphEntity.OuterName target2 = builder2.createOuterName("target");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builder2.newHierarchy("Car").linkToOuter(target2).addSite();
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car2 = builder2.hierarchy("Car").linkToOuter(target2).addSite();
         builder2.createRoot()
-                .addChild("Place").linkToOuter(fromD2).withNewHierarchy().addSite().addChild(car2).top()
-                .addChild("Place").linkToOuter(fromS2).withNewHierarchy().addChild("Road").linkToOuter(fromD2).addSite().top()
+                .addChild("Place").linkToOuter(fromD2).down().addSite().addChild(car2).top()
+                .addChild("Place").linkToOuter(fromS2).down().addChild("Road").linkToOuter(fromD2).addSite().top()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -178,7 +214,7 @@ public class RouteFinding {
 
         builder.createRoot()
                 .addChild("Place").linkToOuter(from)
-                .withNewHierarchy().addSite().connectByEdge("Target", "Car").withNewHierarchy().addSite();
+                .down().addSite().connectByEdge("Target", "Car").down().addSite();
         PureBigraph bigraph = builder.createBigraph();
         return SubBigraphMatchPredicate.create(bigraph);
     }

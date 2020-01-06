@@ -6,10 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="bigraph-rewriting" />
-        <module name="bigraph-converter" />
         <module name="bigraph-visualization" />
+        <module name="bigraph-simulation" />
         <module name="bigraph-core" />
+        <module name="bigraph-converter" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

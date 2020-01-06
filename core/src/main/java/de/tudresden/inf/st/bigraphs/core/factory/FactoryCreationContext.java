@@ -110,8 +110,20 @@ public final class FactoryCreationContext {
         });
     }
 
+    static BigraphBuilder createBigraphBuilder(Signature signature, String metaModel, Class<? extends Bigraph> bigraphClass) {
+        return current().map((ctx) -> {
+            return ctx.newBigraphBuilder(signature, metaModel);
+        }).orElseGet(() -> {
+            return begin(findFactoryFor(bigraphClass)).newBigraphBuilder(signature, metaModel); //TODO: factory
+        });
+    }
+
     private BigraphBuilder newBigraphBuilder(Signature<?> signature) {
         return this.factory.createBigraphBuilder(signature);
+    }
+
+    private BigraphBuilder newBigraphBuilder(Signature<?> signature, String metaModel) {
+        return this.factory.createBigraphBuilder(signature, metaModel);
     }
 
     private BigraphComposite newBigraphOperator(Bigraph<?> bigraph) {

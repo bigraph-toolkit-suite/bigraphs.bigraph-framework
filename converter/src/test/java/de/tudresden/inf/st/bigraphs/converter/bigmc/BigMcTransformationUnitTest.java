@@ -16,9 +16,9 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.rewriting.reactivesystem.impl.SimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class BigMcTransformationUnitTest {
      */
     @Test
     void name() throws InvalidConnectionException, LinkTypeNotExistsException, InvalidReactionRuleException, IOException {
-        SimpleReactiveSystem reactiveSystem = new SimpleReactiveSystem();
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
         PureBigraph agent_a = createAgent_A(3, 4);
         ReactionRule<PureBigraph> rr_1 = createReactionRule_1();
@@ -61,23 +61,23 @@ public class BigMcTransformationUnitTest {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy leftNode =
-                builder.newHierarchy(signature.getControlByName("Left"))
+                builder.hierarchy(signature.getControlByName("Left"))
                         .addChild("S");
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rightNode =
-                builder.newHierarchy(signature.getControlByName("Right"))
+                builder.hierarchy(signature.getControlByName("Right"))
                         .addChild("S");
         for (int i = 0; i < left - 1; i++) {
-            leftNode = leftNode.withNewHierarchy().addChild("S");
+            leftNode = leftNode.down().addChild("S");
         }
-        leftNode = leftNode.withNewHierarchy().addChild("Z").top();
+        leftNode = leftNode.down().addChild("Z").top();
         for (int i = 0; i < right - 1; i++) {
-            rightNode = rightNode.withNewHierarchy().addChild("S");
+            rightNode = rightNode.down().addChild("S");
         }
-        rightNode = rightNode.withNewHierarchy().addChild("Z").top();
+        rightNode = rightNode.down().addChild("Z").top();
 
         builder.createRoot()
                 .addChild("Age")
-                .withNewHierarchy()
+                .down()
                 .addChild(leftNode)
                 .addChild(rightNode)
 //                .addChild(s.top())
@@ -92,14 +92,14 @@ public class BigMcTransformationUnitTest {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
 
         builder.createRoot()
-                .addChild("Left").withNewHierarchy().addChild("S").withNewHierarchy().addSite()
+                .addChild("Left").down().addChild("S").down().addSite()
                 .top()
-                .addChild("Right").withNewHierarchy().addChild("S").withNewHierarchy().addSite()
+                .addChild("Right").down().addChild("S").down().addSite()
         ;
         builder2.createRoot()
-                .addChild("Left").withNewHierarchy().addSite()
+                .addChild("Left").down().addSite()
                 .top()
-                .addChild("Right").withNewHierarchy().addSite()
+                .addChild("Right").down().addSite()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -115,14 +115,14 @@ public class BigMcTransformationUnitTest {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
 
         builder.createRoot()
-                .addChild("Left").withNewHierarchy().addChild("Z")
+                .addChild("Left").down().addChild("Z")
                 .top()
-                .addChild("Right").withNewHierarchy().addChild("S").withNewHierarchy().addSite()
+                .addChild("Right").down().addChild("S").down().addSite()
         ;
         builder2.createRoot()
                 .addSite()
                 .addSite()
-                .addChild("True").withNewHierarchy().addSite()
+                .addChild("True").down().addSite()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
@@ -139,12 +139,12 @@ public class BigMcTransformationUnitTest {
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
 
         builder.createRoot()
-                .addChild("Left").withNewHierarchy().addSite()
+                .addChild("Left").down().addSite()
                 .top()
-                .addChild("Right").withNewHierarchy().addChild("Z")
+                .addChild("Right").down().addChild("Z")
         ;
         builder2.createRoot()
-                .addChild("False").withNewHierarchy().addSite()
+                .addChild("False").down().addSite()
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();

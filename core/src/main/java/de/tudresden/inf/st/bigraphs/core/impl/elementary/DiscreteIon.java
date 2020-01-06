@@ -8,7 +8,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -36,7 +35,7 @@ public class DiscreteIon<S extends Signature, NT extends NamedType, FT extends F
                     throw new RuntimeException(e);
                 }
             });
-            hierarchy.withNewHierarchy().addSite();
+            hierarchy.down().addSite();
         } catch (ControlIsAtomicException e) {
             throw new RuntimeException("Control shouldn't be atomic!");
         }
@@ -77,6 +76,4 @@ public class DiscreteIon<S extends Signature, NT extends NamedType, FT extends F
     public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
         return bigraphDelegate.getPointsFromLink(linkEntity);
     }
-
-
 }

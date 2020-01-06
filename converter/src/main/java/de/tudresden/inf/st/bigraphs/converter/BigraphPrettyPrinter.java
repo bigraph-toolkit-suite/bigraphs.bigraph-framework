@@ -2,7 +2,6 @@ package de.tudresden.inf.st.bigraphs.converter;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.rewriting.ReactiveSystem;
 
 import java.io.IOException;
 import java.io.OutputStream;

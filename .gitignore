@@ -11,6 +11,7 @@
 
 # User-specific stuff
 .idea/**/workspace.xml
+.idea/compiler.xml
 .idea/**/tasks.xml
 .idea/**/dictionaries
 .idea/**/shelf
@@ -120,3 +121,6 @@ gen-test-resources/*
 /etc/doc/site/*
 **/resources/dump/
 /.idea/modules.xml
+/.idea/markdown-navigator-enh.xml
+/.idea/markdown-navigator.xml
+/etc/doc/docusaurus/website/static/apidocs/

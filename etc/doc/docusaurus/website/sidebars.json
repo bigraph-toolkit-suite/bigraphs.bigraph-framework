@@ -1,0 +1,28 @@
+{
+  "docs": {
+    "Basics": [
+      "index",
+      "basics"
+    ],
+    "Simulation": [
+      "simulation",
+      "verification"
+    ],
+    "Converter": [
+      "converter"
+    ],
+    "Persistence": [
+      "persistence"
+    ],
+    "Visualization": [
+      "visualization"
+    ],
+    "Advanced": [
+      "advanced/complex-modeling",
+      "advanced/theory"
+    ],
+    "Examples": [
+      "examples/ex1"
+    ]
+  }
+}

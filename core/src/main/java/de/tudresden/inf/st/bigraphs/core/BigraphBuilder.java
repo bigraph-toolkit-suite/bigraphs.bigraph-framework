@@ -3,6 +3,8 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 
 /**
  * Common bigraph builder interface.
@@ -23,9 +25,9 @@ public interface BigraphBuilder<S extends Signature> {
      */
     NodeHierarchy createRoot();
 
-    NodeHierarchy newHierarchy(Control control);
+    NodeHierarchy hierarchy(Control control);
 
-    NodeHierarchy newHierarchy(String controlIdentifier);
+    NodeHierarchy hierarchy(String controlIdentifier);
 
     <B extends Bigraph<S>> B createBigraph();
 
@@ -61,6 +63,8 @@ public interface BigraphBuilder<S extends Signature> {
          */
         NodeHierarchy addChild(String controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException;
 
+        NodeHierarchy addChild(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException;
+
         /**
          * Adds a site to the current parent.
          * <p>
@@ -74,18 +78,18 @@ public interface BigraphBuilder<S extends Signature> {
         /**
          * Creates a new hierarchy builder where the last created node is the parent of this new hierarchy.
          * <p>
-         * One can go to the previous hierarchy by calling the {@link NodeHierarchy#goBack()} method.
+         * One can go to the previous hierarchy by calling the {@link NodeHierarchy#up()} method.
          *
          * @return the new hierarchy
          */
-        NodeHierarchy withNewHierarchy() throws ControlIsAtomicException;
+        NodeHierarchy down() throws ControlIsAtomicException;
 
         /**
          * Place the cursor one level up from the current position.
          *
          * @return the same hierarchy
          */
-        NodeHierarchy goBack();
+        NodeHierarchy up();
 
         /**
          * Place the cursor to the top most element of the hierarchy.

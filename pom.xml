@@ -9,13 +9,13 @@
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
-        A complete bigraphical framework for creating bigraphs and simulation bigraphical reactive systems.
+        A complete framework for creating bigraphs and performing simulations on bigraphical reactive systems.
     </description>
 
     <modules>
         <module>core</module>
         <module>visualization</module>
-        <module>rewriting</module>
+        <module>simulation</module>
         <module>converter</module>
     </modules>
 
@@ -37,6 +37,7 @@
         <bintray.repo>maven-repository</bintray.repo>
         <bintray.package>${project.artifactId}</bintray.package>
         <doclint>none</doclint>
+        <project.javadoc.outputDirectory>./etc/doc/docusaurus/website/static/apidocs/</project.javadoc.outputDirectory>
     </properties>
 
     <developers>
@@ -75,11 +76,16 @@
             <url>${eclipse.mirror}/releases/photon/</url>
         </repository>
         <!-- add TMF repository for latest Xtend -->
-        <repository>
-            <id>TMF Repo</id>
-            <layout>p2</layout>
-            <url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>
-        </repository>
+        <!--        <repository>-->
+        <!--            <id>TMF Repo</id>-->
+        <!--            <url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>-->
+        <!--            <layout>p2</layout>-->
+        <!--        </repository>        -->
+        <!--        <repository>-->
+        <!--            <id>TMF Repo</id>-->
+        <!--            <url>http://www.elver.org/eclipse/2.1.0/update/</url>-->
+        <!--            <layout>p2</layout>-->
+        <!--        </repository>-->
     </repositories>
 
     <distributionManagement>
@@ -185,31 +191,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.1.0</version>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -232,7 +213,7 @@
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
-                <artifactId>bigraph-rewriting</artifactId>
+                <artifactId>bigraph-simulation</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -306,16 +287,6 @@
                 <artifactId>checker</artifactId>
                 <version>2.6.0</version>
             </dependency>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-core</artifactId>
-                <version>1.19</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-generator-annprocess</artifactId>
-                <version>1.19</version>
-            </dependency>
             <!-- Graph-related -->
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -366,6 +337,16 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>1.19</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -396,23 +377,23 @@
 
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.shredzone.maven</groupId>
-                        <artifactId>mkdocs-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                                <configuration>
-                                    <strict>true</strict>
-                                    <directory>${project.basedir}/etc/doc/</directory>
-                                    <outputDirectory>${project.basedir}/target/site/reference/html/</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    <!--                    <plugin>-->
+                    <!--                        <groupId>org.shredzone.maven</groupId>-->
+                    <!--                        <artifactId>mkdocs-maven-plugin</artifactId>-->
+                    <!--                        <executions>-->
+                    <!--                            <execution>-->
+                    <!--                                <phase>install</phase>-->
+                    <!--                                <goals>-->
+                    <!--                                    <goal>build</goal>-->
+                    <!--                                </goals>-->
+                    <!--                                <configuration>-->
+                    <!--                                    <strict>true</strict>-->
+                    <!--                                    <directory>${project.basedir}/etc/doc/</directory>-->
+                    <!--                                    <outputDirectory>${project.basedir}/target/site/reference/html/</outputDirectory>-->
+                    <!--                                </configuration>-->
+                    <!--                            </execution>-->
+                    <!--                        </executions>-->
+                    <!--                    </plugin>-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -424,7 +405,15 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
-                                    <outputDirectory>${project.root}/target/site/apidocs</outputDirectory>
+                                    <!-- all, none, html-->
+                                    <doclint>${doclint}</doclint>
+                                    <destDir>./</destDir>
+                                    <author>true</author>
+                                    <bottom>Copyright &#169; {inceptionYear}. Software Technology Group,
+                                        Technische Universität Dresden. All rights reserved.
+                                    </bottom>
+                                    <excludePackageNames>com.microstar.xml,GCF</excludePackageNames>
+                                    <!--                                    <reportOutputDirectory>${project.javadoc.outputDirectory}</reportOutputDirectory>-->
                                 </configuration>
                             </execution>
                         </executions>
@@ -435,15 +424,15 @@
                     </plugin>
                 </plugins>
 
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.shredzone.maven</groupId>
-                            <artifactId>mkdocs-maven-plugin</artifactId>
-                            <version>1.0</version>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
+                <!--                <pluginManagement>-->
+                <!--                    <plugins>-->
+                <!--                        <plugin>-->
+                <!--                            <groupId>org.shredzone.maven</groupId>-->
+                <!--                            <artifactId>mkdocs-maven-plugin</artifactId>-->
+                <!--                            <version>1.0</version>-->
+                <!--                        </plugin>-->
+                <!--                    </plugins>-->
+                <!--                </pluginManagement>-->
             </build>
         </profile>
     </profiles>

@@ -23,6 +23,10 @@ public final class BigraphFactory {
         return (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
     }
 
+    public static <S extends Signature> PureBigraphBuilder<S> pureBuilder(S signature, String metaModel) {
+        return (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, metaModel, PureBigraph.class);
+    }
+
     public static DynamicSignatureBuilder pureSignatureBuilder() {
         return (DynamicSignatureBuilder) FactoryCreationContext.createSignatureBuilder(PureBigraph.class);
     }

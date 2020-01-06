@@ -1,26 +1,36 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import java.util.*;
 
 /**
- * Interface for the basic building blocks for all bigraphs.
+ * Interface for the basic building blocks for all Ecore-based bigraphs.
  * <p>
- * With them other larger bigraphs can be built.
+ * Elementary bigraphs are used to build larger and more complex bigraphs by composition.
  *
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public abstract class ElementaryBigraph<S extends Signature> extends BigraphDelegator<S> { //implements Bigraph<S> {
+public abstract class ElementaryBigraph<S extends Signature> extends BigraphDelegator<S> implements EcoreBigraph {
 
     public ElementaryBigraph(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);
+    }
+
+    @Override
+    public EPackage getModelPackage() {
+        return ((EcoreBigraph) bigraphDelegate).getModelPackage();
+    }
+
+    @Override
+    public EObject getModel() {
+        return ((EcoreBigraph) bigraphDelegate).getModel();
     }
 
     @Override
@@ -137,28 +147,6 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
             }
         }
         return result;
-    }
-
-    protected boolean isBLink(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_LINK);
-    }
-
-    protected boolean isBEdge(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_EDGE);
-    }
-
-    protected boolean isBPort(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
-    }
-
-    protected boolean isBInnerName(EObject eObject) {
-        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_INNERNAME);
-    }
-
-    //works only for elements of the calling class
-    protected boolean isOfEClass(EObject eObject, String eClassifier) {
-        return eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
     }
 
     @Override
