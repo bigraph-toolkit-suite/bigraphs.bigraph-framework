@@ -51,12 +51,14 @@ changelogs:
 docs:
   stage: docgen
 #  image: ilyasemenov/gitlab-ci-git-push
-  image: docker:19.03.0-git
-#  before_script:
+#  image: docker:19.03.0-git
+  image: maven:3.6.3-jdk-8-slim
+  before_script:
+    - apt-get update && apt-get install -y git
 #    - chmod +x ./etc/ci/prepare_docs.sh
 #    - ./etc/ci/prepare_docs.sh
   script:
-    - mvn clean install -Pdistribute
+    - mvn $MAVEN_CLI_OPTS clean install -Pdistribute
     - cd ./etc/ci/
     - git clone https://github.com/PioBeat/bigraphs.git
     - cd ./bigraphs
