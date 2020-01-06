@@ -6,7 +6,7 @@ variables:
   CHANGELOG_FILE: "changelog_v0.6.1-SNAPSHOT.md"
 
 stages:
-  - build
+#  - build
   - docgen
 #  - test
 #  - deploy
@@ -52,6 +52,7 @@ docs:
 #  image: ilyasemenov/gitlab-ci-git-push
   image: docker:19.03.0-git
   before_script:
+    - chmod +x ./etc/ci/prepare_docs.sh
     - ./etc/ci/prepare_docs.sh
   script:
     - cd ./etc/ci/

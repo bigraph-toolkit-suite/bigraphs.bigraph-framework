@@ -76,11 +76,16 @@
             <url>${eclipse.mirror}/releases/photon/</url>
         </repository>
         <!-- add TMF repository for latest Xtend -->
-        <repository>
-            <id>TMF Repo</id>
-            <layout>p2</layout>
-            <url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>
-        </repository>
+        <!--        <repository>-->
+        <!--            <id>TMF Repo</id>-->
+        <!--            <url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>-->
+        <!--            <layout>p2</layout>-->
+        <!--        </repository>        -->
+        <!--        <repository>-->
+        <!--            <id>TMF Repo</id>-->
+        <!--            <url>http://www.elver.org/eclipse/2.1.0/update/</url>-->
+        <!--            <layout>p2</layout>-->
+        <!--        </repository>-->
     </repositories>
 
     <distributionManagement>
@@ -96,6 +101,12 @@
     <build>
         <pluginManagement>
             <plugins>
+                <!--                <plugin>-->
+                <!--                    <groupId>org.eclipse.tycho</groupId>-->
+                <!--                    <artifactId>tycho-maven-plugin</artifactId>-->
+                <!--                    <extensions>true</extensions>-->
+                <!--                    <version>1.5.1</version>-->
+                <!--                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -157,6 +168,11 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <!--            <plugin>-->
+            <!--                <groupId>org.eclipse.tycho</groupId>-->
+            <!--                <artifactId>tycho-maven-plugin</artifactId>-->
+            <!--                <extensions>true</extensions>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
