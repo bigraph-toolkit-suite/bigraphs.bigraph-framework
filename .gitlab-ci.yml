@@ -4,11 +4,12 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode"
   MAVEN_OPTS: "-Ddoclint=none"
   CHANGELOG_FILE: "changelog_v0.6.1-SNAPSHOT.md"
+  JOBS_ENABLED: "false"
 
 stages:
   - build
-  #  - test
-#  - deploy
+  - test
+  - deploy
 
 build:
   stage: build
@@ -21,6 +22,9 @@ build:
 
 "Running tests":
   stage: test
+  only:
+    variables:
+      - $JOBS_ENABLED == "true"
   script:
     - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
 
@@ -43,9 +47,12 @@ build:
 "Generate Documentation":
   stage: deploy
   only:
-    - master
-    - develop
-    - ^v[0-9]+(?:.[0-9]+)+$
+    variables:
+      - $JOBS_ENABLED == "true"
+    refs:
+      - master
+      - develop
+      - ^v[0-9]+(?:.[0-9]+)+$
   before_script:
     - apt-get update && apt-get install -y git
     - git config --global user.email "dominik.grzelak@tu-dresden.de"

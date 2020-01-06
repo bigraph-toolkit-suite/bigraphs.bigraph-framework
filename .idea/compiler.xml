@@ -8,8 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="bigraph-visualization" />
         <module name="bigraph-simulation" />
-        <module name="bigraph-core" />
         <module name="bigraph-converter" />
+        <module name="bigraph-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
