@@ -6,7 +6,7 @@ variables:
   CHANGELOG_FILE: "changelog_v0.6.1-SNAPSHOT.md"
 
 stages:
-#  - build
+  - build
   - docgen
 #  - test
 #  - deploy
@@ -18,7 +18,8 @@ build:
   except:
     - /^feature.*$/
   script:
-    - mvn $MAVEN_CLI_OPTS clean compile
+    - echo "skip"
+#    - mvn $MAVEN_CLI_OPTS clean compile
 
 #test:
 #  stage: test
