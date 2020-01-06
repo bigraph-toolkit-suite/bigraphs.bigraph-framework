@@ -7,9 +7,9 @@ variables:
 
 stages:
   - build
-  - docgen
-#  - test
-#  - deploy
+  #  - docgen
+  #  - test
+  - deploy
 
 build:
   stage: build
@@ -48,31 +48,30 @@ changelogs:
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/18106
 
 
-docs:
-  stage: docgen
-#  image: ilyasemenov/gitlab-ci-git-push
-#  image: docker:19.03.0-git
+"Generate Documentation":
+  stage: deploy
   image: maven:3.6.3-jdk-8-slim
   before_script:
     - apt-get update && apt-get install -y git
-#    - chmod +x ./etc/ci/prepare_docs.sh
-#    - ./etc/ci/prepare_docs.sh
+    - git config --global user.email "dominik.grzelak@tu-dresden.de"
+    - git config --global user.name "Dominik Grzelak"
+  #    - ./etc/ci/prepare_docs.sh
   script:
-    - mvn $MAVEN_CLI_OPTS clean install -Pdistribute
+    - mvn $MAVEN_CLI_OPTS install -Pdistribute
     - cd ./etc/ci/
     - git clone https://github.com/PioBeat/bigraphs.git
+    - git remote -v
     - cd ./bigraphs
     - mkdir -p apidocs
-    - cp -a ../../../target/site/. ./apidocs/
-    - git remote -v
+    - cp -a ../../../target/site/apidocs/. ./apidocs/
+    - git add -A
     - git commit -m "updated github pages"
     - git push origin gh-pages
-#    - git-push user@git.host:repo branch
-#deploy:
+
+#"Deploy Artifacts":
 #  stage: deploy
 #  only:
 #    - master
 #    - ^v[0-9]+(?:.[0-9]+)+$
-#    before_script:
 #  script:
 #    - mvn $MAVEN_CLI_OPTS deploy
