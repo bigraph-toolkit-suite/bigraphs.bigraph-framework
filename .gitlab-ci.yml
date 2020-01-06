@@ -6,7 +6,7 @@ variables:
   CHANGELOG_FILE: "changelog_v0.6.1-SNAPSHOT.md"
 
 stages:
-  - build
+#  - build
   - docgen
 #  - test
 #  - deploy
@@ -51,15 +51,19 @@ docs:
   stage: docgen
 #  image: ilyasemenov/gitlab-ci-git-push
   image: docker:19.03.0-git
-  before_script:
-    - ./etc/ci/prepare_docs.sh
+#  before_script:
+#    - chmod +x ./etc/ci/prepare_docs.sh
+#    - ./etc/ci/prepare_docs.sh
   script:
+    - mvn clean install -Pdistribute
     - cd ./etc/ci/
     - git clone https://github.com/PioBeat/bigraphs.git
-    - cd ./etc/ci/bigraphs
-    - cp -a ../../target/site/. ./bigraphs/apidocs/
-    - git commit -m "updated github pages"
-    - git push origin gh-pages
+    - cd ./bigraphs
+    - mkdir -p apidocs
+    - cp -a ../../../target/site/. ./apidocs/
+    - git remote -v
+#    - git commit -m "updated github pages"
+#    - git push origin gh-pages
 #    - git-push user@git.host:repo branch
 #deploy:
 #  stage: deploy
