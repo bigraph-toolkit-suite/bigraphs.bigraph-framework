@@ -57,6 +57,7 @@ changelogs:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   #    - ./etc/ci/prepare_docs.sh
   script:
     - mvn $MAVEN_CLI_OPTS install -Pdistribute
