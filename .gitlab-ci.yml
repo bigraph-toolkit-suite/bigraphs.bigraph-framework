@@ -7,6 +7,7 @@ variables:
 
 stages:
   - build
+  - docgen
 #  - test
 #  - deploy
 
@@ -46,10 +47,25 @@ changelogs:
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/18106
 
 
+docs:
+  stage: docgen
+#  image: ilyasemenov/gitlab-ci-git-push
+  image: docker:19.03.0-git
+  before_script:
+    - ./etc/ci/prepare_docs.sh
+  script:
+    - cd ./etc/ci/
+    - git clone https://github.com/PioBeat/bigraphs.git
+    - cd ./etc/ci/bigraphs
+    - cp -a ../../target/site/. ./bigraphs/apidocs/
+    - git commit -m "updated github pages"
+    - git push origin gh-pages
+#    - git-push user@git.host:repo branch
 #deploy:
 #  stage: deploy
 #  only:
 #    - master
 #    - ^v[0-9]+(?:.[0-9]+)+$
+#    before_script:
 #  script:
 #    - mvn $MAVEN_CLI_OPTS deploy

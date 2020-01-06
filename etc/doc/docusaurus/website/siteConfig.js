@@ -28,11 +28,18 @@ const users = [
     },
 ];
 
+var urlConfigs = {
+    baseUrl: '/bigraphs/',
+    url: 'https://PioBeat.github.io',
+}
+
 const siteConfig = {
     title: 'Bigraph Framework', // Title for your website.
     tagline: 'A framework written in Java for the creation and simulation of bigraphical reactive systems',
-    url: 'https://your-docusaurus-test-site.com', // Your website URL
-    baseUrl: '/', // Base URL for your project */
+    // url: 'https://your-docusaurus-test-site.com', // Your website URL
+    // baseUrl: '/', // Base URL for your project */
+    baseUrl: urlConfigs.baseUrl, // Base URL for your project */
+    url: urlConfigs.url,
     // For github.io type URLs, you would set the url and baseUrl like:
     //   url: 'https://facebook.github.io',
     //   baseUrl: '/test-site/',
@@ -41,7 +48,8 @@ const siteConfig = {
     projectName: 'bigraph-framework',
     // GitHub username of the organization or user hosting this project.
     // This is used by the publishing script to determine where your GitHub pages website will be hosted.
-    organizationName: 'stg-tud',
+    // organizationName: 'stg-tud',
+    // organizationName: 'stg-tud',
     // For top-level user or org sites, the organization is still the same.
     // e.g., for the https://JoelMarcey.github.io site, it would be set like...
     //   organizationName: 'JoelMarcey'
@@ -50,7 +58,7 @@ const siteConfig = {
     headerLinks: [
         {doc: 'index', label: 'Docs'},
         // {doc: 'doc4', label: 'API'},
-        {href: '/apidocs/index.html', label: 'API', external: true},
+        {href: urlConfigs.url + urlConfigs.baseUrl + 'apidocs/index.html', label: 'API', external: true},
         {page: 'help', label: 'Help'},
         {search: true},
         // Links to href destination
@@ -114,7 +122,7 @@ const siteConfig = {
         '/js/code-block-buttons.js',
     ],
     stylesheets: ['/css/code-block-buttons.css'],
-
+    separateCss: ['/static/apidocs/stylesheet.css'],
     // On page navigation for the current documentation page.
     onPageNav: 'separate',
     // No .html extensions for paths.
