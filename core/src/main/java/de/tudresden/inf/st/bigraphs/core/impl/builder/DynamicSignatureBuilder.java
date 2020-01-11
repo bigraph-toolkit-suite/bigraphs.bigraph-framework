@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
-
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
@@ -12,12 +11,15 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class DynamicSignatureBuilder
-        extends SignatureBuilder<StringTypedName, FiniteOrdinal<Integer>, DynamicControlBuilder<StringTypedName, FiniteOrdinal<Integer>>, DynamicSignatureBuilder> {
+        extends SignatureBuilder<StringTypedName, FiniteOrdinal<Integer>, DynamicControlBuilder, DynamicSignatureBuilder> {
 
     @Override
-    public DynamicControlBuilder<StringTypedName, FiniteOrdinal<Integer>> createControlBuilder() {
-        return new DynamicControlBuilder<>();
+    protected DynamicControlBuilder createControlBuilder() {
+        return new DynamicControlBuilder();
     }
 
 
@@ -32,7 +34,12 @@ public class DynamicSignatureBuilder
         return new DefaultDynamicSignature(Collections.emptySet());
     }
 
-//    @Override
+    @Override
+    public DefaultDynamicSignature create() {
+        return super.create();
+    }
+
+    //    @Override
 //    protected <S extends Signature> Class<S> getSignatureClass() {
 //        return (Class<S>) DefaultDynamicSignature.class;
 //    }
