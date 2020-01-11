@@ -8,6 +8,34 @@
 // See https://docusaurus.io/docs/site-config for all the possible
 // site configuration options.
 
+const {Plugin: Embed} = require('remarkable-embed');
+
+// Our custom remarkable plugin factory.
+const createVariableInjectionPlugin = variables => {
+    // `let` binding used to initialize the `Embed` plugin only once for efficiency.
+    // See `if` statement below.
+    let initializedPlugin;
+
+    const embed = new Embed();
+    embed.register({
+        // Call the render method to process the corresponding variable with
+        // the passed Remarkable instance.
+        // -> the Markdown markup in the variable will be converted to HTML.
+        inject: key => initializedPlugin.render(variables[key])
+    });
+
+    return (md, options) => {
+        if (!initializedPlugin) {
+            initializedPlugin = {
+                render: md.render.bind(md),
+                hook: embed.hook(md, options)
+            };
+        }
+
+        return initializedPlugin.hook;
+    };
+};
+
 // List of projects/orgs using your project for the users page.
 const users = [
     {
@@ -31,9 +59,17 @@ const users = [
 var urlConfigs = {
     baseUrl: '/bigraphs/',
     url: 'https://PioBeat.github.io',
-}
+};
+
+const siteVariables = {
+    revision: 'Version: 0.7.0',
+    revisionVar: 'Replace ${revision} with 0.7.0',
+};
 
 const siteConfig = {
+    markdownPlugins: [
+        createVariableInjectionPlugin(siteVariables)
+    ],
     title: 'Bigraph Framework', // Title for your website.
     tagline: 'A framework written in Java for the creation and simulation of bigraphical reactive systems',
     // url: 'https://your-docusaurus-test-site.com', // Your website URL
@@ -43,7 +79,7 @@ const siteConfig = {
     // For github.io type URLs, you would set the url and baseUrl like:
     //   url: 'https://facebook.github.io',
     //   baseUrl: '/test-site/',
-
+    repoUrl: "https://github.com/st-tu-dresden/bigraph-framework",
     // Used for publishing and more: Project name. This must match your GitHub repository project name (case-sensitive).
     projectName: 'bigraph-framework',
     // GitHub username of the organization or user hosting this project.
@@ -53,16 +89,16 @@ const siteConfig = {
     // For top-level user or org sites, the organization is still the same.
     // e.g., for the https://JoelMarcey.github.io site, it would be set like...
     //   organizationName: 'JoelMarcey'
-
+    apiDocsUrl: urlConfigs.url + urlConfigs.baseUrl + 'apidocs/index.html',
     // For no header links in the top nav bar -> headerLinks: [],
     headerLinks: [
         {doc: 'index', label: 'Docs'},
         // {doc: 'doc4', label: 'API'},
         {href: urlConfigs.url + urlConfigs.baseUrl + 'apidocs/index.html', label: 'API', external: true},
-        {page: 'help', label: 'Help'},
+        // {page: 'help', label: 'Help'},
         {search: true},
         // Links to href destination
-        {href: "https://github.com/", label: "GitHub"},
+        {href: "https://github.com/st-tu-dresden/bigraph-framework", label: "GitHub"},
         // {blog: true, label: 'Blog'},
     ],
 

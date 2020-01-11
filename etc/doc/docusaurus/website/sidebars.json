@@ -2,7 +2,8 @@
   "docs": {
     "Basics": [
       "index",
-      "basics"
+      "basics",
+      "composition"
     ],
     "Simulation": [
       "simulation",
@@ -19,6 +20,7 @@
     ],
     "Advanced": [
       "advanced/complex-modeling",
+      "advanced/factories-and-builders",
       "advanced/theory"
     ],
     "Examples": [
