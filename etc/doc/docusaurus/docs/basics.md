@@ -30,13 +30,13 @@ void example() {
 The resulting signature contains 2 controls. The signature specifies the
 syntax of a bigraph we are going to create in the following.
 More about the specific methods of the bigraph factory and signature builder
-can be found in section [Factories and Builders](./advanced/factories-and-builders).
+can be found in [Factories and Builders](./advanced/factories-and-builders).
 
-### Builder
+### Bigraph Builder
 
-After that we are able to instantiate a builder instance.
+Now we are able to instantiate a pure bigraph builder instance.
 With it we can build our bigraph by adding child nodes and connections among them.
-The signature above determines which kind of nodes we can add to the bigraph.
+The signature above determines which kind of nodes we can add to the bigraph (our syntax).
 
 ```java
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
@@ -53,11 +53,12 @@ void example() throws InvalidConnectionException {
             .createBigraph();
 }
 ```
-The example shows how to add two nodes ("User" and "Computer") under the same root twice,
+The example shows how to add two nodes ("User" and "Computer") under the same root (we do it twice)
 and how to link all to the same _outer name_ with the label "login". The bigraph is illustrated below.
 
 Note that the method `addChild` will throw an `InvalidConnectionException`
-if the node cannot be connected to the outer name.
+if the node cannot be connected to the outer name (because of its arity specified by the
+signature).
 
 
 
@@ -71,17 +72,19 @@ if the node cannot be connected to the outer name.
 
 Let us now examine how more trivial bigraphs can be created which are
 termed _elementary bigraphs_. Essentially, there are two categories:
-Placings and Linkings.
+Placings and Linkings. They do not contain any node, thus, they are node-free
+bigraphs.
 
 Elementary bigraphs allow to build more complex bigraphs easily.
-We show how to create a concrete placing first, before we are going to use
+We show how to create a concrete placing and linking, before we use them
 for composition later in the next section.
 
 <!--Note on equality: Object equality at the instance level is not to be compared-->
 <!--with mathematical equality of bigraphs. This is also know as bigraph isomorphism problem.-->
 
-In the following, we create a so-called _merge_n_ which is a placing where
-n sites are located under one root.
+The next code example shows how we can create a so-called _merge_n_ (i.e., a placing where
+n sites are located under one root) and an identity link graph (i.e., inner and outer
+interfaces of the link graph are connected).
 
 ```java
 @Test
@@ -126,7 +129,8 @@ void example() throws InvalidConnectionException {
 }
 ```
 The code above describes a composition that merges the two roots of `bigraph`
-under one root node with index 0.
+under one root node with index 0. At the same time we keep the links so that
+all nodes are kept connected.
 
 Note that composition may throw the following two exceptions `IncompatibleSignatureException` and `IncompatibleInterfaceException`
 if the signatures are not the same or the interfaces are not compatible.
