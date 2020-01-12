@@ -3,7 +3,7 @@ image: maven:3.6.3-jdk-8-slim
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
   MAVEN_OPTS: "-Ddoclint=none"
-  CHANGELOG_FILE: "changelog_v0.6.1-SNAPSHOT.md"
+  CHANGELOG_FILE: "changelog_v0.7.0.md"
   JOBS_ENABLED: "false"
 
 stages:
@@ -65,18 +65,18 @@ build:
     #    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    #    - ./etc/ci/prepare_docs.sh
   script:
     - mvn $MAVEN_CLI_OPTS install -Pdistribute
-    - cd ./etc/ci/
-    - git clone git@github.com:PioBeat/bigraphs.git
+#    - cd ./etc/ci/
+#    - git clone git@github.com:PioBeat/bigraphs.git
     - git remote -v
-    - cd ./bigraphs
-    - mkdir -p apidocs
-    - cp -a ../../../target/site/apidocs/. ./apidocs/
+#    - cd ./bigraphs
+#    - mkdir -p apidocs
+#    - cp -a ../../../target/site/apidocs/. ./apidocs/
     - git add -A
     - git commit -m "updated github pages"
-    - git push origin gh-pages
+#    - git push stgithub gh-pages
+    - git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
 
 #"Deploy Artifacts":
 #  stage: deploy
