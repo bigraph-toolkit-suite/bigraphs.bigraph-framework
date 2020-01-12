@@ -615,7 +615,7 @@ public class BigraphCreationUnitTest {
                 .newControl().kind(ControlKind.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(4)).assign()
         ;
-        Signature<Control<StringTypedName, FiniteOrdinal<Integer>>> controlSignature = signatureBuilder.create();
+        DefaultDynamicSignature controlSignature = signatureBuilder.create();
         return (S) controlSignature;
     }
 }

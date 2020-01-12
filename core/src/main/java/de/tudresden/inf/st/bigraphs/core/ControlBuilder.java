@@ -5,8 +5,8 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 
 public abstract class ControlBuilder<NT extends NamedType, V extends FiniteOrdinal, B extends ControlBuilder<NT, V, B>> {
-    NT type;
-    V arity;
+    protected NT type;
+    protected V arity;
     private SignatureBuilder<NT, V, B, ? extends SignatureBuilder> builder;
 
     public ControlBuilder() {

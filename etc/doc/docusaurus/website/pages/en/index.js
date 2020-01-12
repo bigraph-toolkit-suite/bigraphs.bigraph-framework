@@ -60,7 +60,7 @@ class HomeSplash extends React.Component {
 
         return (
             <SplashContainer>
-                <Logo img_src={`${baseUrl}img/undraw_monitor.svg`}/>
+                {/*<Logo img_src={`${baseUrl}img/undraw_monitor.svg`}/>*/}
                 <div className="inner">
                     <ProjectTitle siteConfig={siteConfig}/>
                     <PromoSection>
@@ -90,15 +90,6 @@ class Index extends React.Component {
                     layout={props.layout}
                 />
             </Container>
-        );
-
-        const FeatureCallout = () => (
-            <div
-                className="productShowcaseSection paddingBottom"
-                style={{textAlign: 'center'}}>
-                <h2>Features</h2>
-                <MarkdownBlock>These are some of the features of this framework</MarkdownBlock>
-            </div>
         );
 
         const TryOut = () => (
@@ -143,6 +134,15 @@ class Index extends React.Component {
                     },
                 ]}
             </Block>
+        );
+
+        const FeatureCallout = () => (
+            <div
+                className="productShowcaseSection paddingBottom"
+                style={{textAlign: 'center'}}>
+                <h2>Features</h2>
+                <MarkdownBlock>These are some of the features of this framework</MarkdownBlock>
+            </div>
         );
 
         const Features = () => (
@@ -216,8 +216,8 @@ class Index extends React.Component {
                     <Features/>
                     {/*<LearnHow/>*/}
                     <TryOut/>
-                    <Description/>
-                    <Showcase/>
+                    {/*<Description/>*/}
+                    {/*<Showcase/>*/}
                 </div>
             </div>
         );

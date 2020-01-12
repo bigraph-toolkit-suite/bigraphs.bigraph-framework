@@ -42,7 +42,7 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
      *
      * @return the control builder
      */
-    abstract C createControlBuilder();
+    protected abstract C createControlBuilder();
 
     private static <C extends ControlBuilder> C createControlBuilder(Class<C> clazz) {
         try {
@@ -56,6 +56,12 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         C builder = createControlBuilder();
         builder.withControlListBuilder(this);
         return builder;
+    }
+
+    public C newControl(NT type, FO arity) {
+        C builder = createControlBuilder();
+        builder.withControlListBuilder(this);
+        return builder.identifier(type).arity(arity);
     }
 
     public B addControl(Control<NT, FO> control) {
@@ -85,6 +91,6 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
     }
 
     public <S extends Signature> S create() {
-        return (S) createSignature(getControls()); //, getSignatureClass());
-    } //CT extends Control<NT, FO>,
+        return (S) createSignature(getControls());
+    }
 }

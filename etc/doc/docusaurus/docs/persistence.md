@@ -23,6 +23,14 @@ For the meta model xmi is used and for the instance model ecore.
 The ecore model includes a direct references to the meta model for validation.
 
 
+## Meta-model data
+
+An important details is
+
+EMetaModelData.builder().setName("sample")
+                .setNsPrefix("bigraph").setNsUri("org.example.bigraphs");
+
+
 
 ## Bigraphical Meta Model
 

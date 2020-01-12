@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
@@ -45,7 +46,7 @@ public class BigraphSignatureUnitTest {
         DynamicSignatureBuilder dynamicBuilder = new DynamicSignatureBuilder();
         dynamicBuilder
                 .newControl().arity(FiniteOrdinal.ofInteger(1)).identifier(StringTypedName.of("Spool")).assign();
-        Signature<Control<StringTypedName, FiniteOrdinal<Long>>> controlSignature = dynamicBuilder.create();
+        DefaultDynamicSignature controlSignature = dynamicBuilder.create();
 
 
 //        DefaultDynamicControl<RandomNameType, FiniteOrdinal<Long>> test
