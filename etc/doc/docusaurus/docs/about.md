@@ -3,8 +3,8 @@ id: about
 title: About
 ---
 
-<!--# About-->
 Bigraph Framework was developed at the Technische Universität Dresden.
+
 ## License
 
 Bigraph Framework is Open Source software released under the Apache 2.0 license.
