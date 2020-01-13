@@ -6,9 +6,10 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+
+import java.util.Optional;
 
 /**
  * @author Dominik Grzelak
@@ -38,8 +39,28 @@ public final class BigraphFactory {
      * @return a pure bigraph factory
      */
     public static PureBigraphFactory pure() {
-        FactoryCreationContext.begin(FactoryCreationContext.createPureBigraphFactory());
+        FactoryCreationContext.begin(AbstractBigraphFactory.createPureBigraphFactory());
         return (PureBigraphFactory) FactoryCreationContext.current().get().getFactory();
+    }
+
+    /**
+     * Uses a given factory context to create a {@link PureBigraphFactory}.
+     *
+     * @param context a valid factory context
+     * @return a pure bigraph factory created by the provided context
+     */
+    public static PureBigraphFactory pure(FactoryCreationContext context) {
+//        FactoryCreationContext.begin(FactoryCreationContext.createPureBigraphFactory());
+        return (PureBigraphFactory) context.getFactory();
+    }
+
+    /**
+     * Return the current factory context.
+     *
+     * @return the current factory context.
+     */
+    public static Optional<FactoryCreationContext> context() {
+        return FactoryCreationContext.current();
     }
 
     public static void end() {

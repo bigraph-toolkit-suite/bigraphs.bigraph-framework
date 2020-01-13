@@ -40,12 +40,12 @@ public final class FactoryCreationContext {
         return factory;
     }
 
-    public static Optional<FactoryCreationContext> current() {
+    static Optional<FactoryCreationContext> current() {
         Stack<FactoryCreationContext> cs = CONTEXT.get();
         return cs.empty() ? Optional.empty() : Optional.of(cs.peek());
     }
 
-    public static FactoryCreationContext get() {
+    static FactoryCreationContext get() {
         Stack<FactoryCreationContext> cs = CONTEXT.get();
         if (cs.empty()) {
             throw new IllegalStateException("Not in a FactoryCreationContext");
@@ -58,8 +58,8 @@ public final class FactoryCreationContext {
         return begin((AbstractBigraphFactory) null);
     }
 
-    static FactoryCreationContext begin(@Nullable AbstractBigraphFactory graph) {
-        FactoryCreationContext ctx = new FactoryCreationContext(graph);
+    static FactoryCreationContext begin(@Nullable AbstractBigraphFactory bigraphFactory) {
+        FactoryCreationContext ctx = new FactoryCreationContext(bigraphFactory);
         ((Stack) CONTEXT.get()).push(ctx);
         return ctx;
     }
