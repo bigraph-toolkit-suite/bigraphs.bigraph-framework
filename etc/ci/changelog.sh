@@ -5,7 +5,7 @@ baseuriGit=https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/commit/
 
 getGitLogsFor() {
   formatOutput="- %s [view commit &#x2197;](${baseuriGit}%H)"
-  local result=$(git log --oneline --pretty=format:"${formatOutput}" --reverse | grep $1)
+  local result=$(git log v0.7.0..v0.8.0 --oneline --pretty=format:"${formatOutput}" --reverse | grep $1)
   replaceString="- "
   result=$(echo "$result" | sed "s/- - /$replaceString/")
   echo "${result}"
