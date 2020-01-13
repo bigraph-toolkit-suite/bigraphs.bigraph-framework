@@ -25,7 +25,7 @@ public class PureBigraphFactory
         extends AbstractBigraphFactory<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> {
 
     PureBigraphFactory() {
-        super.successorClass = new TypeToken<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>>() {
+        super.successorClass = new TypeToken<DefaultDynamicControl>() {
         }.getType();
     }
 

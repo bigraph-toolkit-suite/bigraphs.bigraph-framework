@@ -74,7 +74,7 @@ public class BigraphArtifactUnitTests {
             List<EObject> eObjects2 = BigraphArtifacts.loadBigraphInstanceModel(fileName2);
             assertEquals(1, eObjects2.size());
 
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+            Signature<DefaultDynamicControl> signature = createExampleSignature();
             PureBigraphBuilder builder = PureBigraphBuilder.create(signature, fileName, fileName2);
             System.out.println(builder);
             PureBigraph bigraph = builder.createBigraph();
@@ -91,7 +91,7 @@ public class BigraphArtifactUnitTests {
     void compose_output() {
         assertAll(() -> {
 
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+            Signature<DefaultDynamicControl> signature = createExampleSignature();
             EMetaModelData modelData = EMetaModelData.builder().setName("F").setNsUri("http://www.example.org").setNsPrefix("sample").create();
             PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature, modelData);
             PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
@@ -136,7 +136,7 @@ public class BigraphArtifactUnitTests {
     // change nsURI in to "http:///ecore_file_name.ecore" and nsPrefix into "ecore_file_name" after
     @Test
     void export_sample_model() throws IOException, InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         EMetaModelData modelData = EMetaModelData.builder().setName("F").setNsUri("http://www.example.org").setNsPrefix("sample").create();
         PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature, modelData);
         BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
@@ -180,7 +180,7 @@ public class BigraphArtifactUnitTests {
 //
 
             Linkings<DefaultDynamicSignature> linkings = factory.createLinkings();
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+            Signature<DefaultDynamicControl> signature = createExampleSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
             builderForG.createRoot().addChild(signature.getControlByName("User")).linkToInner(zInner);
@@ -218,7 +218,7 @@ public class BigraphArtifactUnitTests {
     }
 
     public Bigraph createSampleBigraph() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         EMetaModelData metaModelData = new EMetaModelData.MetaModelDataBuilder()
                 .setName("sampleModel")
                 .setNsPrefix("bigraphSampleModel")

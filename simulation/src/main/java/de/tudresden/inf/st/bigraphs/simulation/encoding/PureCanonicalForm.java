@@ -137,7 +137,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                     // special case for sites: re-assign label: consider it as a "normal" node with index as label
                     if (u.getType() == BigraphEntityType.SITE) {
                         String newLabel = "" + ((BigraphEntity.SiteEntity) u).getIndex();
-                        DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> defaultDynamicControl =
+                        DefaultDynamicControl defaultDynamicControl =
                                 DefaultDynamicControl.createDefaultDynamicControl(StringTypedName.of(newLabel),
                                         FiniteOrdinal.ofInteger(0), ControlKind.ATOMIC);
                         BigraphEntity parent = bigraph.getParent(u);

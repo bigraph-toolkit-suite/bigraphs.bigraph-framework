@@ -4,10 +4,19 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 
-public abstract class ControlBuilder<NT extends NamedType, V extends FiniteOrdinal, B extends ControlBuilder<NT, V, B>> {
+/**
+ * Abstract class for all control builder implementations.
+ * It is used by the {@link SignatureBuilder} class to create the individual control instances.
+ *
+ * @param <NT> type of the name (i.e., lable of a control)
+ * @param <V>  type of the arity of a control
+ * @param <B>  type of the control builder
+ * @author Dominik Grzelak
+ */
+public abstract class ControlBuilder<NT extends NamedType<?>, V extends FiniteOrdinal<?>, B extends ControlBuilder<NT, V, B>> {
     protected NT type;
     protected V arity;
-    private SignatureBuilder<NT, V, B, ? extends SignatureBuilder> builder;
+    private SignatureBuilder<NT, V, B, ?> builder;
 
     public ControlBuilder() {
 
@@ -23,7 +32,7 @@ public abstract class ControlBuilder<NT extends NamedType, V extends FiniteOrdin
         return self();
     }
 
-    public SignatureBuilder<NT, V, B, ? extends SignatureBuilder> assign() {
+    public SignatureBuilder<NT, V, B, ?> assign() {
         this.builder.addControl(this.build());
         return this.builder;
     }
@@ -36,7 +45,7 @@ public abstract class ControlBuilder<NT extends NamedType, V extends FiniteOrdin
         return (B) this;
     }
 
-    public void withControlListBuilder(SignatureBuilder<NT, V, B, ? extends SignatureBuilder> cbSignatureBuilder) {
+    public void withControlListBuilder(SignatureBuilder<NT, V, B, ?> cbSignatureBuilder) {
         this.builder = cbSignatureBuilder;
     }
 

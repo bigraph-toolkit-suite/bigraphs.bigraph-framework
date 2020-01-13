@@ -149,7 +149,7 @@ public class RankedGraphEncodingTests {
 
     private PureBigraph createBigraphA() throws InvalidConnectionException, TypeNotExistsException, IOException {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        Signature<DefaultDynamicControl> signature;
         signature = createExampleSignature();
         builder = factory.createBigraphBuilder(signature);
 

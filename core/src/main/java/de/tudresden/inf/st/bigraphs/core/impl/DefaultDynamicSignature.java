@@ -8,9 +8,9 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import java.util.Collections;
 import java.util.Set;
 
-public final class DefaultDynamicSignature extends AbstractSignature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> {
+public final class DefaultDynamicSignature extends AbstractSignature<DefaultDynamicControl> {
 
-    public DefaultDynamicSignature(Set<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> controls) {
+    public DefaultDynamicSignature(Set<DefaultDynamicControl> controls) {
         super(controls);
     }
 

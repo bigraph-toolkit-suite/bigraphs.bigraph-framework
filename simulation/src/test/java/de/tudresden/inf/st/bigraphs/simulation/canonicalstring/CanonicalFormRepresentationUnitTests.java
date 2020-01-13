@@ -118,7 +118,7 @@ public class CanonicalFormRepresentationUnitTests {
     }
 
     public PureBigraph createSubbigraph_b() throws InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
         PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
         BigraphEntity.InnerName e0 = b1.createInnerName("e0");
 //        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
@@ -134,7 +134,7 @@ public class CanonicalFormRepresentationUnitTests {
     }
 
     public PureBigraph createBigraph_a() throws InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
         PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
         BigraphEntity.InnerName b = b1.createInnerName("b");
         BigraphEntity.OuterName y1 = b1.createOuterName("y1");
@@ -149,7 +149,7 @@ public class CanonicalFormRepresentationUnitTests {
     }
 
     public PureBigraph createBigraph_b() throws InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
         PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName y1 = b1.createOuterName("y1");
 
@@ -163,7 +163,7 @@ public class CanonicalFormRepresentationUnitTests {
     }
 
     public PureBigraph createBigraph_c() throws InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
         PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName e0 = b1.createInnerName("e0");
@@ -183,7 +183,7 @@ public class CanonicalFormRepresentationUnitTests {
 
 
     public PureBigraph createBigraph_d() throws InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+        Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
         PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
         BigraphEntity.InnerName e0 = b1.createInnerName("e0");
         BigraphEntity.InnerName e1 = b1.createInnerName("e1");
@@ -252,7 +252,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         private PureBigraph createBasicPlaceGraph() {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
             builder.createRoot()
@@ -334,7 +334,7 @@ public class CanonicalFormRepresentationUnitTests {
          * @see <a href="https://www.ke.tu-darmstadt.de/lehre/archiv/ws0809/ml-sem/slides/Biesinger_Markus.pdf">https://www.ke.tu-darmstadt.de/lehre/archiv/ws0809/ml-sem/slides/Biesinger_Markus.pdf</a>
          */
         public Bigraph createBiesingerSampleBigraph() throws ControlIsAtomicException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
             builder.createRoot()
@@ -357,7 +357,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public Bigraph createNonMatchingBiesingerSampleBigraph() throws ControlIsAtomicException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
             builder.createRoot()
@@ -380,7 +380,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public Bigraph createSampleBigraphA1() throws ControlIsAtomicException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
             builder.createRoot()
@@ -412,7 +412,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public Bigraph createSampleBigraphA2() throws ControlIsAtomicException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
             builder.createRoot()
@@ -448,7 +448,7 @@ public class CanonicalFormRepresentationUnitTests {
          * build procedure (i.e., node indexes).
          */
         public List<Bigraph> createSampleGraphs() {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
             PureBigraphBuilder<DefaultDynamicSignature> b2 = factory.createBigraphBuilder(signature);
             PureBigraphBuilder<DefaultDynamicSignature> b3 = factory.createBigraphBuilder(signature);
@@ -508,7 +508,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         private PureBigraph createA() throws Exception {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
             b1.createRoot().addChild("A").down()
                     .addChild("B").down().addChild("E").down().addChild("G").up().addChild("D").addChild("F").down().addChild("H").up().up()
@@ -519,7 +519,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         private PureBigraph createB() throws Exception {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
 
             b1.createRoot().addChild("A").down()
@@ -575,7 +575,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public Bigraph createSampleBigraphB1() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName inner = builder.createInnerName("inner");
             builder.createRoot()
@@ -594,7 +594,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public Bigraph createSampleBigraphB2() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName inner = builder.createInnerName("inner");
             builder.createRoot()
@@ -613,7 +613,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public Bigraph createSampleBigraph_with_Links() throws InvalidConnectionException, TypeNotExistsException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
 
             BigraphEntity.InnerName edge = b1.createInnerName("edge");
@@ -641,7 +641,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public Bigraph createSampleBigraph_with_Links_v2() throws InvalidConnectionException, TypeNotExistsException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
 
             BigraphEntity.InnerName edge = b1.createInnerName("e1");
@@ -672,7 +672,7 @@ public class CanonicalFormRepresentationUnitTests {
         // for the paper some example bigraphs
         @Test
         void name() throws InvalidConnectionException, LinkTypeNotExistsException {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
             PureBigraphBuilder<DefaultDynamicSignature> b2 = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName x1 = b1.createInnerName("x1");
@@ -707,7 +707,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public PureBigraph createFirstLG() throws Exception {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName x1 = b1.createInnerName("x1");
             BigraphEntity.InnerName x2 = b1.createInnerName("x2");
@@ -728,7 +728,7 @@ public class CanonicalFormRepresentationUnitTests {
         }
 
         public PureBigraph createSecondLG() throws Exception {
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createAlphabeticSignature();
+            Signature<DefaultDynamicControl> signature = createAlphabeticSignature();
             PureBigraphBuilder<DefaultDynamicSignature> b1 = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName x1 = b1.createInnerName("x1");
             BigraphEntity.InnerName x2 = b1.createInnerName("x2");
@@ -786,6 +786,6 @@ public class CanonicalFormRepresentationUnitTests {
         S s = (S) signatureBuilder.create();
         ArrayList<C> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return (S) signatureBuilder.createSignature((Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>>) new LinkedHashSet<C>(cs));
     }
 }

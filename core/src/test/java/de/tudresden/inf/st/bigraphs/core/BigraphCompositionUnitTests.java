@@ -46,7 +46,7 @@ public class BigraphCompositionUnitTests {
     @Test
     @DisplayName("Compose two bigraphs and check their EMetaModel data")
     void compose_test_with_emetamodel_check() throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         EMetaModelData metaData = EMetaModelData.builder().setName("model-check").setNsPrefix("model").setNsUri("org.example.check").create();
         EMetaModelData metaData2 = EMetaModelData.builder().setName("model-check2").setNsPrefix("model2").setNsUri("org.example.check2").create();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature, metaData);
@@ -134,7 +134,7 @@ public class BigraphCompositionUnitTests {
 
     @Test
     void compose_test() throws InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, ControlIsAtomicException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
 
@@ -175,7 +175,7 @@ public class BigraphCompositionUnitTests {
 
     @Test
     void parallelProduct() throws InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builderForH = factory.createBigraphBuilder(signature);
@@ -269,7 +269,7 @@ public class BigraphCompositionUnitTests {
         assertAll(() -> {
 
             //a bigraph is composed with a closure resulting in a inner name rewriting of that bigraph
-            Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+            Signature<DefaultDynamicControl> signature = createExampleSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
             builderForG.createRoot().addChild(signature.getControlByName("User")).linkToInner(zInner);

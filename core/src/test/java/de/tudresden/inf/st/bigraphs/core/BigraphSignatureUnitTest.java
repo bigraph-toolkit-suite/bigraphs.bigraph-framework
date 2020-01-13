@@ -3,8 +3,8 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
@@ -39,9 +39,9 @@ public class BigraphSignatureUnitTest {
     @Order(1)
     public void createSignatures_Test() {
         // Create signature with active controls
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
+        DynamicSignatureBuilder defaultBuilder = new DynamicSignatureBuilder();
         defaultBuilder.newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign();
-        Signature<Control<StringTypedName, FiniteOrdinal<Integer>>> defaultSignature = defaultBuilder.create();
+        DefaultDynamicSignature defaultSignature = defaultBuilder.create();
         // Create signature with dynamic controls
         DynamicSignatureBuilder dynamicBuilder = new DynamicSignatureBuilder();
         dynamicBuilder
@@ -115,7 +115,7 @@ public class BigraphSignatureUnitTest {
 
 
     public static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
+        SignatureBuilder<StringTypedName, FiniteOrdinal<Integer>, ?, ?> defaultBuilder = new DynamicSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

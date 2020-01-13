@@ -121,7 +121,7 @@ public class VisualizationUnitTests {
     }
 
     private PureBigraph createSimpleBigraphHierarchy() {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         builder.createRoot().addChild(signature.getControlByName("Room"))
@@ -137,7 +137,7 @@ public class VisualizationUnitTests {
     }
 
     public PureBigraph bigraphWithTwoRoots() throws InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot().addChild(signature.getControlByName("Room"))
@@ -159,7 +159,7 @@ public class VisualizationUnitTests {
 
     public PureBigraph createBigraph_A() throws
             TypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
@@ -200,7 +200,7 @@ public class VisualizationUnitTests {
 
     public PureBigraph createBigraph_b() throws
             TypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");

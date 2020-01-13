@@ -12,7 +12,10 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
+ * The default signature with "dynamic" controls, meaning that controls can be active, passive or atomic.
+ *
  * @author Dominik Grzelak
+ * @see DynamicControlBuilder
  */
 public class DynamicSignatureBuilder
         extends SignatureBuilder<StringTypedName, FiniteOrdinal<Integer>, DynamicControlBuilder, DynamicSignatureBuilder> {
@@ -22,11 +25,15 @@ public class DynamicSignatureBuilder
         return new DynamicControlBuilder();
     }
 
+    public DynamicControlBuilder newControl(String name, int arity) {
+        DynamicControlBuilder builder = createControlBuilder();
+        builder.withControlListBuilder(this);
+        return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity));
+    }
 
     @Override
-    public DefaultDynamicSignature createSignature(Iterable<? extends Control> controls) {
-//        return DefaultDynamicSignature.class.cast(new DefaultDynamicSignature(null));
-        return new DefaultDynamicSignature((Set<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>>) controls);
+    public DefaultDynamicSignature createSignature(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
+        return new DefaultDynamicSignature((Set<DefaultDynamicControl>) controls);
     }
 
     @Override
@@ -36,7 +43,7 @@ public class DynamicSignatureBuilder
 
     @Override
     public DefaultDynamicSignature create() {
-        return super.create();
+        return (DefaultDynamicSignature) super.create();
     }
 
     //    @Override

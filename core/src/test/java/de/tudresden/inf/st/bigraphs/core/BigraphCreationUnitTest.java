@@ -13,8 +13,8 @@ import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.common.util.EList;
@@ -101,7 +101,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("Create Bigraphs test series")
     class ArityChecks {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        Signature<DefaultDynamicControl> signature;
         PureBigraphBuilder<DefaultDynamicSignature> builder;
 
         @BeforeAll
@@ -119,7 +119,7 @@ public class BigraphCreationUnitTest {
         void connect_to_outername_1() {
             BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
             InvalidArityOfControlException am = assertThrows(InvalidArityOfControlException.class, () -> {
-                DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Job");
+                DefaultDynamicControl selected = signature.getControlByName("Job");
                 System.out.println("Node of control will be added: " + selected + " and connected with outer name " + jeff);
                 builder.createRoot()
                         .addSite()
@@ -138,7 +138,7 @@ public class BigraphCreationUnitTest {
             BigraphEntity.OuterName bob = builder.createOuterName("bob");
             System.out.println("exceeding a node's ports w.r.t to the corresponding control's arity");
             InvalidArityOfControlException am2 = assertThrows(InvalidArityOfControlException.class, () -> {
-                DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Computer");
+                DefaultDynamicControl selected = signature.getControlByName("Computer");
 
                 builder.createRoot()
                         .addChild(selected)
@@ -153,7 +153,7 @@ public class BigraphCreationUnitTest {
 
     @Test
     void biraph_is_discrete() {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignature();
 
         assertAll(() -> {
             PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
@@ -229,7 +229,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ConnectionTestSeries_InnerOuterNames {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        Signature<DefaultDynamicControl> signature;
 
         @BeforeAll
         void createSignature() {
@@ -424,7 +424,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class GroundBigraphTestSeries {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        Signature<DefaultDynamicControl> signature;
 
         @BeforeAll
         void createSignature() {
@@ -438,7 +438,7 @@ public class BigraphCreationUnitTest {
 
         @Test
         void makeGround() throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
-            DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = new DefaultSignatureBuilder<>();
+            SignatureBuilder<StringTypedName, FiniteOrdinal<Integer>, ?, ?> signatureBuilder = new DynamicSignatureBuilder();
             signatureBuilder
                     .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign();
 //            Signature signature2 = signatureBuilder.createSignature();
@@ -465,7 +465,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class NestedHierarchyTestSeries {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        Signature<DefaultDynamicControl> signature;
 
         @BeforeAll
         void createSignature() {
@@ -499,7 +499,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class HierarchyTestSeries {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        Signature<DefaultDynamicControl> signature;
 
         @BeforeAll
         void createSignature() {
@@ -541,7 +541,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ControlAtomicityTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        Signature<DefaultDynamicControl> signature;
 
         @BeforeAll
         void createSignature() {

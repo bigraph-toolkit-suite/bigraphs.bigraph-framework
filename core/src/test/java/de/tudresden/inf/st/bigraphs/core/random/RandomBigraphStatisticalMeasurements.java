@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
@@ -302,7 +303,7 @@ public class RandomBigraphStatisticalMeasurements {
         return (S) signatureBuilder.create();
     }
 
-    private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignature(int n, float probOfPositiveArity) {
+    private DefaultDynamicSignature createRandomSignature(int n, float probOfPositiveArity) {
         DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
@@ -315,13 +316,13 @@ public class RandomBigraphStatisticalMeasurements {
         for (int i = floorNum; i < n; i++) {
             signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
         }
-        S s = (S) signatureBuilder.create();
-        ArrayList<C> cs = new ArrayList<>(s.getControls());
+        DefaultDynamicSignature s = signatureBuilder.create();
+        ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return signatureBuilder.createSignature(new LinkedHashSet<>(cs));
     }
 
-    private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignaturePortVariation(int n, float probOfPositiveArity) {
+    private DefaultDynamicSignature createRandomSignaturePortVariation(int n, float probOfPositiveArity) {
         DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
 
 //        char[] chars = IntStream.rangeClosed('A', 'Z')
@@ -345,9 +346,9 @@ public class RandomBigraphStatisticalMeasurements {
                     .newControl().identifier(StringTypedName.of(String.valueOf(s)))
                     .arity(FiniteOrdinal.ofInteger(0)).assign();
         }
-        S s = (S) signatureBuilder.create();
-        ArrayList<C> cs = new ArrayList<>(s.getControls());
+        DefaultDynamicSignature s = signatureBuilder.create();
+        ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return signatureBuilder.createSignature(new LinkedHashSet<>(cs));
     }
 }

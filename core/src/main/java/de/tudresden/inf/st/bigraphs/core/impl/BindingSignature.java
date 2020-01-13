@@ -9,11 +9,15 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
+ * <strong>Note:</strong> This class is not yet implemented!
+ * <p>
  * Points can be bound in binding bigraphs and are represented by this signature type.
  * <p>
  * According to Milner, a binding implies that for a node it has arity 0 and it is passive.
  * <p>
  * Can only be used within binding bigraphs.
+ *
+ * @author Dominik Grzelak
  */
 public class BindingSignature extends AbstractSignature<BindingControl<? extends NamedType, ? extends FiniteOrdinal>> {
 

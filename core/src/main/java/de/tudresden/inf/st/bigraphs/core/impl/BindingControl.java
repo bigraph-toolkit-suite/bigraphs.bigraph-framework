@@ -5,7 +5,16 @@ import de.tudresden.inf.st.bigraphs.core.ControlKind;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 
-public class BindingControl<NT extends NamedType, FO extends FiniteOrdinal> extends DefaultDynamicControl<NT, FO> {
+/**
+ * <strong>Note:</strong> This class is not yet implemented!
+ * <p>
+ * A binding control for a binding signature for binding bigraphs.
+ *
+ * @param <NT> type of the label
+ * @param <FO> type of the arity
+ * @author Dominik Grzelak
+ */
+public class BindingControl<NT extends NamedType, FO extends FiniteOrdinal> extends AbstractControl<NT, FO> {
 
     protected BindingControl(NT name, FO arity) {
         super(name, arity);
@@ -13,5 +22,10 @@ public class BindingControl<NT extends NamedType, FO extends FiniteOrdinal> exte
 
     public boolean isBindingControl() {
         return getArity().equals(FiniteOrdinal.ofInteger(0)) && getControlKind().equals(ControlKind.PASSIVE);
+    }
+
+    @Override
+    public ControlKind getControlKind() {
+        throw new RuntimeException("Not yet implemented");
     }
 }

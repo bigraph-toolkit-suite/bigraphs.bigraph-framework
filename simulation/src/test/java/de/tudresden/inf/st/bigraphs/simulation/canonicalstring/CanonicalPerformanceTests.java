@@ -201,7 +201,7 @@ public class CanonicalPerformanceTests {
         S s = (S) signatureBuilder.create();
         ArrayList<C> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return (S) signatureBuilder.createSignature((Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>>) new LinkedHashSet<C>(cs));
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignatureFixedArity(int n, float probOfPositiveArity, int arity) {
@@ -221,7 +221,7 @@ public class CanonicalPerformanceTests {
         S s = (S) signatureBuilder.create();
         ArrayList<C> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return (S) signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return (S) signatureBuilder.createSignature((Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>>) new LinkedHashSet<C>(cs));
     }
 
 

@@ -9,9 +9,8 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
 /**
- * Abstract builder class for all kind of signatures.
+ * Abstract base builder class for all kinds of signatures.
  *
  * @param <NT> type of the name representation
  * @param <FO> type of the finite ordinal representation
@@ -19,7 +18,7 @@ import java.util.Set;
  * @param <B>  type of the signature builder
  * @author Dominik Grzelak
  */
-public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOrdinal, C extends ControlBuilder<NT, FO, C>, B extends SignatureBuilder> { //<C extends ControlBuilder, B extends SignatureBuilder<C, B>> {
+public abstract class SignatureBuilder<NT extends NamedType<?>, FO extends FiniteOrdinal<?>, C extends ControlBuilder<NT, FO, C>, B extends SignatureBuilder<?, ?, ?, ?>> {
     private Set<Control<NT, FO>> controls;
 
     public SignatureBuilder() {
@@ -44,13 +43,14 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
      */
     protected abstract C createControlBuilder();
 
-    private static <C extends ControlBuilder> C createControlBuilder(Class<C> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
-        }
-    }
+//    @Deprecated
+//    private static <C extends ControlBuilder> C createControlBuilder(Class<C> clazz) {
+//        try {
+//            return clazz.newInstance();
+//        } catch (Exception e) {
+//            throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
+//        }
+//    }
 
     public C newControl() {
         C builder = createControlBuilder();
@@ -69,16 +69,17 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return self();
     }
 
-    public abstract Signature createSignature(Iterable<? extends Control> controls);
+    public abstract Signature<?> createSignature(Iterable<? extends Control<NT, FO>> controls);
 
     /**
      * Creates an empty signature, meaning that the control set is empty.<br>
      * Needed for the interaction of elementary bigraphs and user-defined bigraphs.
+     * <p>
+     * //     * @param <S> type of the signature
      *
-     * @param <S> type of the signature
      * @return an empty signature of type {@literal <S>}.
      */
-    public abstract <S extends Signature> S createSignature();
+    public abstract Signature<?> createSignature();
 
     //    protected  abstract <S extends Signature> Class<S> getSignatureClass();
     @SuppressWarnings("unchecked")
@@ -90,7 +91,7 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return this.controls;
     }
 
-    public <S extends Signature> S create() {
-        return (S) createSignature(getControls());
+    public Signature<?> create() {
+        return createSignature(getControls());
     }
 }
