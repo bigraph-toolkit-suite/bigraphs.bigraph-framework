@@ -31,6 +31,15 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 //    private static int cnt = 1;
 
+
+    public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, ModelCheckingOptions options) {
+        super(reactiveSystem, options);
+    }
+
+    public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, SimulationType simulationType, ModelCheckingOptions options, ReactiveSystemListener<PureBigraph> listener) {
+        super(reactiveSystem, simulationType, options, listener);
+    }
+
     public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, SimulationType simulationType, ModelCheckingOptions options) {
         super(reactiveSystem, simulationType, options);
     }

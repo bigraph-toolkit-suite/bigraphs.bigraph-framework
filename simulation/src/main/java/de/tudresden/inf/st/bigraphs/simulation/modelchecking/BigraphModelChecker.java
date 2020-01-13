@@ -10,13 +10,13 @@ import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
-import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.PredicateChecker;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.AgentIsNullException;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.InvalidSimulationStrategy;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.ModelCheckerExecutorServiceNotProvided;
+import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
+import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.PredicateChecker;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.jgrapht.Graph;
@@ -35,10 +35,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.nio.file.Paths;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -93,8 +91,18 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     ReactionGraph<B> reactionGraph;
 //    protected MutableList<ReactiveSystemPredicates<B>> predicates = Lists.mutable.empty();
 
+    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, ModelCheckingOptions options) {
+        this(reactiveSystem, (SimulationType<B>) SimulationType.BREADTH_FIRST, options);
+    }
+
     public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationType<B> simulationType, ModelCheckingOptions options) {
+        this(reactiveSystem, simulationType, options, null);
         onAttachListener(this);
+    }
+
+    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationType<B> simulationType, ModelCheckingOptions options,
+                               ReactiveSystemListener<B> listener) {
+        Optional.ofNullable(listener).map(this::setReactiveSystemListener).orElseGet(() -> setReactiveSystemListener((ReactiveSystemListener<B>) DEFAULT_LISTENER));
         loadServiceExecutor();
 
         this.reactiveSystem = reactiveSystem;
@@ -149,6 +157,11 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     // https://www.baeldung.com/java-executor-service-tutorial
     // https://github.com/pivovarit/parallel-collectors
 
+    /**
+     * Asynchronously start the simulation based on the provided reactive system and options.
+     *
+     * @throws BigraphSimulationException if agent is {@code null} or the simulation strategy was not selected
+     */
     public Future<ReactionGraph<B>> executeAsync() throws BigraphSimulationException {
         assertReactionSystemValid();
         return executorService.submit(() -> {
@@ -158,13 +171,20 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     }
 
     private void doWork() {
+        reactiveSystemListener.onReactiveSystemStarted();
         simulationStrategy.synthesizeTransitionSystem();
         if (simulationStrategy instanceof SimulationStrategySupport) {
             int occurrenceCount = ((SimulationStrategySupport<B>) simulationStrategy).getOccurrenceCount();
             getReactionGraph().getGraphStats().setOccurrenceCount(occurrenceCount);
         }
+        reactiveSystemListener.onReactiveSystemFinished();
     }
 
+    /**
+     * Performs some checks if the reactive system is valid.
+     *
+     * @throws BigraphSimulationException if the system is not valid
+     */
     protected void assertReactionSystemValid() throws BigraphSimulationException {
         if (Objects.isNull(reactiveSystem.getAgent())) {
             throw new AgentIsNullException();
@@ -229,11 +249,11 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    private void onAttachListener(BigraphModelChecker<B> reactiveSystem) {
-        if (reactiveSystem instanceof BigraphModelChecker.ReactiveSystemListener) {
-            reactiveSystem.setReactiveSystemListener((BigraphModelChecker.ReactiveSystemListener) this);
+    private void onAttachListener(BigraphModelChecker<B> modelChecker) {
+        if (modelChecker instanceof BigraphModelChecker.ReactiveSystemListener) {
+            modelChecker.setReactiveSystemListener((BigraphModelChecker.ReactiveSystemListener) this);
         } else {
-            reactiveSystem.setReactiveSystemListener((BigraphModelChecker.ReactiveSystemListener<B>) DEFAULT_LISTENER);
+            modelChecker.setReactiveSystemListener((BigraphModelChecker.ReactiveSystemListener<B>) DEFAULT_LISTENER);
         }
     }
 
@@ -295,11 +315,12 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    public synchronized void setReactiveSystemListener(BigraphModelChecker.ReactiveSystemListener<B> reactiveSystemListener) {
+    public synchronized BigraphModelChecker<B> setReactiveSystemListener(BigraphModelChecker.ReactiveSystemListener<B> reactiveSystemListener) {
         this.reactiveSystemListener = reactiveSystemListener;
+        return this;
     }
 
-    interface ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>> {
+    public interface ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>> {
 
         default void onReactiveSystemStarted() {
         }
@@ -317,6 +338,27 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
 
         /**
+         * This method is called if all available predicates of a reactive system evaluated to true in one state.
+         * In this case, the method {@link ReactiveSystemListener#onPredicateMatched(Bigraph, ReactiveSystemPredicates)}
+         * is not called.
+         *
+         * @param currentAgent the agent
+         */
+        default void onAllPredicateMatched(B currentAgent) {
+        }
+
+        /**
+         * This method is called if a predicate evaluated to {@code true} after a transition.
+         * It is only called if not all predicates yielded {@code true}.
+         *
+         * @param currentAgent the agent
+         * @param predicate    the predicate
+         */
+        default void onPredicateMatched(B currentAgent, ReactiveSystemPredicates<B> predicate) {
+
+        }
+
+        /**
          * Reports a violation of a predicate and supplies a counterexample trace from the initial state to the
          * violating state.
          *
@@ -327,8 +369,6 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         default void onPredicateViolated(B currentAgent, ReactiveSystemPredicates<B> predicate, GraphPath<String, ReactionGraph.LabeledEdge> counterExampleTrace) {
         }
 
-        default void onAllPredicateMatched(B currentAgent) {
-        }
 
         default void onError(Exception e) {
 

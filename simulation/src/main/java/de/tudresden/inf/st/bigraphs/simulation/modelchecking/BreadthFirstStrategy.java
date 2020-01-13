@@ -111,7 +111,9 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                 // "Check each property p ∈ P against w."
                 //TODO evaluate in options what should happen here: violation or stop criteria?
                 // this is connected to the predicates (changes its "intent", what they are used for)
-                if (!predicateChecker.checkAll(theAgent)) {
+                if (predicateChecker.checkAll(theAgent)) {
+                    modelChecker.reactiveSystemListener.onAllPredicateMatched(theAgent);
+                } else {
                     // compute counter-example trace from w back to the root
                     try {
 //                DijkstraShortestPath<String, String> dijkstraShortestPath = new DijkstraShortestPath<>(reactionGraph.getGraph());
@@ -121,14 +123,12 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                 logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());
                                 modelChecker.reactiveSystemListener.onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
                             } else {
-
+                                modelChecker.reactiveSystemListener.onPredicateMatched(theAgent, eachPredciate.getKey());
                             }
                         });
                     } catch (Exception e) {
                         modelChecker.reactiveSystemListener.onError(e);
                     }
-                } else {
-                    modelChecker.reactiveSystemListener.onAllPredicateMatched(theAgent);
                 }
             }
 //            transitionCnt.incrementAndGet();
