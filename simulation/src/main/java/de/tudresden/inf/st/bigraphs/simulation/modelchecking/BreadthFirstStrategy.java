@@ -87,7 +87,10 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                             }
 
                             Optional.ofNullable(reaction)
-                                    .map(x -> reactionResults.add(createMatchResult(eachRule, next, x, getOccurrenceCount())))
+                                    .map(x -> {
+                                        modelChecker.reactiveSystemListener.onUpdateReactionRuleApplies(theAgent, eachRule, next);
+                                        return reactionResults.add(createMatchResult(eachRule, next, x, getOccurrenceCount()));
+                                    })
                                     .orElseGet(() -> {
                                         modelChecker.reactiveSystemListener.onReactionIsNull();
                                         return false;

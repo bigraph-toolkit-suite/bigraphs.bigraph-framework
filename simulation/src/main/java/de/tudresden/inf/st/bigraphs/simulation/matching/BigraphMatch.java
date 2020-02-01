@@ -23,11 +23,11 @@ public interface BigraphMatch<B extends Bigraph<? extends Signature<?>>> {
     B getContext();
 
     /**
-     * Identity link graph for the composition of the context and the redex image (i.e., redex composed with parameters).
+     * Identity link graph for the composition of the context and the redex image (see {@link BigraphMatch#getRedexImage()}.
      *
      * @return the identity link graph for the context
      */
-    Bigraph<? extends Signature> getContextIdentity();
+    <BPrime extends Bigraph<? extends Signature<?>>> BPrime getContextIdentity();
 
     /**
      * Returns the redex of the reaction rule.
@@ -37,18 +37,18 @@ public interface BigraphMatch<B extends Bigraph<? extends Signature<?>>> {
     B getRedex();
 
     /**
-     * juxtaposition of the redex and a suitable identity is called the redex image
-     *
-     * @return the composed redex and identity link graph
-     */
-    B getRedexImage();
-
-    /**
-     * Get the identity link graph of the redex to build the "redex image".
+     * Get the identity link graph of the redex to build the <i>redex image</i>.
      *
      * @return the identity link graph of the redex
      */
-    ElementaryBigraph getRedexIdentity();
+    <BPrime extends Bigraph<? extends Signature<?>>> BPrime getRedexIdentity();
+
+    /**
+     * Returns the <i>redex image</i> - the juxtaposition of the redex and a suitable identity.
+     *
+     * @return the product of the redex and identity link graph
+     */
+    B getRedexImage();
 
     /**
      * Get all parameters of the reaction rules as a list

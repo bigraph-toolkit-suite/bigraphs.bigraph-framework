@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An implementation of an {@link BigraphModelChecker} providing a simple model checking for BRS for pure bigraphs (see {@link PureBigraph}).
+ * An implementation of a {@link BigraphModelChecker} for model checking of BRS with pure bigraphs
+ * (see {@link PureBigraph}).
+ * <p>
+ * It provides the required composition instructions using the deconstructed match result to compute the rewritten agent.
  *
  * @author Dominik Grzelak
  * @see PureBigraph
@@ -60,7 +63,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-            Bigraph outerBigraph = factory
+            Bigraph<DefaultDynamicSignature> outerBigraph = factory
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
@@ -87,21 +90,8 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //                    new File("redex.png")
 //            );
 
-            PureBigraph reactum = rule.getReactum();
-//            Bigraph d_Params;
-//            List<PureBigraph> parameters = new ArrayList<>(match.getParameters());
-//            if (rule.getReactum().getSites().size() != 0) {
-//                BigraphComposite d1 = factory.asBigraphOperator(factory.createPlacings(rule.getReactum().getSignature()).barren());
-//                for (int i = 1, n = parameters.size(); i < n; i++) {
-//                    d1 = d1.parallelProduct(factory.createPlacings(rule.getReactum().getSignature()).barren());
-//                }
-////                d_Params = d1.getOuterBigraph();
-//                reactum = (PureBigraph) factory.asBigraphOperator(reactum).compose(d1).getOuterBigraph();
-//            }
-
-            Bigraph agentReacted = factory.asBigraphOperator(outerBigraph)
-//                    .compose(rule.getReactum())
-                    .compose(reactum)
+            Bigraph<DefaultDynamicSignature> agentReacted = factory.asBigraphOperator(outerBigraph)
+                    .compose(rule.getReactum())
                     .getOuterBigraph();
 
 //            GraphvizConverter.toPNG(agentReacted,
@@ -149,7 +139,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            }
 
             //NOTE: juxtapose changed to parallelProduct (check if this is right)
-            Bigraph outerBigraph = factory
+            Bigraph<DefaultDynamicSignature> outerBigraph = factory
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
@@ -161,11 +151,12 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-            Bigraph d_Params = null;
+
+            Bigraph<DefaultDynamicSignature> d_Params = null;
             List<PureBigraph> parameters = new ArrayList<>(match.getParameters());
             if (parameters.size() >= 2) {
                 FiniteOrdinal<Integer> mu_ix = rule.getInstantationMap().get(0);
-                BigraphComposite d1 = factory.asBigraphOperator(parameters.get(mu_ix.getValue()));
+                BigraphComposite<DefaultDynamicSignature> d1 = factory.asBigraphOperator(parameters.get(mu_ix.getValue()));
                 for (int i = 1, n = parameters.size(); i < n; i++) {
                     mu_ix = rule.getInstantationMap().get(i);
                     d1 = d1.parallelProduct(parameters.get(mu_ix.getValue()));
@@ -189,8 +180,9 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            }
 
             //id_X || R) * d_Params <=> R . d_Params
-            BigraphComposite reactumImage = factory.asBigraphOperator(match.getRedexIdentity()).parallelProduct(rule.getReactum());//.compose(d_Params).getOuterBigraph();
-            BigraphComposite compose = reactumImage.compose(d_Params);
+            BigraphComposite<DefaultDynamicSignature> reactumImage = factory.asBigraphOperator(match.getRedexIdentity())
+                    .parallelProduct(rule.getReactum());//.compose(d_Params).getOuterBigraph();
+            BigraphComposite<DefaultDynamicSignature> compose = reactumImage.compose(d_Params);
 
 //            try {
 //                BigraphGraphvizExporter.toPNG(reactumImage.getOuterBigraph(),
@@ -206,7 +198,7 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
 //            }
 
 
-            Bigraph agentReacted = factory.asBigraphOperator(outerBigraph)
+            Bigraph<DefaultDynamicSignature> agentReacted = factory.asBigraphOperator(outerBigraph)
                     .compose(compose)
                     .getOuterBigraph();
 

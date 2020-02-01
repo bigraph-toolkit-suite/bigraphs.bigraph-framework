@@ -786,6 +786,6 @@ public class CanonicalFormRepresentationUnitTests {
         S s = (S) signatureBuilder.create();
         ArrayList<C> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return (S) signatureBuilder.createSignature((Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>>) new LinkedHashSet<C>(cs));
+        return (S) signatureBuilder.createWith((Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>>) new LinkedHashSet<C>(cs));
     }
 }

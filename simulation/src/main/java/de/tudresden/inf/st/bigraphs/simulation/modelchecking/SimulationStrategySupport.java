@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Base class for supporting other simulation strategy implementations.
+ * Provides some useful method to keep sub-classes simple.
+ *
  * @author Dominik Grzelak
  */
 public abstract class SimulationStrategySupport<B extends Bigraph<? extends Signature<?>>> implements SimulationStrategy<B> {

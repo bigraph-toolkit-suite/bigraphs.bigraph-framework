@@ -27,6 +27,11 @@ import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckin
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * This unit test shows how to execute multiple BRSs sequentially where the next one uses the last state of the previous
+ * BRS. It can be thought of a cascading simulation.
+ * <p>
+ * Also useful for multi-scale simulations. Each BRS can be verified individually and combined later.
+ *
  * @author Dominik Grzelak
  */
 public class PredicateListenerUnitTests {
@@ -148,7 +153,7 @@ public class PredicateListenerUnitTests {
         return new ParametricReactionRule<>(redex, reactum);
     }
 
-    private static DefaultDynamicSignature createExampleSignature() {
+    private DefaultDynamicSignature createExampleSignature() {
         DefaultDynamicSignature signature = pure().createSignatureBuilder()
                 .newControl("User", 1).assign()
                 .newControl("Job", 1).assign()

@@ -155,6 +155,7 @@ public class ModelCheckingOptions {
 
             /**
              * Flag to set whether to allow reducible classes for the reaction graph.
+             *
              * @param reduceStates if {@code true}, symmetries are exploited
              * @return {@code true} reaction graph considers symmetries
              */
@@ -178,10 +179,12 @@ public class ModelCheckingOptions {
     public static final class ExportOptions implements Opts {
         private final File outputStatesFolder;
         private final File traceFile;
+        private final File rewriteResultFolder;
 
-        ExportOptions(File outputStatesFolder, File traceFile) {
+        ExportOptions(File outputStatesFolder, File traceFile, File rewriteResultFolder) {
             this.outputStatesFolder = outputStatesFolder;
             this.traceFile = traceFile;
+            this.rewriteResultFolder = rewriteResultFolder;
         }
 
         public File getOutputStatesFolder() {
@@ -190,6 +193,14 @@ public class ModelCheckingOptions {
 
         public boolean hasOutputStatesFolder() {
             return Objects.nonNull(outputStatesFolder);
+        }
+
+        public boolean hasRewriteResultFolder() {
+            return Objects.nonNull(rewriteResultFolder);
+        }
+
+        public File getRewriteResultFolder() {
+            return rewriteResultFolder;
         }
 
         /**
@@ -201,14 +212,19 @@ public class ModelCheckingOptions {
             return traceFile;
         }
 
+        public boolean hasTraceFile() {
+            return Objects.nonNull(traceFile);
+        }
+
         @Override
         public Options getType() {
             return Options.EXPORT;
         }
 
         public static class Builder {
-            private File outputStatesFolder;
-            private File traceFile;
+            private File outputStatesFolder = null;
+            private File traceFile = null;
+            private File rewriteResultFolder = null;
 
             public Builder setOutputStatesFolder(File outputStatesFolder) {
                 this.outputStatesFolder = outputStatesFolder;
@@ -220,8 +236,13 @@ public class ModelCheckingOptions {
                 return this;
             }
 
+            public Builder setRewriteResultFolder(File rewriteResultFolder) {
+                this.rewriteResultFolder = rewriteResultFolder;
+                return this;
+            }
+
             public ExportOptions create() {
-                return new ExportOptions(outputStatesFolder, traceFile);
+                return new ExportOptions(outputStatesFolder, traceFile, rewriteResultFolder);
             }
         }
     }

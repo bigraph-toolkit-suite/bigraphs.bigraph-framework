@@ -6,8 +6,10 @@ import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ContextIsNotActive;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -451,7 +453,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         logger.debug("BUILD MATCH");
 
         // Compute the context, and the parameters
-        Map<Integer, Bigraph> parameters = new LinkedHashMap<>();
+        Map<Integer, Bigraph<DefaultDynamicSignature>> parameters = new LinkedHashMap<>();
         PureBigraphFactory pureBigraphFactory = AbstractBigraphFactory.createPureBigraphFactory();
 
         //when no params are necessary then a barren is all that is needed
@@ -657,7 +659,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                 newInnerNames, newOuterNames, builder.getCreatedEdges()));
         builder.reset();
 
-        ElementaryBigraph<DefaultDynamicSignature> identityForParams;
+        Bigraph<DefaultDynamicSignature> identityForParams;
         Linkings<DefaultDynamicSignature> linkings = pureBigraphFactory.createLinkings(agentAdapter.getSignature());
         List<StringTypedName> namesTmp = (List<StringTypedName>) parameters.values().stream().map(x -> x.getOuterNames())
                 .flatMap(x -> x.stream())
@@ -729,10 +731,17 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
         }
 
+        PureBigraph redexImage = null;
+        try {
+            redexImage = pureBigraphFactory.asBigraphOperator(redexAdapter.getBigraphDelegate()).parallelProduct(identityForParams).getOuterBigraph();
+        } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
+            logger.error(e.getMessage(), e);
+        }
         // parameters are only needed when RR contains sites, otherwise they contain just a barren or are empty
         return new PureBigraphParametricMatch(
                 context,
                 redexAdapter.getBigraphDelegate(),
+                redexImage,
                 parameters.values(),
                 identityForParams,
                 identityForContext
@@ -758,7 +767,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
     // corresponding parts
     private void iterateThroughChildren(BigraphEntity redex, BigraphEntity agent,
-                                        Map<Integer, Bigraph> parameters,
+                                        Map<Integer, Bigraph<DefaultDynamicSignature>> parameters,
                                         BiMap<BigraphEntity.NodeEntity, BigraphEntity.NodeEntity> matchDict,
                                         Table<Integer, BigraphEntity, BigraphEntity> hitsV_newChildren) {
         boolean hasSite = redexAdapter.getChildrenWithSites(redex).stream().anyMatch(BigraphEntityType::isSite);
@@ -1082,7 +1091,6 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
     }
 
     private boolean areLinksOK(List<BigraphEntity> redexPartition, List<BigraphEntity> agentPartition) {
-        //TODO only arity > 0
         HashMap<BigraphEntity, Boolean> lnk = new HashMap<>();
         Table<BigraphEntity, BigraphEntity, Boolean> lnkTab = HashBasedTable.create();
         for (BigraphEntity v : agentPartition) {
@@ -1169,7 +1177,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkAgent = agentAdapter.getLinksOfNode(v);
             List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkRedex = redexAdapter.getLinksOfNode(u);
 
-            //Die Anzahl muss auch stimmen in der angegebenen Reihenfolge, aber bezeichner v. name ist nicht relevant
+            //Die Anzahl muss auch stimmen in der angegebenen Reihenfolge, aber bezeichner vom namen ist nicht relevant, muss bei der modellierung beachtet werden
             if ((lnkRedex.size() != 0) == (lnkAgent.size() != 0)) {
 //            if (lnkRedex.size() != 0 && lnkAgent.size() != 0) {
                 if (lnkRedex.size() != lnkAgent.size()) return false;

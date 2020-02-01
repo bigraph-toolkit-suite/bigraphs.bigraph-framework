@@ -331,7 +331,15 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         default void onReactiveSystemFinished() {
         }
 
-        default void onUpdateReactionRuleApplies() {
+        /**
+         * This method is called by within a simulation, when the redex of a reaction rule could be matched within the
+         * host bigraph (i.e., the last active agent of the reactive system).
+         *
+         * @param agent        the agent where the redex pattern was found
+         * @param reactionRule the respective reaction rule
+         * @param matchResult  the result of the matching
+         */
+        default void onUpdateReactionRuleApplies(B agent, ReactionRule<B> reactionRule, BigraphMatch<B> matchResult) {
         }
 
         default void onReactionIsNull() {

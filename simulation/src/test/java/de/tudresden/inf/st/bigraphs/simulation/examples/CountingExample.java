@@ -65,17 +65,21 @@ public class CountingExample {
         ReactionRule<PureBigraph> rr_1 = createReactionRule_1();
         ReactionRule<PureBigraph> rr_2 = createReactionRule_2();
         ReactionRule<PureBigraph> rr_3 = createReactionRule_3();
-//        GraphvizConverter.toPNG(rr_1.getRedex(),
-//                true,
-//                new File("rr_lhs_1.png")
-//        );
-//        GraphvizConverter.toPNG(rr_1.getReactum(),
-//                true,
-//                new File("rr_rhs_1.png")
-//        );
+        BigraphGraphvizExporter.toPNG(rr_1.getRedex(),
+                true,
+                new File(TARGET_DUMP_PATH + "rr_lhs_1.png")
+        );
+        BigraphGraphvizExporter.toPNG(rr_2.getRedex(),
+                true,
+                new File(TARGET_DUMP_PATH + "rr_lhs_2.png")
+        );
+        BigraphGraphvizExporter.toPNG(rr_3.getRedex(),
+                true,
+                new File(TARGET_DUMP_PATH + "rr_lhs_3.png")
+        );
 
-        ModelCheckingOptions.ExportOptions.Builder builder = ModelCheckingOptions.exportOpts();
-        ModelCheckingOptions.TransitionOptions.Builder builder1 = transitionOpts();
+//        ModelCheckingOptions.ExportOptions.Builder builder = ModelCheckingOptions.exportOpts();
+//        ModelCheckingOptions.TransitionOptions.Builder builder1 = transitionOpts();
         reactiveSystem.addReactionRule(rr_1);
         reactiveSystem.addReactionRule(rr_2);
         reactiveSystem.addReactionRule(rr_3);
@@ -85,10 +89,10 @@ public class CountingExample {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(8)
-                        .setMaximumTime(30)
+                                .setMaximumTransitions(8)
+                                .setMaximumTime(30)
 //                        .allowReducibleClasses(true)
-                        .create()
+                                .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
@@ -97,10 +101,6 @@ public class CountingExample {
                         .create()
                 )
         ;
-//
-//        MatchPredicate<PureBigraph> pred1 = MatchPredicate.create((PureBigraph) createAgent_A_Final());
-//
-//        reactiveSystem.computeTransitionSystem(agent_a, opts);
         reactiveSystem.setAgent(agent_a);
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,

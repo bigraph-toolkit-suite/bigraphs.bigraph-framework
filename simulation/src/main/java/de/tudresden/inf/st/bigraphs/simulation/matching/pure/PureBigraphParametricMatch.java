@@ -12,24 +12,30 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Class represents the result of a match. Contains all necessary elements to perform the rewriting step later.
+ * This class represents the result of a valid match.
+ * It contains all required elements to perform the rewriting step later.
  *
  * @author Dominik Grzelak
  * @see AbstractSimpleReactiveSystem
  */
 public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
 
-    private Collection<Bigraph> parameters = new ArrayList<>();
     private PureBigraph context;
-    private ElementaryBigraph identity;
     private PureBigraph redex;
     private PureBigraph redexImage;
+    private Collection<Bigraph<DefaultDynamicSignature>> parameters;
+    private Bigraph<DefaultDynamicSignature> identity;
     private Bigraph<DefaultDynamicSignature> contextIdentity;
 
-    public PureBigraphParametricMatch(PureBigraph context, PureBigraph redex,
-                                      Collection<Bigraph> parameters, ElementaryBigraph identity, Bigraph<DefaultDynamicSignature> contextIdentity) {
+    public PureBigraphParametricMatch(PureBigraph context,
+                                      PureBigraph redex,
+                                      PureBigraph redexImage,
+                                      Collection<Bigraph<DefaultDynamicSignature>> parameters,
+                                      Bigraph<DefaultDynamicSignature> identity,
+                                      Bigraph<DefaultDynamicSignature> contextIdentity) {
         this.parameters = parameters;
         this.context = context;
+        this.redexImage = redexImage;
         this.identity = identity;
         this.redex = redex;
         this.contextIdentity = contextIdentity;
@@ -45,6 +51,12 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
         return context;
     }
 
+    /**
+     * <b>Note:</b> The return type is of class {@link Bigraph} with a {@link DefaultDynamicSignature}. We cannot cast
+     * it to a pure bigraph because it may also be an elementary bigraph (in the form of a pure bigraph type)
+     *
+     * @return the identity link graph
+     */
     @Override
     public Bigraph<DefaultDynamicSignature> getContextIdentity() {
         return contextIdentity;
@@ -61,7 +73,7 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     }
 
     @Override
-    public ElementaryBigraph getRedexIdentity() {
+    public Bigraph<DefaultDynamicSignature> getRedexIdentity() {
         return identity;
     }
 }
