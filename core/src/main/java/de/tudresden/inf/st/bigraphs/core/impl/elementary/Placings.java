@@ -39,7 +39,7 @@ public class Placings<S extends Signature> implements Serializable {
     public Placings(AbstractBigraphFactory factory) {
 //        AbstractBigraphFactory factory = new PureBigraphFactory<>();
         SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-        emptySignature = (S) signatureBuilder.createSignature();
+        emptySignature = (S) signatureBuilder.createEmpty();
         mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }
@@ -49,7 +49,7 @@ public class Placings<S extends Signature> implements Serializable {
      *                         user-defined bigraphs of the same type created with the same factory
      */
     public Placings(SignatureBuilder signatureBuilder) {
-        emptySignature = (S) signatureBuilder.createSignature();
+        emptySignature = (S) signatureBuilder.createEmpty();
         mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }

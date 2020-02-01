@@ -63,7 +63,7 @@ public class Linkings<S extends Signature> implements Serializable {
     public Linkings(AbstractBigraphFactory factory) {
 //        AbstractBigraphFactory factory = new PureBigraphFactory<>();
         SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-        emptySignature = (S) signatureBuilder.createSignature();
+        emptySignature = (S) signatureBuilder.createEmpty();
         mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }
@@ -82,7 +82,7 @@ public class Linkings<S extends Signature> implements Serializable {
     public Linkings(SignatureBuilder signatureBuilder) {
 //        AbstractBigraphFactory factory = new PureBigraphFactory<>();
 //        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-        emptySignature = (S) signatureBuilder.createSignature();
+        emptySignature = (S) signatureBuilder.createEmpty();
         mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }

@@ -233,7 +233,7 @@ public class BigraphCompositionUnitTests {
         BigraphComposite<DefaultDynamicSignature> b = factory.asBigraphOperator(aJoin);
 
         assertAll(() -> {
-            Bigraph<DefaultDynamicSignature> outerBigraph = b.compose(a.juxtapose(merge_M).getOuterBigraph()).getOuterBigraph();
+            Bigraph<DefaultDynamicSignature> outerBigraph = b.compose((Bigraph<DefaultDynamicSignature>) a.juxtapose(merge_M).getOuterBigraph()).getOuterBigraph();
             assertEquals(merge_MplusOne.getRoots().size(), outerBigraph.getRoots().size());
             assertEquals(merge_MplusOne.getSites().size(), outerBigraph.getSites().size());
             assertEquals(merge_MplusOne.getOuterNames().size() == 0, outerBigraph.getOuterNames().size() == 0);

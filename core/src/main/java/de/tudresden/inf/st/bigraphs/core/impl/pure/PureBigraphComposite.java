@@ -60,8 +60,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
      * Function that makes the nodes disjunct in terms of there names. This is needed for composition.
      */
     @Override
-    public Bigraph<S> getOuterBigraph() {
-        return getBigraphDelegate();
+    public PureBigraph getOuterBigraph() {
+        return (PureBigraph) getBigraphDelegate();
     }
 
     @Override
@@ -289,7 +289,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
 
     @Override
     public BigraphComposite<S> parallelProduct(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        return parallelProduct(f.getOuterBigraph());
+        return parallelProduct((Bigraph<S>) f.getOuterBigraph());
     }
 
     @Override
@@ -547,12 +547,12 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
 
     @Override
     public BigraphComposite<S> compose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        return this.compose(f.getOuterBigraph());
+        return this.compose((Bigraph<S>) f.getOuterBigraph());
     }
 
     @Override
     public BigraphComposite<S> juxtapose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        return this.juxtapose(f.getOuterBigraph());
+        return this.juxtapose((Bigraph<S>) f.getOuterBigraph());
     }
 
     @Override
@@ -952,11 +952,11 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
 
     @Override
     public EPackage getModelPackage() {
-        return ((EcoreBigraph)getBigraphDelegate()).getModelPackage();
+        return ((EcoreBigraph) getBigraphDelegate()).getModelPackage();
     }
 
     @Override
     public EObject getModel() {
-        return ((EcoreBigraph)getBigraphDelegate()).getModel();
+        return ((EcoreBigraph) getBigraphDelegate()).getModel();
     }
 }

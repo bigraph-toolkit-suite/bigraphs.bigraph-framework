@@ -22,7 +22,7 @@ public interface BigraphComposite<S extends Signature> {
      *
      * @return the outer bigraph of a composition
      */
-    Bigraph<S> getOuterBigraph();
+    <B extends Bigraph<S>> B getOuterBigraph();
 
     /**
      * Composes two bigraphs where a new immutable bigraph is created.

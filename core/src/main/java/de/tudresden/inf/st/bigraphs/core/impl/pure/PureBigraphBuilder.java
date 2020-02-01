@@ -164,9 +164,9 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return new PureBigraphBuilder<>(signature, metaModelData);
     }
 
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModel)
+    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFileName)
             throws BigraphMetaModelLoadingFailedException {
-        return new PureBigraphBuilder<>(signature, metaModel);
+        return new PureBigraphBuilder<>(signature, metaModelFileName);
     }
 
     public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature)

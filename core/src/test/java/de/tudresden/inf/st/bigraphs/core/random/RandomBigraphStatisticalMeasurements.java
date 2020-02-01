@@ -319,7 +319,7 @@ public class RandomBigraphStatisticalMeasurements {
         DefaultDynamicSignature s = signatureBuilder.create();
         ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return signatureBuilder.createWith(new LinkedHashSet<>(cs));
     }
 
     private DefaultDynamicSignature createRandomSignaturePortVariation(int n, float probOfPositiveArity) {
@@ -349,6 +349,6 @@ public class RandomBigraphStatisticalMeasurements {
         DefaultDynamicSignature s = signatureBuilder.create();
         ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
-        return signatureBuilder.createSignature(new LinkedHashSet<>(cs));
+        return signatureBuilder.createWith(new LinkedHashSet<>(cs));
     }
 }

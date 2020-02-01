@@ -46,8 +46,8 @@ public class PureBigraphFactory
     }
 
     @Override
-    public BigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, String metaModelData) {
-        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelData);
+    public BigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, String metaModelFileName) {
+        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelFileName);
     }
 
     @Override

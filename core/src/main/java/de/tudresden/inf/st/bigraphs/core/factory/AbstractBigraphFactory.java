@@ -83,7 +83,7 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
      */
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature, EMetaModelData metaModelData);
 
-    public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature, String metaModelData);
+    public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature, String metaModelFileName);
 
     @Deprecated
     public abstract Placings<S> createPlacings();

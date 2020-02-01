@@ -269,7 +269,7 @@ public class ElementaryBigraphUnitTests {
         assertNotNull(closure_x.getModelPackage());
         assertNotNull(closure_x.getModel());
 
-        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = factory.createBigraphBuilder(factory.createSignatureBuilder().createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = factory.createBigraphBuilder(factory.createSignatureBuilder().createEmpty());
         bigraphBuilder.createOuterName("x");
         PureBigraph bx = bigraphBuilder.createBigraph();
         assertAll(() -> {

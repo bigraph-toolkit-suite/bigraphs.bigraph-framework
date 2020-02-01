@@ -32,12 +32,12 @@ public class DynamicSignatureBuilder
     }
 
     @Override
-    public DefaultDynamicSignature createSignature(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
+    public DefaultDynamicSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
         return new DefaultDynamicSignature((Set<DefaultDynamicControl>) controls);
     }
 
     @Override
-    public DefaultDynamicSignature createSignature() {
+    public DefaultDynamicSignature createEmpty() {
         return new DefaultDynamicSignature(Collections.emptySet());
     }
 
