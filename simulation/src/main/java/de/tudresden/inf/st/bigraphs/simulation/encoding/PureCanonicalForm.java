@@ -85,7 +85,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                             )
                     )
             );
-            levelComparator = compareControlByKeyAndValue.thenComparing(
+            levelComparator = compareControlOfParentAndChildren.thenComparing(
                     compareChildrenSizeByValue.reversed().thenComparing(
                             compareChildrenPortSum.reversed().thenComparing(
                                     compareChildrenLinkNames.reversed()
@@ -98,7 +98,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                             comparePortCount.reversed()
                     )
             );
-            levelComparator = compareControlByKeyAndValue.thenComparing(
+            levelComparator = compareControlOfParentAndChildren.thenComparing(
                     compareChildrenSizeByValue.reversed().thenComparing(
                             compareChildrenPortSum.reversed()
                     )
@@ -161,7 +161,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             }
 
             if (next.size() > 0) {
-                // group by parents
+
+                // A) Group by parents
                 // in der reihenfolge wie oben: lexicographic "from small to large", and bfs from left to right
                 Map<BigraphEntity, LinkedList<BigraphEntity>> collect = next
                         .stream()
@@ -171,10 +172,10 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 
 
                 Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator2 = (compareChildrenPortSum.reversed());
+                // we must also respect the last ordering of the former parents
                 if (lastOrdering.size() != 0) {
                     atLevelCnt = new AtomicInteger(lastOrdering.size() - collect.size());
                     //order collect as in lastOrdering and order all childs properly
-//                    System.out.println(lastOrdering);
                     LinkedHashMap<BigraphEntity, LinkedList<BigraphEntity>> collectTmp = new LinkedHashMap<>();
                     for (BigraphEntity eachOrder : lastOrdering) {
                         if (parentChildMap.get(eachOrder) != null) {
@@ -184,18 +185,13 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //                        long distinctLabels = collect.get(eachOrder).stream().map(x -> x.getControl().getNamedType().stringValue()).distinct().count();
                         collectTmp.put(eachOrder, collect.get(eachOrder).stream()
                                 .sorted(
-//                                        compareControl.thenComparing(
-//                                                compareChildrenSize.reversed().thenComparing(
-//                                                        comparePortCount.reversed()
-//                                                )
-//                                        )
                                         levelComp2
                                 )
                                 .collect(Collectors.toCollection(LinkedList::new)));
                     }
                     collect = collectTmp;
                     lastOrdering.clear();
-                } else {
+                } else { // we are in the "first" level or the current level has no children (see below)
                     atLevelCnt = new AtomicInteger(0);
                     collect = collect.entrySet()
                             .stream()
@@ -216,12 +212,6 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                 levelComp2
                         )
                         .forEach(levelList::add));
-//                Comparator<BigraphEntity> siblingCountComp = Comparator.comparing(entry -> {
-//                    return bigraph.getSiblingsOfNode(entry).size();
-//                });
-//                Comparator<BigraphEntity> childCountComp = Comparator.comparing(entry -> {
-//                    return bigraph.getChildrenOf(entry).size();
-//                });
                 //build string
                 boolean allNodesAreLeaves = levelList.summarizeInt((x) -> {
                     return bigraph.getChildrenOf(x).size();
@@ -417,7 +407,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         }
     }
 
-    Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareControlByKeyAndValue =
+    Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareControlOfParentAndChildren =
             Comparator.comparing((entry) -> {
                 String s1 = entry.getValue().stream()
                         .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ? String.valueOf(((BigraphEntity.SiteEntity) lhs).getIndex()) : label(lhs) + getLinkName(bigraph, lhs)))
@@ -443,6 +433,13 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 return o;
             });
 
+//    Comparator<BigraphEntity> siblingCountComp = Comparator.comparing(entry -> {
+//        return bigraph.getSiblingsOfNode(entry).size();
+//    });
+//    Comparator<BigraphEntity> childCountComp = Comparator.comparing(entry -> {
+//        return bigraph.getChildrenOf(entry).size();
+//    });
+//
     Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenSizeByValue =
             Comparator.comparing(entry -> {
                 return entry.getValue().size();

@@ -52,6 +52,10 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
         this.predicateChecker = new PredicateChecker<>(modelChecker.getReactiveSystem().getPredicates());
         this.options = modelChecker.options;
         this.canonicalForm = modelChecker.canonicalForm;
+        if (Objects.nonNull(options.get(ModelCheckingOptions.Options.EXPORT))) {
+            ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
+            modelChecker.getReactionGraph().setCanonicalNodeLabel(opts.getPrintCanonicalStateLabel());
+        }
         modelChecker.getReactionGraph().reset();
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
         String rootBfcs = canonicalForm.bfcs(initialAgent);
@@ -100,12 +104,12 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         return reactionResults.stream();
                     })
                     .forEachOrdered(reaction -> {
-                        modelChecker.exportState(reaction.getBigraph(), String.valueOf(reaction.getOccurrenceCount()));
                         String bfcf = canonicalForm.bfcs(reaction.getBigraph());
                         String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(reaction.getReactionRule());
                         if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
                             modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getNext().getRedex(), reactionLbl);
                             workingQueue.add(reaction.getBigraph());
+                            modelChecker.exportState(reaction.getBigraph(), bfcf, String.valueOf(reaction.getOccurrenceCount()));
                         } else {
                             modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getNext().getRedex(), reactionLbl);
                         }
@@ -120,7 +124,10 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     // compute counter-example trace from w back to the root
                     try {
 //                DijkstraShortestPath<String, String> dijkstraShortestPath = new DijkstraShortestPath<>(reactionGraph.getGraph());
-                        GraphPath<String, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(modelChecker.getReactionGraph().getGraph(), bfcfOfW, rootBfcs);
+                        GraphPath<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(modelChecker.getReactionGraph().getGraph(),
+                                modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW).get(),
+                                modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(rootBfcs).get()
+                        );
                         predicateChecker.getChecked().entrySet().stream().forEach(eachPredciate -> {
                             if (!eachPredciate.getValue()) {
                                 logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());

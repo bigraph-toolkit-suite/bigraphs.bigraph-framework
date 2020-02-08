@@ -180,11 +180,13 @@ public class ModelCheckingOptions {
         private final File outputStatesFolder;
         private final File traceFile;
         private final File rewriteResultFolder;
+        private final Boolean printCanonicalStateLabel;
 
-        ExportOptions(File outputStatesFolder, File traceFile, File rewriteResultFolder) {
+        ExportOptions(File outputStatesFolder, File traceFile, File rewriteResultFolder, Boolean printCanonicalStateLabel) {
             this.outputStatesFolder = outputStatesFolder;
             this.traceFile = traceFile;
             this.rewriteResultFolder = rewriteResultFolder;
+            this.printCanonicalStateLabel = printCanonicalStateLabel;
         }
 
         public File getOutputStatesFolder() {
@@ -201,6 +203,19 @@ public class ModelCheckingOptions {
 
         public File getRewriteResultFolder() {
             return rewriteResultFolder;
+        }
+
+        /**
+         * Flag that can be used to determine whether the labels of the states in the reaction graph should contain
+         * the canonical form of a bigraph or not, meaning, only a constant identifier is printed suffixed with an
+         * incremented number.
+         * <p>
+         * This only affects the exported reaction graph and serves visual purposes.
+         *
+         * @return {@code true}, if the state labels of the reaction graph should contain the canonical form of a bigraph
+         */
+        public Boolean getPrintCanonicalStateLabel() {
+            return printCanonicalStateLabel;
         }
 
         /**
@@ -225,6 +240,7 @@ public class ModelCheckingOptions {
             private File outputStatesFolder = null;
             private File traceFile = null;
             private File rewriteResultFolder = null;
+            private Boolean printCanonicalStateLabel = false;
 
             public Builder setOutputStatesFolder(File outputStatesFolder) {
                 this.outputStatesFolder = outputStatesFolder;
@@ -241,8 +257,22 @@ public class ModelCheckingOptions {
                 return this;
             }
 
+            /**
+             * Flag that can be used to determine whether the labels of the states in the reaction graph should contain
+             * the canonical form of a bigraph or not, meaning, only a constant identifier is printed suffixed with an
+             * incremented number.
+             * <p>
+             * This only affects the exported reaction graph and serves visual purposes.
+             *
+             * @return {@code true}, if the state labels of the reaction graph should contain the canonical form of a bigraph
+             */
+            public Builder setPrintCanonicalStateLabel(boolean flag) {
+                this.printCanonicalStateLabel = flag;
+                return this;
+            }
+
             public ExportOptions create() {
-                return new ExportOptions(outputStatesFolder, traceFile, rewriteResultFolder);
+                return new ExportOptions(outputStatesFolder, traceFile, rewriteResultFolder, printCanonicalStateLabel);
             }
         }
     }

@@ -231,14 +231,21 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    protected void exportState(B bigraph, String suffix) {
+    protected void exportState(B bigraph, String canonicalForm, String suffix) {
         if (Objects.nonNull(options.get(ModelCheckingOptions.Options.EXPORT))) {
             ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
             if (opts.hasOutputStatesFolder()) {
                 try {
+                    String label = "";
+                    if (reactionGraph.getLabeledNodeByCanonicalForm(canonicalForm).isPresent() &&
+                            reactionGraph.getLabeledNodeByCanonicalForm(canonicalForm).get() instanceof ReactionGraph.DefaultLabeledNode) {
+                        label = reactionGraph.getLabeledNodeByCanonicalForm(canonicalForm).get().getLabel();
+                    } else {
+                        label = String.format("state-%s.png", suffix);
+                    }
                     BigraphGraphvizExporter.toPNG(bigraph,
                             true,
-                            Paths.get(opts.getOutputStatesFolder().toString(), String.format("state-%s.png", suffix)).toFile()
+                            Paths.get(opts.getOutputStatesFolder().toString(), label).toFile()
                     );
                     logger.debug("Exporting state {}", suffix);
 //                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
@@ -374,7 +381,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
          * @param predicate           the predicate
          * @param counterExampleTrace the trace representing a counterexample
          */
-        default void onPredicateViolated(B currentAgent, ReactiveSystemPredicates<B> predicate, GraphPath<String, ReactionGraph.LabeledEdge> counterExampleTrace) {
+        default void onPredicateViolated(B currentAgent, ReactiveSystemPredicates<B> predicate, GraphPath<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> counterExampleTrace) {
         }
 
 
