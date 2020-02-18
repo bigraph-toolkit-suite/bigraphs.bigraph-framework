@@ -1,7 +1,5 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
-//TODO: add tactics/order/priorities for RR execution (here?)
-
 import java.io.File;
 import java.util.Map;
 import java.util.Objects;
@@ -263,6 +261,8 @@ public class ModelCheckingOptions {
              * incremented number.
              * <p>
              * This only affects the exported reaction graph and serves visual purposes.
+             *
+             * Default is {@code true}.
              *
              * @return {@code true}, if the state labels of the reaction graph should contain the canonical form of a bigraph
              */

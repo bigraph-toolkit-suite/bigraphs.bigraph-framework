@@ -334,6 +334,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 sb.append(I2.flip().get(each).getOnly()).append("$");
             }
         }
+        // lastly links from inner to outer
         for (BigraphEntity.OuterName each : idleOuterNames) {
 //            sb.append(O2.flip().get(each).getOnly()).append("$");
             sb.append(rewriteFunction.labelO(O2, each)).append("$");
