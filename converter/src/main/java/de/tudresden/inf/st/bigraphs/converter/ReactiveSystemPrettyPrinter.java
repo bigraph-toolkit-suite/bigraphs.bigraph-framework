@@ -14,7 +14,20 @@ import java.io.OutputStream;
  * @author Dominik Grzelak
  */
 public interface ReactiveSystemPrettyPrinter<B extends Bigraph<? extends Signature<?>>, R extends ReactiveSystem> extends PrettyPrinter<B> {
+    /**
+     * Returns the result of a reactive system encoding as string.
+     *
+     * @param system the reactive system being encoded
+     * @return
+     */
     String toString(R system);
 
+    /**
+     * Redirects the result of an encoding to an output stream.
+     *
+     * @param system       the reactive system being encoded
+     * @param outputStream the output stream where the result shall be written to
+     * @throws IOException because of the stream
+     */
     void toOutputStream(R system, OutputStream outputStream) throws IOException;
 }

@@ -1354,7 +1354,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     private void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
         try {
-            loadedEPackage = BigraphArtifacts.loadInternalBigraphMetaModel();
+            loadedEPackage = BigraphArtifacts.loadInternalBigraphMetaMetaModel();
             loadedEPackage.setNsPrefix(modelData.getNsPrefix());
             loadedEPackage.setNsURI(modelData.getNsUri());
             loadedEPackage.setName(modelData.getName());

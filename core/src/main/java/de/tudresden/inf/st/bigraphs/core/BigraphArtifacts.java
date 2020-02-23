@@ -33,7 +33,7 @@ public class BigraphArtifacts {
 
     private final static String DEFAULT_ENCODING = "UTF-8";
 
-    public static EPackage loadInternalBigraphMetaModel() throws IOException {
+    public static EPackage loadInternalBigraphMetaMetaModel() throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         BigraphBaseModelPackage.eINSTANCE.eClass();
         ResourceSet resourceSet = new ResourceSetImpl();
