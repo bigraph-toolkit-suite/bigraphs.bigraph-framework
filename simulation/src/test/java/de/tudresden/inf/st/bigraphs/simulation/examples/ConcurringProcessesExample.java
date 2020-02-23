@@ -90,12 +90,14 @@ public class ConcurringProcessesExample {
                 .and(transitionOpts()
                         .setMaximumTransitions(20)
                         .setMaximumTime(30)
+//                        .allowReducibleClasses(true)
                         .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setTraceFile(new File(TARGET_DUMP_PATH, "partial/transition_graph_agent-2.png"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "partial/states/"))
+                        .setPrintCanonicalStateLabel(true)
                         .create()
                 )
         ;
@@ -155,13 +157,14 @@ public class ConcurringProcessesExample {
                 .and(transitionOpts()
                         .setMaximumTransitions(20)
                         .setMaximumTime(30)
-                        .allowReducibleClasses(false) // use symmetries to make the transition graph smaller?
+                        .allowReducibleClasses(true) // use symmetries to make the transition graph smaller?
                         .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setTraceFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setPrintCanonicalStateLabel(false)
                         .create()
                 )
         ;
