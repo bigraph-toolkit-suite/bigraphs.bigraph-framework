@@ -126,7 +126,7 @@ This sections discusses the deployment process.
     git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
     ```
 
-- In GitLab, the variables SSH_PRIVATE_KEY and SSH_KNOWN_HOSTS must exist for the under Settings>CI/CD.
+- In GitLab, the variables SSH_PRIVATE_KEY and SSH_KNOWN_HOSTS must exist under Settings>CI/CD.
     - see [Using SSH keys with GitLab CI/CD](https://docs.gitlab.com/ee/ci/ssh_keys/)
     and [Generating a new SSH key pair](https://docs.gitlab.com/ee/ssh/#generating-a-new-ssh-key-pair)
     - Command to execute for SSH_KNOWN_HOSTS:
