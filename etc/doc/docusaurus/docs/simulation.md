@@ -1,6 +1,6 @@
 ---
 id: simulation
-title: Simulation
+title: Introduction
 ---
 
 <!--# Simulation-->
@@ -11,9 +11,9 @@ A reaction rule comprises a redex and reactum, where the redex is to be
 found in an agent; then the matched part of the agent can be rewritten by
 the reactum.
 
-This enables a form of rule-based programming paradigm. 
+> This enables a form of rule-based programming paradigm.
 
-Specifically, by simulation we mean *graph rewriting*.
+Reaction rule allow some kind of simulation. Specifically, enabled by means of *graph rewriting*.
 This form of expression allows to synthesize a labelled transition system (LTS). 
 Each node of the LTS is a state. States are connected
 by edges denoting the specific reaction rule that lead to this state.
@@ -44,8 +44,8 @@ class
 ## Simulation types   
 
 The frameworks builds the reaction graph in the course of the simulation.
-Only the canonical form of an agent is stored in the graph to reducing the 
-number of admissable states in order to minimize state space explosion.
+Only the canonical form of an agent is stored in the graph to reduce the
+number of admissable states in order to minimize the state-space explosion problem.
 
 ### Breadth-first simulation
 
@@ -74,7 +74,7 @@ was chosen (where (r0) points to), rules (r1), (r2) and (r3) could be applied.
 ## Additional Model Checking Options
 
 Model checking options may be provided to the model checker.
-Therefore, the the class `ModelCheckingOptions` needs to be created. An
+Therefore, the class `ModelCheckingOptions` needs to be created. An
 example is shown below.
 
 ```java
@@ -95,29 +95,29 @@ opts
 ;
 ```
 
-The options are divided into several categories which can be accessed by
-their builder classes.
-
-Currently, the following option categories are available:
+The individual options are divided into several categories which can be accessed by
+their respective builder classes.
+Currently, the following categories are available:
 
 - `ModelCheckingOptions.TransitionOptions`
 - `ModelCheckingOptions.ExportOptions`
 
-These are explained in the following.
+They are explained in the following.
 
-### Stopping Criteria
+### Transition options
 
+#### Stopping Criteria
 Notice that `ModelCheckingOptions.TransitionOptions` let us specify some stopping criteria by
 acquiring its builder by calling `ModelCheckingOptions.TransitionOptions.transitionOpts()`:
 
 - Maximal Number of transitions to allow
 - Maximal Number of states to compute
 - Time
-- Predicates (see below)
+- Predicates (are explained in [Verification](./verification))
 
 The following methods are available through the `ModelCheckingOptions.exportOpts()` builder instance:
 
-### Graph Export
+### Export options
 
 The `ModelCheckingOptions.ExportOptions` class allows specifying a file path where the reaction graph (i.e., transition system)
 and the individual states shall be written to. If these options are left empty then the graphs are not exported.
