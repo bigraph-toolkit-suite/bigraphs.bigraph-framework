@@ -35,9 +35,9 @@ public class BigraphGraphvizExporter {
         return new BigraphGraphvizExporter().convert(bigraph, output, Format.PNG, asTree, labelSupplier, colorSupplier, shapeSupplier);
     }
 
-    public static String toDOT(Bigraph<?> bigraph) {
+    public static String toDOT(Bigraph<?> bigraph, boolean asTree) {
         try {
-            return new BigraphGraphvizExporter().convert(bigraph, null, null, true, labelSupplier, colorSupplier, shapeSupplier);
+            return new BigraphGraphvizExporter().convert(bigraph, null, null, asTree, labelSupplier, colorSupplier, shapeSupplier);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
