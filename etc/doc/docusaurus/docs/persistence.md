@@ -13,14 +13,14 @@ persisting bigraphical models to the filesystem.
 
 For a more sophisticated persistence solution, we refer the reader to 
 [Eclipse Connected Data Objects (CDO) Model Repository](https://projects.eclipse.org/projects/modeling.emf.cdo) 
-and the corresponding implementation [spring-data-cdo]() for working
+and the corresponding implementation [spring-data-cdo](https://git-st.inf.tu-dresden.de/bft-bigrafogtecture/spring-data-cdo) for working
 with the [Spring framework](https://spring.io/). 
 
 ## Output format
 
 For the meta-model the file extension `*.ecore` is used and for the instance model `*.xmi`.
 
-The instance model includes a direct references to the meta-model which can be used for validation. This information can
+The instance model includes a direct reference to the meta-model which can be used for validation. This information can
 also be changed (or manually edited afterwards). This is described in [Storing an instance model to the filesystem](#storing-an-instance-model-to-the-filesystem)
 
 ## Bigraphical Meta Model

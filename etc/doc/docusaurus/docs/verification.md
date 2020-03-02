@@ -15,39 +15,38 @@ By proving specific properties of some software,
 this type of testing may assist one to develop safe and reliably software
 which cannot be detected by traditional means such as unit tests.
 
-One type of verification technique is the so-called **model checking** which
+One type of verification technique is the so-called **model checking**, which
 is implemented in Bigraph Framework.
 
-For model checking, we the following dependencies are used:
-- tweety, JDD, JavaDD
+<!-- For model checking, we the following dependencies are used: -->
+<!-- - tweety, JDD, JavaDD -->
 
-## Safety and Liveness Properties
+## Creating a Model Checker
 
-As long as the transition system is being built from a BRS specification,
-the provided predicates of the user are checked simultaneously for each
-new computed state in the course of a BRS simulation.
+<!-- Two processes mutually requesting a exclusive resource. -->
+<!-- Then, we want to verify that both processes never enter their critical section at the same time. -->
+This code example shows how to create a model checker object for pure bigraphs:
 
-Note: the user can also listen to those events.
+```java
+PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+// Add an agent and reaction rules
 
-These predicates come in two forms: as safety properties or as liveness
-properties. The former represents a state in the system that should not
-occur, whereas the later denote a system state that eventually occurs.
-By this we can test if a program never reaches a "bad state" (safety),
-or correctly terminates (reaching a desirable state), possibly producing
-a result (liveness).
+/* code omitted */
 
-Note: Safety is easier to check then liveness
-Some further safety properties are: partial correctness, absence of deadlocks,
-and mutual exclusion (see [\[1\]](#ref1)).
+// create model checking options
+ModelCheckingOptions opts = ModelCheckingOptions.create();
 
-Note: fairness properties are important for reactive systems.
+// Create the pure bigraph model checker
+PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
+            BigraphModelChecker.SimulationType.BREADTH_FIRST,
+            opts);
+modelChecker.execute();
+```
 
-### Example: Safety
-
-Two processes mutually requesting a exclusive resource. Then, we want to
-verify that both processes never are in their critical section at the same
-time.
-
+Some remarks:
+- The `execute()` method may throw a `BigraphSimulationException`
+- Simulation types are covered [here](simulation#simulation-types).
+- Model checking options are explained [here](simulation#additional-model-checking-options).
 
 ## Listeners
 
@@ -55,9 +54,16 @@ One may listen to specific events that are thrown during the simulation. This gi
 with the simulation and fire additional actions or to log these events and evaluate them later, additionally to the
 final built reaction graph.
 
+Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added
+to a model checker instance. It provides methods to listen when a reaction rule is applied or when the verification process finished, for instance.
+
+For example, see [here](simulation-predicates#listen-to-predicate-evaluation) on how to listen for predicate evaluation results.
 
 
-## Async execution
+
+
+
+## Asynchronous Execution
 
 To perform the model checking asynchronously, call the `BigraphModelChecker#executeAsync()`:
 
@@ -82,6 +88,25 @@ to search for an implementation.
 
 A default _executor service provider_ is provided within the `bigraph-rewriting` dependency which creates a fixed thread pool.
 
+## Safety and Liveness Properties
+
+As long as the transition system is being built from a BRS specification,
+the provided predicates of the user are checked simultaneously for each
+new computed state in the course of a BRS simulation.
+
+> **Note:** A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker object.
+
+These predicates come in two forms: as safety properties or as liveness
+properties. The former represents a state in the system that should not
+occur, whereas the later denote a system state that eventually occurs.
+By this we can test if a program never reaches a "bad state" (safety),
+or correctly terminates (reaching a desirable state), possibly producing
+a result (liveness).
+
+Some further safety properties are: partial correctness, absence of deadlocks,
+and mutual exclusion (see [\[1\]](#ref1)).
+
+> **Note:** Fairness properties are important for reactive systems. Safety is easier to check then liveness.
 
 ## References
 

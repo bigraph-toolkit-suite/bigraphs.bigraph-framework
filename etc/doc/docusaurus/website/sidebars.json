@@ -7,7 +7,9 @@
     ],
     "Dynamic Bigraphs": [
       "simulation",
-      "verification"
+      "simulation-reaction-rules",
+      "verification",
+      "simulation-predicates"
     ],
     "Converter": [
       "converter"
@@ -21,11 +23,7 @@
     ],
     "Advanced": [
       "advanced/complex-modeling",
-      "advanced/factories-and-builders",
-      "advanced/theory"
-    ],
-    "Examples": [
-      "examples/ex1"
+      "advanced/factories-and-builders"
     ]
   }
 }

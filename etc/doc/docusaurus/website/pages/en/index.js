@@ -75,6 +75,7 @@ class HomeSplash extends React.Component {
 }
 
 class Index extends React.Component {
+
     render() {
         const {config: siteConfig, language = ''} = this.props;
         const {baseUrl} = siteConfig;
@@ -98,10 +99,9 @@ class Index extends React.Component {
                     {
                         title: 'Download Bigraph Framwork for Java',
                         content:
-                            'To make your landing page more attractive, use illustrations! Check out ' +
-                            '[**unDraw**](https://undraw.co/) which provides you with customizable illustrations which are free to use. ' +
-                            'The illustrations you see on this page are from unDraw.',
-                        image: `${baseUrl}img/undraw_code_review.svg`,
+                            '<p>From Bintray</p>' +
+                            '<p>From GitHub</p>',
+                        image: `${baseUrl}img/icon-download.png`,
                         imageAlign: 'left',
                     },
                 ]}
@@ -122,24 +122,24 @@ class Index extends React.Component {
             </Block>
         );
 
-        const LearnHow = () => (
-            <Block background="light">
-                {[
-                    {
-                        content:
-                            'Each new Docusaurus project has **randomly-generated** theme colors.',
-                        image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
-                        imageAlign: 'right',
-                        title: 'Randomly Generated Theme Colors',
-                    },
-                ]}
-            </Block>
-        );
+        // const LearnHow = () => (
+        //     <Block background="light">
+        //         {[
+        //             {
+        //                 content:
+        //                     'Each new Docusaurus project has **randomly-generated** theme colors.',
+        //                 image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
+        //                 imageAlign: 'right',
+        //                 title: 'Randomly Generated Theme Colors',
+        //             },
+        //         ]}
+        //     </Block>
+        // );
 
         const FeatureCallout = () => (
             <div
-                className="productShowcaseSection paddingBottom"
-                style={{textAlign: 'center'}}>
+                className="productShowcaseSection paddingBottom lightBackground"
+                style={{textAlign: 'center', paddingTop: '2em'}}>
                 <h2>Features</h2>
                 <MarkdownBlock>These are some of the features of this framework</MarkdownBlock>
             </div>
@@ -149,30 +149,29 @@ class Index extends React.Component {
             <Block layout="fourColumn">
                 {[
                     {
-                        content: 'Bigraph models are based on the *Ecore* standard. Create or load bigraphical *meta-models* ' +
-                            'and concrete *instance models*. Models can be created dynamically at runtime too.',
-                        image: `${baseUrl}img/undraw_react.svg`,
+                        content: 'Dynamically create bigraph models at runtime. Bigraph models are based on the *Ecore* standard and conforming to a meta model.',
+                        image: `${baseUrl}img/icon-bigraph-creation.png`,
                         imageAlign: 'top',
                         title: 'Modeling',
                     },
                     {
                         content: 'Create a *bigraphical reactive system* with agents and reaction rules to dynamically evolve a user-defined' +
                             ' system. Perform model checking tasks by defining predicates that must hold.',
-                        image: `${baseUrl}img/undraw_operating_system.svg`,
+                        image: `${baseUrl}img/icon-bigraph-simulation.png`,
                         imageAlign: 'top',
                         title: 'Simulation and Verification',
                     },
                     {
                         content: 'Export your bigraphs and bigraphical reactive systems as Ecore-based models or any other format such as ' +
                             'GraphML, GXL, BigraphER or BigMC.',
-                        image: `${baseUrl}img/undraw_operating_system.svg`,
+                        image: `${baseUrl}img/icon-bigraph-interop.png`,
                         imageAlign: 'top',
                         title: 'Interoperability',
                     },
                     {
                         title: 'Visualization',
                         content: 'Display your bigraphs graphically and export them as `PNG` or `SVG`.',
-                        image: `${baseUrl}img/undraw_operating_system.svg`,
+                        image: `${baseUrl}img/icon-bigraph-vizu.png`,
                         imageAlign: 'top',
                     },
                 ]}

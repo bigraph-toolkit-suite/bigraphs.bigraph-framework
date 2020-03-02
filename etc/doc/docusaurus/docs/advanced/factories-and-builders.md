@@ -3,6 +3,8 @@ id: factories-and-builders
 title: Factories and Builders
 ---
 
+> This section is under construction.
+
 ### What is a Factory?
 
 ### Signature Builder

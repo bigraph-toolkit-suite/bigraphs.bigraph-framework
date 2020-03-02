@@ -21,25 +21,51 @@ Beginning with an agent, a set of reaction rules is applied as long
 as a match can be found, until some stop criteria eventuates or some 
 other constraints are applicable. The LTS can have cycles.
 
-## Examples
+## Bigraphical Reactive System (BRS)
 
-### Home computer example
+A BRS is a system containing an agent and reaction rules.
 
-A room with a computer is modelled with the following dynamics.
+All reactive system implement the interface `ReactiveSystem<B extends Bigraph<? extends Signature<?>>>`.
 
-- The first and fourth rules are structurally the same but different instances
-- The second rule is a no-op rule, just for demonstration purposes
-- The third rule allows to create a new "job" on the computer residing in 
-the room
-
-The agent of our BRS is shown below with 
-the corresponding reaction rules. For the simulation, we set the maximal
-allowed transitions to 4. 
-
+A reactive system for pure bigraphs can be created as follows:
 
 ```java
-class
+PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 ```
+
+Then, an agent and reaction rules can be added like this:
+```java
+reactiveSystem.setAgent(agent);
+ReactionRule<PureBigraph> rr = ...;
+reactiveSystem.addReactionRule(rr);
+```
+
+An _agent_ is any ground bigraph, i.e., a bigraph that has no sites and inner names.
+It must also be prime, i.e., it must have only one root.
+
+Some further remarks:
+- Predicates for [model checking](verification) can be added using `PureReactiveSystem#addPredicate(ReactiveSystemPredicates<B> predicate)`.
+- See [here](simulation-predicates) on how to create predicates.
+
+<!-- ## Examples -->
+
+<!-- ### Home computer example -->
+
+<!-- A room with a computer is modelled with the following dynamics. -->
+
+<!-- - The first and fourth rules are structurally the same but different instances -->
+<!-- - The second rule is a no-op rule, just for demonstration purposes -->
+<!-- - The third rule allows to create a new "job" on the computer residing in  -->
+<!-- the room -->
+
+<!-- The agent of our BRS is shown below with  -->
+<!-- the corresponding reaction rules. For the simulation, we set the maximal -->
+<!-- allowed transitions to 4.  -->
+
+
+<!-- ```java -->
+<!-- class -->
+<!-- ``` -->
 
 ## Simulation types   
 
