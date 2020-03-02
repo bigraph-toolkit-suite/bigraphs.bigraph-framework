@@ -1,4 +1,4 @@
-# Bigraphical Framework 
+# Bigraphical Framework
 
 **Version:** ${revision}
 Master: [![pipeline status](/../badges/master/pipeline.svg)](/../pipelines)
@@ -20,41 +20,71 @@ The high level API eases the programming of bigraphical systems for real-world a
 - Visualization (beta)
     - graphical export via GraphViz, DOT
     - PNG, JPG, ...
-- Bigraph matching (beta) 
-- Bigraphical Reactive System support: simulation of the evolution of 
+- Bigraph matching (beta)
+- Bigraphical Reactive System support: simulation of the evolution of
 bigraphs by reaction rules (synthesizing a labelled transition system) (alpha)
     - simulation
     - predicate checking
     - order of reaction rules
-- Model transformation / Conversions (alpha) 
+- Model transformation / Conversions (alpha)
     - e.g., to GXL, BigMC and BigraphER
 
 
 
 ## Getting Started
 
-Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java:
+Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java.
 
-### Creating Bigraphs
+### Lean Bigraph API
 
-#### Factory
+The lean bigraph API allows fast bigraph creation and composition.
+
+To following usage assumes the import statement `import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*`.
+
+```java
+// create the signature
+DefaultDynamicSignature signature = pureSignatureBuilder()
+    .newControl("A", 0).assign()
+    .newControl(StringTypedName.of("C"), FiniteOrdinal.ofInteger(1)).assign()
+    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlKind.ATOMIC).assign()
+    .create();
+
+// create two bigraphs
+PureBigraph bigraph1 = pureBuilder(signature)
+    .createRoot()
+    .addChild("A").addChild("C")
+    .createBigraph();
+
+PureBigraph bigraph2 = pureBuilder(signature)
+    .createRoot().addChild("User", "alice").addSite()
+    .createBigraph();
+
+// compose two bigraphs
+BigraphComposite bigraphComposite = ops(bigraph2).compose(bigraph1);
+```
+
+### Other APIs
+
+#### Creating Bigraphs using Factories
+
+##### Factory
 A factory is necessary for accessing related builder instances for a specific kind of bigraph.
 The factory depends on the kind of bigraph and its _signature_.
-Depending on the bigraph type, the factory will return specialized methods.  
+Depending on the bigraph type, the factory will return specialized methods.
 
 ```java
 // create factory for pure bigraphs (signatures and concrete bigraph instances)
 PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 ```
 
-#### Signature and Bigraph Builder
+##### Signature and Bigraph Builder
 
 The builder is responsible for instantiating and configuring concrete bigraph instances,
 depending on the specific _signature_.
 ```java
 // create signature
 DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-signatureBuilder   
+signatureBuilder
     .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
     .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(0)).assign()
     .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -73,37 +103,6 @@ builder.createRoot().addChild("User").linkToOuter(a)
 PureBigraph bigraph = builder.createBigraph();
 ```
 
-### Other APIs
-
-#### Lean Bigraph API
-
-Here is a brief summary of the new lean bigraph API which allows faster
-bigraph creation and composition.
-
-To following usage assumes the import statement `import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*`.
-
-```java
-// create the signature
-DefaultDynamicSignature signature = pureSignatureBuilder()
-    .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
-    .newControl().identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
-    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-    .create();
-
-// create two bigraphs
-PureBigraph bigraph1 = pureBuilder(signature)
-    .createRoot()
-    .addChild("A").addChild("C")
-    .createBigraph();
-
-PureBigraph bigraph2 = pureBuilder(signature)
-    .createRoot().addChild("User", "alice").addSite()
-    .createBigraph();
-
-// compose two bigraphs
-BigraphComposite bigraphComposite = ops(bigraph2).compose(bigraph1);
-```
-
 #### **Bigraph Builder: Connecting nodes by links**
 
 The bigraph builder provides more utility methods helping to build more
@@ -114,7 +113,7 @@ The following one shows, how to create nodes, and at the same time connecting th
 ```java
 builder.createRoot().connectByEdge(signature.getControlByName("Job"),
                                 signature.getControlByName("Job"),
-                                signature.getControlByName("Job")); 
+                                signature.getControlByName("Job"));
 ```
 
 Now, we want to connect nodes located at different "places". Therefore, we
@@ -234,7 +233,41 @@ by yourself and host them in the local Maven repository. Then, both steps _A)_ a
 
 ## Details
 
-### Bigraph Meta Model 
+### Modules
+
+A brief description of each module's purpose is given below.
+
+#### bigraph-core
+
+Provides builders, factories and interfaces to create concrete bigraphs and elementary bigraphs.
+
+Concrete Bigraphs and their meta model (with the signature only) can be written/loaded to/from the file system.
+
+#### bigraph-simulation
+
+Simulate bigraphs by creating bigraphical reactive systems, reaction rules and agents.
+Check a system according to some specification by defining various types of predicates.
+
+#### bigraph-visualization
+
+Provides simple means to export bigraphs and transition systems as graphic files.
+
+Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`.
+
+#### bigraph-converter
+
+Provides several mechanism to convert bigraphs into other representations.
+For example, bigraphs to GXL (Graph Exchange Language), BigraphER and BigMC.
+
+<!-- ### Reaction Graph / Transition System -->
+
+<!-- TODO: some details about the algorithm -->
+
+<!-- ### Bigraph Matching -->
+
+<!-- TODO: outline algorithm -->
+
+### Bigraph Meta Model
 
 **User-Friendly API**
 
@@ -260,40 +293,6 @@ creation and simulation of bigraphical reactive systems. Furthermore, we
 achieve Separation of concerns: The meta model itself is implementation-agnostic.
 The Bigraph Framework adds specific behavior superimposed upon this meta
 model. Meaning, the implementation-specific details are kept out from the meta model.
-
-
-### Modules
-
-TODO
-
-#### core
-
-Provides builder, factories and interfaces to create concrete bigraphs and elementary bigraphs.
-
-Concrete Bigraphs and their meta model (with the signature only) can be written to the file system for inspection.
-
-#### rewriting
-
-Create reaction rules and bigraphical reactive systems. Simulate bigraphs. Define Predicates.
-
-#### visualization
-
-Provides simple means to export bigraphs and transition systems as graphic files.
-
-Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`. 
-
-#### Converters
-
-Provides several mechanism to convert bigraphs into other representations.
-For example, Bigraphs to GXL (Graph Exchange Language).
-
-### Reaction Graph / Transition System
-
-TODO: some details about the algorithm
-
-### Bigraph Matching
-
-TODO: outline algorithm
 
 ## Building from Source
 
@@ -322,15 +321,15 @@ for further instructions).
 
 ### Development and Deployment
 
-See the document [DEPLOYMENT](etc/ci/DEPLOYMENT.md) for more issues regarding the development
-and deployment of _Bigraph Framework_. 
+See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development
+and deployment of _Bigraph Framework_.
 
 ## License
 
 Bigraph Framework is Open Source software released under the Apache 2.0 license.
 
 ```text
-   Copyright [2019] Dominik Grzelak
+   Copyright [2020] Dominik Grzelak
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -342,5 +341,5 @@ Bigraph Framework is Open Source software released under the Apache 2.0 license.
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
-   limitations under the License. 
+   limitations under the License.
 ```
