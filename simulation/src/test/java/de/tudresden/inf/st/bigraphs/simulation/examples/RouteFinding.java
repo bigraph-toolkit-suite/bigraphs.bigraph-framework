@@ -40,7 +40,7 @@ import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckin
 /**
  * @author Dominik Grzelak
  */
-public class RouteFinding {
+public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/framework/";
 
@@ -49,6 +49,12 @@ public class RouteFinding {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+    }
+
+    @Override
+    public void onAllPredicateMatched(PureBigraph currentAgent, String label) {
+        System.out.println("Car arrived at the target");
+        System.out.println(label);
     }
 
     @Test
@@ -86,12 +92,13 @@ public class RouteFinding {
                 .and(transitionOpts()
                         .setMaximumTransitions(25)
                         .setMaximumTime(60)
-                        .allowReducibleClasses(false) //if true, the simulation is endless
+                        .allowReducibleClasses(false) //if true, the simulation is endlessly running
                         .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setTraceFile(new File(completePath.toUri()))
+                        .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )
@@ -100,13 +107,14 @@ public class RouteFinding {
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
-//        reactiveSystem.addPredicate(predicate);
+        reactiveSystem.addPredicate(predicate);
 //        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.RANDOM_STATE,
 //                opts);
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationType.BREADTH_FIRST,
                 opts);
+        modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
     }
 
@@ -242,10 +250,11 @@ public class RouteFinding {
 
         BigraphEntity.OuterName from = builder.createOuterName("from");
 
-
+        // links of car and target must be connected via an outer name otherwise the predicate is not matched
         builder.createRoot()
                 .addChild("Place").linkToOuter(from)
-                .down().addSite().connectByEdge("Target", "Car").down().addSite();
+//                .down().addSite().connectByEdge("Target", "Car").down().addSite();
+                .down().addSite().addChild("Target", "target").addChild("Car", "target").down().addSite();
         PureBigraph bigraph = builder.createBigraph();
         return SubBigraphMatchPredicate.create(bigraph);
     }

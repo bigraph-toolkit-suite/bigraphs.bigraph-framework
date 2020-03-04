@@ -86,7 +86,7 @@ public class PredicateListenerUnitTests {
             }
 
             @Override
-            public void onAllPredicateMatched(PureBigraph currentAgent) {
+            public void onAllPredicateMatched(PureBigraph currentAgent, String label) {
                 System.out.println("Matched:");
                 allMatched.set(true);
                 // Start a new BRS where the agent is the last state of the previous BRS

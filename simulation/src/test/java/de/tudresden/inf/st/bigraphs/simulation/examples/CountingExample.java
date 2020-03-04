@@ -98,7 +98,7 @@ public class CountingExample {
                 .and(ModelCheckingOptions.exportOpts()
                         .setTraceFile(new File(completePath.toUri()))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                        .setPrintCanonicalStateLabel(false)
+                        .setPrintCanonicalStateLabel(true)
                         .create()
                 )
         ;
