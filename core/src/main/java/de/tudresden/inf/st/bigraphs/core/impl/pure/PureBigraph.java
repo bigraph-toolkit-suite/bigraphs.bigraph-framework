@@ -22,12 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * This Ecore-based model implementation of a bigraph is a immutable data structure providing also some operations on it.
- * Implements directly the {@link Bigraph} interface with a {@link DefaultDynamicSignature}.
+ * This class is an Ecore-based model implementation of a pure bigraph.
+ * A {@link PureBigraph} can be obtained by using a {@link PureBigraphBuilder}.
  * <p>
- * The elements are stored separately in collections for easier access. The collections cannot modified afterwards.
+ * The class directly implements the {@link Bigraph} interface with {@link DefaultDynamicSignature} as type for the signature.
  * <p>
- * A {@link PureBigraph} must be built using the {@link PureBigraphBuilder}.
+ * The class represents an immutable data structure providing also some operations (e.g., get parent of node).
+ * The elements are stored separately in collections for easier access. The collections cannot be modified afterwards.
  *
  * @author Dominik Grzelak
  * @see BigraphBuilder
