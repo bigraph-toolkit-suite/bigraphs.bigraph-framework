@@ -71,21 +71,11 @@
             <name>bintray</name>
             <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
         </repository>
-        <repository>
-            <id>Eclipse</id>
-            <layout>p2</layout>
-            <url>${eclipse.mirror}/releases/photon/</url>
-        </repository>
-        <!-- add TMF repository for latest Xtend -->
         <!--        <repository>-->
-        <!--            <id>TMF Repo</id>-->
-        <!--            <url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>-->
+        <!--            <id>Eclipse</id>-->
         <!--            <layout>p2</layout>-->
-        <!--        </repository>        -->
-        <!--        <repository>-->
-        <!--            <id>TMF Repo</id>-->
-        <!--            <url>http://www.elver.org/eclipse/2.1.0/update/</url>-->
-        <!--            <layout>p2</layout>-->
+        <!--            <url>${eclipse.mirror}/releases/photon/</url>-->
+        <!--&lt;!&ndash;            <url>http://download.eclipse.org/technology/m2e/releases</url>&ndash;&gt;-->
         <!--        </repository>-->
     </repositories>
 
@@ -255,29 +245,10 @@
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>${emf.codegen.version}</version>
             </dependency>
-
             <!-- https://github.com/ghillairet/cdo-maven -->
             <dependency>
                 <groupId>org.eclipselabs</groupId>
                 <artifactId>cdo</artifactId>
-                <version>${emf.cdo.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipselabs</groupId>
-                <artifactId>net4j</artifactId>
-                <version>${emf.cdo.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipselabs</groupId>
-                <artifactId>cdo.hibernate</artifactId>
-                <version>${emf.cdo.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipselabs</groupId>
-                <artifactId>net4j.h2</artifactId>
                 <version>${emf.cdo.version}</version>
                 <type>pom</type>
             </dependency>
