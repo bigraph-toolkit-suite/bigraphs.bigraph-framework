@@ -119,7 +119,14 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                 //TODO evaluate in options what should happen here: violation or stop criteria?
                 // this is connected to the predicates (changes its "intent", what they are used for)
                 if (predicateChecker.checkAll(theAgent)) {
-                    modelChecker.reactiveSystemListener.onAllPredicateMatched(theAgent);
+                    String label = "";
+                    if (modelChecker.reactionGraph.getLabeledNodeByCanonicalForm(bfcfOfW).isPresent() &&
+                            modelChecker.reactionGraph.getLabeledNodeByCanonicalForm(bfcfOfW).get() instanceof ReactionGraph.DefaultLabeledNode) {
+                        label = modelChecker.reactionGraph.getLabeledNodeByCanonicalForm(bfcfOfW).get().getLabel();
+                    } else {
+                        label = String.format("state-%s", String.valueOf(modelChecker.reactionGraph.getGraph().vertexSet().size()));
+                    }
+                    modelChecker.reactiveSystemListener.onAllPredicateMatched(theAgent, label);
                 } else {
                     // compute counter-example trace from w back to the root
                     try {
