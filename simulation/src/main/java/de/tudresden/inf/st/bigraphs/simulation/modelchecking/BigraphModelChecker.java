@@ -231,7 +231,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    protected void exportState(B bigraph, String canonicalForm, String suffix) {
+    protected String exportState(B bigraph, String canonicalForm, String suffix) {
         if (Objects.nonNull(options.get(ModelCheckingOptions.Options.EXPORT))) {
             ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
             if (opts.hasOutputStatesFolder()) {
@@ -248,12 +248,14 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                             Paths.get(opts.getOutputStatesFolder().toString(), label).toFile()
                     );
                     logger.debug("Exporting state {}", suffix);
+                    return label;
 //                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
                 } catch (IOException e) {
                     logger.error(e.toString());
                 }
             }
         }
+        return null;
     }
 
     private void onAttachListener(BigraphModelChecker<B> modelChecker) {
@@ -358,8 +360,9 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
          * is not called.
          *
          * @param currentAgent the agent
+         * @param label
          */
-        default void onAllPredicateMatched(B currentAgent) {
+        default void onAllPredicateMatched(B currentAgent, String label) {
         }
 
         /**
