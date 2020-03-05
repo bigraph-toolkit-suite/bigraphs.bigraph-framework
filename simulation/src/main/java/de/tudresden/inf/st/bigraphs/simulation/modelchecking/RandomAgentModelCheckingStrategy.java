@@ -21,10 +21,10 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 /**
  * @author Dominik Grzelak
  */
-public class RandomAgentSimulationStrategy<B extends Bigraph<? extends Signature<?>>> extends SimulationStrategySupport<B> {
-    private Logger logger = LoggerFactory.getLogger(RandomAgentSimulationStrategy.class);
+public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
+    private Logger logger = LoggerFactory.getLogger(RandomAgentModelCheckingStrategy.class);
 
-    public RandomAgentSimulationStrategy(BigraphModelChecker<B> modelChecker) {
+    public RandomAgentModelCheckingStrategy(BigraphModelChecker<B> modelChecker) {
         super(modelChecker);
     }
 

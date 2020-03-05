@@ -6,7 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 /**
  * @author Dominik Grzelak
  */
-public interface SimulationStrategy<B extends Bigraph<? extends Signature<?>>> {
+public interface ModelCheckingStrategy<B extends Bigraph<? extends Signature<?>>> {
 
     void synthesizeTransitionSystem();
 }

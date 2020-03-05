@@ -13,14 +13,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dominik Grzelak
  */
-public abstract class SimulationStrategySupport<B extends Bigraph<? extends Signature<?>>> implements SimulationStrategy<B> {
-    private Logger logger = LoggerFactory.getLogger(SimulationStrategySupport.class);
+public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends Signature<?>>> implements ModelCheckingStrategy<B> {
+    private Logger logger = LoggerFactory.getLogger(ModelCheckingStrategySupport.class);
 
     protected int occurrenceCounter = 0;
 
     protected BigraphModelChecker<B> modelChecker;
 
-    public SimulationStrategySupport(BigraphModelChecker<B> modelChecker) {
+    public ModelCheckingStrategySupport(BigraphModelChecker<B> modelChecker) {
         this.modelChecker = modelChecker;
     }
 

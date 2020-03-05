@@ -64,22 +64,22 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         public static final SimulationType<Bigraph<? extends Signature<?>>> BREADTH_FIRST =
                 new SimulationType<>(BreadthFirstStrategy.class);
         public static final SimulationType<Bigraph<? extends Signature<?>>> RANDOM_STATE =
-                new SimulationType<>(RandomAgentSimulationStrategy.class);
+                new SimulationType<>(RandomAgentModelCheckingStrategy.class);
 
-        private Class<? extends SimulationStrategy<B>> strategyClass;
+        private Class<? extends ModelCheckingStrategy<B>> strategyClass;
 
-        private SimulationType(Class<? extends SimulationStrategy> strategyClass) {
-            this.strategyClass = (Class<? extends SimulationStrategy<B>>) strategyClass;
+        private SimulationType(Class<? extends ModelCheckingStrategy> strategyClass) {
+            this.strategyClass = (Class<? extends ModelCheckingStrategy<B>>) strategyClass;
         }
 
-        protected Class<? extends SimulationStrategy<B>> getStrategyClass() {
+        protected Class<? extends ModelCheckingStrategy<B>> getStrategyClass() {
             return strategyClass;
         }
     }
 
     private final static BigraphModelChecker.ReactiveSystemListener<Bigraph<? extends Signature<?>>> DEFAULT_LISTENER = new BigraphModelChecker.EmptyReactiveSystemListener<>();
 
-    protected SimulationStrategy<B> simulationStrategy;
+    protected ModelCheckingStrategy<B> modelCheckingStrategy;
     protected SimulationType<B> simulationType;
     protected BigraphModelChecker.ReactiveSystemListener<B> reactiveSystemListener;
     protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.createInstance(true);
@@ -117,7 +117,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
         this.simulationType = simulationType;
         try {
-            this.simulationStrategy = createStrategy(this.simulationType);
+            this.modelCheckingStrategy = createStrategy(this.simulationType);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -137,7 +137,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    private SimulationStrategy<B> createStrategy(SimulationType<B> simulationType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private ModelCheckingStrategy<B> createStrategy(SimulationType<B> simulationType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         return simulationType.getStrategyClass().getConstructor(BigraphModelChecker.class).newInstance(this);
     }
 
@@ -172,9 +172,9 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
     private void doWork() {
         reactiveSystemListener.onReactiveSystemStarted();
-        simulationStrategy.synthesizeTransitionSystem();
-        if (simulationStrategy instanceof SimulationStrategySupport) {
-            int occurrenceCount = ((SimulationStrategySupport<B>) simulationStrategy).getOccurrenceCount();
+        modelCheckingStrategy.synthesizeTransitionSystem();
+        if (modelCheckingStrategy instanceof ModelCheckingStrategySupport) {
+            int occurrenceCount = ((ModelCheckingStrategySupport<B>) modelCheckingStrategy).getOccurrenceCount();
             getReactionGraph().getGraphStats().setOccurrenceCount(occurrenceCount);
         }
         reactiveSystemListener.onReactiveSystemFinished();
@@ -189,7 +189,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         if (Objects.isNull(reactiveSystem.getAgent())) {
             throw new AgentIsNullException();
         }
-        if (Objects.isNull(simulationStrategy)) {
+        if (Objects.isNull(modelCheckingStrategy)) {
             throw new InvalidSimulationStrategy();
         }
     }

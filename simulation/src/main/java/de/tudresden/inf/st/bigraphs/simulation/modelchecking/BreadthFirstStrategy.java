@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Dominik Grzelak
  * @see <a href="https://pure.itu.dk/portal/files/39500908/thesis_GianDavidPerrone.pdf">[1] G. Perrone, “Domain-Specific Modelling Languages in Bigraphs,” IT University of Copenhagen, 2013.</a>
  */
-public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> extends SimulationStrategySupport<B> {
+public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
     private Logger logger = LoggerFactory.getLogger(BreadthFirstStrategy.class);
 
     PredicateChecker<B> predicateChecker;
