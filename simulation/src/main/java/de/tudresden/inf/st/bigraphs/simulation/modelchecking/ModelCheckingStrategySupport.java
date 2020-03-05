@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,20 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
         occurrenceCounter = 0;
     }
 
-    public int getOccurrenceCount() {
+    int getOccurrenceCount() {
         return occurrenceCounter;
     }
 
-    public MatchResult<B> createMatchResult(ReactionRule<B> reactionRule, BigraphMatch<B> next, B bigraph, int occurrenceCount) {
+    MatchResult<B> createMatchResult(ReactionRule<B> reactionRule, BigraphMatch<B> next, B bigraph, int occurrenceCount) {
         return new MatchResult<>(reactionRule, next, bigraph, occurrenceCount);
+    }
+
+    ReactiveSystem<B> getReactiveSystem() {
+        return modelChecker.getReactiveSystem();
+    }
+
+    BigraphModelChecker.ReactiveSystemListener<B> getListener() {
+        return modelChecker.reactiveSystemListener;
     }
 
     static class MatchResult<B extends Bigraph<? extends Signature<?>>> {

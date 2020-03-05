@@ -57,9 +57,9 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
                             BigraphMatch<B> next = iterator.next();
                             B reaction = null;
                             if (next.getParameters().size() == 0) {
-                                reaction = modelChecker.buildGroundReaction(theAgent, next, eachRule);
+                                reaction = getReactiveSystem().buildGroundReaction(theAgent, next, eachRule);
                             } else {
-                                reaction = modelChecker.buildParametricReaction(theAgent, next, eachRule);
+                                reaction = getReactiveSystem().buildParametricReaction(theAgent, next, eachRule);
                             }
                             if (Objects.nonNull(reaction)) {
                                 String bfcf = canonicalForm.bfcs(reaction);

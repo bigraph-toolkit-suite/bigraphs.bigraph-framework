@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.RedexIsNotSimpleException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
+import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.ReactiveSystemPredicates;
 import org.eclipse.collections.api.factory.Lists;
@@ -28,6 +29,10 @@ import java.util.function.Supplier;
  * <p>
  * For all available bigraph types the corresponding reactive system implementation extends this class for
  * the implementation of their own specific nice and simple BRS.
+ * <p>
+ * The required composition instructions using the deconstructed match result (see {@link BigraphMatch}) to compute the
+ * new agent, are  implemented by the subclasses. The methods {@code buildGroundReaction} and {@code buildParametricReaction}
+ * are made abstract here to make this clear.
  *
  * @author Dominik Grzelak
  */
@@ -40,6 +45,12 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
 
     public AbstractSimpleReactiveSystem() {
     }
+
+    @Override
+    public abstract B buildGroundReaction(B agent, BigraphMatch<B> match, ReactionRule<B> rule);
+
+    @Override
+    public abstract B buildParametricReaction(B agent, BigraphMatch<B> match, ReactionRule<B> rule);
 
     /**
      * Checks if a parametric redex is <i>simple</i>. A parametric redex is simple if:
@@ -167,6 +178,16 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
 
         public ReactionGraph<B> getReactionGraph() {
             return reactionGraph;
+        }
+
+        @Override
+        public B buildGroundReaction(B agent, BigraphMatch<B> match, ReactionRule<B> rule) {
+            return this.reactiveSystem.buildGroundReaction(agent, match, rule);
+        }
+
+        @Override
+        public B buildParametricReaction(B agent, BigraphMatch<B> match, ReactionRule<B> rule) {
+            return this.reactiveSystem.buildParametricReaction(agent, match, rule);
         }
     }
 }

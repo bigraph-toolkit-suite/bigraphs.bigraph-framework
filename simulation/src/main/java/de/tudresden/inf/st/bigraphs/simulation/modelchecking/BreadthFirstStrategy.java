@@ -31,9 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
     private Logger logger = LoggerFactory.getLogger(BreadthFirstStrategy.class);
 
-    PredicateChecker<B> predicateChecker;
-    ModelCheckingOptions options;
-    BigraphCanonicalForm canonicalForm;
+    private PredicateChecker<B> predicateChecker;
+    private ModelCheckingOptions options;
+    private BigraphCanonicalForm canonicalForm;
 
     public BreadthFirstStrategy(BigraphModelChecker<B> modelChecker) {
         super(modelChecker);
@@ -41,10 +41,6 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 
     /**
      * Compute the transition system of a bigraph with all added reaction rules so far.
-     * <p>
-     * //     * @param agent      the initial agent
-     * //     * @param options    additional options
-     * //     * @param predicates additional predicates to check at each states
      */
     public synchronized void synthesizeTransitionSystem() {
         final B initialAgent = modelChecker.getReactiveSystem().getAgent();
@@ -74,7 +70,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 //                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
             modelChecker.getReactiveSystem().getReactionRules().stream()
                     .parallel()
-                    .peek(x -> modelChecker.reactiveSystemListener.onCheckingReactionRule(x))
+                    .peek(x -> getListener().onCheckingReactionRule(x))
                     .flatMap(eachRule -> {
                         MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule.getRedex()));
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
@@ -84,19 +80,19 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                             BigraphMatch<B> next = iterator.next();
                             B reaction = null;
                             if (next.getParameters().size() == 0) {
-                                reaction = modelChecker.buildGroundReaction(theAgent, next, eachRule);
+                                reaction = getReactiveSystem().buildGroundReaction(theAgent, next, eachRule);
                             } else {
                                 //TODO: beachte instantiation map
-                                reaction = modelChecker.buildParametricReaction(theAgent, next, eachRule);
+                                reaction = getReactiveSystem().buildParametricReaction(theAgent, next, eachRule);
                             }
 
                             Optional.ofNullable(reaction)
                                     .map(x -> {
-                                        modelChecker.reactiveSystemListener.onUpdateReactionRuleApplies(theAgent, eachRule, next);
+                                        getListener().onUpdateReactionRuleApplies(theAgent, eachRule, next);
                                         return reactionResults.add(createMatchResult(eachRule, next, x, getOccurrenceCount()));
                                     })
                                     .orElseGet(() -> {
-                                        modelChecker.reactiveSystemListener.onReactionIsNull();
+                                        getListener().onReactionIsNull();
                                         return false;
                                     });
                         }
@@ -126,7 +122,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     } else {
                         label = String.format("state-%s", String.valueOf(modelChecker.reactionGraph.getGraph().vertexSet().size()));
                     }
-                    modelChecker.reactiveSystemListener.onAllPredicateMatched(theAgent, label);
+                    getListener().onAllPredicateMatched(theAgent, label);
                 } else {
                     // compute counter-example trace from w back to the root
                     try {
@@ -138,13 +134,13 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         predicateChecker.getChecked().entrySet().stream().forEach(eachPredciate -> {
                             if (!eachPredciate.getValue()) {
                                 logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());
-                                modelChecker.reactiveSystemListener.onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
+                                getListener().onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
                             } else {
-                                modelChecker.reactiveSystemListener.onPredicateMatched(theAgent, eachPredciate.getKey());
+                                getListener().onPredicateMatched(theAgent, eachPredciate.getKey());
                             }
                         });
                     } catch (Exception e) {
-                        modelChecker.reactiveSystemListener.onError(e);
+                        getListener().onError(e);
                     }
                 }
             }

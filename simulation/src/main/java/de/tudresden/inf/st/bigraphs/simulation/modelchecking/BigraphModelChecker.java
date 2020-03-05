@@ -210,9 +210,9 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 //        this.predicates = predicates;
 //    }
 
-    protected abstract B buildGroundReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
-
-    protected abstract B buildParametricReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
+//    protected abstract B buildGroundReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
+//
+//    protected abstract B buildParametricReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
 
 
     public synchronized ReactionGraph<B> getReactionGraph() {
