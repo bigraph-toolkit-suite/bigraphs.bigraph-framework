@@ -16,10 +16,10 @@
     </description>
 
     <dependencies>
-        <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
-            <artifactId>bigraph-ecore-model</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>de.tudresden.inf.st.bigraphs.model</groupId>-->
+<!--            <artifactId>bigraph-ecore-model</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
             <artifactId>bigraph-core</artifactId>
@@ -54,6 +54,11 @@
             <groupId>org.eclipse.collections</groupId>
             <artifactId>eclipse-collections</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.bytedeco</groupId>-->
+<!--            <artifactId>javacpp</artifactId>-->
+<!--            <version>1.5.2</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

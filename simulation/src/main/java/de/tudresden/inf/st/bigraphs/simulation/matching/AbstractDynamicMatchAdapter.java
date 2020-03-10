@@ -256,9 +256,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
     public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
         MutableList<BigraphEntity> neighbors = org.eclipse.collections.api.factory.Lists.mutable.empty();
         neighborhoodHook(neighbors, node);
-//        List<BigraphEntity> neighbors2 = new ArrayList<>();
-//        neighbors2 = neighborhoodHook(neighbors2, node);
-//        assert neighbors.size() == neighbors2.size();
         return neighbors;
     }
 
@@ -269,10 +266,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      */
     public List<BigraphEntity> getAllVertices() {
         return org.eclipse.collections.api.factory.Lists.fixedSize.fromStream(Streams.concat(getNodes().stream(), getRoots().stream()));
-//        List<BigraphEntity> allNodes = new ArrayList<>(getNodes().size() + getRoots().size());
-//        allNodes.addAll(getNodes());
-//        allNodes.addAll(getRoots());
-//        return allNodes;
     }
 
     /**
@@ -283,11 +276,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
     public List<BigraphEntity> getAllInternalVerticesPostOrder() {
         return org.eclipse.collections.api.factory.Lists.mutable.ofAll(getAllVerticesPostOrder())
                 .select(x -> getChildren(x).size() > 0);
-//        Iterable<BigraphEntity> allVerticesPostOrder = getAllVerticesPostOrder();
-//        List<BigraphEntity> collect = StreamSupport.stream(allVerticesPostOrder.spliterator(), false)
-//                .filter(x -> getChildren(x).size() > 0)
-//                .collect(Collectors.toList());
-//        return collect;
     }
 
     public Stream<BigraphEntity> getAllInternalVerticesPostOrderAsStream() {
@@ -302,34 +290,24 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
             Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
             allVerticesPostOrder.addAllIterable(stringTraverser.depthFirstPostOrder(eachRoot));
         });
-//        for (BigraphEntity eachRoot : getRoots()) {
-//        }
         return allVerticesPostOrder;
-//        Collection<BigraphEntity> allVerticesPostOrder = new ArrayList<>();
-//        for (BigraphEntity eachRoot : getBigraphDelegate().getRoots()) {
-//            Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
-//            Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(eachRoot);
-//            allVerticesPostOrder.addAll(Lists.newArrayList(v0));
-//        }
-//        return allVerticesPostOrder;
     }
 
     public Iterable<BigraphEntity> getAllVerticesBfsOrder() {
         MutableList<BigraphEntity> allVerticesBfsOrder = org.eclipse.collections.api.factory.Lists.mutable.empty();
         getBigraphDelegate().getRoots().stream().sorted(Comparator.comparingInt(BigraphEntity.RootEntity::getIndex))
                 .forEachOrdered(eachRoot -> allVerticesBfsOrder.addAll(getAllVerticesBfsOrderFrom(eachRoot)));
-//        Collection<BigraphEntity> allVerticesBfsOrder = new ArrayList<>();
-//        for (BigraphEntity eachRoot : getBigraphDelegate().getRoots()) {
-//            allVerticesBfsOrder.addAll(getAllVerticesBfsOrderFrom(eachRoot));
-//        }
         return allVerticesBfsOrder;
+    }
+
+    public Stream<BigraphEntity> getAllVerticesBfsOrderStream() {
+        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
+        return StreamSupport.stream(stringTraverser.breadthFirst(getRoots().get(0)).spliterator(), false);
     }
 
     public List<BigraphEntity> getAllVerticesBfsOrderFrom(BigraphEntity eachRoot) {
         Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
-//        Iterable<BigraphEntity> v0 = stringTraverser.breadthFirst(eachRoot);
         return org.eclipse.collections.api.factory.Lists.fixedSize.ofAll(stringTraverser.breadthFirst(eachRoot));
-//        return new ArrayList<>(Lists.newArrayList(v0));
     }
 
     /**
