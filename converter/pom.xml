@@ -19,6 +19,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.bigraph.model</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/../etc/auxlibs/bigraph.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
             <artifactId>bigraph-core</artifactId>
         </dependency>

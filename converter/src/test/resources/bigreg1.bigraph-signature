@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<signature:signature xmlns:signature="http://www.itu.dk/research/pls/xmlns/2010/signature">
+  <signature:control kind="atomic" name="Person">
+    <signature:port name="0"/>
+    <signature:port name="1"/>
+    <signature:port name="2"/>
+  </signature:control>
+  <signature:control kind="active" name="Computer"/>
+  <signature:control kind="active" name="User">
+    <signature:port name="0"/>
+  </signature:control>
+  <signature:control kind="passive" name="Room">
+    <signature:port name="0"/>
+    <signature:port name="1"/>
+  </signature:control>
+</signature:signature>
