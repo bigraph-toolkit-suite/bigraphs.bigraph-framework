@@ -22,4 +22,11 @@ public enum ControlKind {
     public static boolean isActive(Control control) {
         return control.getControlKind() == ControlKind.ACTIVE;
     }
+
+    public static ControlKind fromString(String value) {
+        if (value.equalsIgnoreCase("atomic")) return ATOMIC;
+        if (value.equalsIgnoreCase("active")) return ACTIVE;
+        if (value.equalsIgnoreCase("passive")) return PASSIVE;
+        return ATOMIC;
+    }
 }
