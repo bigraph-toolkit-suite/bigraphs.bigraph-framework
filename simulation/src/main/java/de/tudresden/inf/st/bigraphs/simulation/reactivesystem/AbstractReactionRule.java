@@ -13,6 +13,8 @@ import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
  * otherwise an exception is thrown when instantiating a concrete reaction rule.
  * <p>
  * Other checks are also performed checking the reaction rule for conformity: Interfaces and "simpleness".
+ * <p>
+ * A rule is said to be linear when they do not copy or delete parameters.
  *
  * @param <B> type of the bigraph
  * @author Dominik Grzelak
@@ -41,16 +43,16 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
 
     /**
      * Check if the interfaces of the redex and reactum conform to the following form: <br>
-     * {@literal R = (R, R'), R: m -> J and R': m' -> J}
+     * {@literal R = (R, R'), R: m -> J and R': m' -> J}.
      */
     private void assertInterfaceDefinitionIsCorrect(B redex, B reactum) throws NonConformReactionRuleInterfaces {
         // check if same interfaces
         if (!redex.getOuterFace().equals(reactum.getOuterFace())) {
             throw new NonConformReactionRuleInterfaces();
         }
-        if (redex.getSites().size() != reactum.getSites().size()) {
-            throw new NonConformReactionRuleInterfaces();
-        }
+//        if (redex.getSites().size() != reactum.getSites().size()) {
+//            throw new NonConformReactionRuleInterfaces();
+//        }
     }
 
     protected void assertRedexIsSimple() throws RedexIsNotSimpleException {
