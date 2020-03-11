@@ -6,10 +6,11 @@ import de.tudresden.inf.st.bigraphs.core.ControlKind;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import org.bigraph.model.assistants.IObjectIdentifier;
-import org.bigraph.model.assistants.PropertyScratchpad;
 import org.bigraph.model.interfaces.ISignature;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Adapter for our {@link Signature} class to be used with {@link org.bigraph.model.savers.SignatureXMLSaver}.

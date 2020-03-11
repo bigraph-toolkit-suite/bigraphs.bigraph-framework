@@ -17,15 +17,16 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * @author Dominik Grzelak
  */
-public class SignatureXMLLoader {
-    DynamicSignatureBuilder b = pure().createSignatureBuilder();
+public class DefaultSignatureXMLLoader {
 
-    public SignatureXMLLoader() {
+    DynamicSignatureBuilder b = pureSignatureBuilder();
+
+    public DefaultSignatureXMLLoader() {
         super();
     }
 
@@ -33,10 +34,10 @@ public class SignatureXMLLoader {
         return b.create();
     }
 
-    public void readConfig(String configFile) {
+    public void readXml(String file) {
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            InputStream in = new FileInputStream(configFile);
+            InputStream in = new FileInputStream(file);
             XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
             String cName = null;
             int arityCnt = 0;
