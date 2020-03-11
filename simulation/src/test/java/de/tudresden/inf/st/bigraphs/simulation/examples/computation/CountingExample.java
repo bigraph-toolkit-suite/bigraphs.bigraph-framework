@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.simulation.examples;
+package de.tudresden.inf.st.bigraphs.simulation.examples.computation;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;

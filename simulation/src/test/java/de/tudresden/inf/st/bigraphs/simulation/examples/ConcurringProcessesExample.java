@@ -157,14 +157,14 @@ public class ConcurringProcessesExample {
                 .and(transitionOpts()
                         .setMaximumTransitions(20)
                         .setMaximumTime(30)
-                        .allowReducibleClasses(true) // use symmetries to make the transition graph smaller?
+                        .allowReducibleClasses(false) // use symmetries to make the transition graph smaller?
                         .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setTraceFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                        .setPrintCanonicalStateLabel(false)
+                        .setPrintCanonicalStateLabel(true)
                         .create()
                 )
         ;
