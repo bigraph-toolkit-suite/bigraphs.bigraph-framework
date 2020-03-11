@@ -312,7 +312,7 @@ The generated apidoc is available from `etc/doc/docusaurus/website/static/apidoc
 
 The generated user manual is available from `etc/doc/docusaurus/website/`
 by calling `npm start`. The manual is generated using docusaurus which
-must be installed on the system (see [DEPLOYMENT](etc/ci/DEPLOYMENT.md)
+must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md )
 for further instructions).
 
 ### Development and Deployment
