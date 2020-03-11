@@ -6,7 +6,6 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFailedException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
@@ -86,7 +85,10 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
 
     public void connectToEdge(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge theLink) {
         super.connectToEdge(node, theLink);
+    }
 
+    public void connectInnerToLink(BigraphEntity.InnerName innerName, BigraphEntity.Link edge) {
+        super.connectInnerToLink(innerName, edge);
     }
 
     /**

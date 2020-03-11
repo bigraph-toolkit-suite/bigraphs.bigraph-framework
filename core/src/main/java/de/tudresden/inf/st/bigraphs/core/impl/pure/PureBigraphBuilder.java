@@ -653,6 +653,12 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         bPorts.add(portObject);
     }
 
+    protected void connectInnerToLink(BigraphEntity.InnerName innerName, BigraphEntity.Link edge) {
+        EObject innerEObject = innerName.getInstance();
+        EReference linkReference = availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK);
+        innerEObject.eSet(linkReference, edge.getInstance());
+    }
+
     protected void connectToLinkUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity theLink, int customPortIndex) {
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         //create port with index
