@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ControlKind;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import org.bigraph.model.assistants.IObjectIdentifier;
 import org.bigraph.model.interfaces.ISignature;
 
@@ -14,22 +15,24 @@ import java.util.Set;
 
 /**
  * Adapter for our {@link Signature} class to be used with {@link org.bigraph.model.savers.SignatureXMLSaver}.
+ * <p>
+ * This is an adapter for the signature of type {@link de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature}.
  *
  * @author Dominik Grzelak
  */
 public class SignatureAdapter extends org.bigraph.model.Signature implements ISignature, IObjectIdentifier.Resolver {
 
-    Signature<? extends Control> adaptee;
+    Signature<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> adaptee;
 
-    public SignatureAdapter(Signature<? extends Control> adaptee) {
+    public SignatureAdapter(Signature<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> adaptee) {
         super();
         this.adaptee = adaptee;
         initControls();
     }
 
     public void initControls() {
-        Set<? extends Control> controls = adaptee.getControls();
-        for (Control each : controls) {
+        Set<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls = adaptee.getControls();
+        for (Control<StringTypedName, FiniteOrdinal<Integer>> each : controls) {
             org.bigraph.model.Control control = new org.bigraph.model.Control();
             control.setName(each.getNamedType().stringValue());
             control.setKind(translate(each.getControlKind()));
@@ -39,7 +42,7 @@ public class SignatureAdapter extends org.bigraph.model.Signature implements ISi
         }
     }
 
-    private List<PortSpec> translatePorts(FiniteOrdinal arity) {
+    private List<PortSpec> translatePorts(FiniteOrdinal<Integer> arity) {
         List<PortSpec> ports = new ArrayList<>();
         for (int i = 0; i < arity.getValue().longValue(); i++) {
             PortSpec portSpec = new PortSpec();

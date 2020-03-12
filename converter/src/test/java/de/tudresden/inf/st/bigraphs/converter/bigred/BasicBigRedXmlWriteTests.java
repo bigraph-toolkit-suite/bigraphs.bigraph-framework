@@ -24,10 +24,10 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 /**
  * @author Dominik Grzelak
  */
-public class WriteTestBigRed {
+public class BasicBigRedXmlWriteTests {
 
     @Test
-    void write_test() throws SaveFailedException, FileNotFoundException, LoadFailedException {
+    void write_test() throws SaveFailedException {
         DefaultDynamicSignature signature = createSignature();
         SignatureAdapter signatureAdapter = new SignatureAdapter(signature);
 
