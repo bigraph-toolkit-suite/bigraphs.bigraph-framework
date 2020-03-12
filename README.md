@@ -27,7 +27,7 @@ bigraphs by reaction rules (synthesizing a labelled transition system) (alpha)
     - predicate checking
     - order of reaction rules
 - Model transformation / Conversions (alpha)
-    - e.g., to GXL, BigMC and BigraphER
+    - e.g., to GXL, BigMC, BigraphER, and BigRed
 
 
 
