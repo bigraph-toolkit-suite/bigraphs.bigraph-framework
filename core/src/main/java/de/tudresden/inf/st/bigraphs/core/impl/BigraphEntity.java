@@ -52,7 +52,6 @@ public class BigraphEntity<C extends Control> {
      */
     @Deprecated
     BigraphEntity(BigraphEntity<C> bigraphEntity) {
-//        this.setInstance(bigraphEntity.getInstance());
         this.instance = bigraphEntity.getInstance();
         this.control = bigraphEntity.getControl();
         this.type = bigraphEntity.getType();
@@ -62,11 +61,6 @@ public class BigraphEntity<C extends Control> {
     public EObject getInstance() {
         return instance;
     }
-
-//    BigraphEntity setInstance(EObject instance) {
-//        this.instance = instance;
-//        return this;
-//    }
 
     public C getControl() {
         return control;
@@ -169,8 +163,6 @@ public class BigraphEntity<C extends Control> {
 
         public String getName() {
             EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-//            Object name = getInstance().eGet(nameAttr);
-//            return String.valueOf(name);
             return Objects.nonNull(nameAttr) ? String.valueOf(getInstance().eGet(nameAttr)) : "";
         }
 

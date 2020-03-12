@@ -31,6 +31,10 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
         super(signature);
     }
 
+    public MutableBuilder(S signature, EPackage metaModel, EObject instanceModel) throws BigraphMetaModelLoadingFailedException {
+        super(signature, metaModel, instanceModel);
+    }
+
     public MutableBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
         super(signature, metaModelData);
     }
@@ -73,6 +77,13 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
     public BigraphEntity createNewPortWithIndex(final int index) {
         EObject portWithIndex = super.createPortWithIndex(index);
         return BigraphEntity.create(portWithIndex, BigraphEntity.Port.class);
+    }
+
+    public void disconnectPort(BigraphEntity.NodeEntity node, int portIndex) {
+        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(
+                node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT)
+        );
+        bPorts.remove(portIndex);
     }
 
     public void connectInnerToOuter(BigraphEntity.InnerName innerName, BigraphEntity.OuterName outerName) {
@@ -144,6 +155,30 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
                 signature, availableRoots, availableSites,
                 availableNodes, availableInnerNames, availableOuterNames, availableEdges);
         return meta.getbBigraphObject();
+    }
+
+    public Map<String, BigraphEntity.Edge> availableEdges() {
+        return availableEdges;
+    }
+
+    public Map<String, BigraphEntity.OuterName> availableOuterNames() {
+        return availableOuterNames;
+    }
+
+    public Map<String, BigraphEntity.InnerName> availableInnerNames() {
+        return availableInnerNames;
+    }
+
+    public Map<Integer, BigraphEntity.RootEntity> availableRoots() {
+        return availableRoots;
+    }
+
+    public Map<Integer, BigraphEntity.SiteEntity> availableSites() {
+        return availableSites;
+    }
+
+    public Map<String, BigraphEntity.NodeEntity> availableNodes() {
+        return availableNodes;
     }
 
 }

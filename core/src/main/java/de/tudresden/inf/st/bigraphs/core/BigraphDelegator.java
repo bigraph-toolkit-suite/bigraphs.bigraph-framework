@@ -135,13 +135,4 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
         return bigraphDelegate.getPortCount(node);
     }
 
-//    @Override
-//    public EPackage getModelPackage() {
-//        return bigraphDelegate.getModelPackage();
-//    }
-//
-//    @Override
-//    public EObject getModel() {
-//        return bigraphDelegate.getModel();
-//    }
 }

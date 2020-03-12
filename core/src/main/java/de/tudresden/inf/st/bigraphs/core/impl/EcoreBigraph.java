@@ -1,12 +1,22 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import static de.tudresden.inf.st.bigraphs.core.utils.auxiliary.MemoryOperations.createFileSystemManager;
 
 /**
  * Extension interface with standard methods for Ecore-based bigraph classes.
@@ -70,4 +80,64 @@ public interface EcoreBigraph {
     EPackage getModelPackage();
 
     EObject getModel();
+
+    /**
+     * A lightweight container for an Ecore bigraph.
+     * <p>
+     * Though it provides no higher-order functions to access all its elements, it can be useful in some cases.
+     * For example, to copy a {@link de.tudresden.inf.st.bigraphs.core.Bigraph} instance into memory and later
+     * retrieving it via a builder.
+     */
+    class EcoreBigraphStub implements EcoreBigraph {
+        EPackage metaModel;
+        EObject instanceModel;
+
+        /**
+         * Copy constructor
+         *
+         * @param bigraph an Ecore-based bigraph
+         */
+        public EcoreBigraphStub(EcoreBigraph bigraph) {
+            this.metaModel = EcoreUtil.copy(bigraph.getModelPackage());
+            this.instanceModel = EcoreUtil.copy(bigraph.getModel());
+        }
+
+        public EcoreBigraphStub(EPackage metaModel, EObject instanceModel) {
+            this.metaModel = metaModel;
+            this.instanceModel = instanceModel;
+        }
+
+        @Override
+        public EPackage getModelPackage() {
+            return metaModel;
+        }
+
+        @Override
+        public EObject getModel() {
+            return instanceModel;
+        }
+
+        public EcoreBigraphStub clone() throws CloneNotSupportedException {
+            try {
+                DefaultFileSystemManager manager = createFileSystemManager();
+                final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
+                final FileObject fo2 = manager.resolveFile("ram:/meta.ecore");
+                OutputStream outputStream = fo1.getContent().getOutputStream();
+                OutputStream outputStream2 = fo2.getContent().getOutputStream();
+                BigraphArtifacts.exportAsInstanceModel(this, outputStream);
+                BigraphArtifacts.exportAsMetaModel(this, outputStream2);
+                outputStream.close();
+                outputStream2.close();
+                InputStream inputStream = fo1.getContent().getInputStream();
+                InputStream inputStream2 = fo2.getContent().getInputStream();
+                EPackage ePackage = BigraphArtifacts.loadBigraphMetaModel(inputStream2);
+                List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, inputStream);
+                inputStream.close();
+                inputStream2.close();
+                return new EcoreBigraphStub(ePackage, eObjects.get(0));
+            } catch (IOException e) {
+                throw new CloneNotSupportedException(e.getMessage());
+            }
+        }
+    }
 }

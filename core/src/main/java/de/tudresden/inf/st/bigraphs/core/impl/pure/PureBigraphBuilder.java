@@ -66,11 +66,11 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     private Supplier<String> vertexNameSupplier;
 
     protected final Map<String, BigraphEntity.Edge> availableEdges = new ConcurrentHashMap<>();
-    private final Map<String, BigraphEntity.OuterName> availableOuterNames = new ConcurrentHashMap<>();
-    private final Map<String, BigraphEntity.InnerName> availableInnerNames = new ConcurrentHashMap<>();
-    private final Map<Integer, BigraphEntity.RootEntity> availableRoots = new ConcurrentHashMap<>();
-    private final Map<Integer, BigraphEntity.SiteEntity> availableSites = new ConcurrentHashMap<>();
-    private final Map<String, BigraphEntity.NodeEntity> availableNodes = new ConcurrentHashMap<>();
+    protected final Map<String, BigraphEntity.OuterName> availableOuterNames = new ConcurrentHashMap<>();
+    protected final Map<String, BigraphEntity.InnerName> availableInnerNames = new ConcurrentHashMap<>();
+    protected final Map<Integer, BigraphEntity.RootEntity> availableRoots = new ConcurrentHashMap<>();
+    protected final Map<Integer, BigraphEntity.SiteEntity> availableSites = new ConcurrentHashMap<>();
+    protected final Map<String, BigraphEntity.NodeEntity> availableNodes = new ConcurrentHashMap<>();
 
 
     protected PureBigraphBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
@@ -109,13 +109,13 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         this.signature = signature;
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
         this.loadSignatureAsTypeGraph(metaModelFilePath);
-//        this.loadedFromFile = true;
     }
 
     protected PureBigraphBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
         this(signature, new EMetaModelData.MetaModelDataBuilder()
                 .setNsPrefix("bigraphMetaModel")
                 .setName("SAMPLE")
+                .setNsUri("de.tud.inf.st.bigraphs")
                 .create());
     }
 

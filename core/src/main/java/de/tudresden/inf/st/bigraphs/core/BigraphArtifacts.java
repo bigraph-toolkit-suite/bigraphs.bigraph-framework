@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.*;
@@ -71,6 +72,24 @@ public class BigraphArtifacts {
      */
     public static List<EObject> loadBigraphInstanceModel(EPackage metaModelPackageWithSignature, String filePath) throws IOException {
         return loadBigraphInstanceModel0(metaModelPackageWithSignature, filePath);
+    }
+
+    public static List<EObject> loadBigraphInstanceModel(EPackage metaModelPackageWithSignature, InputStream instanceModelInputStream) throws IOException {
+        EcorePackage.eINSTANCE.eClass();
+
+        ResourceSet load_resourceSet = new ResourceSetImpl();
+        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
+        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+
+        if (Objects.nonNull(metaModelPackageWithSignature)) {
+            // register the dynamic package locally
+            load_resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
+            if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()))
+                load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
+        }
+        Resource load_resource = load_resourceSet.createResource(URI.createURI("*.xmi"));
+        load_resource.load(instanceModelInputStream, Collections.EMPTY_MAP);
+        return load_resource.getContents();
     }
 
     /**
@@ -131,6 +150,32 @@ public class BigraphArtifacts {
         return (EPackage) resource.getContents().get(0);
     }
 
+    public static EPackage loadBigraphMetaModel(InputStream inputStream) throws IOException {
+        EcorePackage.eINSTANCE.eClass();
+        BigraphBaseModelPackage.eINSTANCE.eClass();
+        ResourceSet resourceSet = new ResourceSetImpl();
+
+//        URL resource1 = EMFUtils.class.getResource(filePath);
+//        URI uri = URI.createURI(filePath); //resource1.toString()); //URI.createPlatformResourceURI(resource1.toString(), true);
+//        URI uri = URI.createURI(ecoreResource);
+        resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
+        // resource factories
+        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
+
+
+        //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
+//        resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
+//        Resource resource = resourceSet.getResource(uri, true);
+
+//        Resource load_resource = load_resourceSet.createResource(URI.createURI("*.xmi"));
+//        load_resource.load(instanceModelInputStream, Collections.EMPTY_MAP);
+        Resource resource = resourceSet.createResource(URI.createURI("*.xmi"));
+//        Resource resource = resourceSet.getResource(uri, true);
+        resource.load(inputStream, Collections.EMPTY_MAP);
+        return (EPackage) resource.getContents().get(0);
+    }
+
     /**
      * Export the instance model of a bigraph.
      *
@@ -139,7 +184,6 @@ public class BigraphArtifacts {
      * @throws IOException
      */
     public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
-//        Collection<EObject> allresources = BigraphArtifactHelper.getResourcesFromBigraph(bigraph); // old method
         writeDynamicInstanceModel(bigraph.getModelPackage(), bigraph.getModel(), outputStream, null);
     }
 
@@ -176,9 +220,9 @@ public class BigraphArtifacts {
 
         Map<String, Object> options = new HashMap<>();
         options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
-        options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, "THROW"); //see: https://books.google.de/books?id=ff-9ZYhvPwwC&pg=PA317&lpg=PA317&dq=emf+OPTION_PROCESS_DANGLING_HREF&source=bl&ots=yBXkH3qSpD&sig=ACfU3U3uEGX_DCnDa2DAnjRboybhyGsKng&hl=en&sa=X&ved=2ahUKEwiCg-vI7_DgAhXDIVAKHU1PAIgQ6AEwBHoECAYQAQ#v=onepage&q=emf%20OPTION_PROCESS_DANGLING_HREF&f=false
+        options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, "RECORD"); //see: https://books.google.de/books?id=ff-9ZYhvPwwC&pg=PA317&lpg=PA317&dq=emf+OPTION_PROCESS_DANGLING_HREF&source=bl&ots=yBXkH3qSpD&sig=ACfU3U3uEGX_DCnDa2DAnjRboybhyGsKng&hl=en&sa=X&ved=2ahUKEwiCg-vI7_DgAhXDIVAKHU1PAIgQ6AEwBHoECAYQAQ#v=onepage&q=emf%20OPTION_PROCESS_DANGLING_HREF&f=false
         options.put(XMLResource.OPTION_ENCODING, DEFAULT_ENCODING);
-        URI oldURI = ePackage.eResource().getURI();
+        URI oldURI = Objects.nonNull(ePackage.eResource()) ? ePackage.eResource().getURI() : null;
         if (Objects.nonNull(newNamespaceLocation)) {
             ePackage.eResource().setURI(URI.createURI(newNamespaceLocation));
             resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
@@ -188,7 +232,7 @@ public class BigraphArtifacts {
         try {
             outputRes.save(outputStream, options);
         } finally {
-            if (Objects.nonNull(newNamespaceLocation)) {
+            if (Objects.nonNull(oldURI) && Objects.nonNull(newNamespaceLocation)) {
                 ePackage.eResource().setURI(oldURI);
             }
         }
