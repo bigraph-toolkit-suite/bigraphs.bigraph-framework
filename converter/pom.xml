@@ -20,10 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>org.bigraph.model</groupId>
-            <artifactId>core</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/../etc/auxlibs/bigraph.jar</systemPath>
+            <artifactId>bigred-core</artifactId>
         </dependency>
         <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>

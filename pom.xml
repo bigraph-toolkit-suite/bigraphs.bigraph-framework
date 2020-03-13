@@ -64,6 +64,10 @@
 
     <repositories>
         <repository>
+            <id>local-repo</id>
+            <url>file://${project.basedir}/../etc/local-repo</url>
+        </repository>
+        <repository>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -223,6 +227,12 @@
                 <version>${project.version}</version>
             </dependency>
             <!-- Misc -->
+            <dependency>
+                <groupId>org.bigraph.model</groupId>
+                <artifactId>bigred-core</artifactId>
+                <version>1.0.0</version>
+                <type>jar</type>
+            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>

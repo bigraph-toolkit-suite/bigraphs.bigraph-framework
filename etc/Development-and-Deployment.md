@@ -28,9 +28,44 @@ Each module represents a concrete subset of the framework's whole functionality.
 Thus, it makes it easy to include a certain dependency in external projects for
 specific needs, at the same time the project is logically organized.
 
-<!--_v3: current-->
-<!--_v5: cdo migrated model-->
-<!--_v6: with extra BBigraph container object-->
+<!-- _v3: current -->
+<!-- _v5: cdo migrated model -->
+<!-- _v6: with extra BBigraph container object -->
+
+### Using Standalone (Non-Maven) Dependencies
+
+Java libraries that are not available in Maven Central are installed to a local repository within this project.
+This local repository is located under `etc/local-repo` from the project's root.
+The usage of system scope in a `<dependency/>` definition for referencing libraries is discouraged.
+
+To install an arbitrary `*.jar`:
+```bash
+mvn install:install-file  -Dfile=./etc/auxlibs/bigred-bigraph-model.jar \
+                          -DgroupId=org.bigraph.model \
+                          -DartifactId=bigred-core \
+                          -Dversion=1.0.0 \
+                          -Dpackaging=jar \
+                          -DgeneratePom=true \
+                          -DlocalRepositoryPath=./etc/local-repo/
+mvn clean install -U
+```
+
+Sometimes it is necessary to execute the following first:
+```bash
+cd ~/.m2
+find . -name "_remote.repositories" -type f -delete
+```
+See [here](https://stackoverflow.com/questions/16866978/maven-cant-find-my-local-artifacts/) for answers, when it may be the case.
+
+The example above shows how to install a bigraph model library of [BigRed]() (a graphical editor for bigraphs).
+
+To use them in the project, the following repository definition is defined in the parent-pom:
+```xml
+<repository>
+    <id>local-repo</id>
+    <url>file://${project.basedir}/../etc/local-repo</url>
+</repository>
+```
 
 ## Documentation
 
@@ -42,14 +77,13 @@ And also the changelog is part of it, see [Deployment](#Deployment).
 - Docusaurus is used as a static site generator when building the user manual
 It references also to the javadoc.
 - The CI pipeline is responsible to copy the javadoc API into the docusaurus manual.
-<!--- [MkDocs](https://www.mkdocs.org) is used as a static site generator, for building the user manual-->
+<!-- [MkDocs](https://www.mkdocs.org) is used as a static site generator, for building the user manual -->
 <!--    - Must be installed on the machine:-->
 <!--        - MkDocs, see [installation instructions](https://www.mkdocs.org/#installation)-->
 <!--        - Theme: [Bootstrap](https://mkdocs.readthedocs.io/en/0.15.3/user-guide/styling-your-docs/#bootstrap-and-bootswatch-themes)-->
-<!--<!--        - the theme is provided with the project and resides within `etc/doc/theme/mkdocs_windmill`-->-->
-<!--    -->
-<!--- The corresponding content of the documentation files are stored in `etc/doc/`-->
-<!--- The layout is generated automatically-->
+<!--        - the theme is provided with the project and resides within `etc/doc/theme/mkdocs_windmill`-->
+<!-- The corresponding content of the documentation files are stored in `etc/doc/` -->
+<!-- The layout is generated automatically -->
 
 ### Building the Documention
 
