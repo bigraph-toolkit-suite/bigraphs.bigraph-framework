@@ -63,3 +63,58 @@ FileOutputStream fout = new FileOutputStream(new File("bigrapher.big"));
 prettyPrinter.toOutputStream(reactiveSystem, fout);
 fout.close();
 ```
+
+### BigRed
+
+#### Exporting Signatures for BigRed
+
+To export a `DefaultDynamicSignature` as BigRed `*.bigraph-signature` file, you may use the `SignatureAdapter` class
+in combination with BigRed's `org.bigraph.model.savers.SignatureXMLSaver`:
+
+```java
+DefaultDynamicSignature signature = ...;
+SignatureAdapter signatureAdapter = new SignatureAdapter(signature);
+
+PrintStream out = new PrintStream(System.out);
+SignatureXMLSaver sx = new SignatureXMLSaver();
+sx.setModel(signatureAdapter)
+    .setOutputStream(out);
+sx.exportObject();
+```
+
+This approach mainly used the underlying functionality of the BigRed library.
+
+#### Loading BigRed XML files
+
+To load a BigRed `*.bigraph-signature` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultSignatureXMLLoader` class:
+
+```java
+DefaultSignatureXMLLoader sxl = new DefaultSignatureXMLLoader();
+sxl.readXml("path/to/signatures/printing.bigraph-signature"));
+DefaultDynamicSignature signature = sxl.importObject();
+```
+
+To load a BigRed `*.bigraph-agent` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.PureBigraphXMLLoader` class:
+
+```java
+PureBigraphXMLLoader bxl = new PureBigraphXMLLoader();
+bxl.readXml(getFile("path/to/agents/simple.bigraph-agent"));
+PureBigraph simpleBigraph = bxl.importObject();
+```
+
+BigRed agent specifications are imported as `PureBigraph` instances.
+
+
+To load a BigRed `*.bigraph-rule` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.PureReactionRuleXMLLoader` class:
+
+```java
+PureReactionRuleXMLLoader rxl = new PureReactionRuleXMLLoader();
+rxl.readXml(getFile("path/to/rules/finish-job.bigraph-rule"));
+ParametricReactionRule<PureBigraph> finishJob = rxl.importObject();
+```
+
+BigRed reaction rule specifications are imported as `ParametricReactionRule<PureBigraph> ` instances.
+
+
+The loaders are separate and custom implementations that parse BigRed's XML files.
+They do not use the underlying functionality of the BigRed library as the adapter class for writing bigraph entities.
