@@ -52,7 +52,7 @@ public class BasicBigRedXmlParseTests {
     @Test
     void read_bigraph_test() throws IOException {
         URL resource = getClass().getResource("/bigred/misc-examples/agents/sampleB.bigraph-agent");
-        PureBigraphXMLLoader bxl = new PureBigraphXMLLoader();
+        DefaultBigraphXMLLoader bxl = new DefaultBigraphXMLLoader();
         bxl.readXml(resource.getPath());
         PureBigraph bigraph = bxl.importObject();
         BigraphArtifacts.exportAsMetaModel(bigraph, new FileOutputStream(new File(DUMP_TARGET + "./bigred/test-sampleB.ecore")));

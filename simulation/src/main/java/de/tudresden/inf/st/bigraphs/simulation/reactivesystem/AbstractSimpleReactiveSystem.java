@@ -83,7 +83,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
      * @throws InvalidReactionRuleException if outer name is idle.
      */
     protected void assertNoIdleOuterName(ReactionRule<B> reactionRule) throws InvalidReactionRuleException {
-        if (hasIdleOuterNames(reactionRule.getReactum())) {
+        if (hasIdleOuterNames(reactionRule.getRedex())) {
             throw new OuterNameIsIdleException();
         }
     }

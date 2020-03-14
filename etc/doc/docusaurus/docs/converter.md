@@ -84,7 +84,7 @@ sx.exportObject();
 
 This approach mainly used the underlying functionality of the BigRed library.
 
-#### Loading BigRed XML files
+#### Loading BigRed XML files (Signatures, Agents, Rules, Simulation Specification)
 
 To load a BigRed `*.bigraph-signature` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultSignatureXMLLoader` class:
 
@@ -94,27 +94,37 @@ sxl.readXml("path/to/signatures/printing.bigraph-signature"));
 DefaultDynamicSignature signature = sxl.importObject();
 ```
 
-To load a BigRed `*.bigraph-agent` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.PureBigraphXMLLoader` class:
+To load a BigRed `*.bigraph-agent` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultBigraphXMLLoader` class:
 
 ```java
-PureBigraphXMLLoader bxl = new PureBigraphXMLLoader();
-bxl.readXml(getFile("path/to/agents/simple.bigraph-agent"));
+DefaultBigraphXMLLoader bxl = new DefaultBigraphXMLLoader();
+bxl.readXml("path/to/agents/simple.bigraph-agent");
 PureBigraph simpleBigraph = bxl.importObject();
 ```
 
 BigRed agent specifications are imported as `PureBigraph` instances.
 
 
-To load a BigRed `*.bigraph-rule` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.PureReactionRuleXMLLoader` class:
+To load a BigRed `*.bigraph-rule` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultReactionRuleXMLLoader` class:
 
 ```java
-PureReactionRuleXMLLoader rxl = new PureReactionRuleXMLLoader();
-rxl.readXml(getFile("path/to/rules/finish-job.bigraph-rule"));
+DefaultReactionRuleXMLLoader rxl = new DefaultReactionRuleXMLLoader();
+rxl.readXml("path/to/rules/finish-job.bigraph-rule");
 ParametricReactionRule<PureBigraph> finishJob = rxl.importObject();
 ```
 
-BigRed reaction rule specifications are imported as `ParametricReactionRule<PureBigraph> ` instances.
+BigRed reaction rule specifications are imported as `ParametricReactionRule<PureBigraph>` instances.
 
 
 The loaders are separate and custom implementations that parse BigRed's XML files.
 They do not use the underlying functionality of the BigRed library as the adapter class for writing bigraph entities.
+
+To load a BigRed `*.bigraph-simulation-spec` file, use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultSimulationSpecXMLLoader` class:
+
+```java
+DefaultSimulationSpecXMLLoader ssxl = new DefaultSimulationSpecXMLLoader();
+ssxl.readXml("path/to/simple.bigraph-simulation-spec");
+PureReactiveSystem pureReactiveSystem = ssxl.importObject();
+```
+
+A BigRed simulation specification represents a bigraphical reactive system and is imported as a `PureReactiveSystem` instance.

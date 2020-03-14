@@ -75,12 +75,13 @@
             <name>bintray</name>
             <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
         </repository>
-        <!--        <repository>-->
-        <!--            <id>Eclipse</id>-->
-        <!--            <layout>p2</layout>-->
-        <!--            <url>${eclipse.mirror}/releases/photon/</url>-->
-        <!--&lt;!&ndash;            <url>http://download.eclipse.org/technology/m2e/releases</url>&ndash;&gt;-->
-        <!--        </repository>-->
+        <repository>
+            <id>Eclipse</id>
+            <layout>p2</layout>
+            <url>http://download.eclipse.org/releases/latest</url>
+            <!--            <url>${eclipse.mirror}/releases/photon/</url>-->
+            <!--&lt;!&ndash;            <url>http://download.eclipse.org/technology/m2e/releases</url>&ndash;&gt;-->
+        </repository>
     </repositories>
 
     <distributionManagement>

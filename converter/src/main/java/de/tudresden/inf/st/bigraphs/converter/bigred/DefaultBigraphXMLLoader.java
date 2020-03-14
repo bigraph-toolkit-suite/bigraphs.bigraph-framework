@@ -22,7 +22,7 @@ import java.util.*;
  *
  * @author Dominik Grzelak
  */
-public class PureBigraphXMLLoader extends BigraphXmlLoaderSupport implements BigRedXmlLoader {
+public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements BigRedXmlLoader {
 
     private DefaultSignatureXMLLoader sxl = new DefaultSignatureXMLLoader();
     private Path pathToSignature;
@@ -30,8 +30,18 @@ public class PureBigraphXMLLoader extends BigraphXmlLoaderSupport implements Big
     protected DefaultDynamicSignature signature = null;
     protected MutableBuilder<DefaultDynamicSignature> builder;
 
-    public PureBigraphXMLLoader() {
+    public DefaultBigraphXMLLoader() {
         super();
+    }
+
+    /**
+     * If the signature is provided, the signature XML file of the bigraph won't be parsed.
+     *
+     * @param signature the signature
+     */
+    public DefaultBigraphXMLLoader(DefaultDynamicSignature signature) {
+        super();
+        this.signature = signature;
     }
 
     public Map<String, List<Pair<String, Integer>>> getSignatureControlPortIndexMapping() {
@@ -74,6 +84,7 @@ public class PureBigraphXMLLoader extends BigraphXmlLoaderSupport implements Big
 
     @Override
     protected void processStartSignature(StartElement startElement) {
+        if (Objects.nonNull(signature)) return;
         Iterator<Attribute> attributes = startElement.getAttributes();
         while (attributes.hasNext()) {
             Attribute attribute = attributes.next();
@@ -87,7 +98,9 @@ public class PureBigraphXMLLoader extends BigraphXmlLoaderSupport implements Big
 
     @Override
     protected void processEndSignature(EndElement endElement) {
-        signature = sxl.importObject();
+        if (Objects.isNull(signature)) {
+            signature = sxl.importObject();
+        }
         builder = PureBigraphBuilder.newMutableBuilder(signature);
     }
 

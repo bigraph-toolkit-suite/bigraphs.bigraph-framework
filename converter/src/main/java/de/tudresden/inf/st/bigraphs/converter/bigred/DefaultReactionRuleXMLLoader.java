@@ -20,13 +20,14 @@ import java.util.*;
  *
  * @author Dominik Grzelak
  */
-public class PureReactionRuleXMLLoader implements BigraphXmlLoaderSupport.XmlProcessorCallback, BigRedXmlLoader {
+public class DefaultReactionRuleXMLLoader implements BigraphXmlLoaderSupport.XmlProcessorCallback, BigRedXmlLoader {
     protected Queue<ChangeAction> actionStack = new ArrayDeque<>();
     protected MutableBuilder<DefaultDynamicSignature> builder;
-    PureBigraphXMLLoader bxl = new PureBigraphXMLLoader();
-    boolean bigraphParsed = false;
-    PureBigraph redex;
-    PureBigraph reactum;
+    protected final DefaultBigraphXMLLoader bxl;
+    protected boolean bigraphParsed = false;
+    protected PureBigraph redex;
+    protected PureBigraph reactum;
+    protected DefaultDynamicSignature signature = null;
 
     private enum ChangeEvent {
         DISCONNECT("disconnect"), CONNECT("connect"),
@@ -69,8 +70,20 @@ public class PureReactionRuleXMLLoader implements BigraphXmlLoaderSupport.XmlPro
         }
     }
 
-    public PureReactionRuleXMLLoader() {
-        super();
+    public DefaultReactionRuleXMLLoader() {
+        bxl = new DefaultBigraphXMLLoader();
+        bxl.setCallback(this);
+    }
+
+    /**
+     * If the signature is provided, the signature XML file of the reaction rule won't be parsed.
+     *
+     * @param signature the signature
+     */
+    public DefaultReactionRuleXMLLoader(DefaultDynamicSignature signature) {
+//        this();
+        this.signature = signature;
+        this.bxl = new DefaultBigraphXMLLoader(this.signature);
         bxl.setCallback(this);
     }
 
@@ -101,6 +114,7 @@ public class PureReactionRuleXMLLoader implements BigraphXmlLoaderSupport.XmlPro
             if (endElement.getName().getLocalPart().equals("bigraph")) {
                 bigraphParsed = true;
                 redex = bxl.importObject();
+                signature = bxl.getSignature();
                 assert redex != null;
                 createFreshBuilderFrom(redex);
                 return;
@@ -320,5 +334,9 @@ public class PureReactionRuleXMLLoader implements BigraphXmlLoaderSupport.XmlPro
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    public DefaultDynamicSignature getSignature() {
+        return signature;
     }
 }

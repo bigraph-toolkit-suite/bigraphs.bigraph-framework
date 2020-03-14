@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test methods to read and write the included "context-aware printing example" of BigRed.
@@ -48,7 +48,7 @@ public class PrintingBigraphExampleTest {
 
     @Test
     void read_agents_test() throws IOException {
-        PureBigraphXMLLoader bxl = new PureBigraphXMLLoader();
+        DefaultBigraphXMLLoader bxl = new DefaultBigraphXMLLoader();
         bxl.readXml(getFile("agents/simple.bigraph-agent"));
         PureBigraph simpleBigraph = bxl.importObject();
         BigraphGraphvizExporter.toPNG(simpleBigraph, true, (new File(DUMP_TARGET + "simpleBigraph.png")));
@@ -62,7 +62,7 @@ public class PrintingBigraphExampleTest {
 
     @Test
     void read_rule_test_FinishJob() throws InvalidReactionRuleException, IOException {
-        PureReactionRuleXMLLoader rxl = new PureReactionRuleXMLLoader();
+        DefaultReactionRuleXMLLoader rxl = new DefaultReactionRuleXMLLoader();
         rxl.readXml(getFile("rules/finish-job.bigraph-rule"));
         ParametricReactionRule<PureBigraph> finishJob = rxl.importObject();
         BigraphGraphvizExporter.toPNG(finishJob.getRedex(), true, (new File(DUMP_TARGET + "finish-job-redex.png")));
@@ -71,7 +71,7 @@ public class PrintingBigraphExampleTest {
 
     @Test
     void read_rule_test_JobToPrinter() throws InvalidReactionRuleException, IOException {
-        PureReactionRuleXMLLoader rxl = new PureReactionRuleXMLLoader();
+        DefaultReactionRuleXMLLoader rxl = new DefaultReactionRuleXMLLoader();
         rxl.readXml(getFile("rules/job-to-printer.bigraph-rule"));
         ParametricReactionRule<PureBigraph> finishJob = rxl.importObject();
         BigraphGraphvizExporter.toPNG(finishJob.getRedex(), true, (new File(DUMP_TARGET + "job-to-printer-redex.png")));
@@ -82,7 +82,7 @@ public class PrintingBigraphExampleTest {
 
     @Test
     void read_rule_test_MoveRoom() throws InvalidReactionRuleException, IOException {
-        PureReactionRuleXMLLoader rxl = new PureReactionRuleXMLLoader();
+        DefaultReactionRuleXMLLoader rxl = new DefaultReactionRuleXMLLoader();
         rxl.readXml(getFile("rules/move-room.bigraph-rule"));
         ParametricReactionRule<PureBigraph> moveRoom = rxl.importObject();
         BigraphGraphvizExporter.toPNG(moveRoom.getRedex(), true, (new File(DUMP_TARGET + "move-room-redex.png")));
@@ -93,7 +93,7 @@ public class PrintingBigraphExampleTest {
 
     @Test
     void read_rule_test_SubmitJob() throws InvalidReactionRuleException, IOException {
-        PureReactionRuleXMLLoader rxl = new PureReactionRuleXMLLoader();
+        DefaultReactionRuleXMLLoader rxl = new DefaultReactionRuleXMLLoader();
         rxl.readXml(getFile("rules/submit-job.bigraph-rule"));
         ParametricReactionRule<PureBigraph> submitJob = rxl.importObject();
         BigraphGraphvizExporter.toPNG(submitJob.getRedex(), true, (new File(DUMP_TARGET + "submit-job-redex.png")));
@@ -102,4 +102,12 @@ public class PrintingBigraphExampleTest {
         BigraphArtifacts.exportAsInstanceModel(submitJob.getReactum(), new FileOutputStream(DUMP_TARGET + "submit-job-reactum.xmi"));
     }
 
+    @Test
+    void read_simulationSpec_test() throws IOException {
+        DefaultSimulationSpecXMLLoader ssxl = new DefaultSimulationSpecXMLLoader();
+        ssxl.readXml(getFile("simple.bigraph-simulation-spec"));
+        PureReactiveSystem pureReactiveSystem = ssxl.importObject();
+        assertEquals(4, pureReactiveSystem.getReactionRules().size());
+        assertNotNull(pureReactiveSystem.getAgent());
+    }
 }
