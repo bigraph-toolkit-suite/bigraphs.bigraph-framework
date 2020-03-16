@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +46,25 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
+    @DisplayName("Compose two bigraphs, which are the same instance")
+    void composition_of_sameBigraphInstance() throws InvalidConnectionException, IncompatibleSignatureException, IncompatibleInterfaceException, LinkTypeNotExistsException, IOException {
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature());
+        BigraphEntity.InnerName jeff = builder.createInnerName("jeff");
+        PureBigraph bigraph = builder.createRoot()
+                .addChild("Room").down().addChild("User", "jeff")
+                .addChild("Computer").linkToInner(jeff)
+                .addSite()
+                .createBigraph();
+
+        BigraphComposite<DefaultDynamicSignature> comp = ops(bigraph).parallelProduct(bigraph);
+        Bigraph<DefaultDynamicSignature> outerBigraph = comp.getOuterBigraph();
+//        BigraphArtifacts.exportAsInstanceModel((PureBigraph) outerBigraph, new FileOutputStream(TARGET_TEST_PATH + "same-instance.xmi"));
+        
+        Bigraph<DefaultDynamicSignature> comp2 = ops(bigraph).compose(bigraph).getOuterBigraph();
+//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) comp2, new FileOutputStream(TARGET_TEST_PATH + "same-instance2.xmi"));
+    }
+
+    @Test
     @DisplayName("Compose two bigraphs and check their EMetaModel data")
     void compose_test_with_emetamodel_check() throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Signature<DefaultDynamicControl> signature = createExampleSignature();
@@ -60,9 +81,9 @@ public class BigraphCompositionUnitTests {
         assertNotNull(composed);
         assertNotNull(composed2);
 
-        assertEquals(metaData.getName(), ((PureBigraph)composed.getOuterBigraph()).getModelPackage().getName());
-        assertEquals(metaData.getNsPrefix(), ((PureBigraph)composed.getOuterBigraph()).getModelPackage().getNsPrefix());
-        assertEquals(metaData.getNsUri(), ((PureBigraph)composed.getOuterBigraph()).getModelPackage().getNsURI());
+        assertEquals(metaData.getName(), ((PureBigraph) composed.getOuterBigraph()).getModelPackage().getName());
+        assertEquals(metaData.getNsPrefix(), ((PureBigraph) composed.getOuterBigraph()).getModelPackage().getNsPrefix());
+        assertEquals(metaData.getNsUri(), ((PureBigraph) composed.getOuterBigraph()).getModelPackage().getNsURI());
     }
 
     @Test

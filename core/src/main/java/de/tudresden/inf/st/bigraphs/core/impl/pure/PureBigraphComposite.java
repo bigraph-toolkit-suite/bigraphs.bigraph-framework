@@ -56,6 +56,19 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
         this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature());
     }
 
+    public Bigraph<S> copyIfSame(Bigraph<S> g, Bigraph<S> f) {
+        if (g.equals(f)) {
+            try {
+                EcoreBigraphStub clone = new EcoreBigraphStub((EcoreBigraph) f).clone();
+                g = (Bigraph<S>) PureBigraphBuilder.create(g.getSignature(), clone.getModelPackage(), clone.getModel()).createBigraph();
+//                return g;
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Composition exception: Could not clone bigraph");
+            }
+        }
+        return g;
+    }
+
     /**
      * Function that makes the nodes disjunct in terms of there names. This is needed for composition.
      */
@@ -65,11 +78,47 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
     }
 
     @Override
+    public BigraphComposite<S> parallelProductOf(Bigraph<S>... bigraphs) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        if (bigraphs.length == 0) return this;
+        BigraphComposite<S> next = parallelProduct(bigraphs[0]);
+        for (int i = 1, n = bigraphs.length; i < n; i++) {
+            next = next.parallelProduct(bigraphs[i]);
+        }
+        return next;
+    }
+
+    @Override
+    public BigraphComposite<S> juxtpositionOf(Bigraph<S>... bigraphs) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        if (bigraphs.length == 0) return this;
+        BigraphComposite<S> next = juxtapose(bigraphs[0]);
+        for (int i = 1, n = bigraphs.length; i < n; i++) {
+            next = next.juxtapose(bigraphs[i]);
+        }
+        return next;
+    }
+
+    @Override
+    public BigraphComposite<S> parallelProduct(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        return parallelProduct((Bigraph<S>) f.getOuterBigraph());
+    }
+
+    @Override
+    public BigraphComposite<S> compose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        return this.compose((Bigraph<S>) f.getOuterBigraph());
+    }
+
+    @Override
+    public BigraphComposite<S> juxtapose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        return this.juxtapose((Bigraph<S>) f.getOuterBigraph());
+    }
+
+    @Override
     public BigraphComposite<S> juxtapose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph<S> g = getBigraphDelegate();
         //rule: first G then F when rewriting names, ordinals
         assertSignaturesAreSame(g, f);
         assertInterfaceCompatibleForJuxtaposition(g, f);
+        g = copyIfSame(g, f);
 
         Supplier<Integer> rewriteRootSupplier = createNameSupplier();
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
@@ -268,33 +317,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
     }
 
     @Override
-    public BigraphComposite<S> parallelProductOf(Bigraph<S>... bigraphs) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        if (bigraphs.length == 0) return this;
-        BigraphComposite<S> next = parallelProduct(bigraphs[0]);
-        for (int i = 1, n = bigraphs.length; i < n; i++) {
-            next = next.parallelProduct(bigraphs[i]);
-        }
-        return next;
-    }
-
-    @Override
-    public BigraphComposite<S> juxtpositionOf(Bigraph<S>... bigraphs) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        if (bigraphs.length == 0) return this;
-        BigraphComposite<S> next = juxtapose(bigraphs[0]);
-        for (int i = 1, n = bigraphs.length; i < n; i++) {
-            next = next.juxtapose(bigraphs[i]);
-        }
-        return next;
-    }
-
-    @Override
-    public BigraphComposite<S> parallelProduct(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        return parallelProduct((Bigraph<S>) f.getOuterBigraph());
-    }
-
-    @Override
     public BigraphComposite<S> parallelProduct(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        Bigraph<S> g = getBigraphDelegate();
+        Bigraph<S> g = copyIfSame(getBigraphDelegate(), f);
         assertSignaturesAreSame(g, f);
 
         Supplier<Integer> rewriteRootSupplier = createNameSupplier();
@@ -546,18 +570,8 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
     }
 
     @Override
-    public BigraphComposite<S> compose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        return this.compose((Bigraph<S>) f.getOuterBigraph());
-    }
-
-    @Override
-    public BigraphComposite<S> juxtapose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        return this.juxtapose((Bigraph<S>) f.getOuterBigraph());
-    }
-
-    @Override
     public BigraphComposite<S> compose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        Bigraph<S> g = getBigraphDelegate();
+        Bigraph<S> g = copyIfSame(getBigraphDelegate(), f);
         assertSignaturesAreSame(g, f);
         // "disjoint support" of bigraphs is not really important (relevant) here as we are re-creating everything anyway
         // assertBigraphsAreNotSame();
