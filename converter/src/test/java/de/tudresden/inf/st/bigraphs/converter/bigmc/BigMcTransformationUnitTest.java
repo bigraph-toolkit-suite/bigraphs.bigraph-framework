@@ -30,9 +30,9 @@ import java.io.IOException;
  */
 public class BigMcTransformationUnitTest {
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static final String DUMP_TARGET = "src/test/resources/dump/";
 
     /**
-     *
      * bigmc -p ./couting.bgm
      */
     @Test
@@ -51,12 +51,12 @@ public class BigMcTransformationUnitTest {
         String s = prettyPrinter.toString(reactiveSystem);
         System.out.println(s);
 
-        FileOutputStream fout = new FileOutputStream(new File("/home/dominik/git/BigraphFramework/converter/src/test/resources/dump/couting.bgm"));
+        FileOutputStream fout = new FileOutputStream(new File(DUMP_TARGET + "couting.bgm"));
         prettyPrinter.toOutputStream(reactiveSystem, fout);
         fout.close();
     }
 
-    public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
+    public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException {
         Signature<DefaultDynamicControl> signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
 
@@ -106,6 +106,7 @@ public class BigMcTransformationUnitTest {
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
+
     /**
      * react r2 = Left.Z | Right.S -> True;
      */

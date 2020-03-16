@@ -64,7 +64,7 @@ var urlConfigs = {
 const siteVariables = {
     revision: 'Version: 0.7.0',
     revisionVar: 'Replace ${revision} with 0.7.0',
-    supportedConversions: '<ul><li>BigMC</li><li>BigraphER</li></ul>'
+    supportedConversions: '<ul><li>BigMC</li><li>BigraphER</li><li>BigRed</li></ul>'
 };
 
 const siteConfig = {

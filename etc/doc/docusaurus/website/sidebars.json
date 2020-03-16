@@ -12,7 +12,10 @@
       "simulation-predicates"
     ],
     "Converter": [
-      "converter"
+      "converter",
+      "converter/bigrapher-converter",
+      "converter/bigred-converter",
+      "converter/bigmc-converter"
     ],
     "Persistence": [
       "persistence",
