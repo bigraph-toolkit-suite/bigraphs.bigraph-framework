@@ -21,7 +21,7 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOption
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.SubBigraphMatchPredicate;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import org.apache.commons.io.FileUtils;

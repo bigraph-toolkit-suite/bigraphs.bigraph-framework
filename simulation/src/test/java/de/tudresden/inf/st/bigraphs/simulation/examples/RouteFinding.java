@@ -23,7 +23,7 @@ import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveS
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.SubBigraphMatchPredicate;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;

@@ -21,7 +21,7 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOption
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.InstantiationMap;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.SubBigraphMatchPredicate;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 

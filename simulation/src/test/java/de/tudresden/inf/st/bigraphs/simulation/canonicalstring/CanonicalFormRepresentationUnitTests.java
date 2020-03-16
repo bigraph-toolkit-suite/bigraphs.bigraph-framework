@@ -21,7 +21,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.BigraphIsoPredicate;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.BigraphIsoPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;

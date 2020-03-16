@@ -17,7 +17,7 @@ import de.tudresden.inf.st.bigraphs.simulation.exceptions.ModelCheckerExecutorSe
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.PredicateChecker;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
