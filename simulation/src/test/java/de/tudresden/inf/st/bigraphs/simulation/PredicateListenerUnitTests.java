@@ -60,7 +60,7 @@ public class PredicateListenerUnitTests {
 
 
         ModelCheckingOptions opts = ModelCheckingOptions.create().and(transitionOpts().setMaximumTransitions(10).create())
-                .and(exportOpts().setTraceFile(new File(TARGET_DUMP_PATH + "transition_graph.png"))
+                .and(exportOpts().setReactionGraphFile(new File(TARGET_DUMP_PATH + "transition_graph.png"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/")).create());
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
@@ -91,7 +91,7 @@ public class PredicateListenerUnitTests {
                 allMatched.set(true);
                 // Start a new BRS where the agent is the last state of the previous BRS
                 ModelCheckingOptions opts = ModelCheckingOptions.create().and(transitionOpts().setMaximumTransitions(10).create())
-                        .and(exportOpts().setTraceFile(new File(TARGET_DUMP_PATH + "transition_graph2.png"))
+                        .and(exportOpts().setReactionGraphFile(new File(TARGET_DUMP_PATH + "transition_graph2.png"))
                                 .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states2/")).create());
                 PureReactiveSystem pureReactiveSystem = new PureReactiveSystem();
                 pureReactiveSystem.setAgent(currentAgent);

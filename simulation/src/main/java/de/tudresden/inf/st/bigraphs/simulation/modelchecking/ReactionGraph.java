@@ -1,13 +1,15 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.collections.impl.factory.Sets;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -24,6 +26,7 @@ public class ReactionGraph<B extends Bigraph<?>> {
     private Map<String, B> stateMap = new ConcurrentHashMap<>();
     private Map<String, B> transitionMap = new ConcurrentHashMap<>();
     private Graph<LabeledNode, LabeledEdge> graph;
+    private Map<LabeledNode, Set<ReactiveSystemPredicates>> predicateMatches;
     private ReactionGraphStats<B> graphStats;
     private boolean canonicalNodeLabel = false;
 
@@ -48,13 +51,6 @@ public class ReactionGraph<B extends Bigraph<?>> {
         graph.addVertex(targetNode);
         boolean b = graph.addEdge(sourceNode, targetNode, new LabeledEdge(reactionLbl));
 
-        // with a_i symbols in states ...
-//        String s1 = agentMap.computeIfAbsent(sourceLbl, s -> aSup.get());
-//        String s2 = agentMap.computeIfAbsent(targetLbl, s -> aSup.get());
-        // graph.addVertex(s1);
-//        graph.addVertex(s2);
-//        boolean b = graph.addEdge(s1, s2, new LabeledEdge(reactionLbl));
-
         stateMap.putIfAbsent(sourceLbl, source);
         stateMap.putIfAbsent(targetLbl, target);
         transitionMap.putIfAbsent(reactionLbl, reaction);
@@ -64,9 +60,14 @@ public class ReactionGraph<B extends Bigraph<?>> {
         return graph.vertexSet().stream().filter(x -> x.getCanonicalForm().equals(canonicalForm)).findFirst();
     }
 
+    @SuppressWarnings("unused")
     public ReactionGraph<B> setCanonicalNodeLabel(boolean canonicalNodeLabel) {
         this.canonicalNodeLabel = canonicalNodeLabel;
         return this;
+    }
+
+    public Map<LabeledNode, Set<ReactiveSystemPredicates>> getPredicateMatches() {
+        return predicateMatches;
     }
 
     public void reset() {
@@ -80,6 +81,13 @@ public class ReactionGraph<B extends Bigraph<?>> {
         };
         graph = buildEmptySimpleDirectedGraph();
         graphStats = new ReactionGraphStats<>(this);
+        predicateMatches = Maps.mutable.empty();
+    }
+
+    public ReactionGraph<B> addPredicateMatchToNode(LabeledNode node, ReactiveSystemPredicates predicates) {
+        predicateMatches.putIfAbsent(node, Sets.mutable.empty());
+        predicateMatches.get(node).add(predicates);
+        return this;
     }
 
     /**
@@ -136,6 +144,10 @@ public class ReactionGraph<B extends Bigraph<?>> {
         public String getCanonicalForm() {
             return canonicalForm;
         }
+
+        public void changeLabel(String newLabel) {
+            this.label = newLabel;
+        }
     }
 
     public static class DefaultLabeledNode extends LabeledNode {
@@ -188,10 +200,7 @@ public class ReactionGraph<B extends Bigraph<?>> {
         }
     }
 
-
-    public static class LabeledEdge
-            extends
-            DefaultEdge {
+    public static class LabeledEdge extends DefaultEdge {
         private String label;
 
         /**

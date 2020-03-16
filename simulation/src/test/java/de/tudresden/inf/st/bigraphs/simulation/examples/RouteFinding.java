@@ -97,7 +97,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(new File(completePath.toUri()))
+                        .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()

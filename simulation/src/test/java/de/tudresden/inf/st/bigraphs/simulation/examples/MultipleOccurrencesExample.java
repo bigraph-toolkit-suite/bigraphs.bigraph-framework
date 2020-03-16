@@ -70,7 +70,7 @@ public class MultipleOccurrencesExample {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
+                        .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )

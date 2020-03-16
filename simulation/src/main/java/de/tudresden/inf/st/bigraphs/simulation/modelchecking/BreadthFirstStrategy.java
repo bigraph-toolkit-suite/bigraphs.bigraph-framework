@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.PredicateChecker;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.reactions.ReactionRuleSupplier;
 import org.eclipse.collections.api.factory.Lists;
@@ -112,7 +113,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     });
             if (predicateChecker.getPredicates().size() > 0) {
                 // "Check each property p ∈ P against w."
-                //TODO evaluate in options what should happen here: violation or stop criteria?
+                //TODO evaluate in "reaction graph spec" what should happen here: violation or stop criteria?
                 // this is connected to the predicates (changes its "intent", what they are used for)
                 if (predicateChecker.checkAll(theAgent)) {
                     String label = "";
@@ -123,6 +124,10 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         label = String.format("state-%s", String.valueOf(modelChecker.reactionGraph.getGraph().vertexSet().size()));
                     }
                     getListener().onAllPredicateMatched(theAgent, label);
+                    Optional<ReactionGraph.LabeledNode> node = modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW);
+                    node.ifPresent(labeledNode -> predicateChecker.getPredicates().forEach(p -> {
+                        modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, p);
+                    }));
                 } else {
                     // compute counter-example trace from w back to the root
                     try {
@@ -136,6 +141,10 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                 logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());
                                 getListener().onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
                             } else {
+                                Optional<ReactionGraph.LabeledNode> node = modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW);
+                                if (node.isPresent()) {
+                                    modelChecker.getReactionGraph().addPredicateMatchToNode(node.get(), (ReactiveSystemPredicates) eachPredciate);
+                                }
                                 getListener().onPredicateMatched(theAgent, eachPredciate.getKey());
                             }
                         });
@@ -144,10 +153,8 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     }
                 }
             }
-//            transitionCnt.incrementAndGet();
             // "Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty."
         }
-//        System.out.println("transitionCnt=" + transitionCnt);
         logger.debug("Total States/Transitions: {}", transitionCnt.get());
         logger.debug("Total Occurrences: {}", getOccurrenceCount());
     }

@@ -7,11 +7,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * This class represents the available options for the model checker {@link BigraphModelChecker}.
+ *
  * @author Dominik Grzelak
  */
 public class ModelCheckingOptions {
     private final static int DEFAULT_MAX_TRANSITIONS = Integer.MAX_VALUE;
-    //    private int maximumTransitions;
+
     private ExportOptions exportOpts;
     private TransitionOptions transitionOpts;
     private Map<Options, Opts> optsMap = new ConcurrentHashMap<>();
@@ -176,13 +178,13 @@ public class ModelCheckingOptions {
      */
     public static final class ExportOptions implements Opts {
         private final File outputStatesFolder;
-        private final File traceFile;
+        private final File reactionGraphFile;
         private final File rewriteResultFolder;
         private final Boolean printCanonicalStateLabel;
 
-        ExportOptions(File outputStatesFolder, File traceFile, File rewriteResultFolder, Boolean printCanonicalStateLabel) {
+        ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel) {
             this.outputStatesFolder = outputStatesFolder;
-            this.traceFile = traceFile;
+            this.reactionGraphFile = reactionGraphFile;
             this.rewriteResultFolder = rewriteResultFolder;
             this.printCanonicalStateLabel = printCanonicalStateLabel;
         }
@@ -217,16 +219,21 @@ public class ModelCheckingOptions {
         }
 
         /**
-         * The file to store for the trace of the transition graph
+         * The file to store the reaction graph (i.e., transition system)
          *
-         * @return
+         * @return filename of the reaction graph to store
          */
-        public File getTraceFile() {
-            return traceFile;
+        public File getReactionGraphFile() {
+            return reactionGraphFile;
         }
 
-        public boolean hasTraceFile() {
-            return Objects.nonNull(traceFile);
+        /**
+         * Checks if the filename for the reaction graph export was set.
+         *
+         * @return {@code true}, if the filename for the reaction graph export was set
+         */
+        public boolean hasReactionGraphFile() {
+            return Objects.nonNull(reactionGraphFile);
         }
 
         @Override
@@ -236,7 +243,7 @@ public class ModelCheckingOptions {
 
         public static class Builder {
             private File outputStatesFolder = null;
-            private File traceFile = null;
+            private File reactionGraphFile = null;
             private File rewriteResultFolder = null;
             private Boolean printCanonicalStateLabel = false;
 
@@ -245,8 +252,8 @@ public class ModelCheckingOptions {
                 return this;
             }
 
-            public Builder setTraceFile(File traceFile) {
-                this.traceFile = traceFile;
+            public Builder setReactionGraphFile(File reactionGraphFile) {
+                this.reactionGraphFile = reactionGraphFile;
                 return this;
             }
 
@@ -261,7 +268,7 @@ public class ModelCheckingOptions {
              * incremented number.
              * <p>
              * This only affects the exported reaction graph and serves visual purposes.
-             *
+             * <p>
              * Default is {@code true}.
              *
              * @return {@code true}, if the state labels of the reaction graph should contain the canonical form of a bigraph
@@ -272,7 +279,7 @@ public class ModelCheckingOptions {
             }
 
             public ExportOptions create() {
-                return new ExportOptions(outputStatesFolder, traceFile, rewriteResultFolder, printCanonicalStateLabel);
+                return new ExportOptions(outputStatesFolder, reactionGraphFile, rewriteResultFolder, printCanonicalStateLabel);
             }
         }
     }

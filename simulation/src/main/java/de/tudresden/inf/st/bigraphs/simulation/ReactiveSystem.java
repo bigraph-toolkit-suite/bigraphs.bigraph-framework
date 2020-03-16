@@ -32,7 +32,9 @@ public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
 
     B getAgent();
 
-    List<ReactiveSystemPredicates<B>> getPredicates();
+    Collection<ReactiveSystemPredicates<B>> getPredicates();
+
+    BiMap<String, ReactiveSystemPredicates<B>> getPredicateMap();
 
     B buildGroundReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
 

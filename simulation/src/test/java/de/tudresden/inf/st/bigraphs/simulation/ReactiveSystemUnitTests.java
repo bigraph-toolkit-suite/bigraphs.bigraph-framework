@@ -80,7 +80,7 @@ public class ReactiveSystemUnitTests {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(new File(completePath.toUri()))
+                        .setReactionGraphFile(new File(completePath.toUri()))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )
@@ -122,7 +122,7 @@ public class ReactiveSystemUnitTests {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png").toFile())
+                        .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png").toFile())
                         .create()
                 )
         ;
@@ -146,7 +146,7 @@ public class ReactiveSystemUnitTests {
                     .create()
             ).and(ModelCheckingOptions.exportOpts()
                     .setOutputStatesFolder(new File(""))
-                    .setTraceFile(new File(""))
+                    .setReactionGraphFile(new File(""))
                     .create()
             );
 

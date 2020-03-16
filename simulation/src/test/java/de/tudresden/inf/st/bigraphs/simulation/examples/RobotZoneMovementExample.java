@@ -54,7 +54,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
                 )
                 .doMeasureTime(false)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(new File(TARGET_DUMP_PATH + "transition_system.png"))
+                        .setReactionGraphFile(new File(TARGET_DUMP_PATH + "transition_system.png"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )

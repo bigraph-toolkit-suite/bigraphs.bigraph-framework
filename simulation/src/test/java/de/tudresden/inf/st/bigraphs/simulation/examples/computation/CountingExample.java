@@ -96,7 +96,7 @@ public class CountingExample {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(new File(completePath.toUri()))
+                        .setReactionGraphFile(new File(completePath.toUri()))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .setPrintCanonicalStateLabel(true)
                         .create()

@@ -41,7 +41,8 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
 
     protected B initialAgent;
     protected BiMap<String, ReactionRule<B>> reactionRules = HashBiMap.create();
-    protected MutableList<ReactiveSystemPredicates<B>> predicates = Lists.mutable.empty();
+    protected BiMap<String, ReactiveSystemPredicates<B>> predicateMap = HashBiMap.create();
+//    protected MutableList<ReactiveSystemPredicates<B>> predicates = Lists.mutable.empty();
 
     public AbstractSimpleReactiveSystem() {
     }
@@ -101,7 +102,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     }
 
     @Override
-    public synchronized Collection<ReactionRule<B>> getReactionRules() {
+    public synchronized Set<ReactionRule<B>> getReactionRules() {
         return reactionRules.values();
     }
 
@@ -111,13 +112,19 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     }
 
     @Override
-    public synchronized List<ReactiveSystemPredicates<B>> getPredicates() {
-        return predicates;
+    public synchronized BiMap<String, ReactiveSystemPredicates<B>> getPredicateMap() {
+        return predicateMap;
+    }
+
+    @Override
+    public synchronized Set<ReactiveSystemPredicates<B>> getPredicates() {
+        return predicateMap.values();
     }
 
     public synchronized void addPredicate(ReactiveSystemPredicates<B> predicate) {
-        if (!predicates.contains(predicate)) {
-            predicates.add(predicate);
+        if (!predicateMap.containsValue(predicate)) {
+//            predicates.add(predicate);
+            predicateMap.put(predSupplier.get(), predicate);
         } else {
             logger.debug("Predicate {} was not added because it is already contained in the reactive system", predicate);
         }
@@ -155,6 +162,15 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
         @Override
         public String get() {
             return "r" + id++;
+        }
+    };
+
+    private Supplier<String> predSupplier = new Supplier<String>() {
+        private int id = 0;
+
+        @Override
+        public String get() {
+            return "p" + id++;
         }
     };
 

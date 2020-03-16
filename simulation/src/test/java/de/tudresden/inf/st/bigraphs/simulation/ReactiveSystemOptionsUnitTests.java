@@ -39,7 +39,7 @@ public class ReactiveSystemOptionsUnitTests {
                 .create()
         ).and(ModelCheckingOptions.exportOpts()
                 .setOutputStatesFolder(new File(""))
-                .setTraceFile(new File(""))
+                .setReactionGraphFile(new File(""))
                 .create()
         );
 

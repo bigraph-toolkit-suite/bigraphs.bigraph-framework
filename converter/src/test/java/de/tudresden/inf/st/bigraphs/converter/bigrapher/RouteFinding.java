@@ -85,7 +85,7 @@ public class RouteFinding {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(new File(completePath.toUri()))
+                        .setReactionGraphFile(new File(completePath.toUri()))
                         .create()
                 )
         ;

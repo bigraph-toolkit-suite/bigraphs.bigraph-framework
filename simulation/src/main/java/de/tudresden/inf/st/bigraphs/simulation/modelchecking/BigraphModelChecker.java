@@ -16,13 +16,12 @@ import de.tudresden.inf.st.bigraphs.simulation.exceptions.InvalidSimulationStrat
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.ModelCheckerExecutorServiceNotProvided;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.export.mxReactionGraph;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.export.StyleConstants;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.PredicateChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
-import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,7 +198,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     }
 
     public List<ReactiveSystemPredicates<B>> getPredicates() {
-        return reactiveSystem.getPredicates();
+        return new ArrayList<>(reactiveSystem.getPredicates());
     }
 
     public AbstractBigraphMatcher<B> getMatcher() {
@@ -286,9 +285,9 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
     public void exportReactionGraph(ReactionGraph<B> reactionGraph) {
         ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
-        if (Objects.nonNull(opts.getTraceFile())) {
+        if (Objects.nonNull(opts.getReactionGraphFile())) {
             if (!reactionGraph.isEmpty()) {
-                exportGraph(reactionGraph.getGraph(), opts.getTraceFile());
+                exportGraph(reactionGraph, opts.getReactionGraphFile());
             } else {
                 logger.debug("Trace is not exported because reaction graph is empty.");
             }
@@ -297,12 +296,17 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    void exportGraph(Graph g, File imgFile) {
-        JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<>(g);
+    void exportGraph(ReactionGraph<B> bReactionGraph, File imgFile) {
+
+//        Graph g = bReactionGraph.getGraph();
+        mxReactionGraph graphAdapter = new mxReactionGraph(bReactionGraph, reactiveSystem);
+        graphAdapter.getStylesheet().putCellStyle("MATCHED", StyleConstants.predicateMatchedNodeStylesheet());
+        graphAdapter.getStylesheet().putCellStyle("DEFAULT", StyleConstants.defaultNodeStylesheet());
+        graphAdapter.getStylesheet().putCellStyle("DEFAULT_EDGE", StyleConstants.defaultEdgeStylesheet());
 //        mxIGraphLayout layout = new mxCompactTreeLayout(graphAdapter);
         mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.NORTH);
-//        ((mxHierarchicalLayout)layout).setFineTuning(true);
-//        ((mxHierarchicalLayout)layout).setResizeParent(true);
+        ((mxHierarchicalLayout) layout).setFineTuning(true);
+        ((mxHierarchicalLayout) layout).setResizeParent(true);
         layout.execute(graphAdapter.getDefaultParent());
 
         BufferedImage image =
