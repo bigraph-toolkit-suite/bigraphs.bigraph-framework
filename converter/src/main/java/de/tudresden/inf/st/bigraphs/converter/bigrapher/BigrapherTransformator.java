@@ -86,7 +86,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         return s.toString();
     }
 
-    private String toString(List<ReactiveSystemPredicates<PureBigraph>> predicates) {
+    private String toString(Set<ReactiveSystemPredicates<PureBigraph>> predicates) {
         //TODO
         StringBuilder s = new StringBuilder();
         for (ReactiveSystemPredicates<PureBigraph> predicate : predicates) {
