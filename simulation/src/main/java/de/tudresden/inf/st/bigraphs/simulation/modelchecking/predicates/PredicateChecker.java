@@ -1,8 +1,7 @@
-package de.tudresden.inf.st.bigraphs.simulation.reactivesystem;
+package de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

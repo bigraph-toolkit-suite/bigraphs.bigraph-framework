@@ -5,7 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.PredicateChecker;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.PredicateChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.reactions.ReactionRuleSupplier;
 import org.eclipse.collections.api.factory.Lists;
