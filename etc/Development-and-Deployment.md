@@ -142,6 +142,11 @@ This sections discusses the deployment process.
 - Goals to execute ... to run the build
 - Goals to execute ... to deploy artifacts to [Bintray](https://bintray.com/)
 
+Hints:
+- Package must be first created in Bintray having the same name as the artifacts
+- Bintray API key / username:password must be specified in `~/.m2/settings.xml`
+- SNAPSHOT releases cannot be deployed
+
 #### Documentation (User Manual + Javadoc API)
 
 - Docs are pushed to GitHub to be displayed by GitHub Pages.
