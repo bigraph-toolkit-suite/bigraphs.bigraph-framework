@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
@@ -21,12 +22,12 @@ import java.util.function.Supplier;
  *
  * @author Dominik Grzelak
  */
-public class ReactionGraph<B extends Bigraph<?>> {
+public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
 
     private Map<String, B> stateMap = new ConcurrentHashMap<>();
     private Map<String, B> transitionMap = new ConcurrentHashMap<>();
     private Graph<LabeledNode, LabeledEdge> graph;
-    private Map<LabeledNode, Set<ReactiveSystemPredicates>> predicateMatches;
+    private Map<LabeledNode, Set<ReactiveSystemPredicates<B>>> predicateMatches;
     private ReactionGraphStats<B> graphStats;
     private boolean canonicalNodeLabel = false;
 
@@ -60,13 +61,13 @@ public class ReactionGraph<B extends Bigraph<?>> {
         return graph.vertexSet().stream().filter(x -> x.getCanonicalForm().equals(canonicalForm)).findFirst();
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("UnusedReturnValue")
     public ReactionGraph<B> setCanonicalNodeLabel(boolean canonicalNodeLabel) {
         this.canonicalNodeLabel = canonicalNodeLabel;
         return this;
     }
 
-    public Map<LabeledNode, Set<ReactiveSystemPredicates>> getPredicateMatches() {
+    public Map<LabeledNode, Set<ReactiveSystemPredicates<B>>> getPredicateMatches() {
         return predicateMatches;
     }
 
@@ -84,7 +85,8 @@ public class ReactionGraph<B extends Bigraph<?>> {
         predicateMatches = Maps.mutable.empty();
     }
 
-    public ReactionGraph<B> addPredicateMatchToNode(LabeledNode node, ReactiveSystemPredicates predicates) {
+    @SuppressWarnings("UnusedReturnValue")
+    public ReactionGraph<B> addPredicateMatchToNode(LabeledNode node, ReactiveSystemPredicates<B> predicates) {
         predicateMatches.putIfAbsent(node, Sets.mutable.empty());
         predicateMatches.get(node).add(predicates);
         return this;
