@@ -25,7 +25,7 @@ other constraints are applicable. The LTS can have cycles.
 
 A BRS is a system containing an agent and reaction rules.
 
-All reactive system implement the interface `ReactiveSystem<B extends Bigraph<? extends Signature<?>>>`.
+All reactive system implement the interface `de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem<B extends Bigraph<? extends Signature<?>>>`.
 
 A reactive system for pure bigraphs can be created as follows:
 
@@ -78,24 +78,30 @@ number of admissable states in order to minimize the state-space explosion probl
 The algorithm described in [\[1\]](#ref1) is implemented.
 
 The respective reaction graph of the above example is shown below after 
-the BFS simulation is finshed.
+the BFS simulation finished.
 
-![imgs](assets/home-example-reaction-graph.png)
+![imgs](assets/simulation/home-example-reaction-graph.png)
+
+This form of simulation provides no guarantee that the simulation will end at some point.
 
 ### Random simulation
 
 This type of simulation starts to apply a set of given reaction rules
 on an initial agent. After the reaction graph is expanded, the simulation
-randomly selects a new state and repeats the process. Meaning, it follows
-only on path at random, until now further rules can be applied. 
-It is unsure if the simulation ends.
-Provide some stop criteria. 
+randomly selects a new state and repeats the process.
+In other words, it follows only on path at random until now further rules can be applied.
+This form of simulation provides no guarantee that the simulation will end at some point or will reach a desired state.
 
-![imgs](assets/transition_graph_random.png)
-In our example, rules (r0) and (r4) were applied on the agent. The algorithm
+|Random Run #1 | Random Run #2 |
+|---|---|
+|![imgs](assets/simulation/transition_graph_random.png)|![imgs](assets/simulation/transition_graph_random2.png)|
+
+Regarding the first random run of our example (left-hand figure above), rules (r0) and (r4) were applied on the agent. The algorithm
 was selecting the second agent (the one where (r4) points to), however, also 
-stops here, since no further rules could be applied. If the first agent 
-was chosen (where (r0) points to), rules (r1), (r2) and (r3) could be applied.
+stops here, since no further rules could be applied.
+
+If the agent were chosen (where (r0) points to), rules (r1), (r2) and (r3) could be applied.
+This case is illustrated in the right-hand figure above.
 
 ## Additional Model Checking Options
 

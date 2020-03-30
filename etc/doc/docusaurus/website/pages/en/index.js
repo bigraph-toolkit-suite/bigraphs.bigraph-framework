@@ -149,21 +149,21 @@ class Index extends React.Component {
             <Block layout="fourColumn">
                 {[
                     {
-                        content: 'Dynamically create bigraph models at runtime. Bigraph models are based on the *Ecore* standard and conforming to a meta model.',
+                        content: 'Dynamically create bigraph models at design and run-time. Compose bigraphs to build more complex bigraphs quickly. Bigraph models are based on the *Ecore* standard and conform to a meta-model.',
                         image: `${baseUrl}img/icon-bigraph-creation.png`,
                         imageAlign: 'top',
                         title: 'Modeling',
                     },
                     {
                         content: 'Create a *bigraphical reactive system* with agents and reaction rules to dynamically evolve a user-defined' +
-                            ' system. Perform model checking tasks by defining predicates that must hold.',
+                            ' system. Perform model checking tasks by defining various kinds of predicates.',
                         image: `${baseUrl}img/icon-bigraph-simulation.png`,
                         imageAlign: 'top',
                         title: 'Simulation and Verification',
                     },
                     {
                         content: 'Export your bigraphs and bigraphical reactive systems as Ecore-based models or any other format such as ' +
-                            'GraphML, GXL, BigraphER or BigMC.',
+                            'GraphML, GXL, BigraphER, BigMC or BigRed.',
                         image: `${baseUrl}img/icon-bigraph-interop.png`,
                         imageAlign: 'top',
                         title: 'Interoperability',

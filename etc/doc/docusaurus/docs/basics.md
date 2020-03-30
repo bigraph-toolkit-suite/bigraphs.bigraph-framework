@@ -7,10 +7,13 @@ Discover what Bigraph Framework is all about and learn the core concepts behind 
 
 ## Creating a Bigraph
 
-At the moment, Bigraph Framework supports only pure bigraphs.
+At the moment, Bigraph Framework supports only _pure bigraphs_.
 
 ### Signature
-We begin be opening a new pure factory.
+To create a bigraph, a so-called **signature** must be created first.
+Technically, it defines the **syntax** of a bigraph and determines what **types** (i.e., _controls_ of a bigraphs) we can create in the following.
+
+To create a signature, we begin by opening a new _pure factory_.
 All further operations will use the same factory in this context.
 The first step is to create a signature by using the returned factory.
 ```java
@@ -27,10 +30,12 @@ void example() {
 }
 ```
 
-The resulting signature contains 2 controls. The signature specifies the
-syntax of a bigraph we are going to create in the following.
-More about the specific methods of the bigraph factory and signature builder
-can be found in [Factories and Builders](./advanced/factories-and-builders).
+As mentioned above, the signature specifies the syntax of a bigraph we are going to create in the following.
+The resulting signature contains two controls: a _User_ with an arity of 1, and a _Computer_ with an arity of 2.
+The arity specifies how many _connections_ a control can have.
+The semantic meaning of the term "connection" is left open here - it can represent anything, for example, an ethernet link or an association relationship between elements.
+
+> More about the specific methods of the bigraph factory and the signature builder can be found in [Factories and Builders](./advanced/factories-and-builders).
 
 ### Bigraph Builder
 

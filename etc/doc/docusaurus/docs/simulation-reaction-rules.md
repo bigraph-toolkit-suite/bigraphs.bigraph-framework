@@ -5,7 +5,7 @@ title: Reaction Rules
 
 This section explains how to create reaction rules.
 
-Important generic interface: `ReactionRule<B extends Bigraph<? extends Signature<?>>>`.
+Important generic interface: `de.tudresden.inf.st.bigraphs.simulation.ReactionRule<B extends Bigraph<? extends Signature<?>>>`.
 
 ## Example
 

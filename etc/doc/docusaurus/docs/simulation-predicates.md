@@ -5,7 +5,7 @@ title: Bigraphical Predicates
 
 This section explains how to create predicates for model checking.
 
-Important generic abstract class: `ReactiveSystemPredicates<B extends Bigraph<? extends Signature<?>>>`.
+Important generic abstract class: `de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates<B extends Bigraph<? extends Signature<?>>>`.
 
 ## Adding Predicates
 
@@ -15,7 +15,7 @@ Any sub-class of `AbstractSimpleReactiveSystem<B extends Bigraph<? extends Signa
 AbstractSimpleReactiveSystem#addPredicate(ReactiveSystemPredicates<B> predicate)
 ```
 
-## Listen to Predicate Evaluation
+## Listening to Predicate Evaluation
 
 If predicates are added to a reactive system instance, one can add additional logic when these predicates gets evaluated.
 
