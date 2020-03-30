@@ -69,7 +69,9 @@ build:
   script:
     - rm -rf ./etc/doc/docusaurus/website/build
     - mvn $MAVEN_CLI_OPTS install -Pdistribute
-    - cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init && git add . && git commit -m "updated documentation"
+    - cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init
+    - touch CNAME && echo "www.bigraphs.org" > CNAME
+    - git add . && git commit -m "updated documentation"
     - git remote add stgithub $REMOTE_ST_GITHUB
     - git remote -v
     - git push --force stgithub master:gh-pages

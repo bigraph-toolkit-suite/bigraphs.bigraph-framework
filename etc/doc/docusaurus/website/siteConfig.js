@@ -57,8 +57,8 @@ const users = [
 ];
 
 var urlConfigs = {
-    baseUrl: '/bigraph-framework/',
-    url: 'https://st-tu-dresden.github.io',
+    baseUrl: '/',
+    url: 'https://www.bigraphs.org',
 };
 
 const siteVariables = {

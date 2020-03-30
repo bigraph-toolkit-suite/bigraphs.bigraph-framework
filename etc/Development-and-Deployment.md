@@ -169,12 +169,14 @@ Hints:
         ```
 - **Approach B:**
     - The following script builds and pushes the documentation to the remote repository:
-    - rm -rf ./etc/doc/docusaurus/website/build
-    - mvn $MAVEN_CLI_OPTS install -Pdistribute
-    - cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init && git add . && git commit -m "updated documentation"
-    - git remote add stgithub $REMOTE_ST_GITHUB
-    - git remote -v
-    - git push --force stgithub master:gh-pages
+        - rm -rf ./etc/doc/docusaurus/website/build
+        - mvn $MAVEN_CLI_OPTS install -Pdistribute
+        - cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init
+        - touch CNAME && echo "www.bigraphs.org" > CNAME
+        - git add . && git commit -m "updated documentation"
+        - git remote add stgithub $REMOTE_ST_GITHUB
+        - git remote -v
+        - git push --force stgithub master:gh-pages
 
 - In GitLab, the variables SSH_PRIVATE_KEY and SSH_KNOWN_HOSTS must exist under Settings>CI/CD.
     - see [Using SSH keys with GitLab CI/CD](https://docs.gitlab.com/ee/ci/ssh_keys/)
