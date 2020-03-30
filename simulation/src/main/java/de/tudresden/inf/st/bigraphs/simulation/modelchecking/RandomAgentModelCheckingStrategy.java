@@ -34,6 +34,10 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
         final ModelCheckingOptions options = modelChecker.options;
         final BigraphCanonicalForm canonicalForm = modelChecker.canonicalForm;
         final ModelCheckingOptions.TransitionOptions transitionOptions = options.get(ModelCheckingOptions.Options.TRANSITION);
+        if (Objects.nonNull(options.get(ModelCheckingOptions.Options.EXPORT))) {
+            ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
+            modelChecker.getReactionGraph().setCanonicalNodeLabel(opts.getPrintCanonicalStateLabel());
+        }
         int transitionCnt = 0;
 
         modelChecker.getReactionGraph().reset();

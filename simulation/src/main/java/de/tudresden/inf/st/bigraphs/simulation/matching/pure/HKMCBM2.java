@@ -78,7 +78,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         }
 
         ctrlsRedex = new ConcurrentHashMap<>(this.partition1.size());
-//        Maps.immutable.
         ctrlsAgent = new ConcurrentHashMap<>(this.partition2.size());
     }
 
@@ -198,24 +197,14 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         }
         assert matchedVertices <= partition1.size();
 
-//        System.out.println("Redex = " + mapAgent);
-//        System.out.println("Agent = " + mapRedex);
         Set<DefaultEdge> edges = new HashSet<>();
         for (int i = 0; i < vertices.size(); i++) {
             if (matching[i] != DUMMY) {
-//                System.out.println("Control Redex = " + vertices.get(i).getControl());
-//                System.out.println("Control Agent = " + vertices.get(matching[i]).getControl());
                 edges.add(graph.getEdge(vertices.get(i), vertices.get(matching[i])));
             }
-//            else {
-//                loserNodes.add(vertices.get(i));
-//            }
         }
-
         return new MatchingImpl<>(graph, edges, edges.size());
     }
-
-//    List<BigraphEntity> loserNodes = new ArrayList<>();
 
     //TODO: think about to move this out from this class or integrate it better here
 
@@ -223,22 +212,16 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
      * The order is not important (place graphs are unordered trees) so we just have to check if each control is present
      * somewhere
      *
-     * @return
+     * @return {@code true}, if all control types are equal, otherwise {@code false}
      */
     public boolean areControlsSame() {
-//        availableControlsRedex = new LinkedList<>();
-//        availableControlsAgent = new LinkedList<>();
         for (BigraphEntity each : partition1) {
             if (each.getControl() != null) {
-//                availableControlsRedex.add(each.getControl());
-//                ctrlsRedex.putIfAbsent(each.getControl(), 0L);
                 ctrlsRedex.put(each.getControl(), ctrlsRedex.getOrDefault(each.getControl(), 0L) + 1);
             }
         }
         for (BigraphEntity each : partition2) {
             if (each.getControl() != null) {
-//                availableControlsAgent.add(each.getControl());
-//                ctrlsAgent.putIfAbsent(each.getControl(), 0L);
                 ctrlsAgent.put(each.getControl(), ctrlsAgent.getOrDefault(each.getControl(), 0L) + 1);
             }
         }
@@ -250,20 +233,15 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                 Map.Entry<Control, Long> each = redexIterator.next();
                 //is subset
                 if (ctrlsAgent.get(each.getKey()) == null) {
-//                    iterator.remove();
                     controlsAreGood = false;
                 } else if (each.getValue() > ctrlsAgent.get(each.getKey())) {
                     controlsAreGood = false;
                 } else {
-//                    System.out.println("OK");
                     controlsAreGood = true;
                     redexIterator.remove();
                 }
             }
-//            System.out.println("controls stimmen überein...." + controlsAreGood);
-            boolean isSubset = ctrlsRedex.size() == 0;
-//            System.out.println("Subredex is subset of subagent=" + isSubset);
-            return isSubset; //&& availableControlsRedex.size() >= availableControlsAgent.size()
+            return ctrlsRedex.size() == 0; //&& availableControlsRedex.size() >= availableControlsAgent.size()
         } else {
             boolean controlsAreGood = false;
             Iterator<Map.Entry<Control, Long>> redexIterator = ctrlsRedex.entrySet().iterator();
@@ -277,15 +255,11 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
                     controlsAreGood = false;
                     break;
                 } else {
-//                    System.out.println("OK");
                     controlsAreGood = true;
                     redexIterator.remove();
                 }
             }
-//            System.out.println("controls stimmen nicht überein...." + controlsAreGood);
-            boolean isSubset = ctrlsRedex.size() == 0 && controlsAreGood;
-//            System.out.println("Subredex isSubset of subagent=" + isSubset);
-            return isSubset; //&& availableControlsRedex.size() <= availableControlsAgent.size()
+            return ctrlsRedex.size() == 0 && controlsAreGood; //&& availableControlsRedex.size() <= availableControlsAgent.size()
         }
     }
 

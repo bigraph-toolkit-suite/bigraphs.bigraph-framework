@@ -3,7 +3,11 @@ package de.tudresden.inf.st.bigraphs.core.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-//Source: https://stackoverflow.com/a/20329901
+/**
+ * A distributed random number generator.
+ *
+ * @see <a href="https://stackoverflow.com/a/20329901">https://stackoverflow.com/a/20329901</a>
+ */
 public class DistributedRandomNumberGenerator {
 
     private Map<Integer, Float> distribution;

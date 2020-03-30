@@ -4,7 +4,7 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode"
   MAVEN_OPTS: "-Ddoclint=none"
   CHANGELOG_FILE: "changelog_v0.7.0.md"
-  JOBS_ENABLED: "false"
+  STAGING_JOBS_ENABLED: "false"
 
 stages:
   - build
@@ -24,7 +24,7 @@ build:
   stage: test
   only:
     variables:
-      - $JOBS_ENABLED == "true"
+      - $STAGING_JOBS_ENABLED == "true"
   script:
     - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
 
@@ -48,7 +48,7 @@ build:
   stage: deploy
   only:
     variables:
-      - $JOBS_ENABLED == "true"
+      - $STAGING_JOBS_ENABLED == "true"
     refs:
       - master
       - develop
@@ -70,13 +70,11 @@ build:
 #    - cd ./etc/ci/
 #    - git clone git@github.com:PioBeat/bigraphs.git
     - git remote -v
-#    - cd ./bigraphs
-#    - mkdir -p apidocs
-#    - cp -a ../../../target/site/apidocs/. ./apidocs/
     - git add -A
     - git commit -m "updated github pages"
 #    - git push stgithub gh-pages
     - git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
+#    - git push stgithub master
 
 #"Deploy Artifacts":
 #  stage: deploy

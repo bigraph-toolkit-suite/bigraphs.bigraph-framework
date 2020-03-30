@@ -5,6 +5,8 @@ import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
 import org.apache.commons.vfs2.provider.ram.RamFileProvider;
 
 /**
+ * Some utility methods for memory-based operations.
+ *
  * @author Dominik Grzelak
  */
 public class MemoryOperations {

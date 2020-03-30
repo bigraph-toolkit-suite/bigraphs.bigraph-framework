@@ -420,7 +420,6 @@
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
-                                <!-- here the phase you need -->
                                 <phase>package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
@@ -442,20 +441,6 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
                         <executions>
-                            <!--                            <execution>-->
-                            <!--                                <id>npm install (docusaurus)</id>-->
-                            <!--                                <goals>-->
-                            <!--                                    <goal>exec</goal>-->
-                            <!--                                </goals>-->
-                            <!--                                <phase>pre-clean</phase>-->
-                            <!--                                <configuration>-->
-                            <!--                                    <executable>npm</executable>-->
-                            <!--                                    <workingDirectory>${project.usermanual.outputDirectory}</workingDirectory>-->
-                            <!--                                    <arguments>-->
-                            <!--                                        <argument>install</argument>-->
-                            <!--                                    </arguments>-->
-                            <!--                                </configuration>-->
-                            <!--                            </execution>-->
                             <execution>
                                 <id>npm build user manual (docusaurus)</id>
                                 <goals>
