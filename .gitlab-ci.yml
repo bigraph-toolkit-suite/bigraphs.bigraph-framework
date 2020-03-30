@@ -5,6 +5,7 @@ variables:
   MAVEN_OPTS: "-Ddoclint=none"
   CHANGELOG_FILE: "changelog_v0.7.0.md"
   STAGING_JOBS_ENABLED: "false"
+  REMOTE_ST_GITHUB: "git@github.com:st-tu-dresden/bigraph-framework.git"
 
 stages:
   - build
@@ -66,20 +67,25 @@ build:
     - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
+    - rm -rf ./etc/doc/docusaurus/website/build
     - mvn $MAVEN_CLI_OPTS install -Pdistribute
-#    - cd ./etc/ci/
-#    - git clone git@github.com:PioBeat/bigraphs.git
+    - cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init && git add . && git commit -m "updated documentation"
+    - git remote add stgithub $REMOTE_ST_GITHUB
     - git remote -v
-    - git add -A
-    - git commit -m "updated github pages"
-#    - git push stgithub gh-pages
-    - git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
+    - git push --force stgithub master:gh-pages
+# Old approach using git subtree
+#    - git add -A
+#    - git commit -m "updated github pages"
+#    - git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
 #    - git push stgithub master
 
 #"Deploy Artifacts":
 #  stage: deploy
 #  only:
-#    - master
-#    - ^v[0-9]+(?:.[0-9]+)+$
+#    variables:
+#      - $STAGING_JOBS_ENABLED == "true"
+#    refs:
+#      - master
+#      - ^v[0-9]+(?:.[0-9]+)+$
 #  script:
 #    - mvn $MAVEN_CLI_OPTS deploy

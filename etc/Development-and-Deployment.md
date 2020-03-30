@@ -150,21 +150,31 @@ Hints:
 #### Documentation (User Manual + Javadoc API)
 
 - Docs are pushed to GitHub to be displayed by GitHub Pages.
-- The project contains a second remote repository pointing to [GitHub/st-tu-dresden](https://github.com/st-tu-dresden/)
-    - Command to add a remote
-    ```bash
-    # HTTPS
-    git remote add stgithub https://github.com/st-tu-dresden/bigraph-framework.git
-    # SSH (preferred)
-    git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git
-    ```
-- We use `subtree push` to transfer the user manual to the *gh-pages* branch on GitHub.
-- As mentioned above, the full documentation is located at `etc/doc/docusaurus/website/build/bigraph-framework/`.
-- Command to execute:
-    ```bash
-    git subtree push --prefix <PATH-TO-MANUAL> <SECOND-REMOTE> gh-pages
-    git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
-    ```
+
+- **Approach A:**
+    - The project contains a second remote repository pointing to [GitHub/st-tu-dresden](https://github.com/st-tu-dresden/)
+        - Command to add a remote
+        ```bash
+        # HTTPS
+        git remote add stgithub https://github.com/st-tu-dresden/bigraph-framework.git
+        # SSH (preferred)
+        git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git
+        ```
+    - We use `subtree push` to transfer the user manual to the *gh-pages* branch on GitHub.
+    - As mentioned above, the full documentation is located at `etc/doc/docusaurus/website/build/bigraph-framework/`.
+    - Command to execute:
+        ```bash
+        git subtree push --prefix <PATH-TO-MANUAL> <SECOND-REMOTE> gh-pages
+        git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
+        ```
+- **Approach B:**
+    - The following script builds and pushes the documentation to the remote repository:
+    - rm -rf ./etc/doc/docusaurus/website/build
+    - mvn $MAVEN_CLI_OPTS install -Pdistribute
+    - cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init && git add . && git commit -m "updated documentation"
+    - git remote add stgithub $REMOTE_ST_GITHUB
+    - git remote -v
+    - git push --force stgithub master:gh-pages
 
 - In GitLab, the variables SSH_PRIVATE_KEY and SSH_KNOWN_HOSTS must exist under Settings>CI/CD.
     - see [Using SSH keys with GitLab CI/CD](https://docs.gitlab.com/ee/ci/ssh_keys/)
