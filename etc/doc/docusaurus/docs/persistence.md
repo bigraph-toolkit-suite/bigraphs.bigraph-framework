@@ -8,7 +8,7 @@ title: Persisting Bigraphs
 The framework provides simple means for storing and loading bigraphical
 meta models and instance models.
 
-Therefore, the utility class `BigraphArtifacts` comprises methods for
+Therefore, the utility class `de.tudresden.inf.st.bigraphs.core.BigraphArtifacts` within the `bigraph-core` module comprises methods for
 persisting bigraphical models to the filesystem.
 
 For a more sophisticated persistence solution, we refer the reader to 

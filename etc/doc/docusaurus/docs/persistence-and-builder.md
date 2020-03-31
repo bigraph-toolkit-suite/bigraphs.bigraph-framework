@@ -3,7 +3,7 @@ id: persistence-2
 title: Usage with Bigraph Builder
 ---
 
-## Creating a Builder by loading persisted bigraph meta-models
+## Creating a Builder by loading persisted Bigraph Meta-models
 
 The user must supply the signature and the filename or instance of the meta-model to instantiate a builder class.
 Therefore, the `PureBigraphBuilder` provides the following static methods:
@@ -21,18 +21,18 @@ public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S sign
 Then, the builder may produce a bigraph by using its available methods as normal.
 
 It is still necessary to supply the signature information as separate object. The reason is that not all information
-is recorded in the meta-model of the bigraph concerning the signature. Some properties that are missing include the arity
-of the control, or whether it is active, passiv or atomic; to mention a few.
+are recorded in the meta-model of the bigraph concerning the signature. Some properties that are missing include the arity
+of the control, or whether it is _active_, _passive_ or _atomic_; to mention a few.
 
 ### `PureBigraphBuilder#create(Signature, EMetaModelData)`
 
-Create a builder with a given meta model instance.
+Create a builder with a given meta-model instance.
 
 ### `PureBigraphBuilder#create(Signature, String)`
 
-Create a builder with a given meta model file located on the filesystem.
+Create a builder with a given meta-model file located on the filesystem.
 
-## Creating a Builder by loading persisted bigraph instance models
+## Creating a Builder by loading persisted Bigraph Instance Models
 
 Though, bigraphs are per-se immutable data structures in Bigraph Framework, one can use the builder to instantiate bigraphs.
 Persisted bigraphs can be loaded and supplied to a bigraph builder.

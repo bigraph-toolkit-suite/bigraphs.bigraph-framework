@@ -22,7 +22,8 @@
       "persistence-2"
     ],
     "Visualization": [
-      "visualization"
+      "visualization/visualization",
+      "visualization/visualization-styles"
     ],
     "Advanced": [
       "advanced/complex-modeling",

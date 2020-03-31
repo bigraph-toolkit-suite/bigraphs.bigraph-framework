@@ -68,28 +68,24 @@ Add this inside the `<dependencies></dependencies>` section of your project `*.p
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-core</artifactId>
   <version>${revision}</version>
-  <type>pom</type>
 </dependency>
 <!-- the rewriting module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-simulation</artifactId>
   <version>${revision}</version>
-  <type>pom</type>
 </dependency>
 <!-- the visualization module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-visualization</artifactId>
   <version>${revision}</version>
-  <type>pom</type>
 </dependency>
 <!-- the converter module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-converter</artifactId>
   <version>${revision}</version>
-  <type>pom</type>
 </dependency>
 ```
 
