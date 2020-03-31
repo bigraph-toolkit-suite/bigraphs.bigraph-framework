@@ -79,6 +79,7 @@ const siteConfig = {
     //   url: 'https://facebook.github.io',
     //   baseUrl: '/test-site/',
     repoUrl: "https://github.com/st-tu-dresden/bigraph-framework",
+    artifactRepoUrl: "https://bintray.com/st-tu-dresden/maven-repository/",
     // Used for publishing and more: Project name. This must match your GitHub repository project name (case-sensitive).
     projectName: 'bigraph-framework',
     // GitHub username of the organization or user hosting this project.
@@ -157,7 +158,7 @@ const siteConfig = {
         'https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js',
         '/js/code-block-buttons.js',
     ],
-    stylesheets: ['/css/code-block-buttons.css'],
+    stylesheets: ['/css/code-block-buttons.css', '/css/custom.css'],
     separateCss: ['/static/apidocs/stylesheet.css'],
     // On page navigation for the current documentation page.
     onPageNav: 'separate',

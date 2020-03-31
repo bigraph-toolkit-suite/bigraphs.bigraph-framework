@@ -23,6 +23,7 @@ class HomeSplash extends React.Component {
 
         const SplashContainer = props => (
             <div className="homeContainer">
+                {/*<Logo img_src={`${baseUrl}img/bigraph-framework-logo.png`}/>*/}
                 <div className="homeSplashFade">
                     <div className="wrapper homeWrapper">{props.children}</div>
                 </div>
@@ -30,15 +31,17 @@ class HomeSplash extends React.Component {
         );
 
         const Logo = props => (
-            <div className="projectLogo">
+            <div className="projectLogo" style={taglineStyle}>
                 <img src={props.img_src} alt="Project Logo"/>
             </div>
         );
 
+        const taglineStyle = {};
+
         const ProjectTitle = () => (
             <h2 className="projectTitle">
                 {siteConfig.title}
-                <small>{siteConfig.tagline}</small>
+                {/*<small>{siteConfig.tagline}</small>*/}
             </h2>
         );
 
@@ -60,9 +63,12 @@ class HomeSplash extends React.Component {
 
         return (
             <SplashContainer>
-                {/*<Logo img_src={`${baseUrl}img/undraw_monitor.svg`}/>*/}
+                <Logo img_src={`${baseUrl}img/bigraph-framework-logo.png`}/>
                 <div className="inner">
                     <ProjectTitle siteConfig={siteConfig}/>
+                    <div className="customTagline">
+                        <small>{siteConfig.tagline}</small>
+                    </div>
                     <PromoSection>
                         <Button href="#try">Try It Out</Button>
                         <Button href={docUrl('index.html')}>View the User Manual</Button>
@@ -92,21 +98,28 @@ class Index extends React.Component {
                 />
             </Container>
         );
+        const TryOut = () => {
+            const url = siteConfig.repoUrl;
+            return (
 
-        const TryOut = () => (
-            <Block background="light" id="try">
-                {[
-                    {
-                        title: 'Download Bigraph Framwork for Java',
-                        content:
-                            '<p>From Bintray</p>' +
-                            '<p>From GitHub</p>',
-                        image: `${baseUrl}img/icon-download.png`,
-                        imageAlign: 'left',
-                    },
-                ]}
-            </Block>
-        );
+                <Block background="light" id="try">
+                    {[
+                        {
+                            title: 'Download Bigraph Framework for Java',
+                            content:
+                            '<p>Bintray: ' +
+                                '<a href="https://bintray.com/st-tu-dresden/maven-repository">https://bintray.com/st-tu-dresden/maven-repository</a>' +
+                                '</p>' +
+                                '<p>GitHub: ' +
+                                '<a href="https://github.com/st-tu-dresden/bigraph-framework">https://github.com/st-tu-dresden/bigraph-framework</a>' +
+                                '</p>',
+                            image: `${baseUrl}img/icon-download.png`,
+                            imageAlign: 'left',
+                        },
+                    ]}
+                </Block>
+            )
+        };
 
         const Description = () => (
             <Block background="dark">
@@ -122,19 +135,19 @@ class Index extends React.Component {
             </Block>
         );
 
-        // const LearnHow = () => (
-        //     <Block background="light">
-        //         {[
-        //             {
-        //                 content:
-        //                     'Each new Docusaurus project has **randomly-generated** theme colors.',
-        //                 image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
-        //                 imageAlign: 'right',
-        //                 title: 'Randomly Generated Theme Colors',
-        //             },
-        //         ]}
-        //     </Block>
-        // );
+        const LearnHow = () => (
+            <Block background="light">
+                {[
+                    {
+                        content:
+                            'Each new Docusaurus project has **randomly-generated** theme colors.',
+                        image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
+                        imageAlign: 'right',
+                        title: 'Randomly Generated Theme Colors',
+                    },
+                ]}
+            </Block>
+        );
 
         const FeatureCallout = () => (
             <div
