@@ -290,35 +290,47 @@ achieve Separation of concerns: The meta model itself is implementation-agnostic
 The Bigraph Framework adds specific behavior superimposed upon this meta
 model. Meaning, the implementation-specific details are kept out from the meta model.
 
-## Building from Source
+## Building Configuration
 
-It is not necessary to build from source to use the bigraphical meta model but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper). In this case, JDK 1.8 is needed.
+It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper) or the regular `mvn` command. In this case, JDK 1.8 is needed.
+
+> **Note:** The required version of Maven is 3.6.3
+
+The recommendation here is to build it with the regular `mvn` command. You will need [Maven v3.6.3 or above](https://maven.apache.org/run-maven/index.html).
+
+> **Tip:** A script called `install-maven.sh` can be found in the `./etc/ci/` folder to automatically install Maven 3.6.3.
+
+### Building from Source
+
+**For the first time, the following steps must be executed from the root directory of this project:**
 
 ```bash
-$ ./mvnw clean install
+$ mvn validate -f ./etc/aggregator/pom.xml
+$ mvn clean install -U -DskipTests
 ```
 
-If you want to build with the regular `mvn` command, you will need [Maven v3.5.0 or above](https://maven.apache.org/run-maven/index.html).
+Among other things, some necessary dependencies from Eclipse P2 repositories will be downloaded. Afterwards, these auxiliary libraries and some other third party libraries that are not available in the central Maven repository will be installed into the local Maven repository.
+
+As long as no new versions are introduced, you may use `mvn clean/package/install` as usual.
+
+After all steps were executed and the build successfully finished, you can now use _Bigraph Framework_ in other Java projects. Therefore, see [Maven configuration](#Maven-configuration) on how to include the _Bigraph Framework_ Maven dependencies.
 
 ### Building the Documentation
 
-Building the documentation builds also the project without running tests.
+Building the documentation builds also the project without running tests. You may need to execute the above steps before.
 
 ```bash
-$ ./mvnw clean install -Pdistribute
+$ mvn clean install -Pdistribute
 ```
 
 The generated apidoc is available from `etc/doc/docusaurus/website/static/apidocs`.
 
-The generated user manual is available from `etc/doc/docusaurus/website/`
-by calling `npm start`. The manual is generated using docusaurus which
-must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md )
+The generated user manual is available from `etc/doc/docusaurus/website/` by calling `npm start`. The manual is generated using docusaurus which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md )
 for further instructions).
 
 ### Development and Deployment
 
-See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development
-and deployment of _Bigraph Framework_.
+See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development and deployment of _Bigraph Framework_.
 
 ## License
 

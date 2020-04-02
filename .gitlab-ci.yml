@@ -19,7 +19,9 @@ build:
   except:
     - /^feature.*$/
   script:
-    - mvn $MAVEN_CLI_OPTS clean compile
+    - mvn validate -f ./etc/aggregator/pom.xml
+    - mvn $MAVEN_CLI_OPTS clean install -U -DskipTests
+#    - mvn $MAVEN_CLI_OPTS clean compile
 
 "Running tests":
   stage: test
