@@ -24,6 +24,21 @@ The right building has only one room with 4 laptops.
 The **meta model over a signature** of the bigraph depicted in the figure above
 can be downloaded [here](assets/my-meta-model.ecore) to follow along the explanations.
 
+To recreate the running example above, we first need a pure bigraph builder
+instance by initializing it with the meta model (see above):
+```java
+DefaultDynamicSignature signature = BigraphFactory.pureSignatureBuilder()
+        .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
+        .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(2)).assign()
+        .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        .create();
+PureBigraphBuilder<DefaultDynamicSignature> builder =
+        BigraphFactory.pureBuilder(signature, "./my-meta-model.ecore");
+```
+
 ## Building and Combining (Sub-)Hierarchies
 
 The bigraph builder allows to construct hierarchies separately and to
@@ -36,20 +51,7 @@ helps to navigate (see `BigraphBuilder#hierarchy(Control)`, `BigraphBuilder#hier
 `BigraphBuilder.NodeHierarchy#top()`). It will be apparent from the following
 usage demonstration on how to use these methods.
 
-To recreate the running example above, we first create a pure bigraph builder
-instance by initializing it with the meta model (see above):
-```java
-DefaultDynamicSignature signature = BigraphFactory.pureSignatureBuilder()
-        .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
-        .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-        .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-        .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(2)).assign()
-        .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-        .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(1)).assign()
-        .create();
-PureBigraphBuilder<DefaultDynamicSignature> builder = 
-        BigraphFactory.pureBuilder(signature, "./my-meta-model.ecore");
-```
+
 
 Then, we use the builder to create some individual structures.
 (It is arbitrarily with which substructure we begin with)
