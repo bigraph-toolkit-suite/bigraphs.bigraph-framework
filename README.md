@@ -155,7 +155,7 @@ compositor.juxtapose(F);
 compositor.juxtapose(F).parallelProduct(H);
 ```
 
-### Maven configuration
+## Maven configuration
 
 ```xml
 <!-- the core module -->
@@ -309,24 +309,25 @@ $ mvn validate -f ./etc/aggregator/pom.xml
 $ mvn clean install -U -DskipTests
 ```
 
-Among other things, some necessary dependencies from Eclipse P2 repositories will be downloaded. Afterwards, these auxiliary libraries and some other third party libraries that are not available in the central Maven repository will be installed into the local Maven repository.
+Among other things, some necessary dependencies from Eclipse P2 repositories will be downloaded. Afterwards, these auxiliary libraries and some other third party libraries that are not available in the central Maven repository will be installed into your local Maven repository.
 
-As long as no new versions are introduced, you may use `mvn clean/package/install` as usual.
+As long as no new versions are introduced, you may just use `mvn clean/package/install/...` as usual.
 
-After all steps were executed and the build successfully finished, you can now use _Bigraph Framework_ in other Java projects. Therefore, see [Maven configuration](#Maven-configuration) on how to include the _Bigraph Framework_ Maven dependencies.
+After all steps were executed and the build successfully finished, you can now use _Bigraph Framework_ in other Java projects. Therefore, see [Maven configuration](#maven-configuration) on how to include the _Bigraph Framework_ Maven dependencies.
 
 ### Building the Documentation
 
 Building the documentation builds also the project without running tests. You may need to execute the above steps before.
 
 ```bash
+$ mvn install exec:java -f documentation/pom.xml
 $ mvn clean install -Pdistribute
 ```
 
 The generated apidoc is available from `etc/doc/docusaurus/website/static/apidocs`.
 
-The generated user manual is available from `etc/doc/docusaurus/website/` by calling `npm start`. The manual is generated using docusaurus which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md )
-for further instructions).
+The generated user manual is available from `etc/doc/docusaurus/website/` by calling `npm start`.
+The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md) for further instructions).
 
 ### Development and Deployment
 

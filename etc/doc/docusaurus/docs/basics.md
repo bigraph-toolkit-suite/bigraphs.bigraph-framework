@@ -16,19 +16,21 @@ Technically, it defines the **syntax** of a bigraph and determines what **types*
 To create a signature, we begin by opening a new _pure factory_.
 All further operations will use the same factory in this context.
 The first step is to create a signature by using the returned factory.
-```java
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+<!-- ```java -->
+<!-- import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*; -->
 
-@Test
-void example() {
-    PureBigraphFactory pureFactory = pure();
+<!-- @Test -->
+<!-- void example() { -->
+<!--     PureBigraphFactory pureFactory = pure(); -->
 
-    DefaultDynamicSignature signature = pureFactory.createSignatureBuilder()
-            .newControl().identifier("User").arity(1).kind(ControlKind.ATOMIC).assign()
-            .newControl(StringTypedName.of("Computer"), FiniteOrdinal.ofInteger(2)).assign()
-            .create();
-}
-```
+<!--     DefaultDynamicSignature signature = pureFactory.createSignatureBuilder() -->
+<!--             .newControl().identifier("User").arity(1).kind(ControlKind.ATOMIC).assign() -->
+<!--             .newControl(StringTypedName.of("Computer"), FiniteOrdinal.ofInteger(2)).assign() -->
+<!--             .create(); -->
+<!-- } -->
+<!-- ``` -->
+
+{@import: ../docs/assets/basics/getting_started_guide-0.java}
 
 As mentioned above, the signature specifies the syntax of a bigraph we are going to create in the following.
 The resulting signature contains two controls: a _User_ with an arity of 1, and a _Computer_ with an arity of 2.
@@ -43,21 +45,24 @@ Now we are able to instantiate a pure bigraph builder instance.
 With it we can build our bigraph by adding child nodes and connections among them.
 The signature above determines which kind of nodes we can add to the bigraph (our syntax).
 
-```java
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+<!-- ```java -->
+<!-- import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*; -->
 
-@Test
-void example() throws InvalidConnectionException {
-    // ...
+<!-- @Test -->
+<!-- void example() throws InvalidConnectionException { -->
+<!--     // ... -->
 
-    PureBigraphBuilder<DefaultDynamicSignature> builder = pureFactory.createBigraphBuilder(signature);
-    builder.createRoot()
-            .addChild("User", "login").addChild("Computer", "login");
-    PureBigraph bigraph = builder.createRoot()
-            .addChild("User", "login").addChild("Computer", "login")
-            .createBigraph();
-}
-```
+<!--     PureBigraphBuilder<DefaultDynamicSignature> builder = pureFactory.createBigraphBuilder(signature); -->
+<!--     builder.createRoot() -->
+<!--             .addChild("User", "login").addChild("Computer", "login"); -->
+<!--     PureBigraph bigraph = builder.createRoot() -->
+<!--             .addChild("User", "login").addChild("Computer", "login") -->
+<!--             .createBigraph(); -->
+<!-- } -->
+<!-- ``` -->
+
+{@import: ../docs/assets/basics/getting_started_guide-1.java}
+
 The example shows how to add two nodes ("User" and "Computer") under the same root (we do it twice)
 and how to link all to the same _outer name_ with the label "login". The bigraph is illustrated below.
 
@@ -91,17 +96,19 @@ The next code example shows how we can create a so-called _merge_n_ (i.e., a pla
 n sites are located under one root) and an identity link graph (i.e., inner and outer
 interfaces of the link graph are connected).
 
-```java
-@Test
-void example() throws InvalidConnectionException {
-    // ...
+<!-- ```java -->
+<!-- @Test -->
+<!-- void example() throws InvalidConnectionException { -->
+<!--     // ... -->
 
-    Placings<DefaultDynamicSignature> placings = pureFactory.createPlacings(signature);
-    Placings<DefaultDynamicSignature>.Merge merge = placings.merge(2);
-    Linkings<DefaultDynamicSignature> linkings = pureFactory.createLinkings(signature);
-    Linkings<DefaultDynamicSignature>.Identity login = linkings.identity(StringTypedName.of("login"));
-}
-```
+<!--     Placings<DefaultDynamicSignature> placings = pureFactory.createPlacings(signature); -->
+<!--     Placings<DefaultDynamicSignature>.Merge merge = placings.merge(2); -->
+<!--     Linkings<DefaultDynamicSignature> linkings = pureFactory.createLinkings(signature); -->
+<!--     Linkings<DefaultDynamicSignature>.Identity login = linkings.identity(StringTypedName.of("login")); -->
+<!-- } -->
+<!-- ``` -->
+
+{@import: ../docs/assets/basics/getting_started_guide-2.java}
 
 The factory provides the method `createPlacings()` to create a placing builder.
 With it we create a merge and passing the integer 2 as argument to create a merge
@@ -124,15 +131,18 @@ and compose them later to build a larger bigraph.
 To equip a bigraph with operators we simply pass it to the static method
 `ops()` provided by the `BigraphFactory` class.
 
-```java
-@Test
-void example() throws InvalidConnectionException {
-    // ...
+<!-- ```java -->
+<!-- @Test -->
+<!-- void example() throws InvalidConnectionException { -->
+<!--     // ... -->
 
-    BigraphComposite<DefaultDynamicSignature> composed = ops(merge).parallelProduct(login)
-            .compose(bigraph);
-}
-```
+<!--     BigraphComposite<DefaultDynamicSignature> composed = ops(merge).parallelProduct(login) -->
+<!--             .compose(bigraph); -->
+<!-- } -->
+<!-- ``` -->
+
+{@import: ../docs/assets/basics/getting_started_guide-3.java}
+
 The code above describes a composition that merges the two roots of `bigraph`
 under one root node with index 0. At the same time we keep the links so that
 all nodes are kept connected.

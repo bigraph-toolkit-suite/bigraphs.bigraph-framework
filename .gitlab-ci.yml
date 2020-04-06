@@ -70,6 +70,7 @@ build:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - rm -rf ./etc/doc/docusaurus/website/build
+    - mvn $MAVEN_CLI_OPTS install exec:java -f documentation/pom.xml
     - mvn $MAVEN_CLI_OPTS install -Pdistribute
     - cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init
     - touch CNAME && echo "www.bigraphs.org" > CNAME

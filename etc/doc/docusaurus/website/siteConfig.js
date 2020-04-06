@@ -9,7 +9,7 @@
 // site configuration options.
 
 const {Plugin: Embed} = require('remarkable-embed');
-
+const importMd = require('./static/js/import-md');
 // Our custom remarkable plugin factory.
 const createVariableInjectionPlugin = variables => {
     // `let` binding used to initialize the `Embed` plugin only once for efficiency.
@@ -69,7 +69,8 @@ const siteVariables = {
 
 const siteConfig = {
     markdownPlugins: [
-        createVariableInjectionPlugin(siteVariables)
+        createVariableInjectionPlugin(siteVariables),
+        importMd(),
     ],
     title: 'Bigraph Framework', // Title for your website.
     tagline: 'A framework written in Java for the creation and simulation of bigraphical reactive systems',

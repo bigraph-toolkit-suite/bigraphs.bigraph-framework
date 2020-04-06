@@ -5,7 +5,7 @@
 
     <groupId>de.tudresden.inf.st.bigraphs</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>${revision}</version>
+    <version>0.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
@@ -20,9 +20,12 @@
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.type>multi</project.type>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <guava.version>28.1-jre</guava.version>
         <jgrapht.version>1.3.0</jgrapht.version>
         <emf.version>2.16.0</emf.version>
@@ -65,10 +68,6 @@
 
     <repositories>
         <repository>
-            <id>local-repo</id>
-            <url>file://${project.basedir}/../etc/local-repo</url>
-        </repository>
-        <repository>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -76,15 +75,9 @@
             <name>bintray</name>
             <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
         </repository>
-        <!--        <repository>-->
-        <!--            <id>Eclipse</id>-->
-        <!--            <layout>p2</layout>-->
-        <!--            <url>http://download.eclipse.org/releases/latest</url>-->
-        <!--        </repository>-->
         <repository>
-            <id>emf-compare</id>
-            <url>https://download.eclipse.org/modeling/emf/compare/updates/releases/3.3/R201911051515/core/</url>
-            <layout>p2</layout>
+            <id>local-repo</id>
+            <url>file://${project.basedir}/../etc/local-repo</url>
         </repository>
     </repositories>
 
@@ -340,6 +333,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.6</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.6</version>
             </dependency>
             <!-- Test -->
             <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
