@@ -17,6 +17,7 @@
         <module>visualization</module>
         <module>simulation</module>
         <module>converter</module>
+        <module>documentation</module>
     </modules>
 
     <properties>

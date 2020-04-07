@@ -13,12 +13,11 @@ import com.github.javaparser.utils.Pair;
 import com.github.javaparser.utils.SourceRoot;
 import org.junit.jupiter.api.Assertions;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Base class to use for automating the generation of code samples that are going to be included in the user manual.
@@ -29,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *     <li>{@code generateCodeBlockOutput}</li>
  * </ul>
  * <p>
- * The generation procedure can then be initiated by calling {@link BaseDocumentationGeneratorSupport#runParser(BaseDocumentationGeneratorSupport, Class, String)}.
+ * The generation procedure can then be initiated by calling {@link BaseDocumentationGeneratorSupport#runParser(BaseDocumentationGeneratorSupport, String)}.
  *
  * @author Dominik Grzelak
  */
@@ -40,8 +39,12 @@ public abstract class BaseDocumentationGeneratorSupport {
     Pair<Position, Position> currentPosition;
     List<CodeBlock> codeBlocks = new ArrayList<>();
 
+    public static Path getMavenModuleRoot(Class<? extends BaseDocumentationGeneratorSupport> clazz) {
+        return CodeGenerationUtils.mavenModuleRoot(clazz);
+    }
+
     private static SourceRoot getSourceRoot(Class<? extends BaseDocumentationGeneratorSupport> clazz) {
-        SourceRoot sourceRoot = new SourceRoot(CodeGenerationUtils.mavenModuleRoot(clazz).resolve("src/test/java"));
+        SourceRoot sourceRoot = new SourceRoot(getMavenModuleRoot(clazz).resolve("src/test/java"));
         return sourceRoot;
     }
 
@@ -52,15 +55,13 @@ public abstract class BaseDocumentationGeneratorSupport {
      * Start the code sample generation procedure.
      *
      * @param instance          the instance of the test class
-     * @param clazz             the class type of the test instance
      * @param javaClassFilename the java filename of the test instance
      */
     public static void runParser(BaseDocumentationGeneratorSupport instance,
-                                 Class<? extends BaseDocumentationGeneratorSupport> clazz,
                                  String javaClassFilename) {
-        SourceRoot sourceRoot = getSourceRoot(clazz);
+        SourceRoot sourceRoot = getSourceRoot(instance.getClass());
         CompilationUnit cu = sourceRoot.parse(instance.getClass().getPackage().getName(), javaClassFilename);
-        Optional<ClassOrInterfaceDeclaration> gettingStartedGuide = cu.getClassByName(clazz.getSimpleName());
+        Optional<ClassOrInterfaceDeclaration> gettingStartedGuide = cu.getClassByName(instance.getClass().getSimpleName());
         Assertions.assertTrue(gettingStartedGuide.isPresent());
         instance.parseCodeBlocks(gettingStartedGuide);
     }

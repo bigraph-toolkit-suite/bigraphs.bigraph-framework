@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,6 @@ import java.util.List;
  * @author Dominik Grzelak
  */
 public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
-
-    public static void main(String[] args) {
-        runParser(new GettingStartedGuide(), GettingStartedGuide.class, "GettingStartedGuide.java");
-    }
 
     String firstPrefix = "import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;";
 
@@ -69,8 +66,13 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
                 sb.append(CODE_FENCE_END);
                 try {
                     String format = String.format(BASE_EXPORT_PATH + "/basics/%s-%d.java", methodNameSimple, cnt);
-                    FileUtils.writeStringToFile(Paths.get(
-                            System.getProperty("user.dir"), "../", format).toFile(),
+                    Path exportPath = Paths.get(getMavenModuleRoot(
+                            this.getClass()).toAbsolutePath().toString(),
+                            "../",
+                            format);
+                    System.out.println("Exporting to " + exportPath);
+                    FileUtils.writeStringToFile(
+                            exportPath.toFile(),
                             sb.toString(),
                             Charset.forName("UTF-8")
                     );

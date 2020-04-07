@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.documentation.basic;
 
+import com.github.javaparser.ast.body.MethodDeclaration;
 import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -16,12 +17,15 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.documentation.BaseDocumentationGeneratorSupport;
+import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 
@@ -30,7 +34,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
  *
  * @author Dominik Grzelak
  */
-public class ComplexBigraphExamples {
+public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
     private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
@@ -100,5 +104,15 @@ public class ComplexBigraphExamples {
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
         return (S) signatureBuilder.create();
+    }
+
+    @Override
+    public List<String> acceptedMethods() {
+        return Lists.mutable.of("building_and_combining_hierarchies");
+    }
+
+    @Override
+    public void generateCodeBlockOutput(List<CodeBlock> codeBlocks, MethodDeclaration methodDeclaration) {
+
     }
 }
