@@ -121,7 +121,7 @@ link them through an inner name, and
 after, close the link to automatically transform it to an edge:
 ```java
 // First, create an inner name
-BigraphEntity.OuterName tmp_link = builder.createInnerName("link");
+BigraphEntity.InnerName tmp_link = builder.createInnerName("link");
 
 // Create two nodes within different hierarchies
 builder.createRoot().addChild("Printer").linkToInner(tmp_link);
