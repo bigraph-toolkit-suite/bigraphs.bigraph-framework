@@ -338,10 +338,10 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         default void onReactiveSystemStarted() {
         }
 
-        default void onCheckingReactionRule(ReactionRule<B> reactionRule) {
+        default void onReactiveSystemFinished() {
         }
 
-        default void onReactiveSystemFinished() {
+        default void onCheckingReactionRule(ReactionRule<B> reactionRule) {
         }
 
         /**

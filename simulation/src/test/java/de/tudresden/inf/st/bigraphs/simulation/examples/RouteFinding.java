@@ -92,7 +92,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 .and(transitionOpts()
                         .setMaximumTransitions(25)
                         .setMaximumTime(60)
-                        .allowReducibleClasses(false) //if true, the simulation is endlessly running
+                        .allowReducibleClasses(false) //if true, the simulation is infinitely running
                         .create()
                 )
                 .doMeasureTime(true)

@@ -40,7 +40,9 @@
         <bintray.organization>st-tu-dresden</bintray.organization>
         <bintray.repo>maven-repository</bintray.repo>
         <bintray.package>${project.artifactId}</bintray.package>
-        <bintray.deployment.url>https://api.bintray.com/maven/${bintray.organization}/${bintray.repo}/${bintray.package}/;publish=1</bintray.deployment.url>
+        <bintray.deployment.url>
+            https://api.bintray.com/maven/${bintray.organization}/${bintray.repo}/${bintray.package}/;publish=1
+        </bintray.deployment.url>
         <doclint>none</doclint>
         <project.javadoc.outputDirectory>./etc/doc/docusaurus/website/static/apidocs/</project.javadoc.outputDirectory>
         <project.usermanual.outputDirectory>etc/doc/docusaurus/website</project.usermanual.outputDirectory>

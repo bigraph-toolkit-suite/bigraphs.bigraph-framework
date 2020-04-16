@@ -2,8 +2,6 @@ package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
@@ -31,11 +29,23 @@ public class DynamicSignatureBuilder
         return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity));
     }
 
+    /**
+     * Creates a signature with the given controls.
+     * <b>Note:</b> All previously assigned controls will be discarded.
+     *
+     * @param controls the controls to use for the signature
+     * @return a signature with the given controls
+     */
     @Override
     public DefaultDynamicSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
         return new DefaultDynamicSignature((Set<DefaultDynamicControl>) controls);
     }
 
+    /**
+     * Creates an empty signature without controls.
+     *
+     * @return an empty signature of type {@link DefaultDynamicSignature}
+     */
     @Override
     public DefaultDynamicSignature createEmpty() {
         return new DefaultDynamicSignature(Collections.emptySet());
