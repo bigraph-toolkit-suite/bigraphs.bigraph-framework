@@ -59,7 +59,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
     public Bigraph<S> copyIfSame(Bigraph<S> g, Bigraph<S> f) {
         if (g.equals(f)) {
             try {
-                EcoreBigraphStub clone = new EcoreBigraphStub((EcoreBigraph) f).clone();
+                Stub clone = new Stub((EcoreBigraph) f).clone();
                 g = (Bigraph<S>) PureBigraphBuilder.create(g.getSignature(), clone.getModelPackage(), clone.getModel()).createBigraph();
 //                return g;
             } catch (CloneNotSupportedException e) {

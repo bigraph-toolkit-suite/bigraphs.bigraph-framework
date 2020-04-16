@@ -77,18 +77,35 @@ public interface EcoreBigraph {
                 || eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
     }
 
+    /**
+     * Return the bigraph meta-model, which contains the signature of the current bigraph.
+     * <p>
+     * It is an meta-model, which extends the base bigraph meta meta-model.
+     *
+     * @return
+     * @see de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage
+     */
     EPackage getModelPackage();
 
+    /**
+     * Return the bigraph instance model (Ecore)
+     *
+     * @return the bigraph instance model
+     */
     EObject getModel();
 
     /**
-     * A lightweight container for an Ecore bigraph.
+     * A lightweight container for a bigraph that holds only the Ecore-relevant objects.
      * <p>
      * Though it provides no higher-order functions to access all its elements, it can be useful in some cases.
      * For example, to copy a {@link de.tudresden.inf.st.bigraphs.core.Bigraph} instance into memory and later
      * retrieving it via a builder.
+     * <p>
+     * Further, this stub allows the completely copy a bigraph by calling the {@link #clone()} method.
+     *
+     * @author Dominik Grzelak
      */
-    class EcoreBigraphStub implements EcoreBigraph {
+    class Stub implements EcoreBigraph {
         EPackage metaModel;
         EObject instanceModel;
 
@@ -97,12 +114,12 @@ public interface EcoreBigraph {
          *
          * @param bigraph an Ecore-based bigraph
          */
-        public EcoreBigraphStub(EcoreBigraph bigraph) {
+        public Stub(EcoreBigraph bigraph) {
             this.metaModel = EcoreUtil.copy(bigraph.getModelPackage());
             this.instanceModel = EcoreUtil.copy(bigraph.getModel());
         }
 
-        public EcoreBigraphStub(EPackage metaModel, EObject instanceModel) {
+        private Stub(EPackage metaModel, EObject instanceModel) {
             this.metaModel = metaModel;
             this.instanceModel = instanceModel;
         }
@@ -117,7 +134,15 @@ public interface EcoreBigraph {
             return instanceModel;
         }
 
-        public EcoreBigraphStub clone() throws CloneNotSupportedException {
+        /**
+         * This methods returns a copy of the actual bigraph.
+         * <p>
+         * Therefore, the bigraph is exported into the memory and loaded again.
+         *
+         * @return a copy of the current bigraph.
+         * @throws CloneNotSupportedException
+         */
+        public Stub clone() throws CloneNotSupportedException {
             try {
                 DefaultFileSystemManager manager = createFileSystemManager();
                 final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
@@ -134,9 +159,31 @@ public interface EcoreBigraph {
                 List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, inputStream);
                 inputStream.close();
                 inputStream2.close();
-                return new EcoreBigraphStub(ePackage, eObjects.get(0));
+                return new Stub(ePackage, eObjects.get(0));
             } catch (IOException e) {
                 throw new CloneNotSupportedException(e.getMessage());
+            }
+        }
+
+        /**
+         * Return the actual instance model (*.xmi) of the bigraph as an input stream.
+         *
+         * @return the bigraph as an input stream.
+         */
+        public InputStream getInputStreamOfInstanceModel() {
+            try {
+                DefaultFileSystemManager manager = createFileSystemManager();
+                final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
+                OutputStream outputStream = fo1.getContent().getOutputStream();
+                BigraphArtifacts.exportAsInstanceModel(this, outputStream);
+                outputStream.close();
+                //                EPackage ePackage = BigraphArtifacts.loadBigraphMetaModel(inputStream2);
+//                List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, inputStream);
+//                inputStream.close();
+                return fo1.getContent().getInputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
             }
         }
     }

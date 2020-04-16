@@ -26,7 +26,7 @@ import java.util.*;
 import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
 
 /**
- * A simple file utility class to serialize bigraphs and deserialize Ecore-based bigraph model files.
+ * A simple file utility class to serialize (deserialize) bigraphs to (from) Ecore-based bigraph model files.
  *
  * @author Dominik Grzelak
  */
@@ -67,47 +67,82 @@ public class BigraphArtifacts {
      *
      * @param metaModelPackageWithSignature the meta-model of the instance model
      * @param filePath                      the file path of the instance model
-     * @return list of {@link EObject} resources
+     * @return list of {@link EObject} resources representing the bigraph
      * @throws IOException if the file doesn't exists, or an exception is raised when loading the resource
+     * @see #loadBigraphInstanceModel(String)
+     * @see #loadBigraphInstanceModel(EPackage, InputStream)
      */
     public static List<EObject> loadBigraphInstanceModel(EPackage metaModelPackageWithSignature, String filePath) throws IOException {
-        return loadBigraphInstanceModel0(metaModelPackageWithSignature, filePath);
+        return loadBigraphInstanceModelByFilePath(metaModelPackageWithSignature, filePath);
     }
 
+    /**
+     * Loads an instance model without validating it against its meta-model.
+     *
+     * @param filePath the file path of the instance model
+     * @return list of {@link EObject} resources representing the bigraph
+     * @throws IOException if the file doesn't exists, or an exception is raised when loading the resource
+     * @see #loadBigraphInstanceModel(EPackage, String)
+     * @see #loadBigraphInstanceModel(EPackage, InputStream)
+     */
+    public static List<EObject> loadBigraphInstanceModel(String filePath) throws IOException {
+        return loadBigraphInstanceModelByFilePath(null, filePath);
+    }
+
+    /**
+     * Loads an instance model and validates it against the given meta-model.
+     *
+     * @param metaModelPackageWithSignature the meta-model of the instance model
+     * @param instanceModelInputStream      the input stream of the instance model
+     * @return list of {@link EObject} resources representing the bigraph
+     * @throws IOException if the file doesn't exists, or an exception is raised when loading the resource
+     * @see #loadBigraphInstanceModel(String)
+     * @see #loadBigraphInstanceModel(EPackage, InputStream)
+     */
     public static List<EObject> loadBigraphInstanceModel(EPackage metaModelPackageWithSignature, InputStream instanceModelInputStream) throws IOException {
-        EcorePackage.eINSTANCE.eClass();
+        ResourceSet load_resource = BigraphArtifacts.getResourceSetBigraphInstanceModel(metaModelPackageWithSignature, instanceModelInputStream);
+        Resource resource = load_resource.getResources().get(0);
+        return resource.getContents();
+    }
 
-        ResourceSet load_resourceSet = new ResourceSetImpl();
-        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
-        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
 
-        if (Objects.nonNull(metaModelPackageWithSignature)) {
-            // register the dynamic package locally
-            load_resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
-            if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()))
-                load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
-        }
-        Resource load_resource = load_resourceSet.createResource(URI.createURI("*.xmi"));
-        load_resource.load(instanceModelInputStream, Collections.EMPTY_MAP);
+    private static List<EObject> loadBigraphInstanceModelByFilePath(EPackage metaModelPackageWithSignature, String filePath) throws IOException {
+        File file = new File(filePath);
+        if (!file.exists()) throw new IOException("File couldn't be found: " + filePath);
+
+        ResourceSet load_resourceSet = initResourceSet(metaModelPackageWithSignature);
+        Resource load_resource = load_resourceSet.createResource(URI.createFileURI(filePath));
+        load_resource.load(Collections.EMPTY_MAP);
         return load_resource.getContents();
     }
 
     /**
-     * Loads an instance model without validates it against its meta-model.
+     * Returns the resource set ({@link ResourceSet}) of a loaded bigraph instance model and validates it against the
+     * given meta-model.
      *
-     * @param filePath the file path of the instance model
-     * @return list of {@link EObject} resources
-     * @throws IOException if the file doesn't exists, or an exception is raised when loading the resource
+     * @param metaModelPackageWithSignature the meta-model of the instance model
+     * @param instanceModelInputStream      the input stream of the instance model
+     * @return the resource set of the bigraph instance model to load
+     * @throws IOException
+     * @see #loadBigraphInstanceModel(String)
+     * @see #loadBigraphInstanceModel(EPackage, String)
+     * @see #loadBigraphInstanceModel(EPackage, InputStream)
      */
-    public static List<EObject> loadBigraphInstanceModel(String filePath) throws IOException {
-        return loadBigraphInstanceModel0(null, filePath);
+    public static ResourceSet getResourceSetBigraphInstanceModel(EPackage metaModelPackageWithSignature, InputStream instanceModelInputStream) throws IOException {
+        ResourceSet load_resourceSet = initResourceSet(metaModelPackageWithSignature);
+        Resource load_resource = load_resourceSet.createResource(URI.createURI("*.xmi"));
+        load_resource.load(instanceModelInputStream, Collections.EMPTY_MAP);
+        return load_resourceSet;
     }
 
-    private static List<EObject> loadBigraphInstanceModel0(EPackage metaModelPackageWithSignature, String filePath) throws IOException {
-        File file = new File(filePath);
-        if (!file.exists()) throw new IOException("File couldn't be found: " + filePath);
+    /**
+     * Prepares a {@link ResourceSet} in order to load a bigraph instance model.
+     *
+     * @param metaModelPackageWithSignature the meta-model of the bigraph
+     * @return an initialized resource set
+     */
+    private static ResourceSet initResourceSet(EPackage metaModelPackageWithSignature) {
         EcorePackage.eINSTANCE.eClass();
-
         ResourceSet load_resourceSet = new ResourceSetImpl();
         load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
         load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
@@ -118,10 +153,7 @@ public class BigraphArtifacts {
             if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()))
                 load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
         }
-        URI uri = URI.createFileURI(filePath);
-        Resource load_resource = load_resourceSet.createResource(uri);
-        load_resource.load(Collections.EMPTY_MAP);
-        return load_resource.getContents();
+        return load_resourceSet;
     }
 
     public static EPackage loadBigraphMetaModel(String filePath) throws IOException {

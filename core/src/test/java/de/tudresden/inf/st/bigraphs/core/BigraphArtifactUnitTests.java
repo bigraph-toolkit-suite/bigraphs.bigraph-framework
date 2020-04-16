@@ -14,6 +14,7 @@ import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -29,8 +30,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -46,6 +46,22 @@ public class BigraphArtifactUnitTests {
         file.mkdirs();
         file = new File(TARGET_TEST_EXPORT_PATH);
         file.mkdirs();
+    }
+
+    @Test
+    void ecore_bigraph_stub_test() {
+        assertAll(() -> {
+            PureBigraph bigraph = (PureBigraph) createSampleBigraph();
+
+            EcoreBigraph.Stub stub = new EcoreBigraph.Stub(bigraph);
+            assertNotEquals(stub.getModel(), bigraph.getModel());
+
+            EcoreBigraph.Stub clone = stub.clone();
+            assertNotEquals(stub, clone);
+
+            stub.getInputStreamOfInstanceModel();
+        });
+
     }
 
     @Test
