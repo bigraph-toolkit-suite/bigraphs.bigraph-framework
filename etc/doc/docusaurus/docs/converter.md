@@ -12,7 +12,7 @@ including GraphML, [BigMC](http://bigraph.org/bigmc/), [GXL](http://www.gupro.de
 Therefore, the framework module `bigraph-converter` contains the corresponding
 encoders/pretty printers etc.
 
-## Exporting to other bigraph tools
+## Exporting Bigraphs to other Tools
 
 The following bigraph tools are supported by now:
 {@inject: supportedConversions}
@@ -59,6 +59,6 @@ For each respective tool different adapters for signatures, agents and reaction 
 
 
 
-## Loading Bigraphs
+## Loading Bigraphs from other Tools
 
 Currently, bigraphs can be loaded only from BigRed XML files into Bigraph Framework. See [here](converter/bigred-converter#loading-bigred-xml-files-signatures-agents-rules-simulation-specification) for more details.
