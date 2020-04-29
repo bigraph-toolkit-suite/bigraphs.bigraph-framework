@@ -2,11 +2,6 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
-      <option name="id" value="local-repo" />
-      <option name="name" value="local-repo" />
-      <option name="url" value="file://$PROJECT_DIR$/documentation/../etc/local-repo" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="bintray" />
       <option name="url" value="https://jcenter.bintray.com" />
@@ -17,44 +12,14 @@
       <option name="url" value="https://download.eclipse.org/modeling/emf/compare/updates/releases/3.3/R201911051515/core/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="local-repo" />
-      <option name="name" value="local-repo" />
-      <option name="url" value="file://$PROJECT_DIR$/etc/aggregator/../etc/local-repo" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="local-repo" />
-      <option name="name" value="local-repo" />
-      <option name="url" value="file://$PROJECT_DIR$/converter/../etc/local-repo" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="local-repo" />
-      <option name="name" value="local-repo" />
-      <option name="url" value="file://$PROJECT_DIR$/../etc/local-repo" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="bintray-st-tu-dresden-maven-repository" />
       <option name="name" value="bintray" />
       <option name="url" value="https://dl.bintray.com/st-tu-dresden/maven-repository" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="local-repo" />
-      <option name="name" value="local-repo" />
-      <option name="url" value="file://$PROJECT_DIR$/simulation/../etc/local-repo" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="local-repo" />
-      <option name="name" value="local-repo" />
-      <option name="url" value="file://$PROJECT_DIR$/visualization/../etc/local-repo" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="local-repo" />
-      <option name="name" value="local-repo" />
-      <option name="url" value="file://$PROJECT_DIR$/core/../etc/local-repo" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="jboss.community" />

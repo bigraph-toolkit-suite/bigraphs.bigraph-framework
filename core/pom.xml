@@ -66,6 +66,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.eclipse.emf.compare</groupId>
+            <artifactId>org.eclipse.emf.compare</artifactId>
+        </dependency>
+        <dependency>
             <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
             <artifactId>bigraph-ecore-model</artifactId>
         </dependency>

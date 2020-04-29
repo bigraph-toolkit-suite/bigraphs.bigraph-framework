@@ -309,9 +309,9 @@ $ mvn validate -f ./etc/aggregator/pom.xml
 $ mvn clean install -U -DskipTests
 ```
 
-Among other things, some necessary dependencies from Eclipse P2 repositories will be downloaded. Afterwards, these auxiliary libraries and some other third party libraries that are not available in the central Maven repository will be installed into your local Maven repository.
+(Among other things, some necessary dependencies from Eclipse P2 repositories will be downloaded. Afterwards, these auxiliary libraries and some other third party libraries that are not available in the central Maven repository will be installed into your local Maven repository.)
 
-As long as no new versions are introduced regarding Eclipse dependencies, you may just use `mvn clean/package/install/...` as usual.
+As long as no new versions are introduced regarding Eclipse dependencies or other auxiliary libraries, you may just use `mvn clean/package/install/...` as usual.
 
 After all steps were executed and the build successfully finished, you can now use _Bigraph Framework_ in other Java projects. Therefore, see [Maven configuration](#maven-configuration) on how to include the _Bigraph Framework_ Maven dependencies.
 
@@ -335,7 +335,7 @@ See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deplo
 
 ## License
 
-Bigraph Framework is Open Source software released under the Apache 2.0 license.
+**Bigraph Framework** is Open Source software released under the Apache 2.0 license.
 
 ```text
    Copyright [2020] Dominik Grzelak

@@ -78,10 +78,6 @@
             <name>bintray</name>
             <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
         </repository>
-        <repository>
-            <id>local-repo</id>
-            <url>file://${project.basedir}/../etc/local-repo</url>
-        </repository>
     </repositories>
 
     <distributionManagement>
@@ -234,7 +230,7 @@
             <dependency>
                 <groupId>org.bigraph.model</groupId>
                 <artifactId>bigred-core</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.0.20130228</version>
                 <type>jar</type>
             </dependency>
             <dependency>

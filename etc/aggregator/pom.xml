@@ -60,23 +60,37 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>2.5.1</version>
-                <configuration>
-                    <groupId>org.eclipse.emf.compare</groupId>
-                    <artifactId>org.eclipse.emf.compare</artifactId>
-                    <version>3.5.3.201911051515</version>
-                    <packaging>jar</packaging>
-                    <file>${basedir}/target/repository/plugins/org.eclipse.emf.compare_3.5.3.201911051515.jar</file>
-                    <generatePom>true</generatePom>
-                    <!--                    <localRepository>local-repo</localRepository>-->
-                    <localRepositoryPath>./../local-repo</localRepositoryPath>
-                </configuration>
                 <executions>
                     <execution>
-                        <id>install-jar-lib</id>
+                        <id>org.eclipse.emf.compare</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>install-file</goal>
                         </goals>
+                        <configuration>
+                            <groupId>org.eclipse.emf.compare</groupId>
+                            <artifactId>org.eclipse.emf.compare</artifactId>
+                            <version>3.5.3.201911051515</version>
+                            <packaging>jar</packaging>
+                            <file>${basedir}/target/repository/plugins/org.eclipse.emf.compare_3.5.3.201911051515.jar
+                            </file>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>org.bigraph.model</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>org.bigraph.model</groupId>
+                            <artifactId>bigred-core</artifactId>
+                            <version>1.0.0.20130228</version>
+                            <packaging>jar</packaging>
+                            <file>${basedir}/../../etc/auxlibs/bigred-core_1.0.0.20130228.jar</file>
+                            <generatePom>true</generatePom>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -129,10 +129,10 @@ gen-test-resources/*
 **/resources/dump/exported-models/*
 **/resources/dump/graphviz/*
 !/etc/auxlibs/Gcf.zip
+!/etc/auxlibs/*.jar
 /etc/doc/site/*
 **/resources/dump/
 /.idea/modules.xml
 /.idea/markdown-navigator-enh.xml
 /.idea/markdown-navigator.xml
 /etc/doc/docusaurus/website/static/apidocs/
-!/etc/local-repo/
