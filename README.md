@@ -1,3 +1,5 @@
+<img src="./etc/bigraph-framework-logo.png" style="zoom:67%;" />
+
 # Bigraphical Framework
 
 **Version:** ${revision}
