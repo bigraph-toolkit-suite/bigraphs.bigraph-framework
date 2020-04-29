@@ -320,8 +320,8 @@ After all steps were executed and the build successfully finished, you can now u
 Building the documentation builds also the project without running tests. You may need to execute the above steps before.
 
 ```bash
-$ mvn install exec:java -f documentation/pom.xml
-$ mvn clean install -Pdistribute
+$ mvn clean install exec:java -f documentation/pom.xml
+$ mvn install -Pdistribute
 ```
 
 The generated apidoc is available from `etc/doc/docusaurus/website/static/apidocs`.
