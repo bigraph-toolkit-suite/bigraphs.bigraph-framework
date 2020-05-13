@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -26,10 +25,33 @@ public interface Signature<C extends Control> {
      */
     default C getControlByName(String name) {
         C selected = null;
-        Iterator<C> iterator = getControls().iterator();
-        while (iterator.hasNext()) {
-            C next1 = iterator.next();
+        for (C next1 : getControls()) {
             if (next1.getNamedType().stringValue().equals(name)) {
+                selected = next1;
+                break;
+            }
+        }
+        return selected;
+    }
+
+    default C getControl(String name, int arity) {
+        C selected = null;
+        for (C next1 : getControls()) {
+            if (next1.getNamedType().stringValue().equals(name) &&
+                    next1.getArity().getValue().intValue() == arity) {
+                selected = next1;
+                break;
+            }
+        }
+        return selected;
+    }
+
+    default C getControl(String name, int arity, ControlKind controlKind) {
+        C selected = null;
+        for (C next1 : getControls()) {
+            if (next1.getNamedType().stringValue().equals(name) &&
+                    next1.getArity().getValue().intValue() == arity &&
+                    next1.getControlKind().equals(controlKind)) {
                 selected = next1;
                 break;
             }

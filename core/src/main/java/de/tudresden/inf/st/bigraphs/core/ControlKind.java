@@ -27,6 +27,6 @@ public enum ControlKind {
         if (value.equalsIgnoreCase("atomic")) return ATOMIC;
         if (value.equalsIgnoreCase("active")) return ACTIVE;
         if (value.equalsIgnoreCase("passive")) return PASSIVE;
-        return ATOMIC;
+        return ACTIVE;
     }
 }

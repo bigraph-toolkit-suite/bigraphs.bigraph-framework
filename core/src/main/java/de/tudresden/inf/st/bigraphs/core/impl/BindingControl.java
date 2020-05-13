@@ -14,7 +14,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
  * @param <FO> type of the arity
  * @author Dominik Grzelak
  */
-public class BindingControl<NT extends NamedType, FO extends FiniteOrdinal> extends AbstractControl<NT, FO> {
+public class BindingControl<NT extends NamedType<?>, FO extends FiniteOrdinal<?>> extends AbstractControl<NT, FO> {
 
     protected BindingControl(NT name, FO arity) {
         super(name, arity);
