@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -48,6 +49,28 @@ public abstract class BigraphCompositeSupport<S extends Signature> extends Bigra
         if (!disjointInnerNames || !disjointOuterNames) {
             throw new IncompatibleInterfaceException("Common inner names or outer names ...");
         }
+    }
+
+    public static class LinkComparator<T extends BigraphEntity<?>> implements Comparator<T> {
+
+        @Override
+        public int compare(T o1, T o2) {
+            if (o1 instanceof BigraphEntity.Link && o2 instanceof BigraphEntity.Link) {
+                int i = ((BigraphEntity.Link) o1).getName().compareTo(((BigraphEntity.Link) o2).getName());
+                if (i == 0) {
+                    return o1.getType().compareTo(o2.getType());
+                }
+                return i;
+            } else if (o1 instanceof BigraphEntity.InnerName && o2 instanceof BigraphEntity.InnerName) {
+                int i = ((BigraphEntity.InnerName) o1).getName().compareTo(((BigraphEntity.InnerName) o2).getName());
+                if (i == 0) {
+                    return o1.getType().compareTo(o2.getType());
+                }
+                return i;
+            }
+            return -1;
+        }
+
     }
 
     /**

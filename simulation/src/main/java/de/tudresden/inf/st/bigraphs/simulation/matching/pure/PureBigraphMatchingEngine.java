@@ -788,41 +788,41 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
                 }
             }
+        }
 
-            if (agentChildrenKeep.size() == 1) {
-                BigraphEntity next = agentChildrenKeep.iterator().next();
-                if (rekCnt < calcRekCnt) {
-//                if (agentAdapter.getChildren(agentChildrenKeep.get(0)).size() > 0)
-                    {
-                        boolean b = true;
-                        if (agentAdapter.getSiblingsOfNode(next).size() > 1) {
-                            b &= agentAdapter.getSiblingsOfNode(next).stream().allMatch(n -> {
-                                return n.getControl().equals(next.getControl());
-                            });
-                        }
-                        if (b) {
-                            b = agentAdapter.getSiblingsOfNode(next).stream().allMatch(n -> {
-                                return agentAdapter.getChildren(n).size() == 0;
-                            });
-                        }
-                        if (!b) {
-                            try {
-                                LinkedHashSet<BigraphEntity> newDiscards = new LinkedHashSet<>(discards); //discards
+
+        if (agentChildrenKeep.size() != 0) {
+            if (rekCnt < calcRekCnt) {
+//                BigraphEntity next = agentChildrenKeep.iterator().next();
+
+                for (BigraphEntity each : agentChildrenKeep) {
+                    try {
+                        Integer reduce = agentAdapter.getChildren(each).size();
+//                                LinkedHashSet<BigraphEntity> newDiscards = new LinkedHashSet<>(discards); //discards
 //                                LinkedHashSet<BigraphEntity> newDiscards = new LinkedHashSet<>(); //discards
+                        LinkedHashSet<BigraphEntity> newDiscards = new LinkedHashSet<>(discards); //discards
 //                                newDiscards.addAll(agentChildrenKeep);
-                                newDiscards.add(next);
-                                PureBigraphParametricMatch pureBigraphParametricMatch =
-                                        buildMatch(hitsV, hitsV_newChildren, new LinkedList<>(newDiscards), rekCnt + 1);
-                                matches.add(pureBigraphParametricMatch);
-                            } catch (ContextIsNotActive contextIsNotActive) {
-                                contextIsNotActive.printStackTrace();
-                            }
-                        }
-
+//                                newDiscards.removeAll(discards);
+//                                if (reduce != 0)
+//                                    if (b && reduce > 0) { //reduce != 0) {
+                        boolean b = agentAdapter.getSiblingsOfNode(each).stream().allMatch(n -> {
+                            return n.getControl().equals(each.getControl());
+                        });
+                        boolean siblingsHaveChildren = agentAdapter.getSiblingsOfNode(each).stream()
+                                .anyMatch(n -> {
+                                    return agentAdapter.getChildren(n).size() > 0;
+                                });
+                        if (b && !siblingsHaveChildren && reduce == 0) continue;
+                        if (b && siblingsHaveChildren)
+                            newDiscards.add(each);
+                        PureBigraphParametricMatch pureBigraphParametricMatch =
+                                buildMatch(hitsV, hitsV_newChildren, new LinkedList<>(newDiscards), rekCnt + 1);
+                        matches.add(pureBigraphParametricMatch);
+                    } catch (ContextIsNotActive contextIsNotActive) {
+                        contextIsNotActive.printStackTrace();
                     }
                 }
             }
-
         }
 
 
@@ -885,7 +885,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
     // take special care of cross linking nodes
     private LinkedList<BigraphEntity> findCrossLinkingNodes(Map.Entry<BigraphEntity, LinkedList<BigraphEntity>> redexAgentMapping,
-                                                      MutableBiMap<BigraphEntity.NodeEntity, BigraphEntity.NodeEntity> matchDict
+                                                            MutableBiMap<BigraphEntity.NodeEntity, BigraphEntity.NodeEntity> matchDict
     ) {
         LinkedList<BigraphEntity> removeEntities = new LinkedList<>();
         for (BigraphEntity matchingAgent : redexAgentMapping.getValue()) {

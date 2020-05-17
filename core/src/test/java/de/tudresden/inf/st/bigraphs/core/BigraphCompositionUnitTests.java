@@ -46,6 +46,30 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
+    void bigraphNesting_test() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createExampleSignature());
+        BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+        PureBigraph bigraph = builder.createRoot()
+                .addChild("Room").down().addChild("User", "jeff")
+                .addChild("Computer").linkToOuter(jeff)
+                .addSite()
+                .top()
+                .createBigraph();
+        PureBigraph userBigraph = builder2.createRoot()
+                .addChild("User", "jeff")
+                .top()
+                .createBigraph();
+//        System.out.println("-----------------------------------------");
+//        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+//        System.out.println("-----------------------------------------");
+//        BigraphArtifacts.exportAsInstanceModel(userBigraph, System.out);
+        BigraphComposite<DefaultDynamicSignature> nesting = ops(bigraph).nesting(userBigraph);
+//        System.out.println("-----------------------------------------");
+        BigraphArtifacts.exportAsInstanceModel(nesting.getOuterBigraph(), System.out);
+    }
+
+    @Test
     @DisplayName("Compose two bigraphs, which are the same instance")
     void composition_of_sameBigraphInstance() throws InvalidConnectionException, IncompatibleSignatureException, IncompatibleInterfaceException, LinkTypeNotExistsException, IOException {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature());
@@ -59,7 +83,7 @@ public class BigraphCompositionUnitTests {
         BigraphComposite<DefaultDynamicSignature> comp = ops(bigraph).parallelProduct(bigraph);
         Bigraph<DefaultDynamicSignature> outerBigraph = comp.getOuterBigraph();
 //        BigraphArtifacts.exportAsInstanceModel((PureBigraph) outerBigraph, new FileOutputStream(TARGET_TEST_PATH + "same-instance.xmi"));
-        
+
         Bigraph<DefaultDynamicSignature> comp2 = ops(bigraph).compose(bigraph).getOuterBigraph();
 //        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) comp2, new FileOutputStream(TARGET_TEST_PATH + "same-instance2.xmi"));
     }

@@ -3,25 +3,31 @@ package de.tudresden.inf.st.bigraphs.core.impl.pure;
 import com.google.common.collect.HashBiMap;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * Composable bigraph implementation of {@link BigraphComposite} for <b>pure bigraphs</b>.
@@ -105,6 +111,27 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
     @Override
     public BigraphComposite<S> compose(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         return this.compose((Bigraph<S>) f.getOuterBigraph());
+    }
+
+    @Override
+    public BigraphComposite<S> nesting(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        Bigraph<S> g = copyIfSame(getBigraphDelegate(), f);
+        assertSignaturesAreSame(g, f);
+
+        // get all outer names of 'f' and make identity graph from them
+        Linkings<DefaultDynamicSignature> linkings = pure().createLinkings((DefaultDynamicSignature) getSignature());
+        Set<StringTypedName> collect = f.getOuterNames().stream().map(o -> StringTypedName.of(o.getName())).collect(Collectors.toSet());
+        Linkings<DefaultDynamicSignature>.Identity identity = linkings.identity(
+                collect.toArray(new NamedType[0])
+        );
+        BigraphComposite<S> sBigraphComposite = ops(g).parallelProduct((Bigraph<S>) identity);
+        assertInterfaceCompatibleForCompose(sBigraphComposite.getOuterBigraph(), f);
+        return sBigraphComposite.compose(f);
+    }
+
+    @Override
+    public BigraphComposite<S> nesting(BigraphComposite<S> inner) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        return this.nesting((Bigraph<S>) inner.getOuterBigraph());
     }
 
     @Override
@@ -223,7 +250,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
             if (each.getValue().getControl().getArity().compareTo(FiniteOrdinal.ofInteger(0)) == 0) continue;
 
             Collection<BigraphEntity.Port> ports = f.getPorts(each.getValue());
-            if (Objects.isNull(ports)) {
+            if (Objects.isNull(ports) || ports.size() == 0) {
                 ports = g.getPorts(each.getValue());
             }
 
@@ -408,10 +435,12 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
         Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e");
         HashBiMap<String, BigraphEntity.Edge> E = HashBiMap.create();
 
-        List<BigraphEntity.InnerName> I = new ArrayList<>();
+        Set<BigraphEntity.InnerName> I = new TreeSet<>(new LinkComparator<>());
+//        List<BigraphEntity.InnerName> I = new ArrayList<>();
         I.addAll(g.getInnerNames());
         I.addAll(f.getInnerNames());
-        List<BigraphEntity.OuterName> O = new ArrayList<>();
+        Set<BigraphEntity.OuterName> O = new TreeSet<>(new LinkComparator<>());
+//        List<BigraphEntity.OuterName> O = new ArrayList<>();
         O.addAll(g.getOuterNames());
         O.addAll(f.getOuterNames());
         for (BigraphEntity.OuterName each : O) {
@@ -454,7 +483,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
             if (each.getValue().getControl().getArity().compareTo(FiniteOrdinal.ofInteger(0)) == 0) continue;
 
             Collection<BigraphEntity.Port> ports = f.getPorts(each.getValue());
-            if (Objects.isNull(ports)) {
+            if (Objects.isNull(ports) || ports.size() == 0) {
                 ports = g.getPorts(each.getValue());
             }
 
