@@ -5,7 +5,9 @@ import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import org.eclipse.collections.api.factory.SortedSets;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -149,33 +151,33 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
         return cnt;
     }
 
-    /**
-     * Returns all siblings of the current node of the current bigraph. The node itself is not included.
-     *
-     * @param node the node whoms sibling should be returned
-     * @return siblings of {@code node}
-     */
-    @Deprecated //check if needed, whats the difference to PureBigraph's impl?
-    public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
-        if (!isBPlace(node.getInstance())) return new ArrayList<>();
-        EObject instance = node.getInstance();
-//        List<BigraphEntity> siblings = new ArrayList<>();
-        MutableList<BigraphEntity> siblings = org.eclipse.collections.api.factory.Lists.mutable.empty();
-        EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
-            EObject each = (EObject) instance.eGet(prntRef);
-            //get all childs
-            EStructuralFeature childRef = each.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-            @SuppressWarnings("unchecked")
-            EList<EObject> childs = (EList<EObject>) each.eGet(childRef);
-            assert childs != null;
-            for (EObject eachChild : childs) {
-                if (node.getInstance().equals(eachChild)) continue;
-                addPlaceToList(siblings, eachChild, true);
-            }
-        }
-        return siblings;
-    }
+//    /**
+//     * Returns all siblings of the current node of the current bigraph. The node itself is not included.
+//     *
+//     * @param node the node whoms sibling should be returned
+//     * @return siblings of {@code node}
+//     */
+//    @Deprecated //check if needed, whats the difference to PureBigraph's impl?
+//    public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+//        if (!isBPlace(node.getInstance())) return new ArrayList<>();
+//        EObject instance = node.getInstance();
+////        List<BigraphEntity> siblings = new ArrayList<>();
+//        LinkedList<BigraphEntity> siblings = new LinkedList<>(); //org.eclipse.collections.api.factory.Lists.mutable.empty();
+//        EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+//        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
+//            EObject each = (EObject) instance.eGet(prntRef);
+//            //get all childs
+//            EStructuralFeature childRef = each.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+//            @SuppressWarnings("unchecked")
+//            EList<EObject> childs = (EList<EObject>) each.eGet(childRef);
+//            assert childs != null;
+//            for (EObject eachChild : childs) {
+//                if (node.getInstance().equals(eachChild)) continue;
+//                addPlaceToList(siblings, eachChild, true);
+//            }
+//        }
+//        return siblings;
+//    }
 
     protected List<BigraphEntity> neighborhoodHook(List<BigraphEntity> neighbors, BigraphEntity node) {
         EObject instance = node.getInstance();

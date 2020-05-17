@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface BigraphMatchingEngine<B extends Bigraph<? extends Signature<?>>> {
 
-    <M extends BigraphMatch<B>> List<M> getMatches();
+    List<? extends BigraphMatch<B>> getMatches();
 
     default List<BigraphEntity> getSubBigraphFrom(final BigraphEntity node, final AbstractDynamicMatchAdapter adapter) {
         Traverser<BigraphEntity> childTraverser = Traverser.forTree(xx -> adapter.getChildren(xx));

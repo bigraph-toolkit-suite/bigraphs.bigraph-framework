@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -85,14 +87,15 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 true,
                 new File(TARGET_DUMP_PATH + "reactum_car.png")
         );
+//        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream(TARGET_DUMP_PATH + "meta-model.ecore"));
 //        Path currentRelativePath = Paths.get("");
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(25)
+                        .setMaximumTransitions(30)
                         .setMaximumTime(60)
-                        .allowReducibleClasses(false) //if true, the simulation is infinitely running
+                        .allowReducibleClasses(false)
                         .create()
                 )
                 .doMeasureTime(true)
@@ -259,7 +262,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
+    public static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
         DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Car")).arity(FiniteOrdinal.ofInteger(1)).assign()

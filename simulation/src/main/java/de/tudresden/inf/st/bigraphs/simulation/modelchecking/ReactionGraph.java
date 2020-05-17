@@ -24,8 +24,8 @@ import java.util.function.Supplier;
  */
 public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
 
-    private Map<String, B> stateMap = new ConcurrentHashMap<>();
-    private Map<String, B> transitionMap = new ConcurrentHashMap<>();
+    private final Map<String, B> stateMap = new ConcurrentHashMap<>();
+    private final Map<String, B> transitionMap = new ConcurrentHashMap<>();
     private Graph<LabeledNode, LabeledEdge> graph;
     private Map<LabeledNode, Set<ReactiveSystemPredicates<B>>> predicateMatches;
     private ReactionGraphStats<B> graphStats;

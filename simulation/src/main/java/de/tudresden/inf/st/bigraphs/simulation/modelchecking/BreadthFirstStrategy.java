@@ -16,6 +16,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -104,12 +105,13 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         String bfcf = canonicalForm.bfcs(reaction.getBigraph());
                         String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(reaction.getReactionRule());
                         if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
-                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getNext().getRedex(), reactionLbl);
+                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getMatch().getRedex(), reactionLbl);
                             workingQueue.add(reaction.getBigraph());
                             modelChecker.exportState(reaction.getBigraph(), bfcf, String.valueOf(reaction.getOccurrenceCount()));
                         } else {
-                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getNext().getRedex(), reactionLbl);
+                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getMatch().getRedex(), reactionLbl);
                         }
+                        modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
                     });
             if (predicateChecker.getPredicates().size() > 0) {
                 // "Check each property p ∈ P against w."

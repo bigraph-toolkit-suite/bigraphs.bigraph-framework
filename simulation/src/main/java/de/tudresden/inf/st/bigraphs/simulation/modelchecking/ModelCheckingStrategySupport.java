@@ -66,7 +66,7 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
             return reactionRule;
         }
 
-        public BigraphMatch<B> getNext() {
+        public BigraphMatch<B> getMatch() {
             return next;
         }
 

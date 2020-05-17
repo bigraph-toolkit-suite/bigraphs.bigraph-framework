@@ -39,7 +39,7 @@ public class BigraphCanonicalForm {
     boolean withNodeIdentifiers = false;
 
     public static BigraphCanonicalForm createInstance() {
-        return new BigraphCanonicalForm();
+        return createInstance(false);
     }
 
     public static BigraphCanonicalForm createInstance(boolean withNodeIdentifiers) {

@@ -5,7 +5,9 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
@@ -30,6 +32,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -246,7 +249,9 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                             true,
                             Paths.get(opts.getOutputStatesFolder().toString(), label).toFile()
                     );
-                    logger.debug("Exporting state {}", suffix);
+                    BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) bigraph, new FileOutputStream(
+                            Paths.get(opts.getOutputStatesFolder().toString(), label) + ".xmi"));
+                    logger.debug("Exporting state {}", label);
                     return label;
 //                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
                 } catch (IOException e) {

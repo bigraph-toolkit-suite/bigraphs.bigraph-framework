@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bigraphMetaModel:BBigraph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bigraphMetaModel="de.tud.inf.st.bigraphs" xsi:schemaLocation="de.tud.inf.st.bigraphs jar:file:/home/dominik/.m2/repository/de/tudresden/inf/st/bigraphs/model/bigraph-ecore-model/1.1.0/bigraph-ecore-model-1.1.0.jar!/model/bigraphBaseModel.ecore">
+  <bRoots>
+    <bChild xsi:type="bigraphMetaModel:Place" name="v0">
+      <bChild xsi:type="bigraphMetaModel:Road" name="v3">
+        <bPorts bLink="//@bOuterNames.1"/>
+      </bChild>
+      <bChild xsi:type="bigraphMetaModel:Road" name="v9">
+        <bPorts bLink="//@bOuterNames.3"/>
+      </bChild>
+      <bPorts bLink="//@bOuterNames.0"/>
+    </bChild>
+    <bChild xsi:type="bigraphMetaModel:Place" name="v2">
+      <bChild xsi:type="bigraphMetaModel:Road" name="v1">
+        <bPorts bLink="//@bOuterNames.2"/>
+      </bChild>
+      <bChild xsi:type="bigraphMetaModel:Target" name="v6">
+        <bPorts bLink="//@bOuterNames.7"/>
+      </bChild>
+      <bPorts bLink="//@bOuterNames.6"/>
+    </bChild>
+    <bChild xsi:type="bigraphMetaModel:Place" name="v5">
+      <bChild xsi:type="bigraphMetaModel:Road" name="v4">
+        <bPorts bLink="//@bOuterNames.4"/>
+      </bChild>
+      <bChild xsi:type="bigraphMetaModel:Road" name="v10">
+        <bPorts bLink="//@bOuterNames.6"/>
+      </bChild>
+      <bPorts bLink="//@bOuterNames.3"/>
+    </bChild>
+    <bChild xsi:type="bigraphMetaModel:Place" name="v7">
+      <bChild xsi:type="bigraphMetaModel:Road" name="v8">
+        <bPorts bLink="//@bOuterNames.5"/>
+      </bChild>
+      <bPorts bLink="//@bOuterNames.2"/>
+    </bChild>
+    <bChild xsi:type="bigraphMetaModel:Place" name="v11">
+      <bChild xsi:type="bigraphMetaModel:Car" name="v12">
+        <bChild xsi:type="bigraphMetaModel:Fuel" name="v15"/>
+        <bChild xsi:type="bigraphMetaModel:Fuel" name="v16"/>
+        <bChild xsi:type="bigraphMetaModel:Fuel" name="v19"/>
+        <bChild xsi:type="bigraphMetaModel:Fuel" name="v20"/>
+        <bChild xsi:type="bigraphMetaModel:Fuel" name="v21"/>
+        <bChild xsi:type="bigraphMetaModel:Fuel" name="v22"/>
+        <bPorts bLink="//@bOuterNames.7"/>
+      </bChild>
+      <bChild xsi:type="bigraphMetaModel:Road" name="v17">
+        <bPorts bLink="//@bOuterNames.1"/>
+      </bChild>
+      <bChild xsi:type="bigraphMetaModel:Road" name="v18">
+        <bPorts bLink="//@bOuterNames.5"/>
+      </bChild>
+      <bPorts bLink="//@bOuterNames.4"/>
+    </bChild>
+    <bChild xsi:type="bigraphMetaModel:Place" name="v13">
+      <bChild xsi:type="bigraphMetaModel:Road" name="v14">
+        <bPorts bLink="//@bOuterNames.4"/>
+      </bChild>
+      <bChild xsi:type="bigraphMetaModel:Road" name="v23">
+        <bPorts bLink="//@bOuterNames.2"/>
+      </bChild>
+      <bPorts bLink="//@bOuterNames.1"/>
+    </bChild>
+  </bRoots>
+  <bOuterNames name="p0" bPoints="//@bRoots.0/@bChild.0/@bPorts.0"/>
+  <bOuterNames name="p1" bPoints="//@bRoots.0/@bChild.5/@bPorts.0 //@bRoots.0/@bChild.4/@bChild.1/@bPorts.0 //@bRoots.0/@bChild.0/@bChild.0/@bPorts.0"/>
+  <bOuterNames name="p2" bPoints="//@bRoots.0/@bChild.5/@bChild.1/@bPorts.0 //@bRoots.0/@bChild.1/@bChild.0/@bPorts.0 //@bRoots.0/@bChild.3/@bPorts.0"/>
+  <bOuterNames name="p3" bPoints="//@bRoots.0/@bChild.2/@bPorts.0 //@bRoots.0/@bChild.0/@bChild.1/@bPorts.0"/>
+  <bOuterNames name="p4" bPoints="//@bRoots.0/@bChild.5/@bChild.0/@bPorts.0 //@bRoots.0/@bChild.4/@bPorts.0 //@bRoots.0/@bChild.2/@bChild.0/@bPorts.0"/>
+  <bOuterNames name="p5" bPoints="//@bRoots.0/@bChild.4/@bChild.2/@bPorts.0 //@bRoots.0/@bChild.3/@bChild.0/@bPorts.0"/>
+  <bOuterNames name="p7" bPoints="//@bRoots.0/@bChild.1/@bPorts.0 //@bRoots.0/@bChild.2/@bChild.1/@bPorts.0"/>
+  <bOuterNames name="target" bPoints="//@bRoots.0/@bChild.4/@bChild.0/@bPorts.0 //@bRoots.0/@bChild.1/@bChild.1/@bPorts.0"/>
+</bigraphMetaModel:BBigraph>
