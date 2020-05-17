@@ -111,7 +111,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         } else {
                             modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getMatch().getRedex(), reactionLbl);
                         }
-                        modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
+//                        modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
                     });
             if (predicateChecker.getPredicates().size() > 0) {
                 // "Check each property p ∈ P against w."

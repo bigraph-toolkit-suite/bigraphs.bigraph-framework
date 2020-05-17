@@ -20,11 +20,12 @@ import java.util.stream.Collectors;
  * Only small adjustments are made.
  *
  * @author Dominik Grzelak
+ * @see org.jgrapht.ext.JGraphXAdapter
  */
 public class mxReactionGraph extends mxGraph implements GraphListener<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> {
 
-    private ReactionGraph reactionGraph;
-    private ReactiveSystem reactiveSystem;
+    private final ReactionGraph reactionGraph;
+    private final ReactiveSystem reactiveSystem;
 
     /**
      * The graph to be drawn. Has vertices "V" and edges "E".

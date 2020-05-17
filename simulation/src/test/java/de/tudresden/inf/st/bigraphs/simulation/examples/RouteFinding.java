@@ -93,7 +93,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(30)
+                        .setMaximumTransitions(50)
                         .setMaximumTime(60)
                         .allowReducibleClasses(false)
                         .create()

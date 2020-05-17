@@ -108,7 +108,7 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(10)
+                        .setMaximumTransitions(20)
                         .setMaximumTime(30)
                         .allowReducibleClasses(false)
                         .create()

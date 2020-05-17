@@ -20,12 +20,12 @@ import java.util.Collections;
  */
 public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
 
-    private PureBigraph context;
-    private PureBigraph redex;
-    private PureBigraph redexImage;
-    private Collection<Bigraph<DefaultDynamicSignature>> parameters;
-    private Bigraph<DefaultDynamicSignature> identity;
-    private Bigraph<DefaultDynamicSignature> contextIdentity;
+    private final PureBigraph context;
+    private final PureBigraph redex;
+    private final PureBigraph redexImage;
+    private final Collection<Bigraph<DefaultDynamicSignature>> parameters;
+    private final Bigraph<DefaultDynamicSignature> identity;
+    private final Bigraph<DefaultDynamicSignature> contextIdentity;
 
     public PureBigraphParametricMatch(PureBigraph context,
                                       PureBigraph redex,
