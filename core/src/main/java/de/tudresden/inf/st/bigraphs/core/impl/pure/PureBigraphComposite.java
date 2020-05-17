@@ -121,9 +121,10 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
         // get all outer names of 'f' and make identity graph from them
         Linkings<DefaultDynamicSignature> linkings = pure().createLinkings((DefaultDynamicSignature) getSignature());
         Set<StringTypedName> collect = f.getOuterNames().stream().map(o -> StringTypedName.of(o.getName())).collect(Collectors.toSet());
-        Linkings<DefaultDynamicSignature>.Identity identity = linkings.identity(
-                collect.toArray(new NamedType[0])
-        );
+        ElementaryBigraph<DefaultDynamicSignature> identity = collect.size() != 0 ?
+                linkings.identity(
+                        collect.toArray(new NamedType[0])
+                ) : linkings.identity_e();
         BigraphComposite<S> sBigraphComposite = ops(g).parallelProduct((Bigraph<S>) identity);
         assertInterfaceCompatibleForCompose(sBigraphComposite.getOuterBigraph(), f);
         return sBigraphComposite.compose(f);

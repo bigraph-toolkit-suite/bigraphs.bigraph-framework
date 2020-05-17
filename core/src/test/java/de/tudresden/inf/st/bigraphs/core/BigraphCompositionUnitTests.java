@@ -46,6 +46,24 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
+    void bigraphNesting_test_withoutLinks() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createExampleSignature());
+        PureBigraph bigraph = builder.createRoot()
+                .addChild("Room").down().addChild("User")
+                .addChild("Computer")
+                .addSite()
+                .top()
+                .createBigraph();
+        PureBigraph userBigraph = builder2.createRoot()
+                .addChild("User")
+                .top()
+                .createBigraph();
+        BigraphComposite<DefaultDynamicSignature> nesting = ops(bigraph).nesting(userBigraph);
+        BigraphArtifacts.exportAsInstanceModel(nesting.getOuterBigraph(), System.out);
+    }
+
+    @Test
     void bigraphNesting_test() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature());
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createExampleSignature());
