@@ -332,7 +332,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
         }
 
         PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
-                getModelPackage(),
+                builder.getLoadedEPackage(),
                 getSignature(),
                 myRoots,
                 mySites,
@@ -587,7 +587,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
         }
 
         PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
-                getModelPackage(),
+                builder.getLoadedEPackage(),
                 getSignature(),
                 myRoots,
                 mySites,
@@ -949,7 +949,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
 
 
         PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
-                getModelPackage(),
+                builder.getLoadedEPackage(),
                 getSignature(),
                 myRoots,
                 mySites,
