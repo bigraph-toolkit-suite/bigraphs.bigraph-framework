@@ -990,7 +990,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
             builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature(), ((ElementaryBigraph<S>) outer).getEMetaModelData());
             return;
         } else if (inner instanceof ElementaryBigraph) {
-            builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((ElementaryBigraph<S>) outer).getEMetaModelData());
+            builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((ElementaryBigraph<S>) inner).getEMetaModelData());
             return;
         }
         if (!outer.getSignature().equals(inner.getSignature())) {
