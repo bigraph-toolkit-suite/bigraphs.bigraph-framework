@@ -52,7 +52,7 @@ public class PureBigraphFactory
 
     @Override
     public Placings<DefaultDynamicSignature> createPlacings() {
-        return new Placings<DefaultDynamicSignature>(this.createSignatureBuilder());
+        return new Placings<>(this.createSignatureBuilder());
     }
 
     @Override
@@ -61,13 +61,23 @@ public class PureBigraphFactory
     }
 
     @Override
+    public Placings<DefaultDynamicSignature> createPlacings(DefaultDynamicSignature signature, EMetaModelData metaModelData) {
+        return new Placings<>(signature, metaModelData);
+    }
+
+    @Override
     public Linkings<DefaultDynamicSignature> createLinkings() {
-        return new Linkings<DefaultDynamicSignature>(this.createSignatureBuilder());
+        return new Linkings<>(this.createSignatureBuilder());
     }
 
     @Override
     public Linkings<DefaultDynamicSignature> createLinkings(DefaultDynamicSignature signature) {
         return new Linkings<>(signature);
+    }
+
+    @Override
+    public Linkings<DefaultDynamicSignature> createLinkings(DefaultDynamicSignature signature, EMetaModelData metaModelData) {
+        return new Linkings<>(signature, metaModelData);
     }
 
     @Override

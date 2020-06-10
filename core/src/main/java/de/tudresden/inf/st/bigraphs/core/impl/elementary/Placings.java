@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -55,8 +56,16 @@ public class Placings<S extends Signature> implements Serializable {
     }
 
     public Placings(S signature) {
+        this(signature, null);
+    }
+
+    public Placings(S signature, EMetaModelData metaModelData) {
         emptySignature = signature;
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
+        if (Objects.nonNull(metaModelData)) {
+            mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature, metaModelData);
+        } else {
+            mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
+        }
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }
 

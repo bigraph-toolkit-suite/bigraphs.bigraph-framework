@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -69,9 +70,16 @@ public class Linkings<S extends Signature> implements Serializable {
     }
 
     public Linkings(S signature) {
-//        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        this(signature, null);
+    }
+
+    public Linkings(S signature, EMetaModelData metaModelData) {
         emptySignature = signature;
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
+        if (Objects.nonNull(metaModelData)) {
+            mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature, metaModelData);
+        } else {
+            mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
+        }
         loadedModelPacakge = mutableBuilder.getLoadedEPackage();
     }
 

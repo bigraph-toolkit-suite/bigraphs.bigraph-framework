@@ -59,7 +59,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
         super(bigraph);
         assert bigraph instanceof PureBigraphComposite || bigraph instanceof PureBigraph || bigraph instanceof ElementaryBigraph;
         // this is safe: S is inferred from the bigraph to where S is the same type as the builder's type S (they will have the same type thus)
-        this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature());
+        this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature(), ((EcoreBigraph) bigraph).getEMetaModelData());
     }
 
     public Bigraph<S> copyIfSame(Bigraph<S> g, Bigraph<S> f) {
@@ -979,14 +979,18 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
             outer.getSignature().getControls().forEach(x -> {
                 signatureBuilder.addControl((Control) x);
             });
-            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(signatureBuilder.create());
+            if(outer instanceof EcoreBigraph) {
+                builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(signatureBuilder.create(), ((EcoreBigraph) outer).getEMetaModelData());
+            } else {
+                builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(signatureBuilder.create());
+            }
             return;
         }
         if (outer instanceof ElementaryBigraph) {
-            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(inner.getSignature());
+            builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature(), ((ElementaryBigraph<S>) outer).getEMetaModelData());
             return;
         } else if (inner instanceof ElementaryBigraph) {
-            builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(outer.getSignature());
+            builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((ElementaryBigraph<S>) outer).getEMetaModelData());
             return;
         }
         if (!outer.getSignature().equals(inner.getSignature())) {

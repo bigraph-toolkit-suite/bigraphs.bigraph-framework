@@ -174,6 +174,11 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return new MutableBuilder<>(signature);
     }
 
+    public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EMetaModelData metaModelData)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature, metaModelData);
+    }
+
     @Override
     protected EPackage getLoadedEPackage() {
         return this.loadedEPackage;

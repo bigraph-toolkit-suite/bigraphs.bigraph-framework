@@ -90,10 +90,14 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
 
     public abstract Placings<S> createPlacings(S signature);
 
+    public abstract Placings<S> createPlacings(S signature, EMetaModelData metaModelData);
+
     @Deprecated
     public abstract Linkings<S> createLinkings();
 
     public abstract Linkings<S> createLinkings(S signature);
+
+    public abstract Linkings<S> createLinkings(S signature, EMetaModelData metaModelData);
 
     /**
      * Throws a runtime exception either because of InvalidConnectionException or TypeNotExistsException when connecting

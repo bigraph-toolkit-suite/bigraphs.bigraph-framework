@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.impl;
 
 import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
 import org.eclipse.emf.ecore.ENamedElement;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static de.tudresden.inf.st.bigraphs.core.utils.auxiliary.MemoryOperations.createFileSystemManager;
@@ -93,6 +95,21 @@ public interface EcoreBigraph {
      * @return the bigraph instance model
      */
     EObject getModel();
+
+    /**
+     * Retrieves the meta model data from the bigraph's {@link EPackage}.
+     *
+     * @return meta model object
+     */
+    default EMetaModelData getEMetaModelData() {
+        EMetaModelData.MetaModelDataBuilder builder = EMetaModelData.builder();
+        if (Objects.nonNull(getModelPackage())) {
+            builder.setNsPrefix(getModelPackage().getNsPrefix());
+            builder.setNsUri(getModelPackage().getNsURI());
+            builder.setName(getModelPackage().getName());
+        }
+        return builder.create();
+    }
 
     /**
      * A lightweight container for a bigraph that holds only the Ecore-relevant objects.
