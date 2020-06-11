@@ -35,7 +35,7 @@
         <emf.cdo.version>4.7.0</emf.cdo.version>
         <eclipse.mirror>http://download.eclipse.org/</eclipse.mirror>
         <junit.version>5.4.0</junit.version>
-        <log4j.version>1.7.29</log4j.version>
+        <log4j.version>1.7.30</log4j.version>
         <graphviz.version>0.8.3</graphviz.version>
         <bintray.organization>st-tu-dresden</bintray.organization>
         <bintray.repo>maven-repository</bintray.repo>
@@ -74,11 +74,26 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+            <id>eclipse-latest</id>
+            <url>http://download.eclipse.org/releases/latest</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
             <id>bintray-st-tu-dresden-maven-repository</id>
             <name>bintray</name>
             <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>reficio</id>
+            <url>http://repo.reficio.org/maven/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <distributionManagement>
         <repository>
@@ -91,6 +106,12 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-maven-plugin</artifactId>
+                    <version>1.7.0</version>
+                    <extensions>true</extensions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
@@ -116,9 +137,24 @@
                     <version>3.1.2</version>
                     <configuration>
                         <archive>
-                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <addMavenDescriptor>true</addMavenDescriptor>
                         </archive>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -148,19 +184,9 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>1.6.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -196,13 +222,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>reficio</id>
-            <url>http://repo.reficio.org/maven/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
@@ -322,27 +341,28 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.9</version>
             </dependency>
-            <!-- Logging -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.6</version>
-            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.6</version>
             </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${log4j.version}</version>
+                <scope>provided</scope> <!-- will not be exported -->
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+                <scope>provided</scope> <!-- will not be exported -->
+                <optional>true</optional>
+            </dependency>
+
             <!-- Test -->
             <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
             <dependency>
@@ -367,19 +387,66 @@
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
         </dependency>
     </dependencies>
 
     <profiles>
         <profile>
+            <!-- Profile to activate to build a fat jar -->
+            <id>fatJar</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>shade</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <!--<minimizeJar>true</minimizeJar>-->
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/MANIFEST.MF</exclude>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                                <exclude>schema/*</exclude>
+                                                <exclude>.options</exclude>
+                                                <exclude>.api_description</exclude>
+                                                <exclude>*.profile</exclude>
+                                                <exclude>*.html</exclude>
+                                                <exclude>about.*</exclude>
+                                                <exclude>about_files/*</exclude>
+                                                <exclude>plugin.xml</exclude>
+                                                <exclude>systembundle.properties</exclude>
+                                                <exclude>profile.list</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
+        <profile>
             <!-- Profile to be activated when building the documentation artifacts -->
-
             <id>distribute</id>
             <properties>
                 <maven.main.skip>true</maven.main.skip>

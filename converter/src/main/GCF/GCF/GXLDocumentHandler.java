@@ -3,8 +3,8 @@ package GCF;
 import com.microstar.xml.XmlHandler;
 import com.microstar.xml.XmlParser;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+//import lombok.AllArgsConstructor;
+//import lombok.Data;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,17 +44,40 @@ public class GXLDocumentHandler implements XmlHandler {
     private int outerCounter = 0;
     private int innerCounter = 0;
 
-    @Data
-    @AllArgsConstructor
+    //    @Data
+//    @AllArgsConstructor
     public static class ChldPrntRel {
         public String type;
         public String idTargetLink;
         public String id;
         public String name = "";
+
+        public ChldPrntRel(String type, String idTargetLink, String id, String name) {
+            this.type = type;
+            this.idTargetLink = idTargetLink;
+            this.id = id;
+            this.name = name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getIdTargetLink() {
+            return idTargetLink;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
-    @Data
-    @AllArgsConstructor
+    //    @Data
+//    @AllArgsConstructor
     public static class BLinkRel {
         public String type = "";
         public String fromId = "";
@@ -62,10 +85,43 @@ public class GXLDocumentHandler implements XmlHandler {
         public String name = "";
         public String bPoints = "";
         public int count = 0;
+
+        public BLinkRel(String type, String fromId, String bLink, String name, String bPoints, int count) {
+            this.type = type;
+            this.fromId = fromId;
+            this.bLink = bLink;
+            this.name = name;
+            this.bPoints = bPoints;
+            this.count = count;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getFromId() {
+            return fromId;
+        }
+
+        public String getbLink() {
+            return bLink;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getbPoints() {
+            return bPoints;
+        }
+
+        public int getCount() {
+            return count;
+        }
     }
 
-    @Data
-    @AllArgsConstructor
+//    @Data
+//    @AllArgsConstructor
     public static class BEdgeType {
 
     }

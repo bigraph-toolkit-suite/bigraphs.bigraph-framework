@@ -18,66 +18,12 @@
         representations.
     </description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.bigraph.model</groupId>
-            <artifactId>bigred-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>bigraph-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>bigraph-simulation</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>de.tudresden.inf.st.bigraphs</groupId>
-                    <artifactId>bigraph-visualization</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>bigraph-visualization</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht-ext</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-
-        <!-- Test -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -132,5 +78,62 @@
         </plugins>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.bigraph.model</groupId>
+            <artifactId>bigred-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-simulation</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                    <artifactId>bigraph-visualization</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-visualization</artifactId>
+            <scope>test</scope>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.projectlombok</groupId>-->
+<!--            <artifactId>lombok</artifactId>-->
+<!--            <optional>true</optional>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-ext</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

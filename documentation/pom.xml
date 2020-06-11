@@ -21,6 +21,10 @@
                     <execution>
                         <id>generate-code-samples</id>
                     </execution>
+                    <execution>
+                        <id>npm build user manual (docusaurus)</id>
+                        <phase>none</phase>
+                    </execution>
                 </executions>
                 <configuration>
                     <classpathScope>test</classpathScope>
@@ -46,19 +50,6 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>npm build user manual (docusaurus)</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

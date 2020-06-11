@@ -13,33 +13,6 @@
     <name>Bigraph Framework - Visualization</name>
     <description>Simple visualization support for bigraphs and bigraphical reactive systems.</description>
 
-
-    <dependencies>
-        <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>bigraph-core</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>guru.nidi</groupId>
-            <artifactId>graphviz-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- Test -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -77,5 +50,23 @@
         </plugins>
     </build>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>guru.nidi</groupId>
+            <artifactId>graphviz-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>

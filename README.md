@@ -292,7 +292,7 @@ achieve Separation of concerns: The meta model itself is implementation-agnostic
 The Bigraph Framework adds specific behavior superimposed upon this meta
 model. Meaning, the implementation-specific details are kept out from the meta model.
 
-## Building Configuration
+## Build Configuration
 
 It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper) or the regular `mvn` command. In this case, JDK 1.8 is needed.
 
@@ -309,6 +309,8 @@ The recommendation here is to build it with the regular `mvn` command. You will 
 ```bash
 $ mvn validate -f ./etc/aggregator/pom.xml
 $ mvn clean install -U -DskipTests
+# To instead create fat jars of each module, run:
+$ mvn clean install -U -DskipTests -PfatJar
 ```
 
 (Among other things, some necessary dependencies from Eclipse P2 repositories will be downloaded. Afterwards, these auxiliary libraries and some other third party libraries that are not available in the central Maven repository will be installed into your local Maven repository.)
@@ -319,14 +321,18 @@ After all steps were executed and the build successfully finished, you can now u
 
 ### Building the Documentation
 
-Building the documentation builds also the project without running tests. You may need to execute the above steps before.
+Building the documentation builds also the project without running tests.
+You may need to execute the above steps before.
 
 ```bash
-$ mvn clean install exec:java -f documentation/pom.xml
-$ mvn install -Pdistribute
+$ mvn clean package exec:java -f documentation/pom.xml && mvn install -Pdistribute
 ```
 
+#### Java Documentation
+
 The generated apidoc is available from `etc/doc/docusaurus/website/static/apidocs`.
+
+#### User Manual
 
 The generated user manual is available from `etc/doc/docusaurus/website/` by calling `npm start`.
 The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md) for further instructions).

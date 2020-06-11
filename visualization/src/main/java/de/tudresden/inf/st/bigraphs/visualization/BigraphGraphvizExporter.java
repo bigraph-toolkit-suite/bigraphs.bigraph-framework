@@ -9,7 +9,6 @@ import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
-import lombok.Data;
 
 import java.io.File;
 import java.io.IOException;
@@ -313,14 +312,20 @@ public class BigraphGraphvizExporter {
         return currentParent;
     }
 
-    @Data
     private class GraphVizLink {
         private final String target;
         private final String label;
         private final BigraphEntity sourceEntity;
         private final BigraphEntity targetEntity;
 
-        @Override
+    public GraphVizLink(String target, String label, BigraphEntity sourceEntity, BigraphEntity targetEntity) {
+        this.target = target;
+        this.label = label;
+        this.sourceEntity = sourceEntity;
+        this.targetEntity = targetEntity;
+    }
+
+    @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof GraphVizLink)) return false;
@@ -329,7 +334,23 @@ public class BigraphGraphvizExporter {
                     Objects.equals(label, that.label);
         }
 
-        @Override
+    public String getTarget() {
+        return target;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public BigraphEntity getSourceEntity() {
+        return sourceEntity;
+    }
+
+    public BigraphEntity getTargetEntity() {
+        return targetEntity;
+    }
+
+    @Override
         public int hashCode() {
             return Objects.hash(target, label);
         }
