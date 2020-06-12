@@ -17,6 +17,11 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="eclipse-latest" />
+      <option name="name" value="eclipse-latest" />
+      <option name="url" value="http://download.eclipse.org/releases/latest" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="bintray-st-tu-dresden-maven-repository" />
       <option name="name" value="bintray" />
       <option name="url" value="https://dl.bintray.com/st-tu-dresden/maven-repository" />
