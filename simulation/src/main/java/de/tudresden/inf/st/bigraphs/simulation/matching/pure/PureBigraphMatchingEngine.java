@@ -335,12 +335,11 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
                 //current impl: select the first possible agent node
                 for (Map.Entry<BigraphEntity, LinkedList<BigraphEntity>> eachMapping : nodeDiffByControlCheck.entrySet()) {
+//                    if(eachMapping.getValue().size() <= 1) continue;
                     //the agent-redex match is here already "good" (w/o considering the children yet - this is done later)
-                    MatchPairing q = new MatchPairing(redexRootIx, eachMapping.getKey());
-                    for (BigraphEntity x : eachMapping.getValue()) {
-                        q.getAgentMatches().add(x);
-                    }
-                    mapPairings.add(q);
+//                    MatchPairing q = new MatchPairing(redexRootIx, eachMapping.getKey(), eachMapping.getValue());
+//                    q.getAgentMatches().addAll(eachMapping.getValue());
+                    mapPairings.add(new MatchPairing(redexRootIx, eachMapping.getKey(), eachMapping.getValue()));
                 }
             }
 
@@ -360,6 +359,9 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             for (int i = 0; i < combinations.size(); i++) {
                 final Table<Integer, BigraphEntity, BigraphEntity> matchTable = HashBasedTable.create();
                 Map<MatchPairing, BigraphEntity> matchPairingBigraphEntityMap = combinations.get(i);
+                if (elementRepeats(matchPairingBigraphEntityMap.values())) {
+                    continue;
+                }
                 matchPairingBigraphEntityMap.entrySet().stream().forEach(x -> {
                     matchTable.put(x.getKey().getRootIndex(), x.getValue(), x.getKey().getRedexNode());
                 });
@@ -384,6 +386,12 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
             long elapsed0 = matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS);
             logger.debug("Time to build the match result: {} ms", (elapsed0 / 1e+6f));
         }
+    }
+
+    boolean elementRepeats(Collection<BigraphEntity> nodes) {
+        Set<String> collect = nodes.stream().map(x -> ((BigraphEntity.NodeEntity<Control>) x).getName())
+                .collect(Collectors.toSet());
+        return collect.size() < nodes.size();
     }
 
     /**
