@@ -11,6 +11,7 @@ import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -197,7 +198,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         if (BigraphEntityType.isSite(d)) {
             s.append("id(1)"); //.append(((BigraphEntity.SiteEntity) d).getIndex());
         } else {
-            s.append(d.getControl().getNamedType().stringValue());
+            s.append(StringUtils.capitalize(d.getControl().getNamedType().stringValue()));
             StringBuilder ns = new StringBuilder();
             int unlinked = 0;
             int arity = d.getControl().getArity().getValue().intValue();
@@ -266,7 +267,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
             s
                     .append(ctrl.getControlKind().equals(ControlKind.ATOMIC) ? "atomic " : "")
                     .append("ctrl ")
-                    .append(ctrl.getNamedType().stringValue()).append(" = ")
+                    .append(StringUtils.capitalize(ctrl.getNamedType().stringValue())).append(" = ")
                     .append(ctrl.getArity().getValue()).append(";")
                     .append(LINE_SEP);
         }
