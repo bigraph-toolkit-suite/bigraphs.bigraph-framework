@@ -522,7 +522,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                             blockNodesForContext.add(agentNext);
                             blockNodesForContext.addAll(agentAdapter.getChildrenOf(agentNext));
                         }
-                        logger.debug("iterateThroughChildren: start");
+//                        logger.debug("iterateThroughChildren: start");
                         logger.debug("hitsV_newChildren.columnMap().keySet()={}", hitsV_newChildren.columnMap().keySet());
                         // two-times iteration: because we need the matchDict to be complete for the current level
                         for (BigraphEntity agentNext : hitsV_newChildren.columnMap().keySet()) {
@@ -535,8 +535,8 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                             iterateThroughChildren(redexEntityCorrespondence, agentNext, parameters, matchDict, builder2,
                                     hitsV, hitsV_newChildren, discards, rekCnt);
                         }
-                        logger.debug("iterateThroughChildren: finished");
-                        logger.debug("while iterator finished");
+//                        logger.debug("iterateThroughChildren: finished");
+//                        logger.debug("while iterator finished");
                         logger.debug("BlockedNodes: {}", savedRedexNodes);
 
 

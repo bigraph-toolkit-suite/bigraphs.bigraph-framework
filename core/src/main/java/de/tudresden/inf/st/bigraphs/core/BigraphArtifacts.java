@@ -150,8 +150,9 @@ public class BigraphArtifacts {
         if (Objects.nonNull(metaModelPackageWithSignature)) {
             // register the dynamic package locally
             load_resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
-            if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()))
+            if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()) && !metaModelPackageWithSignature.getNsURI().isEmpty()) {
                 load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
+            }
         }
         return load_resourceSet;
     }
