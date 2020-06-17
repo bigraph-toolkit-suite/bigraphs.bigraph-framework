@@ -12,10 +12,7 @@ import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.AgentIsNullException;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.InvalidSimulationStrategy;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.ModelCheckerExecutorServiceNotProvided;
+import de.tudresden.inf.st.bigraphs.simulation.exceptions.*;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.export.mxReactionGraph;
@@ -190,6 +187,9 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     protected void assertReactionSystemValid() throws BigraphSimulationException {
         if (Objects.isNull(reactiveSystem.getAgent())) {
             throw new AgentIsNullException();
+        }
+        if (!reactiveSystem.getAgent().isGround()) {
+            throw new AgentNotGroundException();
         }
         if (Objects.isNull(modelCheckingStrategy)) {
             throw new InvalidSimulationStrategy();
