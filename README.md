@@ -2,7 +2,7 @@
 
 # Bigraphical Framework
 
-**Version:** ${revision}
+**Version:** 0.8.0-SNAPSHOT
 Master: [![pipeline status](/../badges/master/pipeline.svg)](/../pipelines)
 Develop: [![pipeline status](/../badges/develop/pipeline.svg)](/../pipelines)
 
@@ -159,6 +159,8 @@ compositor.juxtapose(F).parallelProduct(H);
 
 ## Maven configuration
 
+> **Note:** The framework is not yet hosted at Bintray. See [Building from Source](#Building-from-Source) instead.
+
 ```xml
 <!-- the core module -->
 <dependency>
@@ -226,8 +228,40 @@ The following remote Maven repository must be added as well. There are two optio
 ```
 
 The [Bintray](https://bintray.com/) service is used for hosting Maven artifacts.
-See also [Building from Source](#Building-from-Source) if you want to build the source
-by yourself and host them in the local Maven repository. Then, both steps _A)_ and _B)_ are not needed.
+See also [Building from Source](#Building-from-Source) if you want to build the source by yourself and host them in the local Maven repository. Then, both steps _A)_ and _B)_ are not needed.
+
+### Logging
+
+This framework employs SLF4J as a facade for the log4j logging framework.
+
+Depending on your project setup, you may need to include the following libraries in your `pom.xml` :
+
+```xml
+<!-- For Spring -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+<!-- For a bare Maven project -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+```
+
+The example above shows how to use log4j2 in your project as the underlying logging framework.
 
 ## Details
 
