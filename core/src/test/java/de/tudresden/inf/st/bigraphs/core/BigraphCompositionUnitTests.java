@@ -318,6 +318,9 @@ public class BigraphCompositionUnitTests {
     @Test
     void elementary_bigraph_linkings_test() {
         Linkings<DefaultDynamicSignature> linkings = factory.createLinkings();
+        Placings<DefaultDynamicSignature> placings = factory.createPlacings();
+
+        Placings<DefaultDynamicSignature>.Join join = placings.join();
 
         assertAll(() -> {
             Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));

@@ -5,11 +5,17 @@ import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.api.map.sorted.MutableSortedMap;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.collections.impl.factory.SortedMaps;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -23,11 +29,11 @@ import java.util.stream.Collectors;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public class Linkings<S extends Signature<? extends Control<?,?>>> implements Serializable {
+public class Linkings<S extends Signature<? extends Control<?, ?>>> implements Serializable {
 
-    private volatile S emptySignature;
+    private volatile S arbitrarySignature;
     private volatile MutableBuilder<S> mutableBuilder;
-    private final EPackage loadedModelPacakge;
+    private final EPackage loadedModelPackage;
     private EObject instanceModel;
 
     public Linkings<S>.Closure closure(NamedType<?> name) {
@@ -61,27 +67,18 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
         return new IdentityEmpty();
     }
 
-//    @Deprecated
-//    public Linkings(AbstractBigraphFactory<S, ?, ?> factory) {
-////        AbstractBigraphFactory factory = new PureBigraphFactory<>();
-//        SignatureBuilder<?, ?, ?, ?> signatureBuilder = factory.createSignatureBuilder();
-//        emptySignature = (S) signatureBuilder.createEmpty();
-//        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
-//        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
-//    }
-
     public Linkings(S signature) {
         this(signature, null);
     }
 
     public Linkings(S signature, EMetaModelData metaModelData) {
-        emptySignature = signature;
+        arbitrarySignature = signature;
         if (Objects.nonNull(metaModelData)) {
-            mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature, metaModelData);
+            mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature, metaModelData);
         } else {
-            mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
+            mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature);
         }
-        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
+        loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
 
     /**
@@ -89,19 +86,17 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
      *                         user-defined bigraphs of the same type created with the same factory
      */
     public Linkings(SignatureBuilder signatureBuilder) {
-//        AbstractBigraphFactory factory = new PureBigraphFactory<>();
-//        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-        emptySignature = (S) signatureBuilder.createEmpty();
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
-        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
+        arbitrarySignature = (S) signatureBuilder.createEmpty();
+        mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature);
+        loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
 
     public class IdentityEmpty extends ElementaryBigraph<S> {
 
-        public IdentityEmpty() {
+        IdentityEmpty() {
             super(null);
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
-                    emptySignature, Collections.emptyMap(), Collections.emptyMap(),
+            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+                    arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -110,17 +105,22 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
 
         @Override
         public S getSignature() {
-            return emptySignature;
+            return arbitrarySignature;
         }
 
         @Override
         public EPackage getModelPackage() {
-            return loadedModelPacakge;
+            return loadedModelPackage;
         }
 
         @Override
         public EObject getModel() {
             return instanceModel;
+        }
+
+        @Override
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Lists.mutable.empty();
         }
     }
 
@@ -132,12 +132,12 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
 
         @Override
         public S getSignature() {
-            return emptySignature;
+            return arbitrarySignature;
         }
 
         @Override
         public EPackage getModelPackage() {
-            return loadedModelPacakge;
+            return loadedModelPackage;
         }
 
         @Override
@@ -147,24 +147,28 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
     }
 
     public class Closure extends ElementaryBigraph<S> {
-        private final BigraphEntity.InnerName x;
-        private final Collection<BigraphEntity.InnerName> innerNames = new ArrayList<>(1);
+        private final MutableList<BigraphEntity.InnerName> innerNames = Lists.mutable.empty();
 
-        Closure(NamedType<?> name) {
+        Closure(Set<NamedType<?>> names) {
             super(null);
-            HashMap<String, BigraphEntity.InnerName> innerNameMap = new HashMap<>();
-            HashMap<String, BigraphEntity.OuterName> outerNameMap = new HashMap<>();
-            x = (BigraphEntity.InnerName) mutableBuilder.createNewInnerName(name.stringValue());
-            innerNames.add(x);
-            innerNameMap.put(x.getName(), x);
+            MutableSortedMap<String, BigraphEntity.InnerName> innerNameMap = SortedMaps.mutable.empty();
+            for (NamedType<?> each : names) {
+                BigraphEntity.InnerName x = (BigraphEntity.InnerName) mutableBuilder.createNewInnerName(each.stringValue());
+                innerNames.add(x);
+                innerNameMap.put(x.getName(), x);
+            }
 
             //TODO
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
-                    emptySignature, Collections.emptyMap(), Collections.emptyMap(),
+            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+                    arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(),
                     Collections.emptyMap(),
                     innerNameMap,
                     Collections.emptyMap(),
                     Collections.emptyMap());
+        }
+
+        Closure(NamedType<?> name) {
+            this(Collections.singleton(name));
         }
 
         @Override
@@ -174,12 +178,17 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
 
         @Override
         public S getSignature() {
-            return emptySignature;
+            return arbitrarySignature;
         }
 
         @Override
         public EPackage getModelPackage() {
-            return loadedModelPacakge;
+            return loadedModelPackage;
+        }
+
+        @Override
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Lists.mutable.empty();
         }
 
         /**
@@ -189,8 +198,8 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
          * @return an empty list
          */
         @Override
-        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
-            return Collections.EMPTY_LIST;
+        public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+            return Lists.mutable.empty();
         }
 
         @Override
@@ -200,16 +209,16 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
     }
 
     public class Substitution extends ElementaryBigraph<S> {
-        private final Collection<BigraphEntity.OuterName> outerNames;
-        private final Collection<BigraphEntity.InnerName> innerNames;
+        private final MutableList<BigraphEntity.InnerName> innerNames;
+        private final MutableList<BigraphEntity.OuterName> outerNames;
 
         Substitution(NamedType<?> outerName, NamedType<?>... innerNames) {
             super(null);
             if (Objects.isNull(outerName) || innerNames.length == 0) {
                 throw new RuntimeException("Substitution cannot be created because outer name or inner name is missing.");
             }
-            this.innerNames = new ArrayList<>(innerNames.length);
-            this.outerNames = new ArrayList<>(1);
+            this.innerNames = Lists.mutable.empty();
+            this.outerNames = Lists.mutable.empty();
             BigraphEntity.OuterName newOuterName = (BigraphEntity.OuterName) mutableBuilder.createNewOuterName(outerName.stringValue());
             outerNames.add(newOuterName);
             for (int i = 0, n = innerNames.length; i < n; i++) {
@@ -225,11 +234,11 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
             if (names.length == 0) {
                 throw new RuntimeException("Renaming (Substitution) cannot be created because names are missing.");
             }
-            HashMap<String, BigraphEntity.InnerName> innerNameMap = new HashMap<>();
-            HashMap<String, BigraphEntity.OuterName> outerNameMap = new HashMap<>();
+            MutableSortedMap<String, BigraphEntity.InnerName> innerNameMap = SortedMaps.mutable.empty();
+            MutableSortedMap<String, BigraphEntity.OuterName> outerNameMap = SortedMaps.mutable.empty();
 
-            this.innerNames = new ArrayList<>(names.length);
-            this.outerNames = new ArrayList<>(names.length);
+            this.innerNames = Lists.mutable.empty();
+            this.outerNames = Lists.mutable.empty();
             for (int i = 0, n = names.length; i < n; i++) {
                 BigraphEntity.OuterName newOuterName = (BigraphEntity.OuterName) mutableBuilder.createNewOuterName(names[i].stringValue());
                 BigraphEntity.InnerName newInnerName = (BigraphEntity.InnerName) mutableBuilder.createNewInnerName(names[i].stringValue());
@@ -240,8 +249,8 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
                 outerNameMap.put(newOuterName.getName(), newOuterName);
             }
 
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
-                    emptySignature, Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
+            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+                    arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
                     innerNameMap,
                     outerNameMap,
                     Collections.emptyMap());
@@ -259,12 +268,12 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
 
         @Override
         public S getSignature() {
-            return emptySignature;
+            return arbitrarySignature;
         }
 
         @Override
         public EPackage getModelPackage() {
-            return loadedModelPacakge;
+            return loadedModelPackage;
         }
 
         /**
@@ -274,7 +283,7 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
          * @return an empty list
          */
         @Override
-        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Collections.EMPTY_LIST;
         }
 

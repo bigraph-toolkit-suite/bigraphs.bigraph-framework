@@ -126,12 +126,12 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
 
     @Override
     public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
-        return Collections.emptyList();
+        throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getSiblingsOfInnerName() yet.");
     }
 
     @Override
     public Collection<BigraphEntity> getAllPlaces() {
-        return Collections.EMPTY_LIST;
+        throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getAllPlaces() yet.");
     }
 
     /**
@@ -143,7 +143,7 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
      */
     @Override
     public <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
-        return null;
+        throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getNodeOfPort() yet.");
     }
 
     @Override
@@ -178,13 +178,13 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
     }
 
     @Override
-    public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+    public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
         throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getSiblingsOfNode(BigraphEntity) yet.");
     }
 
     //TODO for discrete ion important!
     @Override
-    public final Collection<BigraphEntity> getChildrenOf(BigraphEntity node) {
+    public List<BigraphEntity> getChildrenOf(BigraphEntity node) {
         return Collections.EMPTY_LIST;
     }
 

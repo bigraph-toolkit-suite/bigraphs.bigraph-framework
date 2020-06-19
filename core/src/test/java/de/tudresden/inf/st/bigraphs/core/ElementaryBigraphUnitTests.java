@@ -117,12 +117,11 @@ public class ElementaryBigraphUnitTests {
         assertEquals(0, symmetry11.getInnerNames().size());
         assertEquals(0, symmetry11.getOuterNames().size());
         ArrayList<BigraphEntity.RootEntity> roots = Lists.newArrayList(symmetry11.getRoots());
-        ArrayList<BigraphEntity.SiteEntity> sites = Lists.newArrayList(symmetry11.getSites());
         // Checking symmetry of root and site indices respectively (reversed indices)
-        assertEquals(0, roots.get(0).getIndex());
-        assertEquals(1, sites.get(0).getIndex());
-        assertEquals(1, roots.get(1).getIndex());
-        assertEquals(0, sites.get(1).getIndex());
+        assertNotEquals(roots.get(0).getIndex(),
+                ((BigraphEntity.SiteEntity) symmetry11.getChildrenOf(roots.get(0)).iterator().next()).getIndex());
+        assertNotEquals(roots.get(1).getIndex(),
+                ((BigraphEntity.SiteEntity) symmetry11.getChildrenOf(roots.get(1)).iterator().next()).getIndex());
         assertFalse(symmetry11.isPrime());
 
 
@@ -166,7 +165,7 @@ public class ElementaryBigraphUnitTests {
             int finalArity = arity;
             assertAll(() -> {
                 DiscreteIon<DefaultDynamicSignature> discreteIon =
-                        factory.createDiscreteIon(controlName, (Set)outerNames, (DefaultDynamicSignature) signature);
+                        factory.createDiscreteIon(controlName, (Set) outerNames, (DefaultDynamicSignature) signature);
                 assertNotNull(discreteIon.getModelPackage());
                 assertNotNull(discreteIon.getModel());
                 assertTrue(discreteIon.isDiscrete());
