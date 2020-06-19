@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Dominik Grzelak
  */
-public abstract class AbstractBigraphFactory<S extends Signature<? extends Control<NT, FT>>, NT extends NamedType<?>, FT extends FiniteOrdinal<?>> implements BigraphFactoryElement {
+public abstract class AbstractBigraphFactory<S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>> implements BigraphFactoryElement {
     protected Type successorClass = null; //TODO: one for the signature type (and one for the bigraph)
 
     @Override
@@ -36,20 +36,6 @@ public abstract class AbstractBigraphFactory<S extends Signature<? extends Contr
     public static PureBigraphFactory createPureBigraphFactory() {
         return new PureBigraphFactory();
     }
-
-//    /**
-//     * Create a pure bigraph factory
-//     * <p>
-//     * //     * @param nameTypeClass    class of the control's labels
-//     * //     * @param ordinalTypeClass class of the control's arity
-//     *
-//     * @param <NT> type of the control's labels
-//     * @param <FT> type of the control's arity
-//     * @return a pure bigraph factory with the provided types
-//     */
-//    public static <NT extends NamedType, FT extends Number> PureBigraphFactory createPureBigraphFactory(Class<NT> nameTypeClass, Class<FT> ordinalTypeClass) {
-//        return new PureBigraphFactory();
-//    }
 
     /**
      * Creates a builder for creating signatures.
@@ -105,7 +91,7 @@ public abstract class AbstractBigraphFactory<S extends Signature<? extends Contr
      * @param signature  the signature of that ion
      * @return a discrete ion
      */
-    public abstract DiscreteIon<S, NT, FT> createDiscreteIon(NT name, Set<NT> outerNames, S signature);
+    public abstract DiscreteIon<S> createDiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, S signature);
 
     /**
      * Create a composition object for a given bigraph which allows to compose bigraphs.

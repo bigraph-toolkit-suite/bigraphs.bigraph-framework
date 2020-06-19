@@ -165,8 +165,8 @@ public class ElementaryBigraphUnitTests {
 
             int finalArity = arity;
             assertAll(() -> {
-                DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> discreteIon =
-                        factory.createDiscreteIon(controlName, outerNames, (DefaultDynamicSignature) signature);
+                DiscreteIon<DefaultDynamicSignature> discreteIon =
+                        factory.createDiscreteIon(controlName, (Set)outerNames, (DefaultDynamicSignature) signature);
                 assertNotNull(discreteIon.getModelPackage());
                 assertNotNull(discreteIon.getModel());
                 assertTrue(discreteIon.isDiscrete());

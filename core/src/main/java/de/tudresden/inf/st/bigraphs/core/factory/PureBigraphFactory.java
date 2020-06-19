@@ -4,8 +4,8 @@ import com.google.common.reflect.TypeToken;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
@@ -21,8 +21,7 @@ import java.util.Set;
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphFactory
-        extends AbstractBigraphFactory<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> {
+public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSignature> {
 
     PureBigraphFactory() {
         super.successorClass = new TypeToken<DefaultDynamicControl>() {
@@ -80,8 +79,18 @@ public class PureBigraphFactory
         return new Linkings<>(signature, metaModelData);
     }
 
+    /**
+     * Throws a runtime exception either because of InvalidConnectionException or TypeNotExistsException when connecting
+     * the outer names to the node.
+     *
+     * @param name       the control's name for the ion, must be of type {@link StringTypedName}
+     * @param outerNames a set of outer names the ion shall have, must be of type {@link StringTypedName}
+     * @param signature  the signature of that ion
+     * @return a discrete ion
+     */
     @Override
-    public DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> createDiscreteIon(StringTypedName name, Set<StringTypedName> outerNames, DefaultDynamicSignature signature) {
+    public DiscreteIon<DefaultDynamicSignature> createDiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, DefaultDynamicSignature signature) {
+        assert name instanceof StringTypedName;
         return new DiscreteIon<>(
                 name,
                 outerNames,

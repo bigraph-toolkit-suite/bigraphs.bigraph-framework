@@ -38,7 +38,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
  * @param <S> type of the signature.
  * @author Dominik Grzelak
  */
-public class PureBigraphComposite<S extends Signature<? extends Control<?,?>>> extends BigraphCompositeSupport<S> implements EcoreBigraph {//BigraphDelegator<S> implements BigraphComposite<S> {
+public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> extends BigraphCompositeSupport<S> implements EcoreBigraph {
 
     private MutableBuilder<S> builder;
 
@@ -650,6 +650,11 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?,?>>> e
         for (BigraphEntity.RootEntity eachRoot : g.getRoots()) {
             myRoots.put(eachRoot.getIndex(), (BigraphEntity.RootEntity) builder.createNewRoot(eachRoot.getIndex()));
         }
+        if(g instanceof ElementaryBigraph && ((ElementaryBigraph)g).isLinking()) {
+            for (BigraphEntity.RootEntity eachRoot : f.getRoots()) {
+                myRoots.put(eachRoot.getIndex(), (BigraphEntity.RootEntity) builder.createNewRoot(eachRoot.getIndex()));
+            }
+        }
 
         // new node name supplier for the acutal bigraph in question
         Supplier<String> supplier2 = createNameSupplier("v");
@@ -677,8 +682,15 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?,?>>> e
                 int index = ((BigraphEntity.RootEntity) prntFofW).getIndex();
                 //find the site of G with index j
                 Optional<BigraphEntity.SiteEntity> first = g.getSites().stream().filter(x -> x.getIndex() == index).findFirst();
-                assert first.isPresent();
-                p = g.getParent(first.get());
+//                assert first.isPresent();
+                if (first.isPresent()) {
+                    p = g.getParent(first.get());
+                } else if (g instanceof ElementaryBigraph) {
+                    // if the outer bigraph is a linking, take the original parent from the current node w
+                    if (((ElementaryBigraph) g).isLinking()) {
+                        p = f.getParent(w);
+                    }
+                }
             } else if (V_G.containsValue(w)) {
                 p = g.getParent(w);
             }
@@ -972,14 +984,14 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?,?>>> e
     protected void assertSignaturesAreSame(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleSignatureException {
         //special handling if one is an elementary bigraph
         if (inner instanceof DiscreteIon || outer instanceof DiscreteIon) {
-            SignatureBuilder<?,?,?,?> signatureBuilder = AbstractBigraphFactory.createPureBigraphFactory().createSignatureBuilder();
+            SignatureBuilder<?, ?, ?, ?> signatureBuilder = AbstractBigraphFactory.createPureBigraphFactory().createSignatureBuilder();
             inner.getSignature().getControls().forEach(x -> {
                 signatureBuilder.addControl((Control) x);
             });
             outer.getSignature().getControls().forEach(x -> {
                 signatureBuilder.addControl((Control) x);
             });
-            if(outer instanceof EcoreBigraph) {
+            if (outer instanceof EcoreBigraph) {
                 builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(signatureBuilder.create(), ((EcoreBigraph) outer).getEMetaModelData());
             } else {
                 builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(signatureBuilder.create());

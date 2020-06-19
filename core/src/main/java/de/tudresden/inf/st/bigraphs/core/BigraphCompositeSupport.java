@@ -32,6 +32,14 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
             disjoint = false; // this is legit if they are only place graphs
         boolean disjoint2 = siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals);
         if (siteOrdinals.size() == 0 && rootOrdinals.size() == 0) disjoint2 = false;
+        if (inner instanceof ElementaryBigraph) {
+            if (((ElementaryBigraph<S>) inner).isLinking() && !disjoint) return;
+            if (((ElementaryBigraph<S>) inner).isPlacing() && !disjoint2) return;
+        }
+        if (outer instanceof ElementaryBigraph) {
+            if (((ElementaryBigraph<S>) outer).isLinking() && !disjoint) return;
+            if (((ElementaryBigraph<S>) outer).isPlacing() && !disjoint2) return;
+        }
         if (disjoint || disjoint2) {
             throw new IncompatibleInterfaceException();
         }

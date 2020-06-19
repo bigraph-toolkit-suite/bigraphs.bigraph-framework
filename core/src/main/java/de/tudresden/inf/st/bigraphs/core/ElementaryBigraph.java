@@ -2,6 +2,8 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -21,6 +23,21 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
 
     public ElementaryBigraph(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);
+    }
+
+    public boolean isPlacing() {
+        return this instanceof Placings.Barren ||
+                this instanceof Placings.Identity1 ||
+                this instanceof Placings.Join ||
+                this instanceof Placings.Merge ||
+                this instanceof Placings.Permutation;
+    }
+
+    public boolean isLinking() {
+        return this instanceof Linkings.Closure ||
+                this instanceof Linkings.Identity ||
+                this instanceof Linkings.IdentityEmpty ||
+                this instanceof Linkings.Substitution;
     }
 
     @Override

@@ -1,9 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
@@ -19,10 +16,10 @@ import java.util.Set;
 /**
  * @author Dominik Grzelak
  */
-public class DiscreteIon<S extends Signature<? extends Control<NT, FT>>, NT extends NamedType<?>, FT extends FiniteOrdinal<?>> extends ElementaryBigraph<S> {
+public class DiscreteIon<S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>> extends ElementaryBigraph<S> {
     private volatile PureBigraphBuilder<S> builder;
 
-    public DiscreteIon(NT name, Set<NT> outerNames, S signature, AbstractBigraphFactory<S, NT, FT> factory) {
+    public DiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, S signature, AbstractBigraphFactory<S> factory) {
         super(null);
         builder = (PureBigraphBuilder<S>) factory.createBigraphBuilder(signature);
 
@@ -35,7 +32,8 @@ public class DiscreteIon<S extends Signature<? extends Control<NT, FT>>, NT exte
                     throw new RuntimeException(e);
                 }
             });
-            hierarchy.down().addSite();
+            if (signature.getControlByName(name.stringValue()).getControlKind() != ControlKind.ATOMIC)
+                hierarchy.down().addSite();
         } catch (ControlIsAtomicException e) {
             throw new RuntimeException("Control shouldn't be atomic!");
         }

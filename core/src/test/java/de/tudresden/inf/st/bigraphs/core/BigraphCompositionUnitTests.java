@@ -318,6 +318,23 @@ public class BigraphCompositionUnitTests {
     @Test
     void elementary_bigraph_linkings_test() {
         Linkings<DefaultDynamicSignature> linkings = factory.createLinkings();
+
+        assertAll(() -> {
+            Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
+            DiscreteIon<DefaultDynamicSignature> discreteIon = factory.createDiscreteIon(
+                    StringTypedName.of("User"),
+                    Collections.singleton(StringTypedName.of("x")),
+                    createExampleSignature()
+            );
+
+            BigraphArtifacts.exportAsInstanceModel(x, System.out);
+            BigraphArtifacts.exportAsInstanceModel(discreteIon, System.out);
+            BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(x).compose(discreteIon);
+            BigraphArtifacts.exportAsInstanceModel(compose.getOuterBigraph(), System.out);
+//            BigraphComposite<DefaultDynamicSignature> compose = ops(x).compose(discreteIon);
+        });
+
+
         Linkings<DefaultDynamicSignature>.Closure x1 = linkings.closure(StringTypedName.of("x"));
         final Linkings<DefaultDynamicSignature>.Closure x2 = linkings.closure(StringTypedName.of("x"));
 
@@ -362,12 +379,6 @@ public class BigraphCompositionUnitTests {
             assertEquals(outerBigraph.getRoots().size(), 0);
             assertEquals(outerBigraph.getSites().size(), 0);
             assertFalse(outerBigraph.isGround());
-        });
-
-        assertAll(() -> {
-            Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
-            DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> discreteIon = factory.createDiscreteIon(StringTypedName.of("User"), Collections.singleton(StringTypedName.of("x")), createExampleSignature());
-
         });
     }
 

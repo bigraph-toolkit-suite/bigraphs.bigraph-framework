@@ -195,7 +195,7 @@ public class Linkings<S extends Signature<? extends Control<?,?>>> implements Se
 
         @Override
         public EObject getModel() {
-            return loadedModelPacakge;
+            return instanceModel;
         }
     }
 
