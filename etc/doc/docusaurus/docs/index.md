@@ -174,6 +174,39 @@ repositories {
 
 <!--END_DOCUSAURUS_CODE_TABS-->
 
+### Logging Configuration
+
+Bigraph Framework employs SLF4J as a facade for the log4j logging framework.
+
+Depending on your project setup, you may need to include the following libraries in your `pom.xml` :
+
+```xml
+<!-- When used within a Spring project -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+<!-- For a bare Maven project -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+```
+
+The example above shows how to use log4j2 in your project as the underlying logging framework.
+
 <!--## Changelogs-->
 
 <!--- Version: [v0.6-SNAPSHOT](changelogs/changelog_v0.6-SNAPSHOT.txt)-->
