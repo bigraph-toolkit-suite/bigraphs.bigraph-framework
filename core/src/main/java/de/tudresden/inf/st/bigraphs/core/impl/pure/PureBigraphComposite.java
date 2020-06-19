@@ -38,7 +38,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
  * @param <S> type of the signature.
  * @author Dominik Grzelak
  */
-public class PureBigraphComposite<S extends Signature> extends BigraphCompositeSupport<S> implements EcoreBigraph {//BigraphDelegator<S> implements BigraphComposite<S> {
+public class PureBigraphComposite<S extends Signature<? extends Control<?,?>>> extends BigraphCompositeSupport<S> implements EcoreBigraph {//BigraphDelegator<S> implements BigraphComposite<S> {
 
     private MutableBuilder<S> builder;
 
@@ -972,7 +972,7 @@ public class PureBigraphComposite<S extends Signature> extends BigraphCompositeS
     protected void assertSignaturesAreSame(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleSignatureException {
         //special handling if one is an elementary bigraph
         if (inner instanceof DiscreteIon || outer instanceof DiscreteIon) {
-            SignatureBuilder signatureBuilder = AbstractBigraphFactory.createPureBigraphFactory().createSignatureBuilder();
+            SignatureBuilder<?,?,?,?> signatureBuilder = AbstractBigraphFactory.createPureBigraphFactory().createSignatureBuilder();
             inner.getSignature().getControls().forEach(x -> {
                 signatureBuilder.addControl((Control) x);
             });

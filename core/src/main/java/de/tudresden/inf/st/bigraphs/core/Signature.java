@@ -8,7 +8,7 @@ import java.util.Set;
  * @param <C> type of the control
  * @author Dominik Grzelak
  */
-public interface Signature<C extends Control> {
+public interface Signature<C extends Control<?,?>> {
 
     /**
      * Get the controls of the signature.

@@ -17,7 +17,7 @@ import java.util.*;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public abstract class ElementaryBigraph<S extends Signature> extends BigraphDelegator<S> implements EcoreBigraph {
+public abstract class ElementaryBigraph<S extends Signature<? extends Control<?, ?>>> extends BigraphDelegator<S> implements EcoreBigraph {
 
     public ElementaryBigraph(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);
@@ -103,7 +103,7 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
 
     @Override
     public int getLevelOf(BigraphEntity place) {
-        if(BigraphEntityType.isSite(place)) return 1;
+        if (BigraphEntityType.isSite(place)) return 1;
         return 0;
     }
 

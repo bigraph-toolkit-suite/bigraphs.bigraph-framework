@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
@@ -12,6 +13,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInter
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
@@ -29,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -314,7 +317,7 @@ public class BigraphCompositionUnitTests {
 
     @Test
     void elementary_bigraph_linkings_test() {
-        Linkings<DefaultDynamicSignature> linkings = new Linkings<>(factory);
+        Linkings<DefaultDynamicSignature> linkings = factory.createLinkings();
         Linkings<DefaultDynamicSignature>.Closure x1 = linkings.closure(StringTypedName.of("x"));
         final Linkings<DefaultDynamicSignature>.Closure x2 = linkings.closure(StringTypedName.of("x"));
 
@@ -359,6 +362,12 @@ public class BigraphCompositionUnitTests {
             assertEquals(outerBigraph.getRoots().size(), 0);
             assertEquals(outerBigraph.getSites().size(), 0);
             assertFalse(outerBigraph.isGround());
+        });
+
+        assertAll(() -> {
+            Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
+            DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> discreteIon = factory.createDiscreteIon(StringTypedName.of("User"), Collections.singleton(StringTypedName.of("x")), createExampleSignature());
+
         });
     }
 

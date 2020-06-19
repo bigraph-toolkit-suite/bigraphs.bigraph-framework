@@ -41,7 +41,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     protected EObject loadedInstanceModel;
     private PureBigraph bigraph;
 
-    private S signature;
+    private final S signature;
 
     private boolean loadedFromFile = false;
 

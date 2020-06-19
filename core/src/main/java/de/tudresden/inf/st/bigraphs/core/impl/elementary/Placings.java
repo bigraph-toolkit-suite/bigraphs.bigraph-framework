@@ -1,9 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
@@ -30,20 +27,20 @@ import java.util.stream.IntStream;
  * By that a special placing called {@literal merge_m: m -> 1} can be derived and is implemented here for
  * convenience. merge_0 = 1, merge_1 = id_1, merge_2 = join, hence, {@literal merge_{m+1} = join o (id_1 + merge_m)}.
  */
-public class Placings<S extends Signature> implements Serializable {
+public class Placings<S extends Signature<? extends Control<?,?>>> implements Serializable {
     private volatile S emptySignature;
     private volatile MutableBuilder<S> mutableBuilder;
-    private EPackage loadedModelPacakge;
+    private final EPackage loadedModelPacakge;
     private EObject instanceModel;
 
-    @Deprecated
-    public Placings(AbstractBigraphFactory factory) {
-//        AbstractBigraphFactory factory = new PureBigraphFactory<>();
-        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-        emptySignature = (S) signatureBuilder.createEmpty();
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
-        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
-    }
+//    @Deprecated
+//    public Placings(AbstractBigraphFactory factory) {
+////        AbstractBigraphFactory factory = new PureBigraphFactory<>();
+//        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+//        emptySignature = (S) signatureBuilder.createEmpty();
+//        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
+//        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
+//    }
 
     /**
      * @param signatureBuilder to create an empty signature of the appropriate type for working with

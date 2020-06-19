@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  *
  * @author Dominik Grzelak
  */
-public abstract class BigraphCompositeSupport<S extends Signature> extends BigraphDelegator<S> implements BigraphComposite<S> {
+public abstract class BigraphCompositeSupport<S extends Signature<? extends Control<?, ?>>> extends BigraphDelegator<S> implements BigraphComposite<S> {
 
     public BigraphCompositeSupport(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);

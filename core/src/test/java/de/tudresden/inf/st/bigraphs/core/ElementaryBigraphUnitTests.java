@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ElementaryBigraphUnitTests {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static final PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
     void barren() {
-        Placings.Barren b = new Placings(factory).barren();
+        Placings<DefaultDynamicSignature>.Barren b = factory.createPlacings().barren();
         assertNotNull(b.getModelPackage());
         assertNotNull(b.getModel());
         assertTrue(b.isPrime());
@@ -41,7 +41,7 @@ public class ElementaryBigraphUnitTests {
         assertEquals(0, b.getOuterNames().size());
         assertEquals(0, b.getInnerNames().size());
 
-        Placings.Barren b2 = new Placings(factory).barren();
+        Placings<DefaultDynamicSignature>.Barren b2 = factory.createPlacings().barren();
         assertNotNull(b2.getModelPackage());
         assertNotNull(b2.getModel());
         assertNotEquals(b, b2);
@@ -54,8 +54,8 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     void join() {
-        Placings.Join join1 = new Placings(factory).join();
-        Placings.Join join2 = new Placings(factory).join();
+        Placings<DefaultDynamicSignature>.Join join1 = factory.createPlacings().join();
+        Placings<DefaultDynamicSignature>.Join join2 = factory.createPlacings().join();
         assertNotNull(join1.getModelPackage());
         assertNotNull(join1.getModel());
         assertNotNull(join2.getModelPackage());
@@ -74,7 +74,7 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     void merge() {
-        Placings.Merge merge = new Placings(factory).merge(3);
+        Placings<DefaultDynamicSignature>.Merge merge = factory.createPlacings().merge(3);
         assertEquals(1, merge.getRoots().size());
         assertEquals(3, merge.getSites().size());
         assertNotNull(merge.getModelPackage());
@@ -85,7 +85,7 @@ public class ElementaryBigraphUnitTests {
     void permutations() {
         int MAX_N = 10;
         for (int i = 1; i < MAX_N; i++) {
-            Placings<Signature>.Permutation permutation = new Placings<>(factory).permutation(i);
+            Placings<DefaultDynamicSignature>.Permutation permutation = factory.createPlacings().permutation(i);
             assertNotNull(permutation.getModelPackage());
             assertNotNull(permutation.getModel());
             assertEquals(i, permutation.getRoots().size());
@@ -109,7 +109,7 @@ public class ElementaryBigraphUnitTests {
             }
         }
 
-        Placings.Symmetry symmetry11 = new Placings(factory).symmetry11();
+        Placings<DefaultDynamicSignature>.Symmetry symmetry11 = factory.createPlacings().symmetry11();
         assertNotNull(symmetry11.getModelPackage());
         assertNotNull(symmetry11.getModel());
         assertEquals(2, symmetry11.getRoots().size());
@@ -127,7 +127,7 @@ public class ElementaryBigraphUnitTests {
 
 
         //identity barren: id_1
-        Placings<Signature>.Identity1 identity1 = new Placings<>(factory).identity1();
+        Placings<DefaultDynamicSignature>.Identity1 identity1 = factory.createPlacings().identity1();
         assertNotNull(identity1.getModelPackage());
         assertNotNull(identity1.getModel());
         assertEquals(1, identity1.getRoots().size());
@@ -239,7 +239,7 @@ public class ElementaryBigraphUnitTests {
             assertNotNull(((PureBigraph) isAlsoBarren.getOuterBigraph()).getModel());
 
             System.out.println("merge_1 * 1 = 1");
-            BigraphComposite isAlsoBarren2 = factory.asBigraphOperator(placings.merge(1)).compose(barren);
+            BigraphComposite<DefaultDynamicSignature> isAlsoBarren2 = factory.asBigraphOperator(placings.merge(1)).compose(barren);
             assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getModelPackage());
             assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getModel());
             assertTrue(isAlsoBarren2.getOuterBigraph().isPrime());
@@ -440,9 +440,9 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     void linkings() {
-        Linkings<Signature> linkings = new Linkings<>(factory);
-        Linkings<Signature>.Closure x = linkings.closure(StringTypedName.of("x"));
-        Linkings<Signature>.Substitution substitution = linkings.substitution(StringTypedName.of("y"),
+        Linkings<DefaultDynamicSignature> linkings = factory.createLinkings();
+        Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
+        Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("y"),
                 StringTypedName.of("x1"),
                 StringTypedName.of("x2"),
                 StringTypedName.of("x3")

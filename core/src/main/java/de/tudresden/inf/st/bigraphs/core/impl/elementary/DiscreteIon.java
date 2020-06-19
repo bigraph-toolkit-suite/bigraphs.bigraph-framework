@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * @author Dominik Grzelak
  */
-public class DiscreteIon<S extends Signature, NT extends NamedType, FT extends FiniteOrdinal> extends ElementaryBigraph<S> {
+public class DiscreteIon<S extends Signature<? extends Control<NT, FT>>, NT extends NamedType<?>, FT extends FiniteOrdinal<?>> extends ElementaryBigraph<S> {
     private volatile PureBigraphBuilder<S> builder;
 
     public DiscreteIon(NT name, Set<NT> outerNames, S signature, AbstractBigraphFactory<S, NT, FT> factory) {

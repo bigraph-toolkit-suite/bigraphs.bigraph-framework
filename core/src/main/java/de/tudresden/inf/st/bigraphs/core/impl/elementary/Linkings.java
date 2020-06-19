@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
+import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
@@ -22,11 +23,11 @@ import java.util.stream.Collectors;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public class Linkings<S extends Signature> implements Serializable {
+public class Linkings<S extends Signature<? extends Control<?,?>>> implements Serializable {
 
     private volatile S emptySignature;
     private volatile MutableBuilder<S> mutableBuilder;
-    private EPackage loadedModelPacakge;
+    private final EPackage loadedModelPacakge;
     private EObject instanceModel;
 
     public Linkings<S>.Closure closure(NamedType<?> name) {
@@ -60,14 +61,14 @@ public class Linkings<S extends Signature> implements Serializable {
         return new IdentityEmpty();
     }
 
-    @Deprecated
-    public Linkings(AbstractBigraphFactory factory) {
-//        AbstractBigraphFactory factory = new PureBigraphFactory<>();
-        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-        emptySignature = (S) signatureBuilder.createEmpty();
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
-        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
-    }
+//    @Deprecated
+//    public Linkings(AbstractBigraphFactory<S, ?, ?> factory) {
+////        AbstractBigraphFactory factory = new PureBigraphFactory<>();
+//        SignatureBuilder<?, ?, ?, ?> signatureBuilder = factory.createSignatureBuilder();
+//        emptySignature = (S) signatureBuilder.createEmpty();
+//        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
+//        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
+//    }
 
     public Linkings(S signature) {
         this(signature, null);

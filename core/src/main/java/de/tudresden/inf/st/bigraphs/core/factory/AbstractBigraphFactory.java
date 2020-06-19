@@ -1,13 +1,10 @@
 package de.tudresden.inf.st.bigraphs.core.factory;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
@@ -22,7 +19,7 @@ import java.util.Set;
  *
  * @author Dominik Grzelak
  */
-public abstract class AbstractBigraphFactory<S extends Signature, NT extends NamedType, FT extends FiniteOrdinal> implements BigraphFactoryElement {
+public abstract class AbstractBigraphFactory<S extends Signature<? extends Control<NT, FT>>, NT extends NamedType<?>, FT extends FiniteOrdinal<?>> implements BigraphFactoryElement {
     protected Type successorClass = null; //TODO: one for the signature type (and one for the bigraph)
 
     @Override
@@ -103,10 +100,10 @@ public abstract class AbstractBigraphFactory<S extends Signature, NT extends Nam
      * Throws a runtime exception either because of InvalidConnectionException or TypeNotExistsException when connecting
      * the outer names to the node.
      *
-     * @param name
-     * @param outerNames
-     * @param signature
-     * @return
+     * @param name       the control's name for the ion
+     * @param outerNames a set of outer names the ion shall have
+     * @param signature  the signature of that ion
+     * @return a discrete ion
      */
     public abstract DiscreteIon<S, NT, FT> createDiscreteIon(NT name, Set<NT> outerNames, S signature);
 
