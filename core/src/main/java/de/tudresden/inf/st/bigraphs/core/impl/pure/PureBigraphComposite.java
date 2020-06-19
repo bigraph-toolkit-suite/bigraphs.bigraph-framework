@@ -122,9 +122,8 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         Linkings<DefaultDynamicSignature> linkings = pure().createLinkings((DefaultDynamicSignature) getSignature());
         Set<StringTypedName> collect = f.getOuterNames().stream().map(o -> StringTypedName.of(o.getName())).collect(Collectors.toSet());
         ElementaryBigraph<DefaultDynamicSignature> identity = collect.size() != 0 ?
-                linkings.identity(
-                        collect.toArray(new NamedType[0])
-                ) : linkings.identity_e();
+                linkings.identity(collect.toArray(new NamedType[0])) : // as array
+                linkings.identity_e();                                 // empty identity
         BigraphComposite<S> sBigraphComposite = ops(g).parallelProduct((Bigraph<S>) identity);
         assertInterfaceCompatibleForCompose(sBigraphComposite.getOuterBigraph(), f);
         return sBigraphComposite.compose(f);
@@ -437,11 +436,9 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         HashBiMap<String, BigraphEntity.Edge> E = HashBiMap.create();
 
         Set<BigraphEntity.InnerName> I = new TreeSet<>(new LinkComparator<>());
-//        List<BigraphEntity.InnerName> I = new ArrayList<>();
         I.addAll(g.getInnerNames());
         I.addAll(f.getInnerNames());
         Set<BigraphEntity.OuterName> O = new TreeSet<>(new LinkComparator<>());
-//        List<BigraphEntity.OuterName> O = new ArrayList<>();
         O.addAll(g.getOuterNames());
         O.addAll(f.getOuterNames());
         for (BigraphEntity.OuterName each : O) {
@@ -557,6 +554,10 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             BigraphEntity link = g.getLinkOfPoint(each);
             if (Objects.isNull(link)) {
                 link = f.getLinkOfPoint(each);
+                if (Objects.isNull(link)) { //special link graph treating: try to find duplicate inner name in f
+                    Optional<BigraphEntity.InnerName> first = f.getInnerNames().stream().filter(x -> x.getName().equals(each.getName())).findFirst();
+                    if (first.isPresent()) link = f.getLinkOfPoint(first.get());
+                }
             }
             if (Objects.isNull(link)) continue;
 //
@@ -650,7 +651,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         for (BigraphEntity.RootEntity eachRoot : g.getRoots()) {
             myRoots.put(eachRoot.getIndex(), (BigraphEntity.RootEntity) builder.createNewRoot(eachRoot.getIndex()));
         }
-        if(g instanceof ElementaryBigraph && ((ElementaryBigraph)g).isLinking()) {
+        if (isLinking(g)) { //((ElementaryBigraph)g).isLinking()
             for (BigraphEntity.RootEntity eachRoot : f.getRoots()) {
                 myRoots.put(eachRoot.getIndex(), (BigraphEntity.RootEntity) builder.createNewRoot(eachRoot.getIndex()));
             }
@@ -685,11 +686,11 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
 //                assert first.isPresent();
                 if (first.isPresent()) {
                     p = g.getParent(first.get());
-                } else if (g instanceof ElementaryBigraph) {
+                } else if (isLinking(g)) {
                     // if the outer bigraph is a linking, take the original parent from the current node w
-                    if (((ElementaryBigraph) g).isLinking()) {
-                        p = f.getParent(w);
-                    }
+//                    if (((ElementaryBigraph) g).isLinking()) {
+                    p = f.getParent(w);
+//                    }
                 }
             } else if (V_G.containsValue(w)) {
                 p = g.getParent(w);
@@ -959,6 +960,13 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             }
         }
 
+        if (isLinking(g) && !isLinking(f)) { //special treatment for elementary graph: copy the rest of the inner names which where not shared
+            for (BigraphEntity.InnerName each : g.getInnerNames()) {
+                if (myOuterNames.size() == 0 || myOuterNames.keySet().contains(each.getName())) continue;
+                BigraphEntity.InnerName newInnerName = (BigraphEntity.InnerName) builder.createNewInnerName(each.getName());
+                myInnerNames.put(newInnerName.getName(), newInnerName);
+            }
+        }
 
         PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
                 builder.getLoadedEPackage(),
@@ -998,11 +1006,21 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             }
             return;
         }
-        if (outer instanceof ElementaryBigraph) {
-            builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature(), ((ElementaryBigraph<S>) outer).getEMetaModelData());
+        if (isLinking(outer) || isPlacing(outer)) {
+//            builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature(), ((EcoreBigraph) outer).getEMetaModelData());
+            if (outer instanceof EcoreBigraph) {
+                builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature(), ((EcoreBigraph) outer).getEMetaModelData());
+            } else {
+                builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature());
+            }
             return;
-        } else if (inner instanceof ElementaryBigraph) {
-            builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((ElementaryBigraph<S>) inner).getEMetaModelData());
+        } else if (isLinking(inner) || isPlacing(inner)) {
+//            builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((EcoreBigraph) inner).getEMetaModelData());
+            if (inner instanceof EcoreBigraph) {
+                builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((EcoreBigraph) inner).getEMetaModelData());
+            } else {
+                builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature());
+            }
             return;
         }
         if (!outer.getSignature().equals(inner.getSignature())) {

@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
+import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -7,17 +8,15 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
-import org.eclipse.collections.api.list.ImmutableList;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.collections.impl.factory.SortedMaps;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.io.Serializable;
 import java.util.*;
@@ -38,6 +37,10 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
 
     public Linkings<S>.Closure closure(NamedType<?> name) {
         return new Closure(name);
+    }
+
+    public Linkings<S>.Closure closure(Set<NamedType<?>> names) {
+        return new Closure(names);
     }
 
     public Linkings<S>.Substitution substitution(NamedType<?> nameOuter, NamedType<?>... nameInner) {
@@ -158,9 +161,10 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
                 innerNameMap.put(x.getName(), x);
             }
 
-            //TODO
             instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
-                    arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(),
+                    arbitrarySignature,
+                    Collections.emptyMap(),
+                    Collections.emptyMap(),
                     Collections.emptyMap(),
                     innerNameMap,
                     Collections.emptyMap(),

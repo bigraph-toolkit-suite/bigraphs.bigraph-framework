@@ -4,6 +4,8 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.Collections;
@@ -32,17 +34,27 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
             disjoint = false; // this is legit if they are only place graphs
         boolean disjoint2 = siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals);
         if (siteOrdinals.size() == 0 && rootOrdinals.size() == 0) disjoint2 = false;
-        if (inner instanceof ElementaryBigraph) {
-            if (((ElementaryBigraph<S>) inner).isLinking() && !disjoint) return;
-            if (((ElementaryBigraph<S>) inner).isPlacing() && !disjoint2) return;
+        if (inner instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(inner)) {
+            if (!disjoint && isLinking(inner)) return;
+            if (!disjoint2 && isPlacing(inner)) return;
         }
-        if (outer instanceof ElementaryBigraph) {
-            if (((ElementaryBigraph<S>) outer).isLinking() && !disjoint) return;
-            if (((ElementaryBigraph<S>) outer).isPlacing() && !disjoint2) return;
+        if (outer instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(outer)) {
+            if (!disjoint && isLinking(outer)) return;
+            if (!disjoint2 && isPlacing(outer)) return;
         }
         if (disjoint || disjoint2) {
             throw new IncompatibleInterfaceException();
         }
+    }
+
+    protected boolean isLinking(Bigraph<S> bigraph) {
+        return (BigraphUtil.isBigraphElementaryLinking(bigraph) ||
+                (bigraph instanceof ElementaryBigraph && ((ElementaryBigraph<S>) bigraph).isLinking()));
+    }
+
+    protected boolean isPlacing(Bigraph<S> bigraph) {
+        return (BigraphUtil.isBigraphElementaryPlacing(bigraph) ||
+                (bigraph instanceof ElementaryBigraph && ((ElementaryBigraph<S>) bigraph).isPlacing()));
     }
 
     protected void assertInterfaceCompatibleForJuxtaposition(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleInterfaceException {

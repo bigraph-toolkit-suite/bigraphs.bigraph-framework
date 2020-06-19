@@ -128,6 +128,11 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
             return Collections.singletonList(root);
         }
 
+        @Override
+        public Collection<BigraphEntity.SiteEntity> getSites() {
+            return Collections.EMPTY_LIST;
+        }
+
         /**
          * Returns always {@code null} since a barren cannot have any child.
          *
@@ -145,8 +150,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
          * @return the barren's root
          */
         @Override
-        public Collection<BigraphEntity> getAllPlaces() {
-            return Collections.singletonList(root);
+        public List<BigraphEntity> getAllPlaces() {
+            return super.getAllPlaces();
         }
 
         @Override
@@ -202,16 +207,6 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         @Override
         public final Collection<BigraphEntity.SiteEntity> getSites() {
             return sites.castToList();
-        }
-
-        /**
-         * Returns the single root and the two sites of this join.
-         *
-         * @return the join's root and two children
-         */
-        @Override
-        public Collection<BigraphEntity> getAllPlaces() {
-            return Lists.mutable.of((BigraphEntity) root).withAll(sites);
         }
 
         @Override
@@ -276,16 +271,6 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
             return sitesMap.values();
         }
 
-        /**
-         * Returns the single root and the {@code n} sites of this merge.
-         *
-         * @return the merge's root and {@code n} sites
-         */
-        @Override
-        public Collection<BigraphEntity> getAllPlaces() {
-            return Lists.mutable.of((BigraphEntity) root).withAll(sitesMap.values());
-        }
-
         @Override
         public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             if (BigraphEntityType.isSite(node) && sitesMap.containsValue(node)) {
@@ -346,11 +331,6 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         @Override
         public S getSignature() {
             return arbitrarySignature;
-        }
-
-        @Override
-        public Collection<BigraphEntity> getAllPlaces() {
-            return Lists.mutable.<BigraphEntity>ofAll(rootsMap.values()).withAll(sitesMap.values());
         }
 
         @Override

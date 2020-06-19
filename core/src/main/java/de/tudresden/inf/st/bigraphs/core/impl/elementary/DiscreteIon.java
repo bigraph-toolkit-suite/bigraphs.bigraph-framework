@@ -7,10 +7,8 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -38,40 +36,5 @@ public class DiscreteIon<S extends Signature<? extends Control<? extends NamedTy
             throw new RuntimeException("Control shouldn't be atomic!");
         }
         bigraphDelegate = (Bigraph<S>) builder.createBigraph();
-    }
-
-    @Override
-    public Collection<BigraphEntity.RootEntity> getRoots() {
-        return bigraphDelegate.getRoots();
-    }
-
-    @Override
-    public Collection<BigraphEntity.SiteEntity> getSites() {
-        return bigraphDelegate.getSites();
-    }
-
-    @Override
-    public Collection<BigraphEntity.OuterName> getOuterNames() {
-        return bigraphDelegate.getOuterNames();
-    }
-
-    @Override
-    public <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
-        return bigraphDelegate.getNodes();
-    }
-
-    @Override
-    public Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
-        return bigraphDelegate.getPorts(node);
-    }
-
-    @Override
-    public BigraphEntity getParent(BigraphEntity node) {
-        return bigraphDelegate.getParent(node);
-    }
-
-    @Override
-    public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
-        return bigraphDelegate.getPointsFromLink(linkEntity);
     }
 }
