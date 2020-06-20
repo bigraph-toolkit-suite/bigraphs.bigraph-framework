@@ -17,6 +17,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Dominik Grzelak
@@ -94,6 +95,20 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
         return new DiscreteIon<>(
                 name,
                 outerNames,
+                signature,
+                this
+        );
+    }
+
+    /**
+     * Convenient method.
+     *
+     * @see PureBigraphFactory#createDiscreteIon(NamedType, Set, DefaultDynamicSignature)
+     */
+    public DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, DefaultDynamicSignature signature) {
+        return new DiscreteIon<>(
+                StringTypedName.of(name),
+                outerNames.stream().map(StringTypedName::of).collect(Collectors.toSet()),
                 signature,
                 this
         );

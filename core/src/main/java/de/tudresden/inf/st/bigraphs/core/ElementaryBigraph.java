@@ -21,6 +21,8 @@ import java.util.*;
  * @author Dominik Grzelak
  */
 public abstract class ElementaryBigraph<S extends Signature<? extends Control<?, ?>>> extends BigraphDelegator<S> implements EcoreBigraph {
+    protected EPackage metaModelPackage;
+    protected EObject instanceModel;
 
     public ElementaryBigraph(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);
@@ -43,12 +45,16 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
 
     @Override
     public EPackage getModelPackage() {
-        return ((EcoreBigraph) bigraphDelegate).getModelPackage();
+        if (Objects.nonNull(bigraphDelegate) && bigraphDelegate instanceof EcoreBigraph)
+            return ((EcoreBigraph) bigraphDelegate).getModelPackage();
+        return metaModelPackage;
     }
 
     @Override
     public EObject getModel() {
-        return ((EcoreBigraph) bigraphDelegate).getModel();
+        if (Objects.nonNull(bigraphDelegate) && bigraphDelegate instanceof EcoreBigraph)
+            return ((EcoreBigraph) bigraphDelegate).getModel();
+        return instanceModel;
     }
 
     @Override

@@ -123,6 +123,9 @@ public interface BigraphComposite<S extends Signature> {
      */
     BigraphComposite<S> parallelProduct(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
 
+    BigraphComposite<S> merge(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+    BigraphComposite<S> merge(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+
     /**
      * Compute the parallel product in a row.
      * <p>

@@ -4,7 +4,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
@@ -34,10 +33,10 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
             disjoint = false; // this is legit if they are only place graphs
         boolean disjoint2 = siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals);
         if (siteOrdinals.size() == 0 && rootOrdinals.size() == 0) disjoint2 = false;
-        if (inner instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(inner)) {
-            if (!disjoint && isLinking(inner)) return;
-            if (!disjoint2 && isPlacing(inner)) return;
-        }
+//        if (inner instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(inner)) {
+//            if (!disjoint && isLinking(inner) && !disjoint2 && isPlacing(outer)) return;
+//            if (!disjoint2 && isPlacing(inner)) return;
+//        }
         if (outer instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(outer)) {
             if (!disjoint && isLinking(outer)) return;
             if (!disjoint2 && isPlacing(outer)) return;

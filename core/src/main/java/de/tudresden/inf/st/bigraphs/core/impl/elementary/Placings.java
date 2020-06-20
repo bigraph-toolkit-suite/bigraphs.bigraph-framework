@@ -3,25 +3,24 @@ package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.collections.api.factory.Maps;
-import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
-import org.eclipse.collections.api.set.MutableSet;
 import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,7 +39,6 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
     private volatile S arbitrarySignature;
     private volatile MutableBuilder<S> mutableBuilder;
     private final EPackage loadedModelPackage;
-    private EObject instanceModel;
 
     /**
      * @param signatureBuilder to create an empty signature of the appropriate type for working with
@@ -67,26 +65,32 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
     }
 
     public Placings<S>.Barren barren() {
+        mutableBuilder.reset();
         return new Barren();
     }
 
     public Placings<S>.Identity1 identity1() {
+        mutableBuilder.reset();
         return new Identity1();
     }
 
     public Symmetry symmetry11() {
+        mutableBuilder.reset();
         return new Symmetry(2);
     }
 
     public Symmetry symmetry(int n) {
+        mutableBuilder.reset();
         return new Symmetry(n);
     }
 
     public Placings<S>.Merge merge(int m) {
+        mutableBuilder.reset();
         return new Merge(m);
     }
 
     public Placings<S>.Join join() {
+        mutableBuilder.reset();
         return new Join();
     }
 
@@ -98,6 +102,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
      * @return an "equally distributed permutation"
      */
     public Placings<S>.Permutation permutation(int n) {
+        mutableBuilder.reset();
         return new Permutation(n);
     }
 
@@ -108,7 +113,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
             super(null);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
 
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature,
                     SortedMaps.mutable.of(0, root),
                     Collections.emptyMap(),
@@ -160,13 +166,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -183,8 +184,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
             );
 
             sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature,
                     SortedMaps.mutable.of(0, root),
                     SortedMaps.mutable.of(0, sites.get(0), 1, sites.get(1)),
@@ -218,13 +219,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -244,8 +240,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
                 setParentOfNode(newSite, root);
                 sitesMap.put(value, newSite);
             });
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature,
                     SortedMaps.mutable.of(0, root),
                     sitesMap,
@@ -280,13 +276,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -309,8 +300,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
                 rootsMap.put(i, newRoot);
                 sitesMap.put(i, newSite);
             }
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, rootsMap, sitesMap,
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -345,13 +336,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -381,8 +367,8 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
                 rootsMap.put(i, newRoot);
                 sitesMap.put(j, newSite);
             }
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, rootsMap, sitesMap,
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -411,16 +397,6 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         @Override
         public S getSignature() {
             return arbitrarySignature;
-        }
-
-        @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
         }
     }
 

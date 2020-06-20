@@ -15,6 +15,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -598,6 +599,31 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         Bigraph<S> bigraph = (Bigraph<S>) new PureBigraph(meta);
 //        bigraph.getPointsFromLink(new ArrayList<>(bigraph.getOuterNames()).get(1));
         return new PureBigraphComposite<>(bigraph);
+    }
+
+    @Override
+    public BigraphComposite<S> merge(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        Bigraph<S> g = copyIfSame(getBigraphDelegate(), f);
+        assertSignaturesAreSame(g, f);
+
+        BigraphComposite<DefaultDynamicSignature> bigraphComposite = pure().asBigraphOperator((Bigraph<DefaultDynamicSignature>) g).parallelProduct((Bigraph<DefaultDynamicSignature>) f);
+        if (isLinking(f)) {
+            if(g.getRoots().size() > 0) {
+                return (BigraphComposite<S>) bigraphComposite;
+            }
+            Placings<DefaultDynamicSignature>.Barren barren = pure().createPlacings((DefaultDynamicSignature) getSignature()).barren();
+            return (BigraphComposite<S>) pure().asBigraphOperator(barren).parallelProduct(bigraphComposite);
+
+        } else {
+            Placings<DefaultDynamicSignature>.Merge merge = pure().createPlacings((DefaultDynamicSignature) getSignature()).merge(2);
+            BigraphComposite<DefaultDynamicSignature> compose = pure().asBigraphOperator(merge).compose(bigraphComposite);
+            return (BigraphComposite<S>) compose;
+        }
+    }
+
+    @Override
+    public BigraphComposite<S> merge(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        return merge((Bigraph<S>) f.getOuterBigraph());
     }
 
     @Override

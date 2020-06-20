@@ -1,18 +1,15 @@
 package de.tudresden.inf.st.bigraphs.core.factory;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import net.jodah.typetools.TypeResolver;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
 
-
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Stack;
 
@@ -75,10 +72,28 @@ public final class FactoryCreationContext {
     }
 
     private static AbstractBigraphFactory findFactoryFor(Class<? extends Bigraph> bigraphClass) {
+        assert Objects.nonNull(bigraphClass);
+        // factory for common pure bigraphs
         if (bigraphClass.isAssignableFrom(PureBigraph.class)) {
             return new PureBigraphFactory();
         }
+        // factory for elementary bigraphs
+        if (bigraphClass.isAssignableFrom(ElementaryBigraph.class) ||
+                (Objects.nonNull(bigraphClass.getSuperclass()) && isAssignable(bigraphClass))) {
+            Class<?> typeArg = TypeResolver.resolveRawArgument(ElementaryBigraph.class, bigraphClass);
+            if (typeArg.isAssignableFrom(DefaultDynamicSignature.class)) {
+                return new PureBigraphFactory();
+            }
+        }
         throw new RuntimeException("Not implemented yet");
+    }
+
+    private static boolean isAssignable(Class<? extends Bigraph> clazz) {
+        if (Objects.isNull(clazz)) return false;
+        if (clazz.isAssignableFrom(ElementaryBigraph.class)) return true;
+        if (Objects.nonNull(clazz.getSuperclass()))
+            return isAssignable((Class<? extends Bigraph>) clazz.getSuperclass());
+        return false;
     }
 
 

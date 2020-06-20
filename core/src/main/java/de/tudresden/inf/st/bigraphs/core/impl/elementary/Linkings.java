@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -14,9 +13,8 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.SortedMaps;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.io.Serializable;
 import java.util.*;
@@ -33,21 +31,25 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
     private volatile S arbitrarySignature;
     private volatile MutableBuilder<S> mutableBuilder;
     private final EPackage loadedModelPackage;
-    private EObject instanceModel;
+//    private EObject instanceModel;
 
     public Linkings<S>.Closure closure(NamedType<?> name) {
+        mutableBuilder.reset();
         return new Closure(name);
     }
 
     public Linkings<S>.Closure closure(Set<NamedType<?>> names) {
+        mutableBuilder.reset();
         return new Closure(names);
     }
 
     public Linkings<S>.Substitution substitution(NamedType<?> nameOuter, NamedType<?>... nameInner) {
+        mutableBuilder.reset();
         return new Substitution(nameOuter, nameInner);
     }
 
     public Linkings<S>.Identity identity(NamedType<?> name) {
+        mutableBuilder.reset();
         return new Identity(name);
     }
 
@@ -58,6 +60,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
      * @return the identity link graph created from the given name set
      */
     public Linkings<S>.Identity identity(NamedType<?>... nameSet) {
+        mutableBuilder.reset();
         return new Identity(nameSet);
     }
 
@@ -67,6 +70,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
      * @return an empty link graph of type {@link IdentityEmpty}.
      */
     public Linkings<S>.IdentityEmpty identity_e() {
+        mutableBuilder.reset();
         return new IdentityEmpty();
     }
 
@@ -98,7 +102,8 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
 
         IdentityEmpty() {
             super(null);
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -109,16 +114,6 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         @Override
         public S getSignature() {
             return arbitrarySignature;
-        }
-
-        @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
         }
 
         @Override
@@ -139,11 +134,6 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
-        @Override
         public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
             return Collections.emptyList();
         }
@@ -160,8 +150,8 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
                 innerNames.add(x);
                 innerNameMap.put(x.getName(), x);
             }
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature,
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -186,11 +176,6 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
-        @Override
         public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
             return Lists.mutable.empty();
         }
@@ -205,11 +190,6 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
             return Lists.mutable.empty();
         }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
-        }
     }
 
     public class Substitution extends ElementaryBigraph<S> {
@@ -221,15 +201,26 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
             if (Objects.isNull(outerName) || innerNames.length == 0) {
                 throw new RuntimeException("Substitution cannot be created because outer name or inner name is missing.");
             }
+            MutableSortedMap<String, BigraphEntity.InnerName> innerNameMap = SortedMaps.mutable.empty();
+            MutableSortedMap<String, BigraphEntity.OuterName> outerNameMap = SortedMaps.mutable.empty();
             this.innerNames = Lists.mutable.empty();
             this.outerNames = Lists.mutable.empty();
             BigraphEntity.OuterName newOuterName = (BigraphEntity.OuterName) mutableBuilder.createNewOuterName(outerName.stringValue());
             outerNames.add(newOuterName);
+            outerNameMap.put(newOuterName.getName(), newOuterName);
             for (int i = 0, n = innerNames.length; i < n; i++) {
                 BigraphEntity.InnerName newInnerName = (BigraphEntity.InnerName) mutableBuilder.createNewInnerName(innerNames[i].stringValue());
                 mutableBuilder.connectInnerToOuter(newInnerName, newOuterName);
                 this.innerNames.add(newInnerName);
+                innerNameMap.put(newInnerName.getName(), newInnerName);
             }
+
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
+                    arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
+                    innerNameMap,
+                    outerNameMap,
+                    Collections.emptyMap());
         }
 
         Substitution(final NamedType<?>... names) {
@@ -252,8 +243,8 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
                 innerNameMap.put(newInnerName.getName(), newInnerName);
                 outerNameMap.put(newOuterName.getName(), newOuterName);
             }
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPackage,
+            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
                     innerNameMap,
                     outerNameMap,
@@ -275,11 +266,6 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
             return arbitrarySignature;
         }
 
-        @Override
-        public EPackage getModelPackage() {
-            return loadedModelPackage;
-        }
-
         /**
          * Always returns an empty list because a linking has no nodes.
          *
@@ -294,11 +280,6 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         @Override
         public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
             return this.innerNames.stream().filter(x -> !x.equals(innerName)).collect(Collectors.toList());
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
         }
     }
 }

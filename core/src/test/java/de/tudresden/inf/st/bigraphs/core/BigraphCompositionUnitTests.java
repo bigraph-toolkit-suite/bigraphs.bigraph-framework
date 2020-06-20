@@ -22,6 +22,7 @@ import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
 import org.eclipse.collections.impl.factory.Sets;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,9 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
@@ -313,6 +312,146 @@ public class BigraphCompositionUnitTests {
             List<Boolean> collectB = merge_MplusOne.getSites().stream().map(x -> merge_MplusOne.getParent(x) == rootB).collect(Collectors.toList());
 
             assertEquals(collectA.stream().allMatch(y -> y), collectB.stream().allMatch(y -> y));
+        });
+    }
+
+    @Test
+    void more_elementary_linkings_tests() {
+        Linkings<DefaultDynamicSignature> linkings = factory.createLinkings(createExampleSignature());
+        Placings<DefaultDynamicSignature> placings = factory.createPlacings(createExampleSignature());
+
+        assertAll(() -> {
+
+
+            Linkings<DefaultDynamicSignature>.Substitution s1 = linkings.substitution(StringTypedName.of("y"), StringTypedName.of("y"));
+            Linkings<DefaultDynamicSignature>.Closure c1 = linkings.closure(StringTypedName.of("x"));
+            Linkings<DefaultDynamicSignature>.Closure c2 = linkings.closure(StringTypedName.of("a"));
+            Linkings<DefaultDynamicSignature>.Closure y = linkings.closure(StringTypedName.of("y"));
+            DiscreteIon<DefaultDynamicSignature> ionC = factory.createDiscreteIon("Printer", new HashSet<>(Arrays.asList("x", "y")), createExampleSignature());
+
+            // id(2) * (/x || /y): <2,{}> and <0,{}> doesn't works
+            assertThrows(IncompatibleInterfaceException.class, () -> {
+                Placings<DefaultDynamicSignature>.Permutation permutation = placings.permutation(2);
+                ops(permutation).compose(ops(c1).parallelProduct(y)).getOuterBigraph();
+            });
+
+            ///x * User{x}
+            DiscreteIon<DefaultDynamicSignature> discreteIon = factory.createDiscreteIon("User", new HashSet<>(Arrays.asList("x")), createExampleSignature());
+            Bigraph<DefaultDynamicSignature> result0 = ops(c1).compose(discreteIon).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result0, System.out);
+            assertEquals(0, result0.getOuterNames().size());
+            assertEquals(0, result0.getInnerNames().size());
+            assertEquals(3, result0.getAllPlaces().size());
+            assertEquals(1, result0.getRoots().size());
+            assertEquals(1, result0.getNodes().size());
+            assertEquals(1, result0.getSites().size());
+
+            // parallel product between linkings : shall not create root
+            Bigraph<DefaultDynamicSignature> composed1 = ops(c1).parallelProduct(s1).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed1, System.out);
+            assertEquals(1, composed1.getOuterNames().size());
+            assertEquals(2, composed1.getInnerNames().size());
+            assertEquals(0, composed1.getAllPlaces().size());
+            assertEquals(0, composed1.getRoots().size());
+            assertTrue(BigraphUtil.isBigraphElementaryLinking(composed1));
+
+            // parallel product between linkings: shall not create root
+            Bigraph<DefaultDynamicSignature> composed2 = ops(c1).parallelProductOf(c1, s1).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed2, System.out);
+            assertEquals(1, composed2.getOuterNames().size());
+            assertEquals(2, composed2.getInnerNames().size());
+            assertEquals(0, composed2.getAllPlaces().size());
+            assertEquals(0, composed2.getRoots().size());
+            assertTrue(BigraphUtil.isBigraphElementaryLinking(composed2));
+
+            // merge product between linkings
+            Bigraph<DefaultDynamicSignature> merged = ops(c1).merge(s1).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) merged, System.out);
+            assertEquals(1, merged.getOuterNames().size());
+            assertEquals(2, merged.getInnerNames().size());
+            assertEquals(1, merged.getAllPlaces().size());
+            assertEquals(1, merged.getRoots().size());
+
+            // mutliple merges
+            Bigraph<DefaultDynamicSignature> merged2 = ops(c1).merge(c1).merge(c1).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) merged2, System.out);
+            assertEquals(0, merged2.getOuterNames().size());
+            assertEquals(1, merged2.getInnerNames().size());
+            assertEquals(1, merged2.getAllPlaces().size());
+            assertEquals(1, merged2.getRoots().size());
+
+            // merge product of two different linkings
+            Bigraph<DefaultDynamicSignature> merged3 = ops(c1).merge(c1).merge(c2).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) merged3, System.out);
+            assertEquals(0, merged3.getOuterNames().size());
+            assertEquals(2, merged3.getInnerNames().size());
+            assertEquals(1, merged3.getAllPlaces().size());
+            assertEquals(1, merged3.getRoots().size());
+
+            // (/x || (/x | /a))
+            Bigraph<DefaultDynamicSignature> result = ops(c1).parallelProduct(ops(c1).merge(c2)).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result, System.out);
+            assertEquals(0, result.getOuterNames().size());
+            assertEquals(2, result.getInnerNames().size());
+            assertEquals(1, result.getAllPlaces().size());
+            assertEquals(1, result.getRoots().size());
+            assertEquals(0, result.getSites().size());
+
+
+            // 1 * (/x || /y): <0,{}> and <0,{}> works
+            Placings<DefaultDynamicSignature>.Barren barren = placings.barren();
+            Bigraph<DefaultDynamicSignature> result2 = ops(barren).compose(ops(c1).parallelProduct(y)).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result2, System.out);
+            assertEquals(0, result2.getOuterNames().size());
+            assertEquals(2, result2.getInnerNames().size());
+            assertEquals(1, result2.getAllPlaces().size());
+            assertEquals(1, result2.getRoots().size());
+            assertEquals(0, result2.getSites().size());
+
+            //1 * (/x | /y): <0, {}> and <1, {}> doesn't work
+            assertThrows(IncompatibleInterfaceException.class, () -> {
+                ops(placings.barren()).compose(ops(c1).merge(y)).getOuterBigraph();
+            });
+
+            // /x * /y * /a: <0, {x}> and <0, {}> doesn't work
+            assertThrows(IncompatibleInterfaceException.class, () -> {
+                ops(c1).compose(y).compose(c2).getOuterBigraph();
+            });
+
+            //(((x/{x}) * x/{y,x})||id(1)) * C{x,y}
+            Placings<DefaultDynamicSignature>.Identity1 id_1 = placings.identity1();
+            Linkings<DefaultDynamicSignature>.Identity id_x = linkings.identity(StringTypedName.of("x"), StringTypedName.of("x"));
+            Linkings<DefaultDynamicSignature>.Substitution sigma_yx = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("y"), StringTypedName.of("x"));
+            Bigraph<DefaultDynamicSignature> outerBigraph = ops(ops(id_x).compose(sigma_yx).getOuterBigraph()).parallelProduct(id_1).getOuterBigraph();
+            assertEquals(1, outerBigraph.getOuterNames().size());
+            assertEquals(2, outerBigraph.getInnerNames().size());
+            assertEquals(2, outerBigraph.getAllPlaces().size());
+            assertEquals(1, outerBigraph.getRoots().size());
+            assertEquals(0, outerBigraph.getNodes().size());
+            assertEquals(1, outerBigraph.getSites().size());
+            Bigraph<DefaultDynamicSignature> outerBigraph1 = ops(outerBigraph).compose(ionC).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) outerBigraph1, System.out);
+            assertEquals(1, outerBigraph1.getOuterNames().size());
+            assertEquals(0, outerBigraph1.getEdges().size());
+            assertEquals(0, outerBigraph1.getInnerNames().size());
+            assertEquals(3, outerBigraph1.getAllPlaces().size());
+            assertEquals(1, outerBigraph1.getRoots().size());
+            assertEquals(1, outerBigraph1.getNodes().size());
+            assertEquals(1, outerBigraph1.getSites().size());
+
+            //(id(1) || /x || y/{y}) * C{x,y}: closes one name 'x'
+            Linkings<DefaultDynamicSignature>.Substitution sigma_y = linkings.substitution(StringTypedName.of("y"), StringTypedName.of("y"));
+            Bigraph<DefaultDynamicSignature> outerBigraph2 = ops(placings.identity1()).parallelProduct(c1).parallelProduct(sigma_y).getOuterBigraph();
+            Bigraph<DefaultDynamicSignature> composed3 = ops(outerBigraph2).compose(ionC).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed3, System.out);
+            assertEquals(1, composed3.getOuterNames().size());
+            assertEquals("y", composed3.getOuterNames().iterator().next().getName());
+            assertEquals(0, composed3.getEdges().size());
+            assertEquals(0, composed3.getInnerNames().size());
+            assertEquals(3, composed3.getAllPlaces().size());
+            assertEquals(1, composed3.getRoots().size());
+            assertEquals(1, composed3.getNodes().size());
+            assertEquals(1, composed3.getSites().size());
         });
     }
 
