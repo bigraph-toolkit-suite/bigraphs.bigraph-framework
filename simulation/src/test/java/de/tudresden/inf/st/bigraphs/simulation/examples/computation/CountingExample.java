@@ -18,6 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
@@ -25,6 +26,7 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChe
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
+import org.jgrapht.Graph;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +34,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -108,6 +112,14 @@ public class CountingExample {
                 BigraphModelChecker.SimulationType.BREADTH_FIRST,
                 opts);
         modelChecker.execute();
+
+        Graph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> graph = modelChecker.getReactionGraph().getGraph();
+        assertEquals(5, graph.vertexSet().size());
+        assertEquals(4, graph.edgeSet().size());
+        boolean c1 = "r0$Age$True$Z#".equals(new ArrayList<>(graph.vertexSet()).get(0).getCanonicalForm()) ||
+                "r0$Age$True$Z#".equals(new ArrayList<>(graph.vertexSet()).get(graph.vertexSet().size() - 1)
+                        .getCanonicalForm());
+        assertTrue(c1);
     }
 
     /**

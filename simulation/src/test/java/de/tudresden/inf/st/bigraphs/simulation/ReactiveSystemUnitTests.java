@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.simulation;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.ControlKind;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -18,6 +19,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
@@ -25,12 +27,16 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigra
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
@@ -52,14 +58,14 @@ public class ReactiveSystemUnitTests {
     }
 
     @Test
-    void simulate_basic_example_2() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_basic_abbExample() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, BigraphSimulationException {
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         PureBigraph agent_b = (PureBigraph) createAgent_A2();
         reactiveSystem.setAgent(agent_b);
         ReactionRule<PureBigraph> rr = createReactionRuleForA2();
         reactiveSystem.addReactionRule(rr);
 
-        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph_A2.png");
+        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph_ABB.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
@@ -72,7 +78,7 @@ public class ReactiveSystemUnitTests {
                 .and(ModelCheckingOptions.exportOpts()
                         .setPrintCanonicalStateLabel(true)
                         .setReactionGraphFile(new File(completePath.toUri()))
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "statesA2/"))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "statesABB/"))
                         .create()
                 )
         ;
@@ -80,6 +86,15 @@ public class ReactiveSystemUnitTests {
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
                 BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
         modelChecker.execute();
+
+        Set<ReactionGraph.LabeledNode> labeledNodes = modelChecker.getReactionGraph().getGraph().vertexSet();
+        assertEquals(2, labeledNodes.size());
+        // because of the unknown ordering ...
+        boolean c1 = "r0$ABB#".equals(new ArrayList<>(labeledNodes).get(0).getCanonicalForm()) &&
+                "r0$AB#".equals(new ArrayList<>(labeledNodes).get(1).getCanonicalForm());
+        boolean c11 = "r0$ABB#".equals(new ArrayList<>(labeledNodes).get(1).getCanonicalForm()) &&
+                "r0$AB#".equals(new ArrayList<>(labeledNodes).get(0).getCanonicalForm());
+        assertTrue(c1 || c11);
     }
 
     @Test
@@ -228,15 +243,14 @@ public class ReactiveSystemUnitTests {
     }
 
     public static Bigraph createAgent_A2() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
+        Signature<DefaultDynamicControl> signature = createExampleSignatureABB();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-//        BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot()
-                .addChild("Building")
-                .addChild("Job")
-                .addChild("Job")
+                .addChild("A")
+                .addChild("B")
+                .addChild("B")
         ;
-        builder.makeGround();
+//        builder.makeGround();
         return builder.createBigraph();
     }
 
@@ -342,16 +356,19 @@ public class ReactiveSystemUnitTests {
         return rr;
     }
 
-    public static ReactionRule<PureBigraph> createReactionRuleForA2() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
+    /**
+     * a | b | b -> a | b
+     */
+    public static ReactionRule<PureBigraph> createReactionRuleForA2() throws ControlIsAtomicException, InvalidReactionRuleException {
+        Signature<DefaultDynamicControl> signature = createExampleSignatureABB();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
 
-        builder.createRoot().addChild("Building").addChild("Job").addChild("Job");
-        builder2.createRoot().addChild("Building").addChild("Job");
+        builder.createRoot().addChild("A").addChild("B").addChild("B");
+        builder2.createRoot().addChild("A").addChild("B");
 
-        builder.makeGround();
-        builder2.makeGround();
+//        builder.makeGround();
+//        builder2.makeGround();
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
         return new ParametricReactionRule<>(redex, reactum);
@@ -483,6 +500,16 @@ public class ReactiveSystemUnitTests {
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign()
+        ;
+
+        return (S) defaultBuilder.create();
+    }
+
+    private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignatureABB() {
+        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+        defaultBuilder
+                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlKind.ATOMIC).assign()
+                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlKind.ATOMIC).assign()
         ;
 
         return (S) defaultBuilder.create();
