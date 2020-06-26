@@ -33,6 +33,9 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAP
 public class BigraphArtifacts {
 
     private final static String DEFAULT_ENCODING = "UTF-8";
+    public enum Format {
+        ECORE, XMI
+    }
 
     public static EPackage loadInternalBigraphMetaMetaModel() throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
