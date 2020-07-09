@@ -11,6 +11,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.generators.RandomBigraphGeneratorSupport;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public class CanonicalPerformanceTests {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/";
