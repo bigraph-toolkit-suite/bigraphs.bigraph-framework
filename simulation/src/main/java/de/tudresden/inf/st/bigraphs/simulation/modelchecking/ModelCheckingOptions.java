@@ -1,5 +1,8 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
 import java.io.File;
 import java.util.Map;
 import java.util.Objects;
@@ -11,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Dominik Grzelak
  */
+@Configuration
+@ConfigurationProperties(prefix = "model-checking", ignoreInvalidFields = true)
 public class ModelCheckingOptions {
     private final static int DEFAULT_MAX_TRANSITIONS = Integer.MAX_VALUE;
 
@@ -33,7 +38,7 @@ public class ModelCheckingOptions {
         }
     }
 
-    private ModelCheckingOptions() {
+    ModelCheckingOptions() {
     }
 
     public static ExportOptions.Builder exportOpts() {
@@ -51,6 +56,10 @@ public class ModelCheckingOptions {
     public ModelCheckingOptions and(Opts opts) {
         optsMap.put(opts.getType(), opts);
         return this;
+    }
+
+    public void setMeasureTime(boolean measureTime) {
+        this.measureTime = measureTime;
     }
 
     public boolean isMeasureTime() {
@@ -71,8 +80,24 @@ public class ModelCheckingOptions {
     }
 
     public <T extends Opts> T get(Options kind) {
+        if (optsMap.size() == 0) {
+            if (transitionOpts != null) {
+                and(transitionOpts);
+            }
+            if (exportOpts != null) {
+                and(exportOpts);
+            }
+        }
         if (Objects.isNull(optsMap.get(kind))) return null;
         return (T) kind.getOptionClassType().cast(optsMap.get(kind));
+    }
+
+    void setExportOptions(ExportOptions exportOpts) {
+        this.exportOpts = exportOpts;
+    }
+
+    void setTransitionOptions(TransitionOptions transitionOpts) {
+        this.transitionOpts = transitionOpts;
     }
 
     public interface Opts {
@@ -85,15 +110,35 @@ public class ModelCheckingOptions {
      * @author Dominik Grzelak
      */
     public static final class TransitionOptions implements Opts {
-        private int maximumTransitions;
-        private long maximumTime;
-        private TimeUnit maximumTimeUnit;
+        //        @Min(1)
+        private int maximumTransitions = 100;
+        private long maximumTime = 30;
+        private TimeUnit maximumTimeUnit = TimeUnit.SECONDS;
         private boolean allowReducibleClasses;
+
+        TransitionOptions() {
+        }
 
         TransitionOptions(int maximumTransitions, long maximumTime, TimeUnit maximumTimeUnit, boolean allowReducibleClasses) {
             this.maximumTransitions = maximumTransitions;
             this.maximumTime = maximumTime;
             this.maximumTimeUnit = maximumTimeUnit;
+            this.allowReducibleClasses = allowReducibleClasses;
+        }
+
+        void setMaximumTransitions(int maximumTransitions) {
+            this.maximumTransitions = maximumTransitions;
+        }
+
+        void setMaximumTime(long maximumTime) {
+            this.maximumTime = maximumTime;
+        }
+
+        void setMaximumTimeUnit(TimeUnit maximumTimeUnit) {
+            this.maximumTimeUnit = maximumTimeUnit;
+        }
+
+        void setAllowReducibleClasses(boolean allowReducibleClasses) {
             this.allowReducibleClasses = allowReducibleClasses;
         }
 
@@ -177,10 +222,14 @@ public class ModelCheckingOptions {
      * @author Dominik Grzelak
      */
     public static final class ExportOptions implements Opts {
-        private final File outputStatesFolder;
-        private final File reactionGraphFile;
-        private final File rewriteResultFolder;
-        private final Boolean printCanonicalStateLabel;
+        private File outputStatesFolder;
+        private File reactionGraphFile;
+        private File rewriteResultFolder;
+        private Boolean printCanonicalStateLabel;
+
+        ExportOptions() {
+            this(new File("./states/"), new File("./transition_graph.png"), new File("./results/"), false);
+        }
 
         ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel) {
             this.outputStatesFolder = outputStatesFolder;
@@ -203,6 +252,22 @@ public class ModelCheckingOptions {
 
         public File getRewriteResultFolder() {
             return rewriteResultFolder;
+        }
+
+        void setOutputStatesFolder(File outputStatesFolder) {
+            this.outputStatesFolder = outputStatesFolder;
+        }
+
+        void setReactionGraphFile(File reactionGraphFile) {
+            this.reactionGraphFile = reactionGraphFile;
+        }
+
+        void setRewriteResultFolder(File rewriteResultFolder) {
+            this.rewriteResultFolder = rewriteResultFolder;
+        }
+
+        void setPrintCanonicalStateLabel(Boolean printCanonicalStateLabel) {
+            this.printCanonicalStateLabel = printCanonicalStateLabel;
         }
 
         /**

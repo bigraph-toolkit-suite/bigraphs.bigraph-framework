@@ -2,6 +2,31 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="bintray-st-tu-dresden-maven-repository" />
+      <option name="name" value="bintray" />
+      <option name="url" value="https://dl.bintray.com/st-tu-dresden/maven-repository" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="eclipse-latest" />
+      <option name="name" value="eclipse-latest" />
+      <option name="url" value="http://download.eclipse.org/releases/latest" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="spring-milestones" />
+      <option name="name" value="Spring Milestones" />
+      <option name="url" value="https://repo.spring.io/milestone" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="bintray" />
       <option name="url" value="https://jcenter.bintray.com" />
@@ -10,26 +35,6 @@
       <option name="id" value="emf-compare" />
       <option name="name" value="emf-compare" />
       <option name="url" value="https://download.eclipse.org/modeling/emf/compare/updates/releases/3.3/R201911051515/core/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="central" />
-      <option name="name" value="Maven Central repository" />
-      <option name="url" value="https://repo1.maven.org/maven2" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="eclipse-latest" />
-      <option name="name" value="eclipse-latest" />
-      <option name="url" value="http://download.eclipse.org/releases/latest" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="bintray-st-tu-dresden-maven-repository" />
-      <option name="name" value="bintray" />
-      <option name="url" value="https://dl.bintray.com/st-tu-dresden/maven-repository" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="jboss.community" />
-      <option name="name" value="JBoss Community repository" />
-      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
   </component>
 </project>

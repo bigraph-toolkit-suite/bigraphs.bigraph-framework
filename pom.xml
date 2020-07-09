@@ -40,6 +40,7 @@
         <bintray.organization>st-tu-dresden</bintray.organization>
         <bintray.repo>maven-repository</bintray.repo>
         <bintray.package>${project.artifactId}</bintray.package>
+        <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
         <bintray.deployment.url>
             https://api.bintray.com/maven/${bintray.organization}/${bintray.repo}/${bintray.package}/;publish=1
         </bintray.deployment.url>
@@ -86,12 +87,28 @@
             <name>bintray</name>
             <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
         </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>reficio</id>
             <url>http://repo.reficio.org/maven/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </pluginRepository>
     </pluginRepositories>
 
@@ -188,6 +205,18 @@
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>1.6.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring.boot.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -201,8 +230,10 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
+                            <!--                            <additionalJOptions>&#45;&#45;allow-script-in-comments</additionalJOptions>-->
                             <!-- all, none, html-->
                             <doclint>${doclint}</doclint>
+                            <!--                            <excludePackageNames>org.springframework.*</excludePackageNames>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -306,7 +337,6 @@
                 <version>3.5.3.201911051515</version>
                 <type>jar</type>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore.xmi -->
             <dependency>
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
@@ -317,7 +347,6 @@
                 <artifactId>org.eclipse.emf.ecore</artifactId>
                 <version>${emf.ecore.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.codegen -->
             <dependency>
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.codegen</artifactId>
@@ -341,13 +370,36 @@
                 <artifactId>eclipse-collections</artifactId>
                 <version>10.0.0</version>
             </dependency>
+            <!-- Spring Framework -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring.boot.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>5.2.7.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
             <!-- Other -->
             <dependency>
                 <groupId>net.jodah</groupId>
                 <artifactId>typetools</artifactId>
                 <version>0.6.2</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.checkerframework/checker -->
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker</artifactId>
@@ -402,10 +454,21 @@
             </dependency>
 
             <!-- Test -->
-            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <scope>test</scope>
+                <version>${spring.boot.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -496,23 +559,6 @@
 
             <build>
                 <plugins>
-                    <!--                    <plugin>-->
-                    <!--                        <groupId>org.shredzone.maven</groupId>-->
-                    <!--                        <artifactId>mkdocs-maven-plugin</artifactId>-->
-                    <!--                        <executions>-->
-                    <!--                            <execution>-->
-                    <!--                                <phase>install</phase>-->
-                    <!--                                <goals>-->
-                    <!--                                    <goal>build</goal>-->
-                    <!--                                </goals>-->
-                    <!--                                <configuration>-->
-                    <!--                                    <strict>true</strict>-->
-                    <!--                                    <directory>${project.basedir}/etc/doc/</directory>-->
-                    <!--                                    <outputDirectory>${project.basedir}/target/site/reference/html/</outputDirectory>-->
-                    <!--                                </configuration>-->
-                    <!--                            </execution>-->
-                    <!--                        </executions>-->
-                    <!--                    </plugin>-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -524,15 +570,15 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
+                                    <additionalJOptions>--allow-script-in-comments</additionalJOptions>
                                     <!-- all, none, html-->
                                     <doclint>${doclint}</doclint>
                                     <destDir>./</destDir>
                                     <author>true</author>
-                                    <bottom>Copyright &#169; {inceptionYear}. Software Technology Group,
+                                    <bottom>Copyright &#169; 2020. Dominik Grzelak, Software Technology Group,
                                         Technische Universität Dresden. All rights reserved.
                                     </bottom>
-                                    <excludePackageNames>com.microstar.xml,GCF</excludePackageNames>
-                                    <!--                                    <reportOutputDirectory>${project.javadoc.outputDirectory}</reportOutputDirectory>-->
+                                    <excludePackageNames>com.microstar.xml:GCF</excludePackageNames>
                                 </configuration>
                             </execution>
                         </executions>
@@ -548,7 +594,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>copy-resources</id>
+                                <id>copy-api-resources</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
