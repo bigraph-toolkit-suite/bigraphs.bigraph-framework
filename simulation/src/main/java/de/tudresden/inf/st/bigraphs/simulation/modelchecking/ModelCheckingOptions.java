@@ -170,6 +170,12 @@ public class ModelCheckingOptions {
             return Options.TRANSITION;
         }
 
+        public Builder toBuilder() {
+            return transitionOpts().allowReducibleClasses(this.allowReducibleClasses)
+                    .setMaximumTransitions(this.maximumTransitions)
+                    .setMaximumTime(this.maximumTime, this.maximumTimeUnit);
+        }
+
         /**
          * Default values: <br>
          * <ul>
@@ -304,6 +310,13 @@ public class ModelCheckingOptions {
         @Override
         public Options getType() {
             return Options.EXPORT;
+        }
+
+        public Builder toBuilder() {
+            return exportOpts().setOutputStatesFolder(this.outputStatesFolder)
+                    .setPrintCanonicalStateLabel(this.printCanonicalStateLabel)
+                    .setReactionGraphFile(this.reactionGraphFile)
+                    .setRewriteResultFolder(this.rewriteResultFolder);
         }
 
         public static class Builder {
