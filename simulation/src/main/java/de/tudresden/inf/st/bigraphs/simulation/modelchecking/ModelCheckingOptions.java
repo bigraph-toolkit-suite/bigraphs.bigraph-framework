@@ -55,6 +55,12 @@ public class ModelCheckingOptions {
 
     public ModelCheckingOptions and(Opts opts) {
         optsMap.put(opts.getType(), opts);
+        if (opts.getType() == Options.TRANSITION) {
+            transitionOpts = (TransitionOptions) opts;
+        }
+        if (opts.getType() == Options.EXPORT) {
+            exportOpts = (ExportOptions) opts;
+        }
         return this;
     }
 
