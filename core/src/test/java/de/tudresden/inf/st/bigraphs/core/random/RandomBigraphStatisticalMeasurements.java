@@ -17,6 +17,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.generators.RandomBigraphGeneratorSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -36,6 +37,7 @@ import static java.util.stream.Collectors.groupingBy;
  *
  * @author Dominik Grzelak
  */
+@Disabled
 public class RandomBigraphStatisticalMeasurements {
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
