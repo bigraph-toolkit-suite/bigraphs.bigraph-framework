@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
@@ -21,6 +22,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -36,6 +38,56 @@ public class BigraphCreationUnitTest {
 
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
     private PureBigraphFactory factoryWithArgs = AbstractBigraphFactory.createPureBigraphFactory();
+
+    @Test
+    void attach_multiple_innerNames() throws InvalidConnectionException, TypeNotExistsException, IOException {
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.InnerName x1 = builder.createInnerName("x1");
+        BigraphEntity.InnerName tmp = builder.createInnerName("tmp");
+        builder
+                .createRoot()
+                .addChild("D").linkToInner(tmp)
+                .addChild("D").linkToInner(tmp)
+        ;
+        builder.connectInnerNames(x1, tmp);
+        builder.closeInnerName(tmp);
+        PureBigraph bigraph = builder.createBigraph();
+
+        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        assertEquals(1, bigraph.getRoots().size());
+        assertEquals(2, bigraph.getNodes().size());
+        assertEquals(0, bigraph.getPortCount(bigraph.getNodes().get(0)));
+        assertEquals(0, bigraph.getPortCount(bigraph.getNodes().get(1)));
+        assertEquals(1, bigraph.getInnerNames().size());
+        assertEquals(1, bigraph.getEdges().size());
+        assertEquals(1, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals("x1", ((BigraphEntity.InnerName) bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).get(0)).getName());
+        assertEquals("e1", ((BigraphEntity.Edge) bigraph.getLinkOfPoint(x1)).getName());
+
+
+        builder = pureBuilder(signature);
+        x1 = builder.createInnerName("x1");
+        tmp = builder.createInnerName("tmp");
+        builder
+                .createRoot()
+                .addChild("D").linkToInner(tmp)
+                .addChild("D").linkToInner(tmp)
+        ;
+        builder.addInnerNameTo(tmp, x1);
+        builder.closeInnerName(tmp);
+        bigraph = builder.createBigraph();
+
+        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        assertEquals(1, bigraph.getRoots().size());
+        assertEquals(2, bigraph.getNodes().size());
+        assertEquals(1, bigraph.getPortCount(bigraph.getNodes().get(0)));
+        assertEquals(1, bigraph.getPortCount(bigraph.getNodes().get(1)));
+        assertEquals(1, bigraph.getInnerNames().size());
+        assertEquals(1, bigraph.getEdges().size());
+        assertEquals(3, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals("e0", ((BigraphEntity.Edge) bigraph.getLinkOfPoint(x1)).getName());
+    }
 
     @Test
     void lean_factory_creation() throws IncompatibleSignatureException, IncompatibleInterfaceException, InvalidConnectionException {
