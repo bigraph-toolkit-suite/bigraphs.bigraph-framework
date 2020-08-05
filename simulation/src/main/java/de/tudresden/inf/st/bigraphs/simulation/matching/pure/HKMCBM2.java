@@ -45,8 +45,6 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
 
     /* queue used for breadth first search */
     private FixedSizeIntegerQueue queue;
-    private PureBigraphRedexAdapter redexAdapter;
-    private PureBigraphAgentAdapter agentAdapter;
 
     private Map<Control, Long> ctrlsRedex;
     private Map<Control, Long> ctrlsAgent;
@@ -64,10 +62,8 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
      * @param partition2 the second partition of vertices in the bipartite graph (AGENT)
      */
     public HKMCBM2(
-            Graph<BigraphEntity, DefaultEdge> graph, Set<BigraphEntity> partition1, Set<BigraphEntity> partition2, PureBigraphRedexAdapter redexAdapter, PureBigraphAgentAdapter agentAdapter) {
+            Graph<BigraphEntity, DefaultEdge> graph, Set<BigraphEntity> partition1, Set<BigraphEntity> partition2) {
         this.graph = GraphTests.requireUndirected(graph);
-        this.redexAdapter = redexAdapter;
-        this.agentAdapter = agentAdapter;
         // Ensure that partition1 is smaller or equal in size compared to partition 2
         if (partition1.size() <= partition2.size()) {
             this.partition1 = partition1;

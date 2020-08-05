@@ -3,7 +3,10 @@ package de.tudresden.inf.st.bigraphs.simulation.matching.pure;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.*;
 import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
+import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ContextIsNotActive;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
@@ -20,13 +23,12 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractDynamicMatchAdapter;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatchingEngine;
+import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatchingSupport;
 import de.tudresden.inf.st.bigraphs.simulation.util.Permutations;
 import org.eclipse.collections.api.bimap.MutableBiMap;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
-import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 import org.eclipse.collections.impl.factory.BiMaps;
-import org.eclipse.collections.impl.factory.SortedSets;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
@@ -37,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -53,7 +54,7 @@ import static java.util.stream.Collectors.toMap;
  * @author Dominik Grzelak
  * @see HKMCBM2
  */
-public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigraph> {
+public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements BigraphMatchingEngine<PureBigraph> {
 
     private final Logger logger = LoggerFactory.getLogger(PureBigraphMatchingEngine.class);
 
@@ -152,7 +153,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
                 List<BigraphEntity> neighborsOfU = redexAdapter.getOpenNeighborhoodOfVertex(eachU);
 //                neighborsOfU = neighborsOfU.stream().filter(x -> !x.getType().equals(BigraphEntityType.SITE)).collect(Collectors.toList());
-                Graph<BigraphEntity, DefaultEdge> bipartiteGraph = BigraphMatchingEngine.createBipartiteGraph(neighborsOfU, childrenOfV);
+                Graph<BigraphEntity, DefaultEdge> bipartiteGraph = BigraphMatchingSupport.createBipartiteGraph(neighborsOfU, childrenOfV);
 
                 // Additional Conditions to check in the following as well:
                 // C1: has eachU some sites als sibling? If not, then eachV must have same sibling count
@@ -161,7 +162,7 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                 // eachU and eachV must match
 
 
-                // Connect the edges
+                // Connect nodes by edges of the bipartite graph
                 for (int j = 0, vn = childrenOfV.size(); j < vn; j++) {
                     for (int i = 0, un = neighborsOfU.size(); i < un; i++) {
                         if (S.get(childrenOfV.get(j), neighborsOfU.get(i)) != null && S.get(childrenOfV.get(j), neighborsOfU.get(i)).contains(eachU)) {
@@ -182,12 +183,13 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                 //      -> children are allowed
                 //      -> it's possible now that eachV can have more siblings than eachU
                 boolean hasSite = false;
-                if (redexAdapter.isBRoot(eachU.getInstance())) { //if the current element is a root then automatically a "site" is inferred
+                // if the current element is a root then we automatically interpret it is a "site"
+                if (redexAdapter.isBRoot(eachU.getInstance())) {
                     hasSite = true;
                 } else {
 //                    hasSite = redexAdapter.getChildrenWithSites(eachU).stream().anyMatch(BigraphEntityType::isSite);
                     for (BigraphEntity eachSibOfU : redexAdapter.getChildrenWithSites(eachU)) {
-                        if (eachSibOfU.getType().equals(BigraphEntityType.SITE)) {
+                        if (BigraphEntityType.isSite(eachSibOfU)) {
                             hasSite = true;
                             break;
                         }
@@ -196,13 +198,12 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
 
                 // Compute size of maximum matching of bipartite graph for all partitions
                 List<BigraphEntity> uSetAfterMatching = new ArrayList<>();
-                int ic = 0;
-                for (List<BigraphEntity> eachPartitionX : partitionSets) {
+                for (int ic = 0; ic < partitionSets.size(); ic++) {
+                    List<BigraphEntity> eachPartitionX = partitionSets.get(ic);
                     try {
                         HKMCBM2 alg =
                                 new HKMCBM2(bipartiteGraph,
-                                        new HashSet<>(eachPartitionX), new HashSet<>(childrenOfV),
-                                        redexAdapter, agentAdapter
+                                        new HashSet<>(eachPartitionX), new HashSet<>(childrenOfV)
                                 );
                         alg.setHasSite(hasSite);
                         MatchingAlgorithm.Matching<BigraphEntity, DefaultEdge> matching = alg.getMatching();
@@ -220,7 +221,6 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                    ic++;
                 }
                 // Update map S
                 S.put(eachV, eachU, uSetAfterMatching);
@@ -1116,18 +1116,18 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         boolean allMatchesAreGood = false;
         if (redexPartition.size() == lnk.size()) {
             allMatchesAreGood = !lnk.values().stream().anyMatch(x -> !x);
-            logger.debug("allMatchesAreGood 3: " + allMatchesAreGood);
+//            logger.debug("allMatchesAreGood 3: " + allMatchesAreGood);
         }
 
         // This statement leads to an overflow: "agentPartition.stream().allMatch(x -> lnkTab.columnMap().get(x).containsValue(true));"
         // so we have to do it via a traditional loop
-        boolean b = true;
-        for (BigraphEntity entity : agentPartition) {
-            if (Objects.nonNull(lnkTab.columnMap().get(entity)) && !lnkTab.columnMap().get(entity).containsValue(true)) {
-                b = false;
-                break;
-            }
-        }
+//        boolean b = true;
+//        for (BigraphEntity entity : agentPartition) {
+//            if (Objects.nonNull(lnkTab.columnMap().get(entity)) && !lnkTab.columnMap().get(entity).containsValue(true)) {
+//                b = false;
+//                break;
+//            }
+//        }
 //        logger.debug("NewNew link matching result: {}", allMatchesAreGood);
 //        logger.debug("New link matching result: {}", b);
 //        logger.debug("Old link matching result: {}", !lnk.containsValue(false));
@@ -1189,9 +1189,13 @@ public class PureBigraphMatchingEngine implements BigraphMatchingEngine<PureBigr
         List<AbstractDynamicMatchAdapter.ControlLinkPair> lnkAgent = agentAdapter.getLinksOfNode(v);
         if (lnkRedex.size() == lnkAgent.size()) {
             // inner names are not present, thus they are not checked and 'getNodesOfLink()' is enough
-            List<BigraphEntity> collectR = lnkRedex.stream().map(x -> redexAdapter.getNodesOfLink((BigraphEntity.OuterName) x.getLink())).flatMap(x -> x.stream())
+            List<BigraphEntity> collectR = lnkRedex.stream()
+//                    .filter(x -> BigraphEntityType.isOuterName(x.getLink()))
+                    .map(x -> redexAdapter.getNodesOfLink((BigraphEntity.Link) x.getLink())).flatMap(x -> x.stream())
                     .sorted(Comparator.comparing(x -> x.getControl().getNamedType().stringValue())).collect(toList());
-            List<BigraphEntity> collectA = lnkAgent.stream().map(x -> agentAdapter.getNodesOfLink((BigraphEntity.OuterName) x.getLink())).flatMap(x -> x.stream())
+            List<BigraphEntity> collectA = lnkAgent.stream()
+//                    .filter(x -> BigraphEntityType.isOuterName(x.getLink()))
+                    .map(x -> agentAdapter.getNodesOfLink((BigraphEntity.Link) x.getLink())).flatMap(x -> x.stream())
                     .sorted(Comparator.comparing(x -> x.getControl().getNamedType().stringValue())).collect(toList());
             if (collectR.size() == collectA.size()) {
                 for (int i = 0; i < collectR.size(); i++) {
