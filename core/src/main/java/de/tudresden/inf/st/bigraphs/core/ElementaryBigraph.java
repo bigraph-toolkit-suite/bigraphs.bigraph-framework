@@ -64,6 +64,12 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
     }
 
     @Override
+    public Collection<BigraphEntity.Link> getAllLinks() {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getAllLinks();
+        return Lists.mutable.<BigraphEntity.Link>ofAll(getOuterNames()).withAll(getEdges());
+    }
+
+    @Override
     public Collection<BigraphEntity.RootEntity> getRoots() {
         if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getRoots();
         return Collections.emptyList();
@@ -127,7 +133,7 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
     }
 
     @Override
-    public BigraphEntity getLinkOfPoint(BigraphEntity point) {
+    public BigraphEntity.Link getLinkOfPoint(BigraphEntity point) {
         if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getLinkOfPoint(point);
         if (!BigraphEntityType.isPointType(point)) return null;
         EObject eObject = point.getInstance();

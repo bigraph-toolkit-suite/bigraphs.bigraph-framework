@@ -232,6 +232,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @return all places of the bigraph
      */
     Collection<BigraphEntity> getAllPlaces();
+    Collection<BigraphEntity.Link> getAllLinks();
 
     Collection<BigraphEntity.Edge> getEdges();
 
@@ -273,7 +274,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param point a point of the bigraph
      * @return returns the link that connects the point a {@code null}
      */
-    BigraphEntity getLinkOfPoint(BigraphEntity point);
+    BigraphEntity.Link getLinkOfPoint(BigraphEntity point);
 
     /**
      * Return all ports of a node. If the node's control has arity 0, then the list will always be empty.

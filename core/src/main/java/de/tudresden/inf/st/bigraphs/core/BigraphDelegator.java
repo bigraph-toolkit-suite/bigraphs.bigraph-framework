@@ -76,7 +76,7 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public BigraphEntity getLinkOfPoint(BigraphEntity point) {
+    public BigraphEntity.Link getLinkOfPoint(BigraphEntity point) {
         return bigraphDelegate.getLinkOfPoint(point);
     }
 
@@ -123,6 +123,11 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     @Override
     public Collection<BigraphEntity> getAllPlaces() {
         return bigraphDelegate.getAllPlaces();
+    }
+
+    @Override
+    public Collection<BigraphEntity.Link> getAllLinks() {
+        return bigraphDelegate.getAllLinks();
     }
 
     @Override
