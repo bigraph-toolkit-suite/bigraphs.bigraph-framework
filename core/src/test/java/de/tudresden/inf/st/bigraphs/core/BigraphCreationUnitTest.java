@@ -36,8 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 //@Disabled
 public class BigraphCreationUnitTest {
 
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
-    private PureBigraphFactory factoryWithArgs = AbstractBigraphFactory.createPureBigraphFactory();
+    private final PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
     void attach_multiple_innerNames() throws InvalidConnectionException, TypeNotExistsException, IOException {

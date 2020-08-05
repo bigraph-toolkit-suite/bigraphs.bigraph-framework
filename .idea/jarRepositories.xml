@@ -36,5 +36,10 @@
       <option name="name" value="emf-compare" />
       <option name="url" value="https://download.eclipse.org/modeling/emf/compare/updates/releases/3.3/R201911051515/core/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="emf-compare" />
+      <option name="name" value="emf-compare" />
+      <option name="url" value="https://download.eclipse.org/modeling/emf/compare/updates/releases/3.3/R201911051515/core" />
+    </remote-repository>
   </component>
 </project>
