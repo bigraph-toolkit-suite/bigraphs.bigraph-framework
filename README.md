@@ -336,7 +336,7 @@ The recommendation here is to build it with the regular `mvn` command. You will 
 
 > **Tip:** A script called `install-maven.sh` can be found in the `./etc/ci/` folder to automatically install Maven 3.6.3.
 
-### Building from Source
+### Building the Framework from Source
 
 **For the first time, the following steps must be executed from the root directory of this project:**
 

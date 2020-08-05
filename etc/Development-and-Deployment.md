@@ -53,8 +53,8 @@ mvn clean install -U
 
 Sometimes it is necessary to execute the following first:
 ```bash
-cd ~/.m2
-find . -name "_remote.repositories" -type f -delete
+$ cd ~/.m2
+$ find . -name "_remote.repositories" -type f -delete
 ```
 See [here](https://stackoverflow.com/questions/16866978/maven-cant-find-my-local-artifacts/) for answers, when it may be the case.
 
@@ -75,11 +75,11 @@ It references also to the Javadoc.
 
 
 
-### Building the Documentation
+###  Building and Working with the Documentation
 
 #### Using Maven
 
-- This sequence of commands fully build the documentation
+- This sequence of commands fully builds the documentation
 - Execute them from the root folder of this project
 
 ```bash
@@ -95,15 +95,16 @@ It will be copied to `etc/doc/docusaurus/website/static/apidocs` by Maven as wel
 
 #### Using Docusaurus for Live Editing
 
-First, `cd` into the `etc/doc/docusaurus/website/` folder.
+First, `cd` into the `./etc/doc/docusaurus/website/` folder.
 Then, to view and edit the manual execute the following commands:
+
 ```bash
-cd ./etc/doc/docusaurus/website
-npm start
+$ cd ./etc/doc/docusaurus/website
+$ npm start
 ```
 To actually build the static site:
 ```bash
-npm run build
+$ npm run build
 ```
 The output is exported at `etc/doc/docusaurus/website/build/bigraph-framework/index.html`.
 
