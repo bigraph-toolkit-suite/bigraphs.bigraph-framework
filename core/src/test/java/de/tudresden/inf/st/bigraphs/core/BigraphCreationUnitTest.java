@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
@@ -18,6 +19,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.jupiter.api.*;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,6 +40,56 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BigraphCreationUnitTest {
 
     private final PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+
+    @Test
+    void traversal_tests() throws InvalidConnectionException, TypeNotExistsException, IOException {
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        builder
+                .createRoot()
+                .addChild("A").down().addChild("D").up()
+                .addChild("B").down().addChild("D").addChild("D").up()
+                .addChild("E").down().addChild("D").addChild("D").addChild("D").top()
+        ;
+        PureBigraph bigraph = builder.createBigraph();
+        Traverser<BigraphEntity> traverser = Traverser.forTree(x -> {
+            List<BigraphEntity> children = bigraph.getChildrenOf(x);
+            System.out.format("%s has %d children\n", x.getType(), children.size());
+            return children;
+        });
+        Iterable<BigraphEntity> bigraphEntities = traverser.breadthFirst(bigraph.getRoots());
+        bigraphEntities.forEach(x -> {
+            System.out.println(x);
+        });
+
+        builder = pureBuilder(signature);
+        BigraphEntity.OuterName y1 = builder.createOuterName("y1");
+        BigraphEntity.OuterName y2 = builder.createOuterName("y2");
+        BigraphEntity.OuterName y3 = builder.createOuterName("y3");
+        BigraphEntity.InnerName x1 = builder.createInnerName("x1");
+        builder.createRoot()
+                .connectByEdge("D", "D", "D").linkToOuter(y1)
+                .addChild("D").linkToOuter(y1).down()
+                .addChild("D").linkToOuter(y2).addChild("D").linkToOuter(y3)
+                .addChild("User").linkToOuter(y1).up()
+                .addChild("D").linkToInner(x1);
+        PureBigraph bigraph1 = builder.createBigraph();
+        BigraphArtifacts.exportAsInstanceModel(bigraph1, System.out);
+
+        bigraph1.getAllLinks().forEach(l -> {
+            List<BigraphEntity> pointsFromLink = bigraph1.getPointsFromLink(l);
+            pointsFromLink.forEach(p -> {
+                if (BigraphEntityType.isPort(p)) {
+                    BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph1.getNodeOfPort((BigraphEntity.Port) p);
+                    int ix = bigraph1.getPorts(nodeOfPort).indexOf(p);
+                    System.out.format("Node %s with port at index %d is connected to link %s\n", nodeOfPort.getName(), ix, l.getName());
+                } else if (BigraphEntityType.isInnerName(p)) {
+                    System.out.format("Inner name %s is connected to link %s\n", ((BigraphEntity.InnerName) p).getName(), l.getName());
+                }
+            });
+        });
+
+    }
 
     @Test
     void attach_multiple_innerNames() throws InvalidConnectionException, TypeNotExistsException, IOException {
@@ -678,6 +731,7 @@ public class BigraphCreationUnitTest {
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("E")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().kind(ControlKind.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(4)).assign()
         ;

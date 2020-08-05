@@ -2,8 +2,9 @@
   "docs": {
     "Basics": [
       "index",
-      "basics",
-      "composition"
+      "basic/basics",
+      "basic/composition",
+      "basic/traversing"
     ],
     "Dynamic Bigraphs": [
       "simulation",
