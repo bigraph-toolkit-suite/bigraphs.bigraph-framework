@@ -75,7 +75,7 @@ This method checks, whether two nodes are connected via an edge or an outer name
 
 ## Traversing a Bigraph
 
-The framework includes no specific traversal algorithms for bigraphs itself but provides all necessary methods to implement any graph traversal algorithm. Therefore, also review some of the presented methods above in [Simple Navigation through a Bigraph](#Simple-Navigation-through-a-Bigraph) or consulte the JavaDoc API.
+The framework includes no specific traversal algorithms for bigraphs itself but provides all necessary methods to implement any graph traversal algorithm. Therefore, also review some of the presented methods above in [Navigating through a Bigraph](#Navigating-through-a-Bigraph) or consulte the JavaDoc API.
 
 A bigraph is a combination of two structures as explained in the [Getting Started Guide](basics). That means that both structures can be traversed independently.
 
@@ -143,8 +143,8 @@ Guava's `Traverser` class contains more methods, for example, `depthFirstPreOrde
 
 ### Traversing a Link Graph Without Additional Libraries
 
-The next listing illustrates how to traverse the link graph, which can be regarded as an undirected hypergraph, in no specific order.
-Therefore, all links are first returned by calling the `Bigraph#getAllLinks()` method and afterwards iterated over to get the respective points (ports and inner names) that are connected to that link.
+The next listing illustrates how to traverse the link graph in no specific order. A link graph can be regarded as an undirected hypergraph.
+A brief outline of this very naive algorithm is as follows: First, all links are returned by calling [`Bigraph#getAllLinks()`](https://www.bigraphs.org/apidocs/de/tudresden/inf/st/bigraphs/core/Bigraph.html#getAllLinks--). Afterwards, we iterate over this list to get the respective points (i.e., ports and inner names) that are connected to that link.
 
 ```java
 builder = pureBuilder(signature);
