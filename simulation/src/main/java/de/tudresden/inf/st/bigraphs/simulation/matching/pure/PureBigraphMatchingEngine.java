@@ -125,8 +125,9 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             matchingTimer = Stopwatch.createStarted();
         }
 
-        search.search();
+        search.embeddings();
         candidatesHyperIso = search.getCandidates();
+        Set<SubHypergraphIsoSearch.Embedding> embeddingSet = search.getEmbeddingSet();
 
         List<List<BigraphEntity>> partitionSets = new ArrayList<>();
         for (BigraphEntity eachV : internalVertsG) {//TODO: create this in a stream-filter
