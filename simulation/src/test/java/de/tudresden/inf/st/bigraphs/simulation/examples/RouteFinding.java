@@ -33,11 +33,13 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
 
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dominik Grzelak
@@ -119,6 +121,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 opts);
         modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
+        assertTrue(Files.exists(completePath));
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {

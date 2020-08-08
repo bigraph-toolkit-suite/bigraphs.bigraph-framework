@@ -24,9 +24,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dominik Grzelak
@@ -83,6 +86,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
                 opts)
                 .setReactiveSystemListener(this);
         modelChecker.execute();
+        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_system.png")));
     }
 
     @Override

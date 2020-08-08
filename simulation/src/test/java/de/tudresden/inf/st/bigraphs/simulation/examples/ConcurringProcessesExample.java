@@ -26,8 +26,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dominik Grzelak
@@ -88,10 +91,10 @@ public class ConcurringProcessesExample {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(20)
-                        .setMaximumTime(30)
+                                .setMaximumTransitions(20)
+                                .setMaximumTime(30)
 //                        .allowReducibleClasses(true)
-                        .create()
+                                .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
@@ -106,6 +109,7 @@ public class ConcurringProcessesExample {
                 BigraphModelChecker.SimulationType.BREADTH_FIRST,
                 opts);
         modelChecker.execute();
+        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "partial/transition_graph_agent-2.png")));
     }
 
     @Test
@@ -173,6 +177,7 @@ public class ConcurringProcessesExample {
                 BigraphModelChecker.SimulationType.BREADTH_FIRST,
                 opts);
         modelChecker.execute();
+        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
 
     }
 

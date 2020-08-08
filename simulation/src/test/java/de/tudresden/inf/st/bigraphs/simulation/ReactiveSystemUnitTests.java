@@ -32,6 +32,7 @@ import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -86,6 +87,7 @@ public class ReactiveSystemUnitTests {
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
                 BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
         modelChecker.execute();
+        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph_ABB.png")));
 
         Set<ReactionGraph.LabeledNode> labeledNodes = modelChecker.getReactionGraph().getGraph().vertexSet();
         assertEquals(2, labeledNodes.size());
@@ -139,6 +141,7 @@ public class ReactiveSystemUnitTests {
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
         modelChecker.execute();
+        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
     }
 
     @Test
@@ -179,6 +182,7 @@ public class ReactiveSystemUnitTests {
                 BigraphModelChecker.SimulationType.RANDOM_STATE,
                 opts);
         modelChecker.execute();
+        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png")));
     }
 
     @Nested

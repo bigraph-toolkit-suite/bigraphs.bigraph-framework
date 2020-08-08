@@ -22,10 +22,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dominik Grzelak
@@ -93,6 +96,8 @@ public class TraceabilityExample {
                 BigraphModelChecker.SimulationType.BREADTH_FIRST,
                 opts);
         modelChecker.execute();
+
+        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
     }
 
     PureBigraph createAgent() throws InvalidConnectionException {
