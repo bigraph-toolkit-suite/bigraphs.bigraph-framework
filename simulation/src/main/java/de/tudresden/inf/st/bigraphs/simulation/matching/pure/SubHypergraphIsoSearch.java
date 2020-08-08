@@ -18,7 +18,6 @@ public class SubHypergraphIsoSearch {
 
     private final IHSFilter ihsFilter;
     private final Map<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> candidates;
-    private final List<Embedding> embeddings;
     Map<BigraphEntity.NodeEntity<Control<?, ?>>, Float> rankMap;
     private boolean initialized;
     Set<Embedding> embeddingSet = new HashSet<>();
@@ -27,7 +26,6 @@ public class SubHypergraphIsoSearch {
         this.redex = redex;
         this.agent = agent;
         this.candidates = new HashMap<>();
-        this.embeddings = new ArrayList<>();
         this.rankMap = new HashMap<>();
         this.ihsFilter = new IHSFilter(redex, agent);
         this.initialized = false;
@@ -47,7 +45,7 @@ public class SubHypergraphIsoSearch {
 
     public void reset() {
         candidates.clear();
-        embeddings.clear();
+        embeddingSet.clear();
         initialized = false;
     }
 
@@ -126,18 +124,28 @@ public class SubHypergraphIsoSearch {
     }
 
     private boolean candidateGenWithBFS(BigraphEntity.NodeEntity<Control<?, ?>> u_s, BigraphEntity.NodeEntity<Control<?, ?>> v_s) {
-        Traverser<BigraphEntity> traverser = Traverser.forGraph(x -> redex.getOpenNeighborhoodOfVertex(x));
-        List<BigraphEntity> startNodes = new ArrayList<>();
-        startNodes.add(u_s);
-        if (redex.getRoots().size() > 1) {
+        Traverser<BigraphEntity> traverser = Traverser.forGraph(redex::getOpenNeighborhoodOfVertex);
+        int rootCnt = redex.getRoots().size();
+        BigraphEntity<?>[] startNodes = new BigraphEntity[rootCnt];
+        startNodes[0] = u_s;
+        if (rootCnt > 1) {
+            // if we have a forest, the start node cannot reach the other trees using the traverser as defined above
+            // So we add the other root nodes to the start nodes
             BigraphEntity.RootEntity topLevelRoot = redex.getTopLevelRoot(u_s);
-            startNodes.addAll(redex.getRoots().stream().filter(x -> !x.equals(topLevelRoot)).collect(Collectors.toList()));
+            Iterator<BigraphEntity.RootEntity> iterator = redex.getRoots().iterator();
+            int ix = 1;
+            while (iterator.hasNext()) {
+                BigraphEntity.RootEntity root = iterator.next();
+                if (root != topLevelRoot) {
+                    startNodes[ix++] = root;
+                }
+            }
         }
-        for (BigraphEntity startNode : startNodes) {
+        for (BigraphEntity<?> startNode : startNodes) {
 //            Iterable<BigraphEntity> bigraphEntities = traverser.breadthFirst(startNode);
             traverser.breadthFirst(startNode).forEach(u_i -> {
                 if (!BigraphEntityType.isNode(u_i)) return;
-                BigraphEntity.NodeEntity u = (BigraphEntity.NodeEntity) u_i;
+                BigraphEntity.NodeEntity<?> u = (BigraphEntity.NodeEntity<?>) u_i;
 //                System.out.println(u.getName() + " -> " + v_s.getName());
 //            if (u.getName().equals("v2") && v_s.getName().equals("v0")) {
 //                System.out.println("stop");
@@ -167,22 +175,14 @@ public class SubHypergraphIsoSearch {
 
             while (iterator.hasNext()) {
                 Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>> next = iterator.next();
-                List<BigraphEntity.NodeEntity> incidentNodesRedex = getIncidentNodesOf(next.getKey(), redex);
-                List<BigraphEntity.NodeEntity> incidentNodesAgent = getIncidentNodesOf(next.getValue(), agent);
+                List<BigraphEntity.NodeEntity<?>> incidentNodesRedex = getIncidentNodesOf(next.getKey(), redex);
+                List<BigraphEntity.NodeEntity<?>> incidentNodesAgent = getIncidentNodesOf(next.getValue(), agent);
 
-                List<BigraphEntity.NodeEntity> collect = incidentNodesAgent.stream().filter(emb::containsValue).collect(Collectors.toList());
+                List<BigraphEntity.NodeEntity<?>> collect = incidentNodesAgent.stream().filter(emb::containsValue).collect(Collectors.toList());
                 List<? extends BigraphEntity.NodeEntity<?>> collect1 = emb.entrySet().stream().filter(e -> collect.stream().anyMatch(x -> e.getValue().equals(x))).map(Map.Entry::getKey).collect(Collectors.toList());
-//                    System.out.println("chjsd");
-//                    matchedSoFar.addAll(incidentNodesRedex);
                 if (collect1.size() == incidentNodesRedex.size()) {
                     singleMatchCnt++;
                 }
-
-                if (collect1.size() == 0) {
-                    BigraphEntity[] pair = new BigraphEntity[]{next.getKey(), next.getValue()};
-//                        removeList.add(pair);
-                }
-
             }
             if (singleMatchCnt == candidates.size()) {
 //                System.out.println("\t\t Embedding found: " + emb);
@@ -204,162 +204,15 @@ public class SubHypergraphIsoSearch {
         return embeddingSet;
     }
 
-    private void recursiveSearch2(BigraphEntity.NodeEntity u_s, Embedding emb) {
-//        System.out.println("find embeddings from u_s: " + u_s);
-
-        List<BigraphEntity.NodeEntity<?>> nodeEntities = candidates.get(u_s);
-        List<BigraphEntity[]> removeList = new ArrayList<>();
-        candidates.entrySet().stream().filter(x -> !emb.containsKey(x.getKey())) //!x.getKey().equals(u_s) &&
-                .forEach(e -> {
-                    if (e.getValue().size() > 0) {
-                        recursiveSearch2(e.getKey(), emb);
-                    }
-                });
-
-        for (BigraphEntity.NodeEntity<?> af : nodeEntities) {
-            emb.put(u_s, af);
-
-            if (emb.size() != candidates.size()) {
-                break;
-            }
-//            System.out.println("\t begin search now ...");
-            Iterator<Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>>> iterator = emb.entrySet().iterator();
-            int singleMatchCnt = 0;
-
-            while (iterator.hasNext()) {
-                Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>> next = iterator.next();
-                List<BigraphEntity.NodeEntity> incidentNodesRedex = getIncidentNodesOf(next.getKey(), redex);
-                List<BigraphEntity.NodeEntity> incidentNodesAgent = getIncidentNodesOf(next.getValue(), agent);
-
-                List<BigraphEntity.NodeEntity> collect = incidentNodesAgent.stream().filter(emb::containsValue).collect(Collectors.toList());
-                List<? extends BigraphEntity.NodeEntity<?>> collect1 = emb.entrySet().stream().filter(e -> collect.stream().anyMatch(x -> e.getValue().equals(x))).map(Map.Entry::getKey).collect(Collectors.toList());
-//                    System.out.println("chjsd");
-//                    matchedSoFar.addAll(incidentNodesRedex);
-                if (collect1.size() == incidentNodesRedex.size()) {
-                    singleMatchCnt++;
-                }
-
-                if (collect1.size() == 0) {
-                    BigraphEntity[] pair = new BigraphEntity[]{next.getKey(), next.getValue()};
-                    removeList.add(pair);
-                }
-
-            }
-            if (singleMatchCnt == candidates.size()) {
-//                System.out.println("Embedding found: " + emb);
-            }
-
-        }
-
-
-//        for (BigraphEntity[] pair : removeList) {
-//            candidates.get(pair[0]).remove(pair[1]);
-////            emb.remove(pair[0]);
-//        }
-    }
-
-    private void recursiveSearch(BigraphEntity.NodeEntity<Control<?, ?>> u_s) {
-//        System.out.println("find embeddings from u_s: " + u_s);
-//        System.out.println(candidates);
-
-        List<BigraphEntity.NodeEntity<?>> agentNodesUsed = new ArrayList<>();
-        List<BigraphEntity.NodeEntity<?>> discardNode = new ArrayList<>();
-        List<BigraphEntity.NodeEntity<?>> nodeEntities = candidates.get(u_s);
-        int max = candidates.values().stream().map(List::size).reduce(0, Integer::sum);
-//        discardNode
-        for (BigraphEntity.NodeEntity<?> af : nodeEntities) {
-            int cnt = 0;
-            agentNodesUsed.clear();
-            discardNode.clear();
-            Embedding emb = new Embedding();
-            emb.put(u_s, af);
-            while (cnt < max) {
-                candidates.entrySet().stream().filter(x -> !x.getKey().equals(u_s))
-                        .forEach(e -> {
-                            List<BigraphEntity.NodeEntity<?>> availNodes = e.getValue().stream()
-//                                    .filter(x -> !agentNodesUsed.contains(x))
-                                    .collect(Collectors.toList());
-                            if (availNodes.size() > 0) {
-                                BigraphEntity.NodeEntity<?> af2 = availNodes.get(0);
-//                                agentNodesUsed.add(af2);
-                                emb.put(e.getKey(), af2);
-                            }
-                        });
-//                System.out.println(emb);
-                if (emb.size() != candidates.size()) {
-//                    cnt++;
-                    break;
-                }
-                Iterator<Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>>> iterator = emb.entrySet().iterator();
-                Set<BigraphEntity.NodeEntity> matchedSoFar = new HashSet<>();
-                List<BigraphEntity.NodeEntity<?>> notMatched = new ArrayList<>();
-                int singleMatchCnt = 0;
-                while (iterator.hasNext()) {
-                    Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>> next = iterator.next();
-                    List<BigraphEntity.NodeEntity> incidentNodesRedex = getIncidentNodesOf(next.getKey(), redex);
-                    List<BigraphEntity.NodeEntity> incidentNodesAgent = getIncidentNodesOf(next.getValue(), agent);
-
-                    List<BigraphEntity.NodeEntity> collect = incidentNodesAgent.stream().filter(x -> emb.values().contains(x)).collect(Collectors.toList());
-//            List<? extends BigraphEntity.NodeEntity<?>> collect1 = candidates.entrySet().stream().filter(e -> collect.stream().anyMatch(x -> e.getValue().contains(x))).map(Map.Entry::getKey).collect(Collectors.toList());
-                    List<? extends BigraphEntity.NodeEntity<?>> collect1 = emb.entrySet().stream().filter(e -> collect.stream().anyMatch(x -> e.getValue().equals(x))).map(Map.Entry::getKey).collect(Collectors.toList());
-//                    System.out.println("chjsd");
-//                    matchedSoFar.addAll(incidentNodesRedex);
-                    if (collect1.size() == incidentNodesRedex.size()) {
-                        singleMatchCnt++;
-                    } else {
-//                        System.out.println("not good");
-                        cnt++;
-                    }
-
-                    if (collect1.size() == 0) {
-//                        discardNode.add(next.getValue());
-                        emb.remove(next.getKey());
-                        candidates.get(next.getKey()).remove(next.getValue());
-                    }
-
-                }
-                if (singleMatchCnt == candidates.size()) {
-//                    System.out.println("Embedding found: " + emb);
-                }
-//                List<BigraphEntity.NodeEntity<?>> notMatched = emb.keySet().stream().filter(x -> !matchedSoFar.contains(x)).collect(Collectors.toList());
-//                System.out.println(notMatched);
-            }
-        }
-    }
-
-    private List<BigraphEntity.NodeEntity> getIncidentNodesOf(BigraphEntity.NodeEntity<?> node, Bigraph bigraph) {
+    private List<BigraphEntity.NodeEntity<?>> getIncidentNodesOf(BigraphEntity.NodeEntity<?> node, Bigraph<?> bigraph) {
         Collection<BigraphEntity.Link> incidentHyperedges = bigraph.getIncidentLinksOf(node);
 
-        List<BigraphEntity.NodeEntity> collect = (List) incidentHyperedges.stream().flatMap(x -> bigraph.getPointsFromLink(x).stream())
+        List<BigraphEntity.NodeEntity<?>> collect = (List) incidentHyperedges.stream().flatMap(x -> bigraph.getPointsFromLink(x).stream())
                 .filter(x -> BigraphEntityType.isPort((BigraphEntity) x))
                 .map(p -> bigraph.getNodeOfPort((BigraphEntity.Port) p))
                 .filter(n -> !n.equals(node)).distinct().collect(Collectors.toList());
 
         return collect;
-    }
-
-    public void search() {
-        init();
-
-
-        for (BigraphEntity.NodeEntity<?> each : redex.getNodes()) {
-            search(each);
-        }
-    }
-
-    public void search(BigraphEntity.NodeEntity<?> u_s) {
-        init();
-
-        for (BigraphEntity.NodeEntity<?> v_s : agent.getNodes()) {
-            if (agent.getPortCount(v_s) > 0 && redex.getPortCount(u_s) > 0) {
-                if (ihsFilter.condition1(u_s, v_s) &&
-                        ihsFilter.condition2(u_s, v_s) &&
-                        ihsFilter.condition3(u_s, v_s) &&
-                        ihsFilter.condition4(u_s, v_s)) {
-                    candidates.get(u_s).add(v_s);
-                }
-            }
-        }
     }
 
     public Map<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> getCandidates() {
