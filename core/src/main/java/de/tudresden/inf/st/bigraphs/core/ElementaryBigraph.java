@@ -77,7 +77,7 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
 
     @Override
     @SuppressWarnings("unchecked")
-    public <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
+    public <C extends Control<?,?>> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
         if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getNodes();
         return Collections.EMPTY_LIST;
     }
@@ -238,7 +238,7 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
     }
 
     @Override
-    public BigraphEntity getTopLevelRoot(BigraphEntity node) {
+    public BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity node) {
         if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getTopLevelRoot(node);
         throw new UnsupportedOperationException("Not yet implemented");
     }

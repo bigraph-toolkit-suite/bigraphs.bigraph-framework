@@ -337,12 +337,17 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public BigraphEntity getTopLevelRoot(BigraphEntity node) {
+    public Collection<BigraphEntity.Link> getIncidentLinksOf(BigraphEntity.NodeEntity node) {
+        return new ArrayList<>(Bigraph.super.getIncidentLinksOf(node));
+    }
+
+    @Override
+    public BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity node) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         if (node.getInstance().eGet(prntRef) != null) {
-            return getTopLevelRoot(BigraphEntity.create((EObject) node.getInstance().eGet(prntRef), BigraphEntity.RootEntity.class));
+            return getTopLevelRoot(getParent(node));
         }
-        return node;
+        return (BigraphEntity.RootEntity) node;
     }
 
     @Override

@@ -56,7 +56,7 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
+    public <C extends Control<?,?>> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
         return bigraphDelegate.getNodes();
     }
 
@@ -91,7 +91,7 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public BigraphEntity getTopLevelRoot(BigraphEntity node) {
+    public BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity node) {
         return bigraphDelegate.getTopLevelRoot(node);
     }
 

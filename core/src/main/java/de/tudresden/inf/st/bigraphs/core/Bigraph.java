@@ -232,13 +232,14 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @return all places of the bigraph
      */
     Collection<BigraphEntity> getAllPlaces();
+
     Collection<BigraphEntity.Link> getAllLinks();
 
     Collection<BigraphEntity.Edge> getEdges();
 
-    <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes();
+    <C extends Control<?, ?>> Collection<BigraphEntity.NodeEntity<C>> getNodes();
 
-    BigraphEntity getTopLevelRoot(BigraphEntity node);
+    BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity node);
 
     /**
      * Checks, if the node has the given node as parent.
@@ -258,6 +259,18 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      */
     Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
 
+    /**
+     * Returns all incidents links (i.e., edges and outer names) for the given node
+     *
+     * @param node the node
+     * @return all incident links of {@code node}
+     */
+    default Collection<BigraphEntity.Link> getIncidentLinksOf(BigraphEntity.NodeEntity node) {
+        return getPorts(node).stream()
+                .map(this::getLinkOfPoint)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 
     /**
      * Get the parent of a bigraph's place. Passing a root as argument will
