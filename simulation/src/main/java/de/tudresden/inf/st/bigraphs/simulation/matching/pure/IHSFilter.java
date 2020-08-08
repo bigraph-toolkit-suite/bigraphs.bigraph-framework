@@ -49,38 +49,49 @@ public class IHSFilter {
 
         // must be true for all arities ("the number of nodes in a hyperedge")
         for (Integer eachArity : arityValues) {
-            if (incidentHyperedgesR.get(eachArity) == null || incidentHyperedgesA.get(eachArity) == null) {
-                continue;
-            }
-            boolean hasEdge = incidentHyperedgesR.get(eachArity).stream().anyMatch(BigraphEntityType::isEdge);
+            boolean redexHasAritiy = (incidentHyperedgesR.get(eachArity) != null);
+            boolean agentHasAritiy = (incidentHyperedgesA.get(eachArity) != null);
+//            if (incidentHyperedgesR.get(eachArity) == null || incidentHyperedgesA.get(eachArity) == null) {
+//                continue;
+//            }
+            boolean hasEdge = redexHasAritiy && incidentHyperedgesR.get(eachArity).stream().anyMatch(BigraphEntityType::isEdge);
             if (hasEdge) {
                 // this branch: special treatment for bigraphs
-                List<BigraphEntity.Link> edgesR = incidentHyperedgesR.get(eachArity).stream().filter(BigraphEntityType::isEdge).collect(Collectors.toList());
+                List<BigraphEntity.Link> edgesR = incidentHyperedgesR.get(eachArity).stream()
+                        .filter(BigraphEntityType::isEdge).collect(Collectors.toList());
                 List<BigraphEntity.Link> edgesA = incidentHyperedgesA.values().stream()
                         .flatMap(Collection::stream)
                         .filter(BigraphEntityType::isEdge).collect(Collectors.toList());
 
-                if (edgesR.size() != edgesA.size()) {
+                if (edgesR.size() > edgesA.size()) {
                     return false;
                 }
                 for (int i = 0; i < edgesR.size(); i++) {
                     long count = redex.getPointsFromLink(edgesR.get(i)).stream().filter(BigraphEntityType::isPort)
                             .map(x -> redex.getNodeOfPort((BigraphEntity.Port) x))
-                            .distinct()
                             .count();
-                    long count1 = agent.getPointsFromLink(edgesA.get(i)).stream().filter(BigraphEntityType::isPort)
-                            .map(x -> agent.getNodeOfPort((BigraphEntity.Port) x))
-                            .distinct()
-                            .count();
-                    if (count != count1) {
+
+                    boolean cmp = edgesA.stream().allMatch(x -> {
+                        return agent.getPointsFromLink(x).stream().filter(BigraphEntityType::isPort)
+                                .map(p -> agent.getNodeOfPort((BigraphEntity.Port) p))
+                                .count() != count;
+                    });
+
+                    if (cmp) {
                         return false;
                     }
+//                    long count1 = agent.getPointsFromLink(edgesA.get(i)).stream().filter(BigraphEntityType::isPort)
+//                            .map(x -> agent.getNodeOfPort((BigraphEntity.Port) x))
+//                            .count();
+//                    if (count != count1) {
+//                        return false;
+//                    }
                 }
 
             } else {
                 // normal behavior as in the paper
-                int arityR = incidentHyperedgesR.get(eachArity).size();
-                int arityA = incidentHyperedgesA.get(eachArity).size();
+                int arityR = redexHasAritiy ? incidentHyperedgesR.get(eachArity).size() : 0;
+                int arityA = agentHasAritiy ? incidentHyperedgesA.get(eachArity).size() : arityR;
                 if (arityR > arityA) {
                     return false;
                 }
@@ -95,33 +106,45 @@ public class IHSFilter {
     public boolean condition4(BigraphEntity.NodeEntity<?> nodeRedex, BigraphEntity.NodeEntity<?> nodeAgent) {
         Map<Integer, List<BigraphEntity.Link>> incidentHyperedgesR = getIncidentHyperedges(nodeRedex, redex);
         Map<Integer, List<BigraphEntity.Link>> incidentHyperedgesA = getIncidentHyperedges(nodeAgent, agent);
+        if (incidentHyperedgesR.size() == 0 && incidentHyperedgesA.size() == 0) {
+            return true;
+        }
         Stream<Integer> concat = Stream.concat(incidentHyperedgesR.keySet().stream(), incidentHyperedgesA.keySet().stream()).distinct();
         Set<Integer> arityValues = concat.collect(Collectors.toSet());
         List<String> allLabels = (List<String>) agent.getSignature().getControls().stream()
                 .map(x -> ((Control) x).getNamedType().stringValue())
                 .collect(Collectors.toList());
+        boolean noMatchAtAll = false;
         for (Integer eachArity : arityValues) {
+            noMatchAtAll = false;
             List<BigraphEntity.Link> heRedex = incidentHyperedgesR.get(eachArity);
             List<BigraphEntity.Link> heAgents = incidentHyperedgesA.get(eachArity);
             if (heRedex == null) {
+                noMatchAtAll = true;
                 continue;
             } else if (heAgents == null) {
+                noMatchAtAll = true;
                 continue;
             }
-
+            int lblMatchCount = 0;
             for (BigraphEntity.Link e1 : heRedex) {
                 for (BigraphEntity.Link e2 : heAgents) {
                     for (String l : allLabels) {
                         Set<BigraphEntity.NodeEntity<?>> elR = getOfNodesForHyperedgeWithLabel(e1, l, redex);
                         Set<BigraphEntity.NodeEntity<?>> elA = getOfNodesForHyperedgeWithLabel(e2, l, agent);
-                        if (elR.size() != elA.size()) {
-                            return false;
+                        if (elR.size() == elA.size()) {
+                            lblMatchCount++;
                         }
                     }
+                    if (lblMatchCount == allLabels.size()) {
+                        // we can stop here, when at least for 2 hyperedges all label counts are equal above
+                        return true;
+                    }
+                    lblMatchCount = 0;
                 }
             }
         }
-        return true;
+        return noMatchAtAll;
     }
 
     public Set<BigraphEntity.NodeEntity<?>> getOfNodesForHyperedgeWithLabel(BigraphEntity.Link he, String label, Bigraph<?> bigraph) {
