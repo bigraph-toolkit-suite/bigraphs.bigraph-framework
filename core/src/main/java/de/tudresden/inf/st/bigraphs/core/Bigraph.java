@@ -216,7 +216,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param node the nodes who's neighborhood should be returned
      * @return the neighborhood of the node of the place graph
      */
-    List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node);
+    List<BigraphEntity<?>> getOpenNeighborhoodOfVertex(BigraphEntity<?> node);
 
     Collection<BigraphEntity.RootEntity> getRoots();
 
@@ -257,7 +257,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param node the node whose children should be returned
      * @return a set of children of the given node
      */
-    Collection<BigraphEntity> getChildrenOf(BigraphEntity node);
+    Collection<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node);
 
     /**
      * Returns all incidents links (i.e., edges and outer names) for the given node
@@ -315,7 +315,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param node the node whoms sibling should be returned
      * @return siblings of {@code node}
      */
-    Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node);
+    Collection<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node);
 
     /**
      * Returns all siblings of an inner name. The collection will not contain any port.

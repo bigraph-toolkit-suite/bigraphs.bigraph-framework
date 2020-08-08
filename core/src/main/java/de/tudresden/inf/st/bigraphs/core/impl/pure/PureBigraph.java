@@ -92,15 +92,15 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
-        MutableList<BigraphEntity> neighbors = Lists.mutable.empty();
+    public List<BigraphEntity<?>> getOpenNeighborhoodOfVertex(BigraphEntity<?> node) {
+        MutableList<BigraphEntity<?>> neighbors = Lists.mutable.empty();
 //        neighborhoodHook(neighbors, node);
 //        List<BigraphEntity> neighbors = new ArrayList<>();
 //        neighbors = neighborhoodHook(neighbors, node);
         return neighborhoodHook(neighbors, node);
     }
 
-    private List<BigraphEntity> neighborhoodHook(List<BigraphEntity> neighbors, BigraphEntity node) {
+    private List<BigraphEntity<?>> neighborhoodHook(List<BigraphEntity<?>> neighbors, BigraphEntity<?> node) {
         EObject instance = node.getInstance();
         // first check the children of the node
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
@@ -128,7 +128,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
      * @param list the list
      * @param each node entity (e.g., root, node or site)
      */
-    private void addPlaceToList(final List<BigraphEntity> list, final EObject each) {
+    private void addPlaceToList(final List<BigraphEntity<?>> list, final EObject each) {
         if (isBNode(each)) {
             list.add(
                     nodesMap.get(each)
@@ -215,11 +215,11 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
                 .filter(x -> !x.equals(innerName)).map(x -> (BigraphEntity.InnerName) x).collect(Collectors.toList());
     }
 
-    public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+    public Collection<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
         if (BigraphEntityType.isRoot(node) || !isBPlace(node.getInstance())) return Collections.emptyList();
-        BigraphEntity parent = getParent(node);
+        BigraphEntity<?> parent = getParent(node);
         if (Objects.isNull(parent)) return Collections.emptyList();
-        List<BigraphEntity> siblings = getChildrenOf(parent);
+        List<BigraphEntity<?>> siblings = getChildrenOf(parent);
         siblings.remove(node);
 //        return siblings.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
         return siblings;
@@ -308,11 +308,11 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public List<BigraphEntity> getChildrenOf(BigraphEntity node) {
+    public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
 //        Set<BigraphEntity> children = new LinkedHashSet<>();
-        MutableSet<BigraphEntity> children = Sets.mutable.empty();
+        MutableSet<BigraphEntity<?>> children = Sets.mutable.empty();
         if (Objects.nonNull(chldRef)) {
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject eachChild : childs) {
@@ -328,7 +328,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
                 }
             }
         }
-        return children.toList(); //new ArrayList<>(children);
+        return children.toList();
     }
 
     @Override

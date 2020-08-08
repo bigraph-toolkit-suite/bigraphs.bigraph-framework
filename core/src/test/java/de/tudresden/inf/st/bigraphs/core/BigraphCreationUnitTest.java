@@ -53,7 +53,7 @@ public class BigraphCreationUnitTest {
         ;
         PureBigraph bigraph = builder.createBigraph();
         Traverser<BigraphEntity> traverser = Traverser.forTree(x -> {
-            List<BigraphEntity> children = bigraph.getChildrenOf(x);
+            List<BigraphEntity<?>> children = bigraph.getChildrenOf(x);
             System.out.format("%s has %d children\n", x.getType(), children.size());
             return children;
         });

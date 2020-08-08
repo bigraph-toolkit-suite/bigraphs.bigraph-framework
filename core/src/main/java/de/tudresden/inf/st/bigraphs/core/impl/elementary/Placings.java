@@ -17,10 +17,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -161,7 +158,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             return Collections.EMPTY_LIST;
         }
 
@@ -211,9 +208,11 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
-            if (BigraphEntityType.isSite(node) && sites.contains((BigraphEntity.SiteEntity) node)) {
-                return sites.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
+            if (BigraphEntityType.isSite(node) && sites.contains(node)) {
+                return sites.stream().filter(x -> !x.equals(node))
+                        .map(x -> (BigraphEntity<?>)x)
+                        .collect(Collectors.toCollection(LinkedList<BigraphEntity<?>>::new));
             }
             return Collections.emptyList();
         }
@@ -268,9 +267,11 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             if (BigraphEntityType.isSite(node) && sitesMap.containsValue(node)) {
-                return sitesMap.values().stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
+                return sitesMap.values().stream().filter(x -> !x.equals(node))
+                        .map(x -> (BigraphEntity<?>)x)
+                        .collect(Collectors.toCollection(LinkedList::new));
             }
             return Collections.emptyList();
         }
@@ -325,13 +326,13 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public List<BigraphEntity> getChildrenOf(BigraphEntity node) {
+        public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
             if (!(node instanceof BigraphEntity.RootEntity)) return Collections.emptyList();
             return Lists.mutable.of(sitesMap.get(((BigraphEntity.RootEntity) node).getIndex()));
         }
 
         @Override
-        public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             return Collections.emptyList();
         }
 
@@ -387,7 +388,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
 
         @Override
-        public List<BigraphEntity> getChildrenOf(BigraphEntity node) {
+        public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
             if (!(node instanceof BigraphEntity.RootEntity)) return Collections.emptyList();
             int n = sitesMap.size();
             int ix = Math.abs((n - 1) - ((BigraphEntity.RootEntity) node).getIndex());

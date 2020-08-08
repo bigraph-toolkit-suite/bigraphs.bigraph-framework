@@ -61,7 +61,7 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public Collection<BigraphEntity> getChildrenOf(BigraphEntity node) {
+    public Collection<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
         return bigraphDelegate.getChildrenOf(node);
     }
 
@@ -86,7 +86,7 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
+    public List<BigraphEntity<?>> getOpenNeighborhoodOfVertex(BigraphEntity<?> node) {
         return bigraphDelegate.getOpenNeighborhoodOfVertex(node);
     }
 
@@ -111,7 +111,7 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+    public Collection<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
         return bigraphDelegate.getSiblingsOfNode(node);
     }
 

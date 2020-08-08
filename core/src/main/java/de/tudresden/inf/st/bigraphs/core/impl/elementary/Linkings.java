@@ -187,7 +187,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
          * @return an empty list
          */
         @Override
-        public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             return Lists.mutable.empty();
         }
     }
@@ -273,7 +273,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
          * @return an empty list
          */
         @Override
-        public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             return Collections.EMPTY_LIST;
         }
 

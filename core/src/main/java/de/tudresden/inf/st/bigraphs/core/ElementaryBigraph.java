@@ -207,14 +207,14 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
     }
 
     @Override
-    public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
-        if (Objects.nonNull(bigraphDelegate)) return (List<BigraphEntity>) bigraphDelegate.getSiblingsOfNode(node);
+    public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
+        if (Objects.nonNull(bigraphDelegate)) return (List<BigraphEntity<?>>) bigraphDelegate.getSiblingsOfNode(node);
         throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getSiblingsOfNode(BigraphEntity) yet.");
     }
 
     @Override
-    public List<BigraphEntity> getChildrenOf(BigraphEntity node) {
-        if (Objects.nonNull(bigraphDelegate)) return (List<BigraphEntity>) bigraphDelegate.getChildrenOf(node);
+    public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
+        if (Objects.nonNull(bigraphDelegate)) return (List<BigraphEntity<?>>) bigraphDelegate.getChildrenOf(node);
         return Collections.EMPTY_LIST;
     }
 
@@ -232,7 +232,7 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
     }
 
     @Override
-    public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
+    public List<BigraphEntity<?>> getOpenNeighborhoodOfVertex(BigraphEntity<?> node) {
         if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getOpenNeighborhoodOfVertex(node);
         throw new UnsupportedOperationException("Not yet implemented");
     }
