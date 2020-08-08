@@ -101,20 +101,20 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
         }
     }
 
-    public List<BigraphEntity> getSubtreeOfNode(BigraphEntity node) {
-        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(this::getChildren);
+    public List<BigraphEntity<?>> getSubtreeOfNode(BigraphEntity<?> node) {
+        Traverser<BigraphEntity<?>> stringTraverser = Traverser.forTree(this::getChildren);
 //        Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(node);
-        MutableList<BigraphEntity> bigraphEntities = org.eclipse.collections.api.factory.Lists.mutable
+        MutableList<BigraphEntity<?>> bigraphEntities = org.eclipse.collections.api.factory.Lists.mutable
                 .ofAll(stringTraverser.depthFirstPostOrder(node));
 //        ArrayList<BigraphEntity> bigraphEntities = Lists.newArrayList(v0);
         bigraphEntities.remove(node);
         return bigraphEntities;
     }
 
-    public List<BigraphEntity> getNodesOfLink(BigraphEntity.Link outerName) {
+    public List<BigraphEntity<?>> getNodesOfLink(BigraphEntity.Link outerName) {
         EObject instance = outerName.getInstance();
 //        List<BigraphEntity> linkedNodes = new ArrayList<>();
-        MutableList<BigraphEntity> linkedNodes = org.eclipse.collections.api.factory.Lists.mutable.empty();
+        MutableList<BigraphEntity<?>> linkedNodes = org.eclipse.collections.api.factory.Lists.mutable.empty();
         EStructuralFeature pointsRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
         if (Objects.isNull(pointsRef)) return linkedNodes;
         EList<EObject> pointsList = (EList<EObject>) instance.eGet(pointsRef);
@@ -180,7 +180,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
 //        return siblings;
 //    }
 
-    protected List<BigraphEntity> neighborhoodHook(List<BigraphEntity> neighbors, BigraphEntity node) {
+    protected List<BigraphEntity<?>> neighborhoodHook(List<BigraphEntity<?>> neighbors, BigraphEntity<?> node) {
         EObject instance = node.getInstance();
         // first check the children of the node
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
@@ -210,7 +210,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      * @param each      node entity (e.g., root, node or site)
      * @param withSites flag to consider sites or not
      */
-    protected void addPlaceToList(final List<BigraphEntity> list, final EObject each, boolean withSites) {
+    protected void addPlaceToList(final List<BigraphEntity<?>> list, final EObject each, boolean withSites) {
         try {
 
             if (isBNode(each)) {
@@ -256,8 +256,8 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      * @param node the node
      * @return
      */
-    public List<BigraphEntity> getOpenNeighborhoodOfVertex(BigraphEntity node) {
-        MutableList<BigraphEntity> neighbors = org.eclipse.collections.api.factory.Lists.mutable.empty();
+    public List<BigraphEntity<?>> getOpenNeighborhoodOfVertex(BigraphEntity<?> node) {
+        MutableList<BigraphEntity<?>> neighbors = org.eclipse.collections.api.factory.Lists.mutable.empty();
         neighborhoodHook(neighbors, node);
         return neighbors;
     }
@@ -267,8 +267,13 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      *
      * @return all vertices of the bigraph without sites
      */
-    public List<BigraphEntity> getAllVertices() {
-        return org.eclipse.collections.api.factory.Lists.fixedSize.fromStream(Streams.concat(getNodes().stream(), getRoots().stream()));
+    public List<BigraphEntity<?>> getAllVertices() {
+        return org.eclipse.collections.api.factory.Lists.fixedSize.fromStream(
+                Streams.concat(
+                        getNodes().stream().map(x -> (BigraphEntity<?>)x),
+                        getRoots().stream().map(x -> (BigraphEntity<?>)x)
+                )
+        );
     }
 
     /**
@@ -276,21 +281,21 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      *
      * @return
      */
-    public List<BigraphEntity> getAllInternalVerticesPostOrder() {
+    public List<BigraphEntity<?>> getAllInternalVerticesPostOrder() {
         return org.eclipse.collections.api.factory.Lists.mutable.ofAll(getAllVerticesPostOrder())
                 .select(x -> getChildren(x).size() > 0);
     }
 
-    public Stream<BigraphEntity> getAllInternalVerticesPostOrderAsStream() {
-        Iterable<BigraphEntity> allVerticesPostOrder = getAllVerticesPostOrder();
+    public Stream<BigraphEntity<?>> getAllInternalVerticesPostOrderAsStream() {
+        Iterable<BigraphEntity<?>> allVerticesPostOrder = getAllVerticesPostOrder();
         return StreamSupport.stream(allVerticesPostOrder.spliterator(), false)
                 .filter(x -> getChildren(x).size() > 0);
     }
 
-    public Iterable<BigraphEntity> getAllVerticesPostOrder() {
-        final MutableList<BigraphEntity> allVerticesPostOrder = org.eclipse.collections.api.factory.Lists.mutable.empty();
+    public Iterable<BigraphEntity<?>> getAllVerticesPostOrder() {
+        final MutableList<BigraphEntity<?>> allVerticesPostOrder = org.eclipse.collections.api.factory.Lists.mutable.empty();
         getRoots().forEach(eachRoot -> {
-            Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
+            Traverser<BigraphEntity<?>> stringTraverser = Traverser.forTree(node -> getChildren(node));
             allVerticesPostOrder.addAllIterable(stringTraverser.depthFirstPostOrder(eachRoot));
         });
         return allVerticesPostOrder;
@@ -320,7 +325,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      * @param node the node
      * @return all children of the given node
      */
-    public List<BigraphEntity> getChildren(BigraphEntity node) {
+    public List<BigraphEntity<?>> getChildren(BigraphEntity<?> node) {
         return getBigraphDelegate().getChildrenOf(node)
                 .stream()
                 .filter(x -> !BigraphEntityType.isSite(x)).collect(Collectors.toList());

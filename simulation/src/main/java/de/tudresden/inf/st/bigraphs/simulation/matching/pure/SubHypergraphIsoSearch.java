@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractDynamicMatchAdapter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -147,10 +148,6 @@ public class SubHypergraphIsoSearch {
                 if (!BigraphEntityType.isNode(u_i)) return;
                 BigraphEntity.NodeEntity<?> u = (BigraphEntity.NodeEntity<?>) u_i;
 //                System.out.println(u.getName() + " -> " + v_s.getName());
-//            if (u.getName().equals("v2") && v_s.getName().equals("v0")) {
-//                System.out.println("stop");
-//            }
-
                 if (ihsFilter.condition1(u, v_s) &&
                         ihsFilter.condition2(u, v_s) &&
                         ihsFilter.condition3(u, v_s) &&

@@ -19,16 +19,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Dominik Grzelak
  * @see org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching
  */
-public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
+public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity<?>, DefaultEdge> {
 
-    private final Graph<BigraphEntity, DefaultEdge> graph;
-    private final Set<BigraphEntity> partition1;
-    private final Set<BigraphEntity> partition2;
+    private final Graph<BigraphEntity<?>, DefaultEdge> graph;
+    private final Set<BigraphEntity<?>> partition1;
+    private final Set<BigraphEntity<?>> partition2;
 
     /* Ordered list of vertices */
-    private List<BigraphEntity> vertices;
+    private List<BigraphEntity<?>> vertices;
     /* Mapping of a vertex to their unique position in the ordered list of vertices */
-    private Map<BigraphEntity, Integer> vertexIndexMap;
+    private Map<BigraphEntity<?>, Integer> vertexIndexMap;
 
     /* Number of matched vertices i partition 1. */
     private int matchedVertices;
@@ -62,7 +62,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
      * @param partition2 the second partition of vertices in the bipartite graph (AGENT)
      */
     public HKMCBM2(
-            Graph<BigraphEntity, DefaultEdge> graph, Set<BigraphEntity> partition1, Set<BigraphEntity> partition2) {
+            Graph<BigraphEntity<?>, DefaultEdge> graph, Set<BigraphEntity<?>> partition1, Set<BigraphEntity<?>> partition2) {
         this.graph = GraphTests.requireUndirected(graph);
         // Ensure that partition1 is smaller or equal in size compared to partition 2
         if (partition1.size() <= partition2.size()) {
@@ -106,10 +106,10 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
      * Greedily compute an initial feasible matching
      */
     private void warmStart() {
-        for (BigraphEntity uOrig : partition1) {
+        for (BigraphEntity<?> uOrig : partition1) {
             int u = vertexIndexMap.get(uOrig);
 
-            for (BigraphEntity vOrig : Graphs.neighborListOf(graph, uOrig)) {
+            for (BigraphEntity<?> vOrig : Graphs.neighborListOf(graph, uOrig)) {
                 int v = vertexIndexMap.get(vOrig);
                 if (matching[v] == DUMMY) {
                     matching[v] = u;
@@ -142,7 +142,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
         while (!queue.isEmpty()) {
             int u = queue.poll();
             if (dist[u] < dist[DUMMY])
-                for (BigraphEntity vOrig : Graphs.neighborListOf(graph, vertices.get(u))) {
+                for (BigraphEntity<?> vOrig : Graphs.neighborListOf(graph, vertices.get(u))) {
                     int v = vertexIndexMap.get(vOrig);
                     if (dist[matching[v]] == INF) {
                         dist[matching[v]] = dist[u] + 1;
@@ -162,7 +162,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
      */
     private boolean dfs(int u) {
         if (u != DUMMY) {
-            for (BigraphEntity vOrig : Graphs.neighborListOf(graph, vertices.get(u))) {
+            for (BigraphEntity<?> vOrig : Graphs.neighborListOf(graph, vertices.get(u))) {
                 int v = vertexIndexMap.get(vOrig);
                 if (dist[matching[v]] == dist[u] + 1)
                     if (dfs(matching[v])) {
@@ -180,7 +180,7 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
     }
 
     @Override
-    public Matching<BigraphEntity, DefaultEdge> getMatching() {
+    public Matching<BigraphEntity<?>, DefaultEdge> getMatching() {
         this.init();
         this.warmStart();
 
@@ -211,12 +211,12 @@ public class HKMCBM2 implements MatchingAlgorithm<BigraphEntity, DefaultEdge> {
      * @return {@code true}, if all control types are equal, otherwise {@code false}
      */
     public boolean areControlsSame() {
-        for (BigraphEntity each : partition1) {
+        for (BigraphEntity<?> each : partition1) {
             if (each.getControl() != null) {
                 ctrlsRedex.put(each.getControl(), ctrlsRedex.getOrDefault(each.getControl(), 0L) + 1);
             }
         }
-        for (BigraphEntity each : partition2) {
+        for (BigraphEntity<?> each : partition2) {
             if (each.getControl() != null) {
                 ctrlsAgent.put(each.getControl(), ctrlsAgent.getOrDefault(each.getControl(), 0L) + 1);
             }

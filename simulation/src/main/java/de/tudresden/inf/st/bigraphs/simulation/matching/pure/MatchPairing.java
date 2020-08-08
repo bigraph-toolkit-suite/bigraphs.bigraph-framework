@@ -10,17 +10,17 @@ import java.util.List;
  */
 public class MatchPairing {
     int rootIndex;
-    BigraphEntity redexNode;
-    List<BigraphEntity> agentMatches;
+    BigraphEntity<?> redexNode;
+    List<BigraphEntity<?>> agentMatches;
 
     public MatchPairing() {
     }
 
-    public MatchPairing(int rootIndex, BigraphEntity redexNode) {
+    public MatchPairing(int rootIndex, BigraphEntity<?> redexNode) {
         this(rootIndex, redexNode, new LinkedList<>());
     }
 
-    public MatchPairing(int rootIndex, BigraphEntity redexNode, List<BigraphEntity> agentMatches) {
+    public MatchPairing(int rootIndex, BigraphEntity<?> redexNode, List<BigraphEntity<?>> agentMatches) {
         this.rootIndex = rootIndex;
         this.redexNode = redexNode;
         this.agentMatches = agentMatches;
@@ -30,11 +30,11 @@ public class MatchPairing {
         return rootIndex;
     }
 
-    public BigraphEntity getRedexNode() {
+    public BigraphEntity<?> getRedexNode() {
         return redexNode;
     }
 
-    public List<BigraphEntity> getAgentMatches() {
+    public List<BigraphEntity<?>> getAgentMatches() {
         return agentMatches;
     }
 }

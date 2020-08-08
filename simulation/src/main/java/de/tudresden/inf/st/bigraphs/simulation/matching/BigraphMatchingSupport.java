@@ -14,8 +14,8 @@ import java.util.List;
  * @author Dominik Grzelak
  */
 public abstract class BigraphMatchingSupport {
-    public List<BigraphEntity> getSubBigraphFrom(final BigraphEntity node, final AbstractDynamicMatchAdapter adapter) {
-        Traverser<BigraphEntity> childTraverser = Traverser.forTree(xx -> adapter.getChildren(xx));
+    public List<BigraphEntity<?>> getSubBigraphFrom(final BigraphEntity<?> node, final AbstractDynamicMatchAdapter adapter) {
+        Traverser<BigraphEntity<?>> childTraverser = Traverser.forTree(xx -> adapter.getChildren(xx));
         return Lists.newArrayList(childTraverser.breadthFirst(node));
     }
 
@@ -37,12 +37,12 @@ public abstract class BigraphMatchingSupport {
      * @param y second set of nodes
      * @return a bipartite graph
      */
-    public static Graph<BigraphEntity, DefaultEdge> createBipartiteGraph(List<BigraphEntity> x, List<BigraphEntity> y) {
-        SimpleGraph<BigraphEntity, DefaultEdge> bg = (SimpleGraph<BigraphEntity, DefaultEdge>) BigraphMatchingSupport.buildEmptySimpleDirectedGraph();
-        for (BigraphEntity eachX : x) {
+    public static Graph<BigraphEntity<?>, DefaultEdge> createBipartiteGraph(List<BigraphEntity<?>> x, List<BigraphEntity<?>> y) {
+        SimpleGraph<BigraphEntity<?>, DefaultEdge> bg = (SimpleGraph<BigraphEntity<?>, DefaultEdge>) BigraphMatchingSupport.buildEmptySimpleDirectedGraph();
+        for (BigraphEntity<?> eachX : x) {
             bg.addVertex(eachX);
         }
-        for (BigraphEntity eachY : y) {
+        for (BigraphEntity<?> eachY : y) {
             bg.addVertex(eachY);
         }
         return bg;
@@ -53,8 +53,8 @@ public abstract class BigraphMatchingSupport {
      *
      * @return a directed graph
      */
-    public static Graph<BigraphEntity, DefaultEdge> buildEmptySimpleDirectedGraph() {
-        return GraphTypeBuilder.<BigraphEntity, DefaultEdge>undirected()
+    public static Graph<BigraphEntity<?>, DefaultEdge> buildEmptySimpleDirectedGraph() {
+        return GraphTypeBuilder.<BigraphEntity<?>, DefaultEdge>undirected()
 //                .vertexClass()
 //                .vertexSupplier(vSupplier)
                 .allowingMultipleEdges(false)

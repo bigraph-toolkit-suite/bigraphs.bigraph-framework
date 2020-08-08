@@ -164,7 +164,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                         getBigraphCanonicalForm().setParentOfNode(u, parent);
                     }
                     //single-step bottom-up approach
-                    List<BigraphEntity> openNeighborhoodOfVertex = bigraph.getOpenNeighborhoodOfVertex(u);
+                    List<BigraphEntity<?>> openNeighborhoodOfVertex = bigraph.getOpenNeighborhoodOfVertex(u);
                     if (maxDegree < openNeighborhoodOfVertex.size()) {
                         maxDegree = openNeighborhoodOfVertex.size();
                     }

@@ -25,10 +25,10 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
         return (DefaultDynamicSignature) super.getSignature();
     }
 
-    public List<BigraphEntity> getChildrenWithSites(BigraphEntity node) {
+    public List<BigraphEntity<?>> getChildrenWithSites(BigraphEntity<?> node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-        List<BigraphEntity> children = new ArrayList<>();
+        List<BigraphEntity<?>> children = new ArrayList<>();
         if (Objects.nonNull(chldRef)) {
             @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
