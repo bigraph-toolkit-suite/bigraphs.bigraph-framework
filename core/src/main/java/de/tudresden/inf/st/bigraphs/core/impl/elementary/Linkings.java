@@ -48,6 +48,11 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         return new Substitution(nameOuter, nameInner);
     }
 
+    public Linkings<S>.Substitution substitution(NamedType<?> nameOuter, List<NamedType<?>> nameInner) {
+        mutableBuilder.reset();
+        return new Substitution(nameOuter, nameInner.toArray(new NamedType<?>[0]));
+    }
+
     public Linkings<S>.Identity identity(NamedType<?> name) {
         mutableBuilder.reset();
         return new Identity(name);

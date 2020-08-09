@@ -9,11 +9,19 @@ import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Dominik Grzelak
  */
 public abstract class BigraphMatchingSupport {
+    final protected static ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+    public BigraphMatchingSupport() {
+
+    }
+
     public List<BigraphEntity<?>> getSubBigraphFrom(final BigraphEntity<?> node, final AbstractDynamicMatchAdapter adapter) {
         Traverser<BigraphEntity<?>> childTraverser = Traverser.forTree(xx -> adapter.getChildren(xx));
         return Lists.newArrayList(childTraverser.breadthFirst(node));
@@ -29,6 +37,7 @@ public abstract class BigraphMatchingSupport {
     public boolean isSameControl(BigraphEntity node1, BigraphEntity node2) {
         return node1.getControl().equals(node2.getControl());
     }
+
 
     /**
      * Helper function to create a bipartite graph.

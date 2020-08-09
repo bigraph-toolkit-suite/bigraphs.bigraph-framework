@@ -71,9 +71,9 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      */
     public static class ControlLinkPair {
         Control control;
-        BigraphEntity link;
+        BigraphEntity.Link link;
 
-        public ControlLinkPair(Control control, BigraphEntity link) {
+        public ControlLinkPair(Control control, BigraphEntity.Link link) {
             this.control = control;
             this.link = link;
         }
@@ -82,7 +82,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
             return control;
         }
 
-        public BigraphEntity getLink() {
+        public BigraphEntity.Link getLink() {
             return link;
         }
 

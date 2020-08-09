@@ -27,78 +27,29 @@ import java.util.List;
  * @see PureBigraph
  */
 public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph> {
-    private Logger logger = LoggerFactory.getLogger(PureReactiveSystem.class);
+    private final Logger logger = LoggerFactory.getLogger(PureReactiveSystem.class);
 
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private final PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+
     //    private static int cnt = 1;
     @Override
     public PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         try {
 
-//            try {
-//                BigraphGraphvizExporter.toPNG(match.getContext(),
-//                        true,
-//                        new File(String.format("context_%s.png", 1))
-//                );
-//                BigraphGraphvizExporter.toPNG(match.getContextIdentity(),
-//                        true,
-//                        new File(String.format("contextIdentity_%s.png", 1))
-//                );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
             Bigraph<DefaultDynamicSignature> outerBigraph = factory
                     .asBigraphOperator(match.getContext())
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
-//            System.out.println(outerBigraph);
-//            try {
-//                BigraphGraphvizExporter.toPNG(outerBigraph,
-//                        true,
-//                        new File("contextimage.png")
-//                );
-//                BigraphGraphvizExporter.toPNG(rule.getReactum(),
-//                        true,
-//                        new File("reactum.png")
-//                );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            Bigraph originAgent = factory.asBigraphOperator(outerBigraph).compose(match.getRedex()).getOuterBigraph();
-//            GraphvizConverter.toPNG(originAgent,
-//                    true,
-//                    new File("agentOrigin.png")
-//            );
-//            GraphvizConverter.toPNG(rule.getRedex(),
-//                    true,
-//                    new File("redex.png")
-//            );
+
 
             Bigraph<DefaultDynamicSignature> agentReacted = factory.asBigraphOperator(outerBigraph)
                     .compose(rule.getReactum())
                     .getOuterBigraph();
 
-//            GraphvizConverter.toPNG(agentReacted,
-//                    true,
-//                    new File("agentReacted.png")
-//            );
-//            exportState((PureBigraph) agentReacted, String.valueOf(cnt));
-//            cnt++;
-//            try {
-//                BigraphGraphvizExporter.toPNG(agentReacted,
-//                        true,
-//                        new File("agent-reacted-" + 1 + ".png")
-//                );
-////                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
-////                BigraphArtifacts.exportAsMetaModel(agentReacted, new FileOutputStream(String.format("meta-model_%s.ecore", cnt)));
-////                cnt++;
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
             return (PureBigraph) agentReacted;
-        } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
+        } catch (Exception e) {
             logger.error(e.toString());
-            return null;
+            throw new RuntimeException(e);
         }
     }
 

@@ -10,10 +10,10 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInter
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.eclipse.emf.common.util.EList;
@@ -21,14 +21,14 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 
 /**
  * Composable bigraph implementation of {@link BigraphComposite} for <b>pure bigraphs</b>.
@@ -122,12 +122,23 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         // get all outer names of 'f' and make identity graph from them
         Linkings<DefaultDynamicSignature> linkings = pure().createLinkings((DefaultDynamicSignature) getSignature());
         Set<StringTypedName> collect = f.getOuterNames().stream().map(o -> StringTypedName.of(o.getName())).collect(Collectors.toSet());
+        Set<StringTypedName> collect2 = g.getInnerNames().stream().map(o -> StringTypedName.of(o.getName())).collect(Collectors.toSet());
+
         ElementaryBigraph<DefaultDynamicSignature> identity = collect.size() != 0 ?
                 linkings.identity(collect.toArray(new NamedType[0])) : // as array
                 linkings.identity_e();                                 // empty identity
         BigraphComposite<S> sBigraphComposite = ops(g).parallelProduct((Bigraph<S>) identity);
-        assertInterfaceCompatibleForCompose(sBigraphComposite.getOuterBigraph(), f);
-        return sBigraphComposite.compose(f);
+        assertInterfaceCompatibleForCompose(sBigraphComposite.getOuterBigraph(), f, false);
+
+        collect2.removeAll(collect);
+        Bigraph<S> sBigraphCompositeInner = f;
+        if (collect2.size() != 0) {
+            PureBigraphBuilder<DefaultDynamicSignature> idleOuterNameBuilder = pure().createBigraphBuilder(getSignature());
+            collect2.forEach(x -> idleOuterNameBuilder.createOuterName(x.stringValue()));
+            sBigraphCompositeInner = ops(f).parallelProduct((Bigraph<S>) idleOuterNameBuilder.createBigraph()).getOuterBigraph();
+        }
+
+        return sBigraphComposite.compose(sBigraphCompositeInner);
     }
 
     @Override
@@ -582,13 +593,13 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
                     builder.connectInnerToOuter(newInnerName, (BigraphEntity.OuterName) newLink);
                 }
             }
-
+            assert newLink != null;
             //connect the inner name directly to this link
             EStructuralFeature lnkRef = newInnerName.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
             newInnerName.getInstance().eSet(lnkRef, newLink.getInstance());
         }
 
-        PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
+        PureBigraphBuilder<S>.InstanceParameter meta = builder.new InstanceParameter(
                 builder.getLoadedEPackage(),
                 getSignature(),
                 myRoots,
@@ -608,7 +619,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
 
         BigraphComposite<DefaultDynamicSignature> bigraphComposite = pure().asBigraphOperator((Bigraph<DefaultDynamicSignature>) g).parallelProduct((Bigraph<DefaultDynamicSignature>) f);
         if (isLinking(f)) {
-            if(g.getRoots().size() > 0) {
+            if (g.getRoots().size() > 0) {
                 return (BigraphComposite<S>) bigraphComposite;
             }
             Placings<DefaultDynamicSignature>.Barren barren = pure().createPlacings((DefaultDynamicSignature) getSignature()).barren();
@@ -632,7 +643,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         assertSignaturesAreSame(g, f);
         // "disjoint support" of bigraphs is not really important (relevant) here as we are re-creating everything anyway
         // assertBigraphsAreNotSame();
-        assertInterfaceCompatibleForCompose(g, f);
+        assertInterfaceCompatibleForCompose(g, f, true);
 
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
 
@@ -923,7 +934,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
                         newLink = myOuterNames.get(name);
                     }
                     if (newLink == null) continue;
-                    assert newLink != null;
+//                    assert newLink != null;
 //                    System.out.println("\tlink(q) <- link_G(y)");
                     //index beachten
                     //via node names aus nodes holen

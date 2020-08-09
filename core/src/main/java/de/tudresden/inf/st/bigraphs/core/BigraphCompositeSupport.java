@@ -23,7 +23,7 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
         super(bigraphDelegate);
     }
 
-    protected void assertInterfaceCompatibleForCompose(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleInterfaceException {
+    protected void assertInterfaceCompatibleForCompose(Bigraph<S> outer, Bigraph<S> inner, boolean isCompose) throws IncompatibleInterfaceException {
         Set<FiniteOrdinal<Integer>> siteOrdinals = outer.getInnerFace().getKey();
         Set<FiniteOrdinal<Integer>> rootOrdinals = inner.getOuterFace().getKey();
         Set<StringTypedName> nameSetLeft = outer.getInnerFace().getValue();
@@ -31,6 +31,9 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
         boolean disjoint = Collections.disjoint(nameSetLeft, nameSetRight);
         if ((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() == 0 && nameSetRight.size() == 0)
             disjoint = false; // this is legit if they are only place graphs
+//        if (isCompose && ((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() != nameSetRight.size())) {
+//            disjoint = true;
+//        }
         boolean disjoint2 = siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals);
         if (siteOrdinals.size() == 0 && rootOrdinals.size() == 0) disjoint2 = false;
 //        if (inner instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(inner)) {

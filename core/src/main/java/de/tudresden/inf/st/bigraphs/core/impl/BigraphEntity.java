@@ -116,6 +116,7 @@ public class BigraphEntity<C extends Control> {
 
     public static class InnerName extends BigraphEntity {
         String toString = null;
+
         InnerName(@NonNull EObject instance) {
             super(instance, null, BigraphEntityType.INNER_NAME);
         }
@@ -129,11 +130,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                StringBuilder sb = new StringBuilder("InnerName")
-                        .append(":").append(getName())
-                        ;
-                ;
-                toString = sb.toString();
+                toString = new StringBuilder(getName()).append(":").append("InnerName").toString();
             }
             return toString;
         }
@@ -155,6 +152,7 @@ public class BigraphEntity<C extends Control> {
 
     public static class OuterName extends Link {
         String toString = null;
+
         OuterName(@NonNull EObject instance) {
             super(instance, BigraphEntityType.OUTER_NAME);
         }
@@ -162,11 +160,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                StringBuilder sb = new StringBuilder("OuterName")
-                        .append(":").append(getName())
-                        ;
-                ;
-                toString = sb.toString();
+                toString = new StringBuilder(getName()).append(":").append("OuterName").toString();
             }
             return toString;
         }
@@ -174,6 +168,7 @@ public class BigraphEntity<C extends Control> {
 
     public static class Edge extends Link {
         String toString = null;
+
         Edge(EObject instance) {
             super(instance, BigraphEntityType.EDGE);
         }
@@ -181,11 +176,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                StringBuilder sb = new StringBuilder("Edge")
-                        .append(":").append(getName())
-                        ;
-                ;
-                toString = sb.toString();
+                toString = new StringBuilder(getName()).append(":").append("Edge").toString();
             }
             return toString;
         }
@@ -211,11 +202,10 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                StringBuilder sb = new StringBuilder("NodeEntity")
-                        .append(":").append(getName()).append("{");
-                sb.append(getControl().getNamedType().stringValue()).append(":").append(getControl().getArity().getValue())
-                        .append("}");
-                toString = sb.toString();
+                toString = new StringBuilder(getName())
+                        .append(":").append("NodeEntity").append("{")
+                        .append(getControl().getNamedType().stringValue()).append(":").append(getControl().getArity().getValue())
+                        .append("}").toString();
             }
             return toString;
         }
@@ -246,11 +236,8 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                StringBuilder sb = new StringBuilder("Site")
-                        .append(":").append(getIndex())
-                        ;
-                ;
-                toString = sb.toString();
+                toString = new StringBuilder("").append(getIndex())
+                        .append(":").append("Site").toString();
             }
             return toString;
         }
@@ -258,6 +245,7 @@ public class BigraphEntity<C extends Control> {
 
     public static class Port extends BigraphEntity {
         String toString = null;
+
         public Port() {
             super(null, BigraphEntityType.PORT);
         }
@@ -280,11 +268,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                StringBuilder sb = new StringBuilder("Port")
-                        .append(":").append(getIndex())
-                        ;
-                ;
-                toString = sb.toString();
+                toString = new StringBuilder("Port").append(":").append(getIndex()).toString();
             }
             return toString;
         }
@@ -317,11 +301,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                StringBuilder sb = new StringBuilder("Root")
-                        .append(":").append(getIndex())
-                        ;
-                ;
-                toString = sb.toString();
+                toString = new StringBuilder("").append(getIndex()).append(":").append("Root").toString();
             }
             return toString;
         }
