@@ -183,6 +183,42 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     @Test
+    void modelCheckerTest_redex1_test() throws InvalidConnectionException, TypeNotExistsException, BigraphSimulationException, InvalidReactionRuleException {
+        PureBigraph agent = createAgent();
+        PureBigraph redex = createRedex1();
+        eb(agent, "agent");
+        eb(redex, "redex1");
+
+        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph_redex1.png");
+        ModelCheckingOptions opts = ModelCheckingOptions.create();
+        opts
+                .and(transitionOpts()
+                        .setMaximumTransitions(50)
+                        .setMaximumTime(60)
+                        .allowReducibleClasses(false)
+                        .create()
+                )
+                .doMeasureTime(true)
+                .and(ModelCheckingOptions.exportOpts()
+                        .setReactionGraphFile(completePath.toFile())
+                        .setPrintCanonicalStateLabel(false)
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .create()
+                )
+        ;
+
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        reactiveSystem.setAgent(agent);
+        reactiveSystem.addReactionRule(createReactionRule4());
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
+                reactiveSystem,
+                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                opts);
+        modelChecker.execute();
+        assertTrue(Files.exists(completePath));
+    }
+
+    @Test
     void ihsfilter_test() throws Exception {
         PureBigraph agent = createAgent();
         PureBigraph redex = createRedex4();
