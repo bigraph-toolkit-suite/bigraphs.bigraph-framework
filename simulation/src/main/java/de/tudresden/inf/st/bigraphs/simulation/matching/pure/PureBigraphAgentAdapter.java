@@ -32,7 +32,7 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
      * @return a list of all links connected to the given node
      */
 
-    public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
+    public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity<?> node) {
         EObject instance = node.getInstance();
         LinkedList<AbstractDynamicMatchAdapter.ControlLinkPair> children = new LinkedList<>();
 

@@ -47,7 +47,7 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
      * @param node the node
      * @return a list of all links connected to the given node
      */
-    public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
+    public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity<?> node) {
         EObject instance = node.getInstance();
         LinkedList<ControlLinkPair> children = new LinkedList<>();
 
@@ -86,7 +86,7 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
      * @param nodeEntity the node
      * @return the degree of the node
      */
-    public int degreeOf(BigraphEntity nodeEntity) {
+    public int degreeOf(BigraphEntity<?> nodeEntity) {
         //get all edges
         EObject instance = nodeEntity.getInstance();
         int cnt = 0;

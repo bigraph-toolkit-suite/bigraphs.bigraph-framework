@@ -13,7 +13,7 @@ import java.util.List;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S> {
+public abstract class BigraphDelegator<S extends Signature<?>> implements Bigraph<S> {
 
     protected Bigraph<S> bigraphDelegate;
 

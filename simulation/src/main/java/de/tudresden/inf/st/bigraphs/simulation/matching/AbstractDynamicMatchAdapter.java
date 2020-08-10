@@ -29,11 +29,11 @@ import java.util.stream.StreamSupport;
  *
  * @author Dominik Grzelak
  */
-public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Signature> & EcoreBigraph> extends BigraphDelegator<Signature> implements EcoreBigraph {
+public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Signature<?>> & EcoreBigraph> extends BigraphDelegator<Signature<?>> implements EcoreBigraph {
 
     @SuppressWarnings("unchecked")
-    public AbstractDynamicMatchAdapter(Bigraph<? extends Signature> bigraph) {
-        super((Bigraph<Signature>) bigraph);
+    public AbstractDynamicMatchAdapter(B bigraph) {
+        super((Bigraph<Signature<?>>) bigraph);
     }
 
     @SuppressWarnings("unchecked")
@@ -45,7 +45,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
     @Override
     public List<BigraphEntity.RootEntity> getRoots() {
         return org.eclipse.collections.api.factory.Lists.mutable.ofAll(super.getRoots());
-//        return new ArrayList<>(super.getRoots());
     }
 
     @Override
@@ -64,21 +63,21 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      * @param node the node
      * @return a list of all links connected to the given node
      */
-    public abstract AbstractSequentialList<ControlLinkPair> getLinksOfNode(BigraphEntity node);
+    public abstract AbstractSequentialList<ControlLinkPair> getLinksOfNode(BigraphEntity<?> node);
 
     /**
      * Data structure to represent a pair
      */
     public static class ControlLinkPair {
-        Control control;
+        Control<?,?> control;
         BigraphEntity.Link link;
 
-        public ControlLinkPair(Control control, BigraphEntity.Link link) {
+        public ControlLinkPair(Control<?,?> control, BigraphEntity.Link link) {
             this.control = control;
             this.link = link;
         }
 
-        public Control getControl() {
+        public Control<?,?> getControl() {
             return control;
         }
 
@@ -101,6 +100,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
         }
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     public List<BigraphEntity<?>> getSubtreeOfNode(BigraphEntity<?> node) {
         Traverser<BigraphEntity<?>> stringTraverser = Traverser.forTree(this::getChildren);
 //        Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(node);
@@ -117,6 +117,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
         MutableList<BigraphEntity<?>> linkedNodes = org.eclipse.collections.api.factory.Lists.mutable.empty();
         EStructuralFeature pointsRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
         if (Objects.isNull(pointsRef)) return linkedNodes;
+        @SuppressWarnings("unchecked")
         EList<EObject> pointsList = (EList<EObject>) instance.eGet(pointsRef);
         for (EObject eachPoint : pointsList) {
             if (isBPort(eachPoint)) {
@@ -135,7 +136,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      * @param nodeEntity the node
      * @return degree of the node
      */
-    public int degreeOf(BigraphEntity nodeEntity) {
+    public int degreeOf(BigraphEntity<?> nodeEntity) {
         //get all edges
         EObject instance = nodeEntity.getInstance();
         int cnt = 0;
@@ -151,34 +152,6 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
         }
         return cnt;
     }
-
-//    /**
-//     * Returns all siblings of the current node of the current bigraph. The node itself is not included.
-//     *
-//     * @param node the node whoms sibling should be returned
-//     * @return siblings of {@code node}
-//     */
-//    @Deprecated //check if needed, whats the difference to PureBigraph's impl?
-//    public List<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
-//        if (!isBPlace(node.getInstance())) return new ArrayList<>();
-//        EObject instance = node.getInstance();
-////        List<BigraphEntity> siblings = new ArrayList<>();
-//        LinkedList<BigraphEntity> siblings = new LinkedList<>(); //org.eclipse.collections.api.factory.Lists.mutable.empty();
-//        EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-//        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
-//            EObject each = (EObject) instance.eGet(prntRef);
-//            //get all childs
-//            EStructuralFeature childRef = each.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-//            @SuppressWarnings("unchecked")
-//            EList<EObject> childs = (EList<EObject>) each.eGet(childRef);
-//            assert childs != null;
-//            for (EObject eachChild : childs) {
-//                if (node.getInstance().equals(eachChild)) continue;
-//                addPlaceToList(siblings, eachChild, true);
-//            }
-//        }
-//        return siblings;
-//    }
 
     protected List<BigraphEntity<?>> neighborhoodHook(List<BigraphEntity<?>> neighbors, BigraphEntity<?> node) {
         EObject instance = node.getInstance();
@@ -270,8 +243,8 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
     public List<BigraphEntity<?>> getAllVertices() {
         return org.eclipse.collections.api.factory.Lists.fixedSize.fromStream(
                 Streams.concat(
-                        getNodes().stream().map(x -> (BigraphEntity<?>)x),
-                        getRoots().stream().map(x -> (BigraphEntity<?>)x)
+                        getNodes().stream().map(x -> (BigraphEntity<?>) x),
+                        getRoots().stream().map(x -> (BigraphEntity<?>) x)
                 )
         );
     }
@@ -292,29 +265,32 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
                 .filter(x -> getChildren(x).size() > 0);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     public Iterable<BigraphEntity<?>> getAllVerticesPostOrder() {
         final MutableList<BigraphEntity<?>> allVerticesPostOrder = org.eclipse.collections.api.factory.Lists.mutable.empty();
         getRoots().forEach(eachRoot -> {
-            Traverser<BigraphEntity<?>> stringTraverser = Traverser.forTree(node -> getChildren(node));
+            Traverser<BigraphEntity<?>> stringTraverser = Traverser.forTree(this::getChildren);
             allVerticesPostOrder.addAllIterable(stringTraverser.depthFirstPostOrder(eachRoot));
         });
         return allVerticesPostOrder;
     }
 
-    public Iterable<BigraphEntity> getAllVerticesBfsOrder() {
-        MutableList<BigraphEntity> allVerticesBfsOrder = org.eclipse.collections.api.factory.Lists.mutable.empty();
+    public Iterable<BigraphEntity<?>> getAllVerticesBfsOrder() {
+        MutableList<BigraphEntity<?>> allVerticesBfsOrder = org.eclipse.collections.api.factory.Lists.mutable.empty();
         getBigraphDelegate().getRoots().stream().sorted(Comparator.comparingInt(BigraphEntity.RootEntity::getIndex))
                 .forEachOrdered(eachRoot -> allVerticesBfsOrder.addAll(getAllVerticesBfsOrderFrom(eachRoot)));
         return allVerticesBfsOrder;
     }
 
-    public Stream<BigraphEntity> getAllVerticesBfsOrderStream() {
-        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
+    @SuppressWarnings("UnstableApiUsage")
+    public Stream<BigraphEntity<?>> getAllVerticesBfsOrderStream() {
+        Traverser<BigraphEntity<?>> stringTraverser = Traverser.forTree(this::getChildren);
         return StreamSupport.stream(stringTraverser.breadthFirst(getRoots().get(0)).spliterator(), false);
     }
 
-    public List<BigraphEntity> getAllVerticesBfsOrderFrom(BigraphEntity eachRoot) {
-        Traverser<BigraphEntity> stringTraverser = Traverser.forTree(node -> getChildren(node));
+    @SuppressWarnings("UnstableApiUsage")
+    public List<BigraphEntity<?>> getAllVerticesBfsOrderFrom(BigraphEntity<?> eachRoot) {
+        Traverser<BigraphEntity<?>> stringTraverser = Traverser.forTree(this::getChildren);
         return org.eclipse.collections.api.factory.Lists.fixedSize.ofAll(stringTraverser.breadthFirst(eachRoot));
     }
 
@@ -337,19 +313,13 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      *
      * @return all leaves of the place graph
      */
-    public List<BigraphEntity> getAllLeaves() {
-        final MutableList<BigraphEntity> leaves = org.eclipse.collections.api.factory.Lists.mutable.empty();
+    public List<BigraphEntity<?>> getAllLeaves() {
+        final MutableList<BigraphEntity<?>> leaves = org.eclipse.collections.api.factory.Lists.mutable.empty();
         this.getAllVertices().forEach(each -> {
             if (degreeOf(each) <= 1 && !isBRoot(each.getInstance())) {
                 leaves.add(each);
             }
         });
-//        List<BigraphEntity> leaves = new ArrayList<>();
-//        for (BigraphEntity each : this.getAllVertices()) {
-//            if (degreeOf(each) <= 1 && !isRoot(each.getInstance())) {
-//                leaves.add(each);
-//            }
-//        }
         return leaves;
     }
 }
