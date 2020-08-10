@@ -146,7 +146,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     @Test
-    void modelchecker_test() throws InvalidConnectionException, TypeNotExistsException, BigraphSimulationException, InvalidReactionRuleException {
+    void modelCheckerTest_redex4_test() throws InvalidConnectionException, TypeNotExistsException, BigraphSimulationException, InvalidReactionRuleException {
         PureBigraph agent = createAgent();
         PureBigraph redex = createRedex4();
         eb(agent, "agent");
