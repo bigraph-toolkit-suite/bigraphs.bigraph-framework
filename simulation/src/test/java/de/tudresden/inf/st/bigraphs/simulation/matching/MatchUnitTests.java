@@ -64,7 +64,7 @@ public class MatchUnitTests {
         PureBigraph context = (PureBigraph) next.getContext();
         PureBigraph redex = (PureBigraph) next.getRedex();
         Bigraph contextIdentity = next.getContextIdentity();
-        ElementaryBigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
+        Bigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
         PureBigraph contextComposed = (PureBigraph) factory.asBigraphOperator(context).parallelProduct(contextIdentity).getOuterBigraph();
 //            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
 //                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
@@ -149,7 +149,7 @@ public class MatchUnitTests {
         assertTrue(iterator.hasNext());
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent_model_test_0, next, TARGET_DUMP_PATH + "model0/" + (transition++) + "/");
+//            createGraphvizOutput(agent_model_test_0, next, TARGET_DUMP_PATH + "model0/" + (transition++) + "/");
             System.out.println("NEXT: " + next);
         }
 
@@ -287,7 +287,7 @@ public class MatchUnitTests {
         assertFalse(iterator.hasNext());
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
-            createGraphvizOutput(agent, next, TARGET_DUMP_PATH + "model6/");
+//            createGraphvizOutput(agent, next, TARGET_DUMP_PATH + "model6/");
             System.out.println("MATCH: " + next);
         }
     }
@@ -312,7 +312,7 @@ public class MatchUnitTests {
         Iterator<PureBigraphParametricMatch> iterator = match.iterator();
         while (iterator.hasNext()) {
             PureBigraphParametricMatch next = iterator.next();
-            createGraphvizOutput(agent_model_test_7, next, TARGET_DUMP_PATH + "model7/");
+//            createGraphvizOutput(agent_model_test_7, next, TARGET_DUMP_PATH + "model7/");
             System.out.println("MATCH: " + next);
         }
     }
@@ -338,7 +338,7 @@ public class MatchUnitTests {
         assertTrue(match.iterator().hasNext());
         while (iterator.hasNext()) {
             PureBigraphParametricMatch next = iterator.next();
-            createGraphvizOutput(agent, next, TARGET_DUMP_PATH + "model_idleedge/");
+//            createGraphvizOutput(agent, next, TARGET_DUMP_PATH + "model_idleedge/");
             System.out.println(next);
         }
 
