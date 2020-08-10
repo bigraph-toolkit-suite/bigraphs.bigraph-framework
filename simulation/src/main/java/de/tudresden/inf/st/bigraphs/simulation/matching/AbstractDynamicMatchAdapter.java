@@ -5,6 +5,8 @@ import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -69,15 +71,15 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      * Data structure to represent a pair
      */
     public static class ControlLinkPair {
-        Control<?,?> control;
+        Control<?, ?> control;
         BigraphEntity.Link link;
 
-        public ControlLinkPair(Control<?,?> control, BigraphEntity.Link link) {
+        public ControlLinkPair(Control<?, ?> control, BigraphEntity.Link link) {
             this.control = control;
             this.link = link;
         }
 
-        public Control<?,?> getControl() {
+        public Control<?, ?> getControl() {
             return control;
         }
 
@@ -103,10 +105,8 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
     @SuppressWarnings("UnstableApiUsage")
     public List<BigraphEntity<?>> getSubtreeOfNode(BigraphEntity<?> node) {
         Traverser<BigraphEntity<?>> stringTraverser = Traverser.forTree(this::getChildren);
-//        Iterable<BigraphEntity> v0 = stringTraverser.depthFirstPostOrder(node);
         MutableList<BigraphEntity<?>> bigraphEntities = org.eclipse.collections.api.factory.Lists.mutable
                 .ofAll(stringTraverser.depthFirstPostOrder(node));
-//        ArrayList<BigraphEntity> bigraphEntities = Lists.newArrayList(v0);
         bigraphEntities.remove(node);
         return bigraphEntities;
     }
@@ -240,8 +240,8 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      *
      * @return all vertices of the bigraph without sites
      */
-    public List<BigraphEntity<?>> getAllVertices() {
-        return org.eclipse.collections.api.factory.Lists.fixedSize.fromStream(
+    public ImmutableList<BigraphEntity<?>> getAllVertices() {
+        return Lists.immutable.fromStream(
                 Streams.concat(
                         getNodes().stream().map(x -> (BigraphEntity<?>) x),
                         getRoots().stream().map(x -> (BigraphEntity<?>) x)
@@ -254,8 +254,8 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      *
      * @return
      */
-    public List<BigraphEntity<?>> getAllInternalVerticesPostOrder() {
-        return org.eclipse.collections.api.factory.Lists.mutable.ofAll(getAllVerticesPostOrder())
+    public ImmutableList<BigraphEntity<?>> getAllInternalVerticesPostOrder() {
+        return Lists.immutable.ofAll(getAllVerticesPostOrder())
                 .select(x -> getChildren(x).size() > 0);
     }
 

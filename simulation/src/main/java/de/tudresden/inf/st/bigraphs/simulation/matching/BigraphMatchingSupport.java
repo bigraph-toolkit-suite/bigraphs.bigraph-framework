@@ -34,7 +34,7 @@ public abstract class BigraphMatchingSupport {
      * @param node2 second node
      * @return {@code true} if both nodes have the same control, otherwise {@code false}
      */
-    public boolean isSameControl(BigraphEntity node1, BigraphEntity node2) {
+    public boolean isSameControl(BigraphEntity<?> node1, BigraphEntity<?> node2) {
         return node1.getControl().equals(node2.getControl());
     }
 

@@ -22,12 +22,12 @@ The high level API eases the programming of bigraphical systems for real-world a
 - Visualization (beta)
     - graphical export via GraphViz, DOT
     - PNG, JPG, ...
-- Bigraph matching (beta)
+- Bigraph matching
 - Bigraphical Reactive System support: simulation of the evolution of
-bigraphs by reaction rules (synthesizing a labelled transition system) (alpha)
-    - simulation
-    - predicate checking
-    - order of reaction rules
+bigraphs by reaction rules (synthesizing a labelled transition system) (beta)
+    - Simulation
+    - Predicate checking
+    - Specify order of reaction rules
 - Model transformation / Conversions (alpha)
     - e.g., to GXL, BigMC, BigraphER, and BigRed
 
@@ -380,7 +380,7 @@ See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deplo
 **Bigraph Framework** is Open Source software released under the Apache 2.0 license.
 
 ```text
-   Copyright [2020] Dominik Grzelak
+   Copyright 2020 Dominik Grzelak
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
