@@ -198,11 +198,11 @@ public class BigraphGraphvizExporter {
         // now we consider outer name graphviz edges
         // outer names are connected with inner names or nodes (respective ports)
         for (BigraphEntity.OuterName eachOuterName : bigraph.getOuterNames()) {
-            Collection<BigraphEntity> pointsFromLink = bigraph.getPointsFromLink(eachOuterName);
+            Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink(eachOuterName);
             if (pointsFromLink.size() == 0) continue;
             Node grOuter = node(labelSupplier.with(eachOuterName).get())
                     .with(shapeSupplier.with(eachOuterName).get(), colorSupplier.with(eachOuterName).get());
-            for (BigraphEntity point : pointsFromLink) {
+            for (BigraphEntity<?> point : pointsFromLink) {
                 switch (point.getType()) {
                     case PORT:
                         BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);
@@ -232,14 +232,14 @@ public class BigraphGraphvizExporter {
         for (BigraphEntity.Edge eachEdge : edges) {
             // edges for graphviz are created as "hidden nodes"
             //find the nodes that are connected to it
-            Collection<BigraphEntity> pointsFromLink = bigraph.getPointsFromLink(eachEdge);
+            Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink(eachEdge);
             if (pointsFromLink.size() == 0) {
                 continue;
             }
             final Node hiddenEdgeNode = node(labelSupplier.with(eachEdge).get()).with(Shape.POINT, Color.GREEN);
 //            if (pointsFromLink.size() != 0) {
             //if inner name: create new node
-            for (BigraphEntity point : pointsFromLink) {
+            for (BigraphEntity<?> point : pointsFromLink) {
                 switch (point.getType()) {
                     case PORT:
                         BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);

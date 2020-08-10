@@ -74,9 +74,9 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
         Iterator<BigraphEntity.RootEntity> iterator = bigraph.getRoots().iterator();
         while (iterator.hasNext()) {
             BigraphEntity.RootEntity next = iterator.next();
-            Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(next);
+            Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(next);
             if (!childrenOf.isEmpty()) {
-                Iterator<BigraphEntity> childIterator = childrenOf.iterator();
+                Iterator<BigraphEntity<?>> childIterator = childrenOf.iterator();
                 while (childIterator.hasNext()) {
                     String s1 = toString(bigraph, childIterator.next(), bigraph.getOuterNames(), bigraph.getSites());
                     s.append(s1).append(childIterator.hasNext() ? " | " : "");
@@ -94,9 +94,9 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
         Iterator<BigraphEntity.RootEntity> iterator = bigraph.getRoots().iterator();
         if (!iterator.hasNext()) return s.toString();
         BigraphEntity.RootEntity next = iterator.next();
-        Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(next);
+        Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(next);
         if (!childrenOf.isEmpty()) {
-            Iterator<BigraphEntity> childIterator = childrenOf.iterator();
+            Iterator<BigraphEntity<?>> childIterator = childrenOf.iterator();
             while (childIterator.hasNext()) {
                 String s1 = toString(bigraph, childIterator.next(), bigraph.getOuterNames(), bigraph.getSites());
                 s.append(s1).append(childIterator.hasNext() ? " | " : "");
@@ -134,12 +134,12 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
             if (ns.length() > 0) {
                 s.append("[").append(ns.substring(0, ns.length() - 2)).append("]");
             }
-            Collection<BigraphEntity> children = bigraph.getChildrenOf(d);
+            Collection<BigraphEntity<?>> children = bigraph.getChildrenOf(d);
             if (!children.isEmpty()) {
                 s.append(".");
                 if (children.size() > 1) s.append("( ");
 
-                Iterator<BigraphEntity> childIt = children.iterator();
+                Iterator<BigraphEntity<?>> childIt = children.iterator();
                 while (childIt.hasNext()) {
                     s.append(toString(bigraph, childIt.next(), collection, sitelist))
                             .append(childIt.hasNext() ? " | " : "");

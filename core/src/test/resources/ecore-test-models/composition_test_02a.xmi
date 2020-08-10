@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bigraphMetaModel:BBigraph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bigraphMetaModel="de.tud.inf.st.bigraphs" xsi:schemaLocation="de.tud.inf.st.bigraphs jar:file:/home/dominik/.m2/repository/de/tudresden/inf/st/bigraphs/model/bigraph-ecore-model/1.1.0/bigraph-ecore-model-1.1.0.jar!/model/bigraphBaseModel.ecore">
+    <bRoots>
+        <bChild xsi:type="bigraphMetaModel:A" name="v0">
+            <bPorts bLink="//@bOuterNames.0"/>
+            <bPorts bLink="//@bOuterNames.1" index="1"/>
+        </bChild>
+        <bChild xsi:type="bigraphMetaModel:A" name="v1">
+            <bPorts bLink="//@bOuterNames.1"/>
+            <bPorts bLink="//@bEdges.0" index="1"/>
+        </bChild>
+        <bChild xsi:type="bigraphMetaModel:BSite"/>
+    </bRoots>
+    <bEdges name="e3" bPoints="//@bRoots.0/@bChild.1/@bPorts.1 //@bInnerNames.0"/>
+    <bInnerNames bLink="//@bEdges.0" name="e0_innername"/>
+    <bInnerNames bLink="//@bOuterNames.0" name="y1"/>
+    <bInnerNames bLink="//@bOuterNames.1" name="y2"/>
+    <bOuterNames name="y1" bPoints="//@bRoots.0/@bChild.0/@bPorts.0 //@bInnerNames.1"/>
+    <bOuterNames name="y2" bPoints="//@bRoots.0/@bChild.0/@bPorts.1 //@bRoots.0/@bChild.1/@bPorts.0 //@bInnerNames.2"/>
+</bigraphMetaModel:BBigraph>

@@ -41,7 +41,12 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
 //            if (!disjoint2 && isPlacing(inner)) return;
 //        }
         if (outer instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(outer)) {
-            if (!disjoint && isLinking(outer)) return;
+            if (!disjoint && isLinking(outer) && !isCompose) {
+                return;
+            }
+            if (!disjoint && isLinking(outer) && isCompose && nameSetLeft.size() == nameSetRight.size()) {
+                return;
+            }
             if (!disjoint2 && isPlacing(outer)) return;
         }
         if (disjoint || disjoint2) {

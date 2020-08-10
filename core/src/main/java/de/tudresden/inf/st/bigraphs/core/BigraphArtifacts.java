@@ -161,6 +161,7 @@ public class BigraphArtifacts {
     }
 
     public static EPackage loadBigraphMetaModel(String filePath) throws IOException {
+        assert filePath != null;
         File file = new File(filePath);
         if (!file.exists()) throw new IOException("File couldn't be found: " + filePath);
         EcorePackage.eINSTANCE.eClass();

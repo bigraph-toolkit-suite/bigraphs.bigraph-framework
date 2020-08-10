@@ -5,6 +5,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -72,7 +73,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
         // check that no two inner names are siblings
         for (BigraphEntity.InnerName eachInner : getInnerNames()) {
-            final Collection<BigraphEntity> pointsFromLink = getPointsFromLink(getLinkOfPoint(eachInner));
+            final Collection<BigraphEntity<?>> pointsFromLink = getPointsFromLink(getLinkOfPoint(eachInner));
             if (pointsFromLink.stream().filter(x -> !x.equals(eachInner)).anyMatch(BigraphEntityType::isInnerName)) {
                 return false;
             }
@@ -88,10 +89,12 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      *
      * @return the support <i>|B|</i> of the bigraph <i>B</i>
      */
-    default Collection<BigraphEntity> getSupport() {
-        return Stream.concat(
-                getNodes().stream(),
-                getEdges().stream()).collect(Collectors.toList());
+    @SuppressWarnings("unchecked")
+    default Collection<BigraphEntity<?>> getSupport() {
+//        return Stream.concat(
+//                ()getNodes().stream(),
+//                getEdges().stream()).collect(Collectors.toList());
+        return Lists.fixedSize.<BigraphEntity<?>>ofAll((Iterable) getNodes()).withAll((Iterable) getEdges());
     }
 
     /**
@@ -103,7 +106,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     default boolean isActiveAtSite(int siteIndex) {
         Optional<BigraphEntity.SiteEntity> first = getSites().stream().filter(x -> x.getIndex() == siteIndex).findFirst();
         if (first.isPresent()) {
-            BigraphEntity parent = getParent(first.get());
+            BigraphEntity<?> parent = getParent(first.get());
             while (Objects.nonNull(parent) && !BigraphEntityType.isRoot(parent)) {
                 if (!ControlKind.isActive(parent.getControl())) {
                     return false;
@@ -115,9 +118,9 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         return false;
     }
 
-    default boolean isActiveAtNode(BigraphEntity.NodeEntity node) {
+    default <C extends Control<?, ?>> boolean isActiveAtNode(BigraphEntity.NodeEntity<C> node) {
         if (Objects.nonNull(node) && ControlKind.isActive(node.getControl())) {
-            BigraphEntity parent = getParent(node);
+            BigraphEntity<?> parent = getParent(node);
             while (Objects.nonNull(parent) && !BigraphEntityType.isRoot(parent)) {
                 if (!ControlKind.isActive(parent.getControl())) {
                     return false;
@@ -170,7 +173,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
         //check that every point is open..
         boolean allPortsOpen = true;
-        for (BigraphEntity.NodeEntity each : getNodes()) {
+        for (BigraphEntity.NodeEntity<?> each : getNodes()) {
             if (each.getControl().getArity().getValue().longValue() >= 1) {
                 Collection<BigraphEntity.Port> ports = getPorts(each);
                 if (ports.size() == 0 ||
@@ -207,7 +210,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param place the place who's depth should be computed
      * @return the depth of the given place entity of this bigraph
      */
-    int getLevelOf(BigraphEntity place);
+    int getLevelOf(BigraphEntity<?> place);
 
     /**
      * Gets the neighborhood of the given node of the place graph. The neighborhood is the set containing the its
@@ -231,7 +234,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      *
      * @return all places of the bigraph
      */
-    Collection<BigraphEntity> getAllPlaces();
+    Collection<BigraphEntity<?>> getAllPlaces();
 
     Collection<BigraphEntity.Link> getAllLinks();
 
@@ -239,16 +242,18 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
     <C extends Control<?, ?>> Collection<BigraphEntity.NodeEntity<C>> getNodes();
 
-    BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity node);
+    BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity<?> node);
 
     /**
-     * Checks, if the node has the given node as parent.
+     * A recursive function that checks, whether the given node has {@code possibleParent} as parent.
+     * This means that {@code possibleParent} must not necessarily be the direct parent, but can also be
+     * a parent higher in the hierarchy.
      *
-     * @param node
-     * @param possibleParent
-     * @return
+     * @param node           the node to check against the parent {@code possibleParent}
+     * @param possibleParent the possible parent to check against {@code node}
+     * @return {@code true}, if {@code possibleParent} is directly or indirectly the parent of {@code node}, otherwise {@code false}
      */
-    boolean isParentOf(BigraphEntity node, BigraphEntity possibleParent);
+    boolean isParentOf(BigraphEntity<?> node, BigraphEntity<?> possibleParent);
 
     /**
      * Returns the set of children of a given node (including sites). <br>
@@ -265,7 +270,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param node the node
      * @return all incident links of {@code node}
      */
-    default Collection<BigraphEntity.Link> getIncidentLinksOf(BigraphEntity.NodeEntity node) {
+    default <C extends Control<?, ?>> Collection<BigraphEntity.Link> getIncidentLinksOf(BigraphEntity.NodeEntity<C> node) {
         return getPorts(node).stream()
                 .map(this::getLinkOfPoint)
                 .distinct()
@@ -279,7 +284,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param node a place of this bigraph
      * @return the parent of the given place, or {@code null}
      */
-    BigraphEntity getParent(BigraphEntity node);
+    BigraphEntity<?> getParent(BigraphEntity<?> node);
 
     /**
      * Returns the link of a bigraph's point type.
@@ -287,7 +292,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param point a point of the bigraph
      * @return returns the link that connects the point a {@code null}
      */
-    BigraphEntity.Link getLinkOfPoint(BigraphEntity point);
+    BigraphEntity.Link getLinkOfPoint(BigraphEntity<?> point);
 
     /**
      * Return all ports of a node. If the node's control has arity 0, then the list will always be empty.
@@ -296,7 +301,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param node the node who's ports shall be returned
      * @return all ports of a node
      */
-    Collection<BigraphEntity.Port> getPorts(BigraphEntity node);
+    Collection<BigraphEntity.Port> getPorts(BigraphEntity<?> node);
 
     /**
      * Get the number of "blocked/occupied" ports by links of a node.
@@ -305,9 +310,9 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param node the node
      * @return the port count of the node which are already used by links
      */
-    int getPortCount(BigraphEntity node);
+    <C extends Control<?, ?>> int getPortCount(BigraphEntity.NodeEntity<C> node);
 
-    <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port);
+    <C extends Control<?, ?>> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port);
 
     /**
      * Returns all siblings of the given node of the current bigraph. The node itself is not included.
@@ -321,7 +326,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * Returns all siblings of an inner name. The collection will not contain any port.
      *
      * @param innerName the inner name who's siblings should be returned
-     * @return
+     * @return the siblings connected to {@code innerName}
      */
     Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName);
 
@@ -331,7 +336,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param linkEntity the link entity who's connections shall be returned
      * @return collection of points connected to the link entity
      */
-    Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity);
+    Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity<?> linkEntity);
 
     /**
      * Check if two nodes are connected to each other.
@@ -343,5 +348,5 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param place2 right node
      * @return true, if the two nodes are connected by an edge or outer name
      */
-    boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2);
+    <C extends Control<?, ?>> boolean areConnected(BigraphEntity.NodeEntity<C> place1, BigraphEntity.NodeEntity<C> place2);
 }

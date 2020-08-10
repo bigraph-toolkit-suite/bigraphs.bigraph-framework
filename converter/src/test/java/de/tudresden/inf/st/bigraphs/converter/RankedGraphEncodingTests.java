@@ -55,7 +55,7 @@ public class RankedGraphEncodingTests {
         PureBigraph bigraph = createBigraphA();
 
         Map<BigraphEntity, String> idMap = new HashMap<>();
-        Traverser<BigraphEntity> childrenTraverser = Traverser.forTree(x -> {
+        Traverser<BigraphEntity<?>> childrenTraverser = Traverser.forTree(x -> {
             if (BigraphEntityType.isNode(x)) {
                 String n = ((BigraphEntity.NodeEntity) x).getName() + ":" + idMap.get(bigraph.getParent(x));
                 idMap.put(x, n);
@@ -63,7 +63,7 @@ public class RankedGraphEncodingTests {
             if (BigraphEntityType.isRoot(x)) {
                 idMap.put(x, String.valueOf(((BigraphEntity.RootEntity) x).getIndex()));
             }
-            Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(x);
+            Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(x);
             return childrenOf;
         });
 
@@ -75,8 +75,8 @@ public class RankedGraphEncodingTests {
         // kann gleiche node-"id" für site und root verwendet werden? - ja: GMTE erzeugt sowieso neue ids aber beachtet diese nodes
 
         //build id concat with map?
-        ArrayList<BigraphEntity> bigraphEntities = Lists.newArrayList(childrenTraverser.breadthFirst(firstRoot));
-        for (BigraphEntity each : bigraphEntities) {
+        ArrayList<BigraphEntity<?>> bigraphEntities = Lists.newArrayList(childrenTraverser.breadthFirst(firstRoot));
+        for (BigraphEntity<?> each : bigraphEntities) {
             System.out.println(each);
             switch (each.getType()) {
                 case NODE:

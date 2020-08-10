@@ -1381,7 +1381,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     public void loadSignatureAsTypeGraph(String metaModelFilePath) {
         try {
             loadedEPackage = BigraphArtifacts.loadBigraphMetaModel(metaModelFilePath);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new BigraphMetaModelLoadingFailedException(e);
         }
         initReferencesAndEClasses(false);

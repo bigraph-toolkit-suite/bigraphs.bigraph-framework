@@ -143,7 +143,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
          * @return always returns {@code null}
          */
         @Override
-        public final BigraphEntity getParent(BigraphEntity node) {
+        public final BigraphEntity<?> getParent(BigraphEntity<?> node) {
             return null;
         }
 
@@ -153,7 +153,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
          * @return the barren's root
          */
         @Override
-        public List<BigraphEntity> getAllPlaces() {
+        public List<BigraphEntity<?>> getAllPlaces() {
             return super.getAllPlaces();
         }
 

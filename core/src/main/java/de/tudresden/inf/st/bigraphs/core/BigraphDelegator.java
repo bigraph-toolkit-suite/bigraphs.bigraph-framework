@@ -66,22 +66,22 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2) {
+    public <C extends Control<?, ?>> boolean areConnected(BigraphEntity.NodeEntity<C> place1, BigraphEntity.NodeEntity<C> place2) {
         return bigraphDelegate.areConnected(place1, place2);
     }
 
     @Override
-    public BigraphEntity getParent(BigraphEntity node) {
+    public BigraphEntity<?> getParent(BigraphEntity<?> node) {
         return bigraphDelegate.getParent(node);
     }
 
     @Override
-    public BigraphEntity.Link getLinkOfPoint(BigraphEntity point) {
+    public BigraphEntity.Link getLinkOfPoint(BigraphEntity<?> point) {
         return bigraphDelegate.getLinkOfPoint(point);
     }
 
     @Override
-    public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
+    public Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity<?> linkEntity) {
         return bigraphDelegate.getPointsFromLink(linkEntity);
     }
 
@@ -91,12 +91,12 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity node) {
+    public BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity<?> node) {
         return bigraphDelegate.getTopLevelRoot(node);
     }
 
     @Override
-    public boolean isParentOf(BigraphEntity node, BigraphEntity possibleParent) {
+    public boolean isParentOf(BigraphEntity<?> node, BigraphEntity<?> possibleParent) {
         return bigraphDelegate.isParentOf(node, possibleParent);
     }
 
@@ -106,7 +106,7 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
+    public <C extends Control<?,?>> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
         return bigraphDelegate.getNodeOfPort(port);
     }
 
@@ -116,12 +116,12 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public int getLevelOf(BigraphEntity place) {
+    public int getLevelOf(BigraphEntity<?> place) {
         return bigraphDelegate.getLevelOf(place);
     }
 
     @Override
-    public Collection<BigraphEntity> getAllPlaces() {
+    public Collection<BigraphEntity<?>> getAllPlaces() {
         return bigraphDelegate.getAllPlaces();
     }
 
@@ -131,12 +131,12 @@ public abstract class BigraphDelegator<S extends Signature> implements Bigraph<S
     }
 
     @Override
-    public Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
+    public Collection<BigraphEntity.Port> getPorts(BigraphEntity<?> node) {
         return bigraphDelegate.getPorts(node);
     }
 
     @Override
-    public int getPortCount(BigraphEntity node) {
+    public <C extends Control<?,?>> int getPortCount(BigraphEntity.NodeEntity<C> node) {
         return bigraphDelegate.getPortCount(node);
     }
 

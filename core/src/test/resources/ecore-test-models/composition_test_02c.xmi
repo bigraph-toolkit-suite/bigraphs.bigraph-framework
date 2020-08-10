@@ -1,0 +1,11 @@
+<bigraphMetaModel:BBigraph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bigraphMetaModel="de.tud.inf.st.bigraphs" xsi:schemaLocation="de.tud.inf.st.bigraphs jar:file:/home/dominik/.m2/repository/de/tudresden/inf/st/bigraphs/model/bigraph-ecore-model/1.1.0/bigraph-ecore-model-1.1.0.jar!/model/bigraphBaseModel.ecore">
+    <bRoots>
+        <bChild xsi:type="bigraphMetaModel:BSite"/>
+    </bRoots>
+    <bInnerNames bLink="//@bOuterNames.0" name="e0"/>
+    <bInnerNames bLink="//@bOuterNames.1" name="y1"/>
+    <bInnerNames bLink="//@bOuterNames.2" name="y2"/>
+    <bOuterNames name="e0_innername" bPoints="//@bInnerNames.0"/>
+    <bOuterNames name="y1" bPoints="//@bInnerNames.1"/>
+    <bOuterNames name="y2" bPoints="//@bInnerNames.2"/>
+</bigraphMetaModel:BBigraph>

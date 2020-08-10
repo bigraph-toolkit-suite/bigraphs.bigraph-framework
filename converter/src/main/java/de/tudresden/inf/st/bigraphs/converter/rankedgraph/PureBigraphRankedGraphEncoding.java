@@ -50,7 +50,7 @@ public class PureBigraphRankedGraphEncoding extends AbstractRankedGraph<PureBigr
             if (BigraphEntityType.isRoot(x)) {
                 hierarchyIdMap.put(x, String.valueOf(((BigraphEntity.RootEntity) x).getIndex()));
             }
-            Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(x);
+            Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(x);
             return childrenOf;
         });
         BigraphEntity.RootEntity firstRoot = bigraph.getRoots().iterator().next();

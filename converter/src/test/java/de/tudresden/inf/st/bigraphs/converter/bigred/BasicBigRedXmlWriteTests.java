@@ -14,12 +14,10 @@ import org.bigraph.model.savers.SaveFailedException;
 import org.bigraph.model.savers.SignatureXMLSaver;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
+import java.io.*;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Dominik Grzelak
@@ -27,16 +25,86 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 public class BasicBigRedXmlWriteTests {
 
     @Test
-    void write_test() throws SaveFailedException {
-        DefaultDynamicSignature signature = createSignature();
-        SignatureAdapter signatureAdapter = new SignatureAdapter(signature);
+    void write_test() {
+        assertAll(() -> {
 
-        PrintStream out = new PrintStream(System.out);
+            DefaultDynamicSignature signature = createSignature();
+            SignatureAdapter signatureAdapter = new SignatureAdapter(signature);
 
-        SignatureXMLSaver sx = new SignatureXMLSaver();
-        sx.setModel(signatureAdapter)
-                .setOutputStream(out);
-        sx.exportObject();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            SignatureXMLSaver sx = new SignatureXMLSaver();
+            sx.setModel(signatureAdapter)
+                    .setOutputStream(bos);
+            sx.exportObject();
+            String match = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                    "<signature:signature xmlns:signature=\"http://www.itu.dk/research/pls/xmlns/2010/signature\">\n" +
+                    "  <signature:control kind=\"active\" name=\"User\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"atomic\" name=\"Person\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "    <signature:port name=\"1\"/>\n" +
+                    "    <signature:port name=\"2\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"passive\" name=\"Room\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "    <signature:port name=\"1\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"active\" name=\"Computer\"/>\n" +
+                    "</signature:signature>\n";
+            String match2 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                    "<signature:signature xmlns:signature=\"http://www.itu.dk/research/pls/xmlns/2010/signature\">\n" +
+                    "  <signature:control kind=\"passive\" name=\"Room\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "    <signature:port name=\"1\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"atomic\" name=\"Person\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "    <signature:port name=\"1\"/>\n" +
+                    "    <signature:port name=\"2\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"active\" name=\"User\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"active\" name=\"Computer\"/>\n" +
+                    "</signature:signature>\n";
+            String match3 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                    "<signature:signature xmlns:signature=\"http://www.itu.dk/research/pls/xmlns/2010/signature\">\n" +
+                    "  <signature:control kind=\"atomic\" name=\"Person\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "    <signature:port name=\"1\"/>\n" +
+                    "    <signature:port name=\"2\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"active\" name=\"Computer\"/>\n" +
+                    "  <signature:control kind=\"passive\" name=\"Room\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "    <signature:port name=\"1\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"active\" name=\"User\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "  </signature:control>\n" +
+                    "</signature:signature>\n";
+            String match4 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                    "<signature:signature xmlns:signature=\"http://www.itu.dk/research/pls/xmlns/2010/signature\">\n" +
+                    "  <signature:control kind=\"active\" name=\"User\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"passive\" name=\"Room\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "    <signature:port name=\"1\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"atomic\" name=\"Person\">\n" +
+                    "    <signature:port name=\"0\"/>\n" +
+                    "    <signature:port name=\"1\"/>\n" +
+                    "    <signature:port name=\"2\"/>\n" +
+                    "  </signature:control>\n" +
+                    "  <signature:control kind=\"active\" name=\"Computer\"/>\n" +
+                    "</signature:signature>";
+            String s = new String(bos.toByteArray());
+            System.out.println(s);
+//            assertTrue(s.equals(match) || s.equals(match2) || s.equals(match3)|| s.equals(match4));
+            bos.close();
+        });
     }
 
     private static DefaultDynamicSignature createSignature() {
