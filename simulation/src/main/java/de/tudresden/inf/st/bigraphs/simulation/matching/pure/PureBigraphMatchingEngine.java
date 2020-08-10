@@ -665,7 +665,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                     .collect(toList());
             if (BigraphEntityType.isEdge(eachAgentLink)) {
                 substitutionLinkingGraphForRedex.putIfAbsent(eachAgentLink.getName() + "_innername", new ArrayList<>());//todo here
-//                substitutionLinkingGraph.putIfAbsent(eachAgentLink.getName() + "_innername", new ArrayList<>());//todo here
+                substitutionLinkingGraph.putIfAbsent(eachAgentLink.getName() + "_innername", new ArrayList<>());//todo here
             } else {
                 substitutionLinkingGraph.putIfAbsent(eachAgentLink.getName(), new ArrayList<>());
             }
@@ -684,7 +684,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                     if (!alreadyUsedNamesOfNode.contains(linkNameR)) {
                         if (BigraphEntityType.isEdge(pairA.getLink()) && BigraphEntityType.isEdge(eachAgentLink)) { //&& BigraphEntityType.isEdge(eachAgentLink)
                             substitutionLinkingGraphForRedex.get(eachAgentLink.getName() + "_innername").add(linkNameR);
-//                            substitutionLinkingGraph.get(eachAgentLink.getName() + "_innername").add(linkNameR);
+                            substitutionLinkingGraph.get(eachAgentLink.getName() + "_innername").add(linkNameR);
                             alreadyUsedNamesOfNode.add(linkNameR);//todo here
                         } else if (!BigraphEntityType.isEdge(pairA.getLink())) {
                             substitutionLinkingGraph.get(eachAgentLink.getName()).add(linkNameR);
@@ -695,41 +695,11 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             }
         }
 
-        if (substitutionLinkingGraphForRedex.size() != 0) {
-//            Bigraph klo = substitutionLinkingGraph.entrySet().stream().map(x -> {
-//                if (x.getValue().size() == 0) {
-//                    return linkings.substitution(StringTypedName.of(x.getKey()), StringTypedName.of(x.getKey()));
-//                } else {
-//                    List<NamedType<?>> names = x.getValue().stream().map(StringTypedName::of).collect(toList());
-//                    return linkings.substitution(StringTypedName.of(x.getKey()), names);
-//                }
-//            })
-//                    .map(x -> (Bigraph) x)
-//                    .reduce((l, r) -> {
-//                        try {
-//                            return pureBigraphFactory.asBigraphOperator(l).parallelProduct(r).getOuterBigraph();
-//                        } catch (Exception e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }).get();
-////                    identityForParams = linkings.identity_e();
-//            try {
-//                BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) klo, System.out);
-//                Placings<DefaultDynamicSignature> placings = pureBigraphFactory.createPlacings(agentAdapter.getSignature());
-//                klo = pureBigraphFactory.asBigraphOperator(klo).parallelProduct(placings.identity1()).getOuterBigraph();
-//                BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) klo, System.out);
-//                context = (PureBigraph) pureBigraphFactory.asBigraphOperator(context).nesting(klo).getOuterBigraph();
-//                BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) context, System.out);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            System.out.println("modifier for context: ");
-        }
-
         for (Map.Entry<String, List<String>> each : substitutionLinkingGraph.entrySet()) {
             List<StringTypedName> tmp = each.getValue().stream().map(StringTypedName::of).collect(toList());
 //                if(each.getKey().endsWith("_innername")) continue;
-            if (!each.getKey().endsWith("_innername") || needsParameters) {
+            if (each.getKey().endsWith("_innername")) continue;
+            if (needsParameters || each.getValue().size() == 0) { //!each.getKey().endsWith("_innername") ||
                 tmp.add(StringTypedName.of(each.getKey()));
             }
 //                if (each.getKey().endsWith("_innername"))
@@ -737,6 +707,17 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             try {
                 identityForContext = pureBigraphFactory.asBigraphOperator(identityForContext)
                         .parallelProduct(tmpSub).getOuterBigraph();
+
+//                if (!needsParameters) {
+//                    for (Map.Entry<String, List<String>> each2 : substitutionLinkingGraphForRedex.entrySet()) {
+//                        if (each2.getValue().size() == 0) {
+//                            PureBigraphBuilder<DefaultDynamicSignature> b = pureBigraphFactory.createBigraphBuilder(agentAdapter.getSignature());
+//                            b.createOuterName(each.getKey());
+//                            PureBigraph idleOuter = b.createBigraph();
+//                            identityForContext = pureBigraphFactory.asBigraphOperator(identityForContext).parallelProduct(idleOuter).getOuterBigraph();
+//                        }
+//                    }
+//                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -751,23 +732,31 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                     .collect(toList());
             if (namesTmp.size() == 0 || parameters.size() == 0) {
                 identityForParams = linkings.identity_e();
-//                substitutionLinkingGraph.putAll(substitutionLinkingGraphForRedex);
-                if(substitutionLinkingGraphForRedex.size() != 0) {
+                if (substitutionLinkingGraphForRedex.size() != 0) {
                     identityForParams = identityForContext;
+                    Placings<DefaultDynamicSignature>.Permutation permutation = pureBigraphFactory.createPlacings(agentAdapter.getSignature()).permutation(redexAdapter.getRoots().size());
+                    identityForParams = pureBigraphFactory.asBigraphOperator(permutation).parallelProduct(identityForParams).getOuterBigraph();
                     for (Map.Entry<String, List<String>> each : substitutionLinkingGraphForRedex.entrySet()) {
                         if (each.getValue().size() == 0) continue;
                         List<StringTypedName> tmp = each.getValue().stream().map(StringTypedName::of).collect(toList());
-                        tmp.add(StringTypedName.of(each.getKey()));
+//                        tmp.add(StringTypedName.of(each.getKey()));
                         Linkings<DefaultDynamicSignature>.Substitution tmpSub = linkings.substitution(StringTypedName.of(each.getKey()), (List) tmp);
                         identityForParams = pureBigraphFactory.asBigraphOperator(identityForParams).parallelProduct(tmpSub).getOuterBigraph();
                     }
                 }
             } else {
                 identityForParams = linkings.identity(namesTmp.toArray(new StringTypedName[0]));
+//                if (substitutionLinkingGraphForRedex.size() != 0) {
+//                    for (Map.Entry<String, List<String>> each : substitutionLinkingGraphForRedex.entrySet()) {
+//                        if (each.getValue().size() == 0) {
+//                            PureBigraphBuilder<DefaultDynamicSignature> b = pureBigraphFactory.createBigraphBuilder(agentAdapter.getSignature());
+//                            b.createOuterName(each.getKey());
+//                            PureBigraph idleOuter = b.createBigraph();
+//                            identityForParams = pureBigraphFactory.asBigraphOperator(identityForParams).parallelProduct(idleOuter).getOuterBigraph();
+//                        }
+//                    }
+//                }
             }
-//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) identityForContext, System.out);
-//            BigraphGraphvizExporter.toPNG(identityForContext, true, new File("identyContext.png"));
-
             // bigraph to prepare closing the inner names
 //            List<StringTypedName> closeInnerNames = context.getInnerNames().stream().map(x -> StringTypedName.of(x.getName())).collect(Collectors.toList());
 //            PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = pureBigraphFactory.createBigraphBuilder(agentAdapter.getSignature());
@@ -1007,7 +996,9 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
      * @param redexNodes a collection of redex nodes
      * @return a map where the key is the redex and the value is a list of possible agent matches
      */
-    public Map<BigraphEntity<?>, LinkedList<BigraphEntity<?>>> findOccurrences(Collection<BigraphEntity<?>> agentNodes, Collection<BigraphEntity<?>> redexNodes, boolean withSitesNoExactMatch) {
+    public Map<BigraphEntity<?>, LinkedList<BigraphEntity<?>>> findOccurrences
+    (Collection<BigraphEntity<?>> agentNodes, Collection<BigraphEntity<?>> redexNodes,
+     boolean withSitesNoExactMatch) {
         Map<BigraphEntity<?>, LinkedList<BigraphEntity<?>>> mapping = new HashMap<>();
         List<BigraphEntity<?>> agents = new LinkedList<>(agentNodes);
         //Liste durchgehen von redexNodes
@@ -1098,9 +1089,9 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                         //now: find the corresponding agent nodes of otherRedexPair.getOther()
                         // check if redexInQuestion is connected to the corresponding findings of otherRedexPair.getOther()
                         if (otherRedexAgents.size() == 0) continue;
-                        List<BigraphEntity<?>> allChildrenOf = getSubBigraphFrom(otherRedexAgents.get(0), agentAdapter)
+                        List<BigraphEntity<?>> allChildrenOf = (List)getSubBigraphFrom(otherRedexAgents.get(0), agentAdapter)
                                 .stream()
-                                .filter(x -> agentAdapter.getPortCount(x) > 0)
+                                .filter(x -> agentAdapter.getPortCount((BigraphEntity.NodeEntity) x) > 0)
                                 .filter(x -> S.get(x, otherRedexPair.getOther()) != null && S.get(x, otherRedexPair.getOther()).size() > 0)
                                 .filter(x -> agentAdapter.areConnected((BigraphEntity.NodeEntity) eachPossibleAgent, (BigraphEntity.NodeEntity) x))
                                 .collect(toList());
@@ -1162,7 +1153,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
      * @param noExactMatch
      * @return
      */
-    private boolean hasSameSpatialStructure3(BigraphEntity<?> agent, BigraphEntity<?> redex, boolean noExactMatch) {
+    private boolean hasSameSpatialStructure3(BigraphEntity<?> agent, BigraphEntity<?> redex,
+                                             boolean noExactMatch) {
         List<BigraphEntity<?>> bigraphEntities = S.get(agent, redex);
         if (Objects.isNull(bigraphEntities)) return false;
         List<BigraphEntity<?>> redexChildren = redexAdapter.getChildren(redex);
@@ -1329,8 +1321,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 //            if (lnkRedex.size() != 0 && lnkAgent.size() != 0) {
                 if (lnkRedex.size() != lnkAgent.size()) return false;
                 for (int i = 0, n = lnkRedex.size(); i < n; i++) {
-                    Collection<BigraphEntity> redexLinksOfEachU = redexAdapter.getPointsFromLink(lnkRedex.get(i).getLink());
-                    Collection<BigraphEntity> agentLinksOfEachV = agentAdapter.getPointsFromLink(lnkAgent.get(i).getLink());
+                    Collection<BigraphEntity<?>> redexLinksOfEachU = redexAdapter.getPointsFromLink(lnkRedex.get(i).getLink());
+                    Collection<BigraphEntity<?>> agentLinksOfEachV = agentAdapter.getPointsFromLink(lnkAgent.get(i).getLink());
 //                    List<BigraphEntity> redexLinksOfEachU = redexAdapter.getPointsFromLink((BigraphEntity.Link) lnkRedex.get(i).getLink());
 //                    List<BigraphEntity> agentLinksOfEachV = agentAdapter.getNodesOfLink((BigraphEntity.Link) lnkAgent.get(i).getLink());
                     boolean isDistinctLinkR = redexLinksOfEachU.size() == 1;

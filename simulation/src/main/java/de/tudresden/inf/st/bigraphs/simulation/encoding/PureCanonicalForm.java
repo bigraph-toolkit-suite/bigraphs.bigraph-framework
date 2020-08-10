@@ -253,7 +253,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 
                                         }
                                         atLevelCnt.incrementAndGet();
-                                        if (bigraph.getPortCount(val) > 0) {
+                                        if (bigraph.getPortCount((BigraphEntity.NodeEntity) val) > 0) {
                                             sb.append("{"); //.append(num).append(":");
                                             bigraph.getPorts(val).stream()
                                                     .map(bigraph::getLinkOfPoint)
@@ -453,7 +453,16 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             });
     Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenPortSum =
             Comparator.comparing(entry -> {
-                return (int) entry.getValue().stream().map(x -> bigraph.getPortCount(x)).reduce(0, Integer::sum);
+//                return (Integer) entry.getValue().stream()
+//                        .map(x -> bigraph.getPortCount((BigraphEntity.NodeEntity) x))
+//                        .map(x -> (int)x)
+//                        .reduce(0, Integer::sum);
+                int sum = 0;
+                for (int i = 0; i < entry.getValue().size(); i++) {
+                    BigraphEntity<?> bigraphEntity = entry.getValue().get(i);
+                    sum += bigraph.getPortCount((BigraphEntity.NodeEntity) bigraphEntity);
+                }
+                return sum;
             });
 
     Comparator<BigraphEntity> compareChildrenSize = Comparator.comparing(entry -> {
@@ -461,7 +470,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     });
 
     Comparator<BigraphEntity> comparePortCount = Comparator.comparing(entry -> {
-        return bigraph.getPortCount(entry);
+        return bigraph.getPortCount((BigraphEntity.NodeEntity) entry);
     });
 
     Comparator<BigraphEntity> compareLinkNames = Comparator.comparing(entry -> {
