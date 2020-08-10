@@ -133,10 +133,10 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             matchingTimer = Stopwatch.createStarted();
         }
 
-        search.embeddings();
-        candidatesHyperIso = search.getCandidates();
+//        search.embeddings();
+//        candidatesHyperIso = search.getCandidates();
 //        Set<SubHypergraphIsoSearch.Embedding> embeddingSet = search.getEmbeddingSet();
-//        executorService.submit(linkGraphIsoTask);
+        executorService.submit(linkGraphIsoTask);
 
         List<List<BigraphEntity<?>>> partitionSets = new ArrayList<>();
         for (BigraphEntity<?> eachV : internalVertsG) {//TODO: create this in a stream-filter
@@ -265,11 +265,11 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             matchingTimer.reset().start();
         }
 
-//        try {
-//            candidatesHyperIso = linkGraphIsoTask.get();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            candidatesHyperIso = linkGraphIsoTask.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         // generic loop for unique and non-unique matchings of the redex root to agent's node
         int validCounter = 0;
@@ -542,7 +542,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                             blockNodesForContext.addAll(agentAdapter.getChildrenOf(agentNext));
                         }
 //                        logger.debug("iterateThroughChildren: start");
-                        logger.debug("hitsV_newChildren.columnMap().keySet()={}", hitsV_newChildren.columnMap().keySet());
+//                        logger.debug("hitsV_newChildren.columnMap().keySet()={}", hitsV_newChildren.columnMap().keySet());
                         // two-times iteration: because we need the matchDict to be complete for the current level
                         for (BigraphEntity<?> agentNext : hitsV_newChildren.columnMap().keySet()) {
                             Map.Entry<Integer, BigraphEntity<?>> integerBigraphEntityEntry = hitsV_newChildren.column(agentNext)
