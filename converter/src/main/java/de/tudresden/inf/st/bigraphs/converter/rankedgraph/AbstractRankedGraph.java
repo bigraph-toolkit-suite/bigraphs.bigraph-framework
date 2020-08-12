@@ -10,18 +10,24 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
+ * Abstract base class for a ranked graph representation for different kind of bigraphs, and node and edge types for the
+ * ranked graph.
+ *
  * @author Dominik Grzelak
  */
 public abstract class AbstractRankedGraph<B extends Bigraph<?>, N, E> {
 
-    protected Graph<N, E> graph;
-    protected Map<String, N> roots = new HashMap<>();
-    protected Map<String, N> variables = new HashMap<>();
-    protected Map<String, List<N>> variableMap = new HashMap<>();
-    protected Map<String, List<N>> rootMap = new HashMap<>();
     protected B bigraph;
+
+    protected Graph<N, E> graph;
+    protected Map<String, N> roots = new HashMap<>(); // root and outer
+    protected Map<String, N> variables = new HashMap<>(); // sites and inner
+
+    protected Map<String, List<N>> variableMap = new HashMap<>(); //for convenience
+    protected Map<String, List<N>> rootMap = new HashMap<>(); //for convenience
 
     public AbstractRankedGraph(B bigraph) {
         this.bigraph = bigraph;
@@ -40,13 +46,27 @@ public abstract class AbstractRankedGraph<B extends Bigraph<?>, N, E> {
                 .buildGraph();
     }
 
+    public Graph<N, E> getGraph() {
+        return graph;
+    }
+
+    /**
+     * Represents the two types of nodes of a ranked graph: place nodes and link nodes.
+     * The method {@link LabeledNode#isPlaceNode()} can be called to determine the type.
+     * It is automatically inferred by checking whether the supplied control is {@code null}.
+     */
     public static class LabeledNode {
         private String id;
         private Control control;
         private BigraphEntityType type;
+        private boolean isPlaceNode;
 
         public LabeledNode(String id, BigraphEntityType type) {
-            this(id, type, null);
+            this(id, type, null, false);
+        }
+
+        public LabeledNode(String id, BigraphEntityType type, Control control) {
+            this(id, type, control, Objects.nonNull(control));
         }
 
         /**
@@ -54,11 +74,13 @@ public abstract class AbstractRankedGraph<B extends Bigraph<?>, N, E> {
          *
          * @param id the label of the new node.
          */
-        public LabeledNode(String id, BigraphEntityType type, Control control) {
+        private LabeledNode(String id, BigraphEntityType type, Control control, boolean isPlaceNode) {
             this.id = id;
             this.type = type;
             this.control = control;
+            this.isPlaceNode = isPlaceNode;
         }
+
 
         /**
          * Gets the label associated with this node.
@@ -73,13 +95,55 @@ public abstract class AbstractRankedGraph<B extends Bigraph<?>, N, E> {
             return control;
         }
 
+        /**
+         * @return {@code true}, if the node is a <i>place node</i>, otherwise it is a <i>link node</i>
+         */
+        public boolean isPlaceNode() {
+            return isPlaceNode && Objects.nonNull(control);
+        }
+
+        /**
+         * Symmetric method to {@link #isPlaceNode()}.
+         *
+         * @return {@code true}, if the node is a <i>link node</i>, otherwise it is a <i>place node</i>
+         */
+        public boolean isLinkNode() {
+            return !isPlaceNode();
+        }
+
+        /**
+         * @return {@code true}, if the node is a root, site, outer name or inner name
+         */
+        public boolean isInterfaceNode() {
+            return isVariableNode() || isRootNode();
+        }
+
+        public boolean isVariableNode() {
+            return type == BigraphEntityType.SITE ||
+                    type == BigraphEntityType.INNER_NAME;
+        }
+
+        public boolean isRootNode() {
+            return type == BigraphEntityType.OUTER_NAME ||
+                    type == BigraphEntityType.ROOT;
+        }
+
         public BigraphEntityType getType() {
             return type;
         }
 
         @Override
         public String toString() {
-            return "(" + id + ")";
+            if (type == BigraphEntityType.SITE)
+                return "site:" + id;
+            if (type == BigraphEntityType.ROOT)
+                return "root:" + id;
+            if (type == BigraphEntityType.INNER_NAME)
+                return "inner:" + id;
+            if (type == BigraphEntityType.OUTER_NAME)
+                return "outer:" + id;
+            if (Objects.isNull(id) || id.isEmpty()) return "";
+            return id;
         }
     }
 
@@ -105,9 +169,20 @@ public abstract class AbstractRankedGraph<B extends Bigraph<?>, N, E> {
         }
 
         @Override
+        public Object getSource() {
+            return super.getSource();
+        }
+
+        @Override
+        public Object getTarget() {
+            return super.getTarget();
+        }
+
+        @Override
         public String toString() {
-            //            return "(" + getSource() + " : " + getTarget() + " : " + label + ")";
-            return "(" + label + ")";
+            if (Objects.isNull(label) || label.isEmpty())
+                return "";
+            return "(" + getSource() + " : " + getTarget() + " : " + label + ")";
         }
     }
 

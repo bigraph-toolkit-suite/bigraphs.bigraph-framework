@@ -77,7 +77,7 @@ public class BigraphCreationUnitTest {
         BigraphArtifacts.exportAsInstanceModel(bigraph1, System.out);
 
         bigraph1.getAllLinks().forEach(l -> {
-            List<BigraphEntity> pointsFromLink = bigraph1.getPointsFromLink(l);
+            List<BigraphEntity<?>> pointsFromLink = bigraph1.getPointsFromLink(l);
             pointsFromLink.forEach(p -> {
                 if (BigraphEntityType.isPort(p)) {
                     BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph1.getNodeOfPort((BigraphEntity.Port) p);
@@ -442,12 +442,12 @@ public class BigraphCreationUnitTest {
             Collection<BigraphEntity.Port> ports = bigraph.getPorts(D);
             assertEquals(1, ports.size());
             BigraphEntity.Port port = new ArrayList<>(ports).get(0);
-            BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(port);
+            BigraphEntity<?> linkOfPoint = bigraph.getLinkOfPoint(port);
             assertNotNull(linkOfPoint);
-            Collection<BigraphEntity> pointsFromLink = bigraph.getPointsFromLink(linkOfPoint);
+            Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink(linkOfPoint);
             assertEquals(4, pointsFromLink.size());
             int portCnt = 0, innerCnt = 0;
-            for (BigraphEntity eachPoint : pointsFromLink) {
+            for (BigraphEntity<?> eachPoint : pointsFromLink) {
                 if (BigraphEntityType.isPort(eachPoint)) portCnt++;
                 if (BigraphEntityType.isInnerName(eachPoint)) {
                     innerCnt++;

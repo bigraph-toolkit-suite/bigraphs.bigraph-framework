@@ -261,7 +261,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public List<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
+    public List<BigraphEntity<?>> getPointsFromLink(BigraphEntity<?> linkEntity) {
         if (Objects.isNull(linkEntity) || !isBLink(linkEntity.getInstance()))
             return Collections.emptyList();
         final EObject eObject = linkEntity.getInstance();
@@ -270,7 +270,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         final EList<EObject> pointsObjects = (EList<EObject>) eObject.eGet(pointsRef);
         if (Objects.isNull(pointsObjects)) return Collections.emptyList();
 
-        final List<BigraphEntity> result = new ArrayList<>();
+        final List<BigraphEntity<?>> result = new ArrayList<>();
         for (EObject eachObject : pointsObjects) {
             if (isBPort(eachObject)) {
                 getNodes().stream()

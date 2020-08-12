@@ -1,9 +1,13 @@
-package de.tudresden.inf.st.bigraphs.converter;
+package de.tudresden.inf.st.bigraphs.converter.rankedgraph;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxCellRenderer;
+import com.mxgraph.util.mxRectangle;
 import de.tudresden.inf.st.bigraphs.converter.gxl.GraphMLDomBuilder;
-import de.tudresden.inf.st.bigraphs.converter.rankedgraph.PureBigraphRankedGraphEncoding;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -17,15 +21,27 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jgrapht.Graph;
+import org.jgrapht.ext.JGraphXAdapter;
 import org.junit.jupiter.api.Test;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Place graph hierarchy is encoded as attribute "parent"
 // hierarchy is als reflected by the id of the nodes (to maintain the parent relationship)
@@ -40,14 +56,98 @@ import java.util.*;
  * @author Dominik Grzelak
  */
 public class RankedGraphEncodingTests {
-    private final static String TARGET_TEST_PATH = "src/test/resources/dump/";
+    private final static String TARGET_TEST_PATH = "src/test/resources/dump/rankedgraphs/";
     private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
 
     @Test
     void name2() throws TypeNotExistsException, InvalidConnectionException, IOException {
         PureBigraph bigraph = createBigraphA();
+//        BigraphGraphvizExporter.toPNG(bigraph, true, new File("bigraph-example.png"));
         PureBigraphRankedGraphEncoding graphEncoding = new PureBigraphRankedGraphEncoding(bigraph);
         graphEncoding.encode();
+        Graph<AbstractRankedGraph.LabeledNode, AbstractRankedGraph.LabeledEdge> graph = graphEncoding.getGraph();
+        drawGraph(graphEncoding.getGraph());
+    }
+
+    private void drawGraph(Graph graph) throws IOException {
+        JGraphXAdapter graphAdapter = new JGraphXAdapter(graph);
+
+//        mxHierarchicalLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.WEST);
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.SOUTH);
+        ((mxHierarchicalLayout) layout).setFineTuning(true);
+        ((mxHierarchicalLayout) layout).setResizeParent(true);
+        graphAdapter.setResetEdgesOnMove(true);
+        graphAdapter.setResetEdgesOnResize(true);
+        graphAdapter.setResetEdgesOnConnect(true);
+
+        graphAdapter.getModel().beginUpdate();
+        layout.execute(graphAdapter.getDefaultParent());
+        Object[] ver = graphAdapter.getChildCells(graphAdapter.getDefaultParent());
+        DoubleSummaryStatistics averagePosition = Arrays.stream(ver).mapToDouble(x -> graphAdapter.getBoundingBox(x).getX()).summaryStatistics();
+        DoubleSummaryStatistics averageHeight = Arrays.stream(ver).mapToDouble(x -> graphAdapter.getBoundingBox(x).getHeight()).summaryStatistics();
+
+        Object[] filteredVariables = Arrays.stream(ver).map(x -> (mxCell) x)
+                .filter(x -> x.isVertex() && ((AbstractRankedGraph.LabeledNode) x.getValue()).isVariableNode())
+                .toArray(Object[]::new);
+        Object[] filteredRoots = Arrays.stream(ver).map(x -> (mxCell) x)
+                .filter(x -> x.isVertex() && ((AbstractRankedGraph.LabeledNode) x.getValue()).isRootNode())
+                .toArray(Object[]::new);
+        Object[] filteredLinkNodes = Arrays.stream(ver).map(x -> (mxCell) x)
+                .filter(x -> x.isVertex() && ((AbstractRankedGraph.LabeledNode) x.getValue()).isLinkNode())
+                .toArray(Object[]::new);
+        Object[] filteredPlaceNodes = Arrays.stream(ver).map(x -> (mxCell) x)
+                .filter(x -> x.isVertex() && ((AbstractRankedGraph.LabeledNode) x.getValue()).isPlaceNode())
+                .toArray(Object[]::new);
+        Object[] filteredEdgesForInterface = Arrays.stream(ver).map(x -> (mxCell) x).filter(mxCell::isEdge)
+                .filter(x -> {
+                    AbstractRankedGraph.LabeledNode source = (AbstractRankedGraph.LabeledNode) ((AbstractRankedGraph.LabeledEdge) x.getValue()).getSource();
+                    return source.isInterfaceNode();
+                })
+                .toArray(Object[]::new);
+        Object[] filteredEdgesForNodes = Arrays.stream(ver).map(x -> (mxCell) x).filter(mxCell::isEdge)
+                .filter(x -> {
+                    AbstractRankedGraph.LabeledNode source = (AbstractRankedGraph.LabeledNode) ((AbstractRankedGraph.LabeledEdge) x.getValue()).getSource();
+                    AbstractRankedGraph.LabeledNode target = (AbstractRankedGraph.LabeledNode) ((AbstractRankedGraph.LabeledEdge) x.getValue()).getTarget();
+                    return !source.isInterfaceNode() && target.isLinkNode();
+                })
+                .toArray(Object[]::new);
+        Object[] filteredEdgesForNodes2Node = Arrays.stream(ver).map(x -> (mxCell) x).filter(mxCell::isEdge)
+                .filter(x -> {
+                    AbstractRankedGraph.LabeledNode source = (AbstractRankedGraph.LabeledNode) ((AbstractRankedGraph.LabeledEdge) x.getValue()).getSource();
+                    AbstractRankedGraph.LabeledNode target = (AbstractRankedGraph.LabeledNode) ((AbstractRankedGraph.LabeledEdge) x.getValue()).getTarget();
+                    return source.isPlaceNode() && target.isPlaceNode();
+                })
+                .toArray(Object[]::new);
+
+        graphAdapter.setCellStyle("shape=ellipse;fontColor=green;strokeColor=green;fillColor=white", filteredLinkNodes);
+        graphAdapter.setCellStyle("shape=ellipse;fillColor=none;strokeColor=black;fontColor=black", filteredPlaceNodes);
+        graphAdapter.setCellStyle("strokeWidth=0;fillColor=none;strokeColor=none", filteredRoots);
+        graphAdapter.setCellStyle("strokeWidth=0;fillColor=none;strokeColor=none", filteredVariables);
+
+
+        graphAdapter.setCellStyle("dashed=1;strokeColor=black", filteredEdgesForInterface);
+        graphAdapter.setCellStyle("strokeColor=green", filteredEdgesForNodes);
+        graphAdapter.setCellStyle("strokeColor=black", filteredEdgesForNodes2Node);
+
+//        graphAdapter.moveCells(filteredVariables, 0, doubleSummaryStatistics2.getMax(), false);
+        graphAdapter.alignCells("bottom", filteredVariables);
+        graphAdapter.alignCells("top", filteredRoots);
+//        graphAdapter.
+        DoubleSummaryStatistics rootInterfacePositionEstimate = Arrays.stream(filteredRoots)
+                .mapToDouble(x -> graphAdapter.getBoundingBox(x).getX()).summaryStatistics();
+        double newPosRoot = rootInterfacePositionEstimate.getAverage() - averagePosition.getAverage() * averageHeight.getAverage();
+        graphAdapter.moveCells(filteredRoots, 0, newPosRoot * 2, false);
+//        graphAdapter.getM
+        graphAdapter.getModel().endUpdate();
+
+
+        BufferedImage image =
+                mxCellRenderer.createBufferedImage(graphAdapter, null, 2, Color.WHITE, true, null);
+        File imgFile = new File(TARGET_TEST_PATH + "graph.png");
+//        imgFile.createNewFile();
+        ImageIO.write(image, "PNG", imgFile);
+
+        assertTrue(imgFile.exists());
     }
 
     @Test
@@ -160,7 +260,7 @@ public class RankedGraphEncodingTests {
         builder.createRoot()
                 .addChild("K").linkToInner(e0).down().addChild("K").linkToInner(e0).down().addSite().up().up()
                 .addChild("M").linkToInner(e0).linkToInner(e1);
-        builder.createRoot().addChild("L").linkToInner(e1).addSite(); //.withNewHierarchy()
+        builder.createRoot().addChild("L").linkToInner(e1).linkToInner(x0).down().addSite();
         builder.closeInnerName(e0);
         builder.closeInnerName(e1);
 
