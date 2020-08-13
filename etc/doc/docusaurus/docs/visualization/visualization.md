@@ -9,7 +9,8 @@ export them as `*.svg` or `*.png`.
 Internally, the [graphviz-java](https://github.com/nidi3/graphviz-java) library is used. Bigraphs are constructed as
 graphviz models and afterwards converted as graphic file. This allows to export the corresponding DOT file at any time.
 
-## Export as PNG File
+## Exporting Pure Bigraphs
+### Export as PNG File
 
 ```java
 PureBigraph bigraph = ...;
@@ -28,7 +29,7 @@ The difference is shown below.
 |---|---|
 | ![bigraph-tree](assets/visualization/ex_simple_tree.png) | ![bigraph-containment](assets/visualization/ex_simple_nesting.png)  |
 
-## Export as DOT File
+### Export as DOT File
 
 Same as above but without exporting the bigraph to the filesystem:
 
@@ -79,3 +80,18 @@ graph "Bigraph" {
  "Job_v3" -- "Computer_v2" ["label"=""]
  }
  ```
+
+ ## Visualizing Ranked Graphs
+
+ As described in [Section "Ranked Graphs"](../converter/rankedgraphs-converter), a bigraph can be casted to a ranked graph.
+ The visualization module also provides support to export a ranked graphs as a diagram as follows:
+
+```java
+PureBigraph bigraph = ...;
+PureBigraphRankedGraphEncoding graphEncoding = new PureBigraphRankedGraphEncoding(bigraph);
+new BigraphRankedGraphExporter().toPNG(graphEncoding, new File("ranked-graph.png"));
+```
+
+An example is shown below.
+
+![imgs](assets/converter/rankedgraph-encoded.png)

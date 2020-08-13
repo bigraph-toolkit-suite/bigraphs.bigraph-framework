@@ -5,7 +5,7 @@ title: Ranked Graphs
 
 ## Encoding a Bigraph to a Ranked Graph
 
-In some cases, bigraphs may be casted to <strong>ranked graphs</string>, as defined in [\[1\]](#ref1), by exploiting the proposed encoding approach described in [\[2\]](#ref2).
+In some cases, bigraphs may be casted to <strong>ranked graphs</strong>, as defined in [\[1\]](#ref1), by exploiting the proposed encoding approach described in [\[2\]](#ref2).
 
 The next listing shows how to encode the bigraph depicted below to a ranked graph.
 
@@ -24,7 +24,7 @@ The encoded bigraph as ranked graph is illustrated below.
 
 ![imgs](assets/converter/rankedgraph-encoded.png)
 
-The graphical file is provided by the <i>visualization module</i> of this framework using the `BigraphRankedGraphExporter`.
+The graphical file is provided by the <i>visualization module</i> of this framework using the [`BigraphRankedGraphExporter`](../visualization/visualization#visualizing-ranked-graphs).
 
 
 
