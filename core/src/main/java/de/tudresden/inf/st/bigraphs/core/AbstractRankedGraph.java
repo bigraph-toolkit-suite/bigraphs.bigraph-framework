@@ -28,6 +28,9 @@ public abstract class AbstractRankedGraph<B extends Bigraph<?>, N, E> {
     protected Map<String, List<N>> variableMap = new HashMap<>(); //for convenience
     protected Map<String, List<N>> rootMap = new HashMap<>(); //for convenience
 
+    protected boolean encodingStarted = false;
+    protected boolean encodingFinished = false;
+
     public AbstractRankedGraph(B bigraph) {
         this.bigraph = bigraph;
         this.init();
@@ -185,4 +188,11 @@ public abstract class AbstractRankedGraph<B extends Bigraph<?>, N, E> {
         }
     }
 
+    public boolean isEncodingStarted() {
+        return encodingStarted;
+    }
+
+    public boolean isEncodingFinished() {
+        return encodingFinished;
+    }
 }

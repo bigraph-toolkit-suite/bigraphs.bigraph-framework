@@ -24,6 +24,8 @@ public class PureBigraphRankedGraphEncoding extends AbstractRankedGraph<PureBigr
     @Override
     protected void init() {
         assert Objects.nonNull(bigraph);
+        this.encodingStarted = false;
+        this.encodingFinished = false;
         this.roots = new HashMap<>();
         this.variables = new HashMap<>();
         this.variableMap = new HashMap<>();
@@ -34,7 +36,8 @@ public class PureBigraphRankedGraphEncoding extends AbstractRankedGraph<PureBigr
     //var map is a bijection, root map: nothing mentioned in paper (possibly a surjection)
     @Override
     public void encode() {
-
+        encodingStarted = true;
+        encodingFinished = false;
         AtomicInteger i_interfaceCounter = new AtomicInteger(bigraph.getSites().size());
         Map<BigraphEntity<?>, String> innerFaceIdMap = new HashMap<>();
         bigraph.getInnerNames().stream().sorted(Comparator.comparing(BigraphEntity.InnerName::getName)).forEachOrdered(eachInner -> {
@@ -140,6 +143,7 @@ public class PureBigraphRankedGraphEncoding extends AbstractRankedGraph<PureBigr
             });
         });
 
+        encodingFinished = true;
     }
 
     String id(BigraphEntity.RootEntity node) {

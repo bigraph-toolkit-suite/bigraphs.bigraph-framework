@@ -23,13 +23,15 @@ import java.util.DoubleSummaryStatistics;
  */
 public class BigraphRankedGraphExporter {
 
-    public void toPNG(AbstractRankedGraph<?,?,?> rankedGraphEncoding, File output) throws IOException {
-        rankedGraphEncoding.encode();
+    public void toPNG(AbstractRankedGraph<?, ?, ?> rankedGraphEncoding, File output) throws IOException {
+        if (!rankedGraphEncoding.isEncodingFinished() && !rankedGraphEncoding.isEncodingStarted()) {
+            rankedGraphEncoding.encode();
+        }
         drawGraph(rankedGraphEncoding.getGraph(), output);
     }
 
-    private void drawGraph(Graph<?,?> graph, File imgFile) throws IOException {
-        JGraphXAdapter<?,?> graphAdapter = new JGraphXAdapter<>(graph);
+    private void drawGraph(Graph<?, ?> graph, File imgFile) throws IOException {
+        JGraphXAdapter<?, ?> graphAdapter = new JGraphXAdapter<>(graph);
 
 //        mxHierarchicalLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.WEST);
         mxHierarchicalLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.SOUTH);
