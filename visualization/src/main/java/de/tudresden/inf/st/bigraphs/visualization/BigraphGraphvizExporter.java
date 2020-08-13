@@ -29,6 +29,10 @@ public class BigraphGraphvizExporter {
     private static final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
     private static final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
     private static final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
+    
+    public void toPNG(Bigraph<?> bigraph, File output) throws IOException {
+        BigraphGraphvizExporter.toPNG(bigraph, true, output);
+    }
 
     public static String toPNG(Bigraph<?> bigraph, boolean asTree, File output) throws IOException {
         return new BigraphGraphvizExporter().convert(bigraph, output, Format.PNG, asTree, labelSupplier, colorSupplier, shapeSupplier);
@@ -318,14 +322,14 @@ public class BigraphGraphvizExporter {
         private final BigraphEntity sourceEntity;
         private final BigraphEntity targetEntity;
 
-    public GraphVizLink(String target, String label, BigraphEntity sourceEntity, BigraphEntity targetEntity) {
-        this.target = target;
-        this.label = label;
-        this.sourceEntity = sourceEntity;
-        this.targetEntity = targetEntity;
-    }
+        public GraphVizLink(String target, String label, BigraphEntity sourceEntity, BigraphEntity targetEntity) {
+            this.target = target;
+            this.label = label;
+            this.sourceEntity = sourceEntity;
+            this.targetEntity = targetEntity;
+        }
 
-    @Override
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof GraphVizLink)) return false;
@@ -334,23 +338,23 @@ public class BigraphGraphvizExporter {
                     Objects.equals(label, that.label);
         }
 
-    public String getTarget() {
-        return target;
-    }
+        public String getTarget() {
+            return target;
+        }
 
-    public String getLabel() {
-        return label;
-    }
+        public String getLabel() {
+            return label;
+        }
 
-    public BigraphEntity getSourceEntity() {
-        return sourceEntity;
-    }
+        public BigraphEntity getSourceEntity() {
+            return sourceEntity;
+        }
 
-    public BigraphEntity getTargetEntity() {
-        return targetEntity;
-    }
+        public BigraphEntity getTargetEntity() {
+            return targetEntity;
+        }
 
-    @Override
+        @Override
         public int hashCode() {
             return Objects.hash(target, label);
         }
