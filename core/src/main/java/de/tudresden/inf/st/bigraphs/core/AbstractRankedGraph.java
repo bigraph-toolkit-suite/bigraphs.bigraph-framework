@@ -1,8 +1,5 @@
-package de.tudresden.inf.st.bigraphs.converter.rankedgraph;
+package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.Control;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -15,6 +12,8 @@ import java.util.Objects;
 /**
  * Abstract base class for a ranked graph representation for different kind of bigraphs, and node and edge types for the
  * ranked graph.
+ *
+ * The concrete implementations can be found in the <strong>bigraph-converter</strong> module.
  *
  * @author Dominik Grzelak
  */

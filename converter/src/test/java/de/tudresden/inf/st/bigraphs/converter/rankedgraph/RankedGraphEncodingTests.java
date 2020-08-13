@@ -3,10 +3,8 @@ package de.tudresden.inf.st.bigraphs.converter.rankedgraph;
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
-import com.mxgraph.util.mxRectangle;
 import de.tudresden.inf.st.bigraphs.converter.gxl.GraphMLDomBuilder;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -21,7 +19,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import de.tudresden.inf.st.bigraphs.visualization.BigraphRankedGraphExporter;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
@@ -38,8 +36,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -64,9 +60,10 @@ public class RankedGraphEncodingTests {
         PureBigraph bigraph = createBigraphA();
 //        BigraphGraphvizExporter.toPNG(bigraph, true, new File("bigraph-example.png"));
         PureBigraphRankedGraphEncoding graphEncoding = new PureBigraphRankedGraphEncoding(bigraph);
-        graphEncoding.encode();
-        Graph<AbstractRankedGraph.LabeledNode, AbstractRankedGraph.LabeledEdge> graph = graphEncoding.getGraph();
-        drawGraph(graphEncoding.getGraph());
+//        graphEncoding.encode();
+//        Graph<AbstractRankedGraph.LabeledNode, AbstractRankedGraph.LabeledEdge> graph = graphEncoding.getGraph();
+//        drawGraph(graphEncoding.getGraph());
+        new BigraphRankedGraphExporter().toPNG(graphEncoding, new File(TARGET_TEST_PATH + "graph2.png"));
     }
 
     private void drawGraph(Graph graph) throws IOException {

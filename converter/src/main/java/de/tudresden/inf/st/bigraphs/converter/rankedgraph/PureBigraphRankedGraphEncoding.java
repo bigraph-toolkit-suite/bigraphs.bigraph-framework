@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.converter.rankedgraph;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
+import de.tudresden.inf.st.bigraphs.core.AbstractRankedGraph;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
