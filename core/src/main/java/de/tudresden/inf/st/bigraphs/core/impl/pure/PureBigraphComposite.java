@@ -631,8 +631,8 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             return (BigraphComposite<S>) pure().asBigraphOperator(barren).parallelProduct(bigraphComposite);
 
         } else {
-            Placings<DefaultDynamicSignature>.Merge merge = pure().createPlacings((DefaultDynamicSignature) getSignature()).merge(2);
-            BigraphComposite<DefaultDynamicSignature> compose = pure().asBigraphOperator(merge).compose(bigraphComposite);
+            Placings<DefaultDynamicSignature>.Merge merge = pure().createPlacings((DefaultDynamicSignature) getSignature()).merge(bigraphComposite.getOuterBigraph().getRoots().size());
+            BigraphComposite<DefaultDynamicSignature> compose = pure().asBigraphOperator(merge).nesting(bigraphComposite);
             return (BigraphComposite<S>) compose;
         }
     }
