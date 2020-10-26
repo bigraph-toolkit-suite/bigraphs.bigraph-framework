@@ -11,11 +11,13 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+
 /**
  * @author Dominik Grzelak
  */
 public class EcoreConverterUnitTest {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
     private static final String DUMP_TARGET = "src/test/resources/dump/";
 
     @Test

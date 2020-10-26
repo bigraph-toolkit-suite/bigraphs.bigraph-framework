@@ -8,18 +8,23 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import org.eclipse.emf.ecore.EPackage;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * @author Dominik Grzelak
  */
-public class DiscreteIon<S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>> extends ElementaryBigraph<S> {
+public class DiscreteIon<S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>>
+        extends ElementaryBigraph<S> {
     private volatile PureBigraphBuilder<S> builder;
 
-    public DiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, S signature, AbstractBigraphFactory<S> factory) {
+    public DiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, S signature, EPackage bigraphMetamodel, AbstractBigraphFactory<S> factory) {
         super(null);
-        builder = (PureBigraphBuilder<S>) factory.createBigraphBuilder(signature);
+        builder = Objects.nonNull(bigraphMetamodel) ?
+                (PureBigraphBuilder<S>) factory.createBigraphBuilder(signature, bigraphMetamodel) :
+                (PureBigraphBuilder<S>) factory.createBigraphBuilder(signature);
 
         try {
             PureBigraphBuilder<S>.Hierarchy hierarchy = builder.createRoot().addChild(signature.getControlByName(name.stringValue()));
@@ -36,5 +41,9 @@ public class DiscreteIon<S extends Signature<? extends Control<? extends NamedTy
             throw new RuntimeException("Control shouldn't be atomic!");
         }
         bigraphDelegate = (Bigraph<S>) builder.createBigraph();
+    }
+
+    public DiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, S signature, AbstractBigraphFactory<S> factory) {
+        this(name, outerNames, signature, null, factory);
     }
 }

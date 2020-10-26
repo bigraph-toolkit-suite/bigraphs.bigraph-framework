@@ -80,7 +80,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
     }
 
     public Linkings(S signature) {
-        this(signature, null);
+        this(signature, (EMetaModelData) null);
     }
 
     public Linkings(S signature, EMetaModelData metaModelData) {
@@ -90,6 +90,13 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         } else {
             mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature);
         }
+        loadedModelPackage = mutableBuilder.getLoadedEPackage();
+    }
+
+    public Linkings(S signature, EPackage bigraphMetaModel) {
+        arbitrarySignature = signature;
+        mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
+        assert bigraphMetaModel == mutableBuilder.getLoadedEPackage();
         loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
 
@@ -107,7 +114,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
 
         IdentityEmpty() {
             super(null);
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -155,7 +162,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
                 innerNames.add(x);
                 innerNameMap.put(x.getName(), x);
             }
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature,
                     Collections.emptyMap(),
@@ -220,7 +227,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
                 innerNameMap.put(newInnerName.getName(), newInnerName);
             }
 
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
                     innerNameMap,
@@ -248,7 +255,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
                 innerNameMap.put(newInnerName.getName(), newInnerName);
                 outerNameMap.put(newOuterName.getName(), newOuterName);
             }
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(),
                     innerNameMap,
@@ -286,5 +293,9 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
             return this.innerNames.stream().filter(x -> !x.equals(innerName)).collect(Collectors.toList());
         }
+    }
+
+    public EPackage getLoadedModelPackage() {
+        return loadedModelPackage;
     }
 }

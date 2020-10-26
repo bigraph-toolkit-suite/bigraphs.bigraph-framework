@@ -9,8 +9,8 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -20,13 +20,14 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * This test class generates the code samples for the Getting Started section of the user manual.
@@ -87,16 +88,16 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
     @Test
     void getting_started_guide() throws InvalidConnectionException, IncompatibleSignatureException, IncompatibleInterfaceException {
         // (1) start
-        PureBigraphFactory pureFactory = BigraphFactory.pure();
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
-        DefaultDynamicSignature signature = pureFactory.createSignatureBuilder()
+        DefaultDynamicSignature signature = signatureBuilder
                 .newControl().identifier("User").arity(1).kind(ControlKind.ATOMIC).assign()
                 .newControl(StringTypedName.of("Computer"), FiniteOrdinal.ofInteger(2)).assign()
                 .create();
         // (1) end
 
         // (2) start
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureFactory.createBigraphBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
         builder.createRoot()
                 .addChild("User", "login").addChild("Computer", "login");
         PureBigraph bigraph = builder.createRoot()
@@ -105,9 +106,9 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
         // (2) end
 
         // (3) start
-        Placings<DefaultDynamicSignature> placings = pureFactory.createPlacings(signature);
+        Placings<DefaultDynamicSignature> placings = pure().createPlacings(signature);
         Placings<DefaultDynamicSignature>.Merge merge = placings.merge(2);
-        Linkings<DefaultDynamicSignature> linkings = pureFactory.createLinkings(signature);
+        Linkings<DefaultDynamicSignature> linkings = pure().createLinkings(signature);
         Linkings<DefaultDynamicSignature>.Identity login = linkings.identity(StringTypedName.of("login"));
         // (3) end
 

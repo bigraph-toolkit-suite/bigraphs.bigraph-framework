@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -31,13 +30,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dominik Grzelak
  */
 public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/framework/";
 
     @BeforeAll

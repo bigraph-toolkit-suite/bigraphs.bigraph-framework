@@ -113,9 +113,9 @@ public class CanonicalPerformanceTests {
 
                 suffix = "" + aritySizes[a];
                 DefaultDynamicSignature signature = createRandomSignatureFixedArity(1, 1f, aritySizes[a]);
-                PureBigraph generate = new PureBigraphGenerator()
+                PureBigraph generate = new PureBigraphGenerator(signature)
                         .setLinkStrategy(linkStrategy)
-                        .generate(signature, 1, numOfNodes, probs[p]);
+                        .generate(1, numOfNodes, probs[p]);
                 System.out.println("\tBigraph was created with maximal arity=" + aritySizes[a] + " and #edges=" + generate.getEdges().size());
                 Stopwatch stopwatch = Stopwatch.createStarted();
                 String bfcs = BigraphCanonicalForm.createInstance().bfcs(generate);
@@ -161,9 +161,9 @@ public class CanonicalPerformanceTests {
         float p = params[2];
         StringBuilder values = new StringBuilder();
         for (int numOfNodes = start; numOfNodes < end; numOfNodes += stepSize) {
-            PureBigraph generate = new PureBigraphGenerator()
+            PureBigraph generate = new PureBigraphGenerator(randomSignature)
                     .setLinkStrategy(linkStrategy)
-                    .generate(randomSignature, 1, numOfNodes, p);
+                    .generate(1, numOfNodes, p);
 //        O(k² c log c): k = num of vertices, c maximal degree of vertices
             Stopwatch stopwatch = Stopwatch.createStarted();
             String bfcs = BigraphCanonicalForm.createInstance().bfcs(generate);

@@ -95,6 +95,13 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>eclipse-releases</id>
+            <url>https://repo.eclipse.org/content/groups/releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -287,7 +294,10 @@
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
                 <artifactId>bigraph-ecore-model</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
+                <!--                <scope>system</scope>-->
+                <!--                <type>jar</type>-->
+                <!--                <systemPath>${pom.basedir}/../etc/auxlibs/bigraphmetamodel_v1.2.0-alpha.jar</systemPath>-->
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
@@ -478,16 +488,18 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-core</artifactId>
-                <version>1.19</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-generator-annprocess</artifactId>
-                <version>1.19</version>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>org.openjdk.jmh</groupId>-->
+            <!--                <artifactId>jmh-core</artifactId>-->
+            <!--                <version>1.19</version>-->
+            <!--                <scope>test</scope>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.openjdk.jmh</groupId>-->
+            <!--                <artifactId>jmh-generator-annprocess</artifactId>-->
+            <!--                <version>1.19</version>-->
+            <!--                <scope>test</scope>-->
+            <!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 

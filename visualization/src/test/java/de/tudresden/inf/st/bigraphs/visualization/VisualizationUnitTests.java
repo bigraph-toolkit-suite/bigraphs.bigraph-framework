@@ -9,6 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
@@ -37,7 +38,7 @@ import static guru.nidi.graphviz.model.Factory.*;
 public class VisualizationUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/graphviz/";
 
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = BigraphFactory.pure();
 
     @BeforeAll
     static void setUp() {

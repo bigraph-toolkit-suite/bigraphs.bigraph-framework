@@ -18,6 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.examples.BaseExampleTestSupport;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
@@ -34,6 +35,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -48,9 +50,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @author Dominik Grzelak
  */
-public class AddExample {
+public class AddExample extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/add/";
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
+
+    public AddExample() {
+        super(TARGET_DUMP_PATH, true);
+    }
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -63,6 +69,12 @@ public class AddExample {
     void simulate_counting_example() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, IncompatibleInterfaceException {
         int a = 5, b = 2;
         AddExpr reactiveSystem = new AddExpr(a, b);
+        eb(reactiveSystem.agent_a, "agent");
+        eb(reactiveSystem.reactionRule_1.getRedex(), "r1-redex");
+        eb(reactiveSystem.reactionRule_1.getReactum(), "r1-reactum");
+        eb(reactiveSystem.reactionRule_2.getRedex(), "r2-redex");
+        eb(reactiveSystem.reactionRule_2.getReactum(), "r2-reactum");
+
         PureBigraph result = reactiveSystem.execute();
 
         long s = result.getNodes().stream().filter(x -> x.getControl().getNamedType().stringValue().equals("S"))
@@ -75,12 +87,17 @@ public class AddExample {
     }
 
     public static class AddExpr extends PureReactiveSystem {
+        PureBigraph agent_a;
+        ReactionRule<PureBigraph> reactionRule_1;
+        ReactionRule<PureBigraph> reactionRule_2;
 
         public AddExpr(int a, int b) throws LinkTypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, IOException {
-            PureBigraph agent_a = createAgent_A(a, b);
+            agent_a = createAgent_A(a, b);
             setAgent(agent_a);
-            addReactionRule(createReactionRule_1());
-            addReactionRule(createReactionRule_2());
+            reactionRule_1 = createReactionRule_1();
+            reactionRule_2 = createReactionRule_2();
+            addReactionRule(reactionRule_1);
+            addReactionRule(reactionRule_2);
         }
 
         public PureBigraph execute() throws IOException {

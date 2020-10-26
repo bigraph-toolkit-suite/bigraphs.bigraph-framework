@@ -38,6 +38,13 @@ public interface BigraphBuilder<S extends Signature> {
     BigraphBuilder<S> closeAllOuterNames();
 
     /**
+     * Spawns a fresh bigraph builder but with exactly the same instance of the metamodel as before.
+     *
+     * @return a fresn bigraph builder with the same metamodel
+     */
+    BigraphBuilder<S> spawnNewOne();
+
+    /**
      * A {@link NodeHierarchy} contains a collection of nodes in a tree structure and
      * is related to the current {@link BigraphBuilder} instance.
      * <p>

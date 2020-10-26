@@ -24,10 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Matching2UnitTests {
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/matching/framework/testforpaper/";
 
     void exportGraph(Bigraph<?> big, String path) {

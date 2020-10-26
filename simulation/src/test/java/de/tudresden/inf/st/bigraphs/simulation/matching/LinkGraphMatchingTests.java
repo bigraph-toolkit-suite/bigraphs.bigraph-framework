@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dominik Grzelak
  */
 public class LinkGraphMatchingTests extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/bpmtest/framework/";
 
     public LinkGraphMatchingTests() {

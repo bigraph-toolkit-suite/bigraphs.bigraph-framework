@@ -20,11 +20,13 @@ import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveS
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import org.junit.jupiter.api.Test;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+
 /**
  * @author Dominik Grzelak
  */
 public class MultiOccurrenceExample {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
 
     // bigrapher full -d ./model -f svg -s states -M 50 -t trans.svg -v model.big
     @Test

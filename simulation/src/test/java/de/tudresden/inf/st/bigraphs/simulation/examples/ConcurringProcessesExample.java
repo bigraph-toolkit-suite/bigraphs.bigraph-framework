@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ConcurringProcessesExample {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/processes/";
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {

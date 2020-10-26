@@ -1,8 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
+import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.*;
 
 import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
+import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.SIGNATURE_BASE_MODEL;
 
 /**
  * A simple file utility class to serialize (deserialize) bigraphs to (from) Ecore-based bigraph model files.
@@ -33,10 +34,36 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAP
 public class BigraphArtifacts {
 
     private final static String DEFAULT_ENCODING = "UTF-8";
+
     public enum Format {
         ECORE, XMI
     }
 
+    /**
+     * Loads the internal metamodel of a bigraphical signature that is declared in the bigraphMetaModel dependency.
+     * @return the base signature metamodel as {@link EPackage}
+     * @throws IOException if the model could not be loaded from the bigraphMetaModel dependency
+     */
+    public static EPackage loadInternalSignatureMetaMetaModel() throws IOException {
+        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
+        SignatureBaseModelPackage.eINSTANCE.eClass();
+        ResourceSet resourceSet = new ResourceSetImpl();
+
+        URL resource1 = EMFUtils.class.getResource(SIGNATURE_BASE_MODEL);
+        URI uri = URI.createURI(resource1.toString());
+        resourceSet.getPackageRegistry().put(SignatureBaseModelPackage.eNS_URI, SignatureBaseModelPackage.eINSTANCE);
+        // resource factories
+        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+        Resource resource = resourceSet.createResource(uri);
+        resource.load(Collections.EMPTY_MAP);
+        return (EPackage) resource.getContents().get(0);
+    }
+
+    /**
+     * Loads the internal metamodel of a base bigraph that is declared in the bigraphMetaModel dependency.
+     * @return the base bigraph metamodel as {@link EPackage}
+     * @throws IOException if the model could not be loaded from the bigraphMetaModel dependency
+     */
     public static EPackage loadInternalBigraphMetaMetaModel() throws IOException {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         BigraphBaseModelPackage.eINSTANCE.eClass();
@@ -53,16 +80,10 @@ public class BigraphArtifacts {
 
         //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
 //        resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
-        //TODO throw error if resource is not available!
 //        Resource resource = resourceSet.getResource(uri, true);
         Resource resource = resourceSet.createResource(uri);
-        try {
-            resource.load(Collections.EMPTY_MAP);
-            return (EPackage) resource.getContents().get(0);
-        } catch (
-                IOException e) {
-            throw e;
-        }
+        resource.load(Collections.EMPTY_MAP);
+        return (EPackage) resource.getContents().get(0);
     }
 
     /**

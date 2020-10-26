@@ -29,13 +29,14 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
 /**
  * @author Dominik Grzelak
  */
 public class MultipleOccurrencesExample {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/multiple/";
 
     @BeforeAll

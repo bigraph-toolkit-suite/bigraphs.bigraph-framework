@@ -21,13 +21,15 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+
 /**
  * @author Dominik Grzelak
  */
 public class ConcurringProcessesExample {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/processes/";
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {

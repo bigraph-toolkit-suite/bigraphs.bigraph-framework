@@ -24,7 +24,7 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
     protected static final String DEFAULT_EDGE_PREFIX = "e";
     protected static final String DEFAULT_VERTEX_PREFIX = "v";
 
-    protected abstract EPackage getLoadedEPackage();
+    public abstract EPackage getLoadedEPackage();
 
     protected abstract EObject getInstanceModel();
 

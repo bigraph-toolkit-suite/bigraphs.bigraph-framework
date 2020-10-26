@@ -18,7 +18,11 @@ import java.util.Set;
  * @param <B>  type of the signature builder
  * @author Dominik Grzelak
  */
-public abstract class SignatureBuilder<NT extends NamedType<?>, FO extends FiniteOrdinal<?>, C extends ControlBuilder<NT, FO, C>, B extends SignatureBuilder<?, ?, ?, ?>> {
+public abstract class SignatureBuilder<NT extends NamedType<?>,
+        FO extends FiniteOrdinal<?>,
+        C extends ControlBuilder<NT, FO, C>,
+        B extends SignatureBuilder<?, ?, ?, ?>> {
+
     private Set<Control<NT, FO>> controls;
 
     public SignatureBuilder() {
@@ -42,15 +46,6 @@ public abstract class SignatureBuilder<NT extends NamedType<?>, FO extends Finit
      * @return the control builder
      */
     protected abstract C createControlBuilder();
-
-//    @Deprecated
-//    private static <C extends ControlBuilder> C createControlBuilder(Class<C> clazz) {
-//        try {
-//            return clazz.newInstance();
-//        } catch (Exception e) {
-//            throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
-//        }
-//    }
 
     public C newControl() {
         C builder = createControlBuilder();

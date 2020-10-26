@@ -1,27 +1,10 @@
 package de.tudresden.inf.st.bigraphs.core.utils.emf;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
-import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.XMLResource;
-import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
 
 //https://sdqweb.ipd.kit.edu/wiki/Creating_EMF_Model_instances_programmatically
 public class EMFUtils {
@@ -98,12 +81,8 @@ public class EMFUtils {
     }
 
     public static EAttribute findAttribute(EClass eClass, String attributeName) {
-        Optional<EAttribute> first = eClass.getEAllAttributes().stream().filter(x -> x.getName().equals(attributeName)).findFirst();//.collect(Collectors.toList());
+        Optional<EAttribute> first = eClass.getEAllAttributes().stream().filter(x -> x.getName().equals(attributeName)).findFirst();
         return first.orElse(null);
-//        if (collect.size() == 1) {
-//            return collect.get(0);
-//        }
-//        return null;
     }
 
     public static List<EReference> findAllReferences(EClass eClass) {

@@ -27,7 +27,6 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigra
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import org.apache.commons.io.FileUtils;
-import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -36,10 +35,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dominik Grzelak
  */
 public class ReactiveSystemUnitTests {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/basic/";
 
     @BeforeAll

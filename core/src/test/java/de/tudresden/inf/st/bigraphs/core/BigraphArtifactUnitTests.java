@@ -14,12 +14,12 @@ import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.*;
@@ -29,14 +29,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphArtifactUnitTests {
 
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = pure();
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
     private final static String TARGET_TEST_EXPORT_PATH = "src/test/resources/ecore-test-models/";
 
@@ -46,6 +48,18 @@ public class BigraphArtifactUnitTests {
         file.mkdirs();
         file = new File(TARGET_TEST_EXPORT_PATH);
         file.mkdirs();
+    }
+
+    @Test
+    void load_signatureBaseModel_test() {
+        Assertions.assertAll(() -> {
+            EPackage ePackage = BigraphArtifacts.loadInternalSignatureMetaMetaModel();
+            assertNotNull(ePackage);
+            assertEquals("signatureBaseModel", ePackage.getName());
+            Optional<EClassifier> bSignature = ePackage.getEClassifiers().stream().filter(x -> x.getName().equals("BSignature")).findFirst();
+            assertTrue(bSignature.isPresent());
+            assertNotNull(bSignature.get());
+        });
     }
 
     @Test
@@ -180,7 +194,9 @@ public class BigraphArtifactUnitTests {
     @Test
     void compose_output_elementary_composition() {
         int m = 3;
-        Placings<DefaultDynamicSignature> placings = factory.createPlacings();
+        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
+        Placings<DefaultDynamicSignature> placings = purePlacings(empty);
+        Linkings linkings = pureLinkings(empty);
         Placings<DefaultDynamicSignature>.Merge merge_MplusOne = placings.merge(m + 1);
 
         Placings<DefaultDynamicSignature>.Join aJoin = placings.join();
@@ -190,12 +206,6 @@ public class BigraphArtifactUnitTests {
         BigraphComposite<DefaultDynamicSignature> a = factory.asBigraphOperator(merge_1);
         BigraphComposite<DefaultDynamicSignature> b = factory.asBigraphOperator(aJoin);
         try {
-//            Bigraph<DefaultDynamicSignature> outerBigraph1 = a.juxtapose(merge_M).getOuterBigraph();
-//            Bigraph<DefaultDynamicSignature> outerBigraph = b.compose(outerBigraph1).getOuterBigraph();
-//            BigraphModelFileStore.exportBigraph((PureBigraph) outerBigraph, "compose_test", new FileOutputStream(TARGET_TEST_FOLDER + "compose_test.xmi"));
-//
-
-            Linkings<DefaultDynamicSignature> linkings = factory.createLinkings();
             Signature<DefaultDynamicControl> signature = createExampleSignature();
             PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");

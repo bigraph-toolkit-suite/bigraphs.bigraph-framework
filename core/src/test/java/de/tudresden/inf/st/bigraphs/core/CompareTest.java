@@ -2,7 +2,6 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import com.google.common.base.Predicate;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.compare.*;

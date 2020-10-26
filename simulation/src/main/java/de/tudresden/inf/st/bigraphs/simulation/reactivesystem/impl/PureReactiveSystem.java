@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+
 /**
  * An implementation of an {@link AbstractSimpleReactiveSystem} providing a simple BRS data structure for pure bigraphs
  * (see {@link PureBigraph}) and possibly later also binding bigraphs, bigraphs with sharing etc.
@@ -29,7 +31,7 @@ import java.util.List;
 public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph> {
     private final Logger logger = LoggerFactory.getLogger(PureReactiveSystem.class);
 
-    private final PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private final PureBigraphFactory factory = pure();
 
     //    private static int cnt = 1;
     @Override

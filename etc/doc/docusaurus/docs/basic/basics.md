@@ -13,22 +13,9 @@ At the moment, Bigraph Framework supports only _pure bigraphs_.
 To create a bigraph, a so-called **signature** must be created first.
 Technically, it defines the **syntax** of a bigraph and determines what **types** (i.e., _controls_ of a bigraphs) we can create in the following.
 
-To create a signature, we begin by opening a new _pure factory_.
-All further operations will use the same factory in this context.
-The first step is to create a signature by using the returned factory.
-<!-- ```java -->
-<!-- import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*; -->
-
-<!-- @Test -->
-<!-- void example() { -->
-<!--     PureBigraphFactory pureFactory = pure(); -->
-
-<!--     DefaultDynamicSignature signature = pureFactory.createSignatureBuilder() -->
-<!--             .newControl().identifier("User").arity(1).kind(ControlKind.ATOMIC).assign() -->
-<!--             .newControl(StringTypedName.of("Computer"), FiniteOrdinal.ofInteger(2)).assign() -->
-<!--             .create(); -->
-<!-- } -->
-<!-- ``` -->
+To create a signature, we begin by spawning a new _pure factory_, more specifically, a _signature builder_.
+All further operations will use the same factory in the current _execution context_.
+The first step is to create a signature by using the appropriate factory method.
 
 {@import: ../docs/assets/basics/getting_started_guide-0.java}
 
@@ -37,40 +24,22 @@ The resulting signature contains two controls: a _User_ with an arity of 1, and 
 The arity specifies how many _connections_ a control can have.
 The semantic meaning of the term "connection" is left open here - it can represent anything, for example, an ethernet link or an association relationship between elements.
 
-> More about the specific methods of the bigraph factory and the signature builder can be found in [Factories and Builders](./advanced/factories-and-builders).
+> More about the specific methods of the bigraph factory, bigraph builders and signature builder can be found in [Factories and Builders](./advanced/factories-and-builders).
 
 ### Bigraph Builder
 
 Now we are able to instantiate a pure bigraph builder instance.
-With it we can build our bigraph by adding child nodes and connections among them.
+It allows us to build our bigraph by adding child nodes and connections among them.
 The signature above determines which kind of nodes we can add to the bigraph (our syntax).
-
-<!-- ```java -->
-<!-- import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*; -->
-
-<!-- @Test -->
-<!-- void example() throws InvalidConnectionException { -->
-<!--     // ... -->
-
-<!--     PureBigraphBuilder<DefaultDynamicSignature> builder = pureFactory.createBigraphBuilder(signature); -->
-<!--     builder.createRoot() -->
-<!--             .addChild("User", "login").addChild("Computer", "login"); -->
-<!--     PureBigraph bigraph = builder.createRoot() -->
-<!--             .addChild("User", "login").addChild("Computer", "login") -->
-<!--             .createBigraph(); -->
-<!-- } -->
-<!-- ``` -->
+Therefore, we have to supply the previously created signature to the `pureBuilder()` method.
 
 {@import: ../docs/assets/basics/getting_started_guide-1.java}
 
-The example shows how to add two nodes ("User" and "Computer") under the same root (we do it twice)
-and how to link all to the same _outer name_ with the label "login". The bigraph is illustrated below.
+The example shows how to add two nodes ("User" and "Computer") under the same root (we do it twice) and how to link all to the same _outer name_ with the label "login". The bigraph is illustrated below.
 
 Note that the method `addChild` will throw an `InvalidConnectionException`
 if the node cannot be connected to the outer name (because of its arity specified by the
 signature).
-
-
 
 ![basic-example-bigraph](assets/basics/basic-bigraph.png)
 
@@ -88,6 +57,10 @@ bigraphs.
 Elementary bigraphs allow to build more complex bigraphs easily.
 We show how to create a concrete placing and linking, before we use them
 for composition later in the next section.
+
+> Even if elementary bigraphs usually do not take a signature, it must be provided.
+> This is due to technical reasons with respect to the bigraphical metamodel that is used internally.
+> See also [Factories and Builders](./advanced/factories-and-builders) for more details.
 
 <!--Note on equality: Object equality at the instance level is not to be compared-->
 <!--with mathematical equality of bigraphs. This is also know as bigraph isomorphism problem.-->

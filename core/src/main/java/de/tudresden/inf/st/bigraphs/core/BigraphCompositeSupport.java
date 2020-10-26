@@ -122,9 +122,31 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
         };
     }
 
+    protected Supplier<String> createNameSupplier(final String prefix, final int startingIndex) {
+        return new Supplier<String>() {
+            private int id = startingIndex;
+
+            @Override
+            public String get() {
+                return prefix + id++;
+            }
+        };
+    }
+
     protected Supplier<Integer> createNameSupplier() {
         return new Supplier<Integer>() {
             private int id = 0;
+
+            @Override
+            public Integer get() {
+                return id++;
+            }
+        };
+    }
+
+    protected Supplier<Integer> createNameSupplier(final int startingIndex) {
+        return new Supplier<Integer>() {
+            private int id = startingIndex;
 
             @Override
             public Integer get() {

@@ -47,6 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.simulation.matching.AbstractDynamicMatchAdapter.ControlLinkPair;
 import static de.tudresden.inf.st.bigraphs.simulation.util.CombinationMaps.combinations;
 import static java.util.Comparator.comparingInt;
@@ -431,9 +432,9 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
         logger.debug("[Start] Build Match Result ...");
 
-        MutableBuilder<DefaultDynamicSignature> builder = PureBigraphBuilder.newMutableBuilder(agentAdapter.getSignature());
-        MutableBuilder<DefaultDynamicSignature> builder2 = PureBigraphBuilder.newMutableBuilder(agentAdapter.getSignature());
-        PureBigraphFactory pureBigraphFactory = AbstractBigraphFactory.createPureBigraphFactory();
+        MutableBuilder<DefaultDynamicSignature> builder = PureBigraphBuilder.newMutableBuilder(agentAdapter.getSignature(), agentAdapter.getModelPackage());
+        MutableBuilder<DefaultDynamicSignature> builder2 = PureBigraphBuilder.newMutableBuilder(agentAdapter.getSignature(), agentAdapter.getModelPackage());
+        PureBigraphFactory pureBigraphFactory = pure();
 
         // agent->redex
         final MutableBiMap<BigraphEntity.NodeEntity, BigraphEntity.NodeEntity> matchDict = BiMaps.mutable.empty();

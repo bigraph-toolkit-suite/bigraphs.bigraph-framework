@@ -5,7 +5,6 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
@@ -25,11 +24,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+
 /**
  * @author Dominik Grzelak
  */
 public class BigMcTransformationUnitTest {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
     private static final String DUMP_TARGET = "src/test/resources/dump/";
 
     /**

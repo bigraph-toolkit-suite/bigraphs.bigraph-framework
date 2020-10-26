@@ -1,6 +1,6 @@
 ---
 id: simulation
-title: Introduction
+title: Introduction and Simulation
 ---
 
 <!--# Simulation-->

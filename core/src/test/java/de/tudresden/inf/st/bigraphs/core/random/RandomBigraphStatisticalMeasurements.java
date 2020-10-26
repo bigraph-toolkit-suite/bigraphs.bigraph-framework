@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -39,12 +40,12 @@ import static java.util.stream.Collectors.groupingBy;
  */
 @Disabled
 public class RandomBigraphStatisticalMeasurements {
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = pure();
 
     @Test
     void basic() throws IOException {
         DefaultDynamicSignature exampleSignature = createExampleSignature();
-        PureBigraph generated = new PureBigraphGenerator().generate(exampleSignature, 1, 20, 1.0f);
+        PureBigraph generated = new PureBigraphGenerator(exampleSignature).generate(1, 20, 1.0f);
 
         BigraphArtifacts.exportAsInstanceModel(generated, new FileOutputStream(new File("src/test/resources/dump/exported-models/randomly-generated.xmi")));
 
@@ -73,8 +74,6 @@ public class RandomBigraphStatisticalMeasurements {
 
 
         StringBuilder sb = new StringBuilder();
-
-        PureBigraphGenerator generator = new PureBigraphGenerator();
         int nTimes = 10000;//maximum number of nSize
         for (Float p : probs) {
             for (Integer n : nSize) {
@@ -83,11 +82,11 @@ public class RandomBigraphStatisticalMeasurements {
 
 
 //                int n = 1000;
-
                 List<double[]> collectedStats = IntStream.range(0, nTimes).boxed().map(i -> {
                     DefaultDynamicSignature exampleSignature = createRandomSignature(26, p);
 //                    Collections.shuffle(exampleSignature.getControls());
-                    generator.generate(exampleSignature, 1, n + 1, p);
+                    PureBigraphGenerator generator = new PureBigraphGenerator(exampleSignature);
+                    generator.generate(1, n + 1, p);
                     return generator.getStats();
                 }).collect(Collectors.toList());
 //        DoubleSummaryStatistics doubleSummaryStatistics = collectedStats
@@ -131,7 +130,6 @@ public class RandomBigraphStatisticalMeasurements {
 
         StringBuilder sb = new StringBuilder();
 
-        PureBigraphGenerator generator = new PureBigraphGenerator();
         int nTimes = 10;
         for (Integer t : tSize) {
             for (Integer n : nSize) {
@@ -139,7 +137,8 @@ public class RandomBigraphStatisticalMeasurements {
                 List<Integer> collect = IntStream.range(0, nTimes).boxed().map(i -> {
                     DefaultDynamicSignature exampleSignature = createRandomSignature(26, 1.0f);
 //                    Collections.shuffle(exampleSignature.getControls());
-                    PureBigraph generate = generator.generate(exampleSignature, t, n + 1, 1.0f);
+                    PureBigraphGenerator generator = new PureBigraphGenerator(exampleSignature);
+                    PureBigraph generate = generator.generate(t, n + 1, 1.0f);
                     return generate.getAllPlaces().stream().map(x -> {
                         int a = generate.getChildrenOf(x).size();
                         int b = BigraphEntityType.isRoot(x) ? 0 : 1;
@@ -174,8 +173,6 @@ public class RandomBigraphStatisticalMeasurements {
 
         StringBuilder sb = new StringBuilder();
 
-        PureBigraphGenerator generator = new PureBigraphGenerator();
-        generator.setLinkStrategy(RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE);
 //        generator.setLinkStrategy(RandomBigraphGenerator.LinkStrategy.MAXIMAL_DEGREE_DISASSORTATIVE);
         int nTimes = 1;
         for (Integer t : tSize) {
@@ -185,7 +182,9 @@ public class RandomBigraphStatisticalMeasurements {
                         .map(i -> {
                             DefaultDynamicSignature exampleSignature = createRandomSignaturePortVariation(40, 1.0f);
 //                    Collections.shuffle(exampleSignature.getControls());
-                            PureBigraph generate = generator.generate(exampleSignature, t, n + 1, 1.0f);
+                            PureBigraphGenerator generator = new PureBigraphGenerator(exampleSignature);
+                            generator.setLinkStrategy(RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE);
+                            PureBigraph generate = generator.generate(t, n + 1, 1.0f);
 //                            try {
 //                                String convert = GraphvizConverter.toPNG(generate,
 //                                        true,

@@ -6,11 +6,11 @@
       "basic/composition",
       "basic/traversing"
     ],
-    "Dynamic Bigraphs": [
+    "Bigraphical Reactive Systems": [
       "simulation",
       "simulation-reaction-rules",
-      "verification",
-      "simulation-predicates"
+      "simulation-predicates",
+      "verification"
     ],
     "Converter": [
       "converter",

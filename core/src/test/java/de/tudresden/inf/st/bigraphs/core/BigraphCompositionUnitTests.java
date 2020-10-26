@@ -2,7 +2,6 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
@@ -21,7 +20,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
 import org.eclipse.collections.impl.factory.Sets;
 import org.eclipse.emf.ecore.EPackage;
@@ -29,20 +27,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BigraphCompositionUnitTests {
 
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
     private final static String TARGET_TEST_MODEL_PATH = "src/test/resources/ecore-test-models/";
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
 
     @BeforeEach
     void setUp() {
@@ -294,7 +291,8 @@ public class BigraphCompositionUnitTests {
     void elementary_bigraph_composition_test() {
         //we want to check whether: merge_m+1 = join(id1 ⊗ merge_m).
         int m = 3;
-        Placings<DefaultDynamicSignature> placings = factory.createPlacings();
+        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
+        Placings<DefaultDynamicSignature> placings = purePlacings(empty);
         Placings<DefaultDynamicSignature>.Merge merge_MplusOne = placings.merge(m + 1);
 
         Placings<DefaultDynamicSignature>.Join aJoin = placings.join();
@@ -484,7 +482,8 @@ public class BigraphCompositionUnitTests {
 
     @Test
     void elementary_bigraph_linkings_test() {
-        Linkings<DefaultDynamicSignature> linkings = factory.createLinkings();
+        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
+        Linkings linkings = pureLinkings(empty);
 
         assertAll(() -> {
             Linkings<DefaultDynamicSignature>.Closure xyz = linkings.closure(

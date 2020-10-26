@@ -86,6 +86,11 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
         bPorts.remove(portIndex);
     }
 
+    public void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
+        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        node.getInstance().eSet(prntRef, parent.getInstance());
+    }
+
     public void connectInnerToOuter(BigraphEntity.InnerName innerName, BigraphEntity.OuterName outerName) {
         super.connectInnerToOuterName0(innerName, outerName);
     }

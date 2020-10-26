@@ -4,7 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;

@@ -48,7 +48,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
     }
 
     public Placings(S signature) {
-        this(signature, null);
+        this(signature, (EMetaModelData) null);
     }
 
     public Placings(S signature, EMetaModelData metaModelData) {
@@ -60,6 +60,14 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         }
         loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
+
+    public Placings(S signature, EPackage bigraphMetaModel) {
+        arbitrarySignature = signature;
+        mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
+        assert bigraphMetaModel == mutableBuilder.getLoadedEPackage();
+        loadedModelPackage = mutableBuilder.getLoadedEPackage();
+    }
+
 
     public Placings<S>.Barren barren() {
         mutableBuilder.reset();
@@ -110,7 +118,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
             super(null);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
 
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature,
                     SortedMaps.mutable.of(0, root),
@@ -181,7 +189,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
             );
 
             sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature,
                     SortedMaps.mutable.of(0, root),
@@ -211,7 +219,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             if (BigraphEntityType.isSite(node) && sites.contains(node)) {
                 return sites.stream().filter(x -> !x.equals(node))
-                        .map(x -> (BigraphEntity<?>)x)
+                        .map(x -> (BigraphEntity<?>) x)
                         .collect(Collectors.toCollection(LinkedList<BigraphEntity<?>>::new));
             }
             return Collections.emptyList();
@@ -239,7 +247,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
                 setParentOfNode(newSite, root);
                 sitesMap.put(value, newSite);
             });
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature,
                     SortedMaps.mutable.of(0, root),
@@ -270,7 +278,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             if (BigraphEntityType.isSite(node) && sitesMap.containsValue(node)) {
                 return sitesMap.values().stream().filter(x -> !x.equals(node))
-                        .map(x -> (BigraphEntity<?>)x)
+                        .map(x -> (BigraphEntity<?>) x)
                         .collect(Collectors.toCollection(LinkedList::new));
             }
             return Collections.emptyList();
@@ -301,7 +309,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
                 rootsMap.put(i, newRoot);
                 sitesMap.put(i, newSite);
             }
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, rootsMap, sitesMap,
                     Collections.emptyMap(),
@@ -368,7 +376,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
                 rootsMap.put(i, newRoot);
                 sitesMap.put(j, newSite);
             }
-            metaModelPackage = EcoreUtil.copy(loadedModelPackage);
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
             instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
                     arbitrarySignature, rootsMap, sitesMap,
                     Collections.emptyMap(),
@@ -407,4 +415,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
+    public EPackage getLoadedModelPackage() {
+        return loadedModelPackage;
+    }
 }

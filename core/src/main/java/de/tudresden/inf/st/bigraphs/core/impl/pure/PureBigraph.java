@@ -1,11 +1,10 @@
 package de.tudresden.inf.st.bigraphs.core.impl.pure;
 
-import com.google.common.collect.Streams;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -20,7 +19,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This class is an Ecore-based model implementation of a pure bigraph.
@@ -36,7 +34,7 @@ import java.util.stream.Stream;
  */
 public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigraph {
     private final EPackage modelPackage;
-    private final EObject bigraphEModel;
+    private final EObject bigraphInstanceModel;
 
     private final ImmutableSet<BigraphEntity.RootEntity> roots;
     private final ImmutableList<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes;
@@ -49,7 +47,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
 
     public PureBigraph(BigraphBuilderSupport.InstanceParameter details) {
         this.modelPackage = details.getModelPackage();
-        this.bigraphEModel = details.getbBigraphObject();
+        this.bigraphInstanceModel = details.getbBigraphObject();
         this.roots = Sets.immutable.<BigraphEntity.RootEntity>ofAll(details.getRoots());//Collections.unmodifiableSet(details.getRoots()); //roots;
         this.sites = Collections.unmodifiableSet(details.getSites()); //sites;
         this.nodes = Lists.immutable.ofAll(details.getNodes());//new ArrayList<>(Collections.unmodifiableSet(details.getNodes())); //nodes;
@@ -66,7 +64,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
 
     @Override
     public EObject getModel() {
-        return this.bigraphEModel;
+        return this.bigraphInstanceModel;
     }
 
     @Override

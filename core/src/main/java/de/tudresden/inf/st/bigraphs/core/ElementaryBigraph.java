@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.eclipse.collections.api.factory.Lists;

@@ -17,6 +17,7 @@ import org.eclipse.collections.api.block.function.primitive.IntToObjectFunction;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EClassImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +73,10 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     protected final Map<Integer, BigraphEntity.SiteEntity> availableSites = new ConcurrentHashMap<>();
     protected final Map<String, BigraphEntity.NodeEntity> availableNodes = new ConcurrentHashMap<>();
 
+    @Override
+    public PureBigraphBuilder<S> spawnNewOne() {
+        return PureBigraphBuilder.create(signature, loadedEPackage, null);
+    }
 
     protected PureBigraphBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
@@ -174,13 +179,18 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return new MutableBuilder<>(signature);
     }
 
+    public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EPackage metaModel)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature, metaModel, null);
+    }
+
     public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EMetaModelData metaModelData)
             throws BigraphMetaModelLoadingFailedException {
         return new MutableBuilder<>(signature, metaModelData);
     }
 
     @Override
-    protected EPackage getLoadedEPackage() {
+    public EPackage getLoadedEPackage() {
         return this.loadedEPackage;
     }
 
@@ -203,6 +213,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      * Method is used to update all necessary entity maps when a bigraph is loaded from the file system.
      */
     private void updateAllMaps() {
+        if (Objects.isNull(loadedInstanceModel)) return;
         loadedInstanceModel.eContents().stream()
                 .forEach(each -> {
                     if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT))) {

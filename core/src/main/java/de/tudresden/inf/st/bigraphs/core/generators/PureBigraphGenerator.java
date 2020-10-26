@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.DistributedRandomNumberGenerator;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.emf.ecore.EPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ import static de.tudresden.inf.st.bigraphs.core.generators.RandomBigraphGenerato
  */
 public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
     private final Logger logger = LoggerFactory.getLogger(PureBigraphGenerator.class);
-
+    DefaultDynamicSignature signature;
     private HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
     private HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
     private HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
@@ -41,8 +42,25 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
     private int cntE = 0, cntO = 0;
     private Set<BigraphEntity> nodesWithPositiveArity;
 
-    public PureBigraph generate(DefaultDynamicSignature signature, int t, int n, float p) {
-        return this.generate(signature, t, n, p, 0.5f, 0.5f);
+    public PureBigraphGenerator(DefaultDynamicSignature signature) {
+        this(signature, null);
+    }
+
+    public PureBigraphGenerator(DefaultDynamicSignature signature, EPackage metaModel) {
+        this.signature = signature;
+        this.builder = Objects.nonNull(metaModel) ?
+                PureBigraphBuilder.newMutableBuilder(signature, metaModel) :
+                PureBigraphBuilder.newMutableBuilder(signature);
+    }
+
+    public EPackage getModelPackage() {
+        if (Objects.nonNull(builder))
+            return builder.getLoadedEPackage();
+        return null;
+    }
+
+    public PureBigraph generate(int t, int n, float p) {
+        return this.generate(t, n, p, 0.5f, 0.5f);
     }
 
     /**
@@ -50,15 +68,14 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
      * <p>
      * Note that the number of nodes {@literal m} is: {@literal m = n - t}.
      *
-     * @param signature the signature of the bigraph
-     * @param t         number of roots
-     * @param n         number of nodes (inclusive {@literal t})
-     * @param p         proportion of the nodes {@literal n}) being used for linking at all
-     * @param p_l       probability (or "weight") that an outer name will be created
-     * @param p_e       probability (or "weight") that an edge will be created
+     * @param t   number of roots
+     * @param n   number of nodes (inclusive {@literal t})
+     * @param p   proportion of the nodes {@literal n}) being used for linking at all
+     * @param p_l probability (or "weight") that an outer name will be created
+     * @param p_e probability (or "weight") that an edge will be created
      * @return a random bigraph according to the provided parameters
      */
-    public PureBigraph generate(DefaultDynamicSignature signature, int t, int n, float p, float p_l, float p_e) {
+    public PureBigraph generate(int t, int n, float p, float p_l, float p_e) {
         drng = new DistributedRandomNumberGenerator();
         newRoots.clear();
         newNodes.clear();
@@ -66,7 +83,6 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
         newEdges.clear();
         newOuterNames.clear();
         newInnerNames.clear();
-        builder = PureBigraphBuilder.newMutableBuilder(signature);
         builder.reset();
         Supplier<Control> controlSupplier = provideControlSupplier(signature);
         Supplier<String> vertexLabelSupplier = vertexLabelSupplier();

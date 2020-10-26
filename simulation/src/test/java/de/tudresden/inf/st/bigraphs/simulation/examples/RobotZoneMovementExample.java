@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/robot-mvmt/";
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {

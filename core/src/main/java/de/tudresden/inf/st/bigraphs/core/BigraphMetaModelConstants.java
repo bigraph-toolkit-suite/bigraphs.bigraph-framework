@@ -1,12 +1,18 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-//TODO: read from properties file
+/**
+ * Some metamodel constants to conveniently refer to for the <i>BigraphBaseMetaModel</i>.
+ * This is configured as a dependency here in this project.
+ *
+ * @author Dominik Grzelak
+ */
 public final class BigraphMetaModelConstants {
 
     /**
      * Relative path to the Ecore bigraph meta model inside the included bigraph model library.
      */
     public final static String BIGRAPH_BASE_MODEL = "/model/bigraphBaseModel.ecore";
+    public final static String SIGNATURE_BASE_MODEL = "/model/signatureBaseModel.ecore";
 
     // Attributes
     public final static String ATTRIBUTE_INDEX = "index";
@@ -24,6 +30,7 @@ public final class BigraphMetaModelConstants {
     public static final String CLASS_LINK = "BLink";
     public static final String CLASS_POINT = "BPoint";
     public static final String CLASS_BIGRAPH = "BBigraph";
+    public static final String CLASS_NAMEABLETYPE = "NameableType";
 
     // References
     public final static String REFERENCE_CHILD = "bChild";

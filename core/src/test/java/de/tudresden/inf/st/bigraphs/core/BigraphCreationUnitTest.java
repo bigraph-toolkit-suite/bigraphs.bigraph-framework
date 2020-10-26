@@ -19,7 +19,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.jupiter.api.*;
@@ -39,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 //@Disabled
 public class BigraphCreationUnitTest {
 
-    private final PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private final PureBigraphFactory factory = pure();
 
     @Test
     void traversal_tests() throws InvalidConnectionException, TypeNotExistsException, IOException {

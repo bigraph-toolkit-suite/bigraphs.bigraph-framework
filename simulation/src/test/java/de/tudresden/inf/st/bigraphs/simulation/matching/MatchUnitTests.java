@@ -3,7 +3,6 @@ package de.tudresden.inf.st.bigraphs.simulation.matching;
 import com.google.common.base.Stopwatch;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -25,10 +24,10 @@ import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReaction
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Mode;
+//import org.openjdk.jmh.annotations.Benchmark;
+//import org.openjdk.jmh.annotations.BenchmarkMode;
+//import org.openjdk.jmh.annotations.Fork;
+//import org.openjdk.jmh.annotations.Mode;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,18 +35,19 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //TODO write better tests here: the redex output should conform to the expected output - this makes observing things easier
 // to the equivalent bigraphER output result (means, check for num. of outer names etc.)
 public class MatchUnitTests {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/matching/framework/";
 
-    public static void main(String[] args) throws Exception {
-        org.openjdk.jmh.Main.main(args);
-    }
+//    public static void main(String[] args) throws Exception {
+////        org.openjdk.jmh.Main.main(args);
+//    }
 
     void exportGraph(Bigraph<?> big, String path) {
         try {
@@ -173,9 +173,9 @@ public class MatchUnitTests {
     }
 
     @Test
-    @Benchmark
-    @Fork(value = 1, warmups = 2)
-    @BenchmarkMode(Mode.AverageTime)
+//    @Benchmark
+//    @Fork(value = 1, warmups = 2)
+//    @BenchmarkMode(Mode.AverageTime)
     public void model_test_2() throws Exception {
 //        PureBigraph agent_model_test_2 = (PureBigraph) createAgent_model_test_2();
 //        PureBigraph redex_model_test_2a = (PureBigraph) createRedex_model_test_2a();

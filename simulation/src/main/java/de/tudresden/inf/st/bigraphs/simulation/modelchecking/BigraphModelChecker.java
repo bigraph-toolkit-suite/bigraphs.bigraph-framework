@@ -7,7 +7,7 @@ import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
@@ -350,8 +350,8 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
 
         /**
-         * This method is called by within a simulation, when the redex of a reaction rule could be matched within the
-         * host bigraph (i.e., the last active agent of the reactive system).
+         * This method is called within a running simulation (i.e., model checking operation), when the redex of a
+         * reaction rule could be matched within the host bigraph (i.e., the last active agent of the reactive system).
          *
          * @param agent        the agent where the redex pattern was found
          * @param reactionRule the respective reaction rule

@@ -10,16 +10,23 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInter
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
+import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
+import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,8 +34,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * Composable bigraph implementation of {@link BigraphComposite} for <b>pure bigraphs</b>.
@@ -61,19 +67,6 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         assert bigraph instanceof PureBigraphComposite || bigraph instanceof PureBigraph || bigraph instanceof ElementaryBigraph;
         // this is safe: S is inferred from the bigraph to where S is the same type as the builder's type S (they will have the same type thus)
         this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature(), ((EcoreBigraph) bigraph).getEMetaModelData());
-    }
-
-    public Bigraph<S> copyIfSame(Bigraph<S> g, Bigraph<S> f) {
-        if (g.equals(f)) {
-            try {
-                Stub clone = new Stub((EcoreBigraph) f).clone();
-                g = (Bigraph<S>) PureBigraphBuilder.create(g.getSignature(), clone.getModelPackage(), clone.getModel()).createBigraph();
-//                return g;
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException("Composition exception: Could not clone bigraph");
-            }
-        }
-        return g;
     }
 
     /**
@@ -116,7 +109,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
 
     @Override
     public BigraphComposite<S> nesting(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        Bigraph<S> g = copyIfSame(getBigraphDelegate(), f);
+        Bigraph<S> g = BigraphUtil.copyIfSame(getBigraphDelegate(), f);
         assertSignaturesAreSame(g, f);
 
         // get all outer names of 'f' and make identity graph from them
@@ -162,7 +155,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         //rule: first G then F when rewriting names, ordinals
         assertSignaturesAreSame(g, f);
         assertInterfaceCompatibleForJuxtaposition(g, f);
-        g = copyIfSame(g, f);
+        g = BigraphUtil.copyIfSame(g, f);
 
         Supplier<Integer> rewriteRootSupplier = createNameSupplier();
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
@@ -360,9 +353,221 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         return new PureBigraphComposite<>(bigraph);
     }
 
+    public BigraphComposite<S> parallelProductV2(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        Bigraph<S> g = getBigraphDelegate();
+        assertSignaturesAreSame(g, f);
+
+        Supplier<Integer> rewriteRootSupplier = createNameSupplier(g.getRoots().size());
+        Supplier<String> rewriteNameSupplier = createNameSupplier("v", g.getNodes().size());
+        Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e", g.getEdges().size());
+
+        // if we don't copy, both bigraph get 'destroyed'
+        Bigraph<S> copy = BigraphUtil.copy(g);
+        Bigraph<S> copyOuter = BigraphUtil.copy(f);
+
+        EObject left = ((PureBigraph) copy).getModel();
+        EObject right = ((PureBigraph) copyOuter).getModel();
+
+        // Routine: Add roots side-by-side
+        EStructuralFeature rightRootsFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
+        EStructuralFeature leftRootsFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
+        if (Objects.nonNull(right.eGet(rightRootsFeature))) {
+            EList<EObject> roots = (EList<EObject>) right.eGet(rightRootsFeature);
+            for (int i = roots.size() - 1; i >= 0; i--) {
+                EObject eachRoot = roots.get(i);
+                EAttribute indexAttr = EMFUtils.findAttribute(eachRoot.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+                eachRoot.eSet(indexAttr, rewriteRootSupplier.get());
+                if (Objects.nonNull(left.eGet(leftRootsFeature))) {
+                    ((EList<EObject>) left.eGet(leftRootsFeature)).add(eachRoot);
+                    TreeIterator<Object> allContents = EcoreUtil.getAllContents(eachRoot, false);
+                    while (allContents.hasNext()) {
+                        EObject next = (EObject) allContents.next();
+                        if (((EcoreBigraph) copyOuter).isNameable(next) && ((EcoreBigraph) copyOuter).isBPlace(next)) {
+                            EAttribute nameAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                            next.eSet(nameAttr, rewriteNameSupplier.get());
+                        }
+                    }
+                }
+            }
+        }
+
+        // Collect outer names
+        EStructuralFeature leftOuterNameFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        EStructuralFeature rightOuterNameFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        HashMap<String, EObject> outernamesOuterIndex = new HashMap<>();
+        if (Objects.nonNull(left.eGet(leftOuterNameFeature))) {
+            EList<EObject> outernames = (EList<EObject>) left.eGet(leftOuterNameFeature);
+            for (EObject eachOuterName : outernames) {
+                EAttribute nameAttr = EMFUtils.findAttribute(eachOuterName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                outernamesOuterIndex.put((String) eachOuterName.eGet(nameAttr), eachOuterName);
+            }
+        }
+
+        // Adapter for relinking and renaming
+        EStructuralFeature leftEdgesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+        EStructuralFeature rightEdgesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+        EStructuralFeature leftInnerNameFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
+        EStructuralFeature rightInnerNameFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
+        EContentAdapter adapter2 = new EContentAdapter() {
+            public void notifyChanged(Notification notification) {
+                // Edges
+                if (notification.getFeature() == rightEdgesFeature) {
+                    Collection<DynamicEObjectImpl> edges = new ArrayList<>();
+                    if (notification.getNewValue() instanceof Collection) {
+                        edges.addAll((Collection) notification.getNewValue());
+                    } else {
+                        edges.add((DynamicEObjectImpl) notification.getNewValue());
+                    }
+                    for (DynamicEObjectImpl eachEdge : edges) {
+                        EAttribute nameAttr = EMFUtils.findAttribute(eachEdge.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                        eachEdge.eSet(nameAttr, rewriteEdgeNameSupplier.get());
+                    }
+                }
+
+                // Outer names
+                if (notification.getFeature() == rightOuterNameFeature) {
+                    Collection<DynamicEObjectImpl> outernames = new ArrayList<>();
+                    if (notification.getNewValue() instanceof Collection) {
+                        outernames.addAll((Collection) notification.getNewValue());
+                    } else {
+                        outernames.add((DynamicEObjectImpl) notification.getNewValue());
+                    }
+                    for (DynamicEObjectImpl outerNameRight : outernames) {
+                        EAttribute nameAttr = EMFUtils.findAttribute(outerNameRight.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                        String name = (String) outerNameRight.eGet(nameAttr);
+                        if (outernamesOuterIndex.get(name) != null) {
+                            EObject outerLeft = outernamesOuterIndex.get(name);
+                            EStructuralFeature bPoints = outerNameRight.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+                            EList<EObject> points = (EList<EObject>) outerNameRight.eGet(bPoints);
+                            for (int i = points.size() - 1; i >= 0; i--) {
+                                EObject eachPoint = points.get(i);
+                                EStructuralFeature bLink = eachPoint.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                                eachPoint.eSet(bLink, outerLeft);
+                            }
+                        }
+                    }
+                }
+
+                // Inner names
+                if (notification.getFeature() == rightInnerNameFeature) {
+                    Collection<DynamicEObjectImpl> inner = new ArrayList<>();
+                    if (notification.getNewValue() instanceof Collection) {
+                        inner.addAll((Collection) notification.getNewValue());
+                    } else {
+                        inner.add((DynamicEObjectImpl) notification.getNewValue());
+                    }
+                    for (DynamicEObjectImpl eachInner : inner) {
+                        EStructuralFeature bLink = eachInner.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                        EObject outerInner = (EObject) eachInner.eGet(bLink);
+                        EAttribute nameAttr = EMFUtils.findAttribute(outerInner.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                        if (outernamesOuterIndex.get(outerInner.eGet(nameAttr)) != null) {
+                            eachInner.eSet(bLink, outernamesOuterIndex.get(outerInner.eGet(nameAttr)));
+                        }
+                    }
+                }
+            }
+        };
+        left.eAdapters().add(adapter2);
+        ((EList<EObject>) left.eGet(leftEdgesFeature)).addAll((EList<EObject>) right.eGet(rightEdgesFeature));
+
+        // add all outer names
+        EStructuralFeature leftOuterNamesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        EStructuralFeature rightOuterNamesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        List<EObject> collect = ((EList<EObject>) right.eGet(rightOuterNamesFeature)).stream().filter(x -> {
+            EAttribute nameAttr = EMFUtils.findAttribute(x.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+            return outernamesOuterIndex.get(x.eGet(nameAttr)) == null;
+        }).collect(Collectors.toList());
+        ((EList<EObject>) left.eGet(leftOuterNamesFeature)).addAll(collect);
+
+        // Add all inner names
+        EList<EObject> innernames = (EList<EObject>) right.eGet(rightInnerNameFeature);
+        ((EList<EObject>) left.eGet(leftInnerNameFeature)).addAll(innernames);
+
+
+        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getModelPackage(), ((PureBigraph) copy).getModel()).createBigraph();
+        return new PureBigraphComposite<>((Bigraph<S>) bigraph);
+    }
+
+    public BigraphComposite<S> juxtaposeV2(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        Bigraph<S> g = getBigraphDelegate();
+        assertSignaturesAreSame(g, f);
+        assertInterfaceCompatibleForJuxtaposition(g, f);
+
+        Supplier<Integer> rewriteRootSupplier = createNameSupplier(g.getRoots().size());
+        Supplier<String> rewriteNameSupplier = createNameSupplier("v", g.getNodes().size());
+        Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e", g.getEdges().size());
+
+        // if we don't copy, both bigraph get 'destroyed'
+        Bigraph<S> copy = BigraphUtil.copy(g);
+        Bigraph<S> copyOuter = BigraphUtil.copy(f);
+
+        EObject left = ((PureBigraph) copy).getModel();
+        EObject right = ((PureBigraph) copyOuter).getModel();
+
+        // Routine: Add roots side-by-side
+        EStructuralFeature rightRootsFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
+        EStructuralFeature leftRootsFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
+        if (Objects.nonNull(right.eGet(rightRootsFeature))) {
+            EList<EObject> roots = (EList<EObject>) right.eGet(rightRootsFeature);
+            for (int i = roots.size() - 1; i >= 0; i--) {
+                EObject eachRoot = roots.get(i);
+                EAttribute indexAttr = EMFUtils.findAttribute(eachRoot.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+                eachRoot.eSet(indexAttr, rewriteRootSupplier.get());
+                if (Objects.nonNull(left.eGet(leftRootsFeature))) {
+                    ((EList<EObject>) left.eGet(leftRootsFeature)).add(eachRoot);
+                    TreeIterator<Object> allContents = EcoreUtil.getAllContents(eachRoot, false);
+                    while (allContents.hasNext()) {
+                        EObject next = (EObject) allContents.next();
+                        if (((EcoreBigraph) copyOuter).isNameable(next) && ((EcoreBigraph) copyOuter).isBPlace(next)) {
+                            EAttribute nameAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                            next.eSet(nameAttr, rewriteNameSupplier.get());
+                        }
+                    }
+                }
+            }
+        }
+
+        // Add all edges
+        EStructuralFeature leftEdgesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+        EStructuralFeature rightEdgesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+        EContentAdapter adapter2 = new EContentAdapter() {
+            public void notifyChanged(Notification notification) {
+                if (notification.getFeature() == rightEdgesFeature) {
+                    Collection<DynamicEObjectImpl> edges = new ArrayList<>();
+                    if (notification.getNewValue() instanceof Collection) {
+                        edges.addAll((Collection) notification.getNewValue());
+                    } else {
+                        edges.add((DynamicEObjectImpl) notification.getNewValue());
+                    }
+                    for (DynamicEObjectImpl eachEdge : edges) {
+                        EAttribute nameAttr = EMFUtils.findAttribute(eachEdge.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                        eachEdge.eSet(nameAttr, rewriteEdgeNameSupplier.get());
+                    }
+                }
+            }
+        };
+        left.eAdapters().add(adapter2);
+        ((EList<EObject>) left.eGet(leftEdgesFeature)).addAll((EList<EObject>) right.eGet(rightEdgesFeature));
+
+
+        // Add all inner names
+        EStructuralFeature leftInnerNameFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
+        EStructuralFeature rightInnerNameFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
+        EList<EObject> innernames = (EList<EObject>) right.eGet(rightInnerNameFeature);
+        ((EList<EObject>) left.eGet(leftInnerNameFeature)).addAll(innernames);
+
+        // add all outer names
+        EStructuralFeature leftOuterNamesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        EStructuralFeature rightOuterNamesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        ((EList<EObject>) left.eGet(leftOuterNamesFeature)).addAll((EList<EObject>) right.eGet(rightOuterNamesFeature));
+
+        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getModelPackage(), ((PureBigraph) copy).getModel()).createBigraph();
+        return new PureBigraphComposite<>((Bigraph<S>) bigraph);
+    }
+
     @Override
     public BigraphComposite<S> parallelProduct(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        Bigraph<S> g = copyIfSame(getBigraphDelegate(), f);
+        Bigraph<S> g = BigraphUtil.copyIfSame(getBigraphDelegate(), f);
         assertSignaturesAreSame(g, f);
 
         Supplier<Integer> rewriteRootSupplier = createNameSupplier();
@@ -619,7 +824,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
 
     @Override
     public BigraphComposite<S> merge(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        Bigraph<S> g = copyIfSame(getBigraphDelegate(), f);
+        Bigraph<S> g = BigraphUtil.copyIfSame(getBigraphDelegate(), f);
         assertSignaturesAreSame(g, f);
 
         BigraphComposite<DefaultDynamicSignature> bigraphComposite = pure().asBigraphOperator((Bigraph<DefaultDynamicSignature>) g).parallelProduct((Bigraph<DefaultDynamicSignature>) f);
@@ -642,9 +847,155 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         return merge((Bigraph<S>) f.getOuterBigraph());
     }
 
+    public BigraphComposite<S> composeV2(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        Bigraph<S> g = getBigraphDelegate();
+        assertSignaturesAreSame(g, f);
+        assertInterfaceCompatibleForCompose(g, f, true);
+
+        Supplier<String> rewriteNameSupplier = createNameSupplier("v");
+        Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e", g.getEdges().size());
+
+        // if we don't copy, both bigraph get 'destroyed'
+        Bigraph<S> copy = BigraphUtil.copy(g);
+        Bigraph<S> copyOuter = BigraphUtil.copy(f);
+
+        EObject left = ((PureBigraph) copy).getModel();
+        EObject right = ((PureBigraph) copyOuter).getModel();
+
+
+        EStructuralFeature rightOuterNamesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        HashMap<Integer, EObject> rootsOuterIndex = new HashMap<>();
+        HashMap<String, EObject> outernamesOuterIndex = new HashMap<>();
+        if (Objects.nonNull(right.eGet(rightOuterNamesFeature))) {
+            EList<EObject> outernames = (EList<EObject>) right.eGet(rightOuterNamesFeature);
+            for (EObject eachOuterName : outernames) {
+                EAttribute nameAttr = EMFUtils.findAttribute(eachOuterName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                outernamesOuterIndex.put((String) eachOuterName.eGet(nameAttr), eachOuterName);
+            }
+        }
+
+        TreeIterator<Object> allContentsOuter = EcoreUtil.getAllContents(right, false);
+        while (allContentsOuter.hasNext()) {
+            EObject next = (EObject) allContentsOuter.next();
+            if (((EcoreBigraph) copyOuter).isBRoot(next)) {
+                EAttribute indexAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+                Integer index = (Integer) next.eGet(indexAttr);
+                rootsOuterIndex.put(index, next);
+                if (rootsOuterIndex.size() == f.getRoots().size()) {
+                    break;
+                }
+            }
+        }
+
+        TreeIterator<Object> allContents = EcoreUtil.getAllContents(left, false);
+        while (allContents.hasNext()) {
+            EObject next = (EObject) allContents.next();
+            if (((EcoreBigraph) copy).isNameable(next)) {
+                if (((EcoreBigraph) copy).isBPlace(next)) {
+                    EAttribute nameAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                    next.eSet(nameAttr, rewriteNameSupplier.get());
+                }
+            }
+
+            if (((EcoreBigraph) copy).isBInnerName(next)) {
+                EStructuralFeature innerBLinksRef = next.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                EObject theNewLink = (EObject) next.eGet(innerBLinksRef);
+                assert theNewLink != null;
+                EAttribute nameAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                EObject outerName = outernamesOuterIndex.get((String) next.eGet(nameAttr));
+                if (Objects.nonNull(outerName)) {
+                    EStructuralFeature pointsRef = outerName.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+                    if (Objects.nonNull(outerName.eGet(pointsRef))) {
+                        EList<EObject> points = (EList<EObject>) outerName.eGet(pointsRef);
+                        for (int i = points.size() - 1; i >= 0; i--) {
+                            EObject eachPoint = points.get(i);
+                            EStructuralFeature bLinkRef = eachPoint.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                            eachPoint.eSet(bLinkRef, theNewLink);
+                        }
+                    }
+                    // last: delete inner of left
+                    EStructuralFeature pointsRefInner = theNewLink.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+                    if (Objects.nonNull(theNewLink.eGet(pointsRefInner))) {
+                        ((EList<EObject>) theNewLink.eGet(pointsRefInner)).remove(next);
+                    }
+                    outernamesOuterIndex.remove((String) next.eGet(nameAttr));
+                }
+            }
+
+            if (((EcoreBigraph) copy).isBSite(next)) {
+                EAttribute indexAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+                Integer index = (Integer) next.eGet(indexAttr);
+                EStructuralFeature prntRef = next.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+                EObject parentNode = (EObject) next.eGet(prntRef);
+                // retrieve corresponding parent from 'outer bigraph'
+                EObject rootOuter = rootsOuterIndex.get(index);
+                EStructuralFeature childRefOuter = rootOuter.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+                EStructuralFeature prntRefOuter = rootOuter.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+                EList<EObject> childsOuter = (EList<EObject>) rootOuter.eGet(childRefOuter);
+                for (int i = childsOuter.size() - 1; i >= 0; i--) {
+                    EObject eachOuterChild = childsOuter.get(i);
+                    if (((EcoreBigraph) copy).isNameable(eachOuterChild)) {
+                        EAttribute nameAttr = EMFUtils.findAttribute(eachOuterChild.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                        eachOuterChild.eSet(nameAttr, rewriteNameSupplier.get());
+                    }
+                    eachOuterChild.eSet(prntRefOuter, null);
+                    BigraphUtil.setParentOfNode((eachOuterChild), parentNode);
+                }
+
+                // finally: remove the site node from the 'outer bigraph'
+                EStructuralFeature childRef = parentNode.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+                ((EList) parentNode.eGet(childRef)).remove(next);
+            }
+        }
+
+
+        EStructuralFeature rightEdgesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+        if (Objects.nonNull(right.eGet(rightEdgesFeature))) {
+            EStructuralFeature leftEdgesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+            EContentAdapter adapter2 = new EContentAdapter() {
+                public void notifyChanged(Notification notification) {
+                    if (notification.getFeature() == rightEdgesFeature) {
+                        Collection<DynamicEObjectImpl> edges = new ArrayList<>();
+                        if (notification.getNewValue() instanceof Collection) {
+                            edges.addAll((Collection) notification.getNewValue());
+                        } else {
+                            edges.add((DynamicEObjectImpl) notification.getNewValue());
+                        }
+                        for (DynamicEObjectImpl eachEdge : edges) {
+                            EAttribute nameAttr = EMFUtils.findAttribute(eachEdge.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                            eachEdge.eSet(nameAttr, rewriteEdgeNameSupplier.get());
+                        }
+                    }
+                }
+            };
+
+            left.eAdapters().add(adapter2); // for simple name rewriting of the 'outer bigraphs' edges
+            EList<EObject> edges = (EList<EObject>) right.eGet(rightEdgesFeature);
+            ((EList<EObject>) left.eGet(leftEdgesFeature)).addAll(edges);
+        }
+
+        // no inner names should be left from the 'outer bigraph'
+        EStructuralFeature leftInnerNameFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
+        EStructuralFeature rightInnerNameFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
+        ((EList<EObject>) left.eGet(leftInnerNameFeature)).clear();
+        if (Objects.nonNull(right.eGet(rightInnerNameFeature))) {
+            EList<EObject> innernames = (EList<EObject>) right.eGet(rightInnerNameFeature);
+            ((EList<EObject>) left.eGet(leftInnerNameFeature)).addAll(innernames);
+        }
+
+        // remaining outer names of right
+        EStructuralFeature leftOuterNamesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        if (Objects.nonNull(left.eGet(leftOuterNamesFeature))) {
+            ((EList<EObject>) left.eGet(leftOuterNamesFeature)).addAll(outernamesOuterIndex.values());
+        }
+
+        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getModelPackage(), ((PureBigraph) copy).getModel()).createBigraph();
+        return new PureBigraphComposite<>((Bigraph<S>) bigraph);
+    }
+
     @Override
     public BigraphComposite<S> compose(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        Bigraph<S> g = copyIfSame(getBigraphDelegate(), f);
+        Bigraph<S> g = BigraphUtil.copyIfSame(getBigraphDelegate(), f);
         assertSignaturesAreSame(g, f);
         // "disjoint support" of bigraphs is not really important (relevant) here as we are re-creating everything anyway
         // assertBigraphsAreNotSame();
@@ -1042,7 +1393,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
     protected void assertSignaturesAreSame(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleSignatureException {
         //special handling if one is an elementary bigraph
         if (inner instanceof DiscreteIon || outer instanceof DiscreteIon) {
-            SignatureBuilder<?, ?, ?, ?> signatureBuilder = AbstractBigraphFactory.createPureBigraphFactory().createSignatureBuilder();
+            SignatureBuilder<?, ?, ?, ?> signatureBuilder = pureSignatureBuilder();
             inner.getSignature().getControls().forEach(x -> {
                 signatureBuilder.addControl((Control) x);
             });

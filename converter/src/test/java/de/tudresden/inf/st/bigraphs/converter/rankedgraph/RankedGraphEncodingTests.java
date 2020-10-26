@@ -37,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Place graph hierarchy is encoded as attribute "parent"
@@ -53,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class RankedGraphEncodingTests {
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/rankedgraphs/";
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = pure();
 
     @Test
     void name2() throws TypeNotExistsException, InvalidConnectionException, IOException {

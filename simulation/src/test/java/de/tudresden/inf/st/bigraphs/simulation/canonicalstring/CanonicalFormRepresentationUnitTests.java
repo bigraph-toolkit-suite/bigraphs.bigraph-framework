@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -49,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class CanonicalFormRepresentationUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/";
 
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -261,13 +262,13 @@ public class CanonicalFormRepresentationUnitTests {
     @DisplayName("Using the Bigraph BFCS computation within the 'BigraphIsoPredicate'")
     void using_iso_predicate_test() {
         DefaultDynamicSignature randomSignature = createRandomSignature(26, 1f);
-        PureBigraph g0 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
+        PureBigraph g0 = new PureBigraphGenerator(randomSignature).generate(1, 30, 1f);
 
         BigraphIsoPredicate<PureBigraph> pureBigraphBigraphIsoPredicate = BigraphIsoPredicate.create(g0);
         boolean test = pureBigraphBigraphIsoPredicate.test(g0);
         Assertions.assertTrue(test);
 
-        PureBigraph g1 = new PureBigraphGenerator().generate(randomSignature, 1, 30, 1f);
+        PureBigraph g1 = new PureBigraphGenerator(randomSignature).generate(1, 30, 1f);
         boolean test2 = pureBigraphBigraphIsoPredicate.negate().test(g1);
         boolean test3 = pureBigraphBigraphIsoPredicate.test(g1);
         Assertions.assertTrue(test2);

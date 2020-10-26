@@ -1,8 +1,7 @@
-package de.tudresden.inf.st.bigraphs.core.impl;
+package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
+import de.tudresden.inf.st.bigraphs.core.utils.auxiliary.MemoryOperations;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
 import org.eclipse.emf.ecore.ENamedElement;
@@ -17,8 +16,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static de.tudresden.inf.st.bigraphs.core.utils.auxiliary.MemoryOperations.createFileSystemManager;
 
 /**
  * Extension interface with standard methods for Ecore-based bigraph classes.
@@ -53,6 +50,10 @@ public interface EcoreBigraph {
 
     default boolean isBSite(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_SITE);
+    }
+
+    default boolean isNameable(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_NAMEABLETYPE);
     }
 
     default boolean isBRoot(EObject eObject) {
@@ -132,7 +133,7 @@ public interface EcoreBigraph {
          * @param bigraph an Ecore-based bigraph
          */
         public Stub(EcoreBigraph bigraph) {
-            this.metaModel = EcoreUtil.copy(bigraph.getModelPackage());
+            this.metaModel = bigraph.getModelPackage(); //EcoreUtil.copy(bigraph.getModelPackage());
             this.instanceModel = EcoreUtil.copy(bigraph.getModel());
         }
 
@@ -161,7 +162,7 @@ public interface EcoreBigraph {
          */
         public Stub clone() throws CloneNotSupportedException {
             try {
-                DefaultFileSystemManager manager = createFileSystemManager();
+                DefaultFileSystemManager manager = MemoryOperations.getInstance().createFileSystemManager();
                 final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
                 final FileObject fo2 = manager.resolveFile("ram:/meta.ecore");
                 OutputStream outputStream = fo1.getContent().getOutputStream();
@@ -172,11 +173,13 @@ public interface EcoreBigraph {
                 outputStream2.close();
                 InputStream inputStream = fo1.getContent().getInputStream();
                 InputStream inputStream2 = fo2.getContent().getInputStream();
-                EPackage ePackage = BigraphArtifacts.loadBigraphMetaModel(inputStream2);
-                List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, inputStream);
+//                EPackage ePackage = BigraphArtifacts.loadBigraphMetaModel(inputStream2);
+//                List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, inputStream);
+                List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, inputStream);
                 inputStream.close();
                 inputStream2.close();
-                return new Stub(ePackage, eObjects.get(0));
+//                return new Stub(ePackage, eObjects.get(0));
+                return new Stub(metaModel, eObjects.get(0));
             } catch (IOException e) {
                 throw new CloneNotSupportedException(e.getMessage());
             }
@@ -189,7 +192,7 @@ public interface EcoreBigraph {
          */
         public InputStream getInputStreamOfInstanceModel() {
             try {
-                DefaultFileSystemManager manager = createFileSystemManager();
+                DefaultFileSystemManager manager = MemoryOperations.getInstance().createFileSystemManager();
                 final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
                 OutputStream outputStream = fo1.getContent().getOutputStream();
                 BigraphArtifacts.exportAsInstanceModel(this, outputStream);
