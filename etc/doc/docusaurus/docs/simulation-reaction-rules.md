@@ -40,6 +40,14 @@ Important generic interface: `de.tudresden.inf.st.bigraphs.simulation.ReactionRu
     }
 ```
 
+## Bounded Reaction Rules
+
+A reaction rule can be _bound_ to an existing reactive system structure.
+Therefore, the method `de.tudresden.inf.st.bigraphs.simulation.reactivesystem.AbstractReactionRule#withReactiveSystem(ReactiveSystem<B>)` is available.
+A new class `ReactiveSystemBoundReactionRule<B>` is returned which extends `AbstractReactionRule` and contains the previously create reaction rule as well as the reactive system.
+This may help to organize created reaction rules and give them a strong semantic affiliation to a reactive system.
+
+
 
 
 

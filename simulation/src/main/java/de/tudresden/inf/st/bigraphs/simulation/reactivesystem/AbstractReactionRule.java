@@ -4,6 +4,8 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
+import org.springframework.util.Assert;
 
 /**
  * This base class represents an immutable data structure for all kinds of reaction rules.
@@ -25,6 +27,16 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     protected final B reactum;
     protected boolean canReverse;
     protected final InstantiationMap instantiationMap;
+    protected ReactiveSystem<B> reactiveSystemAffili = null; // the "affiliation" to a specific reactive system
+
+    public ReactiveSystemBoundReactionRule<B> withReactiveSystem(ReactiveSystem<B> reactiveSystem) {
+        Assert.notNull(reactiveSystem, "ClientSession must not be null!");
+        try {
+            return new ReactiveSystemBoundReactionRule<>(reactiveSystem, AbstractReactionRule.this);
+        } catch (InvalidReactionRuleException e) {
+            return null;
+        }
+    }
 
     public AbstractReactionRule(final B redex, final B reactum, final InstantiationMap instantiationMap, boolean isReversible) throws InvalidReactionRuleException {
         this.redex = redex;
@@ -47,6 +59,11 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
 
     public AbstractReactionRule(final B redex, final B reactum, boolean isReversible) throws InvalidReactionRuleException {
         this(redex, reactum, InstantiationMap.create(redex.getSites().size()), isReversible);
+    }
+
+    public AbstractReactionRule(ReactiveSystem delegate, AbstractReactionRule rule) throws InvalidReactionRuleException {
+        this((B) rule.redex, (B) rule.reactum, rule.instantiationMap, rule.canReverse);
+        this.reactiveSystemAffili = delegate;
     }
 
     /**
@@ -98,5 +115,29 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
 
     public Signature<?> getSignature() {
         return this.signature;
+    }
+
+    static class ReactiveSystemBoundReactionRule<B extends Bigraph<? extends Signature<?>>> extends AbstractReactionRule<B> {
+
+        private final ReactiveSystem<B> delegate;
+        private final AbstractReactionRule<B> rule;
+
+        /**
+         * @param delegate must not be {@literal null}.
+         * @param rule     must not be {@literal null}.
+         */
+        ReactiveSystemBoundReactionRule(ReactiveSystem<B> delegate, AbstractReactionRule<B> rule) throws InvalidReactionRuleException {
+            super(delegate, rule);
+            this.delegate = delegate;
+            this.rule = rule;
+        }
+
+        public ReactiveSystem<B> getBoundedReactiveSystem() {
+            return delegate;
+        }
+
+        public AbstractReactionRule<B> getRule() {
+            return rule;
+        }
     }
 }
