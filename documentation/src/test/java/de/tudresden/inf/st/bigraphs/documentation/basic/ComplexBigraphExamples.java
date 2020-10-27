@@ -36,7 +36,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
  */
 public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+    private static PureBigraphFactory factory = pure();
 
     @BeforeEach
     void setUp() throws IOException {

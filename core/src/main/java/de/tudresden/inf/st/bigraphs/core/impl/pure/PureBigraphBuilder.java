@@ -1411,13 +1411,14 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
                     }
                     controlMap.put(s, entityClass);
                 });
-        Set<EReference> allrefs = new HashSet<>();
+//        Set<EReference> allrefs = new HashSet<>();
         EList<EObject> eObjects = loadedEPackage.eContents();
         for (EObject each : eObjects) {
             availableEClasses.put(((EClassImpl) each).getName(), (EClassImpl) each);
-            allrefs.addAll(EMFUtils.findAllReferences((EClass) each));
+//            allrefs.addAll(EMFUtils.findAllReferences((EClass) each));
+            EMFUtils.findAllReferences((EClass) each).forEach(x -> availableReferences.putIfAbsent(x.getName(), x));
         }
-        allrefs.forEach(x -> availableReferences.put(x.getName(), x));
+//        allrefs.forEach(x -> availableReferences.put(x.getName(), x));
     }
 
     private void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {

@@ -11,6 +11,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -24,9 +25,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +50,17 @@ public class BigraphArtifactUnitTests {
     }
 
     @Test
+    void checkConstraintsAfterExport() throws IOException {
+        DefaultDynamicSignature signature = createExampleSignature();
+//        PureBigraphGenerator gen = pureRandomBuilder(signature);
+//        PureBigraph generate = gen.generate(1, 10, 1f);
+//        BigraphArtifacts.exportAsInstanceModel(generate, new FileOutputStream(TARGET_TEST_PATH + "_r1.xmi"));
+//        BigraphArtifacts.exportAsMetaModel(generate, new FileOutputStream(TARGET_TEST_PATH + "_r1.ecore"));
+//        EPackage ePackage = BigraphArtifacts.loadBigraphMetaModel(TARGET_TEST_PATH + "_r1.ecore");
+//        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, TARGET_TEST_PATH + "_r1.xmi");
+    }
+
+    @Test
     void load_signatureBaseModel_test() {
         Assertions.assertAll(() -> {
             EPackage ePackage = BigraphArtifacts.loadInternalSignatureMetaMetaModel();
@@ -68,12 +78,17 @@ public class BigraphArtifactUnitTests {
             PureBigraph bigraph = (PureBigraph) createSampleBigraph();
 
             EcoreBigraph.Stub stub = new EcoreBigraph.Stub(bigraph);
-            assertNotEquals(stub.getModel(), bigraph.getModel());
+            assertEquals(stub.getModel(), bigraph.getModel());
+            assertEquals(stub.getModelPackage(), bigraph.getModelPackage());
 
             EcoreBigraph.Stub clone = stub.clone();
+            assertEquals(stub.getModelPackage(), clone.getModelPackage());
             assertNotEquals(stub, clone);
+            assertNotEquals(stub.getModel(), clone.getModel());
 
-            stub.getInputStreamOfInstanceModel();
+            InputStream inputStreamOfInstanceModel = stub.getInputStreamOfInstanceModel();
+            assertNotNull(inputStreamOfInstanceModel);
+            inputStreamOfInstanceModel.close();
         });
 
     }
