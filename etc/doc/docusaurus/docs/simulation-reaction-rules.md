@@ -47,6 +47,9 @@ Therefore, the method `de.tudresden.inf.st.bigraphs.simulation.reactivesystem.Ab
 A new class `ReactiveSystemBoundReactionRule<B>` is returned which extends `AbstractReactionRule` and contains the previously create reaction rule as well as the reactive system.
 This may help to organize created reaction rules and give them a strong semantic affiliation to a reactive system.
 
+Note that this feature does not add a reaction rule to that reactive system automatically.
+As a consequence, the `de.tudresden.inf.st.bigraphs.simulation.reactivesystem.AbstractSimpleReactiveSystem#addReactionRule(ReactionRule<B>)` method has still to be used.
+
 
 
 

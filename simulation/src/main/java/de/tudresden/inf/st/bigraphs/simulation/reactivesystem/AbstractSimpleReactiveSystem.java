@@ -67,7 +67,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
      * @param reactionRule the reaction rule to be checked (redex is used)
      * @throws RedexIsNotSimpleException if the redex is not simple
      */
-    protected void assertParametricRedexIsSimple(ReactionRule<B> reactionRule) throws RedexIsNotSimpleException {
+    public void assertParametricRedexIsSimple(ReactionRule<B> reactionRule) throws RedexIsNotSimpleException {
         //"openness": all links are interfaces (edges, and outer names)
         //TODO must not be severe constraint, as we can internally model edges as outer names (in the matching as currently done)
 //        boolean isOpen = redex.getInnerNames().size() == 0 && redex.getEdges().size() == 0;
@@ -83,7 +83,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
      * @param reactionRule reaction rule where the outer names of the redex are checked
      * @throws InvalidReactionRuleException if outer name is idle.
      */
-    protected void assertNoIdleOuterName(ReactionRule<B> reactionRule) throws InvalidReactionRuleException {
+    public void assertNoIdleOuterName(ReactionRule<B> reactionRule) throws InvalidReactionRuleException {
         if (hasIdleOuterNames(reactionRule.getRedex())) {
             throw new OuterNameIsIdleException();
         }
