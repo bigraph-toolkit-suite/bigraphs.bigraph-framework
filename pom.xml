@@ -72,20 +72,12 @@
 
     <repositories>
         <repository>
+            <id>maven-central</id>
+            <name>Maven Central Repository</name>
+            <url>https://repo1.maven.org/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>eclipse-latest</id>
-            <url>http://download.eclipse.org/releases/latest</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-st-tu-dresden-maven-repository</id>
-            <name>bintray</name>
-            <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
         </repository>
         <repository>
             <id>spring-milestones</id>
@@ -96,8 +88,24 @@
             </snapshots>
         </repository>
         <repository>
-            <id>eclipse-releases</id>
+            <id>eclipse-latest</id>
+            <url>http://download.eclipse.org/releases/latest</url>
+            <layout>p2</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>eclipse-releases-maven</id>
             <url>https://repo.eclipse.org/content/groups/releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>bintray-st-tu-dresden-maven-repository</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
