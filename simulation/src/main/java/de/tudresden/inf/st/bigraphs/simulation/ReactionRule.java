@@ -39,7 +39,7 @@ public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
                 getRedex().getEdges().size() == 0; // every link is open
     }
 
-    boolean isReversable();
+    boolean isReversible();
 
     /**
      * Return the instantiation map of the parametric reaction rule

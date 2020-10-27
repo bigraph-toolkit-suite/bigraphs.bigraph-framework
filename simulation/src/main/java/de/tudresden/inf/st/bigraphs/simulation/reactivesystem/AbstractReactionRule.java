@@ -7,14 +7,14 @@ import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 
 /**
  * This base class represents an immutable data structure for all kinds of reaction rules.
- * It contains the redex, reactum and an instantiation map.
+ * It contains the <i>redex</i>, <i>reactum</i> and an <i>instantiation map</i>.
  * <p>
  * The signature is inferred from the redex since both redex and reactum must have the same signature,
  * otherwise an exception is thrown when instantiating a concrete reaction rule.
  * <p>
  * Other checks are also performed checking the reaction rule for conformity: Interfaces and "simpleness".
  * <p>
- * A rule is said to be linear when they do not copy or delete parameters.
+ * A rule is said to be linear when they do not duplicate or delete parameters.
  *
  * @param <B> type of the bigraph
  * @author Dominik Grzelak
@@ -23,10 +23,10 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     protected final Signature<?> signature;
     protected final B redex;
     protected final B reactum;
-    protected boolean canReverse = false;
+    protected boolean canReverse;
     protected final InstantiationMap instantiationMap;
 
-    public AbstractReactionRule(final B redex, final B reactum, final InstantiationMap instantiationMap) throws InvalidReactionRuleException {
+    public AbstractReactionRule(final B redex, final B reactum, final InstantiationMap instantiationMap, boolean isReversible) throws InvalidReactionRuleException {
         this.redex = redex;
         this.reactum = reactum;
         this.instantiationMap = instantiationMap;
@@ -34,11 +34,19 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         this.assertInterfaceDefinitionIsCorrect(this.redex, this.reactum);
         this.assertRedexIsSimple();
         this.signature = this.redex.getSignature();
+        this.canReverse = isReversible;
     }
 
+    public AbstractReactionRule(final B redex, final B reactum, final InstantiationMap instantiationMap) throws InvalidReactionRuleException {
+        this(redex, reactum, instantiationMap, false);
+    }
 
     public AbstractReactionRule(final B redex, final B reactum) throws InvalidReactionRuleException {
         this(redex, reactum, InstantiationMap.create(redex.getSites().size()));
+    }
+
+    public AbstractReactionRule(final B redex, final B reactum, boolean isReversible) throws InvalidReactionRuleException {
+        this(redex, reactum, InstantiationMap.create(redex.getSites().size()), isReversible);
     }
 
     /**
@@ -73,7 +81,7 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     }
 
     @Override
-    public boolean isReversable() {
+    public boolean isReversible() {
         return this.canReverse;
     }
 

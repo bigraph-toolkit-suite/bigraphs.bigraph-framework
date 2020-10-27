@@ -19,4 +19,12 @@ public class ParametricReactionRule<B extends Bigraph<? extends Signature<?>>> e
     public ParametricReactionRule(B redex, B reactum, InstantiationMap instantiationMap) throws InvalidReactionRuleException {
         super(redex, reactum, instantiationMap);
     }
+
+    public ParametricReactionRule(B redex, B reactum, InstantiationMap instantiationMap, boolean isReversible) throws InvalidReactionRuleException {
+        super(redex, reactum, instantiationMap, isReversible);
+    }
+
+    public ParametricReactionRule(B redex, B reactum, boolean isReversible) throws InvalidReactionRuleException {
+        super(redex, reactum, isReversible);
+    }
 }
