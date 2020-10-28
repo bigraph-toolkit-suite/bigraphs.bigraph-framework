@@ -17,7 +17,8 @@
       "converter/bigrapher-converter",
       "converter/bigred-converter",
       "converter/bigmc-converter",
-      "converter/rankedgraphs-converter"
+      "converter/rankedgraphs-converter",
+      "converter/graphml-converter"
     ],
     "Persistence": [
       "persistence",

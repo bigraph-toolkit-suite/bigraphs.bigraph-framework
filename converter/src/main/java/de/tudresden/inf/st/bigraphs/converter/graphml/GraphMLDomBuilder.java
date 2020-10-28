@@ -34,13 +34,13 @@ public class GraphMLDomBuilder {
         graphMLRoot = new Element("graphml", "http://graphml.graphdrawing.org/xmlns");
         document = new Document(graphMLRoot);
         Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        Namespace schemLocation = Namespace.getNamespace("schemLocation", "http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd");
-        Namespace y = Namespace.getNamespace("y", "http://www.yworks.com/xml/graphml");
+        Namespace schemLocation = Namespace.getNamespace("schemaLocation", "http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd");
+//        Namespace y = Namespace.getNamespace("y", "http://www.yworks.com/xml/graphml");
 
         // add Namespace
         graphMLRoot.addNamespaceDeclaration(xsi);
         graphMLRoot.addNamespaceDeclaration(schemLocation);
-        graphMLRoot.addNamespaceDeclaration(y);
+//        graphMLRoot.addNamespaceDeclaration(y);
 
         graph = new Element("graph");
         graph.setAttribute("id", "bigraph");

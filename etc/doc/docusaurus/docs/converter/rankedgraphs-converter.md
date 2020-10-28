@@ -9,7 +9,8 @@ In some cases, bigraphs may be casted to <strong>ranked graphs</strong>, as defi
 
 The next listing shows how to encode the bigraph depicted below to a ranked graph.
 
-![imgs](assets/converter/bigraph-example.png)
+![imgs](assets/converter/bigraph-rankedgraph-example.png)
+This bigraph is taken from [\[2\]](#ref2).
 
 ```java
 PureBigraph bigraph = ...;
