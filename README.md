@@ -29,7 +29,8 @@ bigraphs by reaction rules (synthesizing a labelled transition system) (beta)
     - Predicate checking
     - Specify order of reaction rules
 - Model transformation / Conversions (alpha)
-    - e.g., to GXL, BigMC, BigraphER, BigRed, and Ranked Graphs
+    - into other graph formats, e.g., GraphML, GXL, and Ranked Graphs
+    - for other bigraph tools: BigMC, BigraphER, and BigRed
 
 
 
