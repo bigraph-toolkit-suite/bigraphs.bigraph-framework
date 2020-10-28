@@ -1,17 +1,16 @@
 package de.tudresden.inf.st.bigraphs.converter.rankedgraph;
 
-import com.google.common.collect.Lists;
-import com.google.common.graph.Traverser;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
-import de.tudresden.inf.st.bigraphs.converter.gxl.GraphMLDomBuilder;
-import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.AbstractRankedGraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
@@ -21,7 +20,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphRankedGraphExporter;
 import org.jdom2.Document;
-import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.jgrapht.Graph;
@@ -35,7 +33,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -148,77 +147,6 @@ public class RankedGraphEncodingTests {
         assertTrue(imgFile.exists());
     }
 
-    @Test
-    void name() throws InvalidConnectionException, TypeNotExistsException, IOException {
-        PureBigraph bigraph = createBigraphA();
-
-        Map<BigraphEntity, String> idMap = new HashMap<>();
-        Traverser<BigraphEntity<?>> childrenTraverser = Traverser.forTree(x -> {
-            if (BigraphEntityType.isNode(x)) {
-                String n = ((BigraphEntity.NodeEntity) x).getName() + ":" + idMap.get(bigraph.getParent(x));
-                idMap.put(x, n);
-            }
-            if (BigraphEntityType.isRoot(x)) {
-                idMap.put(x, String.valueOf(((BigraphEntity.RootEntity) x).getIndex()));
-            }
-            Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(x);
-            return childrenOf;
-        });
-
-
-        GraphMLDomBuilder.buildtop();
-
-        BigraphEntity.RootEntity firstRoot = bigraph.getRoots().iterator().next();
-        //TODO: addNode with attributes root,index,...
-        // kann gleiche node-"id" für site und root verwendet werden? - ja: GMTE erzeugt sowieso neue ids aber beachtet diese nodes
-
-        //build id concat with map?
-        ArrayList<BigraphEntity<?>> bigraphEntities = Lists.newArrayList(childrenTraverser.breadthFirst(firstRoot));
-        for (BigraphEntity<?> each : bigraphEntities) {
-            System.out.println(each);
-            switch (each.getType()) {
-                case NODE:
-                    String id = idMap.get(each);
-                    String value = each.getControl().getNamedType().stringValue();
-                    Element nodeElem = GraphMLDomBuilder.addNode(id, each.getType().name(), value);
-                    if (bigraph.getParent(each).getType() == BigraphEntityType.ROOT) {
-                        String targetId0 = "" + ((BigraphEntity.RootEntity) bigraph.getParent(each)).getIndex();
-                        GraphMLDomBuilder.addAttributeToNode(nodeElem, "parent", targetId0);
-//                        GraphMLDomBuilder.addEdge("outerface", id, targetId0);
-                    } else if (bigraph.getParent(each).getType() == BigraphEntityType.NODE) {
-                        GraphMLDomBuilder.addAttributeToNode(nodeElem, "parent", idMap.get(bigraph.getParent(each)));
-                    }
-                    break;
-                case ROOT:
-                    String id2 = String.valueOf(((BigraphEntity.RootEntity) each).getIndex());
-                    GraphMLDomBuilder.addNode(id2, each.getType().name(), null);
-                    break;
-                case SITE:
-                    String id3 = String.valueOf(((BigraphEntity.SiteEntity) each).getIndex());
-                    Element nodeElem2 = GraphMLDomBuilder.addNode(id3, each.getType().name(), null);
-                    String sourceId = "" + ((BigraphEntity.SiteEntity) each).getIndex();
-                    if (bigraph.getParent(each).getType() == BigraphEntityType.ROOT) {
-//                        GraphMLDomBuilder.addEdge("outerface", sourceId, "" + ((BigraphEntity.RootEntity) bigraph.getParent(each)).getIndex());
-                        GraphMLDomBuilder.addAttributeToNode(nodeElem2, "parent", "" + ((BigraphEntity.RootEntity) bigraph.getParent(each)).getIndex());
-                    } else if (bigraph.getParent(each).getType() == BigraphEntityType.NODE) {
-//                        GraphMLDomBuilder.addEdge("innerface", sourceId, idMap.get(bigraph.getParent(each)));
-                        GraphMLDomBuilder.addAttributeToNode(nodeElem2, "parent", idMap.get(bigraph.getParent(each)));
-                    }
-                    break;
-            }
-
-            //TODO if site addNode, addEdge to Parent
-            //TODO if node: addNode,
-            //TODO: if parent is root: addEdge
-        }
-        int i_interfaceCounter = bigraph.getSites().size();
-        for (BigraphEntity.InnerName eachInner : bigraph.getInnerNames()) {
-            Element nodeElem = GraphMLDomBuilder.addNode("" + (++i_interfaceCounter), eachInner.getType().name(), null);
-        }
-
-        printAll(GraphMLDomBuilder.document);
-
-    }
 
     public static void printAll(Document doc) {
         try {
