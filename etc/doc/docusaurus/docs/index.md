@@ -31,12 +31,13 @@ and dynamics of complex systems.
 
 ## Overview of the Features
 
-- Dynamic creation of bigraphs at runtime based on an Ecore meta model
+- Dynamic creation of bigraphs at runtime based on an Ecore meta model; support of various bigraph operators
 - Visualization (beta)
 - Bigraph matching (beta)
-- Bigraphical reactive system support: simulation of bigraphs by reaction rules (= transition system) (alpha)
-- Read and write meta and instance model to file system
-- Model transformation (WIP)
+- Bigraphical reactive system support: simulation of bigraphs by reaction rules and synthesisation of a transition system (beta)
+- Read and write meta and instance model to the file system
+- Conversion of bigraphs to other file formats (e.g., GraphML, BigMC or BigraphER)
+<!-- - Model transformation (WIP) -->
 
 ## Requirements
 
