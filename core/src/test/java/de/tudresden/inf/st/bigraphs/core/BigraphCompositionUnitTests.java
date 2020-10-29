@@ -9,17 +9,16 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
 import org.eclipse.collections.impl.factory.Sets;
 import org.eclipse.emf.ecore.EPackage;
@@ -91,6 +90,37 @@ public class BigraphCompositionUnitTests {
         assertEquals(1, nesting.getOuterNames().size());
         assertEquals("jeff", nesting.getOuterNames().get(0).getName());
         assertEquals(3, nesting.getPointsFromLink(nesting.getOuterNames().stream().filter(x -> x.getName().equals("jeff")).findFirst().get()).size());
+    }
+
+    @Test
+    @DisplayName("Closure test: Close open link by transforming it to a closed link")
+    void closure_test_01() throws InvalidConnectionException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        // (id(1) | /("x")) * (a["x"] | a["x"])
+        PureBigraphBuilder<Signature> builder = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<Signature> builder2 = pureBuilder(createExampleSignature());
+
+        // (Computer["x"] | Computer["x"])
+        builder.createRoot().addChild("Computer", "x").addChild("Computer", "x");
+
+        PureBigraph bigraph = builder.createBigraph();
+        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+
+        // (id(1) | /("x"))
+        builder2.createInnerName("x");
+        builder2.createRoot().addSite();
+        PureBigraph left = builder2.createBigraph();
+        BigraphArtifacts.exportAsInstanceModel(left, System.out);
+
+        Bigraph<DefaultDynamicSignature> result = ops(left).compose(bigraph).getOuterBigraph();
+        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result, System.out);
+        assertNotNull(result);
+        assertEquals(3, result.getAllPlaces().size());
+        assertEquals(1, result.getEdges().size());
+        assertEquals(0, result.getOuterNames().size());
+        assertEquals(0, result.getInnerNames().size());
+        assertEquals(2, result.getPointsFromLink(result.getEdges().iterator().next()).size());
+//        Bigraph<DefaultDynamicSignature> result2 = new PureBigraphComposite<>(left).composeV2(bigraph).getOuterBigraph();
+//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result2, System.out);
     }
 
     @Test
@@ -464,14 +494,14 @@ public class BigraphCompositionUnitTests {
             assertEquals(1, outerBigraph1.getNodes().size());
             assertEquals(1, outerBigraph1.getSites().size());
 
-            //(id(1) || /x || y/{y}) * C{x,y}: closes one name 'x'
+            //(id(1) || /x || y/{y}) * C{x,y}: closes one open link 'x' but keeps the idle edge
             Linkings<DefaultDynamicSignature>.Substitution sigma_y = linkings.substitution(StringTypedName.of("y"), StringTypedName.of("y"));
             Bigraph<DefaultDynamicSignature> outerBigraph2 = ops(placings.identity1()).parallelProduct(c1).parallelProduct(sigma_y).getOuterBigraph();
             Bigraph<DefaultDynamicSignature> composed3 = ops(outerBigraph2).compose(ionC).getOuterBigraph();
             BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed3, System.out);
             assertEquals(1, composed3.getOuterNames().size());
             assertEquals("y", composed3.getOuterNames().iterator().next().getName());
-            assertEquals(0, composed3.getEdges().size());
+            assertEquals(1, composed3.getEdges().size());
             assertEquals(0, composed3.getInnerNames().size());
             assertEquals(3, composed3.getAllPlaces().size());
             assertEquals(1, composed3.getRoots().size());

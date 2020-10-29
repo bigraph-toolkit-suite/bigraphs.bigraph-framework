@@ -20,10 +20,7 @@ import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -887,6 +884,9 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             }
         }
 
+        EStructuralFeature leftEdgesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+        EStructuralFeature rightEdgesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+
         TreeIterator<Object> allContents = EcoreUtil.getAllContents(left, false);
         while (allContents.hasNext()) {
             EObject next = (EObject) allContents.next();
@@ -900,9 +900,16 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             if (((EcoreBigraph) copy).isBInnerName(next)) {
                 EStructuralFeature innerBLinksRef = next.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
                 EObject theNewLink = (EObject) next.eGet(innerBLinksRef);
-                assert theNewLink != null;
+                if (Objects.isNull(theNewLink)) { // otherwise the innername is a closure
+                    // the current element must be a closure if no link is connected. So we should create a new edge
+                    EClassifier edgeClass = next.eClass().getEPackage().getEClassifier(BigraphMetaModelConstants.CLASS_EDGE);
+                    theNewLink = next.eClass().getEPackage().getEFactoryInstance().create((EClass) edgeClass);
+                    EAttribute nameAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                    theNewLink.eSet(nameAttr, rewriteEdgeNameSupplier.get());
+                    ((EList<EObject>) left.eGet(leftEdgesFeature)).add(theNewLink); // Important to add the edge to the bigraph
+                }
                 EAttribute nameAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-                EObject outerName = outernamesOuterIndex.get((String) next.eGet(nameAttr));
+                EObject outerName = outernamesOuterIndex.get(next.eGet(nameAttr));
                 if (Objects.nonNull(outerName)) {
                     EStructuralFeature pointsRef = outerName.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
                     if (Objects.nonNull(outerName.eGet(pointsRef))) {
@@ -948,10 +955,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             }
         }
 
-
-        EStructuralFeature rightEdgesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
         if (Objects.nonNull(right.eGet(rightEdgesFeature))) {
-            EStructuralFeature leftEdgesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
             EContentAdapter adapter2 = new EContentAdapter() {
                 public void notifyChanged(Notification notification) {
                     if (notification.getFeature() == rightEdgesFeature) {
@@ -1191,15 +1195,12 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         for (BigraphEntity.OuterName each : f.getOuterNames()) {
             outerNames_F.put(each.getName(), each); //(BigraphEntity.InnerName) builder.createNewInnerName(eachInnerName.getName()));
         }
-        //innerNames_G und outerNames_F können schonmal verbunden werden?
-        //TODO 2nd condition must hold
-        for (BigraphEntity<?> q : Q_set) {
-//            System.out.println(q);
 
+        HashMap<String, BigraphEntity.Edge> innerNamesToEdgesMap = new HashMap<>();
+        for (BigraphEntity<?> q : Q_set) {
             //C1,C3 preserving links
             //C2: is recreating links (outer --connect-> inner == edge, or inner name of inner big is connected to the edge
             // of a node)
-
 
             BigraphEntity<?> linkQofF = f.getLinkOfPoint(q);
             if (Objects.nonNull(linkQofF)) {
@@ -1257,8 +1258,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
                 boolean contains = false;
                 // we need the name: from the edge or an outer name
                 String edgeName = E.inverse().get(linkQofF);
-                //TODO move into next if clause. we get the name directly w/ null check because it
-                // it is an outer name and cannot have an edge name
+
                 if (Objects.isNull(edgeName) &&
                         Objects.nonNull(innerNames_G.get(((BigraphEntity.OuterName) linkQofF).getName()))) {
                     edgeName = ((BigraphEntity.OuterName) linkQofF).getName();
@@ -1291,12 +1291,18 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
                         String name = ((BigraphEntity.OuterName) link).getName();
                         newLink = myOuterNames.get(name);
                     }
-                    if (newLink == null) continue;
-//                    assert newLink != null;
-//                    System.out.println("\tlink(q) <- link_G(y)");
-                    //index beachten
-                    //via node names aus nodes holen
-
+//                    if (newLink == null) continue;
+                    if (Objects.isNull(newLink)) { // otherwise the innername is a closure
+                        // the current element must be a closure if no link is connected. So we should create a new edge
+                        if (Objects.isNull(innerNamesToEdgesMap.get(nameValue.stringValue()))) {
+                            newLink = builder.createNewEdge(rewriteEdgeNameSupplier.get());
+                            myEdges.put(((BigraphEntity.Edge) newLink).getName(), (BigraphEntity.Edge) newLink);
+                            innerNamesToEdgesMap.put(nameValue.stringValue(), (BigraphEntity.Edge) newLink);
+                        } else {
+                            newLink = innerNamesToEdgesMap.get(nameValue.stringValue());
+                        }
+                    }
+                    // link(q) <- link_G(y)
                     if (BigraphEntityType.isInnerName(q)) {
                         //erstelle neuen innername
                         BigraphEntity.InnerName newInnerName = myInnerNames.get(((BigraphEntity.InnerName) q).getName());
@@ -1335,12 +1341,6 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
                 if (BigraphEntityType.isOuterName(linkQofG)) {
                     //outer names are already created, they remain the same
                     BigraphEntity.OuterName outerName = myOuterNames.get(((BigraphEntity.OuterName) linkQofG).getName());
-//                    System.out.println(outerName);
-//                    BigraphEntity newPortWithIndex = builder.createNewPortWithIndex(thePort.getIndex());
-//                    newPortWithIndex.getInstance().eSet(
-//                            newPortWithIndex.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK),
-//                            outerName.getInstance()
-//                    );
                     builder.connectToLinkUsingIndex(nodeEntity, outerName, thePort.getIndex());
                 } else if (BigraphEntityType.isEdge(linkQofG)) {
                     String edgeName = E.inverse().get(linkQofG);

@@ -2,10 +2,13 @@
 ctrl Room = 0;
 ctrl Building = 0;
 ctrl Comp = 1;
+ctrl C = 2;
 
 # some elementary bigraphs
 # big join = id | id;
 # big g11 = ([{1}, {0}], 2);
+# 
+big aaa = id(2); #(id(1) | /x | y/{y}) * C{x,y};
 
 big s0 = Building . (Room.(Comp{network}.1) | Room.(Comp{network}.1));
 
