@@ -41,6 +41,34 @@ public class BigraphCreationUnitTest {
     private final PureBigraphFactory factory = pure();
 
     @Test
+    @DisplayName("Connecting Nodes via an Edge using connectByEdge() method")
+    void connect_nodesByEdge_test_01() throws InvalidArityOfControlException {
+        DefaultDynamicSignature sig = pureSignatureBuilder().newControl("A", 1).assign().create();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+
+        PureBigraph bigraph = builder.createRoot().connectByEdge("A", "A").createBigraph();
+
+        assertEquals(1, bigraph.getEdges().size());
+        assertEquals(2, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+    }
+
+    @Test
+    @DisplayName("Connecting Nodes via an Edge by closing inner name")
+    void connect_nodesByEdge_test_02() throws InvalidConnectionException, TypeNotExistsException {
+        DefaultDynamicSignature sig = pureSignatureBuilder().newControl("A", 1).assign().create();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+
+        BigraphEntity.InnerName tmp = builder.createInnerName("tmp");
+        builder.createRoot().addChild("A").linkToInner(tmp).addChild("A").linkToInner(tmp);
+        builder.closeInnerName(tmp);
+        PureBigraph bigraph = builder.createBigraph();
+
+        assertEquals(1, bigraph.getEdges().size());
+        assertEquals(2, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals(0, bigraph.getInnerNames().size());
+    }
+
+    @Test
     void traversal_tests() throws InvalidConnectionException, TypeNotExistsException, IOException {
         DefaultDynamicSignature signature = createExampleSignature();
         PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
