@@ -3,13 +3,20 @@ package de.tudresden.inf.st.bigraphs.simulation.encoding;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphIsNotPrimeException;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -38,6 +45,18 @@ public class BigraphCanonicalForm {
     private MutableMap<Class, BigraphCanonicalFormStrategy> strategyMap = Maps.mutable.of(PureBigraph.class, new PureCanonicalForm(this));
     boolean withNodeIdentifiers = false;
     final static char PREFIX_BARREN = 'r';
+    static final Map<Class<?>, Function<Object, String>> ELEMENTARY_ENCODINGS;
+
+    static {
+        Map<Class<?>, Function<Object, String>> _encodings = new HashMap<>();
+        _encodings.put(Placings.Barren.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$0#");
+        _encodings.put(Placings.Join.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$01#");
+        _encodings.put(Placings.Identity1.class, (Void) -> "");
+        _encodings.put(Placings.Merge.class, (Void) -> "...");
+        _encodings.put(Placings.Permutation.class, (Void) -> "...");
+        _encodings.put(Placings.Symmetry.class, (Void) -> "...");
+        ELEMENTARY_ENCODINGS = Collections.unmodifiableMap(_encodings);
+    }
 
     public static BigraphCanonicalForm createInstance() {
         return createInstance(false);
@@ -75,11 +94,29 @@ public class BigraphCanonicalForm {
                     bigraph.getClass(),
                     new PureCanonicalForm(this)
             ).setPrintNodeIdentifiers(withNodeIdentifiers);
+        } else if (bigraph instanceof ElementaryBigraph) {
+            return bfcs((ElementaryBigraph<?>) bigraph);
         } else {
             throw new RuntimeException("Not implemented yet");
         }
 
         return canonicalFormStrategy.compute(bigraph);
+    }
+
+    protected String bfcs(ElementaryBigraph<?> elementaryBigraph) {
+        if (elementaryBigraph.isPlacing()) { // for no-arg elementary bigraphs
+            if (elementaryBigraph instanceof Placings.Barren || elementaryBigraph instanceof Placings.Join) {
+                return ELEMENTARY_ENCODINGS.get(elementaryBigraph.getClass()).apply((Void) null);
+            } else {
+                return "";
+            }
+        } else if (elementaryBigraph.isLinking()) {
+            return "";
+        } else {
+            // DiscreteIon
+            assert elementaryBigraph instanceof DiscreteIon;
+            return "";
+        }
     }
 
     void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
