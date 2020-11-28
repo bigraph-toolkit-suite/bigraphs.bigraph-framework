@@ -49,12 +49,34 @@ public class BigraphCanonicalForm {
 
     static {
         Map<Class<?>, Function<Object, String>> _encodings = new HashMap<>();
-        _encodings.put(Placings.Barren.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$0#");
+        _encodings.put(Placings.Barren.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "#");
         _encodings.put(Placings.Join.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$01#");
-        _encodings.put(Placings.Identity1.class, (Void) -> "");
-        _encodings.put(Placings.Merge.class, (Void) -> "...");
-        _encodings.put(Placings.Permutation.class, (Void) -> "...");
-        _encodings.put(Placings.Symmetry.class, (Void) -> "...");
+        _encodings.put(Placings.Identity1.class, (n) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$0#");
+        _encodings.put(Placings.Merge.class, (n) -> {
+            StringBuilder sb = new StringBuilder(String.valueOf(PREFIX_BARREN)).append(0);
+            if (Integer.parseInt(String.valueOf(n)) > 0) {
+                sb.append('$');
+            }
+            for (int i = 0; i < Integer.parseInt(String.valueOf(n)); i++) {
+                sb.append(i);
+            }
+            return sb.append('#').toString();
+        });
+        _encodings.put(Placings.Permutation.class, (n) -> {
+            StringBuilder sb = new StringBuilder("");
+            for (int i = 0; i < Integer.parseInt(String.valueOf(n)); i++) {
+                sb.append(PREFIX_BARREN).append(i).append('$').append(i).append('#');
+            }
+            return sb.toString();
+        });
+        _encodings.put(Placings.Symmetry.class, (n) -> {
+            int N = Integer.parseInt(String.valueOf(n));
+            StringBuilder sb = new StringBuilder("");
+            for (int i = 0, j = (N - 1); i < N; i++, j--) {
+                sb.append(PREFIX_BARREN).append(i).append('$').append(j).append('#');
+            }
+            return sb.toString();
+        });
         ELEMENTARY_ENCODINGS = Collections.unmodifiableMap(_encodings);
     }
 
@@ -108,7 +130,7 @@ public class BigraphCanonicalForm {
             if (elementaryBigraph instanceof Placings.Barren || elementaryBigraph instanceof Placings.Join) {
                 return ELEMENTARY_ENCODINGS.get(elementaryBigraph.getClass()).apply((Void) null);
             } else {
-                return "";
+                return ELEMENTARY_ENCODINGS.get((elementaryBigraph.getClass())).apply(elementaryBigraph.getSites().size());
             }
         } else if (elementaryBigraph.isLinking()) {
             return "";

@@ -47,19 +47,16 @@ public class CanonicalElementaryBigraphUnitTests {
 
         String bfcs_1 = bfcs.bfcs(barren);
         System.out.println(bfcs_1);
-        assertEquals("r0$0#", bfcs_1);
+        assertEquals("r0#", bfcs_1);
     }
 
     @Test
-    @DisplayName("Merge_n where n = 2 (elementary placing)")
-    void merge_test_01() {
-
-    }
-
-    @Test
-    @DisplayName("Merge_n with arbitrary n (elementary placing)")
-    void merge_test_02() {
-
+    @DisplayName("identity (elementary placing)")
+    void identity_test_01() {
+        Placings<DefaultDynamicSignature>.Identity1 identity1 = placings.identity1();
+        String bfcs = CanonicalElementaryBigraphUnitTests.bfcs.bfcs(identity1);
+        System.out.println(bfcs);
+        assertEquals("r0$0#", bfcs);
     }
 
     @Test
@@ -70,6 +67,87 @@ public class CanonicalElementaryBigraphUnitTests {
         String bfcs_1 = bfcs.bfcs(join);
         System.out.println(bfcs_1);
         assertEquals("r0$01#", bfcs_1);
+    }
+
+    @Test
+    @DisplayName("Merge_n where n = 2 (elementary placing)")
+    void merge_test_01() {
+        Placings<DefaultDynamicSignature>.Merge merge = placings.merge(2);
+        String bfcs_1 = bfcs.bfcs(merge);
+        System.out.println(bfcs_1);
+        assertEquals("r0$01#", bfcs_1);
+    }
+
+    @Test
+    @DisplayName("Merge_n with arbitrary n (elementary placing)")
+    void merge_test_02() {
+        Placings<DefaultDynamicSignature>.Merge merge3 = placings.merge(3);
+        String bfcs_3 = bfcs.bfcs(merge3);
+        System.out.println(bfcs_3);
+        assertEquals("r0$012#", bfcs_3);
+
+        Placings<DefaultDynamicSignature>.Merge merge4 = placings.merge(4);
+        String bfcs_4 = bfcs.bfcs(merge4);
+        System.out.println(bfcs_4);
+        assertEquals("r0$0123#", bfcs_4);
+
+        Placings<DefaultDynamicSignature>.Merge merge5 = placings.merge(5);
+        String bfcs_5 = bfcs.bfcs(merge5);
+        System.out.println(bfcs_5);
+        assertEquals("r0$01234#", bfcs_5);
+    }
+
+    @Test
+    @DisplayName("Merge_0 = 1 (elementary placing)")
+    void merge_test_03() {
+        Placings<DefaultDynamicSignature>.Merge merge0 = placings.merge(0);
+        String bfcs_0 = bfcs.bfcs(merge0);
+        System.out.println(bfcs_0);
+        assertEquals("r0#", bfcs_0);
+
+        Placings<DefaultDynamicSignature>.Barren barren = placings.barren();
+
+        String bfcs_1 = bfcs.bfcs(barren);
+        System.out.println(bfcs_1);
+        assertEquals("r0#", bfcs_1);
+
+        assertEquals(bfcs_0, bfcs_1);
+    }
+
+    @Test
+    @DisplayName("Merge_2 = join (elementary placing)")
+    void merge_test_04() {
+        Placings<DefaultDynamicSignature>.Merge merge0 = placings.merge(2);
+        String bfcs_0 = bfcs.bfcs(merge0);
+        System.out.println(bfcs_0);
+        assertEquals("r0$01#", bfcs_0);
+
+        Placings<DefaultDynamicSignature>.Join join = placings.join();
+
+        String bfcs_1 = bfcs.bfcs(join);
+        System.out.println(bfcs_1);
+        assertEquals("r0$01#", bfcs_1);
+
+        assertEquals(bfcs_0, bfcs_1);
+    }
+
+    @Test
+    void permutation_and_symmetry_test_01() {
+        Placings<DefaultDynamicSignature>.Permutation perm4 = placings.permutation(4);
+        String bfcsA = CanonicalElementaryBigraphUnitTests.bfcs.bfcs(perm4);
+        System.out.println(bfcsA);
+        assertEquals("r0$0#r1$1#r2$2#r3$3#", bfcsA);
+
+        Placings<DefaultDynamicSignature>.Symmetry symmetry1 = placings.symmetry(4);
+        String bfcsSym1 = CanonicalElementaryBigraphUnitTests.bfcs.bfcs(symmetry1);
+        System.out.println(bfcsSym1);
+        assertEquals("r0$3#r1$2#r2$1#r3$0#", bfcsSym1);
+
+        Placings<DefaultDynamicSignature>.Symmetry symmetry = placings.symmetry11();
+        String bfcsSym = CanonicalElementaryBigraphUnitTests.bfcs.bfcs(symmetry);
+        System.out.println(bfcsSym);
+        assertEquals("r0$1#r1$0#", bfcsSym);
+
     }
 
     @Test
