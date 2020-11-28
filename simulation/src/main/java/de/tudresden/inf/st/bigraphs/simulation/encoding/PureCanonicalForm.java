@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.encoding;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphCompositeSupport;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.ControlKind;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
@@ -9,26 +8,23 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import org.eclipse.collections.api.factory.SortedSets;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
-import org.eclipse.collections.impl.factory.SortedMaps;
 import org.eclipse.collections.impl.map.sorted.mutable.TreeSortedMap;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Map.Entry.comparingByKey;
+import static de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm.PREFIX_BARREN;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -124,7 +120,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //        }
 
         BigraphEntity.RootEntity theParent = bigraph.getRoots().iterator().next();
-        sb.append('r').append(theParent.getIndex()).append('$');
+        sb.append(PREFIX_BARREN).append(theParent.getIndex()).append('$');
         parentMap.put(theParent, theParent);
         frontier.add(theParent);
 

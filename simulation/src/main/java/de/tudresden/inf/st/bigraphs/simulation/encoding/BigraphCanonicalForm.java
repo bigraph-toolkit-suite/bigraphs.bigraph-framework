@@ -37,6 +37,7 @@ public class BigraphCanonicalForm {
 
     private MutableMap<Class, BigraphCanonicalFormStrategy> strategyMap = Maps.mutable.of(PureBigraph.class, new PureCanonicalForm(this));
     boolean withNodeIdentifiers = false;
+    final static char PREFIX_BARREN = 'r';
 
     public static BigraphCanonicalForm createInstance() {
         return createInstance(false);
@@ -131,7 +132,8 @@ public class BigraphCanonicalForm {
         }
     }
 
-    Supplier<String> createNameSupplier(final String prefix) {
+
+    static Supplier<String> createNameSupplier(final String prefix) {
         return new Supplier<String>() {
             private int id = 0;
 
