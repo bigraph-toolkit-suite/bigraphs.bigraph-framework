@@ -91,7 +91,28 @@ public class BigraphCanonicalForm {
             for (BigraphEntity.InnerName eachName : names) {
                 sb.append(eachName.getName()).append('$');
             }
-            sb.replace(sb.length()-1,sb.length(),"");
+            sb.replace(sb.length() - 1, sb.length(), "");
+            return sb.append('#').toString();
+        });
+        _encodings.put(Linkings.Substitution.class, (outerInner) -> {
+            assert outerInner instanceof Object[];
+            assert ((Object[]) outerInner).length == 2;
+            BigraphEntity.OuterName outerName = (BigraphEntity.OuterName) ((Object[]) outerInner)[0];
+            Iterable<BigraphEntity.InnerName> innerNames = (Iterable<BigraphEntity.InnerName>) ((Object[]) outerInner)[1];
+            StringBuilder sb = new StringBuilder("");
+            for (BigraphEntity.InnerName eachName : innerNames) {
+                sb.append(eachName.getName()).append(outerName.getName()).append('$');
+            }
+            sb.replace(sb.length() - 1, sb.length(), "");
+            return sb.append('#').toString();
+        });
+        _encodings.put(Linkings.Identity.class, (outerInner) -> {
+            Iterable<BigraphEntity.InnerName> innerNames = (Iterable<BigraphEntity.InnerName>) (outerInner);
+            StringBuilder sb = new StringBuilder("");
+            for (BigraphEntity.InnerName eachName : innerNames) {
+                sb.append(eachName.getName()).append(eachName.getName()).append('$');
+            }
+            sb.replace(sb.length() - 1, sb.length(), "");
             return sb.append('#').toString();
         });
         ELEMENTARY_ENCODINGS = Collections.unmodifiableMap(_encodings);
@@ -153,14 +174,16 @@ public class BigraphCanonicalForm {
                 return ELEMENTARY_ENCODINGS.get((elementaryBigraph.getClass())).apply(elementaryBigraph.getSites().size());
             }
         } else if (elementaryBigraph.isLinking()) {
-            if (elementaryBigraph instanceof Linkings.Closure) {
+            if (elementaryBigraph instanceof Linkings.Closure || elementaryBigraph instanceof Linkings.Identity) {
                 return ELEMENTARY_ENCODINGS.get((elementaryBigraph.getClass())).apply(elementaryBigraph.getInnerNames());
+            } else if (elementaryBigraph instanceof Linkings.Substitution) {
+                return ELEMENTARY_ENCODINGS.get((elementaryBigraph.getClass())).apply(new Object[]{elementaryBigraph.getOuterNames().iterator().next(), elementaryBigraph.getInnerNames()});
             }
-            return "";
+            throw new RuntimeException("Not implemented yet");
         } else {
             // DiscreteIon
             assert elementaryBigraph instanceof DiscreteIon;
-            return "";
+            throw new RuntimeException("Not implemented yet");
         }
     }
 

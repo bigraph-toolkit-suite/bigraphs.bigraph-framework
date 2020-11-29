@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Sets;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -177,7 +178,24 @@ public class CanonicalElementaryBigraphsUnitTests {
 
     @Test
     void substitution_test_01() {
+        Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("y"), Lists.fixedSize.with(StringTypedName.of("x1"), StringTypedName.of("x2"), StringTypedName.of("x3"), StringTypedName.of("x4")));
+        String bfcs1 = bfcs.bfcs(substitution);
+        System.out.println(bfcs1);
+        assertEquals("x1y$x2y$x3y$x4y#", bfcs1);
+    }
 
+    @Test
+    @DisplayName("Identity link graph")
+    void identity_linkgraph_test_01() {
+        Linkings<DefaultDynamicSignature>.Identity identity0 = linkings.identity(StringTypedName.of("xbcd"));
+        String b0 = bfcs.bfcs(identity0);
+        System.out.println(b0);
+        assertEquals("xbcdxbcd#", b0);
+
+        Linkings<DefaultDynamicSignature>.Identity identity = linkings.identity(StringTypedName.of("x1"), StringTypedName.of("x2"), StringTypedName.of("x3"), StringTypedName.of("x4"));
+        String b1 = bfcs.bfcs(identity);
+        System.out.println(b1);
+        assertEquals("x1x1$x2x2$x3x3$x4x4#", b1);
     }
 
     @Test

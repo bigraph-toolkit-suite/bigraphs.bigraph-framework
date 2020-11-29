@@ -29,7 +29,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
  * @author Dominik Grzelak
  */
 @Disabled
-public class CanonicalPerformanceTests {
+public class CanonicalFormPerformanceTests {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/";
 
