@@ -4,18 +4,18 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphIsNotPrimeException;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -45,10 +45,16 @@ public class BigraphCanonicalForm {
     private MutableMap<Class, BigraphCanonicalFormStrategy> strategyMap = Maps.mutable.of(PureBigraph.class, new PureCanonicalForm(this));
     boolean withNodeIdentifiers = false;
     final static char PREFIX_BARREN = 'r';
+    /**
+     * Elementary bigraphs are handled differently as their encoding exhibit rather a finalized static nature.
+     * Their canonical form is described simply by some lambda functions.
+     */
     static final Map<Class<?>, Function<Object, String>> ELEMENTARY_ENCODINGS;
+
 
     static {
         Map<Class<?>, Function<Object, String>> _encodings = new HashMap<>();
+        // All placings
         _encodings.put(Placings.Barren.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "#");
         _encodings.put(Placings.Join.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$01#");
         _encodings.put(Placings.Identity1.class, (n) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$0#");
@@ -77,6 +83,17 @@ public class BigraphCanonicalForm {
             }
             return sb.toString();
         });
+        // All linkings
+        _encodings.put(Linkings.Closure.class, (n) -> {
+            assert n instanceof Iterable;
+            Iterable<BigraphEntity.InnerName> names = (Iterable<BigraphEntity.InnerName>) n;
+            StringBuilder sb = new StringBuilder("");
+            for (BigraphEntity.InnerName eachName : names) {
+                sb.append(eachName.getName()).append('$');
+            }
+            sb.replace(sb.length()-1,sb.length(),"");
+            return sb.append('#').toString();
+        });
         ELEMENTARY_ENCODINGS = Collections.unmodifiableMap(_encodings);
     }
 
@@ -88,6 +105,9 @@ public class BigraphCanonicalForm {
         return new BigraphCanonicalForm(withNodeIdentifiers);
     }
 
+    /**
+     * Private constructor.
+     */
     private BigraphCanonicalForm() {
     }
 
@@ -133,6 +153,9 @@ public class BigraphCanonicalForm {
                 return ELEMENTARY_ENCODINGS.get((elementaryBigraph.getClass())).apply(elementaryBigraph.getSites().size());
             }
         } else if (elementaryBigraph.isLinking()) {
+            if (elementaryBigraph instanceof Linkings.Closure) {
+                return ELEMENTARY_ENCODINGS.get((elementaryBigraph.getClass())).apply(elementaryBigraph.getInnerNames());
+            }
             return "";
         } else {
             // DiscreteIon

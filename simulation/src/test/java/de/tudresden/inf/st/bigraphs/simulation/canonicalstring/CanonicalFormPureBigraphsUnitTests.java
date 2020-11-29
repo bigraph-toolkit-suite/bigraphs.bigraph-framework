@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 /**
  * @author Dominik Grzelak
  */
-public class CanonicalFormRepresentationUnitTests {
+public class CanonicalFormPureBigraphsUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/";
 
     private PureBigraphFactory factory = pure();

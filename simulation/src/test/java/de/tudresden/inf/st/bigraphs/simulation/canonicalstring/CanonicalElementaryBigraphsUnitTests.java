@@ -1,17 +1,20 @@
 package de.tudresden.inf.st.bigraphs.simulation.canonicalstring;
 
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.collections.impl.factory.Sets;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
@@ -20,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Dominik Grzelak
  */
-public class CanonicalElementaryBigraphUnitTests {
+public class CanonicalElementaryBigraphsUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/elementary/";
 
     static PureBigraphFactory factory = pure();
@@ -54,7 +57,7 @@ public class CanonicalElementaryBigraphUnitTests {
     @DisplayName("identity (elementary placing)")
     void identity_test_01() {
         Placings<DefaultDynamicSignature>.Identity1 identity1 = placings.identity1();
-        String bfcs = CanonicalElementaryBigraphUnitTests.bfcs.bfcs(identity1);
+        String bfcs = CanonicalElementaryBigraphsUnitTests.bfcs.bfcs(identity1);
         System.out.println(bfcs);
         assertEquals("r0$0#", bfcs);
     }
@@ -134,17 +137,17 @@ public class CanonicalElementaryBigraphUnitTests {
     @Test
     void permutation_and_symmetry_test_01() {
         Placings<DefaultDynamicSignature>.Permutation perm4 = placings.permutation(4);
-        String bfcsA = CanonicalElementaryBigraphUnitTests.bfcs.bfcs(perm4);
+        String bfcsA = CanonicalElementaryBigraphsUnitTests.bfcs.bfcs(perm4);
         System.out.println(bfcsA);
         assertEquals("r0$0#r1$1#r2$2#r3$3#", bfcsA);
 
         Placings<DefaultDynamicSignature>.Symmetry symmetry1 = placings.symmetry(4);
-        String bfcsSym1 = CanonicalElementaryBigraphUnitTests.bfcs.bfcs(symmetry1);
+        String bfcsSym1 = CanonicalElementaryBigraphsUnitTests.bfcs.bfcs(symmetry1);
         System.out.println(bfcsSym1);
         assertEquals("r0$3#r1$2#r2$1#r3$0#", bfcsSym1);
 
         Placings<DefaultDynamicSignature>.Symmetry symmetry = placings.symmetry11();
-        String bfcsSym = CanonicalElementaryBigraphUnitTests.bfcs.bfcs(symmetry);
+        String bfcsSym = CanonicalElementaryBigraphsUnitTests.bfcs.bfcs(symmetry);
         System.out.println(bfcsSym);
         assertEquals("r0$1#r1$0#", bfcsSym);
 
@@ -153,10 +156,23 @@ public class CanonicalElementaryBigraphUnitTests {
     @Test
     @DisplayName("Single closure (elementary linking)")
     void closure_test_01() {
+        Linkings<DefaultDynamicSignature>.Closure network = linkings.closure(StringTypedName.of("network"));
+        String bfcs1 = bfcs.bfcs(network);
+        System.out.println(bfcs1);
+        assertEquals("network#", bfcs1);
+
+        Linkings<DefaultDynamicSignature>.Closure x1 = linkings.closure(StringTypedName.of("x1"));
+        String bfcs2 = bfcs.bfcs(x1);
+        System.out.println(bfcs2);
+        assertEquals("x1#", bfcs2);
     }
 
     @Test
     void closure_test_02() {
+        Linkings<DefaultDynamicSignature>.Closure x1234 = linkings.closure(Sets.fixedSize.with(StringTypedName.of("x1"), StringTypedName.of("x2"), StringTypedName.of("x3"), StringTypedName.of("x4")));
+        String bfcs1234 = bfcs.bfcs(x1234);
+        System.out.println(bfcs1234);
+        assertEquals("x1$x2$x3$x4#", bfcs1234);
     }
 
     @Test
