@@ -263,7 +263,7 @@ public class BigraphGraphvizExporter {
         }
 
         if (Objects.nonNull(output)) {
-            Graphviz.fromGraph(theGraph).render(format).toFile(output);
+            Graphviz.fromGraph(theGraph).totalMemory(204800).render(format).toFile(output);
         }
         return theGraph.toString();
     }
