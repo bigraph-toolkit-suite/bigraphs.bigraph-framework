@@ -74,7 +74,8 @@ public class CanonicalFormPerformanceTests {
         for (int a = 1; a < maxArity; a++) {
             suffix = "ar" + a;
             DefaultDynamicSignature signature = createRandomSignatureFixedArity(6, 1f, a);
-            RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE;
+//            RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE;
+            RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.NONE;
             String s = measureTimeComplexity(new float[]{1000f, 10000f, 100f, p}, signature, linkStrategy, suffix);
             results.append(s).append("\n");
             System.out.println("Created results for ar=" + a);

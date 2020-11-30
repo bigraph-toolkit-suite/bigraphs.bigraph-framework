@@ -1,25 +1,24 @@
 package de.tudresden.inf.st.bigraphs.simulation.canonicalstring;
 
 import com.google.common.collect.Lists;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.examples.RouteFinding;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.BigraphIsoPredicate;
@@ -39,8 +38,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -57,6 +56,61 @@ public class CanonicalFormPureBigraphsUnitTests {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+    }
+
+    @Test
+    void multiple_roots() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        DefaultDynamicSignature sig = createAlphabeticSignature();
+        BigraphCanonicalForm instance = BigraphCanonicalForm.createInstance();
+        PureBigraphBuilder<DefaultDynamicSignature> b = factory.createBigraphBuilder(sig);
+        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
+        b.createRoot()
+                .addChild("A")
+                .addChild("B").down().addChild("C").linkToInner(tmp).top();
+        b.createRoot().addChild("B").down().addChild("D").linkToInner(tmp).up().addChild("A").top();
+        b.closeInnerName(tmp);
+        PureBigraph bigraphA = b.createBigraph();
+//        BigraphArtifacts.exportAsInstanceModel(bigraphA, System.out);
+        String bfcsA = instance.bfcs(bigraphA);
+        System.out.println(bfcsA);
+
+        // same bigraph as above, but only roots swapped (technically)
+        PureBigraphBuilder<DefaultDynamicSignature> b2 = factory.createBigraphBuilder(sig);
+        BigraphEntity.InnerName tmp2 = b2.createInnerName("tmp");
+        b2.createRoot().addChild("B").down().addChild("D").linkToInner(tmp2).up().addChild("A").top();
+        b2.createRoot().addChild("A").addChild("B").down().addChild("C").linkToInner(tmp2).top();
+        b2.closeInnerName(tmp2);
+        PureBigraph bigraph2 = b2.createBigraph();
+//        BigraphArtifacts.exportAsInstanceModel(bigraph2, System.out);
+
+        String bfcs2 = instance.bfcs(bigraph2);
+        System.out.println(bfcs2);
+
+        PureBigraphBuilder<DefaultDynamicSignature> b3 = factory.createBigraphBuilder(sig);
+        b3.createRoot().addChild("G").down().addSite().up().addChild("H").down().addSite();
+        PureBigraph big3 = b3.createBigraph();
+//        BigraphArtifacts.exportAsInstanceModel(big3, System.out);
+        String bfcs = instance.bfcs(big3);
+        System.out.println(bfcs);
+
+        Bigraph<DefaultDynamicSignature> outerBigraph = ops(big3).compose(bigraphA).getOuterBigraph();
+        String outerBigraphSE = instance.bfcs(outerBigraph);
+        System.out.println(outerBigraphSE);
+
+        Bigraph<DefaultDynamicSignature> outerBigraph2 = ops(big3).compose(bigraph2).getOuterBigraph();
+        String outerBigraphSE2 = instance.bfcs(outerBigraph2);
+        System.out.println(outerBigraphSE2);
+//        Placings<DefaultDynamicSignature> placings = factory.createPlacings(sig);
+//        Placings<DefaultDynamicSignature>.Join join = placings.join();
+//        Bigraph<DefaultDynamicSignature> compA = ops(join).nesting(bigraphA).getOuterBigraph();
+//        Bigraph<DefaultDynamicSignature> comp2 = ops(join).nesting(bigraph2).getOuterBigraph();
+////        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) compA, System.out);
+////        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) comp2, System.out);
+//
+//        String bfcsCompA = instance.bfcs(compA);
+//        String bfcsComp2 = instance.bfcs(comp2);
+//        System.out.println(bfcsCompA);
+//        System.out.println(bfcsComp2);
     }
 
     @Test

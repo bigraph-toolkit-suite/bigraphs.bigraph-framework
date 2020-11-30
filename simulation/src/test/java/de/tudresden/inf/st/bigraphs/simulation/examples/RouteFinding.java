@@ -46,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/framework/";
+    boolean carArrivedAtTarget = false;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -58,6 +59,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
     public void onAllPredicateMatched(PureBigraph currentAgent, String label) {
         System.out.println("Car arrived at the target");
         System.out.println(label);
+        carArrivedAtTarget = true;
     }
 
     @Test
@@ -121,6 +123,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
         assertTrue(Files.exists(completePath));
+        assertTrue(carArrivedAtTarget);
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
