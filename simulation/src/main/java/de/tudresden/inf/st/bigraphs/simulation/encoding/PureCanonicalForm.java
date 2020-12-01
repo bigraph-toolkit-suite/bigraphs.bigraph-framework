@@ -164,7 +164,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                     // in der reihenfolge wie oben: lexicographic "from small to large", and bfs from left to right
                     Map<BigraphEntity, LinkedList<BigraphEntity>> collect = next
                             .stream()
-//                        .sorted(compareControl.thenComparing(compareChildrenSize.reversed()))
+                        .sorted(levelComp2) //IMPORTANT (NEW@12/2020: ADDED)
                             .collect(groupingBy(e -> bigraph.getParent(e), Collectors.toCollection(LinkedList::new)));
                     final AtomicInteger atLevelCnt;
 
@@ -209,7 +209,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 
                     blu.entrySet().stream()
 //                        .sorted(levelComparator)
-                            .sorted(compareChildrenPortSum.reversed())
+//                            .sorted(compareChildrenPortSum.reversed()) //IMPORTANT (NEW@12/2020: REMOVED)
                             .forEachOrdered(e -> {
                                 if (e.getValue().size() == 0 && parentChildMap.get(e.getKey()) != null) { //
                                     sb.append("$");
@@ -218,7 +218,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                 }
                                 e.getValue()
                                         .stream()
-                                        .sorted(levelComp2) //IMPORTANT
+//                                        .sorted(levelComp2) //IMPORTANT (NEW@12/2020: REMOVED)
                                         .forEachOrdered(val -> {
 //                                        System.out.println("Val:" + val);
                                             lastOrdering.add(val);

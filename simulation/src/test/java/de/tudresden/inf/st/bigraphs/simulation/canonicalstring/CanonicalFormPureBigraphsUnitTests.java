@@ -202,10 +202,10 @@ public class CanonicalFormPureBigraphsUnitTests {
 
         assertNotEquals(bfcs0, bfcs1);
         assertNotEquals(bfcs2, bfcs3);
-
-        assertEquals(bfcs0, "r0$Q$ABC$D{e0}E{e0}F{y0}$D{e1}E{e1}F{y1}$AB$$$GH$$$$$1$0#x0y1#");
+//        r0$Q$ABC$D{e0}E{e0}F{y0}$D{e1}E{e1}F{y1}$AB$$$GH$$$$$1$0#x0y1# // paper
+        assertEquals(bfcs0, "r0$Q$ABC$D{e0}E{e0}F{y0}$AB$D{e1}E{e1}F{y1}$$$GH$$1$$$$$0#x0y1#");
         assertEquals(bfcs1, "r0$Q$ABC$D{e0}E{e0}F{y0}$D{e1}E{e1}F{y0}$AB$$$GH$$$$$$0#");
-//        assertEquals(bfcs2, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2}E{e3}F{e2e3}$G$$H$G$$H#");
+        assertEquals(bfcs2, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2}E{e3}F{e2e3}$G$$H$G$$H#");
         assertEquals(bfcs3, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2e3}E{e3}F{e2}$G$$H$G$$H#");
 
         PureBigraph subbigraph_b = createSubbigraph_b();
@@ -236,11 +236,11 @@ public class CanonicalFormPureBigraphsUnitTests {
         BigraphEntity.OuterName y1 = b1.createOuterName("y1");
         BigraphEntity.OuterName y2 = b1.createOuterName("y2");
 
-        PureBigraphBuilder.Hierarchy left = b1.hierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).down().addChild("H").addChild("G").down().addSite().top();
-        PureBigraphBuilder.Hierarchy middle = b1.hierarchy("C").addChild("A").addChild("B").down().addSite().top();
-        PureBigraphBuilder.Hierarchy right = b1.hierarchy("B").connectByEdge("D", "E").addChild("F").linkToOuter(y2).top();
+        PureBigraphBuilder.Hierarchy left = b1.hierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).down().addChild("G").addChild("H").down().addSite().top();
+        PureBigraphBuilder.Hierarchy middle = b1.hierarchy("B").addChild("A").addChild("B").down().addSite().top();
+        PureBigraphBuilder.Hierarchy right = b1.hierarchy("C").connectByEdge("D", "E").addChild("F").linkToOuter(y2).top();
         b1.connectInnerToOuterName(b, y2);
-        b1.createRoot().addChild("Q").down().addChild(left).addChild(middle).addChild(right);
+        b1.createRoot().addChild("Q").down().addChild(left.top()).addChild(middle.top()).addChild(right.top());
         return b1.createBigraph();
     }
 
