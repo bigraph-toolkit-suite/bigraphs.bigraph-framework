@@ -203,8 +203,8 @@ public class CanonicalFormPureBigraphsUnitTests {
         assertNotEquals(bfcs0, bfcs1);
         assertNotEquals(bfcs2, bfcs3);
 //        r0$Q$ABC$D{e0}E{e0}F{y0}$D{e1}E{e1}F{y1}$AB$$$GH$$$$$1$0#x0y1# // paper
-        assertEquals(bfcs0, "r0$Q$ABC$D{e0}E{e0}F{y0}$AB$D{e1}E{e1}F{y1}$$$GH$$1$$$$$0#x0y1#");
-        assertEquals(bfcs1, "r0$Q$ABC$D{e0}E{e0}F{y0}$D{e1}E{e1}F{y0}$AB$$$GH$$$$$$0#");
+        assertEquals(bfcs0, "r0$Q$ABC$D{e0}E{e0}F{y1}$AB$D{e1}E{e1}F{y2}$$$GH$$1$$$$$0#by2#");
+        assertEquals(bfcs1, "r0$Q$ABC$D{e0}E{e0}F{y1}$D{e1}E{e1}F{y1}$AB$$$GH$$$$$$0#");
         assertEquals(bfcs2, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2}E{e3}F{e2e3}$G$$H$G$$H#");
         assertEquals(bfcs3, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2e3}E{e3}F{e2}$G$$H$G$$H#");
 
