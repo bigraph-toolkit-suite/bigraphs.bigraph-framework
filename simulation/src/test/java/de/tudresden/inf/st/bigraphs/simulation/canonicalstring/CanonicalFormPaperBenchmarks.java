@@ -36,7 +36,7 @@ public class CanonicalFormPaperBenchmarks {
     @Test
     @DisplayName("Time complexity test for a bigraph without a link graph")
     void multiParam_timeComplexity_test() throws IOException {
-        String filePath = "/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/results0.data";
+        String filePath = "/home/dominik/Documents/PhD/Papers-and-Talks/Concept/a-canonical-string-encoding-for-bigraphs/analysis/data/results0.data";
         // Hängt die komplexität mit der anzahl der links ab?
         String suffix = "";
         float p = 0.0f;
@@ -69,7 +69,7 @@ public class CanonicalFormPaperBenchmarks {
     @Test
     @DisplayName("Time complexity test for a bigraph with links")
     void multiParam_timeComplexity_test_withLinkGraph() throws IOException {
-        String filePath = "/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/results_withLinkGraph2.csv";
+        String filePath = "/home/dominik/Documents/PhD/Papers-and-Talks/Concept/a-canonical-string-encoding-for-bigraphs/analysis/data/results1.csv";
         int maxArity = 10;
         float[] probs = {0.1f, 0.25f, 0.5f, 0.75f, 1.f};
         int[] nodeSize = {1000, 2500, 5000};
@@ -114,7 +114,7 @@ public class CanonicalFormPaperBenchmarks {
         if (params.length != 4) {
             throw new RuntimeException("Length of parameter array is not correct.");
         }
-
+        int numOfTrees = 1;
         int start = (int) params[0];
         int end = (int) params[1];
         int stepSize = (int) params[2];
@@ -123,7 +123,7 @@ public class CanonicalFormPaperBenchmarks {
         for (int numOfNodes = start; numOfNodes < end; numOfNodes += stepSize) {
             PureBigraph generate = new PureBigraphGenerator(randomSignature)
                     .setLinkStrategy(linkStrategy)
-                    .generate(1, numOfNodes, p);
+                    .generate(numOfTrees, numOfNodes, p);
 //        O(k² c log c): k = num of vertices, c maximal degree of vertices
             Stopwatch stopwatch = Stopwatch.createStarted();
             String bfcs = BigraphCanonicalForm.createInstance().bfcs(generate);
