@@ -1,3 +1,8 @@
+# bigrapher sim -s -t blub -f svg -S 2 model2.big
+# bigrapher validate -d ./ -f svg -v model2.big
+# bigrapher full -d ./states -f svg -s states -M 10 -t trans.svg -v model2.big
+# ####
+
 # Signature
 ctrl Room = 0;
 ctrl Building = 0;
@@ -29,18 +34,9 @@ big redexpaper = (r + linkingId) * dpaper;
 big a = (network/{network} + id(1)) * Comp{network}.1;
 
 # Reaction rules
-#big bla = id(1) | id(1);
-#big blu = /jeff + id(1);
 react nil = Room --> Room;
 
-#big phi = /{w0,w1} Printer{w0,w1}.1;
 
-#big klo = /a (Computer{a}.1 | Computer{a}.1);
-#big klo2 = /a/b (Computer{a}.1 | Computer{b}.1 | Job.1);
-
-#react cp = klo --> klo2;
-
-#big blu = Job || Job;
 
 
 # Reactive system
