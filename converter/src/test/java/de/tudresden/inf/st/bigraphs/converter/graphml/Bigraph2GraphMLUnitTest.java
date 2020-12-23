@@ -22,7 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -78,7 +78,7 @@ public class Bigraph2GraphMLUnitTest {
     }
 
     private PureBigraph robotZoneBigraph() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pure().createBigraphBuilder(createRobotZoneSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createRobotZoneSignature());
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy zone1 = b.hierarchy("Zone1");
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy zone2 = b.hierarchy("Zone2");
         zone1.addChild("Robot", "rId").down().addChild("Gripper", "canGrip");
@@ -101,7 +101,7 @@ public class Bigraph2GraphMLUnitTest {
     }
 
     private DefaultDynamicSignature createRobotZoneSignature() {
-        return pure().createSignatureBuilder()
+        return pureSignatureBuilder()
                 .newControl("Robot", 1).assign()
                 .newControl("Gripper", 1).assign()
                 .newControl("Object", 1).assign()

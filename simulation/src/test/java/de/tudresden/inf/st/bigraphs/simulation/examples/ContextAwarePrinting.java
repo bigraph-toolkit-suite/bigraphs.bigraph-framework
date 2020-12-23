@@ -4,7 +4,6 @@ import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
@@ -22,8 +21,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
 /**
@@ -44,13 +43,13 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
             File dump = new File(TARGET_DUMP_PATH);
             dump.mkdirs();
             FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+            new File(TARGET_DUMP_PATH + "states/").mkdir();
         }
     }
 
     @Test
     void name() throws Exception {
-        PureBigraphFactory pure = pure();
-        DynamicSignatureBuilder assign = pure.createSignatureBuilder()
+        DynamicSignatureBuilder assign = pureSignatureBuilder()
                 .newControl("loc", 1).assign()
                 .newControl("in", 0).assign() // input node
                 .newControl("out", 0).assign() // output node
@@ -66,7 +65,7 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
 
         DefaultDynamicSignature defaultDynamicSignature = assign.create();
 
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pure.createBigraphBuilder(defaultDynamicSignature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(defaultDynamicSignature);
 
         //loc(loc(loc(loc(dev1) | loc(dev2 | dev3))) | loc() | loc(dev 4))
         BigraphEntity.OuterName z = builder.createOuterName("z");

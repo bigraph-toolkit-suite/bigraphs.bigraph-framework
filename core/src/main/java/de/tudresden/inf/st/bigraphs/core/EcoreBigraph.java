@@ -56,6 +56,10 @@ public interface EcoreBigraph {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_NAMEABLETYPE);
     }
 
+    default boolean isIndexable(EObject eObject) {
+        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_INDEXABLETYPE);
+    }
+
     default boolean isBRoot(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_ROOT);
     }
@@ -74,10 +78,13 @@ public interface EcoreBigraph {
 
     //works only for elements of the calling class
     default boolean isOfEClass(EObject eObject, String eClassifier) {
-        return eObject.eClass().getName().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName()) ||
-                eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
-                eObject.eClass().getEAllSuperTypes().stream().map(ENamedElement::getName).collect(Collectors.toList()).contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName())
-                || eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier));
+        return ((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier) != null &&
+                (
+                        eObject.eClass().getName().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName()) ||
+                                eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
+                                eObject.eClass().getEAllSuperTypes().stream().map(ENamedElement::getName).collect(Collectors.toList()).contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName())
+                                || eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier))
+                );
     }
 
     /**

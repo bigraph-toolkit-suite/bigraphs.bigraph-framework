@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Place graph hierarchy is encoded as attribute "parent"
@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class RankedGraphEncodingTests {
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/rankedgraphs/";
-    private PureBigraphFactory factory = pure();
+//    private PureBigraphFactory factory = pure();
 
     @Test
     void name2() throws TypeNotExistsException, InvalidConnectionException, IOException {
@@ -175,9 +175,8 @@ public class RankedGraphEncodingTests {
 
     private PureBigraph createBigraphA() throws InvalidConnectionException, TypeNotExistsException, IOException {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl> signature;
-        signature = createExampleSignature();
-        builder = factory.createBigraphBuilder(signature);
+        DefaultDynamicSignature signature = createExampleSignature();
+        builder = pureBuilder(signature);
 
         BigraphEntity.InnerName x0 = builder.createInnerName("x0");
         BigraphEntity.InnerName e0 = builder.createInnerName("e0");
@@ -198,7 +197,7 @@ public class RankedGraphEncodingTests {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("M")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("K")).arity(FiniteOrdinal.ofInteger(1)).assign()

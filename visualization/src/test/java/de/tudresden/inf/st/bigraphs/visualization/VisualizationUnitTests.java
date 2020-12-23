@@ -33,12 +33,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 import static guru.nidi.graphviz.model.Factory.*;
 
 public class VisualizationUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/graphviz/";
 
-    private PureBigraphFactory factory = BigraphFactory.pure();
+//    private PureBigraphFactory factory = BigraphFactory.pure();
 
     @BeforeAll
     static void setUp() {
@@ -122,8 +124,8 @@ public class VisualizationUnitTests {
     }
 
     private PureBigraph createSimpleBigraphHierarchy() {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
 
         builder.createRoot().addChild(signature.getControlByName("Room"))
                 .down()
@@ -138,8 +140,8 @@ public class VisualizationUnitTests {
     }
 
     public PureBigraph bigraphWithTwoRoots() throws InvalidConnectionException, TypeNotExistsException {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
         BigraphEntity.OuterName network = builder.createOuterName("network");
         builder.createRoot().addChild(signature.getControlByName("Room"))
                 .down()
@@ -160,8 +162,8 @@ public class VisualizationUnitTests {
 
     public PureBigraph createBigraph_A() throws
             TypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
         BigraphEntity.OuterName a = builder.createOuterName("a");
@@ -201,8 +203,8 @@ public class VisualizationUnitTests {
 
     public PureBigraph createBigraph_b() throws
             TypeNotExistsException, InvalidConnectionException, IOException {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
 
         BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
         BigraphEntity.InnerName spoolLink = builder.createInnerName("tmp_spoolLink");
@@ -237,7 +239,7 @@ public class VisualizationUnitTests {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()

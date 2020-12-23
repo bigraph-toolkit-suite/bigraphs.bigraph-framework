@@ -11,6 +11,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
@@ -35,7 +36,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -52,7 +53,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class AddExample extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/add/";
-    private static PureBigraphFactory factory = pure();
 
     public AddExample() {
         super(TARGET_DUMP_PATH, true);
@@ -142,8 +142,8 @@ public class AddExample extends BaseExampleTestSupport {
      * big start = Plus . (numberLeft | numberRight);
      */
     public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy leftNode =
                 builder.hierarchy(signature.getControlByName("Left"))
@@ -176,9 +176,9 @@ public class AddExample extends BaseExampleTestSupport {
      * react r1 = Left.S | Right.S -> Left | Right;
      */
     public static ReactionRule<PureBigraph> createReactionRule_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
 
         builder.createRoot()
                 .addChild("Left").down().addChild("S").down().addSite()
@@ -200,9 +200,9 @@ public class AddExample extends BaseExampleTestSupport {
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_2() throws ControlIsAtomicException, InvalidReactionRuleException {
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature);
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
 
         builder.createRoot()
                 .addChild("Left").down().addChild("Z")
@@ -222,7 +222,7 @@ public class AddExample extends BaseExampleTestSupport {
         PureBigraph redex = (PureBigraph) next.getRedex();
         Bigraph contextIdentity = next.getContextIdentity();
         ElementaryBigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
-        PureBigraph contextComposed = (PureBigraph) factory.asBigraphOperator(context).parallelProduct(contextIdentity).getOuterBigraph();
+        PureBigraph contextComposed = (PureBigraph) BigraphFactory.ops(context).parallelProduct(contextIdentity).getOuterBigraph();
 //            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
 //                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
         BigraphGraphvizExporter.toPNG(contextComposed,
@@ -281,8 +281,8 @@ public class AddExample extends BaseExampleTestSupport {
 
     }
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+    private static DefaultDynamicSignature createExampleSignature() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Plus")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("Sum")).arity(FiniteOrdinal.ofInteger(0)).assign()
@@ -294,6 +294,6 @@ public class AddExample extends BaseExampleTestSupport {
                 .newControl().identifier(StringTypedName.of("Right")).arity(FiniteOrdinal.ofInteger(0)).assign()
         ;
 
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

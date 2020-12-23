@@ -31,6 +31,7 @@ public final class BigraphMetaModelConstants {
     public static final String CLASS_POINT = "BPoint";
     public static final String CLASS_BIGRAPH = "BBigraph";
     public static final String CLASS_NAMEABLETYPE = "NameableType";
+    public static final String CLASS_INDEXABLETYPE = "IndexableType";
 
     // References
     public final static String REFERENCE_CHILD = "bChild";

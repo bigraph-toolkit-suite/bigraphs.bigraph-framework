@@ -85,10 +85,10 @@ public class RandomBigraphUnitTests {
         BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) left, new FileOutputStream("src/test/resources/dump/exported-models/random_left_03_before.xmi"));
         BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) right, new FileOutputStream("src/test/resources/dump/exported-models/random_right_03_before.xmi"));
         PureBigraphComposite<DefaultDynamicSignature> comp = new PureBigraphComposite<>(left);
-        BigraphComposite<DefaultDynamicSignature> result = comp.composeV2(right);
+        BigraphComposite<DefaultDynamicSignature> result = comp.compose(right);
 //        BigraphComposite<DefaultDynamicSignature> result = comp.parallelProductV2(right);
 //        BigraphComposite<DefaultDynamicSignature> result = comp.parallelProduct(right);
-        BigraphComposite<DefaultDynamicSignature> juxtapose = ((PureBigraphComposite) result).juxtaposeV2(randomBigraph);
+        BigraphComposite<DefaultDynamicSignature> juxtapose = ((PureBigraphComposite) result).juxtapose(randomBigraph);
         BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result.getOuterBigraph(), new FileOutputStream("src/test/resources/dump/exported-models/random_comp_03_after.xmi"));
         BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) juxtapose.getOuterBigraph(), new FileOutputStream("src/test/resources/dump/exported-models/random_juxta_03_after.xmi"));
 //        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) left, new FileOutputStream("src/test/resources/dump/exported-models/random_left_03_after.xmi"));
@@ -131,7 +131,7 @@ public class RandomBigraphUnitTests {
             PureBigraphComposite<DefaultDynamicSignature> comp = new PureBigraphComposite<>(bigraph);
 //            BigraphArtifacts.exportAsInstanceModel(comp.getOuterBigraph(), new FileOutputStream(TARGET_TEST_PATH + "random_left_01.xmi"));
             long l = System.nanoTime();
-            BigraphComposite<DefaultDynamicSignature> result = comp.composeV2(cloned);
+            BigraphComposite<DefaultDynamicSignature> result = comp.compose(cloned);
 //            BigraphComposite<DefaultDynamicSignature> result = comp.compose(cloned);
             long l2 = System.nanoTime();
 //            double secs = (l2 - l) * 1.f / 1e+9;

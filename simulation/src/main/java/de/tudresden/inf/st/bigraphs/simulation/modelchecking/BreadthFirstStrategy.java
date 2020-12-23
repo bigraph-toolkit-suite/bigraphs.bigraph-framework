@@ -16,8 +16,10 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -102,6 +104,11 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         return reactionResults.stream();
                     })
                     .forEachOrdered(reaction -> {
+//                        try {
+//                            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) reaction.getBigraph(), System.out);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
                         String bfcf = canonicalForm.bfcs(reaction.getBigraph());
                         String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(reaction.getReactionRule());
                         if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {

@@ -154,7 +154,7 @@ public class PredicateListenerUnitTests {
     }
 
     private DefaultDynamicSignature createExampleSignature() {
-        DefaultDynamicSignature signature = pure().createSignatureBuilder()
+        DefaultDynamicSignature signature = pureSignatureBuilder()
                 .newControl("User", 1).assign()
                 .newControl("Job", 1).assign()
                 .newControl("Token", 1).assign()

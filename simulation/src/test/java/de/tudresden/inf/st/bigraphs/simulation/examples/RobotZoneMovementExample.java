@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,13 +36,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/robot-mvmt/";
-    private static PureBigraphFactory factory = pure();
+//    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+        new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
 
     @Test
@@ -128,7 +129,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
     }
 
     private PureBigraph agent() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pure().createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createSignature());
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy zone1 = b.hierarchy("Zone1");
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy zone2 = b.hierarchy("Zone2");
         zone1.addChild("Robot", "rId").down().addChild("Gripper", "canGrip");
@@ -139,8 +140,8 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
     }
 
     public ReactionRule<PureBigraph> createReactionRule_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pure().createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pure().createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
 
         b1.createRoot().addChild("Zone1").down().addChild("Robot", "rId").down().addSite();
         b1.createRoot().addChild("Zone2").down().addChild("Zone3").addChild("Object", "isFree").down().addChild("Ownership", "belongsTo");
@@ -156,7 +157,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
     }
 
     private DefaultDynamicSignature createSignature() {
-        return pure().createSignatureBuilder()
+        return pureSignatureBuilder()
                 .newControl("Robot", 1).assign()
                 .newControl("Gripper", 1).assign()
                 .newControl("Object", 1).assign()

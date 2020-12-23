@@ -185,7 +185,7 @@ public class BigraphCreationUnitTest {
 
     @Test
     void lean_factory_creation() throws IncompatibleSignatureException, IncompatibleInterfaceException, InvalidConnectionException {
-        pure();
+//        pure();
         DefaultDynamicSignature signature = createExampleSignature();
 
         PureBigraph bigraph = pureBuilder(signature)
@@ -206,7 +206,7 @@ public class BigraphCreationUnitTest {
         assertEquals(1, bigraphComposite.getOuterBigraph().getOuterNames().size());
         assertEquals(0, bigraphComposite.getOuterBigraph().getInnerNames().size());
 
-        end();
+//        end();
     }
 
     @Test

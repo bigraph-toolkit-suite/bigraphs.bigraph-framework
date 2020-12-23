@@ -40,7 +40,7 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
 //            if (!disjoint && isLinking(inner) && !disjoint2 && isPlacing(outer)) return;
 //            if (!disjoint2 && isPlacing(inner)) return;
 //        }
-        if (outer instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(outer)) {
+        if (outer instanceof ElementaryBigraph || BigraphUtil.isElementaryBigraph(outer)) {
             if (!disjoint && isLinking(outer) && !isCompose) {
                 return;
             }

@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dominik Grzelak
  */
 public class LinkGraphMatchingTests extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
-    private static PureBigraphFactory factory = pure();
+    //    private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/bpmtest/framework/";
 
     public LinkGraphMatchingTests() {
@@ -237,7 +237,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         PureBigraph redex = (PureBigraph) next.getRedex();
         Bigraph contextIdentity = next.getContextIdentity();
         Bigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
-        PureBigraph contextComposed = (PureBigraph) factory.asBigraphOperator(context).parallelProduct(contextIdentity).getOuterBigraph();
+        PureBigraph contextComposed = (PureBigraph) ops(context).parallelProduct(contextIdentity).getOuterBigraph();
 
 //        try {
         BigraphGraphvizExporter.toPNG(contextComposed,
@@ -260,7 +260,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     private PureBigraph createQueryLinkGraph() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature2());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature2());
 
         BigraphEntity.InnerName x1 = builder.createInnerName("x1");
         BigraphEntity.InnerName x2 = builder.createInnerName("x2");
@@ -278,7 +278,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     private PureBigraph createDataLinkGraph() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature2());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature2());
         BigraphEntity.InnerName x1 = builder.createInnerName("x1");
         BigraphEntity.InnerName x2 = builder.createInnerName("x2");
         BigraphEntity.InnerName x3 = builder.createInnerName("x3");
@@ -301,7 +301,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     private PureBigraph createAgent() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
 //        /e0 (A{y1,y2}.1 | A{y1,e0}.1 | A{y1,e0}.1 | A{y2,e0}.1);
 
@@ -321,7 +321,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
 
     //(A{y1,e0}.1 | A{y2,e0}.1) -> (A{y1,e0}.1 | A{y2,e0}.1);
     public PureBigraph createRedex1() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
         BigraphEntity.OuterName y1 = builder.createOuterName("y2");
         BigraphEntity.OuterName y2 = builder.createOuterName("e0");
         BigraphEntity.OuterName e0 = builder.createOuterName("y1");
@@ -335,7 +335,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
 
     ///e0 (A{y1,e0}.1 | A{y1,e0}.1) -> /e0 (A{y1,e0}.1 | A{y1,e0}.1)
     public PureBigraph createRedex3() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
         BigraphEntity.OuterName y1 = builder.createOuterName("y1");
         BigraphEntity.InnerName e0 = builder.createInnerName("e0");
         builder.createRoot()
@@ -348,7 +348,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
 
     ///e0 (/y1 A{y1,e0}.1 | /y2 A{y2,e0}.1) -> /e0 (/y1 A{y1,e0}.1 | /y2 A{y2,e0}.1);
     public PureBigraph createRedex2() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
         builder.createRoot()
                 .connectByEdge("A", "A")
         ;
@@ -359,7 +359,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
 
     // (A{y1,e0}.1 | A{y1,e0}.1)
     public PureBigraph createRedex4() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
         BigraphEntity.OuterName y1 = builder.createOuterName("y1");
         BigraphEntity.OuterName e0 = builder.createOuterName("e0");
@@ -386,7 +386,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
         BigraphEntity.OuterName from = builder.createOuterName("from");
 
@@ -400,7 +400,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     public static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier("A").arity(2).assign()
         ;
@@ -408,7 +408,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     public static <C extends Control<?, ?>, S extends Signature<C>> S createSignature2() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier("A").arity(3).assign()
                 .newControl().identifier("B").arity(3).assign()

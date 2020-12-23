@@ -138,8 +138,9 @@ public class BigraphArtifactUnitTests {
 
             Signature<DefaultDynamicControl> signature = createExampleSignature();
             EMetaModelData modelData = EMetaModelData.builder().setName("F").setNsUri("http://www.example.org").setNsPrefix("sample").create();
-            PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature, modelData);
-            PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
+            EPackage bMetaModel = createOrGetMetaModel(signature, modelData);
+            PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature, bMetaModel);
+            PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature, bMetaModel);
 //
             BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
             BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
@@ -209,9 +210,11 @@ public class BigraphArtifactUnitTests {
     @Test
     void compose_output_elementary_composition() {
         int m = 3;
-        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
-        Placings<DefaultDynamicSignature> placings = purePlacings(empty);
-        Linkings linkings = pureLinkings(empty);
+        DefaultDynamicSignature signature = createExampleSignature();
+//        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
+        EPackage bMetaModel = createOrGetMetaModel(signature);
+        Placings<DefaultDynamicSignature> placings = purePlacings(signature);
+        Linkings<DefaultDynamicSignature> linkings = pureLinkings(signature);
         Placings<DefaultDynamicSignature>.Merge merge_MplusOne = placings.merge(m + 1);
 
         Placings<DefaultDynamicSignature>.Join aJoin = placings.join();
@@ -221,13 +224,14 @@ public class BigraphArtifactUnitTests {
         BigraphComposite<DefaultDynamicSignature> a = factory.asBigraphOperator(merge_1);
         BigraphComposite<DefaultDynamicSignature> b = factory.asBigraphOperator(aJoin);
         try {
-            Signature<DefaultDynamicControl> signature = createExampleSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature, bMetaModel);
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
             builderForG.createRoot().addChild(signature.getControlByName("User")).linkToInner(zInner);
             PureBigraph simpleBigraph = builderForG.createBigraph();
-            BigraphArtifacts.exportAsInstanceModel((PureBigraph) simpleBigraph,
-                    new FileOutputStream(TARGET_TEST_PATH + "compose_test_2a.xmi"));
+            BigraphArtifacts.exportAsInstanceModel(
+                    simpleBigraph,
+                    new FileOutputStream(TARGET_TEST_PATH + "compose_test_2a.xmi")
+            );
             Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
             BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(simpleBigraph);
             BigraphComposite<DefaultDynamicSignature> compose1 = compose.compose(substitution);

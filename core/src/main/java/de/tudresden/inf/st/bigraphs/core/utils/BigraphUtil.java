@@ -1,10 +1,11 @@
 package de.tudresden.inf.st.bigraphs.core.utils;
 
 import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+
+import java.util.Objects;
 
 /**
  * @author Dominik Grzelak
@@ -39,7 +40,7 @@ public class BigraphUtil {
 
     public static void setParentOfNode(final EObject node, final EObject parent) {
         EStructuralFeature prntRef = node.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-        assert prntRef != null;
+        Objects.requireNonNull(prntRef);
         node.eSet(prntRef, parent); // child is automatically added to the parent according to the ecore model
     }
 
@@ -50,7 +51,7 @@ public class BigraphUtil {
      * @param bigraph the bigraph to check
      * @return {@code true}, if bigraph is a simple elementary one (except for a discrete ion, for example).
      */
-    public static boolean isBigraphElementary(Bigraph<?> bigraph) {
+    public static boolean isElementaryBigraph(Bigraph<?> bigraph) {
         boolean isPlacing = isBigraphElementaryPlacing(bigraph);
         boolean isLinking = isBigraphElementaryLinking(bigraph);
         return isLinking || isPlacing;

@@ -32,7 +32,8 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
                 this instanceof Placings.Identity1 ||
                 this instanceof Placings.Join ||
                 this instanceof Placings.Merge ||
-                this instanceof Placings.Permutation;
+                this instanceof Placings.Permutation ||
+                this instanceof Placings.Symmetry;
     }
 
     public boolean isLinking() {

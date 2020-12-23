@@ -2,8 +2,11 @@ package de.tudresden.inf.st.bigraphs.core.factory;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
+import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
@@ -31,6 +34,27 @@ public final class BigraphFactory {
         return FactoryCreationContext.createOperator(bigraph);
     }
 
+    public static synchronized <S extends Signature> EPackage createOrGetMetaModel(S signature) {
+        return createOrGetMetaModel(signature, null);
+    }
+
+    public static synchronized <S extends Signature> EPackage createOrGetMetaModel(S signature, EMetaModelData metaModelData) {
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
+        if (Objects.isNull(bigraphBaseModelPackage)) {
+            PureBigraphBuilder<S> b = (PureBigraphBuilder<S>) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
+            EPackage loadedEPackage = b.getLoadedEPackage();
+            if (Objects.nonNull(metaModelData)) {
+                loadedEPackage.setNsPrefix(metaModelData.getNsPrefix());
+                loadedEPackage.setNsURI(metaModelData.getNsUri());
+                loadedEPackage.setName(metaModelData.getName());
+            }
+            Registry.INSTANCE.put(signature, loadedEPackage);
+            return loadedEPackage;
+        } else {
+            return bigraphBaseModelPackage;
+        }
+    }
+
     public static synchronized <S extends Signature> PureBigraphBuilder<S> pureBuilder(S signature) {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
@@ -42,10 +66,10 @@ public final class BigraphFactory {
         }
     }
 
-    public static synchronized <S extends Signature> DiscreteIon pureDiscreteIon(S signature, String name, Set<String> outerNames) {
+    public static synchronized <S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>> DiscreteIon<S> pureDiscreteIon(S signature, String name, Set<String> outerNames) {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
-            DiscreteIon b = FactoryCreationContext.createDiscreteIonBuilder(signature, name, outerNames, PureBigraph.class);
+            DiscreteIon<S> b = FactoryCreationContext.createDiscreteIonBuilder(signature, name, outerNames, PureBigraph.class);
             Registry.INSTANCE.put(signature, b.getModelPackage());
             return b;
         } else {
@@ -53,10 +77,10 @@ public final class BigraphFactory {
         }
     }
 
-    public static synchronized <S extends Signature> Placings purePlacings(S signature) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> Placings<S> purePlacings(S signature) {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
-            Placings b = FactoryCreationContext.createPlacingsBuilder(signature, PureBigraph.class);
+            Placings<S> b = FactoryCreationContext.createPlacingsBuilder(signature, PureBigraph.class);
             Registry.INSTANCE.put(signature, b.getLoadedModelPackage());
             return b;
         } else {
@@ -64,10 +88,10 @@ public final class BigraphFactory {
         }
     }
 
-    public static synchronized <S extends Signature> Linkings pureLinkings(S signature) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> Linkings<S> pureLinkings(S signature) {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
-            Linkings b = FactoryCreationContext.createLinkingsBuilder(signature, PureBigraph.class);
+            Linkings<S> b = FactoryCreationContext.createLinkingsBuilder(signature, PureBigraph.class);
             Registry.INSTANCE.put(signature, b.getLoadedModelPackage());
             return b;
         } else {
@@ -76,7 +100,11 @@ public final class BigraphFactory {
     }
 
     public static synchronized <S extends Signature> PureBigraphBuilder<S> pureBuilder(S signature, EPackage bigraphBaseModelPackage) {
-        Registry.INSTANCE.put(signature, bigraphBaseModelPackage);
+        if (Registry.INSTANCE.get(signature) == null) {
+            Registry.INSTANCE.put(signature, bigraphBaseModelPackage);
+        } else {
+            throw new RuntimeException("Signature already in the registry");
+        }
         return (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
     }
 
@@ -119,6 +147,7 @@ public final class BigraphFactory {
      *
      * @return a pure bigraph factory
      */
+    @Deprecated
     public static synchronized PureBigraphFactory pure() {
         FactoryCreationContext.begin(new PureBigraphFactory());
         return (PureBigraphFactory) FactoryCreationContext.current().get().getFactory();

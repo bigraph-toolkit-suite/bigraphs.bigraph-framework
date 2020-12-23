@@ -237,25 +237,28 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         if (Objects.nonNull(options.get(ModelCheckingOptions.Options.EXPORT))) {
             ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
             if (opts.hasOutputStatesFolder()) {
+                String label = "";
                 try {
-                    String label = "";
                     if (reactionGraph.getLabeledNodeByCanonicalForm(canonicalForm).isPresent() &&
                             reactionGraph.getLabeledNodeByCanonicalForm(canonicalForm).get() instanceof ReactionGraph.DefaultLabeledNode) {
                         label = reactionGraph.getLabeledNodeByCanonicalForm(canonicalForm).get().getLabel();
                     } else {
                         label = String.format("state-%s.png", suffix);
                     }
-                    BigraphGraphvizExporter.toPNG(bigraph,
-                            true,
-                            Paths.get(opts.getOutputStatesFolder().toString(), label).toFile()
-                    );
                     BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) bigraph, new FileOutputStream(
                             Paths.get(opts.getOutputStatesFolder().toString(), label) + ".xmi"));
                     logger.debug("Exporting state {}", label);
+                    BigraphGraphvizExporter.toPNG(bigraph,
+                            true,
+                            Paths.get(opts.getOutputStatesFolder().toString(), label + ".png").toFile()
+                    );
                     return label;
 //                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
                 } catch (IOException e) {
                     logger.error(e.toString());
+                    if (!label.isEmpty()) {
+                        return label;
+                    }
                 }
             }
         }

@@ -100,10 +100,10 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
     }
 
     /**
-     * Create an "equally distributed permutation", similiar to an identity place graph.
+     * Create a bijection from sites to roots, similar to an identity place graph.
      * Each site will be mapped exactly to one root where the indices match.
      *
-     * @param n number of sites respectively roots mapped to each other {@literal n_i -> n_i, i in 1..n}
+     * @param n number of sites/roots that are mapped to each other: {@literal n_i -> n_i, i in 0...n-1}
      * @return an "equally distributed permutation"
      */
     public Placings<S>.Permutation permutation(int n) {

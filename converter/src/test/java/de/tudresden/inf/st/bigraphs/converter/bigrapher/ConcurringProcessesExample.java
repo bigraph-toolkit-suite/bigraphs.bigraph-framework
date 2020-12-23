@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * @author Dominik Grzelak
@@ -29,7 +29,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 public class ConcurringProcessesExample {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/processes/";
-    private static PureBigraphFactory factory = pure();
+//    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -66,7 +66,7 @@ public class ConcurringProcessesExample {
     }
 
     PureBigraph createAgent() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Process", "access1")
@@ -78,8 +78,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ResourceRegistrationPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
 
         builderRedex.createRoot().addChild("Process", "access");
         builderRedex.createRoot().addChild("Resource").down().addChild("Token");
@@ -95,8 +95,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ResourceDeregistrationPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
 
         builderRedex.createRoot().addChild("Process", "access").down().addChild("Working").top();
         builderRedex.createRoot().addChild("Resource").down().addChild("Token", "access");
@@ -111,8 +111,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ProcessWorkingPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
 
         builderRedex.createRoot().addChild("Process", "access");
         builderRedex.createRoot().addChild("Resource").down().addChild("Token", "access");
@@ -127,7 +127,7 @@ public class ConcurringProcessesExample {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Process")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Token")).arity(FiniteOrdinal.ofInteger(1)).assign()

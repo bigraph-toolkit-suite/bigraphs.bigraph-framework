@@ -55,18 +55,6 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
         return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), bigraphMetaModel, null);
     }
 
-//    @Deprecated
-//    @Override
-//    public Placings<DefaultDynamicSignature> createPlacings() {
-//        return new Placings<>(this.createSignatureBuilder());
-//    }
-
-    //    @Deprecated
-//    @Override
-//    public Linkings<DefaultDynamicSignature> createLinkings() {
-//        return new Linkings<>(this.createSignatureBuilder());
-//    }
-
     @Override
     public Placings<DefaultDynamicSignature> createPlacings(DefaultDynamicSignature signature) {
         return new Placings<>(signature);
