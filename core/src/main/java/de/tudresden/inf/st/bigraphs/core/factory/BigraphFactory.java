@@ -18,9 +18,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.ecore.EPackage;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -66,14 +64,14 @@ public final class BigraphFactory {
         }
     }
 
-    public static synchronized <S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>> DiscreteIon<S> pureDiscreteIon(S signature, String name, Set<String> outerNames) {
+    public static synchronized <S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>> DiscreteIon<S> pureDiscreteIon(S signature, String name, String... outerNames) {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
-            DiscreteIon<S> b = FactoryCreationContext.createDiscreteIonBuilder(signature, name, outerNames, PureBigraph.class);
+            DiscreteIon<S> b = FactoryCreationContext.createDiscreteIonBuilder(signature, name, new HashSet<>(Arrays.asList(outerNames)), PureBigraph.class);
             Registry.INSTANCE.put(signature, b.getModelPackage());
             return b;
         } else {
-            return FactoryCreationContext.createDiscreteIonBuilder(signature, name, outerNames, bigraphBaseModelPackage, PureBigraph.class);
+            return FactoryCreationContext.createDiscreteIonBuilder(signature, name, new HashSet<>(Arrays.asList(outerNames)), bigraphBaseModelPackage, PureBigraph.class);
         }
     }
 

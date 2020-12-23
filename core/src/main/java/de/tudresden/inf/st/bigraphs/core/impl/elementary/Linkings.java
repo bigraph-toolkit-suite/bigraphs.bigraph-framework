@@ -5,7 +5,9 @@ import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
@@ -14,7 +16,6 @@ import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.SortedMaps;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.io.Serializable;
 import java.util.*;
@@ -36,6 +37,11 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
     public Linkings<S>.Closure closure(NamedType<?> name) {
         mutableBuilder.reset();
         return new Closure(name);
+    }
+
+    public Linkings<DefaultDynamicSignature>.Closure closure(String name) {
+        mutableBuilder.reset();
+        return (Linkings<DefaultDynamicSignature>.Closure) new Closure(StringTypedName.of(name));
     }
 
     public Linkings<S>.Closure closure(Set<NamedType<?>> names) {

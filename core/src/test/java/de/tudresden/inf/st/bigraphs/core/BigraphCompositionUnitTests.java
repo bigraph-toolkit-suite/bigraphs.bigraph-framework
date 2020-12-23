@@ -54,6 +54,23 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
+    void test_01() throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .newControl("K", 1).assign()
+                .newControl("L", 1).assign()
+                .create();
+        DiscreteIon<DefaultDynamicSignature> K_x =
+                pureDiscreteIon(sig, "K", "x");
+        DiscreteIon<DefaultDynamicSignature> L_x =
+                pureDiscreteIon(sig, "L", "x");
+        Linkings<DefaultDynamicSignature>.Closure x = pureLinkings(sig).closure("x");
+        BigraphComposite<DefaultDynamicSignature> G = ops(K_x).merge(L_x);
+        ops(x).compose(G);
+        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) G, System.out);
+        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) (ops(x).compose(G).getOuterBigraph()), System.out);
+    }
+
+    @Test
     void bigraphNesting_test_withoutLinks() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         EPackage exampleMetaModel = getExampleMetaModel();
         PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature(), exampleMetaModel);

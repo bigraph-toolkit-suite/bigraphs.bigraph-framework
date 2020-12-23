@@ -177,7 +177,7 @@ public class ElementaryBigraphUnitTests {
                     .map(x -> StringTypedName.of("x" + x))
                     .collect(Collectors.toSet());
 
-            Set<String> outerNamesAsString = outerNames.stream().map(StringTypedName::getValue).collect(Collectors.toSet());
+            String[] outerNamesAsString = outerNames.stream().map(StringTypedName::getValue).toArray(String[]::new);
 
             int finalArity = arity;
             assertAll(() -> {
@@ -211,8 +211,8 @@ public class ElementaryBigraphUnitTests {
         DefaultDynamicSignature sig = pureSignatureBuilder().newControl("K", 3).assign().newControl("L", 2).assign().create();
         Linkings<DefaultDynamicSignature> linkingsFactory = pureLinkings(sig);
 
-        DiscreteIon<DefaultDynamicSignature> K_xyz = pureDiscreteIon(sig, "K", new HashSet<>(Arrays.asList("x", "y", "z")));
-        DiscreteIon<DefaultDynamicSignature> L_yz = pureDiscreteIon(sig, "L", new HashSet<>(Arrays.asList("y", "z")));
+        DiscreteIon<DefaultDynamicSignature> K_xyz = pureDiscreteIon(sig, "K", "x", "y", "z");
+        DiscreteIon<DefaultDynamicSignature> L_yz = pureDiscreteIon(sig, "L", "y", "z");
 
         Linkings<DefaultDynamicSignature>.Identity id_XY = linkingsFactory.identity(StringTypedName.of("y"), StringTypedName.of("z"));
 
@@ -255,7 +255,7 @@ public class ElementaryBigraphUnitTests {
         Linkings<DefaultDynamicSignature> linkingsFactory = pureLinkings(sig);
         Placings<DefaultDynamicSignature> placingsFactory = purePlacings(sig);
 
-        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", new HashSet<>(Collections.singletonList("x")));
+        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
         Placings<DefaultDynamicSignature>.Merge merge = placingsFactory.merge(1);
         Linkings<DefaultDynamicSignature>.Closure x = linkingsFactory.closure(StringTypedName.of("x"));
 
