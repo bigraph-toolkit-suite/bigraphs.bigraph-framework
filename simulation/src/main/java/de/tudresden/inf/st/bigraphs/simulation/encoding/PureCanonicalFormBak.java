@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.groupingBy;
  *
  * @author Dominik Grzelak
  */
-public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph> {
+public class PureCanonicalFormBak extends BigraphCanonicalFormStrategy<PureBigraph> {
 
     RewriteFunction rewriteFunction = new RewriteFunction();
     TreeSortedMap<String, BigraphEntity.Edge> E2 = new TreeSortedMap<>(); //.mutable.with();
@@ -45,11 +45,11 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     MutableList<BigraphEntity> next = Lists.mutable.empty();
     PureBigraph bigraph;
     Supplier<String> rewriteEdgeNameSupplier;
-//    Supplier<String> rewriteInnerNameSupplier;
-//    Supplier<String> rewriteOuterNameSupplier;
+    Supplier<String> rewriteInnerNameSupplier;
+    Supplier<String> rewriteOuterNameSupplier;
     private boolean exploitSymmetries = false;
 
-    public PureCanonicalForm(BigraphCanonicalForm bigraphCanonicalForm) {
+    public PureCanonicalFormBak(BigraphCanonicalForm bigraphCanonicalForm) {
         super(bigraphCanonicalForm);
     }
 
@@ -77,12 +77,13 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         final StringBuilder sb = new StringBuilder();
 
         rewriteEdgeNameSupplier = getBigraphCanonicalForm().createNameSupplier("e");
-//        rewriteInnerNameSupplier = getBigraphCanonicalForm().createNameSupplier("x");
-//        rewriteOuterNameSupplier = getBigraphCanonicalForm().createNameSupplier("y");
+        rewriteInnerNameSupplier = getBigraphCanonicalForm().createNameSupplier("x");
+        rewriteOuterNameSupplier = getBigraphCanonicalForm().createNameSupplier("y");
 
         // prepare the comparators depending on whether to consider symmetries or not (which are made up by the link names somehow)
         Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator;
         Comparator<BigraphEntity> levelComp2;
+//        if (printNodeIdentifiers) {
         levelComp2 =
                 compareControlByKey3.thenComparing(
                         compareChildrenSize.reversed().thenComparing(
@@ -100,180 +101,197 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                 )
                         )
                 );
+//        } else {
+//            levelComp2 =
+//                    compareControlByKey3.thenComparing(
+//                            compareChildrenSize.reversed().thenComparing(
+//                                    comparePortCount.reversed()
+//                            )
+//                    );
+//            levelComparator =
+//                    compareControlOfParentAndChildren.thenComparing(
+//                            compareChildrenSizeByValue.reversed().thenComparing(
+//                                    compareChildrenPortSum.reversed()
+////                                            .thenComparing(
+////                                            compareChildrenLinkNames.reversed()
+////                                    )
+//                            )
+//                    );
+//        }
 
-        Iterator<BigraphEntity.RootEntity> iteratorParents = bigraph.getRoots().iterator();
-        while (iteratorParents.hasNext()) {
-            BigraphEntity.RootEntity theParent = iteratorParents.next(); //bigraph.getRoots().iterator().next();
-            sb.append(PREFIX_BARREN).append(theParent.getIndex()).append('$');
-            parentMap.put(theParent, theParent);
-            frontier.clear();
-            frontier.add(theParent);
+        BigraphEntity.RootEntity theParent = bigraph.getRoots().iterator().next();
+        sb.append(PREFIX_BARREN).append(theParent.getIndex()).append('$');
+        parentMap.put(theParent, theParent);
+        frontier.add(theParent);
 
-            // rewrite all "idle outer names" first, order is not important
-            for (BigraphEntity.OuterName each : bigraph.getOuterNames()) {
-                if (bigraph.getPointsFromLink(each).size() == 0 &&
-                        !O2.flip().get(each).getFirstOptional().isPresent()) {
-//                    O2.put(rewriteOuterNameSupplier.get(), each);
-                    O2.put(each.getName(), each);
-                    idleOuterNames.add(each);
-                }
+        // rewrite all "idle outer names" first, order is not important
+        for (BigraphEntity.OuterName each : bigraph.getOuterNames()) {
+            if (bigraph.getPointsFromLink(each).size() == 0 &&
+                    !O2.flip().get(each).getFirstOptional().isPresent()) {
+                O2.put(rewriteOuterNameSupplier.get(), each);
+                idleOuterNames.add(each);
             }
-            // rewrite all idle inner names first, order is not important
-            for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
-                if (Objects.isNull(bigraph.getLinkOfPoint(each)) &&
-                        !I2.flip().get(each).getFirstOptional().isPresent()) {
-//                    I2.put(rewriteInnerNameSupplier.get(), each);
-                    I2.put(each.getName(), each);
-                }
+        }
+        // rewrite all idle inner names first, order is not important
+        for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
+            if (Objects.isNull(bigraph.getLinkOfPoint(each)) &&
+                    !I2.flip().get(each).getFirstOptional().isPresent()) {
+                I2.put(rewriteInnerNameSupplier.get(), each);
             }
+        }
 
-            final AtomicBoolean checkNextRound = new AtomicBoolean(false);
-            ImmutableList<BigraphEntity> places = Lists.immutable.fromStream(Stream.concat(bigraph.getNodes().stream(), bigraph.getSites().stream()));
-            int maxDegree = bigraph.getOpenNeighborhoodOfVertex(theParent).size();
-            LinkedList<BigraphEntity> lastOrdering = new LinkedList<>();
-            while (!frontier.isEmpty()) {
-                for (BigraphEntity u : places) {
-                    if (parentMap.get(u) == null) {
-                        // special case for sites: re-assign label: consider it as a "normal" node with index as label
-                        if (u.getType() == BigraphEntityType.SITE) {
-                            String newLabel = "" + ((BigraphEntity.SiteEntity) u).getIndex();
-                            DefaultDynamicControl defaultDynamicControl =
-                                    DefaultDynamicControl.createDefaultDynamicControl(StringTypedName.of(newLabel),
-                                            FiniteOrdinal.ofInteger(0), ControlKind.ATOMIC);
-                            BigraphEntity parent = bigraph.getParent(u);
-                            //rewrite parent
-                            u = BigraphEntity.createNode(u.getInstance(), defaultDynamicControl);
-                            getBigraphCanonicalForm().setParentOfNode(u, parent);
-                        }
-                        //single-step bottom-up approach
-                        List<BigraphEntity<?>> openNeighborhoodOfVertex = bigraph.getOpenNeighborhoodOfVertex(u);
-                        if (maxDegree < openNeighborhoodOfVertex.size()) {
-                            maxDegree = openNeighborhoodOfVertex.size();
-                        }
-                        for (BigraphEntity v : openNeighborhoodOfVertex) {
-                            if (frontier.contains(v)) {
-                                next.add(u);
-                                parentMap.put(u, v);
-                                break;
-                            }
+        final AtomicBoolean checkNextRound = new AtomicBoolean(false);
+        ImmutableList<BigraphEntity> places = Lists.immutable.fromStream(Stream.concat(bigraph.getNodes().stream(), bigraph.getSites().stream()));
+        int maxDegree = bigraph.getOpenNeighborhoodOfVertex(theParent).size();
+//        final AtomicInteger lastChar = new AtomicInteger(-1);
+        LinkedList<BigraphEntity> lastOrdering = new LinkedList<>();
+        while (!frontier.isEmpty()) {
+            for (BigraphEntity u : places) {
+                if (parentMap.get(u) == null) {
+                    // special case for sites: re-assign label: consider it as a "normal" node with index as label
+                    if (u.getType() == BigraphEntityType.SITE) {
+                        String newLabel = "" + ((BigraphEntity.SiteEntity) u).getIndex();
+                        DefaultDynamicControl defaultDynamicControl =
+                                DefaultDynamicControl.createDefaultDynamicControl(StringTypedName.of(newLabel),
+                                        FiniteOrdinal.ofInteger(0), ControlKind.ATOMIC);
+                        BigraphEntity parent = bigraph.getParent(u);
+                        //rewrite parent
+                        u = BigraphEntity.createNode(u.getInstance(), defaultDynamicControl);
+                        getBigraphCanonicalForm().setParentOfNode(u, parent);
+                    }
+                    //single-step bottom-up approach
+                    List<BigraphEntity<?>> openNeighborhoodOfVertex = bigraph.getOpenNeighborhoodOfVertex(u);
+                    if (maxDegree < openNeighborhoodOfVertex.size()) {
+                        maxDegree = openNeighborhoodOfVertex.size();
+                    }
+                    for (BigraphEntity v : openNeighborhoodOfVertex) {
+                        if (frontier.contains(v)) {
+                            next.add(u);
+                            parentMap.put(u, v);
+                            break;
                         }
                     }
                 }
+            }
 
-                if (next.size() > 0) {
+            if (next.size() > 0) {
 
-                    // A) Group by parents
-                    // in der reihenfolge wie oben: lexicographic "from small to large", and bfs from left to right
-                    Map<BigraphEntity, LinkedList<BigraphEntity>> collect = next
-                            .stream()
-                        .sorted(levelComp2) //IMPORTANT (NEW@12/2020: ADDED)
-                            .collect(groupingBy(e -> bigraph.getParent(e), Collectors.toCollection(LinkedList::new)));
-                    final AtomicInteger atLevelCnt;
+                // A) Group by parents
+                // in der reihenfolge wie oben: lexicographic "from small to large", and bfs from left to right
+                Map<BigraphEntity, LinkedList<BigraphEntity>> collect = next
+                        .stream()
+//                        .sorted(compareControl.thenComparing(compareChildrenSize.reversed()))
+                        .collect(groupingBy(e -> bigraph.getParent(e), Collectors.toCollection(LinkedList::new)));
+                final AtomicInteger atLevelCnt;
 
 
 //                Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator2 = (compareChildrenPortSum.reversed());
-                    // we must also respect the last ordering of the former parents
-                    if (lastOrdering.size() != 0) {
-                        atLevelCnt = new AtomicInteger(lastOrdering.size() - collect.size());
-                        //order collect as in lastOrdering and order all childs properly
-                        LinkedHashMap<BigraphEntity, LinkedList<BigraphEntity>> collectTmp = new LinkedHashMap<>();
-                        for (BigraphEntity eachOrder : lastOrdering) {
-                            if (parentChildMap.get(eachOrder) != null) {
-                                collectTmp.put(eachOrder, new LinkedList<>());
-                            }
-                            if (collect.get(eachOrder) == null) continue;
-//                        long distinctLabels = collect.get(eachOrder).stream().map(x -> x.getControl().getNamedType().stringValue()).distinct().count();
-                            collectTmp.put(eachOrder, collect.get(eachOrder).stream()
-                                    .sorted(
-                                            levelComp2
-                                    )
-                                    .collect(Collectors.toCollection(LinkedList::new)));
+                // we must also respect the last ordering of the former parents
+                if (lastOrdering.size() != 0) {
+                    atLevelCnt = new AtomicInteger(lastOrdering.size() - collect.size());
+                    //order collect as in lastOrdering and order all childs properly
+                    LinkedHashMap<BigraphEntity, LinkedList<BigraphEntity>> collectTmp = new LinkedHashMap<>();
+                    for (BigraphEntity eachOrder : lastOrdering) {
+                        if (parentChildMap.get(eachOrder) != null) {
+                            collectTmp.put(eachOrder, new LinkedList<>());
                         }
-                        collect = collectTmp;
-                        lastOrdering.clear();
-                    } else { // we are in the "first" level or the current level has no children (see below)
-                        atLevelCnt = new AtomicInteger(0);
-                        collect = collect.entrySet()
-                                .stream()
-                                .sorted(levelComparator)
-                                .collect(Collectors.toMap(Entry::getKey, Entry::getValue,
-                                        (e1, e2) -> e1, LinkedHashMap::new));
+                        if (collect.get(eachOrder) == null) continue;
+//                        long distinctLabels = collect.get(eachOrder).stream().map(x -> x.getControl().getNamedType().stringValue()).distinct().count();
+                        collectTmp.put(eachOrder, collect.get(eachOrder).stream()
+                                .sorted(
+                                        levelComp2
+                                )
+                                .collect(Collectors.toCollection(LinkedList::new)));
                     }
+                    collect = collectTmp;
+                    lastOrdering.clear();
+                } else { // we are in the "first" level or the current level has no children (see below)
+                    atLevelCnt = new AtomicInteger(0);
+                    collect = collect.entrySet()
+                            .stream()
+                            .sorted(levelComparator)
+                            .collect(Collectors.toMap(Entry::getKey, Entry::getValue,
+                                    (e1, e2) -> e1, LinkedHashMap::new));
+                }
 
-                    final AtomicInteger ixCnt = new AtomicInteger(0);
-                    MutableList<BigraphEntity> levelList = Lists.mutable.empty();
-                    Map<BigraphEntity, LinkedList<BigraphEntity>> blu = collect;
-                    blu.forEach((key, value) -> levelList.addAll(value));
-                    // check if in the next level all nodes are leaves
-                    boolean allNodesAreLeaves = levelList.summarizeInt((x) -> {
-                        return bigraph.getChildrenOf(x).size();
-                    }).getSum() == 0;
+                final AtomicInteger ixCnt = new AtomicInteger(0);
+                MutableList<BigraphEntity> levelList = Lists.mutable.empty();
+                Map<BigraphEntity, LinkedList<BigraphEntity>> blu = collect;
+                blu.forEach((key, value) -> levelList.addAll(value));
+                // check if in the next level all nodes are leaves
+                boolean allNodesAreLeaves = levelList.summarizeInt((x) -> {
+                    return bigraph.getChildrenOf(x).size();
+                }).getSum() == 0;
 
-                    blu.entrySet().stream()
+                blu.entrySet().stream()
 //                        .sorted(levelComparator)
-//                            .sorted(compareChildrenPortSum.reversed()) //IMPORTANT (NEW@12/2020: REMOVED)
-                            .forEachOrdered(e -> {
-                                if (e.getValue().size() == 0 && parentChildMap.get(e.getKey()) != null) { //
-                                    sb.append("$");
-                                    parentChildMap.remove(e.getKey());
-                                    return;
-                                }
-                                e.getValue()
-                                        .stream()
-//                                        .sorted(levelComp2) //IMPORTANT (NEW@12/2020: REMOVED)
-                                        .forEachOrdered(val -> {
+                        .sorted(compareChildrenPortSum.reversed())
+                        .forEachOrdered(e -> {
+                            if (e.getValue().size() == 0 && parentChildMap.get(e.getKey()) != null) { //
+                                sb.append("$");
+                                parentChildMap.remove(e.getKey());
+                                return;
+                            }
+                            e.getValue()
+                                    .stream()
+                                    .sorted(levelComp2) //IMPORTANT
+                                    .forEachOrdered(val -> {
 //                                        System.out.println("Val:" + val);
-                                            lastOrdering.add(val);
+                                        lastOrdering.add(val);
 //                                        sb.append(val.getControl().getNamedType().stringValue());
-                                            sb.append(label(val));
-                                            //&& e.getValue().size() >= 2
-                                            if (!allNodesAreLeaves && bigraph.getChildrenOf(val).size() == 0) { // && bigraph.getSiblingsOfNode(val).size() != 0) {
+                                        sb.append(label(val));
+                                        //&& e.getValue().size() >= 2
+                                        if (!allNodesAreLeaves && bigraph.getChildrenOf(val).size() == 0) { // && bigraph.getSiblingsOfNode(val).size() != 0) {
 //                                        if (!allNodesAreLeaves && bigraph.getChildrenOf(val).size() == 0 && bigraph.getSiblingsOfNode(val).size() != 0) {
 //                                            parentChildMap.put(val, ixCnt.get());
 //                                            parentChildMap.put(val, levelList.indexOf(val));
-                                                parentChildMap.put(val, atLevelCnt.get());
+                                            parentChildMap.put(val, atLevelCnt.get());
 
-                                            }
-                                            atLevelCnt.incrementAndGet();
-                                            if (bigraph.getPortCount((BigraphEntity.NodeEntity) val) > 0) {
-                                                sb.append("{"); //.append(num).append(":");
-                                                bigraph.getPorts(val).stream()
-                                                        .map(bigraph::getLinkOfPoint)
-                                                        .filter(Objects::nonNull)
-                                                        .map(l -> {
-//                                                            return rewriteFunction.rewrite(E2, O2, (BigraphEntity.Link) l,
-//                                                                    rewriteEdgeNameSupplier, rewriteOuterNameSupplier, printNodeIdentifiers);
-                                                            return rewriteFunction.rewrite(E2, O2, (BigraphEntity.Link) l,
-                                                                    rewriteEdgeNameSupplier, null, printNodeIdentifiers);
-                                                        })
-                                                        .sorted()
-                                                        .forEachOrdered(n -> sb.append(n)); //.append("|")
+                                        }
+                                        atLevelCnt.incrementAndGet();
+                                        if (bigraph.getPortCount((BigraphEntity.NodeEntity) val) > 0) {
+                                            sb.append("{"); //.append(num).append(":");
+                                            bigraph.getPorts(val).stream()
+                                                    .map(bigraph::getLinkOfPoint)
+                                                    .map(l -> {
+                                                        return rewriteFunction.rewrite(E2, O2, (BigraphEntity.Link) l,
+                                                                rewriteEdgeNameSupplier, rewriteOuterNameSupplier, printNodeIdentifiers);
+                                                    })
+                                                    .sorted()
+                                                    .forEachOrdered(n -> sb.append(n)); //.append("|")
 //                                            sb.deleteCharAt(sb.length() - 1);
-                                                sb.append("}");
-                                            }
-                                        });
+                                            sb.append("}");
+                                        }
+                                    });
 
-                                sb.append("$");
-                                ixCnt.incrementAndGet();
+                            sb.append("$");
+                            ixCnt.incrementAndGet();
 //                            System.out.println();
 //                            O2.values().forEach(x -> System.out.print(x.getName() + ", "));
 //                            System.out.println();
 //                            O2.keySet().forEach(x -> System.out.print(x + ", "));
 //                            System.out.println();
 //                            System.out.println();
-                            });
+                        });
 
-                    if (parentChildMap.size() != 0) {
-                        checkNextRound.set(true);
-                    }
+                if (parentChildMap.size() != 0) {
+                    checkNextRound.set(true);
                 }
-                frontier.clear();
-                frontier.addAll(next);
-                next.clear();
             }
-
-            cleanUpEndOfEncoding(sb);
+            frontier.clear();
+            frontier.addAll(next);
+            next.clear();
         }
+        if (sb.charAt(sb.length() - 1) == '$') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        sb.insert(sb.length(), "#");
+        //check $# -> #
+        int i = sb.lastIndexOf("$#");
+        if (i != -1) {
+            sb.replace(i, sb.length(), "#");
+        }
+
         //
         // Rest of the Link Encoding concerning the idleness of links, and inner to edge/outer connections
         //
@@ -283,8 +301,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
                         .map(x -> {
                             if (!I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isPresent()) {
-//                                I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
-                                I2.put(((BigraphEntity.InnerName) x).getName(), (BigraphEntity.InnerName) x);
+                                I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
                             }
                             return (BigraphEntity.InnerName) x;
                         })
@@ -295,15 +312,13 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
                         .map(x -> {
                             if (!I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isPresent()) {
-//                                I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
-                                I2.put(((BigraphEntity.InnerName) x).getName(), (BigraphEntity.InnerName) x);
+                                I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
                             }
                             return (BigraphEntity.InnerName) x;
                         })
                         .collect(Collectors.toList())
         );
         // first idle inner names, then those which are connected to edges, lastly links from inner to outer
-        // Identifiers are already sorted due to the TreeSortedMap structure
         for (BigraphEntity.InnerName each : I2.values()) {
             BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(each);
             if (Objects.nonNull(linkOfPoint)) {
@@ -324,7 +339,6 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             }
         }
         // lastly links from inner to outer
-        // Identifiers are already sorted due to the TreeSortedMap structure
         for (BigraphEntity.OuterName each : idleOuterNames) {
 //            sb.append(O2.flip().get(each).getOnly()).append("$");
             sb.append(rewriteFunction.labelO(O2, each)).append("$");
@@ -337,24 +351,6 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         }
 
         return sb.toString().replaceAll("\\$#", "#").replaceAll("##", "#");
-    }
-
-    /**
-     * Removes invalid combinations such as {@code '$#'} at the end of the string that were introduced due to for-loop
-     * behaviour.
-     *
-     * @param sb the string builder used for storing the encoding
-     */
-    private void cleanUpEndOfEncoding(StringBuilder sb) {
-        if (sb.charAt(sb.length() - 1) == '$') {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        sb.insert(sb.length(), "#");
-        //check $# -> #
-        int i = sb.lastIndexOf("$#");
-        if (i != -1) {
-            sb.replace(i, sb.length(), "#");
-        }
     }
 
     String getLinkName(Bigraph bigraph, BigraphEntity node) {
@@ -393,8 +389,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 return labelE(E2, (BigraphEntity.Edge) l);
             } else {
                 if (!O2.flip().get((BigraphEntity.OuterName) l).getFirstOptional().isPresent()) {
-//                    O2.put(rewriteOuterNameSupplier.get(), (BigraphEntity.OuterName) l);
-                    O2.put(((BigraphEntity.OuterName) l).getName(), (BigraphEntity.OuterName) l);
+                    O2.put(rewriteOuterNameSupplier.get(), (BigraphEntity.OuterName) l);
                 }
                 return labelO(O2, (BigraphEntity.OuterName) l);
             }
@@ -452,7 +447,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             Comparator.comparing(entry -> {
                 return entry.getValue().size();
             });
-    Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenPortSum =
+    Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenPortSum =
             Comparator.comparing(entry -> {
 //                return (Integer) entry.getValue().stream()
 //                        .map(x -> bigraph.getPortCount((BigraphEntity.NodeEntity) x))
@@ -498,7 +493,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //        return a;
     });
 
-    Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenLinkNames =
+    Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenLinkNames =
             Comparator.comparing((entry) -> {
 //                if (printNodeIdentifiers) {
                 String s1 = entry.getValue().stream()
