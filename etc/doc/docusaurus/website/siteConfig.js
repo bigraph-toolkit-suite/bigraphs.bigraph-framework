@@ -62,8 +62,8 @@ var urlConfigs = {
 };
 
 const siteVariables = {
-    revision: 'Version: 0.7.0',
-    revisionVar: 'Replace ${revision} with 0.7.0',
+    revision: 'Version: 0.9.0',
+    revisionVar: 'Replace ${revision} with 0.9.0',
     supportedConversions: '<ul><li>BigMC</li><li>BigraphER</li><li>BigRed</li></ul>'
 };
 
@@ -73,7 +73,7 @@ const siteConfig = {
         importMd(),
     ],
     title: 'Bigraph Framework', // Title for your website.
-    tagline: 'A framework written in Java for the creation and simulation of bigraphical reactive systems',
+    tagline: 'A framework written in Java for the manipulation and simulation of bigraphical reactive systems',
     baseUrl: urlConfigs.baseUrl, // Base URL for your project */
     url: urlConfigs.url, // Your website URL, e.g., https://your-docusaurus-test-site.com
     // For github.io type URLs, you would set the url and baseUrl like:

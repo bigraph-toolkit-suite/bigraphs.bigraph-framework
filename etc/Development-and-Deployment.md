@@ -106,7 +106,7 @@ To actually build the static site:
 ```bash
 $ npm run build
 ```
-The output is exported at `etc/doc/docusaurus/website/build/bigraph-framework/index.html`.
+The output is exported at `etc/doc/docusaurus/website/build/bigraph-framework/`.
 
 #### Auto-generated Code Samples
 
@@ -140,17 +140,17 @@ This sections discusses the deployment process.
 
 - Docs are pushed to GitHub to be displayed by GitHub Pages.
 
-- **Approach**
-    - The following script builds and pushes the documentation to the remote repository:
-       ```bash
-       mvn clean package exec:java -f documentation/pom.xml && mvn install -Pdistribute
-       cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init
-       touch CNAME && echo "www.bigraphs.org" > CNAME
-       git add . && git commit -m "updated documentation"
-       git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git
-       git push --force stgithub master:gh-pages
-       ```
-- In GitLab, the variables SSH_PRIVATE_KEY and SSH_KNOWN_HOSTS must exist under Settings>CI/CD.
+
+- The following script builds and pushes the documentation to the remote repository:
+```bash
+mvn clean package exec:java -f documentation/pom.xml && mvn install -Pdistribute
+cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init
+touch CNAME && echo "www.bigraphs.org" > CNAME
+git add . && git commit -m "updated documentation"
+git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git
+git push --force stgithub master:gh-pages
+```
+- In GitLab, the variables SSH_PRIVATE_KEY and SSH_KNOWN_HOSTS must exist under **Settings | CI/CD**.
     - see [Using SSH keys with GitLab CI/CD](https://docs.gitlab.com/ee/ci/ssh_keys/)
     and [Generating a new SSH key pair](https://docs.gitlab.com/ee/ssh/#generating-a-new-ssh-key-pair)
     - Command to execute for SSH_KNOWN_HOSTS:
