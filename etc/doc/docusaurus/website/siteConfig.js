@@ -42,7 +42,7 @@ const users = [
         caption: 'User1',
         // You will need to prepend the image path with your baseUrl
         // if it is not '/', like: '/test-site/img/image.jpg'.
-        image: '/img/undraw_open_source.svg',
+        image: 'img/undraw_open_source.svg',
         infoLink: 'https://www.facebook.com',
         pinned: true,
     },
@@ -50,14 +50,14 @@ const users = [
         caption: 'User1',
         // You will need to prepend the image path with your baseUrl
         // if it is not '/', like: '/test-site/img/image.jpg'.
-        image: '/img/undraw_open_source.svg',
+        image: 'img/undraw_open_source.svg',
         infoLink: 'https://www.facebook.com',
         pinned: true,
     },
 ];
 
 var urlConfigs = {
-    baseUrl: '/',
+    baseUrl: '/products/bigraph-framework/',
     url: 'https://www.bigraphs.org',
 };
 
@@ -90,7 +90,7 @@ const siteConfig = {
     // For top-level user or org sites, the organization is still the same.
     // e.g., for the https://JoelMarcey.github.io site, it would be set like...
     //   organizationName: 'JoelMarcey'
-    apiDocsUrl: urlConfigs.url + urlConfigs.baseUrl + 'apidocs/index.html',
+    apiDocsUrl: 'apidocs/index.html',
     disableHeaderTitle: true,
     // For no header links in the top nav bar -> headerLinks: [],
     headerLinks: [
