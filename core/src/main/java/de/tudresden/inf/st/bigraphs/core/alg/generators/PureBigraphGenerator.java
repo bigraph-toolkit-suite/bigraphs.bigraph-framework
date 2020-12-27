@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.generators;
+package de.tudresden.inf.st.bigraphs.core.alg.generators;
 
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static de.tudresden.inf.st.bigraphs.core.generators.RandomBigraphGeneratorSupport.LinkStrategy.NONE;
+import static de.tudresden.inf.st.bigraphs.core.alg.generators.RandomBigraphGeneratorSupport.LinkStrategy.NONE;
 
 /**
  * A random generator for <i>pure bigraphs</i>. Uses {@link RandomBigraphGeneratorSupport}.
