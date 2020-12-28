@@ -100,17 +100,6 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
 
     }
 
-    /**
-     * Helper method to assign a parent to a node.
-     *
-     * @param node   the node
-     * @param parent the parent
-     */
-    protected void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
-        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-        node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
-    }
-
     protected Supplier<String> createNameSupplier(final String prefix) {
         return new Supplier<String>() {
             private int id = 0;
