@@ -1,20 +1,17 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.factory.Lists;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
- * Generic bigraph interface of all bigraph entities in this framework (for all pure bigraphs)
+ * Generic bigraph interface of all bigraph entities in this framework.
+ * This interface is primarily implemented by pure bigraphs.
  * <p>
  * Important direct implementations are:
  * <ul>
@@ -28,6 +25,7 @@ import java.util.stream.Stream;
  */
 public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
+    @Override
     S getSignature();
 
     /**
@@ -202,12 +200,11 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         );
     }
 
-    //TODO rename method
-
     /**
-     * Get the depth of a place entity.
+     * Get the depth of a place entity in the place graph (i.e., a tree).
+     * The depth of a root node is always {@literal 0}.
      *
-     * @param place the place who's depth should be computed
+     * @param place the place node in question to compute its depth
      * @return the depth of the given place entity of this bigraph
      */
     int getLevelOf(BigraphEntity<?> place);
@@ -340,9 +337,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
 
     /**
      * Check if two nodes are connected to each other.
-     * <p>
-     * The method considers also indirect connection, meaning, it doesn't matter if they are connected by an edge
-     * or outer name.
+     * The method considers connections by edges and outer names.
      *
      * @param place1 left node
      * @param place2 right node
