@@ -682,7 +682,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
         for (Map.Entry<String, List<String>> each : substitutionLinkingGraph.entrySet()) {
             List<StringTypedName> tmp = each.getValue().stream().map(StringTypedName::of).collect(toList());
-//                if(each.getKey().endsWith("_innername")) continue;
+
             if (each.getKey().endsWith("_innername")) continue;
             if (needsParameters || each.getValue().size() == 0) { //!each.getKey().endsWith("_innername") ||
                 tmp.add(StringTypedName.of(each.getKey()));

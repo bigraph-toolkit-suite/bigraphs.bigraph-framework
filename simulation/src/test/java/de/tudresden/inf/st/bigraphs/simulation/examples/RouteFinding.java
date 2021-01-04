@@ -267,7 +267,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
-    public static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
+    public static DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Car")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -276,6 +276,6 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 .newControl().identifier(StringTypedName.of("Road")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Target")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

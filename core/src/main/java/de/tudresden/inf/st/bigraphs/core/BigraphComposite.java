@@ -15,7 +15,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphComposite;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public interface BigraphComposite<S extends Signature> {
+public interface BigraphComposite<S extends Signature<? extends Control<?, ?>>> {
 
     /**
      * Return the outer bigraph of a composition, that is, the left part of the operator (i.e., outer bigraph).

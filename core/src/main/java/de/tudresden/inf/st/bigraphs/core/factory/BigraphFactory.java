@@ -28,15 +28,15 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class BigraphFactory {
 
-    public static synchronized <S extends Signature> BigraphComposite<S> ops(Bigraph<S> bigraph) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> BigraphComposite<S> ops(Bigraph<S> bigraph) {
         return FactoryCreationContext.createOperator(bigraph);
     }
 
-    public static synchronized <S extends Signature> EPackage createOrGetMetaModel(S signature) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> EPackage createOrGetMetaModel(S signature) {
         return createOrGetMetaModel(signature, null);
     }
 
-    public static synchronized <S extends Signature> EPackage createOrGetMetaModel(S signature, EMetaModelData metaModelData) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> EPackage createOrGetMetaModel(S signature, EMetaModelData metaModelData) {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
             PureBigraphBuilder<S> b = (PureBigraphBuilder<S>) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
@@ -53,7 +53,7 @@ public final class BigraphFactory {
         }
     }
 
-    public static synchronized <S extends Signature> PureBigraphBuilder<S> pureBuilder(S signature) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> pureBuilder(S signature) {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
             PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
@@ -97,7 +97,7 @@ public final class BigraphFactory {
         }
     }
 
-    public static synchronized <S extends Signature> PureBigraphBuilder<S> pureBuilder(S signature, EPackage bigraphBaseModelPackage) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> pureBuilder(S signature, EPackage bigraphBaseModelPackage) {
         if (Registry.INSTANCE.get(signature) == null) {
             Registry.INSTANCE.put(signature, bigraphBaseModelPackage);
         } else {
@@ -106,13 +106,13 @@ public final class BigraphFactory {
         return (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
     }
 
-    public static synchronized <S extends Signature> PureBigraphBuilder<S> pureBuilder(S signature, String bigraphBaseModelPackageFile) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> pureBuilder(S signature, String bigraphBaseModelPackageFile) {
         PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackageFile, PureBigraph.class);
         Registry.INSTANCE.put(signature, b.getLoadedEPackage());
         return b;
     }
 
-    public static synchronized <S extends Signature> PureBigraphGenerator pureRandomBuilder(DefaultDynamicSignature signature) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(DefaultDynamicSignature signature) {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
             PureBigraphGenerator b = FactoryCreationContext.createRandomBigraphBuilder(signature, PureBigraph.class);
@@ -123,7 +123,7 @@ public final class BigraphFactory {
         }
     }
 
-    public static synchronized <S extends Signature> PureBigraphGenerator pureRandomBuilder(DefaultDynamicSignature signature, EPackage bigraphBaseModelPackage) {
+    public static synchronized <S extends Signature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(DefaultDynamicSignature signature, EPackage bigraphBaseModelPackage) {
         Registry.INSTANCE.put(signature, bigraphBaseModelPackage);
         return FactoryCreationContext.createRandomBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
     }

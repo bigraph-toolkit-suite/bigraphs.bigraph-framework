@@ -399,21 +399,21 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
-    public static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
+    public static DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier("A").arity(2).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 
-    public static <C extends Control<?, ?>, S extends Signature<C>> S createSignature2() {
+    public static DefaultDynamicSignature createSignature2() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier("A").arity(3).assign()
                 .newControl().identifier("B").arity(3).assign()
                 .newControl().identifier("C").arity(3).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

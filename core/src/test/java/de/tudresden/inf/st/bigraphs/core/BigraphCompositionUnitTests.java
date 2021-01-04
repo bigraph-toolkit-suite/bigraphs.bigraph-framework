@@ -598,11 +598,11 @@ public class BigraphCompositionUnitTests {
             BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) xyzWithPGIdentity, System.out);
             Bigraph<DefaultDynamicSignature> nesting = factory.asBigraphOperator(xyzWithPGIdentity).nesting(discreteIon).getOuterBigraph();
             BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) nesting, System.out);
-//            assertEquals(2, nesting.getInnerNames().size());
-//            assertEquals(1, nesting.getOuterNames().size());
-//            assertEquals(1, nesting.getRoots().size());
-//            assertEquals(1, nesting.getNodes().size());
-//            assertEquals(1, nesting.getSites().size());
+            assertEquals(2, nesting.getInnerNames().size());
+            assertEquals(1, nesting.getOuterNames().size());
+            assertEquals(1, nesting.getRoots().size());
+            assertEquals(1, nesting.getNodes().size());
+            assertEquals(1, nesting.getSites().size());
         });
 
 

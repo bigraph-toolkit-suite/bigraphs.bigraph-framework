@@ -31,15 +31,12 @@ public abstract class BigraphCompositeSupport<S extends Signature<? extends Cont
         boolean disjoint = Collections.disjoint(nameSetLeft, nameSetRight);
         if ((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() == 0 && nameSetRight.size() == 0)
             disjoint = false; // this is legit if they are only place graphs
-//        if (isCompose && ((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() != nameSetRight.size())) {
-//            disjoint = true;
-//        }
+        if (isCompose && ((rootOrdinals.size() > 0 || siteOrdinals.size() > 0) && nameSetLeft.size() != nameSetRight.size())) {
+            disjoint = true;
+        }
         boolean disjoint2 = siteOrdinals.size() != rootOrdinals.size() || Collections.disjoint(siteOrdinals, rootOrdinals);
         if (siteOrdinals.size() == 0 && rootOrdinals.size() == 0) disjoint2 = false;
-//        if (inner instanceof ElementaryBigraph || BigraphUtil.isBigraphElementary(inner)) {
-//            if (!disjoint && isLinking(inner) && !disjoint2 && isPlacing(outer)) return;
-//            if (!disjoint2 && isPlacing(inner)) return;
-//        }
+
         if (outer instanceof ElementaryBigraph || BigraphUtil.isElementaryBigraph(outer)) {
             if (!disjoint && isLinking(outer) && !isCompose) {
                 return;

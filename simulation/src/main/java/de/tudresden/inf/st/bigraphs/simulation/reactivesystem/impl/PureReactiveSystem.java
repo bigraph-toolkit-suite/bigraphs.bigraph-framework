@@ -2,12 +2,16 @@ package de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.AbstractSimpleReactiveSystem;
@@ -16,8 +20,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * An implementation of an {@link AbstractSimpleReactiveSystem} providing a simple BRS data structure for pure bigraphs
@@ -29,8 +36,6 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
 public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph> {
     private final Logger logger = LoggerFactory.getLogger(PureReactiveSystem.class);
 
-//    private static int cnt = 1;
-
     @Override
     public PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         try {
@@ -40,23 +45,37 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                     .getOuterBigraph();
 
             Bigraph<DefaultDynamicSignature> agentReacted;
-            if (match.getRedexIdentity() instanceof Linkings.IdentityEmpty) {
-                agentReacted = ops(outerBigraph)
-                        .compose(rule.getReactum())
-                        .getOuterBigraph();
-            } else {
-//                BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) outerBigraph, System.out);
-//                BigraphGraphvizExporter.toPNG(outerBigraph, true, new File("outerBigraph"));
-//                BigraphArtifacts.exportAsInstanceModel(match.getRedexIdentity(), System.out);
-                BigraphComposite<DefaultDynamicSignature> reactumImage = ops((Bigraph) match.getRedexIdentity())
-                        .nesting(rule.getReactum());
-//                BigraphArtifacts.exportAsInstanceModel(reactumImage.getOuterBigraph(), System.out);
-//                BigraphGraphvizExporter.toPNG(reactumImage.getOuterBigraph(), true, new File("reactumImage"));
-                BigraphComposite<DefaultDynamicSignature> compose = ops(outerBigraph).compose(reactumImage);
-//                BigraphArtifacts.exportAsInstanceModel(compose.getOuterBigraph(), System.out);
-//                BigraphGraphvizExporter.toPNG(compose.getOuterBigraph(), true, new File("compose"));
-                agentReacted = compose.getOuterBigraph();
+            Bigraph<DefaultDynamicSignature> reactumImage;
+            // Compute the "reactum image" (some identity link graph and the reactum)
+            if (match.getRedexIdentity() instanceof Linkings.IdentityEmpty) { // if we have no identity then compute one here
+                Linkings<DefaultDynamicSignature> linkings = pureLinkings((DefaultDynamicSignature) getSignature());
+                Set<StringTypedName> collect = rule.getReactum().getOuterNames().stream()
+                        .filter(o -> {
+                            Optional<BigraphEntity.InnerName> first = outerBigraph.getInnerNames().stream().filter(x -> x.getName().equals(o.getName())).findFirst();
+                            return !first.isPresent() || outerBigraph.getLinkOfPoint(first.get()) == null;
+                        })
+                        .map(o -> StringTypedName.of(o.getName()))
+                        .collect(Collectors.toSet());
+                Set<StringTypedName> differences = outerBigraph.getInnerNames().stream()
+                        .map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
+                differences.removeAll(collect);
+                PureBigraphBuilder<? extends Signature<?>> b = pureBuilder(getSignature());
+                for (StringTypedName each : differences) {
+                    b.createOuterName(each.getValue());
+                }
+
+                Bigraph<DefaultDynamicSignature> renamingForReactum = differences.size() != 0 ?
+                        b.createBigraph() :
+                        linkings.identity_e();
+                reactumImage = ops(renamingForReactum).parallelProduct(rule.getReactum()).getOuterBigraph();
+            } else { // otherwise, use the one that was computed in the matching phase
+                reactumImage = ops((Bigraph<DefaultDynamicSignature>) match.getRedexIdentity())
+                        .nesting((Bigraph<DefaultDynamicSignature>) rule.getReactum()).getOuterBigraph();
             }
+
+            agentReacted = ops(outerBigraph)
+                    .compose(reactumImage)
+                    .getOuterBigraph();
 
             return (PureBigraph) agentReacted;
         } catch (Exception e) {
@@ -65,7 +84,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
         }
     }
 
-    //TODO: beachte instantiation map
+    //TODO: Implement instantiation map
     @Override
     public PureBigraph buildParametricReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         //first build parallel product of the parameters using the instantiation map
@@ -76,6 +95,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                     .parallelProduct((Bigraph<DefaultDynamicSignature>) match.getContextIdentity())
                     .getOuterBigraph();
 
+            // Compose all parameters
             Bigraph<DefaultDynamicSignature> d_Params;
             List<PureBigraph> parameters = new ArrayList<>(match.getParameters());
             if (parameters.size() >= 2) {
@@ -91,13 +111,37 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             }
 
             //id_X || R) * d_Params <=> R . d_Params
+            // Build the reactum image and then add the parameters
             BigraphComposite<DefaultDynamicSignature> reactumImage =
-                    ops((Bigraph) match.getRedexIdentity()).parallelProduct(rule.getReactum());//.compose(d_Params).getOuterBigraph();
-            BigraphComposite<DefaultDynamicSignature> compose = reactumImage.compose(d_Params);
+                    ops((Bigraph) match.getRedexIdentity()).parallelProduct(rule.getReactum());//.reactumImageWithParams(d_Params).getOuterBigraph();
+            Bigraph<DefaultDynamicSignature> reactumImageWithParams = reactumImage.compose(d_Params).getOuterBigraph();
 
+
+            // Get all outer names of right inner bigraph and make identity graph from them
+            // This resembles some of the logic from the nesting operator
+            Linkings<DefaultDynamicSignature> linkings = pureLinkings((DefaultDynamicSignature) getSignature());
+            Set<StringTypedName> collect = reactumImageWithParams.getOuterNames().stream()
+                    .filter(o -> {
+                        Optional<BigraphEntity.InnerName> first = outerBigraph.getInnerNames().stream().filter(x -> x.getName().equals(o.getName())).findFirst();
+                        return !first.isPresent() || outerBigraph.getLinkOfPoint(first.get()) == null;
+                    })
+                    .map(o -> StringTypedName.of(o.getName()))
+                    .collect(Collectors.toSet());
+
+            Set<StringTypedName> differences = outerBigraph.getInnerNames().stream()
+                    .map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
+            differences.removeAll(collect);
+            PureBigraphBuilder<? extends Signature<?>> b = pureBuilder(getSignature());
+            for (StringTypedName each : differences) {
+                b.createOuterName(each.getValue());
+            }
+            Bigraph<DefaultDynamicSignature> renamingForF = differences.size() != 0 ?
+                    b.createBigraph() :
+                    linkings.identity_e();
+            Bigraph reactumImageWithParamsAndIdentity = ops(renamingForF).parallelProduct(reactumImageWithParams).getOuterBigraph();
 
             Bigraph<DefaultDynamicSignature> agentReacted = ops(outerBigraph)
-                    .compose(compose)
+                    .compose(reactumImageWithParamsAndIdentity)
                     .getOuterBigraph();
 
             return (PureBigraph) agentReacted;
