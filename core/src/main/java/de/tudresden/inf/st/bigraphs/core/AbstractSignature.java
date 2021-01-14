@@ -29,7 +29,7 @@ public abstract class AbstractSignature<C extends Control<? extends NamedType, ?
 
     protected AbstractSignature(BSignature bSignature) {
         this();
-        validateBSignature(bSignature);
+        EcoreSignature.validateBSignature(bSignature);
         instanceModel = bSignature;
     }
 
@@ -43,19 +43,9 @@ public abstract class AbstractSignature<C extends Control<? extends NamedType, ?
             bControl.setName(x.getNamedType().stringValue());
             instanceModel.getBControls().add(bControl);
         });
-        validateBSignature(instanceModel);
+        EcoreSignature.validateBSignature(instanceModel);
     }
 
-    protected void validateBSignature(BSignature bSignature) {
-        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bSignature);
-        if (diagnostic.getSeverity() != Diagnostic.OK) {
-            for (Diagnostic child : diagnostic.getChildren()) {
-                if (child.getCode() == 13) { // duplicate control name
-                    throw new RuntimeException("Duplicate control names found in signature definition.", child.getException());
-                }
-            }
-        }
-    }
 
     @Override
     public Set<C> getControls() {
