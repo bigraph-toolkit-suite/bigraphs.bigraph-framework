@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
@@ -9,9 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
@@ -20,10 +17,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelFactory;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.impl.BigraphBaseModelPackageImpl;
 import org.eclipse.collections.impl.factory.Sets;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +26,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
@@ -42,7 +37,7 @@ public class BigraphCompositionUnitTests {
 
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
     private final static String TARGET_TEST_MODEL_PATH = "src/test/resources/ecore-test-models/";
-    private static PureBigraphFactory factory = pure();
+//    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void beforeAll() {
@@ -73,8 +68,8 @@ public class BigraphCompositionUnitTests {
     @Test
     void bigraphNesting_test_withoutLinks() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         EPackage exampleMetaModel = getExampleMetaModel();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature(), exampleMetaModel);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createExampleSignature(), exampleMetaModel);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createExampleSignature());
         PureBigraph bigraph = builder.createRoot()
                 .addChild("Room").down().addChild("User")
                 .addChild("Computer")
@@ -92,8 +87,8 @@ public class BigraphCompositionUnitTests {
     @Test
     void bigraphNesting_test() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         EPackage exampleMetaModel = getExampleMetaModel();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature(), exampleMetaModel);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createExampleSignature(), exampleMetaModel);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createExampleSignature());
         BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
         PureBigraph bigraph = builder.createRoot()
                 .addChild("Room").down().addChild("User", "jeff")
@@ -154,7 +149,7 @@ public class BigraphCompositionUnitTests {
     @Test
     @DisplayName("Compose two bigraphs, which are the same instance")
     void composition_of_sameBigraphInstance() throws InvalidConnectionException, IncompatibleSignatureException, IncompatibleInterfaceException, LinkTypeNotExistsException, IOException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createExampleSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createExampleSignature());
         BigraphEntity.InnerName jeff = builder.createInnerName("jeff");
         PureBigraph bigraph = builder.createRoot()
                 .addChild("Room").down().addChild("User", "jeff")
@@ -200,7 +195,7 @@ public class BigraphCompositionUnitTests {
     @Test
     void compose_test_0() throws InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
         EPackage exampleMetaModel = createOrGetMetaModel(createSignature_compose_test_0());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature_compose_test_0(), exampleMetaModel);
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature_compose_test_0());
         BigraphEntity.OuterName fromD2 = builderReactum.createOuterName("fromD");
         BigraphEntity.OuterName fromS2 = builderReactum.createOuterName("fromS");
         BigraphEntity.OuterName target2 = builderReactum.createOuterName("target");
@@ -212,7 +207,7 @@ public class BigraphCompositionUnitTests {
         ;
         PureBigraph reactum = builderReactum.createBigraph();
 
-        PureBigraphBuilder<DefaultDynamicSignature> builderParams = factory.createBigraphBuilder(createSignature_compose_test_0(), exampleMetaModel);
+        PureBigraphBuilder<DefaultDynamicSignature> builderParams = pureBuilder(createSignature_compose_test_0());
 
         builderParams.createRoot().addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel").addChild("Fuel");
         BigraphEntity.OuterName p4 = builderParams.createOuterName("p4");
@@ -222,12 +217,12 @@ public class BigraphCompositionUnitTests {
         builderParams.createRoot().addChild("Road").linkToOuter(p1);
         PureBigraph parameters = builderParams.createBigraph();
 
-        PureBigraphBuilder<DefaultDynamicSignature> builderRenaming = factory.createBigraphBuilder(createSignature_compose_test_0(), exampleMetaModel);
-        Linkings<DefaultDynamicSignature>.Identity identity = factory.createLinkings(createSignature_compose_test_0(), exampleMetaModel).identity(StringTypedName.of("p1"), StringTypedName.of("p4"), StringTypedName.of("p7"));
+        PureBigraphBuilder<DefaultDynamicSignature> builderRenaming = pureBuilder(createSignature_compose_test_0());
+        Linkings<DefaultDynamicSignature>.Identity identity = pureLinkings(createSignature_compose_test_0()).identity(StringTypedName.of("p1"), StringTypedName.of("p4"), StringTypedName.of("p7"));
 
-        Bigraph<DefaultDynamicSignature> reactumImage = factory.asBigraphOperator(identity).parallelProduct(reactum).getOuterBigraph();
+        Bigraph<DefaultDynamicSignature> reactumImage = ops(identity).parallelProduct(reactum).getOuterBigraph();
 
-        Bigraph<DefaultDynamicSignature> reacted = factory.asBigraphOperator(reactumImage).compose(parameters).getOuterBigraph();
+        Bigraph<DefaultDynamicSignature> reacted = ops(reactumImage).compose(parameters).getOuterBigraph();
 
         assertEquals(0, reacted.getInnerNames().size());
         assertEquals(0, reacted.getSites().size());
@@ -253,8 +248,8 @@ public class BigraphCompositionUnitTests {
 
     }
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature_compose_test_0() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+    private static DefaultDynamicSignature createSignature_compose_test_0() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Car")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Fuel")).arity(FiniteOrdinal.ofInteger(0)).assign()
@@ -262,15 +257,15 @@ public class BigraphCompositionUnitTests {
                 .newControl().identifier(StringTypedName.of("Road")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Target")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 
     @Test
     void compose_test() throws InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException, ControlIsAtomicException {
         EPackage exampleMetaModel = getExampleMetaModel();
-        Signature<DefaultDynamicControl> signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature, exampleMetaModel);
-        PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature, exampleMetaModel);
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builderForF = pureBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builderForG = pureBuilder(signature);
 
         BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
         BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
@@ -292,7 +287,7 @@ public class BigraphCompositionUnitTests {
         EPackage modelPackage = F.getModelPackage();
 
 
-        BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
+        BigraphComposite<DefaultDynamicSignature> compositor = ops(G);
 //        PureBigraphComposite<DefaultDynamicSignature> compositor = (PureBigraphComposite<DefaultDynamicSignature>) factory.asBigraphOperator(G);
         BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
 
@@ -364,8 +359,8 @@ public class BigraphCompositionUnitTests {
         Placings<DefaultDynamicSignature>.Merge merge_1 = placings.merge(1); //id_1 = merge_1
         Placings<DefaultDynamicSignature>.Merge merge_M = placings.merge(m);
 
-        BigraphComposite<DefaultDynamicSignature> a = factory.asBigraphOperator(merge_1);
-        BigraphComposite<DefaultDynamicSignature> b = factory.asBigraphOperator(aJoin);
+        BigraphComposite<DefaultDynamicSignature> a = ops(merge_1);
+        BigraphComposite<DefaultDynamicSignature> b = ops(aJoin);
 
         assertAll(() -> {
             Bigraph<DefaultDynamicSignature> tmp = a.juxtapose(merge_M).getOuterBigraph();
@@ -391,27 +386,27 @@ public class BigraphCompositionUnitTests {
     void more_elementary_linkings_tests() {
         final DefaultDynamicSignature mainSignature = createExampleSignature();
         final EPackage bMetaModel = createOrGetMetaModel(mainSignature);
-        final Linkings<DefaultDynamicSignature> linkings = factory.createLinkings(mainSignature, bMetaModel);
-        final Placings<DefaultDynamicSignature> placings = factory.createPlacings(mainSignature, bMetaModel);
+        final Linkings<DefaultDynamicSignature> linkings = pureLinkings(mainSignature);
+        final Placings<DefaultDynamicSignature> placings = purePlacings(mainSignature);
 
         assertAll(() -> {
             Linkings<DefaultDynamicSignature>.Identity a = linkings.identity(StringTypedName.of("a"));
-            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(mainSignature, bMetaModel);
+            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(mainSignature);
             builder.createOuterName("a");
             PureBigraph bigraph = builder.createBigraph();
 
-            Bigraph<DefaultDynamicSignature> compose = factory.asBigraphOperator(a).compose(bigraph).getOuterBigraph();
+            Bigraph<DefaultDynamicSignature> compose = ops(a).compose(bigraph).getOuterBigraph();
             assertEquals(1, compose.getOuterNames().size());
             assertEquals(0, compose.getInnerNames().size());
 
             assertThrows(IncompatibleInterfaceException.class, () -> {
-                factory.asBigraphOperator(bigraph).compose(a).getOuterBigraph();
+                ops(bigraph).compose(a).getOuterBigraph();
             });
 
-            PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(mainSignature, bMetaModel);
+            PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(mainSignature);
             builder2.connectInnerToOuterName(builder2.createInnerName("a"), builder2.createOuterName("a"));
             PureBigraph bigraph2 = builder2.createBigraph();
-            Bigraph<DefaultDynamicSignature> compose2 = factory.asBigraphOperator(a).compose(bigraph2).getOuterBigraph();
+            Bigraph<DefaultDynamicSignature> compose2 = ops(a).compose(bigraph2).getOuterBigraph();
             assertEquals(1, compose2.getOuterNames().size());
             assertEquals(1, compose2.getInnerNames().size());
             assertEquals("a", compose2.getLinkOfPoint(compose2.getInnerNames().iterator().next()).getName());
@@ -422,7 +417,7 @@ public class BigraphCompositionUnitTests {
             Linkings<DefaultDynamicSignature>.Closure c1 = linkings.closure(StringTypedName.of("x"));
             Linkings<DefaultDynamicSignature>.Closure c2 = linkings.closure(StringTypedName.of("a"));
             Linkings<DefaultDynamicSignature>.Closure y = linkings.closure(StringTypedName.of("y"));
-            DiscreteIon<DefaultDynamicSignature> ionC = factory.createDiscreteIon("Printer", new HashSet<>(Arrays.asList("x", "y")), mainSignature, bMetaModel);
+            DiscreteIon<DefaultDynamicSignature> ionC = pureDiscreteIon(mainSignature, "Printer", "x", "y");
 
             // id(2) * (/x || /y): <2,{}> and <0,{}> doesn't works
             assertThrows(IncompatibleInterfaceException.class, () -> {
@@ -435,7 +430,7 @@ public class BigraphCompositionUnitTests {
             Bigraph<DefaultDynamicSignature> outerBigraph3 = ops(placings.identity1()).juxtapose(c1).getOuterBigraph();
             BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) outerBigraph3, System.out);
 
-            DiscreteIon<DefaultDynamicSignature> discreteIon = factory.createDiscreteIon("User", new HashSet<>(Arrays.asList("x")), mainSignature, bMetaModel);
+            DiscreteIon<DefaultDynamicSignature> discreteIon = pureDiscreteIon(mainSignature, "User", "x");
             Bigraph<DefaultDynamicSignature> result0 = ops(outerBigraph3).compose(discreteIon).getOuterBigraph();
             BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result0, System.out);
             assertEquals(0, result0.getOuterNames().size());
@@ -555,6 +550,20 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
+    void test_example_3_14() {
+        DefaultDynamicSignature sig = pureSignatureBuilder().newControl("K", 3).assign()
+                .newControl("L", 2).assign().create();
+
+        DiscreteIon<DefaultDynamicSignature> K_xyz = pureDiscreteIon(sig, "K", "x", "y", "z");
+        DiscreteIon<DefaultDynamicSignature> L_yz = pureDiscreteIon(sig, "L", "y", "z");
+
+        assertAll(() -> {
+            Bigraph<DefaultDynamicSignature> outerBigraph = ops(K_xyz).nesting(L_yz).getOuterBigraph();
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) outerBigraph, System.out);
+        });
+    }
+
+    @Test
     void elementary_bigraph_linkings_test() {
 //        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
         DefaultDynamicSignature exampleSignature = createExampleSignature();
@@ -570,11 +579,10 @@ public class BigraphCompositionUnitTests {
             assertEquals(0, xyz.getOuterNames().size());
 
             Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
-            DiscreteIon<DefaultDynamicSignature> discreteIon = factory.createDiscreteIon(
-                    "User",
-                    Collections.singleton("x"),
+            DiscreteIon<DefaultDynamicSignature> discreteIon = pureDiscreteIon(
                     exampleSignature,
-                    exampleMetaModel
+                    "User",
+                    "x"
             );
             assertEquals(1, discreteIon.getRoots().size());
             assertEquals(1, discreteIon.getNodes().size());
@@ -586,30 +594,30 @@ public class BigraphCompositionUnitTests {
             Placings.Identity1 id = purePlacings(exampleSignature).identity1();
             System.out.println("Discrete Ion:");
             BigraphArtifacts.exportAsInstanceModel(discreteIon, System.out);
-            BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(ops(x).juxtapose(id).getOuterBigraph()).compose(discreteIon);
+            BigraphComposite<DefaultDynamicSignature> compose = ops(ops(x).juxtapose(id).getOuterBigraph()).compose(discreteIon);
             assertEquals(0, compose.getOuterBigraph().getInnerNames().size());
             assertEquals(0, compose.getOuterBigraph().getOuterNames().size());
             System.out.println("Composition of Closure /x and Discrete Ion:");
             BigraphArtifacts.exportAsInstanceModel(compose.getOuterBigraph(), System.out);
 //            BigraphComposite<DefaultDynamicSignature> compose = ops(x).compose(discreteIon);
 //            factory.asBigraphOperator(x).compose(discreteIon)
-            Bigraph<DefaultDynamicSignature> xyzWithPGIdentity = factory.asBigraphOperator(id).parallelProduct(xyz).getOuterBigraph();
+            Bigraph<DefaultDynamicSignature> xyzWithPGIdentity = ops(id).parallelProduct(xyz).getOuterBigraph();
             System.out.println("xyzWithPGIdentity: ");
             BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) xyzWithPGIdentity, System.out);
-            Bigraph<DefaultDynamicSignature> nesting = factory.asBigraphOperator(xyzWithPGIdentity).nesting(discreteIon).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) nesting, System.out);
-            assertEquals(2, nesting.getInnerNames().size());
-            assertEquals(1, nesting.getOuterNames().size());
-            assertEquals(1, nesting.getRoots().size());
-            assertEquals(1, nesting.getNodes().size());
-            assertEquals(1, nesting.getSites().size());
+//            Bigraph<DefaultDynamicSignature> nesting = factory.asBigraphOperator(xyzWithPGIdentity).nesting(discreteIon).getOuterBigraph();
+//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) nesting, System.out);
+//            assertEquals(2, nesting.getInnerNames().size());
+//            assertEquals(1, nesting.getOuterNames().size());
+//            assertEquals(1, nesting.getRoots().size());
+//            assertEquals(1, nesting.getNodes().size());
+//            assertEquals(1, nesting.getSites().size());
         });
 
 
         Linkings<DefaultDynamicSignature>.Closure x1 = linkings.closure(StringTypedName.of("x"));
         final Linkings<DefaultDynamicSignature>.Closure x2 = linkings.closure(StringTypedName.of("x"));
 
-        BigraphComposite<DefaultDynamicSignature> x1Op = factory.asBigraphOperator(x1);
+        BigraphComposite<DefaultDynamicSignature> x1Op = ops(x1);
         assertThrows(IncompatibleInterfaceException.class, () -> x1Op.juxtapose(x2));
 
         final Linkings<DefaultDynamicSignature>.Closure x3 = linkings.closure(StringTypedName.of("y"));
@@ -624,12 +632,12 @@ public class BigraphCompositionUnitTests {
 
             //a bigraph is composed with a closure resulting in a inner name rewriting of that bigraph
 //            Signature<DefaultDynamicControl> signature = (Signature<DefaultDynamicControl>) exampleSignature;
-            PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(exampleSignature, exampleMetaModel);
+            PureBigraphBuilder<DefaultDynamicSignature> builderForG = pureBuilder(exampleSignature);
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
             builderForG.createRoot().addChild(exampleSignature.getControlByName("User")).linkToInner(zInner);
             PureBigraph simpleBigraph = builderForG.createBigraph();
             Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
-            BigraphComposite<DefaultDynamicSignature> compose = factory.asBigraphOperator(simpleBigraph);
+            BigraphComposite<DefaultDynamicSignature> compose = ops(simpleBigraph);
             BigraphComposite<DefaultDynamicSignature> compose1 = compose.compose(substitution);
 
             assertFalse(compose1.getOuterBigraph().isGround());
@@ -643,7 +651,7 @@ public class BigraphCompositionUnitTests {
         assertAll(() -> {
             Linkings<DefaultDynamicSignature>.Substitution a1 = linkings.substitution(StringTypedName.of("a"), StringTypedName.of("b"), StringTypedName.of("c"));
             Linkings<DefaultDynamicSignature>.Substitution a2 = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("a"));
-            Bigraph<DefaultDynamicSignature> outerBigraph = factory.asBigraphOperator(a2).compose(a1).getOuterBigraph();
+            Bigraph<DefaultDynamicSignature> outerBigraph = ops(a2).compose(a1).getOuterBigraph();
             assertEquals(1, outerBigraph.getOuterNames().size());
             assertEquals(2, outerBigraph.getInnerNames().size());
             assertEquals(0, outerBigraph.getNodes().size());
@@ -699,20 +707,20 @@ public class BigraphCompositionUnitTests {
 //        assertEquals(2, result.getPointsFromLink(result.getOuterNames().stream().filter(x -> x.getName().equals("y2")).findFirst().get()).size());
     }
 
-    public static <C extends Control<?, ?>, S extends Signature<C>> S createSingleControlSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+    public static DefaultDynamicSignature createSingleControlSignature() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier("A").arity(2).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 
     private static EPackage getExampleMetaModel() {
         return createOrGetMetaModel(createExampleSignature());
     }
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+    private static DefaultDynamicSignature createExampleSignature() {
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -721,6 +729,6 @@ public class BigraphCompositionUnitTests {
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
-        return (S) signatureBuilder.create();
+        return signatureBuilder.create();
     }
 }

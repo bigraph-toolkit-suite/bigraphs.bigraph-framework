@@ -250,7 +250,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
             super(null);
 
             if (names.length == 0) {
-                throw new RuntimeException("Renaming (Substitution) cannot be created because names are missing.");
+                throw new RuntimeException("Identity/Renaming cannot be created because names are missing.");
             }
             MutableSortedMap<String, BigraphEntity.InnerName> innerNameMap = SortedMaps.mutable.empty();
             MutableSortedMap<String, BigraphEntity.OuterName> outerNameMap = SortedMaps.mutable.empty();

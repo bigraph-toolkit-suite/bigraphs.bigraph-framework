@@ -131,7 +131,7 @@ gen-test-resources/*
 !/etc/auxlibs/Gcf.zip
 !/etc/auxlibs/*.jar
 /etc/doc/site/*
-**/resources/dump/
+**/resources/dump/*
 /.idea/modules.xml
 /.idea/markdown-navigator-enh.xml
 /.idea/markdown-navigator.xml
