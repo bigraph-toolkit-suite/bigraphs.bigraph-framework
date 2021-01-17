@@ -108,44 +108,44 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         // get all outer names of 'f' and make identity graph from them
         Linkings<DefaultDynamicSignature> linkings = pureLinkings((DefaultDynamicSignature) getSignature());
         Set<StringTypedName> collect = f.getOuterNames().stream()
-                .filter(o -> {
-                    Optional<BigraphEntity.InnerName> first = g.getInnerNames().stream().filter(x -> x.getName().equals(o.getName())).findFirst();
-                    return !first.isPresent() || g.getLinkOfPoint(first.get()) == null; //collect2.contains(o.getName())
-                })
+//                .filter(o -> {
+//                    Optional<BigraphEntity.InnerName> first = g.getInnerNames().stream().filter(x -> x.getName().equals(o.getName())).findFirst();
+//                    return !first.isPresent(); // || g.getLinkOfPoint(first.get()) == null; //collect2.contains(o.getName())
+//                })
                 .map(o -> StringTypedName.of(o.getName()))
                 .collect(Collectors.toSet());
         ElementaryBigraph<DefaultDynamicSignature> identity = collect.size() != 0 ?
                 linkings.identity(collect.toArray(new NamedType[0])) : // as array
                 linkings.identity_e();                                 // empty identity
-        BigraphComposite<S> sBigraphComposite = ops((Bigraph<S>) identity).parallelProduct(g);
-//        assertInterfaceCompatibleForCompose(sBigraphComposite.getOuterBigraph(), f, false);
+//        // (!) Order is important here, otherwise the root indexes may be swapped. First g, then the identity
+        BigraphComposite<S> sBigraphComposite = ops(g).parallelProduct((Bigraph<S>) identity);
 
-        Set<StringTypedName> differences = new HashSet<>();
-        Bigraph<DefaultDynamicSignature> renamingForF;
-        if (collect.size() > 0) {
-            differences = g.getInnerNames().stream()
-                    .map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
-            differences.removeAll(collect);
-            renamingForF = differences.size() != 0 ?
-                    linkings.identity(differences.toArray(new NamedType[0])) : // as array
-                    linkings.identity_e();
-        } else {
-            differences = g.getInnerNames().stream()
-                    .filter(o -> {
-                        Optional<BigraphEntity.OuterName> first = f.getOuterNames().stream().filter(x -> x.getName().equals(o.getName())).findFirst();
-                        return !first.isPresent() || f.getPointsFromLink(first.get()).size() == 0; //collect2.contains(o.getName())
-                    })
-                    .map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
-            PureBigraphBuilder<? extends Signature<?>> b = pureBuilder(getSignature());
-            for (StringTypedName each : differences) {
-                b.createOuterName(each.getValue());
-            }
-            renamingForF = differences.size() != 0 ?
-                    b.createBigraph() :
-                    linkings.identity_e();
-        }
-        Bigraph fBigraphComposite = ops((Bigraph) renamingForF).parallelProduct(f).getOuterBigraph();
-        return sBigraphComposite.compose(fBigraphComposite);
+//        Set<StringTypedName> differences = new HashSet<>();
+//        Bigraph<DefaultDynamicSignature> renamingForF = linkings.identity_e();
+//        if (collect.size() == 0) {
+////            differences = g.getInnerNames().stream()
+////                    .map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
+////            differences.removeAll(collect);
+////            renamingForF = differences.size() != 0 ?
+////                    linkings.identity(differences.toArray(new NamedType[0])) : // as array
+////                    linkings.identity_e();
+////        } else {
+//            differences = g.getInnerNames().stream()
+//                    .filter(o -> {
+//                        Optional<BigraphEntity.OuterName> first = f.getOuterNames().stream().filter(x -> x.getName().equals(o.getName())).findFirst();
+//                        return !first.isPresent() || f.getPointsFromLink(first.get()).size() == 0; //collect2.contains(o.getName())
+//                    })
+//                    .map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
+//            PureBigraphBuilder<? extends Signature<?>> b = pureBuilder(getSignature());
+//            for (StringTypedName each : differences) {
+//                b.createOuterName(each.getValue());
+//            }
+//            renamingForF = differences.size() != 0 ?
+//                    b.createBigraph() :
+//                    linkings.identity_e();
+//        }
+//        Bigraph fBigraphComposite = ops(f).parallelProduct((Bigraph) renamingForF).getOuterBigraph();
+        return sBigraphComposite.compose(f);
     }
 
     @Override
@@ -484,7 +484,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
 
 
         EStructuralFeature rightOuterNamesFeature = rightInner.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
-        HashMap<Integer, EObject> rootsOuterIndex = new HashMap<>();
+        HashMap<Integer, EObject> rootsInnerIndex = new HashMap<>();
         HashMap<String, EObject> rightOuterNamesIndex = new HashMap<>();
         if (Objects.nonNull(rightInner.eGet(rightOuterNamesFeature))) {
             EList<EObject> outernames = (EList<EObject>) rightInner.eGet(rightOuterNamesFeature);
@@ -494,14 +494,14 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             }
         }
 
-        TreeIterator<Object> allContentsOuter = EcoreUtil.getAllContents(rightInner, true);
-        while (allContentsOuter.hasNext()) {
-            EObject next = (EObject) allContentsOuter.next();
+        TreeIterator<Object> allContentsInner = EcoreUtil.getAllContents(rightInner, true);
+        while (allContentsInner.hasNext()) {
+            EObject next = (EObject) allContentsInner.next();
             if (((EcoreBigraph) copyInner).isBRoot(next)) {
                 EAttribute indexAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
                 Integer index = (Integer) next.eGet(indexAttr);
-                rootsOuterIndex.put(index, next);
-                if (rootsOuterIndex.size() == copyInner.getRoots().size()) {
+                rootsInnerIndex.put(index, next);
+                if (rootsInnerIndex.size() == copyInner.getRoots().size()) {
                     break;
                 }
             }
@@ -556,8 +556,8 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             if (((EcoreBigraph) copyOuter).isBSite(next)) {
                 EAttribute indexAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
                 Integer index = (Integer) next.eGet(indexAttr);
-                // retrieve corresponding parent from 'outer bigraph'
-                EObject rootOuter = rootsOuterIndex.get(index);
+                // retrieve corresponding parent from 'inner bigraph'
+                EObject rootOuter = rootsInnerIndex.get(index);
                 renameContentsRecursively((EcoreBigraph) copyInner, rootOuter, rewriteNameSupplier);
             }
         }
@@ -570,15 +570,15 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             EStructuralFeature prntRef = nextSite.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
             EObject parentNodeLeft = (EObject) nextSite.eGet(prntRef);
             // retrieve corresponding parent from 'outer bigraph'
-            EObject rootOuter = rootsOuterIndex.get(index);
-            EStructuralFeature childRefOuter = rootOuter.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-            EList<EObject> childsOuter = (EList<EObject>) rootOuter.eGet(childRefOuter);
-            for (int i = childsOuter.size() - 1; i >= 0; i--) {
-                EObject eachOuterChild = childsOuter.get(i);
-                EStructuralFeature prntRefOuter = eachOuterChild.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-                if (prntRefOuter != null)
-                    eachOuterChild.eSet(prntRefOuter, null);
-                BigraphUtil.setParentOfNode(eachOuterChild, parentNodeLeft);
+            EObject rootInner = rootsInnerIndex.get(index);
+            EStructuralFeature childRefInner = rootInner.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+            EList<EObject> childsInner = (EList<EObject>) rootInner.eGet(childRefInner);
+            for (int i = childsInner.size() - 1; i >= 0; i--) {
+                EObject eachInnerChild = childsInner.get(i);
+                EStructuralFeature prntRefInner = eachInnerChild.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+                if (prntRefInner != null)
+                    eachInnerChild.eSet(prntRefInner, null);
+                BigraphUtil.setParentOfNode(eachInnerChild, parentNodeLeft);
             }
 
             // finally: remove the site node from the 'outer bigraph'
@@ -664,14 +664,6 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         for (EObject next1 : node.eContents()) {
             renameContentsRecursively(bigraph, next1, nameSupplier);
         }
-    }
-
-    private BigraphEntity getNodeFromPort(List<AbstractMap.SimpleImmutableEntry<BigraphEntity.NodeEntity, BigraphEntity.Port>> collect, BigraphEntity searchPattern) {
-        if (!BigraphEntityType.isPort(searchPattern)) return null;
-        for (Map.Entry<BigraphEntity.NodeEntity, BigraphEntity.Port> each : collect) {
-            if (each.getValue().equals(searchPattern)) return each.getKey();
-        }
-        return null;
     }
 
     protected void assertSignaturesAreSame(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleSignatureException {
