@@ -34,6 +34,7 @@
         <emf.codegen.version>2.16.0</emf.codegen.version>
         <emf.cdo.version>4.7.0</emf.cdo.version>
         <eclipse.mirror>http://download.eclipse.org/</eclipse.mirror>
+        <eclipse.collections.version>10.4.0</eclipse.collections.version>
         <junit.version>5.4.0</junit.version>
         <log4j.version>1.7.30</log4j.version>
         <graphviz.version>0.8.3</graphviz.version>
@@ -377,12 +378,12 @@
             <dependency>
                 <groupId>org.eclipse.collections</groupId>
                 <artifactId>eclipse-collections-api</artifactId>
-                <version>10.3.0</version>
+                <version>${eclipse.collections.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.collections</groupId>
                 <artifactId>eclipse-collections</artifactId>
-                <version>10.3.0</version>
+                <version>${eclipse.collections.version}</version>
             </dependency>
             <!-- Spring Framework -->
             <dependency>
