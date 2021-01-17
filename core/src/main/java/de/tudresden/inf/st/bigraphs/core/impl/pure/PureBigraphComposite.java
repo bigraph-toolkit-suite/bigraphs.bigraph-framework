@@ -14,6 +14,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -200,8 +204,8 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         // Collect outer names
         EStructuralFeature leftOuterNameFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
         EStructuralFeature rightOuterNameFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
-        HashMap<String, EObject> outernamesOuterIndexLeft = new HashMap<>();
-        HashMap<String, EObject> outernamesOuterIndexRight = new HashMap<>();
+        MutableMap<String, EObject> outernamesOuterIndexLeft = Maps.mutable.empty(); //new HashMap<>();
+//        MutableMap<String, EObject> outernamesOuterIndexRight = Maps.mutable.empty(); //new HashMap<>();
         if (Objects.nonNull(left.eGet(leftOuterNameFeature))) {
             EList<EObject> outernames = (EList<EObject>) left.eGet(leftOuterNameFeature);
             for (EObject eachOuterName : outernames) {
@@ -219,7 +223,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             public void notifyChanged(Notification notification) {
                 // Edges
                 if (notification.getFeature() == rightEdgesFeature) {
-                    Collection<DynamicEObjectImpl> edges = new ArrayList<>();
+                    MutableList<DynamicEObjectImpl> edges = Lists.mutable.empty(); //new ArrayList<>();
                     if (notification.getNewValue() instanceof Collection) {
                         edges.addAll((Collection) notification.getNewValue());
                     } else {
@@ -233,7 +237,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
 
                 // Outer names
                 if (notification.getFeature() == rightOuterNameFeature) {
-                    Collection<DynamicEObjectImpl> outernames = new ArrayList<>();
+                    MutableList<DynamicEObjectImpl> outernames = Lists.mutable.empty(); //new ArrayList<>();
                     if (notification.getNewValue() instanceof Collection) {
                         outernames.addAll((Collection) notification.getNewValue());
                     } else {
@@ -259,7 +263,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
 
                 // Inner names
                 if (notification.getFeature() == rightInnerNameFeature) {
-                    Collection<DynamicEObjectImpl> inner = new ArrayList<>();
+                    MutableList<DynamicEObjectImpl> inner = Lists.mutable.empty();
                     if (notification.getNewValue() instanceof Collection) {
                         inner.addAll((Collection) notification.getNewValue());
                     } else {
@@ -393,7 +397,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         EContentAdapter adapter2 = new EContentAdapter() {
             public void notifyChanged(Notification notification) {
                 if (notification.getFeature() == rightEdgesFeature) {
-                    Collection<DynamicEObjectImpl> edges = new ArrayList<>();
+                    MutableList<DynamicEObjectImpl> edges = Lists.mutable.empty(); //new ArrayList<>();
                     if (notification.getNewValue() instanceof Collection) {
                         edges.addAll((Collection) notification.getNewValue());
                     } else {
@@ -484,8 +488,8 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
 
 
         EStructuralFeature rightOuterNamesFeature = rightInner.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
-        HashMap<Integer, EObject> rootsInnerIndex = new HashMap<>();
-        HashMap<String, EObject> rightOuterNamesIndex = new HashMap<>();
+        MutableMap<Integer, EObject> rootsInnerIndex = Maps.mutable.empty(); //new HashMap<>();
+        MutableMap<String, EObject> rightOuterNamesIndex = Maps.mutable.empty(); //new HashMap<>();
         if (Objects.nonNull(rightInner.eGet(rightOuterNamesFeature))) {
             EList<EObject> outernames = (EList<EObject>) rightInner.eGet(rightOuterNamesFeature);
             for (EObject eachOuterName : outernames) {
@@ -562,7 +566,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             }
         }
 
-        ArrayList<BigraphEntity.SiteEntity> leftSites = new ArrayList<>(copyOuter.getSites());
+        MutableList<BigraphEntity.SiteEntity> leftSites = Lists.mutable.ofAll(copyOuter.getSites()); // new ArrayList<>(copyOuter.getSites());
         for (int k = leftSites.size() - 1; k >= 0; k--) {
             EObject nextSite = leftSites.get(k).getInstance();
             EAttribute indexAttr = EMFUtils.findAttribute(nextSite.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
@@ -592,7 +596,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
             EContentAdapter adapter2 = new EContentAdapter() {
                 public void notifyChanged(Notification notification) {
                     if (notification.getFeature() == rightEdgesFeature) {
-                        Collection<DynamicEObjectImpl> edges = new ArrayList<>();
+                        MutableList<DynamicEObjectImpl> edges = Lists.mutable.empty(); //new ArrayList<>();
                         if (notification.getNewValue() instanceof Collection) {
                             edges.addAll((Collection) notification.getNewValue());
                         } else {
