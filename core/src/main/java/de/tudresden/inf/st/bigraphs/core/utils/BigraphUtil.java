@@ -1,11 +1,16 @@
 package de.tudresden.inf.st.bigraphs.core.utils;
 
 import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.Objects;
+import java.util.stream.Stream;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 
 /**
  * @author Dominik Grzelak
@@ -42,6 +47,31 @@ public class BigraphUtil {
         EStructuralFeature prntRef = node.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         Objects.requireNonNull(prntRef);
         node.eSet(prntRef, parent); // child is automatically added to the parent according to the ecore model
+    }
+
+    // somewhat necessary, if bigrids are going to be used later in combination with other models
+
+    /**
+     * This method merges the two given signatures {@code left} and {@code right}.
+     * A completely new instance will be created with a new underlying Ecore signature meta-model.
+     * <p>
+     * If either one of the given signatures is {@code null}, the other one is simply returned.
+     *
+     * @param left  a signature
+     * @param right another signature to merge with {@code left}
+     * @return a merged signature, or just {@code left} or {@code right}, if the other one is {@code null}
+     * @throws RuntimeException if the underlying meta-model is invalid that is created in the merging process.
+     */
+    public static DefaultDynamicSignature mergeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+        if (Objects.nonNull(left) && Objects.nonNull(right)) {
+            DynamicSignatureBuilder sb = pureSignatureBuilder();
+            Stream.concat(left.getControls().stream(), right.getControls().stream()).forEach(c -> {
+                sb.newControl(c.getNamedType(), sb.newControl().getArity())
+                        .kind(c.getControlKind()).assign();
+            });
+            return sb.create();
+        }
+        return Objects.isNull(right) ? left : right;
     }
 
     /**
