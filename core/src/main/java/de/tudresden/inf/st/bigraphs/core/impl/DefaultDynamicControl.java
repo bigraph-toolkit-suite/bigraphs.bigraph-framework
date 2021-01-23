@@ -2,7 +2,6 @@ package de.tudresden.inf.st.bigraphs.core.impl;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 
 import java.util.Objects;
@@ -17,34 +16,34 @@ import java.util.Objects;
  */
 public class DefaultDynamicControl extends AbstractControl<StringTypedName, FiniteOrdinal<Integer>> {
 
-    private final ControlKind kindOfControl;
+    private final ControlStatus statusOfControl;
 
     /**
-     * Status will be set to {@link ControlKind#ACTIVE}
+     * Status will be set to {@link ControlStatus#ACTIVE}
      *
      * @param name  the label of the control
      * @param arity the arity of the control
      */
     protected DefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity) {
-        this(name, arity, ControlKind.ACTIVE);
+        this(name, arity, ControlStatus.ACTIVE);
     }
 
-    private DefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity, ControlKind kindOfControl) {
+    private DefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity, ControlStatus statusOfControl) {
         super(name, arity);
-        if (Objects.isNull(kindOfControl)) {
-            kindOfControl = ControlKind.ACTIVE;
+        if (Objects.isNull(statusOfControl)) {
+            statusOfControl = ControlStatus.ACTIVE;
         }
-        this.kindOfControl = kindOfControl;
+        this.statusOfControl = statusOfControl;
     }
 
     public static DefaultDynamicControl createDefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity,
-                                                                    ControlKind kindOfControl) {
+                                                                    ControlStatus kindOfControl) {
         return new DefaultDynamicControl(name, arity, kindOfControl);
     }
 
     @Override
-    public ControlKind getControlKind() {
-        return kindOfControl;
+    public ControlStatus getControlKind() {
+        return statusOfControl;
     }
 
     @Override
@@ -53,11 +52,11 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
         if (!(o instanceof DefaultDynamicControl)) return false;
         if (!super.equals(o)) return false;
         DefaultDynamicControl that = (DefaultDynamicControl) o;
-        return kindOfControl == that.kindOfControl;
+        return statusOfControl == that.statusOfControl;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), kindOfControl);
+        return Objects.hash(super.hashCode(), statusOfControl);
     }
 }

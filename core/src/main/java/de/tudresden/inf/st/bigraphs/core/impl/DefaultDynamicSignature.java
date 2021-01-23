@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractSignature;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControl;
 import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BSignature;
@@ -23,7 +23,7 @@ public final class DefaultDynamicSignature extends AbstractSignature<DefaultDyna
         for (BControl bControl : bSignature.getBControls()) {
             dynamicSignatureBuilder = dynamicSignatureBuilder
                     .newControl(bControl.getName(), bControl.getArity())
-                    .kind(ControlKind.fromString(bControl.getStatus().getName())).assign();
+                    .kind(ControlStatus.fromString(bControl.getStatus().getName())).assign();
         }
         this.controls = dynamicSignatureBuilder.create().getControls();
     }

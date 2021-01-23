@@ -24,6 +24,6 @@ public interface Control<NT extends NamedType, T extends FiniteOrdinal> extends 
      *
      * @return kind of the control
      */
-    ControlKind getControlKind();
+    ControlStatus getControlKind();
 
 }

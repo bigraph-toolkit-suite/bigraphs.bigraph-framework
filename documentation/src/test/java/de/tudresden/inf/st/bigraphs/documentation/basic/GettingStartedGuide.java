@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.documentation.basic;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
@@ -91,7 +91,7 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
         DefaultDynamicSignature signature = signatureBuilder
-                .newControl().identifier("User").arity(1).kind(ControlKind.ATOMIC).assign()
+                .newControl().identifier("User").arity(1).kind(ControlStatus.ATOMIC).assign()
                 .newControl(StringTypedName.of("Computer"), FiniteOrdinal.ofInteger(2)).assign()
                 .create();
         // (1) end

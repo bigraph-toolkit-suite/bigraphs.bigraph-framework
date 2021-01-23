@@ -3,7 +3,7 @@ package de.tudresden.inf.st.bigraphs.converter.bigmc;
 import de.tudresden.inf.st.bigraphs.converter.ReactiveSystemPrettyPrinter;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -163,7 +163,7 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
         StringBuilder s = new StringBuilder();
         Set<Control<?, ?>> controls = sig.getControls();
         for (Control ctrl : controls) {
-            s.append(ctrl.getControlKind().equals(ControlKind.ACTIVE) ? "%active " : "%passive ")
+            s.append(ctrl.getControlKind().equals(ControlStatus.ACTIVE) ? "%active " : "%passive ")
                     .append(ctrl.getNamedType().stringValue()).append(" : ")
                     .append(ctrl.getArity().getValue()).append(";").append(LINE_SEP);
         }

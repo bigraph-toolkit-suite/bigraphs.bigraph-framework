@@ -1,11 +1,9 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractSignature;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**

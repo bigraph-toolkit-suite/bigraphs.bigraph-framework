@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.converter.bigred;
 
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
@@ -50,7 +50,7 @@ public class DefaultSignatureXMLLoader implements BigRedXmlLoader {
             XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
             String cName = null;
             int arityCnt = 0;
-            ControlKind kind = null;
+            ControlStatus kind = null;
             while (eventReader.hasNext()) {
                 XMLEvent event = eventReader.nextEvent();
 
@@ -62,7 +62,7 @@ public class DefaultSignatureXMLLoader implements BigRedXmlLoader {
                         while (attributes.hasNext()) {
                             Attribute attribute = attributes.next();
                             if (attribute.getName().toString().equals("kind")) {
-                                kind = ControlKind.fromString(attribute.getValue());
+                                kind = ControlStatus.fromString(attribute.getValue());
                             }
                             if (attribute.getName().toString().equals("name")) {
                                 cName = attribute.getValue();

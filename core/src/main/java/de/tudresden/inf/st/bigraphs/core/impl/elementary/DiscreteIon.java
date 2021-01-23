@@ -35,7 +35,7 @@ public class DiscreteIon<S extends Signature<? extends Control<? extends NamedTy
                     throw new RuntimeException(e);
                 }
             });
-            if (signature.getControlByName(name.stringValue()).getControlKind() != ControlKind.ATOMIC)
+            if (signature.getControlByName(name.stringValue()).getControlKind() != ControlStatus.ATOMIC)
                 hierarchy.down().addSite();
         } catch (ControlIsAtomicException e) {
             throw new RuntimeException("Control shouldn't be atomic!");

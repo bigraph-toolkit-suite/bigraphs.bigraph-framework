@@ -5,7 +5,7 @@ package de.tudresden.inf.st.bigraphs.core;
  *
  * @author Dominik Grzelak
  */
-public enum ControlKind {
+public enum ControlStatus {
     ATOMIC, ACTIVE, PASSIVE;
 
     /**
@@ -16,14 +16,14 @@ public enum ControlKind {
      * @return {@true} if the control is atomic, otherwise {@code false}
      */
     public static boolean isAtomic(Control control) {
-        return control.getControlKind() == ControlKind.ATOMIC;
+        return control.getControlKind() == ControlStatus.ATOMIC;
     }
 
     public static boolean isActive(Control control) {
-        return control.getControlKind() == ControlKind.ACTIVE;
+        return control.getControlKind() == ControlStatus.ACTIVE;
     }
 
-    public static ControlKind fromString(String value) {
+    public static ControlStatus fromString(String value) {
         if (value.equalsIgnoreCase("atomic")) return ATOMIC;
         if (value.equalsIgnoreCase("active")) return ACTIVE;
         if (value.equalsIgnoreCase("passive")) return PASSIVE;

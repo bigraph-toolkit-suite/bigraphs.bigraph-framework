@@ -1,8 +1,11 @@
 package de.tudresden.inf.st.bigraphs.core.utils.emf;
 
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.ecore.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -92,9 +95,22 @@ public class EMFUtils {
                 .collect(Collectors.toList());
     }
 
+    public static Map<String, EReference> findAllReferences2(EClass eClass) {
+        MutableMap<String, EReference> refMap = Maps.mutable.empty();
+        eClass.getEAllReferences()
+                .forEach(x -> {
+                    refMap.put(x.getName(), x);
+                });
+        return refMap;
+    }
+
     public static void addSuperType(EClass anEClass, EPackage aPackage,
                                     String name) {
         final EClass eSuperClass = (EClass) aPackage.getEClassifier(name);
+        anEClass.getESuperTypes().add(eSuperClass);
+    }
+
+    public static void addSuperType(EClass anEClass, EClass eSuperClass) {
         anEClass.getESuperTypes().add(eSuperClass);
     }
 

@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.simulation.encoding;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -139,7 +139,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                             String newLabel = "" + ((BigraphEntity.SiteEntity) u).getIndex();
                             DefaultDynamicControl defaultDynamicControl =
                                     DefaultDynamicControl.createDefaultDynamicControl(StringTypedName.of(newLabel),
-                                            FiniteOrdinal.ofInteger(0), ControlKind.ATOMIC);
+                                            FiniteOrdinal.ofInteger(0), ControlStatus.ATOMIC);
                             BigraphEntity parent = bigraph.getParent(u);
                             //rewrite parent
                             u = BigraphEntity.createNode(u.getInstance(), defaultDynamicControl);

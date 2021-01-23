@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.ControlBuilder;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
@@ -14,13 +14,13 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
  * @see DynamicSignatureBuilder
  */
 public class DynamicControlBuilder extends ControlBuilder<StringTypedName, FiniteOrdinal<Integer>, DynamicControlBuilder> {
-    private ControlKind kind;
+    private ControlStatus kind;
 
     protected DynamicControlBuilder() {
         super();
     }
 
-    public DynamicControlBuilder kind(ControlKind kind) {
+    public DynamicControlBuilder kind(ControlStatus kind) {
         this.kind = kind;
         return self();
     }

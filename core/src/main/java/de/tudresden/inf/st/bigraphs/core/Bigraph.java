@@ -106,7 +106,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
         if (first.isPresent()) {
             BigraphEntity<?> parent = getParent(first.get());
             while (Objects.nonNull(parent) && !BigraphEntityType.isRoot(parent)) {
-                if (!ControlKind.isActive(parent.getControl())) {
+                if (!ControlStatus.isActive(parent.getControl())) {
                     return false;
                 }
                 parent = getParent(parent);
@@ -117,10 +117,10 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     }
 
     default <C extends Control<?, ?>> boolean isActiveAtNode(BigraphEntity.NodeEntity<C> node) {
-        if (Objects.nonNull(node) && ControlKind.isActive(node.getControl())) {
+        if (Objects.nonNull(node) && ControlStatus.isActive(node.getControl())) {
             BigraphEntity<?> parent = getParent(node);
             while (Objects.nonNull(parent) && !BigraphEntityType.isRoot(parent)) {
-                if (!ControlKind.isActive(parent.getControl())) {
+                if (!ControlStatus.isActive(parent.getControl())) {
                     return false;
                 }
                 parent = getParent(parent);

@@ -17,7 +17,6 @@ import org.eclipse.collections.api.block.function.primitive.IntToObjectFunction;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EClassImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -438,7 +437,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         void assertControlIsNonAtomic(BigraphEntity bigraphEntity) {
             if (Objects.nonNull(bigraphEntity) &&
                     !BigraphEntityType.isRoot(bigraphEntity) &&
-                    ControlKind.isAtomic(bigraphEntity.getControl())) {
+                    ControlStatus.isAtomic(bigraphEntity.getControl())) {
                 throw new ControlIsAtomicException();
             }
         }
@@ -1423,6 +1422,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     private void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
         try {
+            // This basically creates a new package and contains all elements later that will be generated
             loadedEPackage = BigraphArtifacts.loadInternalBigraphMetaMetaModel();
             loadedEPackage.setNsPrefix(modelData.getNsPrefix());
             loadedEPackage.setNsURI(modelData.getNsUri());

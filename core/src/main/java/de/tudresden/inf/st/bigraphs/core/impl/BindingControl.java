@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractControl;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 
@@ -21,11 +21,11 @@ public class BindingControl<NT extends NamedType<?>, FO extends FiniteOrdinal<?>
     }
 
     public boolean isBindingControl() {
-        return getArity().equals(FiniteOrdinal.ofInteger(0)) && getControlKind().equals(ControlKind.PASSIVE);
+        return getArity().equals(FiniteOrdinal.ofInteger(0)) && getControlKind().equals(ControlStatus.PASSIVE);
     }
 
     @Override
-    public ControlKind getControlKind() {
+    public ControlStatus getControlKind() {
         throw new RuntimeException("Not yet implemented");
     }
 }

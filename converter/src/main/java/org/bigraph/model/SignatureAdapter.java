@@ -2,7 +2,7 @@ package org.bigraph.model;
 
 
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -52,7 +52,7 @@ public class SignatureAdapter extends org.bigraph.model.Signature implements ISi
         return ports;
     }
 
-    private org.bigraph.model.Control.Kind translate(ControlKind kind) {
+    private org.bigraph.model.Control.Kind translate(ControlStatus kind) {
         switch (kind) {
             case ATOMIC:
                 return org.bigraph.model.Control.Kind.ATOMIC;

@@ -1,5 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -43,13 +45,28 @@ public interface Signature<C extends Control<?, ?>> {
         return null;
     }
 
-    default C getControl(String name, int arity, ControlKind controlKind) {
+    default C getControl(String name, int arity, ControlStatus controlStatus) {
         for (C next1 : getControls()) {
             if (next1.getNamedType().stringValue().equals(name) &&
                     next1.getArity().getValue().intValue() == arity &&
-                    next1.getControlKind().equals(controlKind)) {
+                    next1.getControlKind().equals(controlStatus)) {
                 return next1;
             }
+        }
+        return null;
+    }
+
+    default FiniteOrdinal<?> getArity(String controlName) {
+        C controlByName = getControlByName(controlName);
+        if (Objects.nonNull(controlByName)) {
+            return controlByName.getArity();
+        }
+        return null;
+    }
+
+    default FiniteOrdinal<?> getArity(C control) {
+        if (getControls().contains(control)) {
+            return control.getArity();
         }
         return null;
     }
