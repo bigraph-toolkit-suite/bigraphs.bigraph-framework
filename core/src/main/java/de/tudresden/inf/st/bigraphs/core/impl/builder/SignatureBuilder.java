@@ -10,7 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Abstract base builder class for all kinds of signatures.
+ * Abstract base builder class for all types of signatures.
  *
  * @param <NT> type of the name representation
  * @param <FO> type of the finite ordinal representation

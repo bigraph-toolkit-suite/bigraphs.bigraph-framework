@@ -20,37 +20,25 @@ public abstract class AbstractSignature<C extends Control<? extends NamedType, ?
 
     // collection of controls of type C
     protected Set<C> controls;
-    protected SignatureBaseModelPackage ePackage = SignatureBaseModelPackage.eINSTANCE;
-    protected BSignature instanceModel;
 
     protected AbstractSignature() {
         controls = new LinkedHashSet<>();
     }
 
-    protected AbstractSignature(BSignature bSignature) {
-        this();
-        EcoreSignature.validateBSignature(bSignature);
-        instanceModel = bSignature;
-    }
-
     protected AbstractSignature(Set<C> controls) {
         this.controls = controls;
-        SignatureBaseModelFactory factory = SignatureBaseModelFactory.eINSTANCE;
-        instanceModel = factory.createBSignature();
-        this.controls.forEach(x -> {
-            BControl bControl = factory.createBControl();
-            bControl.setArity(x.getArity().getValue().intValue());
-            bControl.setName(x.getNamedType().stringValue());
-            instanceModel.getBControls().add(bControl);
-        });
-        EcoreSignature.validateBSignature(instanceModel);
     }
-
 
     @Override
     public Set<C> getControls() {
         return controls;
     }
+
+    @Override
+    public abstract EPackage getModelPackage();
+
+    @Override
+    public abstract EObject getModel();
 
     @Override
     public boolean equals(Object o) {
@@ -70,15 +58,5 @@ public abstract class AbstractSignature<C extends Control<? extends NamedType, ?
         return getClass().getSimpleName() + "{" +
                 "controls=" + controls +
                 '}';
-    }
-
-    @Override
-    public EPackage getModelPackage() {
-        return ePackage;
-    }
-
-    @Override
-    public EObject getModel() {
-        return instanceModel;
     }
 }

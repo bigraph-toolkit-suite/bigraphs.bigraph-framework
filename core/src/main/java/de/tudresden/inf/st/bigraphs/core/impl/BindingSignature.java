@@ -3,6 +3,8 @@ package de.tudresden.inf.st.bigraphs.core.impl;
 import de.tudresden.inf.st.bigraphs.core.AbstractSignature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Set;
 
@@ -28,4 +30,15 @@ public class BindingSignature extends AbstractSignature<BindingControl<? extends
         BindingControl<? extends NamedType, ? extends FiniteOrdinal> controlByName = getControlByName(control.getNamedType().stringValue());
         return controlByName.isBindingControl();
     }
+
+    @Override
+    public EPackage getModelPackage() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public EObject getModel() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
 }
