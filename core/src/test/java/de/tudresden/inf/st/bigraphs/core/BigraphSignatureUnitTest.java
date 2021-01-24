@@ -2,16 +2,23 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.*;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Map;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.kindSignatureBuilder;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphSignatureUnitTest {
@@ -31,6 +38,95 @@ public class BigraphSignatureUnitTest {
         StringTypedName edge2A = StringTypedName.of("edge2");
         StringTypedName edge2B = StringTypedName.of("edge2");
         Assertions.assertEquals(edge2A, edge2B);
+    }
+
+    @Test
+    void test_create_extendedKindSignature() throws IOException {
+
+    }
+
+    @Test
+    @DisplayName("Create kind signature and test default behavior: All controls are active (non-atomic)")
+    void create_instanceModelFromExtendedKindSignatureClass() throws IOException {
+        KindSignatureBuilder ksb = kindSignatureBuilder();
+
+        KindSignature signature = ksb.addControl("Room", 1)
+                .addControl("Person", 2)
+                .addControl("Computer", 2)
+                .create();
+        EPackage modelPackage = signature.getModelPackage();
+        EObject model = signature.getModel();
+        assert modelPackage != null;
+        assert model != null;
+
+        Map<String, EReference> allRefsBKindSignature = EMFUtils.findAllReferences2(model.eClass());
+        EReference refBKindSorts = allRefsBKindSignature.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
+        EList<EObject> kindSorts = (EList<EObject>) model.eGet(refBKindSorts);
+        for (EObject eachKindSort : kindSorts) {
+            System.out.println(eachKindSort);
+            if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC)) {
+                Map<String, EReference> allBKindSortRefs = EMFUtils.findAllReferences2(eachKindSort.eClass());
+                EReference refKindSortChildren = allBKindSortRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDSORTS);
+                EList<EObject> kindSortChildren = (EList<EObject>) eachKindSort.eGet(refKindSortChildren);
+                for (EObject eachChild : kindSortChildren) {
+                    System.out.println(eachChild);
+                }
+            }
+            if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC)) {
+
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Create kind signature where place-sorting is specified")
+    void create_instanceModelFromExtendedKindSignatureClass_2() throws ControlNotExistsException {
+        KindSignatureBuilder ksb = kindSignatureBuilder();
+
+        KindSignature signature = ksb.addControl("Room", 1)
+                .addControl("Person", 2)
+                .addControl("Computer", 2)
+                .addActiveKindSort("Room", Lists.mutable.of("Person", "Computer"))
+                .addPassiveKindSort("Person")
+                .addPassiveKindSort("Computer")
+                .create();
+        EPackage modelPackage = signature.getModelPackage();
+        EObject model = signature.getModel();
+        assert modelPackage != null;
+        assert model != null;
+
+        Map<String, EReference> allRefsBKindSignature = EMFUtils.findAllReferences2(model.eClass());
+        EReference refBKindSorts = allRefsBKindSignature.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
+        EList<EObject> kindSorts = (EList<EObject>) model.eGet(refBKindSorts);
+        int cntRoom = 0;
+        int cntAtomics = 0;
+        for (EObject eachKindSort : kindSorts) {
+            if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC)) {
+                Map<String, EReference> allBKindSortRefs = EMFUtils.findAllReferences2(eachKindSort.eClass());
+                EReference refKindSortChildren = allBKindSortRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDSORTS);
+                EList<EObject> kindSortChildren = (EList<EObject>) eachKindSort.eGet(refKindSortChildren);
+                System.out.println("Active control: " + eachKindSort.eClass().getName());
+                for (EObject eachChild : kindSortChildren) {
+                    System.out.println("\t" + eachChild.eClass().getName());
+                    cntRoom++;
+                }
+            }
+            if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC)) {
+                System.out.println("Passive control: " + eachKindSort.eClass().getName());
+                cntAtomics++;
+            }
+        }
+
+        assert cntRoom == 2;
+        assert cntAtomics == 2;
+    }
+
+    private EClass extendBControlEClass(String controlName, EPackage packageKindSig, EPackage dynamicSig) {
+        EClassifier eClassifier = dynamicSig.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BCONTROL);
+        EClass controlClass = EMFUtils.createEClass(controlName);
+        EMFUtils.addSuperType(controlClass, (EClass) eClassifier);
+        packageKindSig.getEClassifiers().add(controlClass);
+        return controlClass;
     }
 
     //Feature: provide type-checking at compile time (because of type erasure)

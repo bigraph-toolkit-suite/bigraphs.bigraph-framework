@@ -88,7 +88,7 @@ public class DefaultSignatureXMLLoader implements BigRedXmlLoader {
                         arityCnt++;
                     }
                     if (endElement.getName().getLocalPart().equals("control")) {
-                        b.newControl().kind(kind).identifier(StringTypedName.of(cName))
+                        b.newControl().status(kind).identifier(StringTypedName.of(cName))
                                 .arity(arityCnt).assign();
                         cName = null;
                     }

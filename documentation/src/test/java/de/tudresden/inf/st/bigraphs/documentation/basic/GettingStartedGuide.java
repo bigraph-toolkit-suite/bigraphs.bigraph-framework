@@ -91,7 +91,7 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
         DefaultDynamicSignature signature = signatureBuilder
-                .newControl().identifier("User").arity(1).kind(ControlStatus.ATOMIC).assign()
+                .newControl().identifier("User").arity(1).status(ControlStatus.ATOMIC).assign()
                 .newControl(StringTypedName.of("Computer"), FiniteOrdinal.ofInteger(2)).assign()
                 .create();
         // (1) end

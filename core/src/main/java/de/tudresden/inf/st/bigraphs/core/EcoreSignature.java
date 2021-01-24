@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.models.kindSignatureBaseModel.BKindSignature;
 import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BSignature;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
@@ -16,7 +15,6 @@ public interface EcoreSignature {
      *
      * @return the metamodel of the base signature specification
      * @see de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage
-     * @see de.tudresden.inf.st.bigraphs.models.kindSignatureBaseModel.KindSignatureBaseModelPackage
      */
     EPackage getModelPackage();
 
@@ -44,7 +42,8 @@ public interface EcoreSignature {
         }
     }
 
-    static void validateBKindSignature(BKindSignature bKindSignature) {
+    static void validateBKindSignature(EObject bKindSignature) {
+        assert bKindSignature.eClass().getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSIGNATURE);
         //TODO perform OCL-based checks
         Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bKindSignature);
         if (diagnostic.getSeverity() != Diagnostic.OK) {

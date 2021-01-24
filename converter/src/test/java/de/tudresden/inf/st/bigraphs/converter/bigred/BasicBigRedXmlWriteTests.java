@@ -105,9 +105,9 @@ public class BasicBigRedXmlWriteTests {
     private static DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pure().createSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(3)).kind(ControlStatus.ATOMIC).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(2)).kind(ControlStatus.PASSIVE).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlStatus.ACTIVE).assign()
+                .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(3)).status(ControlStatus.ATOMIC).assign()
+                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(2)).status(ControlStatus.PASSIVE).assign()
+                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).status(ControlStatus.ACTIVE).assign()
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(0)).assign()
         ;
 

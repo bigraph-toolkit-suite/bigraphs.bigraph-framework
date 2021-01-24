@@ -13,6 +13,7 @@ public final class BigraphMetaModelConstants {
      */
     public final static String BIGRAPH_BASE_MODEL = "/model/bigraphBaseModel.ecore";
     public final static String SIGNATURE_BASE_MODEL = "/model/signatureBaseModel.ecore";
+//    public final static String KIND_SIGNATURE_BASE_MODEL = "/model/kindSignatureBaseModel.ecore";
 
     // Attributes
     public final static String ATTRIBUTE_INDEX = "index";
@@ -45,5 +46,23 @@ public final class BigraphMetaModelConstants {
     public final static String REFERENCE_BEDGES = "bEdges";
     public final static String REFERENCE_BROOTS = "bRoots";
 
+    public interface SignaturePackage {
+        String SORT_PREFIX = "Sort";
+        String ECLASS_BKINDSIGNATURE = "BKindSignature";
+        String ECLASS_BKINDPLACESORTINGS = "BKindPlaceSortings";
+        String ECLASS_BKINDSORTATOMIC = "BKindSortAtomic";
+        String ECLASS_KINDSORTNONATOMIC = "BKindSortNonAtomic";
+        String ECLASS_BCONTROL = "BControl";
+        String ECLASS_BCONTROLSTATUS = "BControlStatus";
+
+        String REFERENCE_BCONTROLS = "bControls";
+        String REFERENCE_BKINDPLACESORTS = "bKindPlaceSorts";
+        String REFERENCE_BKINDSORTS = "bKindSorts";
+
+        // Attributes
+        String ATTRIBUTE_NAME = "name";
+        String ATTRIBUTE_ARITY = "arity";
+        String ATTRIBUTE_STATUS = "status";
+    }
 
 }

@@ -116,6 +116,14 @@ public final class FactoryCreationContext {
         });
     }
 
+    static <S extends Signature> Object createKindSignatureBuilder(Class<PureBigraph> bigraphClass) {
+        return current().map((ctx) -> {
+            return ctx.newKindSignatureBuilder();
+        }).orElseGet(() -> {
+            return begin(findFactoryFor(bigraphClass)).newKindSignatureBuilder();
+        });
+    }
+
     static BigraphComposite createOperator(Bigraph bigraph) {
         return current().map((ctx) -> {
             return ctx.newBigraphOperator(bigraph);
@@ -265,6 +273,10 @@ public final class FactoryCreationContext {
 
     private SignatureBuilder newSignatureBuilder() {
         return this.factory.createSignatureBuilder();
+    }
+
+    private SignatureBuilder newKindSignatureBuilder() {
+        return this.factory.createKindSignatureBuilder();
     }
 
     private PureBigraphFactory newPureBigraphFactory() {

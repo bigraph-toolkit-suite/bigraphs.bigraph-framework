@@ -41,12 +41,20 @@ public abstract class AbstractBigraphFactory<S extends Signature<? extends Contr
 //    }
 
     /**
-     * Creates a builder for creating signatures.
+     * Creates a builder for constructing pure dynamic signatures .
      *
      * @param <SB> type of the signature builder (i.e., the type of the controls)
      * @return a new signature builder instance
      */
     public abstract <SB extends SignatureBuilder> SB createSignatureBuilder();
+
+    /**
+     * Creates a builder for constructing kind signatures.
+     *
+     * @param <SB> type of the signature builder (i.e., the type of the controls)
+     * @return a new signature builder instance
+     */
+    public abstract <SB extends SignatureBuilder> SB createKindSignatureBuilder();
 
     /**
      * Throws a class cast exception when a signature is passed as argument which was not created with the

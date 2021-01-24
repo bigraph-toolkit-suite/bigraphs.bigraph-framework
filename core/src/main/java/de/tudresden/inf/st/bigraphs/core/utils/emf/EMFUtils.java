@@ -2,8 +2,19 @@ package de.tudresden.inf.st.bigraphs.core.utils.emf;
 
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -114,4 +125,28 @@ public class EMFUtils {
         anEClass.getESuperTypes().add(eSuperClass);
     }
 
+    public static void writeDynamicMetaModel(EPackage ePackage, OutputStream outputStream) throws IOException {
+        EMFUtils.writeDynamicMetaModel(ePackage, "UTF-8", outputStream);
+    }
+
+    public static void writeDynamicMetaModel(EPackage ePackage, String encoding, OutputStream outputStream) throws IOException {
+        ResourceSet metaResourceSet = new ResourceSetImpl();
+        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+        registerResourceFactories(metaResourceSet.getResourceFactoryRegistry());
+//        metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMLResourceFactoryImpl());
+
+        Resource metaResource = metaResourceSet.createResource(URI.createURI(ePackage.getName() + ".ecore")); //URI.createURI(ePackage.getName())); //URI.createURI(filename + ".ecore"));
+        metaResource.getContents().add(ePackage);
+        Map<String, Object> options = new HashMap<>();
+        options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
+        options.put(XMLResource.OPTION_ENCODING, encoding);
+        metaResource.save(outputStream, options);
+        outputStream.close();
+    }
+
+    public static void registerResourceFactories(Resource.Factory.Registry registry) {
+        registry.getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
+        registry.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+        registry.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+    }
 }

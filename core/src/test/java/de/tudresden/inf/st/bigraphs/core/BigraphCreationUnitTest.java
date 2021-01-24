@@ -755,11 +755,11 @@ public class BigraphCreationUnitTest {
                 .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlStatus.ACTIVE).identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlStatus.PASSIVE).identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlStatus.ACTIVE).identifier(StringTypedName.of("E")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlStatus.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlStatus.ACTIVE).identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(4)).assign()
+                .newControl().status(ControlStatus.ACTIVE).identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().status(ControlStatus.PASSIVE).identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().status(ControlStatus.ACTIVE).identifier(StringTypedName.of("E")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().status(ControlStatus.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().status(ControlStatus.ACTIVE).identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(4)).assign()
         ;
         DefaultDynamicSignature controlSignature = signatureBuilder.create();
         return (S) controlSignature;

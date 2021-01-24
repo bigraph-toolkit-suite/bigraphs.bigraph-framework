@@ -29,6 +29,12 @@ public class DynamicSignatureBuilder
         return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity));
     }
 
+    public DynamicSignatureBuilder addControl(String name, int arity) {
+        DynamicControlBuilder builder = createControlBuilder();
+        builder.withControlListBuilder(this);
+        return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity)).assign();
+    }
+
     /**
      * Creates a signature with the given controls.
      * <b>Note:</b> All previously assigned controls will be discarded.

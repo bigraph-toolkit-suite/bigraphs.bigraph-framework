@@ -5,10 +5,8 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Table;
 import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ContextIsNotActive;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
@@ -186,7 +184,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
                 // To check:
                 // 1) Has eachU a site as children? ->
-                //      -> children are allowed
+                //      -> children are allowed 
                 //      -> it's possible now that eachV can have more siblings than eachU
                 boolean hasSite = false;
                 // if the current element is a root then we automatically interpret it is a "site"
@@ -300,7 +298,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             // hier kann noch verbessert werden (ungueltige kombinationen werden auch aussortiert). der kombinationsraum
             // kann womöglich hier schon verkleinert werden
             List<Integer> nums2 = IntStream.range(0, numOfRoots).boxed().collect(toList());
-            Permutations.of(nums2).forEach(p -> {
+            Permutations.of(nums2).forEachOrdered(p -> {
                 combination.add(p.toArray(Integer[]::new));
             });
         }
@@ -565,7 +563,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                         // now we are left only with the remaining children precluding the redex match at the current level (height of the tree)
                         agentAdapter.getChildrenOf(eachNodeV).stream()
                                 .filter(x -> !savedRedexNodes.contains(x))
-                                .forEach(x -> {
+                                .forEachOrdered(x -> {
                                     BigraphEntity.NodeEntity newNode1 = (BigraphEntity.NodeEntity) builder.createNewNode(x.getControl(), ((BigraphEntity.NodeEntity) x).getName());
                                     newNodes.put(newNode1.getName(), newNode1);
                                     setParentOfNode(newNode1, newNode);
@@ -719,7 +717,12 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             if (namesTmp.size() == 0 || parameters.size() == 0) {
                 identityForParams = linkingsFactory.identity_e();
                 if (substitutionLinkingGraphForRedex.size() != 0) {
-                    identityForParams = identityForContext;
+                    // CHANGED TO:
+                    Set<StringTypedName> namesRedex = redexAdapter.getOuterNames().stream().map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
+                    identityForParams = namesRedex.size() != 0 ?
+                            linkingsFactory.identity(namesRedex.toArray(new NamedType[0])) : // as array
+                            identityForParams;
+//                    identityForParams = identityForContext; // COMMENTED
                     Placings<DefaultDynamicSignature>.Permutation permutation = placingsFactory.permutation(redexAdapter.getRoots().size());
                     identityForParams = ops(permutation).parallelProduct(identityForParams).getOuterBigraph();
                     for (Map.Entry<String, List<String>> each : substitutionLinkingGraphForRedex.entrySet()) {
@@ -732,16 +735,6 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                 }
             } else {
                 identityForParams = linkingsFactory.identity(namesTmp.toArray(new StringTypedName[0]));
-//                if (substitutionLinkingGraphForRedex.size() != 0) {
-//                    for (Map.Entry<String, List<String>> each : substitutionLinkingGraphForRedex.entrySet()) {
-//                        if (each.getValue().size() == 0) {
-//                            PureBigraphBuilder<DefaultDynamicSignature> b = pureBigraphFactory.createBigraphBuilder(agentAdapter.getSignature());
-//                            b.createOuterName(each.getKey());
-//                            PureBigraph idleOuter = b.createBigraph();
-//                            identityForParams = pureBigraphFactory.asBigraphOperator(identityForParams).parallelProduct(idleOuter).getOuterBigraph();
-//                        }
-//                    }
-//                }
             }
             // bigraph to prepare closing the inner names
 //            List<StringTypedName> closeInnerNames = context.getInnerNames().stream().map(x -> StringTypedName.of(x.getName())).collect(Collectors.toList());
@@ -757,12 +750,10 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 //                    .getOuterBigraph();
 
 
-            PureBigraph finalContext = context;
-            List<Integer> collect = context.getSites().stream().collect(Collectors.toMap(BigraphEntity.SiteEntity::getIndex, s -> finalContext.isActiveAtSite(s.getIndex())))
+            List<Integer> collect = context.getSites().stream().collect(Collectors.toMap(BigraphEntity.SiteEntity::getIndex, s -> context.isActiveAtSite(s.getIndex())))
                     .entrySet().stream().filter(k -> !k.getValue()).map(k -> k.getKey()).collect(toList());
             if (collect.size() != 0) {
                 throw new ContextIsNotActive(collect.stream().mapToInt(i -> i).toArray());
-
             }
 
             PureBigraph redexImage = ops(redexAdapter.getBigraphDelegate())

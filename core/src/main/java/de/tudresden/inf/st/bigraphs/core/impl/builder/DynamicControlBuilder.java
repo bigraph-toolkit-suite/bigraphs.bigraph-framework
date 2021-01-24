@@ -14,14 +14,14 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
  * @see DynamicSignatureBuilder
  */
 public class DynamicControlBuilder extends ControlBuilder<StringTypedName, FiniteOrdinal<Integer>, DynamicControlBuilder> {
-    private ControlStatus kind;
+    private ControlStatus status;
 
     protected DynamicControlBuilder() {
         super();
     }
 
-    public DynamicControlBuilder kind(ControlStatus kind) {
-        this.kind = kind;
+    public DynamicControlBuilder status(ControlStatus status) {
+        this.status = status;
         return self();
     }
 
@@ -40,6 +40,6 @@ public class DynamicControlBuilder extends ControlBuilder<StringTypedName, Finit
 
     @Override
     protected DefaultDynamicControl build() {
-        return DefaultDynamicControl.createDefaultDynamicControl(getType(), getArity(), this.kind);
+        return DefaultDynamicControl.createDefaultDynamicControl(getType(), getArity(), this.status);
     }
 }

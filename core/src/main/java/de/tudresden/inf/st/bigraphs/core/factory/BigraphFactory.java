@@ -11,6 +11,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -130,6 +131,10 @@ public final class BigraphFactory {
 
     public static synchronized DynamicSignatureBuilder pureSignatureBuilder() {
         return (DynamicSignatureBuilder) FactoryCreationContext.createSignatureBuilder(PureBigraph.class);
+    }
+
+    public static synchronized KindSignatureBuilder kindSignatureBuilder() {
+        return (KindSignatureBuilder) FactoryCreationContext.createKindSignatureBuilder(PureBigraph.class);
     }
 
     /**

@@ -12,7 +12,9 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.BasicExtendedMetaData;
 import org.eclipse.emf.ecore.util.Diagnostician;
+import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
@@ -26,8 +28,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.*;
 
-import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
-import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.SIGNATURE_BASE_MODEL;
+import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.*;
+import static de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils.registerResourceFactories;
+import static de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils.writeDynamicMetaModel;
 
 /**
  * A simple file utility class to serialize (deserialize) bigraphs to (from) Ecore-based bigraph model files.
@@ -35,12 +38,38 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.SIGNAT
  * @author Dominik Grzelak
  */
 public class BigraphArtifacts {
-
+    // register packages: https://www.cct.lsu.edu/~rguidry/eclipse-doc36/src-html/org/eclipse/emf/cdo/common/model/EMFUtil.html
     private final static String DEFAULT_ENCODING = "UTF-8";
 
     public enum Format {
         ECORE, XMI
     }
+
+    private static void enableExtendedMetadata(ResourceSet rs) {
+        final ExtendedMetaData extendedMetaData = new BasicExtendedMetaData(rs.getPackageRegistry());
+        rs.getLoadOptions().put(XMLResource.OPTION_EXTENDED_META_DATA, extendedMetaData);
+    }
+
+//    public static EPackage loadInternalKindSortingsMetaMetaModel() throws IOException {
+//        EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
+//        KindSignatureBaseModelPackage.eINSTANCE.eClass();
+//        ResourceSet resourceSet = new ResourceSetImpl();
+//        enableExtendedMetadata(resourceSet);
+//        URL resource1 = EMFUtils.class.getResource(KIND_SIGNATURE_BASE_MODEL);
+//        URI uri = URI.createURI(resource1.toString());
+//        EPackage.Registry.INSTANCE.put(KindSignatureBaseModelPackage.eNS_URI, KindSignatureBaseModelPackage.eINSTANCE);
+//        resourceSet.getPackageRegistry().put(KindSignatureBaseModelPackage.eNS_URI, KindSignatureBaseModelPackage.eINSTANCE);
+//        // resource factories
+//        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+//        registerResourceFactories(resourceSet.getResourceFactoryRegistry());
+////        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+////        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+//        Resource resource = resourceSet.createResource(uri);
+//        resource.load(Collections.EMPTY_MAP);
+//        EPackage ePackage = (EPackage) resource.getContents().get(0);
+//        validateModel(ePackage);
+//        return ePackage;
+//    }
 
     /**
      * Loads the internal metamodel of a bigraphical signature that is declared in the bigraphMetaModel dependency.
@@ -52,12 +81,17 @@ public class BigraphArtifacts {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         SignatureBaseModelPackage.eINSTANCE.eClass();
         ResourceSet resourceSet = new ResourceSetImpl();
+        enableExtendedMetadata(resourceSet);
 
         URL resource1 = EMFUtils.class.getResource(SIGNATURE_BASE_MODEL);
         URI uri = URI.createURI(resource1.toString());
+        EPackage.Registry.INSTANCE.put(SignatureBaseModelPackage.eNS_URI, SignatureBaseModelPackage.eINSTANCE);
         resourceSet.getPackageRegistry().put(SignatureBaseModelPackage.eNS_URI, SignatureBaseModelPackage.eINSTANCE);
         // resource factories
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+        registerResourceFactories(resourceSet.getResourceFactoryRegistry());
+//        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
         Resource resource = resourceSet.createResource(uri);
         resource.load(Collections.EMPTY_MAP);
         EPackage ePackage = (EPackage) resource.getContents().get(0);
@@ -79,11 +113,13 @@ public class BigraphArtifacts {
         URL resource1 = EMFUtils.class.getResource(BIGRAPH_BASE_MODEL);
         URI uri = URI.createURI(resource1.toString()); //URI.createPlatformResourceURI(resource1.toString(), true);
 //        URI uri = URI.createURI(ecoreResource);
+        EPackage.Registry.INSTANCE.put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
         resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
         // resource factories
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
-
+        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
+        registerResourceFactories(resourceSet.getResourceFactoryRegistry());
 
         //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
 //        resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
@@ -106,11 +142,13 @@ public class BigraphArtifacts {
 //        URL resource1 = EMFUtils.class.getResource(filePath);
         URI uri = URI.createURI(filePath); //resource1.toString()); //URI.createPlatformResourceURI(resource1.toString(), true);
 //        URI uri = URI.createURI(ecoreResource);
+        EPackage.Registry.INSTANCE.put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
         resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
         // resource factories
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
-
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
+        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+        registerResourceFactories(resourceSet.getResourceFactoryRegistry());
 
         //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
 //        resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
@@ -132,11 +170,13 @@ public class BigraphArtifacts {
 //        URL resource1 = EMFUtils.class.getResource(filePath);
 //        URI uri = URI.createURI(filePath); //resource1.toString()); //URI.createPlatformResourceURI(resource1.toString(), true);
 //        URI uri = URI.createURI(ecoreResource);
+        EPackage.Registry.INSTANCE.put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
         resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
         // resource factories
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
-
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl()); //probably not necessary
+        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+        registerResourceFactories(resourceSet.getResourceFactoryRegistry());
 
         //https://wiki.eclipse.org/EMF/FAQ#How_do_I_make_my_EMF_standalone_application_Eclipse-aware.3F
 //        resourceSet.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap(false));
@@ -249,13 +289,17 @@ public class BigraphArtifacts {
     private static ResourceSet initResourceSet(EPackage metaModelPackageWithSignature) {
         EcorePackage.eINSTANCE.eClass();
         ResourceSet load_resourceSet = new ResourceSetImpl();
-        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
-        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+//        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+        registerResourceFactories(load_resourceSet.getResourceFactoryRegistry());
+//        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
+//        load_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
 
         if (Objects.nonNull(metaModelPackageWithSignature)) {
-            // register the dynamic package locally
+            // register the dynamic package locally and globally
+            EPackage.Registry.INSTANCE.put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
             load_resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
             if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()) && !metaModelPackageWithSignature.getNsURI().isEmpty()) {
+                EPackage.Registry.INSTANCE.put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
                 load_resourceSet.getPackageRegistry().put(metaModelPackageWithSignature.getNsURI(), metaModelPackageWithSignature);
             }
         }
@@ -285,7 +329,7 @@ public class BigraphArtifacts {
      * @throws IOException
      */
     public static void exportAsMetaModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
-        writeDynamicMetaModel(bigraph.getModelPackage(), outputStream);
+        writeDynamicMetaModel(bigraph.getModelPackage(), DEFAULT_ENCODING, outputStream);
     }
 
     private static void writeDynamicInstanceModel(EPackage metaModelPackage, EObject instanceModel, OutputStream outputStream, String newNamespaceLocation) throws IOException {
@@ -296,12 +340,15 @@ public class BigraphArtifacts {
         EcorePackage.eINSTANCE.eClass();    // makes sure EMF is up and running, probably not necessary
         final ResourceSet resourceSet = new ResourceSetImpl();
 
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+        registerResourceFactories(resourceSet.getResourceFactoryRegistry());
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
+//        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
         final Resource outputRes = resourceSet.createResource(URI.createFileURI(ePackage.getName() + ".xmi")); //
         // add our new package to resource contents
         objects.forEach(x -> outputRes.getContents().add(x));
 //        outputRes.getContents().add(ePackage); //(!) then the meta model is also included in the instance model
+        EPackage.Registry.INSTANCE.put(ePackage.getNsURI(), ePackage);
         outputRes.getResourceSet().getPackageRegistry().put(ePackage.getNsURI(), ePackage);
 
         Map<String, Object> options = new HashMap<>();
@@ -312,6 +359,7 @@ public class BigraphArtifacts {
         URI oldURI = Objects.nonNull(ePackage.eResource()) ? ePackage.eResource().getURI() : null;
         if (Objects.nonNull(newNamespaceLocation)) {
             ePackage.eResource().setURI(URI.createURI(newNamespaceLocation));
+            EPackage.Registry.INSTANCE.put(ePackage.getNsURI(), ePackage);
             resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
             options.put(XMIResource.SCHEMA_LOCATION, newNamespaceLocation);
         }
@@ -324,16 +372,18 @@ public class BigraphArtifacts {
         }
     }
 
-    private static void writeDynamicMetaModel(EPackage ePackage, OutputStream outputStream) throws IOException {
-        ResourceSet metaResourceSet = new ResourceSetImpl();
-        metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMLResourceFactoryImpl());
-
-        Resource metaResource = metaResourceSet.createResource(URI.createURI(ePackage.getName() + ".ecore")); //URI.createURI(ePackage.getName())); //URI.createURI(filename + ".ecore"));
-        metaResource.getContents().add(ePackage);
-        Map<String, Object> options = new HashMap<>();
-        options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
-        options.put(XMLResource.OPTION_ENCODING, DEFAULT_ENCODING);
-        metaResource.save(outputStream, options);
-        outputStream.close();
-    }
+//    private static void writeDynamicMetaModel(EPackage ePackage, OutputStream outputStream) throws IOException {
+//        ResourceSet metaResourceSet = new ResourceSetImpl();
+//        registerResourceFactories(Resource.Factory.Registry.INSTANCE);
+//        registerResourceFactories(metaResourceSet.getResourceFactoryRegistry());
+////        metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new XMLResourceFactoryImpl());
+//
+//        Resource metaResource = metaResourceSet.createResource(URI.createURI(ePackage.getName() + ".ecore")); //URI.createURI(ePackage.getName())); //URI.createURI(filename + ".ecore"));
+//        metaResource.getContents().add(ePackage);
+//        Map<String, Object> options = new HashMap<>();
+//        options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
+//        options.put(XMLResource.OPTION_ENCODING, DEFAULT_ENCODING);
+//        metaResource.save(outputStream, options);
+//        outputStream.close();
+//    }
 }

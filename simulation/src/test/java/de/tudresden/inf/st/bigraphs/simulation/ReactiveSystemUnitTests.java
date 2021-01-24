@@ -508,8 +508,8 @@ public class ReactiveSystemUnitTests {
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignatureABB() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlStatus.ATOMIC).assign()
-                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlStatus.ATOMIC).assign()
+                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).status(ControlStatus.ATOMIC).assign()
+                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).status(ControlStatus.ATOMIC).assign()
         ;
 
         return (S) defaultBuilder.create();

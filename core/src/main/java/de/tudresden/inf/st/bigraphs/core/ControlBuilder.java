@@ -8,10 +8,11 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
  * Abstract class for all control builder implementations.
  * It is used by the {@link SignatureBuilder} class to create the individual control instances.
  *
- * @param <NT> type of the name (i.e., lable of a control)
+ * @param <NT> type of the label of a control
  * @param <V>  type of the arity of a control
  * @param <B>  type of the control builder
  * @author Dominik Grzelak
+ * @see SignatureBuilder
  */
 public abstract class ControlBuilder<NT extends NamedType<?>, V extends FiniteOrdinal<?>, B extends ControlBuilder<NT, V, B>> {
     protected NT type;
