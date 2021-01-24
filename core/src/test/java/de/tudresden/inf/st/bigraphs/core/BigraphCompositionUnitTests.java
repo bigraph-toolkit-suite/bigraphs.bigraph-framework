@@ -81,7 +81,7 @@ public class BigraphCompositionUnitTests {
                 .top()
                 .createBigraph();
         BigraphComposite<DefaultDynamicSignature> nesting = ops(bigraph).nesting(userBigraph);
-        BigraphArtifacts.exportAsInstanceModel(nesting.getOuterBigraph(), System.out);
+        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) nesting.getOuterBigraph(), System.out);
     }
 
     @Test
@@ -598,7 +598,7 @@ public class BigraphCompositionUnitTests {
             assertEquals(0, compose.getOuterBigraph().getInnerNames().size());
             assertEquals(0, compose.getOuterBigraph().getOuterNames().size());
             System.out.println("Composition of Closure /x and Discrete Ion:");
-            BigraphArtifacts.exportAsInstanceModel(compose.getOuterBigraph(), System.out);
+            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) compose.getOuterBigraph(), System.out);
 //            BigraphComposite<DefaultDynamicSignature> compose = ops(x).compose(discreteIon);
 //            factory.asBigraphOperator(x).compose(discreteIon)
             Bigraph<DefaultDynamicSignature> xyzWithPGIdentity = ops(id).parallelProduct(xyz).getOuterBigraph();

@@ -48,7 +48,9 @@ public final class BigraphMetaModelConstants {
 
     public interface SignaturePackage {
         String SORT_PREFIX = "Sort";
+        String EPACKAGE_NAME = "signatureBaseModel";
         String ECLASS_BKINDSIGNATURE = "BKindSignature";
+        String ECLASS_BDYNAMICSIGNATURE = "BDynamicSignature";
         String ECLASS_BKINDPLACESORTINGS = "BKindPlaceSortings";
         String ECLASS_BKINDSORTATOMIC = "BKindSortAtomic";
         String ECLASS_KINDSORTNONATOMIC = "BKindSortNonAtomic";

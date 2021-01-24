@@ -63,8 +63,8 @@ public class BigraphArtifactUnitTests {
         Assertions.assertAll(() -> {
             EPackage ePackage = BigraphArtifacts.loadInternalSignatureMetaMetaModel();
             assertNotNull(ePackage);
-            assertEquals("signatureBaseModel", ePackage.getName());
-            Optional<EClassifier> bSignature = ePackage.getEClassifiers().stream().filter(x -> x.getName().equals("BSignature")).findFirst();
+            assertEquals(BigraphMetaModelConstants.SignaturePackage.EPACKAGE_NAME, ePackage.getName());
+            Optional<EClassifier> bSignature = ePackage.getEClassifiers().stream().filter(x -> x.getName().equals(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE)).findFirst();
             assertTrue(bSignature.isPresent());
             assertNotNull(bSignature.get());
         });

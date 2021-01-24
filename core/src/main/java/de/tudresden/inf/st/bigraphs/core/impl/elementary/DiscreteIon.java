@@ -14,6 +14,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * This class represents a discrete ion.
+ *
  * @author Dominik Grzelak
  */
 public class DiscreteIon<S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>>

@@ -21,6 +21,7 @@ import java.util.Objects;
  * The objects cannot be instatiated with the constructor. Therefore, the builder shall be used.
  *
  * @param <C> type of the controls
+ * @author Dominik Grzelak
  */
 public class BigraphEntity<C extends Control> {
 

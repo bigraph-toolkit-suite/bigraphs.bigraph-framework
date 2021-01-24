@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BSignature;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -31,7 +30,8 @@ public interface EcoreSignature {
      * @param bSignature the Ecore signature model
      * @throws RuntimeException if a duplicate control was found in the meta-model
      */
-    static void validateBSignature(BSignature bSignature) {
+    static void validateBSignature(EObject bSignature) {
+        assert bSignature.eClass().getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE);
         Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bSignature);
         if (diagnostic.getSeverity() != Diagnostic.OK) {
             for (Diagnostic child : diagnostic.getChildren()) {

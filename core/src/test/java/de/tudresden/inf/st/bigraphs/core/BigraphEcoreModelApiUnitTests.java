@@ -1,17 +1,11 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.*;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControl;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControlStatus;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BSignature;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelFactory;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.Diagnostician;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.ocl.OCLInput;
 import org.eclipse.ocl.ParserException;
 import org.eclipse.ocl.ecore.Constraint;
@@ -32,31 +26,31 @@ public class BigraphEcoreModelApiUnitTests {
 
     @Test
     void no_duplicate_controls() {
-        BControl bControl = SignatureBaseModelFactory.eINSTANCE.createBControl();
-        bControl.setName("User");
-        bControl.setArity(1);
-        BControl bControl2 = SignatureBaseModelFactory.eINSTANCE.createBControl();
-        bControl2.setName("User");
-        bControl2.setArity(1);
-        bControl2.setStatus(BControlStatus.ACTIVE);
-
-        BSignature bSignature = SignatureBaseModelFactory.eINSTANCE.createBSignature();
-        bSignature.getBControls().add(bControl);
-        bSignature.getBControls().add(bControl2);
-
-        System.out.println(bSignature.getBControls().size());
-        System.out.println(bSignature.getBControls());
-
-
-        // Triggering Validation
-        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bSignature);
-//        System.out.println(diagnostic);
-        if (diagnostic.getSeverity() != Diagnostic.OK) {
-            System.out.println("ERROR in: " + diagnostic.getMessage());
-            for (Diagnostic child : diagnostic.getChildren()) {
-                System.out.println(child.getMessage());
-            }
-        }
+//        BControl bControl = SignatureBaseModelFactory.eINSTANCE.createBControl();
+//        bControl.setName("User");
+//        bControl.setArity(1);
+//        BControl bControl2 = SignatureBaseModelFactory.eINSTANCE.createBControl();
+//        bControl2.setName("User");
+//        bControl2.setArity(1);
+//        bControl2.setStatus(BControlStatus.ACTIVE);
+//
+//        BDynamicSignature bSignature = SignatureBaseModelFactory.eINSTANCE.createBDynamicSignature();
+//        bSignature.getBControls().add(bControl);
+//        bSignature.getBControls().add(bControl2);
+//
+//        System.out.println(bSignature.getBControls().size());
+//        System.out.println(bSignature.getBControls());
+//
+//
+//        // Triggering Validation
+//        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bSignature);
+////        System.out.println(diagnostic);
+//        if (diagnostic.getSeverity() != Diagnostic.OK) {
+//            System.out.println("ERROR in: " + diagnostic.getMessage());
+//            for (Diagnostic child : diagnostic.getChildren()) {
+//                System.out.println(child.getMessage());
+//            }
+//        }
     }
 
     @Test

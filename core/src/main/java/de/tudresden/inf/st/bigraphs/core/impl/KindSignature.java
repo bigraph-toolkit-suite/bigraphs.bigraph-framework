@@ -5,8 +5,6 @@ import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.EcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControl;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BKindSignature;
 import org.eclipse.collections.api.bimap.MutableBiMap;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.BiMaps;
@@ -20,6 +18,15 @@ import java.util.*;
 
 import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.SignaturePackage.SORT_PREFIX;
 
+/**
+ * Concrete implementation of a pure (dynamic) signature, where controls can be assigned a {@code status =  (active, passive)},
+ * and further place-sorts can be defined for each control.
+ * <p>
+ * This class generalizes the {@link DefaultDynamicSignature} class somewhat, because (place-sorted) kind signatures
+ * are a generalisation of pure signatures.
+ *
+ * @author Dominik Grzelak
+ */
 public class KindSignature extends AbstractSignature<DefaultDynamicControl> {
     protected EObject instanceModel;
     protected MutableBiMap<String, KindSort> kindFunction = BiMaps.mutable.empty();

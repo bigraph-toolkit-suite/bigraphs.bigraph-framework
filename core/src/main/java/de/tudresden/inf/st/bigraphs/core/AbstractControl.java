@@ -5,6 +5,11 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 
 import java.util.Objects;
 
+/**
+ * @param <NT>
+ * @param <V>
+ * @author Dominik Grzelak
+ */
 public abstract class AbstractControl<NT extends NamedType<?>, V extends FiniteOrdinal<?>> implements Control<NT, V> {
     protected final NT name;
     protected final V arity;
