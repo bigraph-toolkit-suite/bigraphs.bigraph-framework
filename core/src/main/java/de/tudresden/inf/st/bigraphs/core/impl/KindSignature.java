@@ -41,12 +41,14 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
      * That is, that control is active, thus, the kind function returns all available controls for the respective control.
      *
      * @param bKindSignature the instance model of a kind signature
+     * @throws RuntimeException if the instance model is invalid (not conforming to the metamodel)
      * @see #getModel()
      * @see #getModelPackage()
      */
     public KindSignature(EObject bKindSignature) {
         super();
         EcoreSignature.validateBKindSignature(bKindSignature);
+        instanceModel = bKindSignature;
         // extract and move everything to our internal structure
         // TODO re-generate the metamodel
 

@@ -1,15 +1,18 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+import de.tudresden.inf.st.bigraphs.core.exceptions.SignatureValidationFailedException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import org.eclipse.collections.api.tuple.Pair;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
-import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -34,13 +37,47 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
 
     public abstract void closeInnerName(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException;
 
-    protected static <S extends Signature<? extends Control<?, ?>>> S getSignatureFromMetaModel(EObject signatureMetaModel) {
-        //TODO
-        // get the class of the type and then use first the validotr in utils to check the package - throw exception
-        // then instantiate the respective signature object - if everything works the signature should have the same epackage as metamodel
+    /**
+     * Executes various metamodel validators.
+     * It returns the class of the respective signature instance object passed to this method
+     * (e.g., {@link de.tudresden.inf.st.bigraphs.core.impl.KindSignature}).
+     *
+     * @param signatureMetaModel the signature instance model
+     * @return the class of the corresponding signature instance model
+     * @throws SignatureValidationFailedException If the validation fails because the instance model does not conform to a metamodel or
+     *                                            the respective signature class constructor could not be found.
+     */
+    protected static Class<? extends EcoreSignature> executeValidationChain(EObject signatureMetaModel)
+            throws SignatureValidationFailedException {
+        Optional<Pair<Class<? extends AbstractEcoreSignature>, Consumer<EObject>>> any =
+                EcoreSignature.VALIDATORS.keyValuesView()
+                .detectOptional((entry) -> {
+                    try {
+                        entry.getTwo().accept(signatureMetaModel);
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                });
+        if (Objects.isNull(any) || !any.isPresent()) {
+            throw new SignatureValidationFailedException();
+        }
+        return any.get().getOne();
+    }
 
-        //do: assert signatureMetaModel == newSig.getMetamodel();
-        return (S) null;
+    protected static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> S getSignatureFromMetaModel(EObject signatureInstanceModel)
+            throws SignatureValidationFailedException {
+        // perform all validations first
+        Class<? extends EcoreSignature> clazz = executeValidationChain(signatureInstanceModel);
+        try {
+            // Now create the respective signature object from the class info given above
+            Constructor<S> ctor = (Constructor<S>) clazz.getConstructor(EObject.class);
+            S sig = ctor.newInstance(signatureInstanceModel);
+            assert sig.getModel().equals(signatureInstanceModel);
+            return sig;
+        } catch (Exception e) {
+            throw new SignatureValidationFailedException(e);
+        }
     }
 
     protected void assertSortingIsEnsuredForControl(String controlName) {

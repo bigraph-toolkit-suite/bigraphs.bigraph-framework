@@ -1,9 +1,15 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
+import org.eclipse.collections.api.map.ImmutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Diagnostician;
+
+import java.util.function.Consumer;
 
 /**
  * @author Dominik Grzelak
@@ -25,13 +31,24 @@ public interface EcoreSignature {
     EObject getModel();
 
     /**
+     * Keeps a list of validators for checking signature instance models.
+     * If an instance model is invalid, a runtime exception will be thrown.
+     */
+    final ImmutableMap<Class<? extends AbstractEcoreSignature>, Consumer<EObject>> VALIDATORS = Maps.immutable.of(
+            DefaultDynamicSignature.class, EcoreSignature::validateBSignature,
+            KindSignature.class, EcoreSignature::validateBKindSignature
+    );
+
+    /**
      * Validate the Ecore-based signature meta-model.
      *
      * @param bSignature the Ecore signature model
      * @throws RuntimeException if a duplicate control was found in the meta-model
      */
     static void validateBSignature(EObject bSignature) {
-        assert bSignature.eClass().getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE);
+        if (!bSignature.eClass().getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE)) {
+            throw new RuntimeException("Signature instance is not of EClass= " + BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE);
+        }
         Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bSignature);
         if (diagnostic.getSeverity() != Diagnostic.OK) {
             for (Diagnostic child : diagnostic.getChildren()) {
@@ -43,7 +60,9 @@ public interface EcoreSignature {
     }
 
     static void validateBKindSignature(EObject bKindSignature) {
-        assert bKindSignature.eClass().getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSIGNATURE);
+        if (!bKindSignature.eClass().getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSIGNATURE)) {
+            throw new RuntimeException("Signature instance is not of EClass= " + BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSIGNATURE);
+        }
         //TODO perform OCL-based checks
         Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bKindSignature);
         if (diagnostic.getSeverity() != Diagnostic.OK) {

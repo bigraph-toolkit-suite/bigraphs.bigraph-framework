@@ -8,6 +8,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControlStatus;
 import org.eclipse.collections.impl.factory.Lists;
@@ -20,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.kindSignatureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphSignatureUnitTest {
@@ -113,6 +115,42 @@ public class BigraphSignatureUnitTest {
 
         BigraphArtifacts.exportAsMetaModel(signature, System.out);
         BigraphArtifacts.exportAsInstanceModel(signature, System.out);
+    }
+
+    @Test
+    @DisplayName("Create a pureBuilder instance with a freshly created signature instance model")
+    void createPureBuilderFromKindSignatureInstanceModel() {
+        KindSignatureBuilder ksb = kindSignatureBuilder();
+
+        KindSignature signature = ksb.addControl("Room", 1)
+                .addControl("Person", 2)
+                .addControl("Computer", 2)
+                .create();
+        EPackage modelPackage = signature.getModelPackage();
+        EObject model = signature.getModel();
+        assert modelPackage != null;
+        assert model != null;
+
+        PureBigraphBuilder<KindSignature> ksBigraphBuilder = PureBigraphBuilder.<KindSignature>create(model);
+        assert ksBigraphBuilder.getLoadedEPackage() != null;
+    }
+
+    @Test
+    @DisplayName("Create a pureBuilder instance with a freshly created signature instance model")
+    void createPureBuilderFromDynamicSignatureInstanceModel() {
+        DynamicSignatureBuilder dynamicSigBuilder = pureSignatureBuilder();
+
+        DefaultDynamicSignature signature = dynamicSigBuilder.addControl("Room", 1)
+                .addControl("Person", 2)
+                .addControl("Computer", 2)
+                .create();
+        EPackage modelPackage = signature.getModelPackage();
+        EObject model = signature.getModel();
+        assert modelPackage != null;
+        assert model != null;
+
+        PureBigraphBuilder<DefaultDynamicSignature> ksBigraphBuilder = PureBigraphBuilder.<DefaultDynamicSignature>create(model);
+        assert ksBigraphBuilder.getLoadedEPackage() != null;
     }
 
     //Feature: provide type-checking at compile time (because of type erasure)

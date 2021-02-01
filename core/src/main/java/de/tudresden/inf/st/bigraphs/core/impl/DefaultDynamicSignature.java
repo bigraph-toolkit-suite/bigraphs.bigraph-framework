@@ -25,17 +25,18 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
     protected EPackage sigPackage;
     protected EObject instanceModel;
 
-    public DefaultDynamicSignature(BDynamicSignature bSignature) { // TODO: change this to EObject
+    public DefaultDynamicSignature(EObject bSignature) {
         super();
-        //TODO: extend/re-create the metamodel here for the new approach, or maybe allow loading it
         EcoreSignature.validateBSignature(bSignature);
         instanceModel = bSignature;
+
+        //TODO: extend/re-create the metamodel here for the new approach, or maybe allow loading it
         DynamicSignatureBuilder dynamicSignatureBuilder = new DynamicSignatureBuilder();
-        for (BControl bControl : bSignature.getBControls()) {
-            dynamicSignatureBuilder = dynamicSignatureBuilder
-                    .newControl(bControl.getName(), bControl.getArity())
-                    .status(ControlStatus.fromString(bControl.getStatus().getName())).assign();
-        }
+//        for (BControl bControl : bSignature.getBControls()) {
+//            dynamicSignatureBuilder = dynamicSignatureBuilder
+//                    .newControl(bControl.getName(), bControl.getArity())
+//                    .status(ControlStatus.fromString(bControl.getStatus().getName())).assign();
+//        }
         this.controls = dynamicSignatureBuilder.create().getControls();
     }
 
