@@ -38,9 +38,10 @@ public interface BigraphBuilder<S extends Signature> {
     BigraphBuilder<S> closeAllOuterNames();
 
     /**
-     * Spawns a fresh bigraph builder but with exactly the same instance of the metamodel as before.
+     * Spawns a fresh bigraph builder but with exactly the same instance of the extended bigraph metamodel and signature
+     * as before.
      *
-     * @return a fresn bigraph builder with the same metamodel
+     * @return a fresn bigraph builder with the same bigraph metamodel and signature metamodel
      */
     BigraphBuilder<S> spawnNewOne();
 

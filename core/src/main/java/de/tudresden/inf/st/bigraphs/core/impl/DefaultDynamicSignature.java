@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Dominik Grzelak
  */
-public final class DefaultDynamicSignature extends AbstractSignature<DefaultDynamicControl> {
+public final class DefaultDynamicSignature extends AbstractEcoreSignature<DefaultDynamicControl> {
 
     protected EFactory sigFactory;
     protected EPackage sigPackage;

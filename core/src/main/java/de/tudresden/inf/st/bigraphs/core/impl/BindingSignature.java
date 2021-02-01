@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
-import de.tudresden.inf.st.bigraphs.core.AbstractSignature;
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import org.eclipse.emf.ecore.EObject;
@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Dominik Grzelak
  */
-public class BindingSignature extends AbstractSignature<BindingControl<? extends NamedType, ? extends FiniteOrdinal>> {
+public class BindingSignature extends AbstractEcoreSignature<BindingControl<? extends NamedType, ? extends FiniteOrdinal>> {
 
     public BindingSignature(Set<BindingControl<? extends NamedType, ? extends FiniteOrdinal>> controls) {
         super(controls);

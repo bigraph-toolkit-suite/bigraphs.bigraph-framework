@@ -7,7 +7,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.xml.stream.events.Attribute;
@@ -101,7 +100,7 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
         if (Objects.isNull(signature)) {
             signature = sxl.importObject();
         }
-        builder = PureBigraphBuilder.newMutableBuilder(signature);
+        builder = MutableBuilder.newMutableBuilder(signature);
     }
 
     @Override

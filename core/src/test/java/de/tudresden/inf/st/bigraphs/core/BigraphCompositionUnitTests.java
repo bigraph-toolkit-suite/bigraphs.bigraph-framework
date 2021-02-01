@@ -119,8 +119,8 @@ public class BigraphCompositionUnitTests {
     @DisplayName("Closure test: Close open link by transforming it to a closed link")
     void closure_test_01() throws InvalidConnectionException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         // (id(1) | /("x")) * (a["x"] | a["x"])
-        PureBigraphBuilder<Signature> builder = pureBuilder(createExampleSignature());
-        PureBigraphBuilder<Signature> builder2 = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createExampleSignature());
 
         // (Computer["x"] | Computer["x"])
         builder.createRoot().addChild("Computer", "x").addChild("Computer", "x");

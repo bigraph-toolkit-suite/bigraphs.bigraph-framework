@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
-import de.tudresden.inf.st.bigraphs.core.AbstractSignature;
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.EcoreSignature;
@@ -27,7 +27,7 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.Signat
  *
  * @author Dominik Grzelak
  */
-public class KindSignature extends AbstractSignature<DefaultDynamicControl> {
+public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl> {
     protected EObject instanceModel;
     protected MutableBiMap<String, KindSort> kindFunction = BiMaps.mutable.empty();
     protected EFactory sigFactory;

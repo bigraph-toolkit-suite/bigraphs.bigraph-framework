@@ -49,8 +49,8 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
     public PureBigraphGenerator(DefaultDynamicSignature signature, EPackage metaModel) {
         this.signature = signature;
         this.builder = Objects.nonNull(metaModel) ?
-                PureBigraphBuilder.newMutableBuilder(signature, metaModel) :
-                PureBigraphBuilder.newMutableBuilder(signature);
+                MutableBuilder.newMutableBuilder(signature, metaModel) :
+                MutableBuilder.newMutableBuilder(signature);
     }
 
     public EPackage getModelPackage() {

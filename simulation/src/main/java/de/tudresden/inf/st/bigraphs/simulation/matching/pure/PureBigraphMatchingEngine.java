@@ -17,7 +17,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatchingEngine;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatchingSupport;
 import de.tudresden.inf.st.bigraphs.simulation.util.Permutations;
@@ -428,8 +427,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
         logger.debug("[Start] Build Match Result ...");
 
-        MutableBuilder<DefaultDynamicSignature> builder = PureBigraphBuilder.newMutableBuilder(agentAdapter.getSignature(), agentAdapter.getModelPackage());
-        MutableBuilder<DefaultDynamicSignature> builder2 = PureBigraphBuilder.newMutableBuilder(agentAdapter.getSignature(), agentAdapter.getModelPackage());
+        MutableBuilder<DefaultDynamicSignature> builder = MutableBuilder.newMutableBuilder(agentAdapter.getSignature(), agentAdapter.getModelPackage());
+        MutableBuilder<DefaultDynamicSignature> builder2 = MutableBuilder.newMutableBuilder(agentAdapter.getSignature(), agentAdapter.getModelPackage());
 //        PureBigraphFactory pureBigraphFactory = pure();
         Placings<DefaultDynamicSignature> placingsFactory = purePlacings(agentAdapter.getSignature());
         Linkings<DefaultDynamicSignature> linkingsFactory = pureLinkings(agentAdapter.getSignature());

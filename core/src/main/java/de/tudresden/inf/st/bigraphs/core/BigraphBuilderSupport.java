@@ -19,8 +19,8 @@ import java.util.function.Supplier;
  *
  * @author Dominik Grzelak
  */
-public abstract class BigraphBuilderSupport<S extends Signature> implements BigraphBuilder<S> {
-    
+public abstract class BigraphBuilderSupport<S extends Signature<? extends Control<?, ?>>> implements BigraphBuilder<S> {
+
     protected static final String DEFAULT_EDGE_PREFIX = "e";
     protected static final String DEFAULT_VERTEX_PREFIX = "v";
 
@@ -33,6 +33,23 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
     protected abstract Map<String, EReference> getAvailableEReferences();
 
     public abstract void closeInnerName(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException;
+
+    protected static <S extends Signature<? extends Control<?, ?>>> S getSignatureFromMetaModel(EObject signatureMetaModel) {
+        //TODO
+        // get the class of the type and then use first the validotr in utils to check the package - throw exception
+        // then instantiate the respective signature object - if everything works the signature should have the same epackage as metamodel
+
+        //do: assert signatureMetaModel == newSig.getMetamodel();
+        return (S) null;
+    }
+
+    protected void assertSortingIsEnsuredForControl(String controlName) {
+        //TODO: use in all addChild methods in subclass
+    }
+
+    protected void assertSortingIsEnsuredForControl(Control controlName) {
+        this.assertSortingIsEnsuredForControl(controlName.getNamedType().stringValue());
+    }
 
     protected boolean isOuterName(EObject eObject) {
         return Objects.nonNull(eObject) && eObject.eClass().equals(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_OUTERNAME));
@@ -70,7 +87,7 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
 
     //TODO: add method "fromFile/Model/": args are instance (EObject) and meta-model (EPackage)
     // we need to reconstruct the internal object structure
-    // do also validation against the meta-model
+    // do also validation against the meta-model: EcoreSignature provides such information
 
     //DTO?
     public class InstanceParameter {
@@ -121,7 +138,7 @@ public abstract class BigraphBuilderSupport<S extends Signature> implements Bigr
                     availableInnerNames, availableOuterNames, availableEdges);
         }
 
-        public Signature<Control<?, ?>> getSignature() {
+        public Signature<? extends Control<?, ?>> getSignature() {
             return signature;
         }
 

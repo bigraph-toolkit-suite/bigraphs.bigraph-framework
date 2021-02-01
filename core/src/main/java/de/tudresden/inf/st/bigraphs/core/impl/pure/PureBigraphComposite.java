@@ -63,7 +63,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
         super(bigraph);
         assert bigraph instanceof PureBigraphComposite || bigraph instanceof PureBigraph || bigraph instanceof ElementaryBigraph;
         // this is safe: S is inferred from the bigraph to where S is the same type as the builder's type S (they will have the same type thus)
-        this.builder = PureBigraphBuilder.newMutableBuilder(getBigraphDelegate().getSignature(), ((EcoreBigraph) getBigraphDelegate()).getModelPackage()); // ((EcoreBigraph) bigraph).getEMetaModelData());
+        this.builder = MutableBuilder.newMutableBuilder(getBigraphDelegate().getSignature(), ((EcoreBigraph) getBigraphDelegate()).getModelPackage()); // ((EcoreBigraph) bigraph).getEMetaModelData());
     }
 
     /**
@@ -681,26 +681,26 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
                 signatureBuilder.addControl((Control) x);
             });
             if (outer instanceof EcoreBigraph) {
-                builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(signatureBuilder.create(), ((EcoreBigraph) outer).getEMetaModelData());
+                builder = (MutableBuilder<S>) MutableBuilder.newMutableBuilder(signatureBuilder.create(), ((EcoreBigraph) outer).getEMetaModelData());
             } else {
-                builder = (MutableBuilder<S>) PureBigraphBuilder.newMutableBuilder(signatureBuilder.create());
+                builder = (MutableBuilder<S>) MutableBuilder.newMutableBuilder(signatureBuilder.create());
             }
             return;
         }
         if (isLinking(outer) || isPlacing(outer)) {
 //            builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature(), ((EcoreBigraph) outer).getEMetaModelData());
             if (outer instanceof EcoreBigraph) {
-                builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature(), ((EcoreBigraph) outer).getEMetaModelData());
+                builder = MutableBuilder.newMutableBuilder(inner.getSignature(), ((EcoreBigraph) outer).getEMetaModelData());
             } else {
-                builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature());
+                builder = MutableBuilder.newMutableBuilder(inner.getSignature());
             }
             return;
         } else if (isLinking(inner) || isPlacing(inner)) {
 //            builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((EcoreBigraph) inner).getEMetaModelData());
             if (inner instanceof EcoreBigraph) {
-                builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((EcoreBigraph) inner).getEMetaModelData());
+                builder = MutableBuilder.newMutableBuilder(outer.getSignature(), ((EcoreBigraph) inner).getEMetaModelData());
             } else {
-                builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature());
+                builder = MutableBuilder.newMutableBuilder(outer.getSignature());
             }
             return;
         }

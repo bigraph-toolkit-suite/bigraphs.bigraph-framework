@@ -10,7 +10,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.impl.factory.Lists;
@@ -97,16 +96,16 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
     public Linkings(S signature, EMetaModelData metaModelData) {
         arbitrarySignature = signature;
         if (Objects.nonNull(metaModelData)) {
-            mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature, metaModelData);
+            mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature, metaModelData);
         } else {
-            mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature);
+            mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
         }
         loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
 
     public Linkings(S signature, EPackage bigraphMetaModel) {
         arbitrarySignature = signature;
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
+        mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
         assert bigraphMetaModel == mutableBuilder.getLoadedEPackage();
         loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
@@ -117,7 +116,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
      */
     public Linkings(SignatureBuilder signatureBuilder) {
         arbitrarySignature = (S) signatureBuilder.createEmpty();
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature);
+        mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
         loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
 

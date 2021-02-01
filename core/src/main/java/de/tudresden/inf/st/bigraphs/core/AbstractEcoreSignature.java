@@ -16,17 +16,17 @@ import java.util.Set;
  * @param <C> type of the control
  * @author Dominik Grzelak
  */
-public abstract class AbstractSignature<C extends Control<? extends NamedType, ? extends FiniteOrdinal>>
+public abstract class AbstractEcoreSignature<C extends Control<? extends NamedType, ? extends FiniteOrdinal>>
         implements Signature<C>, EcoreSignature {
 
     // Collection of controls of type C
     protected Set<C> controls;
 
-    protected AbstractSignature() {
+    protected AbstractEcoreSignature() {
         controls = new LinkedHashSet<>();
     }
 
-    protected AbstractSignature(Set<C> controls) {
+    protected AbstractEcoreSignature(Set<C> controls) {
         this.controls = controls;
     }
 
@@ -44,8 +44,8 @@ public abstract class AbstractSignature<C extends Control<? extends NamedType, ?
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AbstractSignature)) return false;
-        AbstractSignature<?> that = (AbstractSignature<?>) o;
+        if (!(o instanceof AbstractEcoreSignature)) return false;
+        AbstractEcoreSignature<?> that = (AbstractEcoreSignature<?>) o;
         return controls.equals(that.controls);
     }
 

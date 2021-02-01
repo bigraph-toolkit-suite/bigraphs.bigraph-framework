@@ -5,7 +5,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.factory.SortedMaps;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -14,7 +13,6 @@ import org.eclipse.collections.api.map.sorted.MutableSortedMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.io.Serializable;
 import java.util.*;
@@ -43,7 +41,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
      */
     public Placings(SignatureBuilder signatureBuilder) {
         arbitrarySignature = (S) signatureBuilder.createEmpty();
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature);
+        mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
         loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
 
@@ -54,16 +52,16 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
     public Placings(S signature, EMetaModelData metaModelData) {
         arbitrarySignature = signature;
         if (Objects.nonNull(metaModelData)) {
-            mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature, metaModelData);
+            mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature, metaModelData);
         } else {
-            mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature);
+            mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
         }
         loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
 
     public Placings(S signature, EPackage bigraphMetaModel) {
         arbitrarySignature = signature;
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
+        mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
         assert bigraphMetaModel == mutableBuilder.getLoadedEPackage();
         loadedModelPackage = mutableBuilder.getLoadedEPackage();
     }
