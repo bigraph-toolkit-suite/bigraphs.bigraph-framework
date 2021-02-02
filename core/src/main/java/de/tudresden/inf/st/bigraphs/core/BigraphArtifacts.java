@@ -279,7 +279,7 @@ public class BigraphArtifacts {
      * Exports the Ecore-based instance model of a signature.
      */
     public static void exportAsInstanceModel(EcoreSignature signature, OutputStream outputStream) throws IOException {
-        EMFUtils.writeDynamicInstanceModel(signature.getModelPackage(), Collections.singleton(signature.getModel()), outputStream, null);
+        EMFUtils.writeDynamicInstanceModel(signature.getMetaModel(), Collections.singleton(signature.getInstanceModel()), outputStream, null);
     }
 
     /**
@@ -293,6 +293,6 @@ public class BigraphArtifacts {
      * Exports the Ecore-based metamodel of a signature
      */
     public static void exportAsMetaModel(EcoreSignature signature, OutputStream outputStream) throws IOException {
-        writeDynamicMetaModel(signature.getModelPackage(), DEFAULT_ENCODING, outputStream);
+        writeDynamicMetaModel(signature.getMetaModel(), DEFAULT_ENCODING, outputStream);
     }
 }

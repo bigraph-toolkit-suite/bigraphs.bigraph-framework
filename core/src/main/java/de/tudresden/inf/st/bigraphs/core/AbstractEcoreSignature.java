@@ -39,10 +39,10 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
     }
 
     @Override
-    public abstract EPackage getModelPackage();
+    public abstract EPackage getMetaModel();
 
     @Override
-    public abstract EObject getModel();
+    public abstract EObject getInstanceModel();
 
     @Override
     public boolean equals(Object o) {

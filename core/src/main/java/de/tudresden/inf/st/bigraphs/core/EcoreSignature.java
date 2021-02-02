@@ -21,14 +21,14 @@ public interface EcoreSignature {
      * @return the metamodel of the base signature specification
      * @see de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage
      */
-    EPackage getModelPackage();
+    EPackage getMetaModel();
 
     /**
      * Return the respective signature Ecore-based instance model.
      *
      * @return the signature instance model
      */
-    EObject getModel();
+    EObject getInstanceModel();
 
     /**
      * Keeps a list of validators for checking signature instance models.

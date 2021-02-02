@@ -102,12 +102,12 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
     }
 
     @Override
-    public EPackage getModelPackage() {
+    public EPackage getMetaModel() {
         return this.sigPackage;
     }
 
     @Override
-    public EObject getModel() {
+    public EObject getInstanceModel() {
         return this.instanceModel;
     }
 

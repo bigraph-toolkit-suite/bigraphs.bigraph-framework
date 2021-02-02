@@ -32,12 +32,12 @@ public class BindingSignature extends AbstractEcoreSignature<BindingControl<? ex
     }
 
     @Override
-    public EPackage getModelPackage() {
+    public EPackage getMetaModel() {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public EObject getModel() {
+    public EObject getInstanceModel() {
         throw new RuntimeException("Not implemented yet");
     }
 

@@ -47,8 +47,8 @@ public class BigraphSignatureUnitTest {
                 .addControl("Person", 2)
                 .addControl("Computer", 2)
                 .create();
-        EPackage modelPackage = signature.getModelPackage();
-        EObject model = signature.getModel();
+        EPackage modelPackage = signature.getMetaModel();
+        EObject model = signature.getInstanceModel();
         assert modelPackage != null;
         assert model != null;
 
@@ -83,8 +83,8 @@ public class BigraphSignatureUnitTest {
                 .addPassiveKindSort("Person")
                 .addPassiveKindSort("Computer")
                 .create();
-        EPackage modelPackage = signature.getModelPackage();
-        EObject model = signature.getModel();
+        EPackage modelPackage = signature.getMetaModel();
+        EObject model = signature.getInstanceModel();
         assert modelPackage != null;
         assert model != null;
 
@@ -126,8 +126,8 @@ public class BigraphSignatureUnitTest {
                 .addControl("Person", 2)
                 .addControl("Computer", 2)
                 .create();
-        EPackage modelPackage = signature.getModelPackage();
-        EObject model = signature.getModel();
+        EPackage modelPackage = signature.getMetaModel();
+        EObject model = signature.getInstanceModel();
         assert modelPackage != null;
         assert model != null;
 
@@ -144,8 +144,8 @@ public class BigraphSignatureUnitTest {
                 .addControl("Person", 2)
                 .addControl("Computer", 2)
                 .create();
-        EPackage modelPackage = signature.getModelPackage();
-        EObject model = signature.getModel();
+        EPackage modelPackage = signature.getMetaModel();
+        EObject model = signature.getInstanceModel();
         assert modelPackage != null;
         assert model != null;
 
@@ -166,8 +166,8 @@ public class BigraphSignatureUnitTest {
         BigraphArtifacts.exportAsMetaModel(defaultSignature, System.out);
         BigraphArtifacts.exportAsInstanceModel(defaultSignature, System.out);
 
-        EPackage packageObject = defaultSignature.getModelPackage();
-        EObject instanceObject = defaultSignature.getModel();
+        EPackage packageObject = defaultSignature.getMetaModel();
+        EObject instanceObject = defaultSignature.getInstanceModel();
         EClass dynSigEClass = (EClass) packageObject.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE);
         Map<String, EReference> allRefs = EMFUtils.findAllReferences2(dynSigEClass);
         EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);
@@ -206,8 +206,8 @@ public class BigraphSignatureUnitTest {
         BigraphArtifacts.exportAsMetaModel(dynamicSignature, System.out);
         BigraphArtifacts.exportAsInstanceModel(dynamicSignature, System.out);
 
-        EPackage packageObject = dynamicSignature.getModelPackage();
-        EObject instanceObject = dynamicSignature.getModel();
+        EPackage packageObject = dynamicSignature.getMetaModel();
+        EObject instanceObject = dynamicSignature.getInstanceModel();
         EClass dynSigEClass = (EClass) packageObject.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE);
         Map<String, EReference> allRefs = EMFUtils.findAllReferences2(dynSigEClass);
         EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);

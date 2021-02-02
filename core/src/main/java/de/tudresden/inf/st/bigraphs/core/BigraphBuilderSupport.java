@@ -73,7 +73,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
             // Now create the respective signature object from the class info given above
             Constructor<S> ctor = (Constructor<S>) clazz.getConstructor(EObject.class);
             S sig = ctor.newInstance(signatureInstanceModel);
-            assert sig.getModel().equals(signatureInstanceModel);
+            assert sig.getInstanceModel().equals(signatureInstanceModel);
             return sig;
         } catch (Exception e) {
             throw new SignatureValidationFailedException(e);
