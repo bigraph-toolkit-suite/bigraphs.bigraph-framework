@@ -1,9 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
-import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.EcoreSignature;
+import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
@@ -22,26 +21,23 @@ import java.util.Set;
 public final class DefaultDynamicSignature extends AbstractEcoreSignature<DefaultDynamicControl> {
 
     protected EFactory sigFactory;
-    protected EPackage sigPackage;
-    protected EObject instanceModel;
 
+    /**
+     * Create a dynamic signature object for the given Ecore instance model.
+     * The "extended" metamodel for dynamic signatures is stored in the member variable {@link AbstractEcoreSignature#sigPackage}.
+     *
+     * @param bSignature the instance model of a dynamic signature
+     * @throws RuntimeException if the instance model is invalid (not conforming to the metamodel)
+     * @see #getInstanceModel()
+     * @see #getMetaModel()
+     */
     public DefaultDynamicSignature(EObject bSignature) {
-        super();
-        EcoreSignature.validateBSignature(bSignature);
-        instanceModel = bSignature;
-        try {
-            // (!) Important, because otherwise we might face a "A frozen model should not be modified" assertion exception:
-            sigPackage = BigraphArtifacts.loadInternalSignatureMetaMetaModel();
-            sigFactory = sigPackage.getEFactoryInstance();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        super(EcoreSignature.validateBSignature(bSignature));
 
+        // Re-create control objects
         Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
-        // Create bControl classes and add them to bControls reference
         EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);
         assert eReferenceControls != null;
-
         EList<EObject> availableControls = (EList<EObject>) instanceModel.eGet(eReferenceControls);
         for (EObject eachControl : availableControls) {
             EAttribute nameAttr = EMFUtils.findAttribute(eachControl.eClass(), BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_NAME);
@@ -49,10 +45,17 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
             EAttribute statusAttr = EMFUtils.findAttribute(eachControl.eClass(), BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_STATUS);
             assert nameAttr != null && arityAttr != null && statusAttr != null;
             String ctrlId = (String) eachControl.eGet(nameAttr);
-            EClass controlEClass = extendBControlEClass(ctrlId, sigPackage);
+            Integer ctrlArity = (Integer) eachControl.eGet(arityAttr);
+            EEnumLiteral ctrlStatus = (EEnumLiteral) eachControl.eGet(statusAttr);
+
+            DefaultDynamicControl defaultDynamicControl = DefaultDynamicControl.createDefaultDynamicControl(
+                    StringTypedName.of(ctrlId),
+                    FiniteOrdinal.ofInteger(ctrlArity),
+                    ControlStatus.fromString(ctrlStatus.getLiteral())
+            );
+            controls.add(defaultDynamicControl);
         }
     }
-
 
     public DefaultDynamicSignature(Set<DefaultDynamicControl> controls) {
         super(controls);

@@ -25,8 +25,19 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
     // Collection of controls of type C
     protected Set<C> controls;
 
+    protected EPackage sigPackage;
+    protected EObject instanceModel;
+
     protected AbstractEcoreSignature() {
-        controls = new LinkedHashSet<>();
+        this.controls = new LinkedHashSet<>();
+    }
+
+    protected AbstractEcoreSignature(EObject signatureInstanceModel) {
+        this();
+        assert signatureInstanceModel != null;
+        this.instanceModel = signatureInstanceModel;
+        this.sigPackage = this.instanceModel.eClass().getEPackage();
+        assert this.sigPackage != null;
     }
 
     protected AbstractEcoreSignature(Set<C> controls) {

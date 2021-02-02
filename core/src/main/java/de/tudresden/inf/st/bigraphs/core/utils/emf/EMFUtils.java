@@ -85,6 +85,16 @@ public class EMFUtils {
         return epackage;
     }
 
+    public static boolean eClassHasSuperType(String nameOfSuperType, EClass eClass) {
+        for (EClass eachSuperType : eClass.getESuperTypes()) {
+            if (eachSuperType.getName().equals(nameOfSuperType)) {
+                return true;
+            }
+            eClassHasSuperType(nameOfSuperType, eachSuperType);
+        }
+        return false;
+    }
+
     public static EClass createEClass(final String name) {
         final EClass eClass = FACTORY.createEClass();
         eClass.setName(name);

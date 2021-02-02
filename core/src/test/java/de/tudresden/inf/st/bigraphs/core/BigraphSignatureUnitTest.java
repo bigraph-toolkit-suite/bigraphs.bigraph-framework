@@ -133,6 +133,9 @@ public class BigraphSignatureUnitTest {
 
         PureBigraphBuilder<KindSignature> ksBigraphBuilder = PureBigraphBuilder.<KindSignature>create(model);
         assert ksBigraphBuilder.getMetaModel() != null;
+
+        KindSignature kindSignatureRecreated = new KindSignature(model);
+        assert kindSignatureRecreated.getControls().equals(signature.getControls());
     }
 
     @Test
@@ -151,6 +154,10 @@ public class BigraphSignatureUnitTest {
 
         PureBigraphBuilder<DefaultDynamicSignature> ksBigraphBuilder = PureBigraphBuilder.<DefaultDynamicSignature>create(model);
         assert ksBigraphBuilder.getMetaModel() != null;
+
+        DefaultDynamicSignature dynSignatureRecreated = new DefaultDynamicSignature(model);
+        assert dynSignatureRecreated.getControls().equals(signature.getControls());
+
     }
 
     //Feature: provide type-checking at compile time (because of type erasure)

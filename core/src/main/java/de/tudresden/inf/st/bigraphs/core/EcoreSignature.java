@@ -40,12 +40,13 @@ public interface EcoreSignature {
     );
 
     /**
-     * Validate the Ecore-based signature meta-model.
+     * Validate the Ecore-based dynamic signature instance model.
      *
      * @param bSignature the Ecore signature model
+     * @return bSignature the same signature model if everything is fine
      * @throws RuntimeException if a duplicate control was found in the meta-model
      */
-    static void validateBSignature(EObject bSignature) {
+    static EObject validateBSignature(EObject bSignature) {
         if (!bSignature.eClass().getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE)) {
             throw new RuntimeException("Signature instance is not of EClass= " + BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE);
         }
@@ -57,9 +58,18 @@ public interface EcoreSignature {
                 }
             }
         }
+
+        return bSignature;
     }
 
-    static void validateBKindSignature(EObject bKindSignature) {
+    /**
+     * Validate the Ecore-based kind signature instance model.
+     *
+     * @param bKindSignature the Ecore signature model
+     * @return bKindSignature the same signature model if everything is fine
+     * @throws RuntimeException if a duplicate control was found in the meta-model
+     */
+    static EObject validateBKindSignature(EObject bKindSignature) {
         if (!bKindSignature.eClass().getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSIGNATURE)) {
             throw new RuntimeException("Signature instance is not of EClass= " + BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSIGNATURE);
         }
@@ -68,5 +78,7 @@ public interface EcoreSignature {
         if (diagnostic.getSeverity() != Diagnostic.OK) {
             throw new RuntimeException("The kind signature model is invalid", diagnostic.getException());
         }
+
+        return bKindSignature;
     }
 }

@@ -1,11 +1,11 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
-import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.EcoreSignature;
+import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.eclipse.collections.api.bimap.MutableBiMap;
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.BiMaps;
 import org.eclipse.collections.impl.factory.Lists;
@@ -28,48 +28,66 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.Signat
  * @author Dominik Grzelak
  */
 public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl> {
-    protected EObject instanceModel;
+
     protected MutableBiMap<String, KindSort> kindFunction = BiMaps.mutable.empty();
     protected EFactory sigFactory;
-    protected EPackage sigPackage;
 
     /**
      * Create a kind signature object for the given Ecore instance model.
-     * The "extended" metamodel for kind signatures is created ad-hoc and stored in the member variable {@code ePackage}.
-     * <p>
-     * If no kind sort is provided for a given control, the default behaviour kicks in.
-     * That is, that control is active, thus, the kind function returns all available controls for the respective control.
+     * The "extended" metamodel for kind signatures is stored in the member variable {@link AbstractEcoreSignature#sigPackage}.
      *
      * @param bKindSignature the instance model of a kind signature
      * @throws RuntimeException if the instance model is invalid (not conforming to the metamodel)
-     * @see #getModel()
-     * @see #getModelPackage()
+     * @see #getInstanceModel()
+     * @see #getMetaModel()
      */
     public KindSignature(EObject bKindSignature) {
-        super();
-        EcoreSignature.validateBKindSignature(bKindSignature);
-        instanceModel = bKindSignature;
-        // extract and move everything to our internal structure
-        // TODO re-generate the metamodel
+        super(EcoreSignature.validateBKindSignature(bKindSignature));
 
-        // Get all controls
-//        for (BControl bControl : bKindSignature.getBControls()) {
-//            dynamicSignatureBuilder = dynamicSignatureBuilder
-//                    .newControl(bControl.getName(), bControl.getArity())
-//                    .kind(ControlStatus.fromString(bControl.getStatus().getName())).assign();
-        // init the kind functions (construct the kind sorts for the controls)
+        // Re-create control objects
+        Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
+        EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);
+        assert eReferenceControls != null;
+        EList<EObject> availableControls = (EList<EObject>) instanceModel.eGet(eReferenceControls);
+        for (EObject eachControl : availableControls) {
+            EAttribute nameAttr = EMFUtils.findAttribute(eachControl.eClass(), BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_NAME);
+            EAttribute arityAttr = EMFUtils.findAttribute(eachControl.eClass(), BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_ARITY);
+            EAttribute statusAttr = EMFUtils.findAttribute(eachControl.eClass(), BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_STATUS);
+            assert nameAttr != null && arityAttr != null && statusAttr != null;
+            String ctrlId = (String) eachControl.eGet(nameAttr);
+            Integer ctrlArity = (Integer) eachControl.eGet(arityAttr);
+            EEnumLiteral ctrlStatus = (EEnumLiteral) eachControl.eGet(statusAttr);
 
-        // re-set the status based on the current sorts, if none was available use the default behavior
-//        }
-//        DynamicSignatureBuilder dynamicSignatureBuilder = new DynamicSignatureBuilder();
-//        for (BControl bControl : bSignature.getBControls()) {
-//            dynamicSignatureBuilder = dynamicSignatureBuilder
-//                    .newControl(bControl.getName(), bControl.getArity())
-//                    .kind(ControlStatus.fromString(bControl.getStatus().getName())).assign();
-//        }
-//        this.controls = dynamicSignatureBuilder.create().getControls();
+            DefaultDynamicControl defaultDynamicControl = DefaultDynamicControl.createDefaultDynamicControl(
+                    StringTypedName.of(ctrlId),
+                    FiniteOrdinal.ofInteger(ctrlArity),
+                    ControlStatus.fromString(ctrlStatus.getLiteral())
+            );
+            controls.add(defaultDynamicControl);
+        }
 
-        //TODO assert that kind function as size=control.size
+        // Re-create kind sort objects
+        EReference eReferencePlaceSorts = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
+        assert eReferencePlaceSorts != null;
+        EList<EObject> availablePlaceSorts = (EList<EObject>) instanceModel.eGet(eReferencePlaceSorts);
+        for (EObject eachPlaceSort : availablePlaceSorts) {
+            String ctrlId = eachPlaceSort.eClass().getName();
+            if (EMFUtils.eClassHasSuperType(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC, eachPlaceSort.eClass())) {
+                MutableList<DefaultDynamicControl> sorts = Lists.mutable.empty();
+                Map<String, EReference> refsOfSort = EMFUtils.findAllReferences2(eachPlaceSort.eClass());
+                EReference eReference = refsOfSort.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDSORTS);
+                assert eReference != null;
+                EList<EObject> bKindSorts = (EList<EObject>) eachPlaceSort.eGet(eReference);
+                bKindSorts.forEach(x -> {
+                    String rectifiedCtrlId = x.eClass().getName().substring(0, x.eClass().getName().lastIndexOf(SORT_PREFIX));
+                    sorts.add(getControlByName(rectifiedCtrlId));
+                });
+                kindFunction.put(ctrlId, KindSort.create(getControlByName(ctrlId), sorts));
+            }
+            if (EMFUtils.eClassHasSuperType(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC, eachPlaceSort.eClass())) {
+                kindFunction.put(ctrlId, KindSort.create(getControlByName(ctrlId), Lists.mutable.empty()));
+            }
+        }
     }
 
 
@@ -190,12 +208,12 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
     }
 
     @Override
-    public EPackage getModelPackage() {
+    public EPackage getMetaModel() {
         return this.sigPackage;
     }
 
     @Override
-    public EObject getModel() {
+    public EObject getInstanceModel() {
         return this.instanceModel;
     }
 
@@ -208,14 +226,6 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
         kindSorts.forEach(eachSort -> {
             kindFunction.put(eachSort.getControl().getNamedType().stringValue(), eachSort);
         });
-    }
-
-    private EClass extendBControlEClass(String controlName, EPackage sigPackage) {
-        EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BCONTROL);
-        EClass controlClass = EMFUtils.createEClass(controlName);
-        EMFUtils.addSuperType(controlClass, (EClass) eClassifier);
-        sigPackage.getEClassifiers().add(controlClass);
-        return controlClass;
     }
 
     private EClass extendBKindSortCompositeEClass(String controlName, EPackage sigPackage) {

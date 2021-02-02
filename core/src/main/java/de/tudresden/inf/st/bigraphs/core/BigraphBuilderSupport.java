@@ -51,14 +51,14 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
             throws SignatureValidationFailedException {
         Optional<Pair<Class<? extends AbstractEcoreSignature>, Consumer<EObject>>> any =
                 EcoreSignature.VALIDATORS.keyValuesView()
-                .detectOptional((entry) -> {
-                    try {
-                        entry.getTwo().accept(signatureMetaModel);
-                        return true;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                });
+                        .detectOptional((entry) -> {
+                            try {
+                                entry.getTwo().accept(signatureMetaModel);
+                                return true;
+                            } catch (Exception e) {
+                                return false;
+                            }
+                        });
         if (Objects.isNull(any) || !any.isPresent()) {
             throw new SignatureValidationFailedException();
         }
@@ -74,6 +74,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
             Constructor<S> ctor = (Constructor<S>) clazz.getConstructor(EObject.class);
             S sig = ctor.newInstance(signatureInstanceModel);
             assert sig.getInstanceModel().equals(signatureInstanceModel);
+            assert sig.getControls() != null;
             return sig;
         } catch (Exception e) {
             throw new SignatureValidationFailedException(e);
