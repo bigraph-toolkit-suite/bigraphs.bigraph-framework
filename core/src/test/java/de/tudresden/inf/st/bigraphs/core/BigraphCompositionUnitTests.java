@@ -194,7 +194,7 @@ public class BigraphCompositionUnitTests {
 
     @Test
     void compose_test_0() throws InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IncompatibleInterfaceException {
-        EPackage exampleMetaModel = createOrGetMetaModel(createSignature_compose_test_0());
+        EPackage exampleMetaModel = createOrGetBigraphMetaModel(createSignature_compose_test_0());
         PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature_compose_test_0());
         BigraphEntity.OuterName fromD2 = builderReactum.createOuterName("fromD");
         BigraphEntity.OuterName fromS2 = builderReactum.createOuterName("fromS");
@@ -385,7 +385,7 @@ public class BigraphCompositionUnitTests {
     @Test
     void more_elementary_linkings_tests() {
         final DefaultDynamicSignature mainSignature = createExampleSignature();
-        final EPackage bMetaModel = createOrGetMetaModel(mainSignature);
+        final EPackage bMetaModel = createOrGetBigraphMetaModel(mainSignature);
         final Linkings<DefaultDynamicSignature> linkings = pureLinkings(mainSignature);
         final Placings<DefaultDynamicSignature> placings = purePlacings(mainSignature);
 
@@ -716,7 +716,7 @@ public class BigraphCompositionUnitTests {
     }
 
     private static EPackage getExampleMetaModel() {
-        return createOrGetMetaModel(createExampleSignature());
+        return createOrGetBigraphMetaModel(createExampleSignature());
     }
 
     private static DefaultDynamicSignature createExampleSignature() {

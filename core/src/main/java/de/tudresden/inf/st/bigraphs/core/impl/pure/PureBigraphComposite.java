@@ -7,8 +7,8 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -42,7 +42,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
  * @param <S> type of the signature.
  * @author Dominik Grzelak
  */
-public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> extends BigraphCompositeSupport<S> implements EcoreBigraph {
+public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphCompositeSupport<S> implements EcoreBigraph {
 
     private MutableBuilder<S> builder;
 
@@ -673,7 +673,7 @@ public class PureBigraphComposite<S extends Signature<? extends Control<?, ?>>> 
     protected void assertSignaturesAreSame(Bigraph<S> outer, Bigraph<S> inner) throws IncompatibleSignatureException {
         //special handling if one is an elementary bigraph
         if (inner instanceof DiscreteIon || outer instanceof DiscreteIon) {
-            SignatureBuilder<?, ?, ?, ?> signatureBuilder = pureSignatureBuilder();
+            DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
             inner.getSignature().getControls().forEach(x -> {
                 signatureBuilder.addControl((Control) x);
             });

@@ -19,13 +19,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
@@ -134,9 +131,9 @@ public class BigraphArtifactUnitTests {
     void compose_output() {
         assertAll(() -> {
 
-            Signature<DefaultDynamicControl> signature = createExampleSignature();
+            DefaultDynamicSignature signature = createExampleSignature();
             EMetaModelData modelData = EMetaModelData.builder().setName("F").setNsUri("http://www.example.org").setNsPrefix("sample").create();
-            EPackage bMetaModel = createOrGetMetaModel(signature, modelData);
+            EPackage bMetaModel = createOrGetBigraphMetaModel(signature, modelData);
             PureBigraphBuilder<DefaultDynamicSignature> builderForF = factory.createBigraphBuilder(signature, bMetaModel);
             PureBigraphBuilder<DefaultDynamicSignature> builderForG = factory.createBigraphBuilder(signature, bMetaModel);
 //
@@ -210,7 +207,7 @@ public class BigraphArtifactUnitTests {
         int m = 3;
         DefaultDynamicSignature signature = createExampleSignature();
 //        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
-        EPackage bMetaModel = createOrGetMetaModel(signature);
+        EPackage bMetaModel = createOrGetBigraphMetaModel(signature);
         Placings<DefaultDynamicSignature> placings = purePlacings(signature);
         Linkings<DefaultDynamicSignature> linkings = pureLinkings(signature);
         Placings<DefaultDynamicSignature>.Merge merge_MplusOne = placings.merge(m + 1);

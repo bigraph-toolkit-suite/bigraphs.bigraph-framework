@@ -169,7 +169,7 @@ public class CanonicalFormPureBigraphsUnitTests {
         return bigraph;
     }
 
-    private <C extends Control<?, ?>, S extends Signature<C>> S createSignatureProcess() {
+    private DefaultDynamicSignature createSignatureProcess() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Process")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -177,7 +177,7 @@ public class CanonicalFormPureBigraphsUnitTests {
                 .newControl().identifier(StringTypedName.of("Working")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Resource")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 
     @Test

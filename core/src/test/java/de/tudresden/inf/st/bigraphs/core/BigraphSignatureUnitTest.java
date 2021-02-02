@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.core;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
@@ -136,6 +137,10 @@ public class BigraphSignatureUnitTest {
 
         KindSignature kindSignatureRecreated = new KindSignature(model);
         assert kindSignatureRecreated.getControls().equals(signature.getControls());
+
+//        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(kindSignatureRecreated);
+//        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
+//        assert orGetMetaModel == orGetMetaModel1;
     }
 
     @Test
@@ -152,11 +157,25 @@ public class BigraphSignatureUnitTest {
         assert modelPackage != null;
         assert model != null;
 
+        System.out.println("Check if signature is already in the BigraphFactory Registry");
+        AbstractEcoreSignature<? extends Control<?, ?>> orGetSignature = BigraphFactory.createOrGetSignature(model);
+        assert orGetSignature.equals(signature);
+        EPackage tmp1 = BigraphFactory.createOrGetSignatureMetaModel(signature);
+        EPackage tmp2 = BigraphFactory.createOrGetSignatureMetaModel(orGetSignature);
+        assert tmp1.equals(tmp2);
+        assert tmp1.equals(modelPackage);
+        assert tmp2.equals(modelPackage);
+
         PureBigraphBuilder<DefaultDynamicSignature> ksBigraphBuilder = PureBigraphBuilder.<DefaultDynamicSignature>create(model);
         assert ksBigraphBuilder.getMetaModel() != null;
 
         DefaultDynamicSignature dynSignatureRecreated = new DefaultDynamicSignature(model);
         assert dynSignatureRecreated.getControls().equals(signature.getControls());
+
+
+        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
+        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(dynSignatureRecreated);
+        assert orGetMetaModel == orGetMetaModel1;
 
     }
 

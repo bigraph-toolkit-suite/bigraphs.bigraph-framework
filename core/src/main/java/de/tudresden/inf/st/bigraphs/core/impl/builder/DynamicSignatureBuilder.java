@@ -1,8 +1,10 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 
@@ -44,7 +46,14 @@ public class DynamicSignatureBuilder
      */
     @Override
     public DefaultDynamicSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
-        return new DefaultDynamicSignature((Set<DefaultDynamicControl>) controls);
+        DefaultDynamicSignature sig = new DefaultDynamicSignature((Set<DefaultDynamicControl>) controls);
+        BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
+    }
+
+    @Override
+    public DefaultDynamicSignature createEmpty() {
+        return (DefaultDynamicSignature) super.createEmpty();
     }
 
     /**
@@ -53,7 +62,7 @@ public class DynamicSignatureBuilder
      * @return an empty signature of type {@link DefaultDynamicSignature}
      */
     @Override
-    public DefaultDynamicSignature createEmpty() {
+    protected DefaultDynamicSignature createEmptyStub() {
         return new DefaultDynamicSignature(Collections.emptySet());
     }
 

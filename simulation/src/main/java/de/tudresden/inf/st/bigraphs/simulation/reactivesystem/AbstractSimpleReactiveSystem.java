@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.simulation.reactivesystem;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
@@ -142,9 +143,10 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
         return false;
     }
 
-    public synchronized Signature<?> getSignature() {
+    public synchronized AbstractEcoreSignature<?> getSignature() {
         assert initialAgent != null;
-        return initialAgent.getSignature();
+        assert initialAgent.getSignature() instanceof AbstractEcoreSignature;
+        return (AbstractEcoreSignature<?>) initialAgent.getSignature();
     }
 
     public synchronized B getAgent() {

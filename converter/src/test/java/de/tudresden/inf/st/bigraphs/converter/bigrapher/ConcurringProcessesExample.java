@@ -126,7 +126,7 @@ public class ConcurringProcessesExample {
         return rr;
     }
 
-    private <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
+    private DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Process")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -139,6 +139,6 @@ public class ConcurringProcessesExample {
 //                .newControl().identifier(StringTypedName.of("Right")).arity(FiniteOrdinal.ofInteger(0)).assign()
         ;
 
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

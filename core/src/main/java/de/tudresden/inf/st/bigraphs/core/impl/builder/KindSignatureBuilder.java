@@ -1,9 +1,11 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.KindSort;
@@ -51,8 +53,6 @@ public class KindSignatureBuilder extends
                 .map(x -> (DefaultDynamicControl) x)
                 .findFirst();
     }
-
-    //TODO: add method to add kindsorts; throw exception if control was not declared before
 
     /**
      * This methods adds a place-sort for the given control.
@@ -114,16 +114,26 @@ public class KindSignatureBuilder extends
 
     @Override
     public KindSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
-        return new KindSignature((Set<DefaultDynamicControl>) controls);
+        KindSignature sig = new KindSignature((Set<DefaultDynamicControl>) controls);
+        BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
     }
 
     public KindSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls,
                                     Collection<KindSort> kindSorts) {
-        return new KindSignature((Set<DefaultDynamicControl>) controls, kindSorts);
+        KindSignature sig = new KindSignature((Set<DefaultDynamicControl>) controls, kindSorts);
+        BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
     }
 
     @Override
     public KindSignature createEmpty() {
+        return (KindSignature) super.createEmpty();
+    }
+
+    @Override
+    protected KindSignature createEmptyStub() {
         return new KindSignature(Collections.emptySet());
     }
+
 }

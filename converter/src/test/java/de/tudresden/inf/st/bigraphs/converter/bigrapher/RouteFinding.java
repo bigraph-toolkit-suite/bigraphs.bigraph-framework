@@ -37,11 +37,12 @@ import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckin
  * @author Dominik Grzelak
  */
 public class RouteFinding {
-//    private static PureBigraphFactory factory = pure();
+    //    private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/";
 
     /**
      * bigrapher full -d ./cars -f svg -s states -M 10 -t trans.svg -v carsconverted.big
+     *
      * @throws InvalidConnectionException
      * @throws LinkTypeNotExistsException
      * @throws IOException
@@ -220,7 +221,7 @@ public class RouteFinding {
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
+    private static DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Car")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -229,6 +230,6 @@ public class RouteFinding {
                 .newControl().identifier(StringTypedName.of("Road")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Target")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

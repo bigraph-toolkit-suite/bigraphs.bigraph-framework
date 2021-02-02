@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Dominik Grzelak
  */
-public class DefaultSignatureRegistryImpl extends ConcurrentHashMap<Signature, EPackage> implements BigraphFactory.Registry {
+public class DefaultBigraphModelsRegistryImpl extends ConcurrentHashMap<Signature, EPackage> implements BigraphFactory.Registry {
 
     @Override
     public EPackage getEPackage(Signature signature) {

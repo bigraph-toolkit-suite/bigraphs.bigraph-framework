@@ -1,10 +1,9 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlBuilder;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -78,7 +77,10 @@ public abstract class SignatureBuilder<NT extends NamedType<?>,
      * @return a signature
      */
     public Signature<?> create() {
-        return createWith(getControls());
+        Signature<?> sig = createWith(getControls());
+        if (sig instanceof AbstractEcoreSignature)
+            BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
     }
 
     /**
@@ -87,7 +89,17 @@ public abstract class SignatureBuilder<NT extends NamedType<?>,
      *
      * @return an empty signature of type {@literal <S>}.
      */
-    public abstract Signature<?> createEmpty();
+    public Signature<? extends Control<NT, FO>> createEmpty() {
+        Signature<? extends Control<NT, FO>> sig = (Signature<? extends Control<NT, FO>>) createEmptyStub();
+        if (sig instanceof AbstractEcoreSignature)
+            BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
+    }
+
+    /**
+     * This method is not called by the user; it is called by {@link SignatureBuilder#createEmpty()}.
+     */
+    protected abstract Signature<? extends Control<NT, FO>> createEmptyStub();
 
     //    protected  abstract <S extends Signature> Class<S> getSignatureClass();
     @SuppressWarnings("unchecked")

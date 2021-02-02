@@ -120,7 +120,7 @@ public class MultiOccurrenceExample {
     }
 
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
+    private static DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -131,6 +131,6 @@ public class MultiOccurrenceExample {
                 .newControl().identifier(StringTypedName.of("JobC")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("JobD")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

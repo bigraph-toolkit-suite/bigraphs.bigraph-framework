@@ -65,7 +65,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
         return any.get().getOne();
     }
 
-    protected static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> S getSignatureFromMetaModel(EObject signatureInstanceModel)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> S getSignatureFromMetaModel(EObject signatureInstanceModel)
             throws SignatureValidationFailedException {
         // perform all validations first
         Class<? extends EcoreSignature> clazz = executeValidationChain(signatureInstanceModel);
