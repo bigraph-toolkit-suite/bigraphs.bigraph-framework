@@ -303,10 +303,7 @@
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
                 <artifactId>bigraph-ecore-model</artifactId>
-                                <version>1.2.0</version>
-                <scope>system</scope>
-                <type>jar</type>
-                <systemPath>/home/dominik/git/BigraphFramework/etc/auxlibs/bigraphmetamodel_v2.0-alpha.jar</systemPath>
+                <version>1.2.0</version>
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>

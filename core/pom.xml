@@ -92,8 +92,12 @@
             <artifactId>org.eclipse.emf.compare</artifactId>
         </dependency>
         <dependency>
+            <!-- TODO: to be removed later when the metamodel dep. is in bintray -->
             <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
             <artifactId>bigraph-ecore-model</artifactId>
+            <scope>system</scope>
+            <type>jar</type>
+            <systemPath>${project.basedir}/../etc/auxlibs/bigraphmetamodel_v2.0-alpha.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
