@@ -64,6 +64,10 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
                 '}';
     }
 
+    // ///////////////////////////////////////////
+    // Some helper methods for Ecore-related stuff
+    // ///////////////////////////////////////////
+
     protected EClass extendBControlEClass(String newControlName, EPackage sigPackage) {
         EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BCONTROL);
         EClass controlClass = EMFUtils.createEClass(newControlName);

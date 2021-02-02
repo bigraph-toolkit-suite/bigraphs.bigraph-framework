@@ -41,7 +41,7 @@ public final class BigraphFactory {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
             PureBigraphBuilder<S> b = (PureBigraphBuilder<S>) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
-            EPackage loadedEPackage = b.getLoadedEPackage();
+            EPackage loadedEPackage = b.getMetaModel();
             if (Objects.nonNull(metaModelData)) {
                 loadedEPackage.setNsPrefix(metaModelData.getNsPrefix());
                 loadedEPackage.setNsURI(metaModelData.getNsUri());
@@ -58,7 +58,7 @@ public final class BigraphFactory {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
             PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
-            Registry.INSTANCE.put(signature, b.getLoadedEPackage());
+            Registry.INSTANCE.put(signature, b.getMetaModel());
             return b;
         } else {
             return (PureBigraphBuilder<S>) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
@@ -109,7 +109,7 @@ public final class BigraphFactory {
 
     public static synchronized <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> pureBuilder(S signature, String bigraphBaseModelPackageFile) {
         PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackageFile, PureBigraph.class);
-        Registry.INSTANCE.put(signature, b.getLoadedEPackage());
+        Registry.INSTANCE.put(signature, b.getMetaModel());
         return b;
     }
 

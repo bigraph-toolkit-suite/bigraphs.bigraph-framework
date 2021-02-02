@@ -27,7 +27,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
     protected static final String DEFAULT_EDGE_PREFIX = "e";
     protected static final String DEFAULT_VERTEX_PREFIX = "v";
 
-    public abstract EPackage getLoadedEPackage();
+    public abstract EPackage getMetaModel();
 
     protected abstract EObject getInstanceModel();
 
@@ -101,7 +101,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
                                               Collection<BigraphEntity.InnerName> innerNames,
                                               Collection<BigraphEntity.OuterName> outerNames) {
 //        assert availableEClasses.get(BigraphMetaModelConstants.CLASS_BIGRAPH) != null;
-        EObject eObject = getLoadedEPackage().getEFactoryInstance().create(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_BIGRAPH));
+        EObject eObject = getMetaModel().getEFactoryInstance().create(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_BIGRAPH));
 
         roots.forEach(x -> {
             ((EList) eObject.eGet(getAvailableEReferences().get(BigraphMetaModelConstants.REFERENCE_BROOTS)))

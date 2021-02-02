@@ -42,7 +42,7 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
     public Placings(SignatureBuilder signatureBuilder) {
         arbitrarySignature = (S) signatureBuilder.createEmpty();
         mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
-        loadedModelPackage = mutableBuilder.getLoadedEPackage();
+        loadedModelPackage = mutableBuilder.getMetaModel();
     }
 
     public Placings(S signature) {
@@ -56,14 +56,14 @@ public class Placings<S extends Signature<? extends Control<?, ?>>> implements S
         } else {
             mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
         }
-        loadedModelPackage = mutableBuilder.getLoadedEPackage();
+        loadedModelPackage = mutableBuilder.getMetaModel();
     }
 
     public Placings(S signature, EPackage bigraphMetaModel) {
         arbitrarySignature = signature;
         mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
-        assert bigraphMetaModel == mutableBuilder.getLoadedEPackage();
-        loadedModelPackage = mutableBuilder.getLoadedEPackage();
+        assert bigraphMetaModel == mutableBuilder.getMetaModel();
+        loadedModelPackage = mutableBuilder.getMetaModel();
     }
 
 

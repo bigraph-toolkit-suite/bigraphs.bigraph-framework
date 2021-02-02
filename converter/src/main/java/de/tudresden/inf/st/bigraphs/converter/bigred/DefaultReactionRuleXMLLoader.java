@@ -145,7 +145,7 @@ public class DefaultReactionRuleXMLLoader implements BigraphXmlLoaderSupport.Xml
             }
             if (localPart.equals("changes")) {
                 reactum = new PureBigraph(builder.new InstanceParameter(
-                        builder.getLoadedEPackage(),
+                        builder.getMetaModel(),
                         redex.getSignature(),
                         builder.availableRoots(),
                         builder.availableSites(),

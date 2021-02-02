@@ -83,8 +83,8 @@ public class MutableBuilder<S extends Signature<? extends Control<?, ?>>> extend
     }
 
     @Override
-    public EPackage getLoadedEPackage() {
-        return loadedEPackage;
+    public EPackage getMetaModel() {
+        return metaModel;
     }
 
     public BigraphEntity createNewNode(Control<?, ?> control, String nodeIdentifier) {

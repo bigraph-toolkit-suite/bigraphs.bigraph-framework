@@ -49,7 +49,7 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
 
     public PureBigraph importObject() {
         PureBigraph context = new PureBigraph(builder.new InstanceParameter(
-                builder.getLoadedEPackage(),
+                builder.getMetaModel(),
                 signature,
                 builder.availableRoots(),
                 builder.availableSites(),

@@ -55,7 +55,7 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
 
     public EPackage getModelPackage() {
         if (Objects.nonNull(builder))
-            return builder.getLoadedEPackage();
+            return builder.getMetaModel();
         return null;
     }
 
@@ -170,7 +170,7 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
         stats = new double[]{nodesWithPositiveArity.size(), cntO, cntE, numOfLinkings};
 
         PureBigraphBuilder<Signature<?>>.InstanceParameter meta = builder.new InstanceParameter(
-                builder.getLoadedEPackage(),
+                builder.getMetaModel(),
                 signature,
                 newRoots,
                 newSites,

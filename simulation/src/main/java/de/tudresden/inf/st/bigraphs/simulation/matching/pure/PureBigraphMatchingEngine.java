@@ -621,7 +621,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
         // outer names in d must not included in outernames of R: die names kommen direkt aus dem agent und dürfen gleichen namen haben
 
         PureBigraph context = new PureBigraph(builder.new InstanceParameter(
-                builder.getLoadedEPackage(),
+                builder.getMetaModel(),
                 agentAdapter.getSignature(),
                 builder.availableRoots(), // roots
                 newSites,
@@ -910,7 +910,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             });
             PureBigraph paramBigraph = new PureBigraph(
                     builder2.new InstanceParameter(
-                            builder2.getLoadedEPackage(),
+                            builder2.getMetaModel(),
                             agentAdapter.getSignature(),
                             Collections.singletonMap(0, rootParam),
                             Collections.emptyMap(),

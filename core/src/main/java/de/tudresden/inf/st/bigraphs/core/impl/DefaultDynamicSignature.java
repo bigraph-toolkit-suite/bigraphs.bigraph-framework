@@ -1,10 +1,10 @@
 package de.tudresden.inf.st.bigraphs.core.impl;
 
-import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import de.tudresden.inf.st.bigraphs.core.EcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControl;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BDynamicSignature;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.EList;

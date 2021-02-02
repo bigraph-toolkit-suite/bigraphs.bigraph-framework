@@ -100,14 +100,14 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
         } else {
             mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
         }
-        loadedModelPackage = mutableBuilder.getLoadedEPackage();
+        loadedModelPackage = mutableBuilder.getMetaModel();
     }
 
     public Linkings(S signature, EPackage bigraphMetaModel) {
         arbitrarySignature = signature;
         mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
-        assert bigraphMetaModel == mutableBuilder.getLoadedEPackage();
-        loadedModelPackage = mutableBuilder.getLoadedEPackage();
+        assert bigraphMetaModel == mutableBuilder.getMetaModel();
+        loadedModelPackage = mutableBuilder.getMetaModel();
     }
 
     /**
@@ -117,7 +117,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
     public Linkings(SignatureBuilder signatureBuilder) {
         arbitrarySignature = (S) signatureBuilder.createEmpty();
         mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
-        loadedModelPackage = mutableBuilder.getLoadedEPackage();
+        loadedModelPackage = mutableBuilder.getMetaModel();
     }
 
     public class IdentityEmpty extends ElementaryBigraph<S> {
