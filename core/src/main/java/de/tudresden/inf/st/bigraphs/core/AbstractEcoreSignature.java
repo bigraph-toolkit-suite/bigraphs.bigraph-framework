@@ -2,6 +2,9 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -59,5 +62,13 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
         return getClass().getSimpleName() + "{" +
                 "controls=" + controls +
                 '}';
+    }
+
+    protected EClass extendBControlEClass(String newControlName, EPackage sigPackage) {
+        EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BCONTROL);
+        EClass controlClass = EMFUtils.createEClass(newControlName);
+        EMFUtils.addSuperType(controlClass, (EClass) eClassifier);
+        sigPackage.getEClassifiers().add(controlClass);
+        return controlClass;
     }
 }

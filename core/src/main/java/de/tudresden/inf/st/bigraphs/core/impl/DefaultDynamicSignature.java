@@ -29,15 +29,28 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
         super();
         EcoreSignature.validateBSignature(bSignature);
         instanceModel = bSignature;
+        try {
+            // (!) Important, because otherwise we might face a "A frozen model should not be modified" assertion exception:
+            sigPackage = BigraphArtifacts.loadInternalSignatureMetaMetaModel();
+            sigFactory = sigPackage.getEFactoryInstance();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        //TODO: extend/re-create the metamodel here for the new approach, or maybe allow loading it
-        DynamicSignatureBuilder dynamicSignatureBuilder = new DynamicSignatureBuilder();
-//        for (BControl bControl : bSignature.getBControls()) {
-//            dynamicSignatureBuilder = dynamicSignatureBuilder
-//                    .newControl(bControl.getName(), bControl.getArity())
-//                    .status(ControlStatus.fromString(bControl.getStatus().getName())).assign();
-//        }
-        this.controls = dynamicSignatureBuilder.create().getControls();
+        Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
+        // Create bControl classes and add them to bControls reference
+        EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);
+        assert eReferenceControls != null;
+
+        EList<EObject> availableControls = (EList<EObject>) instanceModel.eGet(eReferenceControls);
+        for (EObject eachControl : availableControls) {
+            EAttribute nameAttr = EMFUtils.findAttribute(eachControl.eClass(), BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_NAME);
+            EAttribute arityAttr = EMFUtils.findAttribute(eachControl.eClass(), BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_ARITY);
+            EAttribute statusAttr = EMFUtils.findAttribute(eachControl.eClass(), BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_STATUS);
+            assert nameAttr != null && arityAttr != null && statusAttr != null;
+            String ctrlId = (String) eachControl.eGet(nameAttr);
+            EClass controlEClass = extendBControlEClass(ctrlId, sigPackage);
+        }
     }
 
 
@@ -98,11 +111,4 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
         return this.instanceModel;
     }
 
-    private EClass extendBControlEClass(String controlName, EPackage sigPackage) {
-        EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BCONTROL);
-        EClass controlClass = EMFUtils.createEClass(controlName);
-        EMFUtils.addSuperType(controlClass, (EClass) eClassifier);
-        sigPackage.getEClassifiers().add(controlClass);
-        return controlClass;
-    }
 }
