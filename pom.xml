@@ -5,7 +5,7 @@
 
     <groupId>de.tudresden.inf.st.bigraphs</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
@@ -27,25 +27,19 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <guava.version>28.1-jre</guava.version>
-        <jgrapht.version>1.3.0</jgrapht.version>
+        <bigraph.metamodel.version>1.3.0-SNAPSHOT</bigraph.metamodel.version>
         <emf.common.version>2.21.0</emf.common.version>
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
-        <emf.ecore.version>2.18.0</emf.ecore.version>
-        <emf.codegen.version>2.16.0</emf.codegen.version>
+        <emf.ecore.version>2.23.0</emf.ecore.version>
+        <emf.codegen.version>2.21.0</emf.codegen.version>
         <emf.cdo.version>4.7.0</emf.cdo.version>
-        <eclipse.mirror>http://download.eclipse.org/</eclipse.mirror>
         <eclipse.collections.version>10.4.0</eclipse.collections.version>
+        <guava.version>28.1-jre</guava.version>
+        <jgrapht.version>1.3.0</jgrapht.version>
         <junit.version>5.4.0</junit.version>
         <log4j.version>1.7.30</log4j.version>
         <graphviz.version>0.8.3</graphviz.version>
-        <bintray.organization>st-tu-dresden</bintray.organization>
-        <bintray.repo>maven-repository</bintray.repo>
-        <bintray.package>${project.artifactId}</bintray.package>
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
-        <bintray.deployment.url>
-            https://api.bintray.com/maven/${bintray.organization}/${bintray.repo}/${bintray.package}/;publish=1
-        </bintray.deployment.url>
         <doclint>none</doclint>
         <project.javadoc.outputDirectory>./etc/doc/docusaurus/website/static/apidocs/</project.javadoc.outputDirectory>
         <project.usermanual.outputDirectory>etc/doc/docusaurus/website</project.usermanual.outputDirectory>
@@ -74,25 +68,9 @@
 
     <repositories>
         <repository>
-            <id>maven-central</id>
-            <name>Maven Central Repository</name>
-            <url>https://repo1.maven.org/maven2/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
             <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>eclipse-latest</id>
-            <url>http://download.eclipse.org/releases/latest</url>
-            <layout>p2</layout>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -105,12 +83,20 @@
             </snapshots>
         </repository>
         <repository>
-            <id>bintray-st-tu-dresden-maven-repository</id>
-            <name>bintray</name>
-            <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>STFactory</id>
+            <name>st-tu-dresden-artifactory</name>
+            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
+        </repository>
+        <repository>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+            <id>central</id>
+            <name>bintray</name>
+            <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
 
@@ -123,14 +109,27 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>bintray-plugins</name>
+            <url>https://jcenter.bintray.com</url>
+        </pluginRepository>
     </pluginRepositories>
 
     <distributionManagement>
         <repository>
-            <id>bintray-st-tu-dresden-maven-repository</id>
-            <name>st-tu-dresden-maven-repository</name>
-            <url>${bintray.deployment.url}</url>
+            <id>central</id>
+            <name>STFactory-releases</name>
+            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>STFactory-snapshots</name>
+            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <build>
@@ -194,24 +193,6 @@
                         <!-- disable the default existing mapping -->
                         <skip>true</skip>
                     </configuration>
-                    <executions>
-                        <execution>
-                            <configuration>
-                                <url>${bintray.deployment.url}</url>
-                                <repositoryId>bintray-st-tu-dresden-maven-repository</repositoryId>
-                                <file>${project.build.directory}/${project.build.finalName}.jar</file>
-                                <artifactId>${project.artifactId}</artifactId>
-                                <groupId>${project.groupId}</groupId>
-                                <version>${project.version}</version>
-                                <packaging>jar</packaging>
-                            </configuration>
-                            <phase>deploy</phase>
-                            <id>bintray-deploy</id>
-                            <goals>
-                                <goal>deploy-file</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -299,12 +280,23 @@
         </plugins>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+    </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
                 <artifactId>bigraph-ecore-model</artifactId>
-                <version>1.2.0</version>
+                <version>${bigraph.metamodel.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
@@ -341,6 +333,16 @@
             <!-- EMF -->
             <dependency>
                 <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.ecore</artifactId>
+                <version>${emf.ecore.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                <version>${emf.ecore.xmi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.common</artifactId>
                 <version>${emf.common.version}</version>
             </dependency>
@@ -352,18 +354,18 @@
             </dependency>
             <dependency>
                 <groupId>org.eclipse.emf</groupId>
-                <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-                <version>${emf.ecore.xmi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.emf</groupId>
-                <artifactId>org.eclipse.emf.ecore</artifactId>
-                <version>${emf.ecore.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>${emf.codegen.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.jdt</groupId>
+                        <artifactId>org.eclipse.jdt.core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jdt</groupId>
+                        <artifactId>org.eclipse.jdt.launching</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- https://github.com/ghillairet/cdo-maven -->
             <dependency>
@@ -510,20 +512,12 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-    </dependencies>
-
     <profiles>
+        <!-- ************************************************************ -->
+        <!-- Profile for building a fat jar (containing every dependency) -->
+        <!-- ************************************************************ -->
+
         <profile>
-            <!-- Profile to activate to build a fat jar -->
             <id>fatJar</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -571,8 +565,10 @@
             </build>
         </profile>
 
+        <!-- ************************************************ -->
+        <!-- Profile for building all documentation artifacts -->
+        <!-- ************************************************ -->
         <profile>
-            <!-- Profile to be activated when building the documentation artifacts -->
             <id>distribute</id>
             <properties>
                 <maven.main.skip>true</maven.main.skip>
@@ -662,6 +658,58 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- ****************** -->
+        <!-- Deployment Profile -->
+        <!-- ****************** -->
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jfrog.buildinfo</groupId>
+                        <artifactId>artifactory-maven-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>build-info</id>
+                                <goals>
+                                    <goal>publish</goal>
+                                </goals>
+                                <configuration>
+                                    <deployProperties>
+                                        <groupId>${project.groupId}</groupId>
+                                        <artifactId>${project.artifactId}</artifactId>
+                                        <version>${project.version}</version>
+                                    </deployProperties>
+                                    <artifactory>
+                                        <includeEnvVars>true</includeEnvVars>
+                                        <envVarsExcludePatterns>*password*,*secret*,*key*,*token*,*passphrase*
+                                        </envVarsExcludePatterns>
+                                        <timeoutSec>60</timeoutSec>
+                                    </artifactory>
+                                    <publisher>
+                                        <contextUrl>https://stgroup.jfrog.io/artifactory/</contextUrl>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <username>${username}</username>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <password>${password}</password>
+                                        <excludePatterns>*-tests.jar</excludePatterns>
+                                        <!-- Name of local repository in Artifactory @ stgroup.jfrog.io/ -->
+                                        <repoKey>st-tu-dresden-maven-repository</repoKey>
+                                        <snapshotRepoKey>st-tu-dresden-maven-repository</snapshotRepoKey>
+                                    </publisher>
+                                    <buildInfo>
+                                        <buildName>bigraph-framework-builds</buildName>
+                                    </buildInfo>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

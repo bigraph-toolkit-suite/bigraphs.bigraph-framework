@@ -7,11 +7,6 @@
       <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="bintray-st-tu-dresden-maven-repository" />
-      <option name="name" value="bintray" />
-      <option name="url" value="https://dl.bintray.com/st-tu-dresden/maven-repository" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="eclipse-releases-maven" />
       <option name="name" value="eclipse-releases-maven" />
       <option name="url" value="https://repo.eclipse.org/content/groups/releases/" />
@@ -27,9 +22,19 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="STFactory" />
+      <option name="name" value="st-tu-dresden-release" />
+      <option name="url" value="https://stgroup.jfrog.io/artifactory/st-tu-dresden-release" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="bintray" />
       <option name="url" value="https://jcenter.bintray.com" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="STFactory" />
+      <option name="name" value="st-tu-dresden-artifactory" />
+      <option name="url" value="https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="spring-milestones" />
@@ -62,9 +67,14 @@
       <option name="url" value="https://repo1.maven.org/maven2/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="emf-compare" />
-      <option name="name" value="emf-compare" />
-      <option name="url" value="https://download.eclipse.org/modeling/emf/compare/updates/releases/3.3/R201911051515/core" />
+      <option name="id" value="central" />
+      <option name="name" value="st-tu-dresden-release" />
+      <option name="url" value="https://stgroup.jfrog.io/artifactory/st-tu-dresden-release" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="snapshots" />
+      <option name="name" value="st-tu-dresden-snapshot" />
+      <option name="url" value="https://stgroup.jfrog.io/artifactory/st-tu-dresden-snapshot" />
     </remote-repository>
   </component>
 </project>

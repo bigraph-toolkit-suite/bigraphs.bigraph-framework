@@ -9,13 +9,11 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/dev/pom.xml" />
-        <option value="$PROJECT_DIR$/etc/aggregator/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/bigraph-store/pom.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
       </set>
     </option>
   </component>

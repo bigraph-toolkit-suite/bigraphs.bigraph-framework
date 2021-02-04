@@ -1,19 +1,19 @@
 <img src="./etc/bigraph-framework-logo.png" style="zoom:67%;" />
 
-# Bigraphical Framework
+# Bigraph Framework
 
-**Version:** 0.8.0-SNAPSHOT
-Master: [![pipeline status](/../badges/master/pipeline.svg)](/../pipelines)
-Develop: [![pipeline status](/../badges/develop/pipeline.svg)](/../pipelines)
+Version | Master | Develop
+---|---|---
+0.9.0-SNAPSHOT | [![pipeline status](/../badges/master/pipeline.svg)](/../pipelines) | [![pipeline status](/../badges/develop/pipeline.svg)](/../pipelines)
 
 -----
 
 A framework for the creation and simulation of bigraphs to expedite the experimental evaluation of the bigraph theory in
 real-world applications.
 
-The goal of this framework is to facilitate the implementation of context-aware and agent-based systems.
+The goal of this framework is to facilitate the implementation of context-aware and agent-based systems, and reactive systems in general.
 It provides means for model-driven software development based on the bigraph theory.
-The high level API eases the programming of bigraphical systems for real-world application.
+The high-level API eases the programming of bigraphical systems for real-world application.
 
 **Features**
 
@@ -68,44 +68,6 @@ BigraphComposite bigraphComposite = ops(bigraph2).compose(bigraph1);
 
 ### Other APIs
 
-#### Creating Bigraphs using Factories
-
-##### Factory
-A factory is necessary for accessing related builder instances for a specific kind of bigraph.
-The factory depends on the kind of bigraph and its _signature_.
-Depending on the bigraph type, the factory will return specialized methods.
-
-```java
-// create factory for pure bigraphs (signatures and concrete bigraph instances)
-PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
-```
-
-##### Signature and Bigraph Builder
-
-The builder is responsible for instantiating and configuring concrete bigraph instances,
-depending on the specific _signature_.
-```java
-// create signature
-DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-signatureBuilder
-    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-    .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(0)).assign()
-    .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-;
-
-DefaultDynamicSignature signature = signatureBuilder.create();
-// create a bigraph builder and supply the signature
-PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-BigraphEntity.OuterName a = builder.createOuterName("a");
-BigraphEntity.InnerName b = builder.createInnerName("b");
-builder.createRoot().addChild("User").linkToOuter(a)
-.addChild("User", "a")
-.addChild(signature.getControlByName("User")).linkToInner(b);
-
-// create a concrete bigraph instance
-PureBigraph bigraph = builder.createBigraph();
-```
-
 #### **Bigraph Builder: Connecting nodes by links**
 
 The bigraph builder provides more utility methods helping to build more
@@ -114,9 +76,12 @@ complex structures easily.
 The following one shows, how to create nodes, and at the same time connecting them all with an edge:
 
 ```java
-builder.createRoot().connectByEdge(signature.getControlByName("Job"),
-                                signature.getControlByName("Job"),
-                                signature.getControlByName("Job"));
+PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+builder.createRoot().connectByEdge(
+    "Job",
+    "Job",
+    signature.getControlByName("Job")
+);
 ```
 
 Now, we want to connect nodes located at different "places". Therefore, we
@@ -134,7 +99,7 @@ builder.createRoot().addChild("Computer").linkToInner(tmp_link);
 builder.closeInnerName(tmp_link);
 ```
 
-#### **Exporting the meta-model and instance model**
+#### **Exporting the Ecore metamodel and instance model**
 
 ```java
 PureBigraph bigraph = ...;
@@ -151,7 +116,7 @@ To get the composition and tensor product of two bigraphs:
 PureBigraph G = ...;
 PureBigraph F = ...;
 PureBigraph H = ...;
-BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
+BigraphComposite<DefaultDynamicSignature> compositor = ops(G);
 
 BigraphComposite<DefaultDynamicSignature> result = compositor.compose(F);
 compositor.juxtapose(F);
@@ -160,78 +125,89 @@ compositor.juxtapose(F).parallelProduct(H);
 
 ## Maven configuration
 
-> **Note:** The framework is not yet hosted at Bintray. See [Building from Source](#Building-from-Source) instead.
-
 ```xml
 <!-- the core module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-core</artifactId>
-  <version>${revision}</version>
+  <version>${version}</version>
 </dependency>
 <!-- the rewriting module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-simulation</artifactId>
-  <version>${revision}</version>
+  <version>${version}</version>
 </dependency>
 <!-- the visualization module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-visualization</artifactId>
-  <version>${revision}</version>
+  <version>${version}</version>
 </dependency>
 <!-- the converter module -->
 <dependency>
   <groupId>de.tudresden.inf.st.bigraphs</groupId>
   <artifactId>bigraph-converter</artifactId>
-  <version>${revision}</version>
+  <version>${version}</version>
 </dependency>
 ```
 
-The following remote Maven repository must be added as well. There are two options:
-- A) Within the `pom.xml` of a Maven project:
+The following Maven remote repository must be added as well. 
+
+There are two options:
+
+### Remote repositories
+
+Artifacts are deployed to the [ST-Group's Artifactory](https://stgroup.jfrog.io/).
+To resolve the dependencies above, the following remote repository must be configured.
+
+##### A) Within the `pom.xml` of a Maven project:
 ```xml
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-st-tu-dresden-maven-repository</id>
-            <name>bintray</name>
-            <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
-        </repository>
-    </repositories>
+<-- Default -->
+<repository>
+    <snapshots>
+        <enabled>true</enabled> <!-- set false to disable snapshot releases -->
+    </snapshots>
+    <id>STFactory</id>
+    <name>st-tu-dresden-artifactory</name>
+    <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
+</repository>
 ```
 
-- B) Via the `settings.xml` of your Maven local repository `~/.m2/`:
+##### B) Via the [`settings.xml`](https://maven.apache.org/ref/3.6.3/maven-settings/settings.html) of your Maven local repository `~/.m2/`:
 
 ```xml
-    <profiles>
-        <!-- possibly other profiles -->
-        <profile>
-            <repositories>
-                <repository>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>bintray-st-tu-dresden-maven-repository</id>
-                    <name>bintray</name>
-                    <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
-                </repository>
-            </repositories>
-            <id>bintray-st-tu-dresden</id>
-        </profile>
-    </profiles>
-    <activeProfiles>
-        <activeProfile>bintray-st-tu-dresden</activeProfile>
-    </activeProfiles>
+<!-- ... -->
+<profiles>
+    <profile>
+        <repositories>
+            <repository>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+                <id>STFactory-release</id>
+                <name>st-tu-dresden-releases</name>
+                <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-release</url>
+            </repository>
+            <repository>
+                <snapshots/>
+                <id>STFactory-snapshot</id>
+                <name>st-tu-dresden-snapshots</name>
+                <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-snapshot</url>
+            </repository>
+        </repositories>
+        <id>artifactory</id>
+    </profile>
+</profiles>
+<activeProfiles>
+    <activeProfile>artifactory</activeProfile>
+</activeProfiles>
+<!-- ... -->
 ```
 
-The [Bintray](https://bintray.com/) service is used for hosting Maven artifacts.
-See also [Building from Source](#Building-from-Source) if you want to build the source by yourself and host them in the local Maven repository. Then, both steps _A)_ and _B)_ are not needed.
+> See also [Building from Source](#Building-the-Framework-from Source) if you want to build the source by yourself and host them in your Maven local repository.
 
-### Logging
+#### Logging
 
 This framework employs SLF4J as a facade for the log4j logging framework.
 
@@ -339,20 +315,18 @@ The recommendation here is to build it with the regular `mvn` command. You will 
 
 ### Building the Framework from Source
 
-**For the first time, the following steps must be executed from the root directory of this project:**
+The following command must be executed from the root directory of this project:
 
 ```bash
-$ mvn validate -f ./etc/aggregator/pom.xml
-$ mvn clean install -U -DskipTests
-# To instead create fat jars of each module, run:
-$ mvn clean install -U -DskipTests -PfatJar
+# Default
+$ mvn clean install -DskipTests
+
+# To create a "fat jar" for each module, run:
+$ mvn clean install -DskipTests -PfatJar
 ```
 
-(Among other things, some necessary dependencies from Eclipse P2 repositories will be downloaded. Afterwards, these auxiliary libraries and some other third party libraries that are not available in the central Maven repository will be installed into your local Maven repository.)
-
-As long as no new versions are introduced regarding Eclipse dependencies or other auxiliary libraries, you may just use `mvn clean/package/install/...` as usual.
-
-After all steps were executed and the build successfully finished, you can now use _Bigraph Framework_ in other Java projects. Therefore, see [Maven configuration](#maven-configuration) on how to include the _Bigraph Framework_ Maven dependencies.
+After the command successfully finished, you can now use _Bigraph Framework_ in other Java projects. 
+Therefore, see [Maven configuration](#maven-configuration) on how to include the individual _Bigraph Framework_ dependencies.
 
 ### Building the Documentation
 
@@ -375,6 +349,11 @@ The manual is generated using [docusaurus](https://docusaurus.io/), which must b
 ### Development and Deployment
 
 See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development and deployment of _Bigraph Framework_.
+
+To deploy Bigraph Framework to the [ST-Group's Artifactory](https://stgroup.jfrog.io/):
+```bash
+mvn deploy -DskipTests -Pdeploy -Dusername=admin -Dpassword=password
+```
 
 ## License
 
