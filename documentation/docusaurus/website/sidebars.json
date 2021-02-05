@@ -2,7 +2,7 @@
   "docs": {
     "Basics": [
       "index",
-      "basic/basics",
+      "basic/start",
       "basic/composition",
       "basic/traversing"
     ],
@@ -29,8 +29,7 @@
       "visualization/visualization-styles"
     ],
     "Advanced": [
-      "advanced/complex-modeling",
-      "advanced/factories-and-builders"
+      "advanced/complex-modeling"
     ]
   }
 }

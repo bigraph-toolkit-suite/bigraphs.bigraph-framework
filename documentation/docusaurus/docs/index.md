@@ -120,41 +120,42 @@ must be added as well. We provide the configuration for Maven and Gradle below.
 
 <!--Maven-->
 
-The following Maven repository settings must be added to the user's `settings.xml`, usually found
-in `~/.m2/`.
+The following Maven repository settings must be added to the `<repositories/>` element of a `pom.xml` for a new project.
+
+```xml
+<repository>
+    <snapshots>
+        <enabled>true</enabled> <!-- set false to disable snapshot releases -->
+    </snapshots>
+    <id>STFactory</id>
+    <name>st-tu-dresden-artifactory</name>
+    <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
+</repository>
+```
+
+Another option is to modify the `settings.xml`, usually found in `~/.m2/`.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <settings xsi:schemaLocation='http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd'
           xmlns='http://maven.apache.org/SETTINGS/1.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-    
     <profiles>
         <profile>
+            <id>stgroup-artifactory</id>
             <repositories>
                 <repository>
                     <snapshots>
-                        <enabled>false</enabled>
+                        <enabled>true</enabled> <!-- set false to disable snapshot releases -->
                     </snapshots>
-                    <id>bintray-st-tu-dresden-maven-repository</id>
-                    <name>bintray</name>
-                    <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
+                    <id>STFactory</id>
+                    <name>st-tu-dresden-artifactory</name>
+                    <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
                 </repository>
             </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>bintray-st-tu-dresden-maven-repository</id>
-                    <name>bintray-plugins</name>
-                    <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
-                </pluginRepository>
-            </pluginRepositories>
-            <id>bintray</id>
         </profile>
     </profiles>
     <activeProfiles>
-        <activeProfile>bintray</activeProfile>
+        <activeProfile>stgroup-artifactory</activeProfile>
     </activeProfiles>
 </settings>
 ```
@@ -168,7 +169,7 @@ For Gradle, add this to the project's build gradle file:
 ```gradle
 repositories {
     maven {
-        url  "https://dl.bintray.com/st-tu-dresden/maven-repository" 
+        url  "https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/" 
     }
 }
 ```

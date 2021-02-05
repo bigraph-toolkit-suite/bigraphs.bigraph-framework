@@ -57,8 +57,8 @@ const users = [
 ];
 
 var urlConfigs = {
-    baseUrl: '/products/bigraph-framework/',
     url: 'https://www.bigraphs.org',
+    baseUrl: '/products/bigraph-framework/',
 };
 
 const siteVariables = {
@@ -72,6 +72,8 @@ const siteConfig = {
         createVariableInjectionPlugin(siteVariables),
         importMd(),
     ],
+    defaultVersionShown: '0.9.0-SNAPSHOT',
+    noIndex: false,
     title: 'Bigraph Framework', // Title for your website.
     tagline: 'A framework written in Java for the manipulation and simulation of bigraphical reactive systems',
     baseUrl: urlConfigs.baseUrl, // Base URL for your project */

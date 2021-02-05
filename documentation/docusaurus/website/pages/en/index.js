@@ -6,12 +6,16 @@
  */
 
 const React = require('react');
-
+// var createReactClass = require('create-react-class');
 const CompLibrary = require('../../core/CompLibrary.js');
 
 const MarkdownBlock = CompLibrary.MarkdownBlock; /* Used to read markdown */
 const Container = CompLibrary.Container;
 const GridBlock = CompLibrary.GridBlock;
+// var Markdown = require('react-remarkable');
+
+var RemoteRepoCodeBlock = require('../../../../../core/BigraphRepositoryBlock')
+var DependencyCodeBlock = require('../../../../../core/BigraphDependencyBlock')
 
 class HomeSplash extends React.Component {
     render() {
@@ -86,6 +90,81 @@ class Index extends React.Component {
         const {config: siteConfig, language = ''} = this.props;
         const {baseUrl} = siteConfig;
 
+        // const HowToUse = () => {
+        //     return (
+        //         <GridBlock
+        //             align="center"
+        //             layout="twoColumn"
+        //             className="myCustomClass"
+        //             contents={[
+        //                 {
+        //                     content: "ABC"
+        //                 },
+        //                 {
+        //                     content: "DEF"
+        //                 }
+        //             ]}
+        //         />
+        //     )
+        // };
+
+        // const LearnHow = () => (
+        //     <Block background="light">
+        //         {[
+        //             {
+        //                 content:
+        //                     'Each new Docusaurus project has **randomly-generated** theme colors.',
+        //                 image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
+        //                 imageAlign: 'right',
+        //                 title: 'Randomly Generated Theme Colors',
+        //             },
+        //         ]}
+        //     </Block>
+        // );
+
+        // const Showcase = () => {
+        //     if ((siteConfig.users || []).length === 0) {
+        //         return null;
+        //     }
+        //
+        //     const showcase = siteConfig.users
+        //         .filter(user => user.pinned)
+        //         .map(user => (
+        //             <a href={user.infoLink} key={user.infoLink}>
+        //                 <img src={user.image} alt={user.caption} title={user.caption}/>
+        //             </a>
+        //         ));
+        //
+        //     const pageUrl = page => baseUrl + (language ? `${language}/` : '') + page;
+        //
+        //     return (
+        //         <div className="productShowcaseSection paddingBottom">
+        //             <h2>Who is Using This?</h2>
+        //             <p>This project is used by all these people</p>
+        //             <div className="logos">{showcase}</div>
+        //             <div className="more-users">
+        //                 <a className="button" href={pageUrl('users.html')}>
+        //                     More {siteConfig.title} Users
+        //                 </a>
+        //             </div>
+        //         </div>
+        //     );
+        // };
+
+        // const Description = () => (
+        //     <Block background="dark">
+        //         {[
+        //             {
+        //                 content:
+        //                     'This is another description of how this project is useful',
+        //                 image: `${baseUrl}img/undraw_note_list.svg`,
+        //                 imageAlign: 'right',
+        //                 title: 'Description',
+        //             },
+        //         ]}
+        //     </Block>
+        // );
+
         const Block = props => (
             <Container
                 padding={['bottom', 'top']}
@@ -98,63 +177,28 @@ class Index extends React.Component {
                 />
             </Container>
         );
-        const TryOut = () => {
-            const url = siteConfig.repoUrl;
-            return (
-
-                <Block background="light" id="try">
-                    {[
-                        {
-                            title: 'Download Bigraph Framework for Java',
-                            content:
-                            '<p>Bintray: ' +
-                                '<a href="https://bintray.com/st-tu-dresden/maven-repository">https://bintray.com/st-tu-dresden/maven-repository</a>' +
-                                '</p>' +
-                                '<p>GitHub: ' +
-                                '<a href="https://github.com/st-tu-dresden/bigraph-framework">https://github.com/st-tu-dresden/bigraph-framework</a>' +
-                                '</p>',
-                            image: `${baseUrl}img/icon-download.png`,
-                            imageAlign: 'left',
-                        },
-                    ]}
-                </Block>
-            )
-        };
-
-        const Description = () => (
-            <Block background="dark">
-                {[
-                    {
-                        content:
-                            'This is another description of how this project is useful',
-                        image: `${baseUrl}img/undraw_note_list.svg`,
-                        imageAlign: 'right',
-                        title: 'Description',
-                    },
-                ]}
-            </Block>
-        );
-
-        const LearnHow = () => (
-            <Block background="light">
-                {[
-                    {
-                        content:
-                            'Each new Docusaurus project has **randomly-generated** theme colors.',
-                        image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
-                        imageAlign: 'right',
-                        title: 'Randomly Generated Theme Colors',
-                    },
-                ]}
-            </Block>
-        );
 
         const FeatureCallout = () => (
             <div
                 className="productShowcaseSection paddingBottom lightBackground"
                 style={{textAlign: 'center', paddingTop: '2em'}}>
                 <h2>Features</h2>
-                <MarkdownBlock>These are some of the features of this framework</MarkdownBlock>
+                <MarkdownBlock>
+                    This framework provides 4 central building blocks. Some of their features are:
+                </MarkdownBlock>
+            </div>
+        );
+
+        const UsageCallout = () => (
+            <div id={`try`}
+                className="productShowcaseSection paddingBottom lightBackground"
+                style={{textAlign: 'center', paddingTop: '2em'}}>
+                <h2>Download & Use Bigraph Framework for Java</h2>
+                <ul>
+                    <li>Maven Repository on <a href={`https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/`}>Artifactory</a> </li>
+                    <li>Source code on <a href={`https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/`}>GitLab</a></li>
+                    <li>Source code on <a href={`https://github.com/st-tu-dresden/bigraph-framework`}>GitHub (mirror)</a></li>
+                </ul>
             </div>
         );
 
@@ -191,43 +235,18 @@ class Index extends React.Component {
             </Block>
         );
 
-        const Showcase = () => {
-            if ((siteConfig.users || []).length === 0) {
-                return null;
-            }
-
-            const showcase = siteConfig.users
-                .filter(user => user.pinned)
-                .map(user => (
-                    <a href={user.infoLink} key={user.infoLink}>
-                        <img src={user.image} alt={user.caption} title={user.caption}/>
-                    </a>
-                ));
-
-            const pageUrl = page => baseUrl + (language ? `${language}/` : '') + page;
-
-            return (
-                <div className="productShowcaseSection paddingBottom">
-                    <h2>Who is Using This?</h2>
-                    <p>This project is used by all these people</p>
-                    <div className="logos">{showcase}</div>
-                    <div className="more-users">
-                        <a className="button" href={pageUrl('users.html')}>
-                            More {siteConfig.title} Users
-                        </a>
-                    </div>
-                </div>
-            );
-        };
-
         return (
             <div>
                 <HomeSplash siteConfig={siteConfig} language={language}/>
                 <div className="mainContainer">
                     <FeatureCallout/>
                     <Features/>
+                    <UsageCallout/>
+                    <RemoteRepoCodeBlock img={`${baseUrl}img/icon-remote-repository.png`} />
+                    <DependencyCodeBlock img={`${baseUrl}img/icon-artifact.png`} />
                     {/*<LearnHow/>*/}
-                    <TryOut/>
+                    {/*<TryOut/>*/}
+                    {/*<HowToUse/>*/}
                     {/*<Description/>*/}
                     {/*<Showcase/>*/}
                 </div>

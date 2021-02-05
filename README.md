@@ -334,7 +334,7 @@ Building the documentation builds also the project without running tests.
 You may need to execute the above steps before.
 
 ```bash
-$ mvn clean package exec:java -f documentation/pom.xml && mvn install -Pdistribute
+$ mvn clean package exec:java -f documentation/pom.xml && mvn install -f documentation/pom.xml -Pdistribute
 ```
 
 #### Java Documentation

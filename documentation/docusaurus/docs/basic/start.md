@@ -1,5 +1,5 @@
 ---
-id: basics
+id: start
 title: Getting Started
 ---
 
@@ -27,7 +27,7 @@ The semantic meaning of the term "connection" is left open here - it can represe
 > More about the specific methods of the bigraph factory, bigraph builders and signature builder can be found in [Factories and Builders](./advanced/factories-and-builders).
 
 ### Bigraph Builder
-
+ 
 Now we are able to instantiate a pure bigraph builder instance.
 It allows us to build our bigraph by adding child nodes and connections among them.
 The signature above determines which kind of nodes we can add to the bigraph (our syntax).

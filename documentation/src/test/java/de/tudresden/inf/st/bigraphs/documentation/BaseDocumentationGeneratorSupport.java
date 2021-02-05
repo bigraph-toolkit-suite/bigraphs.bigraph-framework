@@ -33,7 +33,6 @@ import java.util.stream.IntStream;
  * @author Dominik Grzelak
  */
 public abstract class BaseDocumentationGeneratorSupport {
-    public final static String BASE_EXPORT_PATH = "etc/doc/docusaurus/docs/assets";
 
     Queue<Pair<Position, Position>> positionStack = new LinkedBlockingDeque<>();
     Pair<Position, Position> currentPosition;

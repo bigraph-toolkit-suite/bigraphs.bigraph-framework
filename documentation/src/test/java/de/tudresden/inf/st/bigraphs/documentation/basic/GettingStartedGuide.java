@@ -16,6 +16,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.documentation.BaseDocumentationGeneratorSupport;
+import de.tudresden.inf.st.bigraphs.documentation.MainDocGenerationRunner;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Test;
@@ -66,7 +67,7 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
                 sb.append("\n");
                 sb.append(CODE_FENCE_END);
                 try {
-                    String format = String.format(BASE_EXPORT_PATH + "/basics/%s-%d.java", methodNameSimple, cnt);
+                    String format = String.format(MainDocGenerationRunner.BASE_EXPORT_PATH + "/basics/%s-%d.java", methodNameSimple, cnt);
                     Path exportPath = Paths.get(getMavenModuleRoot(
                             this.getClass()).toAbsolutePath().toString(),
                             "../",

@@ -28,41 +28,6 @@ Each module represents a concrete subset of the framework's whole functionality.
 Thus, it makes it easy to include a certain dependency in external projects for
 specific needs, at the same time the project is logically organized.
 
-<!-- _v3: current -->
-<!-- _v5: cdo migrated model -->
-<!-- _v6: with extra BBigraph container object -->
-
-### Using Standalone (Non-Maven) Dependencies
-
-Java libraries that are not available in Maven Central are installed to the local Maven repository.
-This local repository is usually located under `~/.m2/`.
-The usage of system scope in a `<dependency/>` definition for referencing libraries is discouraged.
-
-The module `aggregator` under `./etc/aggregator` takes care of this install procedure.
-
-To manually install an arbitrary `*.jar`:
-```bash
-mvn install:install-file  -Dfile=./etc/auxlibs/bigred-core_1.0.0.20130228.jar \
-                          -DgroupId=org.bigraph.model \
-                          -DartifactId=bigred-core \
-                          -Dversion=1.0.0.20130228 \
-                          -Dpackaging=jar \
-                          -DgeneratePom=true
-mvn clean install -U
-```
-
-Sometimes it is necessary to execute the following first:
-```bash
-$ cd ~/.m2
-$ find . -name "_remote.repositories" -type f -delete
-```
-See [here](https://stackoverflow.com/questions/16866978/maven-cant-find-my-local-artifacts/) for answers, when it may be the case.
-
-The example above shows how to install a bigraph model library of [BigRed]() (a graphical editor for bigraphs).
-
-**However, as mentioned,** the `aggregator` module is responsible for this task.
-You shall not manually install the dependencies, instead, configure them within the `aggregator` module.
-
 ## Documentation
 
 This section explains how to build and view the user manual and Javadoc API.
@@ -95,24 +60,30 @@ It will be copied to `etc/doc/docusaurus/website/static/apidocs` by Maven as wel
 
 #### Using Docusaurus for Live Editing
 
-First, `cd` into the `./etc/doc/docusaurus/website/` folder.
+First, `cd` into the `./documentation/docusaurus/website/` folder.
 Then, to view and edit the manual execute the following commands:
 
 ```bash
-$ cd ./etc/doc/docusaurus/website
+$ cd ./documentation/docusaurus/website
 $ npm start
 ```
 To actually build the static site:
 ```bash
 $ npm run build
 ```
-The output is exported at `etc/doc/docusaurus/website/build/bigraph-framework/`.
+The output is exported at `documentation/docusaurus/website/build/bigraph-framework/`.
 
 #### Auto-generated Code Samples
 
 - Some of the code samples are automatically derived from the test cases and merged into the documentation
 - The module `documentation` is in charge for that
 - Execute the following Maven goal to create the code samples: `mvn install exec:java -f documentation/pom.xml`
+
+#### Build the whole documentation
+
+```bash
+$ mvn install -f documentation/pom.xml -Pdistribute
+```
 
 ## Deployment
 
