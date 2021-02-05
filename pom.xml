@@ -353,19 +353,24 @@
                 <type>jar</type>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.core.expressions</artifactId>
+                <version>3.5.100</version>
+            </dependency>
+            <dependency>
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>${emf.codegen.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.eclipse.jdt</groupId>
-                        <artifactId>org.eclipse.jdt.core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.eclipse.jdt</groupId>
-                        <artifactId>org.eclipse.jdt.launching</artifactId>
-                    </exclusion>
-                </exclusions>
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.eclipse.jdt</groupId>-->
+<!--                        <artifactId>org.eclipse.jdt.core</artifactId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.eclipse.jdt</groupId>-->
+<!--                        <artifactId>org.eclipse.jdt.launching</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
             </dependency>
             <!-- https://github.com/ghillairet/cdo-maven -->
             <dependency>
