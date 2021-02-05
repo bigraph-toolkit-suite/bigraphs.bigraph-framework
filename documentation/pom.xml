@@ -12,6 +12,11 @@
 
     <artifactId>documentation</artifactId>
 
+    <properties>
+        <!--        <project.javadoc.outputDirectory>docusaurus/website/static/apidocs/</project.javadoc.outputDirectory>-->
+        <project.usermanual.outputDirectory>docusaurus/website</project.usermanual.outputDirectory>
+    </properties>
+
     <!-- *********************************************************** -->
     <!-- Additional profile for building all documentation artifacts -->
     <!-- *********************************************************** -->

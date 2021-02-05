@@ -41,8 +41,6 @@
         <graphviz.version>0.8.3</graphviz.version>
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
         <doclint>none</doclint>
-        <project.javadoc.outputDirectory>./etc/doc/docusaurus/website/static/apidocs/</project.javadoc.outputDirectory>
-        <project.usermanual.outputDirectory>etc/doc/docusaurus/website</project.usermanual.outputDirectory>
     </properties>
 
     <developers>

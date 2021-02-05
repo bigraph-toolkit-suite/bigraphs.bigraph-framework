@@ -38,6 +38,10 @@ And also the Changelog is part of it, see [Deployment](#Deployment).
 It references also to the Javadoc.
 - The CI pipeline is responsible to copy the Javadoc API into the Docusaurus manual.
 
+**Requirements for the Documentation**
+
+- Node: use latest version, see: https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04-de
+- NPM: use latest version: `sudo npm install -g npm@latest`
 
 
 ###  Building and Working with the Documentation
@@ -48,9 +52,9 @@ It references also to the Javadoc.
 - Execute them from the root folder of this project
 
 ```bash
-$ mvn install exec:java -f documentation/pom.xml
-$ mvn clean install -Pdistribute
-$ cd ./etc/doc/docusaurus/website
+$ mvn clean package exec:java -f documentation/pom.xml
+$ mvn install -f documentation/pom.xml -Pdistribute
+$ cd ./documentation/docusaurus/website
 $ npm run build
 ```
 
@@ -99,13 +103,7 @@ This sections discusses the deployment process.
 ### Build configuration
 
 - Goals to execute `mvn clean install` to run the build
-- Goals to execute `mvn clean deploy` to deploy artifacts to [Bintray](https://bintray.com/)
-
-> **Note:**
-> 
-> - The *package* must be created in Bintray first while having the same name as the artifact name
-> - Bintray API key / username:password must be specified in `~/.m2/settings.xml`
-> - SNAPSHOT releases *cannot* be deployed
+- Goals to execute `mvn clean deploy` to deploy Artifactory
 
 ### Documentation (User Manual + Javadoc API)
 
