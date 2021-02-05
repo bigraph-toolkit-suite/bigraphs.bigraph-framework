@@ -352,7 +352,7 @@ See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deplo
 
 To deploy Bigraph Framework to the [ST-Group's Artifactory](https://stgroup.jfrog.io/):
 ```bash
-mvn deploy -DskipTests -Pdeploy -Dusername=admin -Dpassword=password
+mvn deploy -DskipTests -Pdeploy -Dusername=username -Dpassword=password
 ```
 
 ## License
