@@ -8,10 +8,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Supplier;
 
 /**
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  * @author Dominik Grzelak
  */
 public abstract class RandomBigraphGeneratorSupport {
-    SecureRandom rnd;
+    Random rnd;
     LinkStrategy linkStrategy;
 
     public enum LinkStrategy {
@@ -33,7 +33,7 @@ public abstract class RandomBigraphGeneratorSupport {
 
     public RandomBigraphGeneratorSupport(LinkStrategy linkStrategy) {
         this.linkStrategy = linkStrategy;
-        this.rnd = new SecureRandom();
+        this.rnd = new Random();
     }
 
     double[] stats;

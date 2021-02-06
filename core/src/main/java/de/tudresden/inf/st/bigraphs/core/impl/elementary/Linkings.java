@@ -220,7 +220,7 @@ public class Linkings<S extends Signature<? extends Control<?, ?>>> implements S
 
         Substitution(NamedType<?> outerName, NamedType<?>... innerNames) {
             super(null);
-            if (Objects.isNull(outerName) || innerNames.length == 0) {
+            if ((outerName) == null || innerNames.length == 0) {
                 throw new RuntimeException("Substitution cannot be created because outer name or inner name is missing.");
             }
             MutableSortedMap<String, BigraphEntity.InnerName> innerNameMap = SortedMaps.mutable.empty();

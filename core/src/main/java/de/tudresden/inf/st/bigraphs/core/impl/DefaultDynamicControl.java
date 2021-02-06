@@ -30,7 +30,7 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
 
     private DefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity, ControlStatus statusOfControl) {
         super(name, arity);
-        if (Objects.isNull(statusOfControl)) {
+        if ((statusOfControl) == null) {
             statusOfControl = ControlStatus.ACTIVE;
         }
         this.statusOfControl = statusOfControl;

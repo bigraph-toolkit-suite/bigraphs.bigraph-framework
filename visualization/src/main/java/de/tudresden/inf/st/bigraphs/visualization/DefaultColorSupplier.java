@@ -18,7 +18,7 @@ public class DefaultColorSupplier extends GraphicalFeatureSupplier<Color> {
 
     @Override
     public Color get() {
-        if (Objects.isNull(getNode())) return DEFAULT_COLOR;
+        if ((getNode()) == null) return DEFAULT_COLOR;
         switch (getNode().getType()) {
             case ROOT:
                 return Color.BLACK;

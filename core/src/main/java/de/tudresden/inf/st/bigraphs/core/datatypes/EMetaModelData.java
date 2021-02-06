@@ -48,17 +48,17 @@ public class EMetaModelData {
         private String nsUri;
 
         public MetaModelDataBuilder setName(String name) {
-            this.name = Objects.isNull(name) ? "" : name;
+            this.name = (name) == null ? "" : name;
             return this;
         }
 
         public MetaModelDataBuilder setNsPrefix(String nsPrefix) {
-            this.nsPrefix = Objects.isNull(nsPrefix) ? "" : nsPrefix;
+            this.nsPrefix = (nsPrefix) == null ? "" : nsPrefix;
             return this;
         }
 
         public MetaModelDataBuilder setNsUri(String nsUri) {
-            this.nsUri = Objects.isNull(nsUri) ? "" : nsUri;
+            this.nsUri = (nsUri) == null ? "" : nsUri;
             return this;
         }
 
@@ -71,7 +71,7 @@ public class EMetaModelData {
          * @return a meta model data object with the provided parameters
          */
         public EMetaModelData create() {
-            if (Objects.isNull(nsUri) && Objects.isNull(nsPrefix) && Objects.nonNull(name)) {
+            if ((nsUri) == null && (nsPrefix) == null && (name) != null) {
                 nsUri = "http://" + name + ".ecore";
                 nsPrefix = name;
             }

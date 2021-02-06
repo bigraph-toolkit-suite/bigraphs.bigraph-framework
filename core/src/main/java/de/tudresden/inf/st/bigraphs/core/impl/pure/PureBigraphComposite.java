@@ -527,7 +527,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             if (((EcoreBigraph) copyOuter).isBInnerName(next)) {
                 EStructuralFeature innerBLinksRef = next.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
                 EObject theNewLink = (EObject) next.eGet(innerBLinksRef);
-                if (Objects.isNull(theNewLink)) { // otherwise the innername is a closure
+                if ((theNewLink) == null) { // otherwise the innername is a closure
                     // the current element must be a closure if no link is connected. So we should create a new edge
                     EClassifier edgeClass = next.eClass().getEPackage().getEClassifier(BigraphMetaModelConstants.CLASS_EDGE);
                     theNewLink = next.eClass().getEPackage().getEFactoryInstance().create((EClass) edgeClass);

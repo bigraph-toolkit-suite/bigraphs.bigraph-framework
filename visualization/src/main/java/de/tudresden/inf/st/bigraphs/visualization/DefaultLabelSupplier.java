@@ -16,7 +16,7 @@ public class DefaultLabelSupplier extends GraphicalFeatureSupplier<String> {
 
     @Override
     public String get() {
-        if (Objects.isNull(getNode())) return "INVALID";
+        if ((getNode()) == null) return "INVALID";
         switch (getNode().getType()) {
             case NODE:
                 BigraphEntity.NodeEntity node = (BigraphEntity.NodeEntity) getNode();

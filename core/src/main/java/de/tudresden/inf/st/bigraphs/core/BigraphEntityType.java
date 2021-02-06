@@ -19,7 +19,7 @@ public enum BigraphEntityType {
      * @return {@code true} if the given entity is a root, otherwise {@code false}.
      */
     public static boolean isRoot(BigraphEntity entity) {
-        if (Objects.isNull(entity)) return false;
+        if ((entity) == null) return false;
         return entity.getType() == BigraphEntityType.ROOT;
     }
 
@@ -30,7 +30,7 @@ public enum BigraphEntityType {
      * @return {@code true} if the given entity is a site, otherwise {@code false}.
      */
     public static boolean isSite(BigraphEntity entity) {
-        if (Objects.isNull(entity)) return false;
+        if ((entity) == null) return false;
         return entity.getType() == BigraphEntityType.SITE;
     }
 
@@ -41,7 +41,7 @@ public enum BigraphEntityType {
      * @return {@code true} if the given entity is a node, otherwise {@code false}.
      */
     public static boolean isNode(BigraphEntity entity) {
-        if (Objects.isNull(entity)) return false;
+        if (entity == null) return false;
         return entity.getType() == BigraphEntityType.NODE;
     }
 
@@ -53,7 +53,7 @@ public enum BigraphEntityType {
      * @return {@code true} if the given entity is a port, otherwise {@code false}.
      */
     public static boolean isPort(BigraphEntity entity) {
-        if (Objects.isNull(entity)) return false;
+        if ((entity) == null) return false;
         return entity.getType() == BigraphEntityType.PORT;
     }
 
@@ -64,7 +64,7 @@ public enum BigraphEntityType {
      * @return {@code true} if the given entity is an inner name, otherwise {@code false}.
      */
     public static boolean isInnerName(BigraphEntity entity) {
-        if (Objects.isNull(entity)) return false;
+        if ((entity) == null) return false;
         return entity.getType() == BigraphEntityType.INNER_NAME;
     }
 
@@ -75,7 +75,7 @@ public enum BigraphEntityType {
      * @return {@code true} if the given entity is an outer name, otherwise {@code false}.
      */
     public static boolean isOuterName(BigraphEntity entity) {
-        if (Objects.isNull(entity)) return false;
+        if ((entity) == null) return false;
         return entity.getType() == BigraphEntityType.OUTER_NAME;
     }
 
@@ -86,7 +86,7 @@ public enum BigraphEntityType {
      * @return {@code true} if the given entity is an edge, otherwise {@code false}.
      */
     public static boolean isEdge(BigraphEntity entity) {
-        if (Objects.isNull(entity)) return false;
+        if ((entity) == null) return false;
         return entity.getType() == BigraphEntityType.EDGE;
     }
 
@@ -131,7 +131,7 @@ public enum BigraphEntityType {
      * @return {@code true} if the given type is a place, otherwise {@code false}.
      */
     public static boolean isPlaceType(BigraphEntityType type) {
-        if (Objects.isNull(type)) return false;
+        if ((type) == null) return false;
         switch (type) {
             case NODE:
             case SITE:
@@ -154,7 +154,7 @@ public enum BigraphEntityType {
     }
 
     public static boolean isPointType(BigraphEntityType type) {
-        if (Objects.isNull(type)) return false;
+        if ((type) == null) return false;
         switch (type) {
             case INNER_NAME:
             case PORT:

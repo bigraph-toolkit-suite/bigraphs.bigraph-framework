@@ -213,7 +213,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
         if (BigraphEntityType.isRoot(node) || !isBPlace(node.getInstance())) return Collections.emptyList();
         BigraphEntity<?> parent = getParent(node);
-        if (Objects.isNull(parent)) return Collections.emptyList();
+        if ((parent) == null) return Collections.emptyList();
         List<BigraphEntity<?>> siblings = getChildrenOf(parent);
         siblings.remove(node);
         return siblings;
@@ -222,10 +222,10 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     @Override
     @SuppressWarnings("unchecked")
     public BigraphEntity.NodeEntity<DefaultDynamicControl> getNodeOfPort(BigraphEntity.Port port) {
-        if (Objects.isNull(port)) return null;
+        if ((port) == null) return null;
         EObject instance = port.getInstance();
         EStructuralFeature nodeRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
-        if (Objects.isNull(nodeRef)) return null;
+        if ((nodeRef) == null) return null;
         EObject nodeObject = (EObject) instance.eGet(nodeRef);
         Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> first =
                 Optional.ofNullable(nodesMap.get(nodeObject));
@@ -237,7 +237,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         if (!BigraphEntityType.isNode(node)) return Collections.emptyList();
         EObject instance = node.getInstance();
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
-        if (Objects.isNull(portRef)) return Collections.emptyList();
+        if (portRef == null) return Collections.emptyList();
         EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
         List<BigraphEntity.Port> portsList = new LinkedList<>();
         for (EObject eachPort : portList) { // are ordered anyway
@@ -254,19 +254,19 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         if (!BigraphEntityType.isNode(node)) return 0;
         EObject instance = node.getInstance();
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
-        if (Objects.isNull(portRef)) return 0;
+        if ((portRef) == null) return 0;
         return ((EList<EObject>) instance.eGet(portRef)).size();
     }
 
     @Override
     public List<BigraphEntity<?>> getPointsFromLink(BigraphEntity<?> linkEntity) {
-        if (Objects.isNull(linkEntity) || !isBLink(linkEntity.getInstance()))
+        if (linkEntity == null || !isBLink(linkEntity.getInstance()))
             return Collections.emptyList();
         final EObject eObject = linkEntity.getInstance();
         final EStructuralFeature pointsRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
         if (Objects.isNull(pointsRef)) return Collections.emptyList();
         final EList<EObject> pointsObjects = (EList<EObject>) eObject.eGet(pointsRef);
-        if (Objects.isNull(pointsObjects)) return Collections.emptyList();
+        if ((pointsObjects) == null) return Collections.emptyList();
 
         final List<BigraphEntity<?>> result = new ArrayList<>();
         for (EObject eachObject : pointsObjects) {
@@ -291,9 +291,9 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         if (!BigraphEntityType.isPointType(point)) return null;
         EObject eObject = point.getInstance();
         EStructuralFeature lnkRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
-        if (Objects.isNull(lnkRef)) return null;
+        if ((lnkRef) == null) return null;
         EObject linkObject = (EObject) eObject.eGet(lnkRef);
-        if (Objects.isNull(linkObject)) return null;
+        if ((linkObject) == null) return null;
         if (!isBLink(linkObject)) return null; //"owner" problem
         if (isBEdge(linkObject)) {
             Optional<BigraphEntity.Edge> first = getEdges().stream().filter(x -> x.getInstance().equals(linkObject)).findFirst();
@@ -349,7 +349,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
 
     @Override
     public boolean isParentOf(BigraphEntity<?> node, BigraphEntity<?> possibleParent) {
-        if (Objects.isNull(node) || Objects.isNull(possibleParent)) return false;
+        if ((node) == null || (possibleParent) == null) return false;
         if (node.equals(possibleParent)) return true;
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         if (Objects.isNull(prntRef)) return false;
@@ -367,17 +367,17 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
 
     @Override
     public <C extends Control<?, ?>> boolean areConnected(BigraphEntity.NodeEntity<C> place1, BigraphEntity.NodeEntity<C> place2) {
-        if (Objects.isNull(place1) || Objects.isNull(place2)) return false;
+        if ((place1) == null || (place2) == null) return false;
         EStructuralFeature portsRef = place1.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
-        if (Objects.isNull(portsRef)) return false;
+        if ((portsRef) == null) return false;
         EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(portsRef);
         for (EObject bPort : bPorts) {
             EStructuralFeature linkRef = bPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
-            if (Objects.isNull(linkRef)) return false;
+            if ((linkRef) == null) return false;
             EObject linkObject = (EObject) bPort.eGet(linkRef);
-            if (Objects.isNull(linkObject)) continue;
+            if ((linkObject) == null) continue;
             EStructuralFeature pointsRef = linkObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-            if (Objects.isNull(pointsRef)) continue;
+            if ((pointsRef) == null) continue;
             EList<EObject> bPoints = (EList<EObject>) linkObject.eGet(pointsRef);
             for (EObject bPoint : bPoints) {
                 if (isBPort(bPoint)) {

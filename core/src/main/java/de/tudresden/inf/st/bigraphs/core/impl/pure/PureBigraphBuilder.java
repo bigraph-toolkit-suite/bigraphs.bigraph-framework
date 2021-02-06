@@ -306,7 +306,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * Method is used to update all necessary entity maps when a bigraph is loaded from the file system.
      */
     private void updateAllMaps() {
-        if (Objects.isNull(loadedInstanceModel)) return;
+        if ((loadedInstanceModel) == null) return;
         loadedInstanceModel.eContents().stream()
                 .forEach(each -> {
                     if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT))) {
@@ -408,13 +408,13 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
 
         @Override
         public Hierarchy up() {
-            return Objects.isNull(this.parentHierarchy) ? this : this.parentHierarchy;
+            return (this.parentHierarchy) == null ? this : this.parentHierarchy;
         }
 
         @Override
         public Hierarchy top() {
             Hierarchy tmp = this.parentHierarchy;
-            if (Objects.isNull(tmp)) return this;
+            if ((tmp) == null) return this;
             Hierarchy last = null;
             do {
                 if (tmp != null) last = tmp;
@@ -443,7 +443,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
             // First, check if node is not already in the list or being put under a different name
             // the node itself and the name is searched
             // Ensures that the correct builder was used (because of the node name supplier)
-            if (Objects.isNull(availableNodes.get(((BigraphEntity.NodeEntity) thisOne.getParent()).getName())) &&
+            if ((availableNodes.get(((BigraphEntity.NodeEntity) thisOne.getParent()).getName())) == null &&
                     availableNodes.values().stream().noneMatch(x -> x.equals(thisOne.getParent()))
             ) {
                 addChildToParent(thisOne.getParent());
@@ -1222,7 +1222,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @return {@code true}, if the given place is connected with the link, otherwise {@code false}.
      */
     protected boolean isConnectedWithLink(BigraphEntity.NodeEntity<Control> place, @Nullable EObject theLink) {
-        if (Objects.isNull(theLink)) return false;
+        if ((theLink) == null) return false;
         EList<EObject> bPorts = (EList<EObject>) place.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
 //        EList<EObject> bPorts = (EList<EObject>) place.getInstance().eGet(factory.getBigraphBaseModelPackage().getBNode_BPorts());
 //        EList<BPort> bPorts = place.getBPorts();
@@ -1303,7 +1303,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
 
     @SuppressWarnings("unchecked")
     public PureBigraph createBigraph() {
-        if (Objects.isNull(bigraph)) {
+        if ((bigraph) == null) {
             InstanceParameter meta;
             if (loadedFromFile && Objects.nonNull(loadedInstanceModel)) {
                 meta = new InstanceParameter(metaModel,

@@ -157,7 +157,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
             this.outerNames = new LinkedHashSet<>(availableOuterNames.values());
             this.innerNames = new LinkedHashSet<>(availableInnerNames.values());
             this.nodes = new LinkedHashSet<>(availableNodes.values());
-            if (Objects.isNull(instanceModel))
+            if ((instanceModel) == null)
                 this.bBigraphObject = createBBigraphContainer(this.roots, this.edges, this.innerNames, this.outerNames);
             else
                 this.bBigraphObject = instanceModel;

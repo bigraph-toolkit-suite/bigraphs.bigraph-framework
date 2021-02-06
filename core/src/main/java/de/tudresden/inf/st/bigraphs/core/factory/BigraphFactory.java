@@ -38,7 +38,7 @@ public final class BigraphFactory {
 
 
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> EPackage createOrGetSignatureMetaModel(S signatureObject) {
-        if (Objects.isNull(Registry.INSTANCE_SIG.getEPackage(signatureObject))) {
+        if ((Registry.INSTANCE_SIG.getEPackage(signatureObject)) == null) {
             Registry.INSTANCE_SIG.put(signatureObject, signatureObject.getMetaModel());
             return signatureObject.getMetaModel();
         }
@@ -122,7 +122,7 @@ public final class BigraphFactory {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
-        if (Objects.isNull(bigraphBaseModelPackage)) {
+        if ((bigraphBaseModelPackage) == null) {
             PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
             Registry.INSTANCE.put(signature, b.getMetaModel());
             return b;
@@ -149,7 +149,7 @@ public final class BigraphFactory {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
-        if (Objects.isNull(bigraphBaseModelPackage)) {
+        if ((bigraphBaseModelPackage) == null) {
             Placings<S> b = FactoryCreationContext.createPlacingsBuilder(signature, PureBigraph.class);
             Registry.INSTANCE.put(signature, b.getLoadedModelPackage());
             return b;
@@ -162,7 +162,7 @@ public final class BigraphFactory {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
-        if (Objects.isNull(bigraphBaseModelPackage)) {
+        if ((bigraphBaseModelPackage) == null) {
             Linkings<S> b = FactoryCreationContext.createLinkingsBuilder(signature, PureBigraph.class);
             Registry.INSTANCE.put(signature, b.getLoadedModelPackage());
             return b;

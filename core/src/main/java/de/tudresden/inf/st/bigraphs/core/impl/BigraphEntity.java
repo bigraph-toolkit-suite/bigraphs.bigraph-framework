@@ -301,7 +301,7 @@ public class BigraphEntity<C extends Control> {
 
         @Override
         public String toString() {
-            if (Objects.isNull(toString)) {
+            if ((toString) == null) {
                 toString = new StringBuilder("").append(getIndex()).append(":").append("Root").toString();
             }
             return toString;

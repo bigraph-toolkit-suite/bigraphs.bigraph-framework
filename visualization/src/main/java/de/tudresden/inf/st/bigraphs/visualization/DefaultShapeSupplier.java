@@ -18,7 +18,7 @@ public class DefaultShapeSupplier extends GraphicalFeatureSupplier<Shape> {
 
     @Override
     public Shape get() {
-        if (Objects.isNull(getNode())) return DEFAULT_SHAPE;
+        if ((getNode()) == null) return DEFAULT_SHAPE;
         switch (getNode().getType()) {
             case ROOT:
                 return Shape.ELLIPSE;
