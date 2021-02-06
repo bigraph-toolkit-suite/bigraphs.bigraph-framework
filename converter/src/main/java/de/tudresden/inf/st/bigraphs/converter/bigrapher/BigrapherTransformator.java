@@ -12,6 +12,8 @@ import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveS
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.impl.factory.Lists;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -137,7 +139,8 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
             if (!childrenOf.isEmpty()) {
                 Iterator<BigraphEntity<?>> childIterator = childrenOf.iterator();
                 while (childIterator.hasNext()) {
-                    List<BigraphEntity.Link> links = new ArrayList<>(bigraph.getEdges());
+                    MutableList<BigraphEntity.Link> links = Lists.mutable.withAll(bigraph.getEdges());
+//                    List<BigraphEntity.Link> links = new ArrayList<>(bigraph.getEdges());
                     links.addAll(bigraph.getOuterNames());
                     String s1 = toString(bigraph, childIterator.next(), links, bigraph.getSites());
                     s.append(s1).append(childIterator.hasNext() ? " | " : "");
