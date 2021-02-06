@@ -169,11 +169,12 @@ public class SubHypergraphIsoSearch {
         if (index > cands.size()) return;
         if (emb.size() == candidates.size() && emb.values().stream().allMatch(Objects::nonNull)) {
 //            System.out.println("\t\t begin search now ...");
-            Iterator<Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>>> iterator = emb.entrySet().iterator();
+//            Iterator<Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>>> iterator = emb.entrySet().iterator();
             int singleMatchCnt = 0;
 
-            while (iterator.hasNext()) {
-                Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>> next = iterator.next();
+//            while (iterator.hasNext()) {
+            for (Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>> next : emb.entrySet()) {
+//                Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>> next = iterator.next();
                 List<BigraphEntity.NodeEntity<?>> incidentNodesRedex = getIncidentNodesOf(next.getKey(), redex);
                 List<BigraphEntity.NodeEntity<?>> incidentNodesAgent = getIncidentNodesOf(next.getValue(), agent);
 

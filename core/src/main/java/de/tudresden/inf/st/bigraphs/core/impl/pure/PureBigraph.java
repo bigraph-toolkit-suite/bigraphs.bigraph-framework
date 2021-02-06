@@ -40,6 +40,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     private final ImmutableList<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes;
     private final MutableMap<EObject, BigraphEntity.NodeEntity<DefaultDynamicControl>> nodesMap = Maps.mutable.empty();
     private final MutableMap<BigraphEntity.NodeEntity<DefaultDynamicControl>, List<BigraphEntity.Port>> portMap = Maps.mutable.empty();
+    private final MutableMap<BigraphEntity.Link, List<BigraphEntity<?>>> pointsOfLinkMap = Maps.mutable.empty();
     private final ImmutableSet<BigraphEntity.SiteEntity> sites;
     private final ImmutableSet<BigraphEntity.InnerName> innerNames;
     private final ImmutableSet<BigraphEntity.OuterName> outerNames;
@@ -263,8 +264,11 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public List<BigraphEntity<?>> getPointsFromLink(BigraphEntity<?> linkEntity) {
-        if (linkEntity == null || !isBLink(linkEntity.getInstance()))
+    public List<BigraphEntity<?>> getPointsFromLink(BigraphEntity.Link linkEntity) {
+        if (pointsOfLinkMap.containsKey(linkEntity)) {
+            return pointsOfLinkMap.get(linkEntity);
+        }
+        if (linkEntity == null) // || !isBLink(linkEntity.getInstance()))
             return Collections.emptyList();
         final EObject eObject = linkEntity.getInstance();
         final EStructuralFeature pointsRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
@@ -287,6 +291,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
                         .ifPresent(result::add);
             }
         }
+        pointsOfLinkMap.put(linkEntity, result);
         return result;
     }
 
@@ -298,7 +303,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         if ((lnkRef) == null) return null;
         EObject linkObject = (EObject) eObject.eGet(lnkRef);
         if ((linkObject) == null) return null;
-        if (!isBLink(linkObject)) return null; //"owner" problem
+//        if (!isBLink(linkObject)) return null; //"owner" problem
         if (isBEdge(linkObject)) {
             Optional<BigraphEntity.Edge> first = getEdges().stream().filter(x -> x.getInstance().equals(linkObject)).findFirst();
             return first.orElse(null);
@@ -338,7 +343,8 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public <C extends Control<?, ?>> List<BigraphEntity.Link> getIncidentLinksOf(BigraphEntity.NodeEntity<C> node) {
+    public <C extends Control<?, ?>> List<BigraphEntity.Link> getIncidentLinksOf
+            (BigraphEntity.NodeEntity<C> node) {
         return new ArrayList<>(Bigraph.super.getIncidentLinksOf(node));
     }
 
@@ -370,7 +376,8 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public <C extends Control<?, ?>> boolean areConnected(BigraphEntity.NodeEntity<C> place1, BigraphEntity.NodeEntity<C> place2) {
+    public <C extends Control<?, ?>> boolean areConnected
+            (BigraphEntity.NodeEntity<C> place1, BigraphEntity.NodeEntity<C> place2) {
         if ((place1) == null || (place2) == null) return false;
         EStructuralFeature portsRef = place1.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         if ((portsRef) == null) return false;

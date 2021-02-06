@@ -1152,15 +1152,15 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
         EObject instance1 = node.getInstance();
 //        EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
-        Integer numberOfConnections = bPorts1.size();
+        int numberOfConnections = bPorts1.size();
         //check arity of control
-        Number arityOfControl = node.getControl().getArity().getValue();
-        Integer castedArityOfControl = numberOfConnections.getClass().cast(arityOfControl);
+        int arityOfControl = (Integer) node.getControl().getArity().getValue();
+//        Integer castedArityOfControl = numberOfConnections.getClass().cast(arityOfControl);
 //        Integer value = (Integer) arity.getValue();
-        castedArityOfControl = castedArityOfControl == null ? 0 : castedArityOfControl;
-        if (castedArityOfControl == 0)
+//        castedArityOfControl = castedArityOfControl == null ? 0 : castedArityOfControl;
+        if (arityOfControl == 0)
             throw new InvalidArityOfControlException();
-        if (numberOfConnections.compareTo(castedArityOfControl) >= 0)
+        if (numberOfConnections >= arityOfControl)
             throw new ToManyConnections(); // numberOfConnections >= castedArityOfControl
     }
 

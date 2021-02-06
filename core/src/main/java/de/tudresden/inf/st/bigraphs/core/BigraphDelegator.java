@@ -81,7 +81,7 @@ public abstract class BigraphDelegator<S extends Signature<?>> implements Bigrap
     }
 
     @Override
-    public Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity<?> linkEntity) {
+    public Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity.Link linkEntity) {
         return bigraphDelegate.getPointsFromLink(linkEntity);
     }
 

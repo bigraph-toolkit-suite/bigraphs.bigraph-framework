@@ -64,6 +64,7 @@ public class IHSFilter {
                         .filter(BigraphEntityType::isEdge).collect(Collectors.toList());
 
                 if (edgesR.size() > edgesA.size()) {
+                    clearMap(incidentHyperedgesA, incidentHyperedgesR);
                     return false;
                 }
                 for (int i = 0; i < edgesR.size(); i++) {
@@ -78,6 +79,7 @@ public class IHSFilter {
                     });
 
                     if (cmp) {
+                        clearMap(incidentHyperedgesA, incidentHyperedgesR);
                         return false;
                     }
 //                    long count1 = agent.getPointsFromLink(edgesA.get(i)).stream().filter(BigraphEntityType::isPort)
@@ -93,11 +95,18 @@ public class IHSFilter {
                 int arityR = redexHasAritiy ? incidentHyperedgesR.get(eachArity).size() : 0;
                 int arityA = agentHasAritiy ? incidentHyperedgesA.get(eachArity).size() : arityR;
                 if (arityR > arityA) {
+                    clearMap(incidentHyperedgesA, incidentHyperedgesR);
                     return false;
                 }
             }
         }
+        clearMap(incidentHyperedgesA, incidentHyperedgesR);
         return true;
+    }
+
+    private void clearMap(Map... maps) {
+        for (Map each : maps)
+            each.clear();
     }
 
     /**
@@ -195,10 +204,11 @@ public class IHSFilter {
     }
 
     public Set<BigraphEntity.NodeEntity<?>> adj(BigraphEntity.NodeEntity<?> node, Bigraph<?> bigraph) {
-        List<BigraphEntity> collect = bigraph.getPorts(node)
-                .stream()
-                .map(bigraph::getLinkOfPoint)
-                .collect(Collectors.toList());
+        Collection<BigraphEntity.Link> collect =  bigraph.getIncidentLinksOf(node);
+//                bigraph.getPorts(node)
+//                .stream()
+//                .map(bigraph::getLinkOfPoint)
+//                .collect(Collectors.toList());
         Set<BigraphEntity.NodeEntity<?>> collect1 = collect.stream()
                 .flatMap(x -> bigraph.getPointsFromLink(x).stream())
                 .filter(BigraphEntityType::isPort)

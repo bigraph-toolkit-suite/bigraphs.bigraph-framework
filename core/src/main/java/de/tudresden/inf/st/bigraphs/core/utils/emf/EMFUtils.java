@@ -1,6 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core.utils.emf;
 
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
@@ -107,10 +109,15 @@ public class EMFUtils {
     }
 
     public static List<EReference> findAllReferences(EClass eClass) {
-        return eClass.eContents().stream()
-                .filter(x -> x instanceof EReference)
-                .map(x -> ((EReference) x))
-                .collect(Collectors.toList());
+        return eClass.getEAllReferences();
+//        MutableList collected = Lists.mutable.empty();
+//        for(EObject x: ) {
+//
+//        }
+//        return eClass.eContents().stream()
+//                .filter(x -> x instanceof EReference)
+//                .map(x -> ((EReference) x))
+//                .collect(Collectors.toList());
     }
 
     public static Map<String, EReference> findAllReferences2(EClass eClass) {

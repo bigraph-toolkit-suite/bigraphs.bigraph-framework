@@ -302,9 +302,16 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      * @return all children of the given node
      */
     public List<BigraphEntity<?>> getChildren(BigraphEntity<?> node) {
-        return getBigraphDelegate().getChildrenOf(node)
-                .stream()
-                .filter(x -> !BigraphEntityType.isSite(x)).collect(Collectors.toList());
+        MutableList<BigraphEntity<?>> childrenWithoutSites = Lists.mutable.empty();
+        for (BigraphEntity<?> x : getBigraphDelegate().getChildrenOf(node)) {
+            if (!BigraphEntityType.isSite(x)) {
+                childrenWithoutSites.add(x);
+            }
+        }
+        return childrenWithoutSites;
+//        return getBigraphDelegate().getChildrenOf(node)
+//                .stream()
+//                .filter(x -> !BigraphEntityType.isSite(x)).collect(Collectors.toList());
     }
 
     /**

@@ -5,6 +5,8 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.factory.Lists;
+import org.eclipse.collections.api.factory.Sets;
+import org.eclipse.collections.api.set.MutableSet;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -268,11 +270,16 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @return all incident links of {@code node}
      */
     default <C extends Control<?, ?>> Collection<BigraphEntity.Link> getIncidentLinksOf(BigraphEntity.NodeEntity<C> node) {
-        return getPorts(node)
-                .stream()
-                .map(this::getLinkOfPoint)
-                .distinct()
-                .collect(Collectors.toList());
+        MutableSet<BigraphEntity.Link> incidentLinks = Sets.mutable.empty();
+        for(BigraphEntity.Port each: getPorts(node)) {
+            incidentLinks.add(getLinkOfPoint(each));
+        }
+        return incidentLinks;
+//        return getPorts(node)
+//                .stream()
+//                .map(this::getLinkOfPoint)
+//                .distinct()
+//                .collect(Collectors.toList());
     }
 
     /**
@@ -334,7 +341,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @param linkEntity the link entity who's connections shall be returned
      * @return collection of points connected to the link entity
      */
-    Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity<?> linkEntity);
+    Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity.Link linkEntity);
 
     /**
      * Check if two nodes are connected to each other.

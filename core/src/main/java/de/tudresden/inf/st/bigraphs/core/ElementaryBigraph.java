@@ -180,7 +180,7 @@ public abstract class ElementaryBigraph<S extends Signature<? extends Control<?,
     }
 
     @Override
-    public Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity<?> linkEntity) {
+    public Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity.Link linkEntity) {
         if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getPointsFromLink(linkEntity);
         if (Objects.isNull(linkEntity) || !isBLink(linkEntity.getInstance()))
             return Collections.EMPTY_LIST;

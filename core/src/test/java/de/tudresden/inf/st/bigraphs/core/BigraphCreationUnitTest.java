@@ -470,7 +470,7 @@ public class BigraphCreationUnitTest {
             BigraphEntity.Port port = new ArrayList<>(ports).get(0);
             BigraphEntity<?> linkOfPoint = bigraph.getLinkOfPoint(port);
             assertNotNull(linkOfPoint);
-            Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink(linkOfPoint);
+            Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink((BigraphEntity.Link) linkOfPoint);
             assertEquals(4, pointsFromLink.size());
             int portCnt = 0, innerCnt = 0;
             for (BigraphEntity<?> eachPoint : pointsFromLink) {
