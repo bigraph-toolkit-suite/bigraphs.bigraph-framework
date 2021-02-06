@@ -94,7 +94,7 @@ public class ModelCheckingOptions {
                 and(exportOpts);
             }
         }
-        if (Objects.isNull(optsMap.get(kind))) return null;
+        if ((optsMap.get(kind)) == null) return null;
         return (T) kind.getOptionClassType().cast(optsMap.get(kind));
     }
 

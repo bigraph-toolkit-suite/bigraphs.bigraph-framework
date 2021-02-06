@@ -67,16 +67,17 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
     private ImmutableList<BigraphEntity<?>> internalVertsG;
     private ImmutableList<BigraphEntity<?>> allVerticesOfH;
-    private final MutableList<PureBigraphParametricMatch> matches = org.eclipse.collections.impl.factory.Lists.mutable.empty();
+    private final MutableList<PureBigraphParametricMatch> matches = Lists.mutable.empty();
     // Agent -> redex root indices
-    private final HashMap<BigraphEntity<?>, List<Integer>> hitsVIx = new HashMap<>();
+    private final MutableMap<BigraphEntity<?>, List<Integer>> hitsVIx = Maps.mutable.empty(); //new HashMap<>();
 
     SubHypergraphIsoSearch search;
-    Map<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> candidatesHyperIso;
+    MutableMap<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> candidatesHyperIso;
     //TODO make local (?)
-    com.google.common.collect.BiMap<BigraphEntity<?>, LinkedList<BigraphEntity<?>>> crossingsA = HashBiMap.create();
+    MutableBiMap<BigraphEntity<?>, LinkedList<BigraphEntity<?>>> crossingsA = BiMaps.mutable.empty();
+    //    com.google.common.collect.BiMap<BigraphEntity<?>, LinkedList<BigraphEntity<?>>> crossingsA = HashBiMap.create();
     private Stopwatch matchingTimer;
-    private FutureTask<Map<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>>> linkGraphIsoTask;
+    private FutureTask<MutableMap<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>>> linkGraphIsoTask;
 
     PureBigraphMatchingEngine(PureBigraph agent, PureBigraph redex) {
         //signature, ground agent
@@ -85,7 +86,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
         this.agentAdapter = new PureBigraphAgentAdapter(agent);
         this.init();
         if (logger.isDebugEnabled() && Objects.nonNull(timer))
-            logger.debug("Initialization time: {}", (timer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+            logger.debug("Initialization time: {} (ms)", (timer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
     }
 
     @Override
@@ -134,11 +135,11 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 //        Set<SubHypergraphIsoSearch.Embedding> embeddingSet = search.getEmbeddingSet();
         executorService.submit(linkGraphIsoTask);
 
-        List<List<BigraphEntity<?>>> partitionSets = new ArrayList<>();
+        MutableList<MutableList<BigraphEntity<?>>> partitionSets = Lists.mutable.empty();//new ArrayList<>();
         for (BigraphEntity<?> eachV : internalVertsG) {//TODO: create this in a stream-filter
             List<BigraphEntity<?>> childrenOfV = agentAdapter.getChildren(eachV);
 //            List<BigraphEntity> u_vertsOfH = new ArrayList<>(allVerticesOfH);//TODO: create this in a stream-filter
-            MutableList<BigraphEntity<?>> u_vertsOfH = org.eclipse.collections.api.factory.Lists.mutable.ofAll(allVerticesOfH);
+            MutableList<BigraphEntity<?>> u_vertsOfH = Lists.mutable.ofAll(allVerticesOfH);
             //d(u) <= t + 1
             int t = childrenOfV.size();
             for (int i = u_vertsOfH.size() - 1; i >= 0; i--) {
@@ -154,7 +155,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                 }
                 if (!cs) continue;
 
-                List<BigraphEntity<?>> neighborsOfU = redexAdapter.getOpenNeighborhoodOfVertex(eachU);
+                MutableList<BigraphEntity<?>> neighborsOfU = redexAdapter.getOpenNeighborhoodOfVertex(eachU);
 //                neighborsOfU = neighborsOfU.stream().filter(x -> !x.getType().equals(BigraphEntityType.SITE)).collect(Collectors.toList());
                 Graph<BigraphEntity<?>, DefaultEdge> bipartiteGraph = BigraphMatchingSupport.createBipartiteGraph(neighborsOfU, childrenOfV);
 
@@ -176,7 +177,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                 partitionSets.clear();
                 partitionSets.add(neighborsOfU);
                 for (int i = 1, un = neighborsOfU.size(); i <= un; i++) {
-                    List<BigraphEntity<?>> tmp = new ArrayList<>(neighborsOfU);
+                    MutableList<BigraphEntity<?>> tmp = Lists.mutable.withAll(neighborsOfU);
                     tmp.remove(neighborsOfU.get(i - 1));
                     partitionSets.add(tmp);
                 }
@@ -257,9 +258,10 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
      */
     public void createMatchResult() {
         if (logger.isDebugEnabled()) {
-            logger.debug("Matching took: {} ms", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+            logger.debug("Matching took: {} (ms)", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
             matchingTimer.reset().start();
         }
+
 
         try {
             candidatesHyperIso = linkGraphIsoTask.get();
@@ -277,9 +279,10 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             }
             return;
         }
+
+
         // This is needed when there is not a distinct match of the redices roots to a agent's subtree
         // Anzahl an occurrence-bedingter "mehr"-transitionen
-
         final int numOfRoots = redexAdapter.getRoots().size();
         final boolean redexRootMatchIsUnique = numOfRoots == totalHits.get();
         LinkedList<BigraphEntity<?>> collect = new LinkedList<>(hitsVIx.keySet());
@@ -305,6 +308,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
         // for every combination
         for (Integer[] eachCombination : combination) {
+            Stopwatch matchResultPrepTimer = Stopwatch.createStarted();
+
             // redex root to agent node
 //            BiMap<Integer, BigraphEntity> hitsV_new = HashBiMap.create();
             MutableMap<Integer, BigraphEntity<?>> hitsV_new = org.eclipse.collections.api.factory.Maps.mutable.empty();
@@ -382,6 +387,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
                 // TODO: make the following faster: this step takes most of the time
                 try {
+                    logger.debug("PrepTime before Building took: {} (ms)", (matchResultPrepTimer.elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+                    matchResultPrepTimer.reset().start();
                     // Structure of each: {redex root index -> {agentNode -> redexNode}} (are unique mappings here)
 //                    logger.debug("Final redex<->agent node matching: {}", matchTable);
                     PureBigraphParametricMatch m = buildMatch(hitsV_new, matchTable, new LinkedList<>(), 0);
@@ -468,8 +475,9 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             });
         }
 
-//        for (BigraphEntity eachNodeV : agentAdapter.getAllVerticesBfsOrder()) {
-        agentAdapter.getAllVerticesBfsOrderStream().forEachOrdered(eachNodeV -> {
+        Stopwatch watch = Stopwatch.createStarted();
+        for (BigraphEntity eachNodeV : agentAdapter.getAllVerticesBfsOrder()) {
+//        agentAdapter.getAllVerticesBfsOrderStream().forEachOrdered(eachNodeV -> {
 
                     // skip blocked children first (children that are in the redex match
                     // this part will be executed after the top-level nodes of the redex were matched with the corresponding agent nodes
@@ -477,7 +485,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                         //put all their children inside
 //                        blockNodesForContext.addAll(agentAdapter.getChildrenOf(eachNodeV));
                         blockNodesForContext.addAll(agentAdapter.getSubtreeOfNode(eachNodeV));
-                        return;
+//                        return;
+                        continue;
                     }
 
                     final BigraphEntity<?> newNode;
@@ -616,8 +625,10 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                         }
                     }
                 }
-        );
+//        );
 
+        logger.debug("Traverse at site: {} (ms)", (watch.elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+        watch.reset().start();
         // outer names in d must not included in outernames of R: die names kommen direkt aus dem agent und dürfen gleichen namen haben
 
         PureBigraph context = new PureBigraph(builder.new InstanceParameter(
@@ -847,7 +858,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
         if (agentChildrenKeep.size() != 0) {
             if (rekCnt < calcRekCnt) {
-
+                // This is a case which is necessary for the cas-printing example (where a query-search is implemented)
+                // For the "car example" this is not necessary.
                 for (BigraphEntity<?> each : agentChildrenKeep) {
                     try {
                         int reduce = agentAdapter.getChildren(each).size();
@@ -906,6 +918,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                 return children;
             });
 //            Lists.newArrayList(paramTraverser.breadthFirst(agentChildren)); // fills the paramNodes map
+            // This is not slow:
             paramTraverser.breadthFirst(agentChildren).forEach(x -> {
             });
             PureBigraph paramBigraph = new PureBigraph(
@@ -923,7 +936,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             builder2.reset();
             parameters.put(siteIndex, paramBigraph);
         }
-
+        // This is not slow
         // Process the rest recursively in the same fashion
         for (Map.Entry<BigraphEntity<?>, BigraphEntity<?>> eachEntry : distinctMatch.entrySet()) {
             iterateThroughChildren(eachEntry.getKey(), eachEntry.getValue(), parameters, matchDict, builder2, hitsV, hitsV_newChildren, discards, rekCnt);
@@ -1130,7 +1143,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
                                             BigraphEntity<?> redex,
                                             boolean noExactMatch) {
         List<BigraphEntity<?>> bigraphEntities = S.get(agent, redex);
-        if (Objects.isNull(bigraphEntities)) return false;
+        if ((bigraphEntities) == null) return false;
         List<BigraphEntity<?>> redexChildren = redexAdapter.getChildren(redex);
         if (noExactMatch && redexChildren.size() == 0 && bigraphEntities.size() != 0) {
             return true;

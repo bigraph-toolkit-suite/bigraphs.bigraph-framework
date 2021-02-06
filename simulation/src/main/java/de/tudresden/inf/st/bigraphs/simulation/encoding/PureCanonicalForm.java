@@ -120,7 +120,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             }
             // rewrite all idle inner names first, order is not important
             for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
-                if (Objects.isNull(bigraph.getLinkOfPoint(each)) &&
+                if ((bigraph.getLinkOfPoint(each) == null) &&
                         !I2.flip().get(each).getFirstOptional().isPresent()) {
 //                    I2.put(rewriteInnerNameSupplier.get(), each);
                     I2.put(each.getName(), each);

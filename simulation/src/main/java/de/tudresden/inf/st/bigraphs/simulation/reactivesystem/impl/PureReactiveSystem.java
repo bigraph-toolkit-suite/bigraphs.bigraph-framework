@@ -84,7 +84,6 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
         }
     }
 
-    //TODO: Implement instantiation map
     @Override
     public PureBigraph buildParametricReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
         //first build parallel product of the parameters using the instantiation map
@@ -99,6 +98,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             Bigraph<DefaultDynamicSignature> d_Params;
             List<PureBigraph> parameters = new ArrayList<>(match.getParameters());
             if (parameters.size() >= 2) {
+                // Consider the instantiation map here: it "swaps" the parameters basically according to the map definition
                 FiniteOrdinal<Integer> mu_ix = rule.getInstantationMap().get(0);
                 BigraphComposite<DefaultDynamicSignature> d1 = ops(parameters.get(mu_ix.getValue()));
                 for (int i = 1, n = parameters.size(); i < n; i++) {
@@ -140,6 +140,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                     linkings.identity_e();
             Bigraph reactumImageWithParamsAndIdentity = ops(renamingForF).parallelProduct(reactumImageWithParams).getOuterBigraph();
 
+            // Context * Reactum (* params)
             Bigraph<DefaultDynamicSignature> agentReacted = ops(outerBigraph)
                     .compose(reactumImageWithParamsAndIdentity)
                     .getOuterBigraph();

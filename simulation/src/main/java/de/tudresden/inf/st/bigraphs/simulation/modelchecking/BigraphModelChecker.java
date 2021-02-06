@@ -131,7 +131,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
             executorService = next.provide();
         }
 
-        if (Objects.isNull(executorService)) {
+        if ((executorService) == null) {
             throw new ModelCheckerExecutorServiceNotProvided();
         }
     }
@@ -185,7 +185,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
      * @throws BigraphSimulationException if the system is not valid
      */
     protected void assertReactionSystemValid() throws BigraphSimulationException {
-        if (Objects.isNull(reactiveSystem.getAgent())) {
+        if ((reactiveSystem.getAgent()) == null) {
             throw new AgentIsNullException();
         }
         if (!reactiveSystem.getAgent().isGround()) {

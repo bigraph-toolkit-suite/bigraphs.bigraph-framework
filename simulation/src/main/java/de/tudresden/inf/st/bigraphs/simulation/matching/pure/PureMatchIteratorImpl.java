@@ -37,11 +37,7 @@ public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatc
     @Override
     public boolean hasNext() {
         if (matches.size() == 0) return false;
-        boolean tmp = cursor != matches.size();
-//        if (tmp) {
-//            cursor++;
-//        }
-        return tmp; // && nextMatch != null;
+        return cursor != matches.size();
     }
 
     @Override

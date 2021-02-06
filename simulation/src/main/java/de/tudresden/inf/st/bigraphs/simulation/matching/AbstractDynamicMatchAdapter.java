@@ -116,7 +116,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
 //        List<BigraphEntity> linkedNodes = new ArrayList<>();
         MutableList<BigraphEntity<?>> linkedNodes = org.eclipse.collections.api.factory.Lists.mutable.empty();
         EStructuralFeature pointsRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
-        if (Objects.isNull(pointsRef)) return linkedNodes;
+        if ((pointsRef) == null) return linkedNodes;
         @SuppressWarnings("unchecked")
         EList<EObject> pointsList = (EList<EObject>) instance.eGet(pointsRef);
         for (EObject eachPoint : pointsList) {
@@ -229,7 +229,7 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
      * @param node the node
      * @return
      */
-    public List<BigraphEntity<?>> getOpenNeighborhoodOfVertex(BigraphEntity<?> node) {
+    public MutableList<BigraphEntity<?>> getOpenNeighborhoodOfVertex(BigraphEntity<?> node) {
         MutableList<BigraphEntity<?>> neighbors = org.eclipse.collections.api.factory.Lists.mutable.empty();
         neighborhoodHook(neighbors, node);
         return neighbors;

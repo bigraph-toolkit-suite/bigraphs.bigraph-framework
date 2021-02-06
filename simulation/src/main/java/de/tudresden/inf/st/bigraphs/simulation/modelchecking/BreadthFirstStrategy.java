@@ -86,7 +86,6 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                             if (next.getParameters().size() == 0) {
                                 reaction = getReactiveSystem().buildGroundReaction(theAgent, next, eachRule);
                             } else {
-                                //TODO: beachte instantiation map
                                 reaction = getReactiveSystem().buildParametricReaction(theAgent, next, eachRule);
                             }
 
@@ -103,20 +102,20 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         transitionCnt.addAndGet(reactionResults.size());
                         return reactionResults.stream();
                     })
-                    .forEachOrdered(reaction -> {
+                    .forEachOrdered(matchResult -> {
 //                        try {
-//                            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) reaction.getBigraph(), System.out);
+//                            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) matchResult.getBigraph(), System.out);
 //                        } catch (IOException e) {
 //                            e.printStackTrace();
 //                        }
-                        String bfcf = canonicalForm.bfcs(reaction.getBigraph());
-                        String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(reaction.getReactionRule());
+                        String bfcf = canonicalForm.bfcs(matchResult.getBigraph());
+                        String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(matchResult.getReactionRule());
                         if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
-                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getMatch().getRedex(), reactionLbl);
-                            workingQueue.add(reaction.getBigraph());
-                            modelChecker.exportState(reaction.getBigraph(), bfcf, String.valueOf(reaction.getOccurrenceCount()));
+                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
+                            workingQueue.add(matchResult.getBigraph());
+                            modelChecker.exportState(matchResult.getBigraph(), bfcf, String.valueOf(matchResult.getOccurrenceCount()));
                         } else {
-                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction.getBigraph(), bfcf, reaction.getMatch().getRedex(), reactionLbl);
+                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
                         }
 //                        modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
                     });
@@ -126,9 +125,9 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                 // this is connected to the predicates (changes its "intent", what they are used for)
                 if (predicateChecker.checkAll(theAgent)) {
                     String label = "";
-                    if (modelChecker.reactionGraph.getLabeledNodeByCanonicalForm(bfcfOfW).isPresent() &&
-                            modelChecker.reactionGraph.getLabeledNodeByCanonicalForm(bfcfOfW).get() instanceof ReactionGraph.DefaultLabeledNode) {
-                        label = modelChecker.reactionGraph.getLabeledNodeByCanonicalForm(bfcfOfW).get().getLabel();
+                    Optional<ReactionGraph.LabeledNode> tmp = modelChecker.reactionGraph.getLabeledNodeByCanonicalForm(bfcfOfW);
+                    if (tmp.isPresent() && tmp.get() instanceof ReactionGraph.DefaultLabeledNode) {
+                        label = tmp.get().getLabel();
                     } else {
                         label = String.format("state-%s", String.valueOf(modelChecker.reactionGraph.getGraph().vertexSet().size()));
                     }
@@ -151,9 +150,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                 getListener().onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
                             } else {
                                 Optional<ReactionGraph.LabeledNode> node = modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW);
-                                if (node.isPresent()) {
-                                    modelChecker.getReactionGraph().addPredicateMatchToNode(node.get(), (ReactiveSystemPredicates) eachPredciate);
-                                }
+                                node.ifPresent(labeledNode -> modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, (ReactiveSystemPredicates) eachPredciate));
                                 getListener().onPredicateMatched(theAgent, eachPredciate.getKey());
                             }
                         });

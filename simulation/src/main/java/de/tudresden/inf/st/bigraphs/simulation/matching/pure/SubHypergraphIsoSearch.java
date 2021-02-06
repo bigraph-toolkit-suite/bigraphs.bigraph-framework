@@ -6,6 +6,8 @@ import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractDynamicMatchAdapter;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,16 +20,16 @@ public class SubHypergraphIsoSearch {
     private final Bigraph<?> agent;
 
     private final IHSFilter ihsFilter;
-    private final Map<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> candidates;
-    Map<BigraphEntity.NodeEntity<Control<?, ?>>, Float> rankMap;
+    private final MutableMap<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> candidates;
+    MutableMap<BigraphEntity.NodeEntity<Control<?, ?>>, Float> rankMap;
     private boolean initialized;
     Set<Embedding> embeddingSet = new HashSet<>();
 
     public SubHypergraphIsoSearch(Bigraph<?> redex, Bigraph<?> agent) {
         this.redex = redex;
         this.agent = agent;
-        this.candidates = new HashMap<>();
-        this.rankMap = new HashMap<>();
+        this.candidates = Maps.mutable.empty(); //new HashMap<>();
+        this.rankMap = Maps.mutable.empty(); //new HashMap<>();
         this.ihsFilter = new IHSFilter(redex, agent);
         this.initialized = false;
     }
@@ -204,7 +206,8 @@ public class SubHypergraphIsoSearch {
     private List<BigraphEntity.NodeEntity<?>> getIncidentNodesOf(BigraphEntity.NodeEntity<?> node, Bigraph<?> bigraph) {
         Collection<BigraphEntity.Link> incidentHyperedges = bigraph.getIncidentLinksOf(node);
 
-        List<BigraphEntity.NodeEntity<?>> collect = (List) incidentHyperedges.stream().flatMap(x -> bigraph.getPointsFromLink(x).stream())
+        List<BigraphEntity.NodeEntity<?>> collect = (List) incidentHyperedges.stream()
+                .flatMap(x -> bigraph.getPointsFromLink(x).stream())
                 .filter(x -> BigraphEntityType.isPort((BigraphEntity) x))
                 .map(p -> bigraph.getNodeOfPort((BigraphEntity.Port) p))
                 .filter(n -> !n.equals(node)).distinct().collect(Collectors.toList());
@@ -212,7 +215,7 @@ public class SubHypergraphIsoSearch {
         return collect;
     }
 
-    public Map<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> getCandidates() {
+    public MutableMap<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> getCandidates() {
         return candidates;
     }
 

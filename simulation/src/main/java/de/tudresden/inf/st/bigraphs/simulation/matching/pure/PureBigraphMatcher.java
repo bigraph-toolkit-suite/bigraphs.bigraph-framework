@@ -33,7 +33,7 @@ public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
         MatchIterable<PureBigraphParametricMatch> bigraphMatches = new MatchIterable<>(new PureMatchIteratorImpl(matchingEngine));
         if (logger.isDebugEnabled()) {
             long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
-            logger.debug("Complete Matching Time: {} ms", (elapsed0 / 1e+6f));
+            logger.debug("Complete Matching Time: {} (ms)", (elapsed0 / 1e+6f));
         }
         return bigraphMatches;
     }
