@@ -46,23 +46,7 @@ It references also to the Javadoc.
 
 ###  Building and Working with the Documentation
 
-#### Using Maven
-
-- This sequence of commands fully builds the documentation
-- Execute them from the root folder of this project
-
-```bash
-$ mvn clean package exec:java -f documentation/pom.xml
-$ mvn install -f documentation/pom.xml -Pdistribute
-$ cd ./documentation/docusaurus/website
-$ npm run build
-```
-
-The generated user manual is available from `etc/doc/docusaurus/website/`.
-The generated Java documentation is available from `target/site/apidocs/` for each module.
-It will be copied to `etc/doc/docusaurus/website/static/apidocs` by Maven as well.
-
-#### Using Docusaurus for Live Editing
+#### Live Editing
 
 First, `cd` into the `./documentation/docusaurus/website/` folder.
 Then, to view and edit the manual execute the following commands:
@@ -81,13 +65,19 @@ The output is exported at `documentation/docusaurus/website/build/bigraph-framew
 
 - Some of the code samples are automatically derived from the test cases and merged into the documentation
 - The module `documentation` is in charge for that
-- Execute the following Maven goal to create the code samples: `mvn install exec:java -f documentation/pom.xml`
+- Execute the following Maven goal to create the code samples: `mvn exec:java -f documentation/pom.xml`
 
 #### Build the whole documentation
 
 ```bash
-$ mvn install -f documentation/pom.xml -Pdistribute
+$ mvn package # aggregation of api docs 
+$ mvn exec:java -f documentation/pom.xml # code sample generation 
+$ mvn -f documentation/pom.xml exec:java install -Pdistribute # building static site
 ```
+
+The generated user manual is available from `documentation/docusaurus/website/`.
+The generated Java documentation is available from `target/site/apidocs/` for each module as usual.
+The aggregated API doc will be copied to `documentation/docusaurus/website/static/apidocs` by Maven as well.
 
 ## Deployment
 
@@ -112,13 +102,14 @@ This sections discusses the deployment process.
 
 - The following script builds and pushes the documentation to the remote repository:
 ```bash
-mvn clean package exec:java -f documentation/pom.xml && mvn install -Pdistribute
-cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init
-touch CNAME && echo "www.bigraphs.org" > CNAME
-git add . && git commit -m "updated documentation"
-git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git
-git push --force stgithub master:gh-pages
+$ mvn ... # build the whole documentation as described before
+$ cd ./documentation/docusaurus/website/build/bigraph-framework && git init
+$ touch CNAME && echo "www.bigraphs.org" > CNAME
+$ git add . && git commit -m "updated documentation"
+$ git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git
+$ git push --force stgithub master:gh-pages
 ```
+
 - In GitLab, the variables SSH_PRIVATE_KEY and SSH_KNOWN_HOSTS must exist under **Settings | CI/CD**.
     - see [Using SSH keys with GitLab CI/CD](https://docs.gitlab.com/ee/ci/ssh_keys/)
     and [Generating a new SSH key pair](https://docs.gitlab.com/ee/ssh/#generating-a-new-ssh-key-pair)
@@ -140,22 +131,3 @@ above as tags
 - Usage of the script:
     - First parameter: path to the `maven.config` file (usually `.mvn/maven.config`)
     - Second parameter: path of the output file
-
-
-
-<!-- - **Legacy Approach** -->
-<!--     - The project contains a second remote repository pointing to [GitHub/st-tu-dresden](https://github.com/st-tu-dresden/) -->
-<!--         - Command to add a remote -->
-<!--         ```bash -->
-<!--         # HTTPS -->
-<!--         git remote add stgithub https://github.com/st-tu-dresden/bigraph-framework.git -->
-<!--         # SSH (preferred) -->
-<!--         git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git -->
-<!--         ``` -->
-<!--     - We use `subtree push` to transfer the user manual to the *gh-pages* branch on GitHub. -->
-<!--     - As mentioned above, the full documentation is located at `etc/doc/docusaurus/website/build/bigraph-framework/`. -->
-<!--     - Command to execute: -->
-<!--         ```bash -->
-<!--         git subtree push --prefix <PATH-TO-MANUAL> <SECOND-REMOTE> gh-pages -->
-<!--         git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages -->
-<!--         ``` -->

@@ -41,6 +41,8 @@
         <graphviz.version>0.8.3</graphviz.version>
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
         <doclint>none</doclint>
+        <!-- For documentation -->
+        <project.usermanual.outputDirectory>../documentation/docusaurus/website/static/apidocs</project.usermanual.outputDirectory>
     </properties>
 
     <developers>
@@ -359,16 +361,16 @@
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>${emf.codegen.version}</version>
-<!--                <exclusions>-->
-<!--                    <exclusion>-->
-<!--                        <groupId>org.eclipse.jdt</groupId>-->
-<!--                        <artifactId>org.eclipse.jdt.core</artifactId>-->
-<!--                    </exclusion>-->
-<!--                    <exclusion>-->
-<!--                        <groupId>org.eclipse.jdt</groupId>-->
-<!--                        <artifactId>org.eclipse.jdt.launching</artifactId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
+                <!--                <exclusions>-->
+                <!--                    <exclusion>-->
+                <!--                        <groupId>org.eclipse.jdt</groupId>-->
+                <!--                        <artifactId>org.eclipse.jdt.core</artifactId>-->
+                <!--                    </exclusion>-->
+                <!--                    <exclusion>-->
+                <!--                        <groupId>org.eclipse.jdt</groupId>-->
+                <!--                        <artifactId>org.eclipse.jdt.launching</artifactId>-->
+                <!--                    </exclusion>-->
+                <!--                </exclusions>-->
             </dependency>
             <!-- https://github.com/ghillairet/cdo-maven -->
             <dependency>
@@ -612,6 +614,75 @@
                                     <buildInfo>
                                         <buildName>bigraph-framework-builds</buildName>
                                     </buildInfo>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>distribute</id>
+            <properties>
+                <maven.main.skip>true</maven.main.skip>
+                <maven.test.skip>true</maven.test.skip>
+                <maven.install.skip>true</maven.install.skip>
+                <maven.deploy.skip>true</maven.deploy.skip>
+                <skipTests>true</skipTests>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>aggregate-javadoc</id>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <additionalJOptions>--allow-script-in-comments</additionalJOptions>
+                                    <!-- all, none, html-->
+                                    <doclint>${doclint}</doclint>
+                                    <destDir>./</destDir>
+                                    <author>true</author>
+                                    <bottom>Copyright &#169; 2020. Dominik Grzelak, Software Technology Group,
+                                        Technische Universität Dresden. All rights reserved.
+                                    </bottom>
+                                    <excludePackageNames>com.microstar.xml:GCF</excludePackageNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-resources-for-deploy</id>
+                                <configuration>
+                                    <skip>true</skip>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-api-resources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.usermanual.outputDirectory}
+                                    </outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/../target/site/apidocs</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
                                 </configuration>
                             </execution>
                         </executions>

@@ -331,19 +331,16 @@ Therefore, see [Maven configuration](#maven-configuration) on how to include the
 ### Building the Documentation
 
 Building the documentation builds also the project without running tests.
-You may need to execute the above steps before.
 
 ```bash
-$ mvn clean package exec:java -f documentation/pom.xml && mvn install -f documentation/pom.xml -Pdistribute
+$ mvn package && mvn exec:java -f documentation/pom.xml && mvn -f documentation/pom.xml exec:java install -Pdistribute
 ```
 
-#### Java Documentation
-
-The generated apidoc is available from `etc/doc/docusaurus/website/static/apidocs`.
+**Java Documentation:** The generated apidoc is available from `documentation/docusaurus/website/static/apidocs`.
 
 #### User Manual
 
-The generated user manual is available from `etc/doc/docusaurus/website/` by calling `npm start`.
+The generated user manual is available from `documentation/docusaurus/website/` by calling `npm start`.
 
 ```bash
 $ cd ./documentation/docusaurus/website

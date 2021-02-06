@@ -69,10 +69,11 @@ build:
     - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - rm -rf ./etc/doc/docusaurus/website/build
-    - mvn $MAVEN_CLI_OPTS clean install exec:java -f documentation/pom.xml
-    - mvn $MAVEN_CLI_OPTS install -Pdistribute
-    - cd ./etc/doc/docusaurus/website/build/bigraph-framework && git init
+    - rm -rf ./documentation/docusaurus/website/build
+#    - mvn $MAVEN_CLI_OPTS install exec:java -f documentation/pom.xml
+#    - mvn $MAVEN_CLI_OPTS install -Pdistribute
+    - mvn install -f documentation/pom.xml -Pdistribute
+    - cd ./documentation/docusaurus/website/build/bigraph-framework && git init
     - touch CNAME && echo "www.bigraphs.org" > CNAME
     - git add . && git commit -m "updated documentation"
     - git remote add stgithub $REMOTE_ST_GITHUB
