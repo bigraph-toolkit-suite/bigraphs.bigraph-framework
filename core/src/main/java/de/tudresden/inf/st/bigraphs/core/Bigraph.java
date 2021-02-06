@@ -268,7 +268,8 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      * @return all incident links of {@code node}
      */
     default <C extends Control<?, ?>> Collection<BigraphEntity.Link> getIncidentLinksOf(BigraphEntity.NodeEntity<C> node) {
-        return getPorts(node).stream()
+        return getPorts(node)
+                .stream()
                 .map(this::getLinkOfPoint)
                 .distinct()
                 .collect(Collectors.toList());
