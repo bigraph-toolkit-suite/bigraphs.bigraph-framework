@@ -148,7 +148,7 @@ public class BigraphSignatureUnitTest {
 
     @Test
     @DisplayName("Create a pureBuilder instance with a freshly created dynamic signature instance model")
-    void createPureBuilderFromDynamicSignatureInstanceModel() {
+    void createPureBuilderFromDynamicSignatureInstanceModel() throws IOException {
         DynamicSignatureBuilder dynamicSigBuilder = pureSignatureBuilder();
 
         DefaultDynamicSignature signature = dynamicSigBuilder.addControl("Room", 1)
@@ -171,6 +171,7 @@ public class BigraphSignatureUnitTest {
 
         PureBigraphBuilder<DefaultDynamicSignature> ksBigraphBuilder = PureBigraphBuilder.<DefaultDynamicSignature>create(model);
         assert ksBigraphBuilder.getMetaModel() != null;
+        assert !ksBigraphBuilder.getMetaModel().equals(modelPackage); // because only the factory ensures that the sig-registry is asked
 
         DefaultDynamicSignature dynSignatureRecreated = new DefaultDynamicSignature(model);
         assert dynSignatureRecreated.getControls().equals(signature.getControls());
@@ -181,7 +182,13 @@ public class BigraphSignatureUnitTest {
         assert orGetMetaModel == orGetMetaModel1;
 
         assert dynSignatureRecreated.getPlaceKindMap().get("Room").equals(signature.getPlaceKindMap().get("Room"));
+        assert dynSignatureRecreated.getPlaceKindMap().get("Person").equals(signature.getPlaceKindMap().get("Person"));
+        assert dynSignatureRecreated.getPlaceKindMap().get("Computer").equals(signature.getPlaceKindMap().get("Computer"));
+        assert dynSignatureRecreated.getPlaceKindMap().size() != 0;
+        assert signature.getPlaceKindMap().size() != 0;
         assert dynSignatureRecreated.getPlaceKindMap().equals(signature.getPlaceKindMap());
+
+        BigraphArtifacts.exportAsInstanceModel(dynSignatureRecreated, System.out);
 
     }
 
