@@ -42,7 +42,8 @@
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
         <doclint>none</doclint>
         <!-- For documentation -->
-        <project.usermanual.outputDirectory>../documentation/docusaurus/website/static/apidocs</project.usermanual.outputDirectory>
+        <project.usermanual.outputDirectory>../documentation/docusaurus/website/static/apidocs
+        </project.usermanual.outputDirectory>
     </properties>
 
     <developers>
@@ -193,6 +194,11 @@
                         <!-- disable the default existing mapping -->
                         <skip>true</skip>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jfrog.buildinfo</groupId>
+                    <artifactId>artifactory-maven-plugin</artifactId>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -580,7 +586,6 @@
                     <plugin>
                         <groupId>org.jfrog.buildinfo</groupId>
                         <artifactId>artifactory-maven-plugin</artifactId>
-                        <version>3.0.0</version>
                         <inherited>false</inherited>
                         <executions>
                             <execution>
@@ -606,7 +611,7 @@
                                         <username>${username}</username>
                                         <!--suppress UnresolvedMavenProperty -->
                                         <password>${password}</password>
-                                        <excludePatterns>*-tests.jar</excludePatterns>
+                                        <excludePatterns>*-tests.jar,*documentation-*.jar,*documentation-*.pom</excludePatterns>
                                         <!-- Name of local repository in Artifactory @ stgroup.jfrog.io/ -->
                                         <repoKey>st-tu-dresden-maven-repository</repoKey>
                                         <snapshotRepoKey>st-tu-dresden-maven-repository</snapshotRepoKey>
