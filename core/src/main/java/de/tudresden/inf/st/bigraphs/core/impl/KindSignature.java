@@ -4,10 +4,8 @@ import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import org.eclipse.collections.api.bimap.MutableBiMap;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
-import org.eclipse.collections.impl.factory.BiMaps;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.EList;
@@ -27,9 +25,9 @@ import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.Signat
  *
  * @author Dominik Grzelak
  */
-public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl> {
+public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl> implements IsPlaceSortable {
 
-    protected MutableBiMap<String, KindSort> kindFunction = BiMaps.mutable.empty();
+    protected MutableMap<String, KindSort> kindFunction;
     protected EFactory sigFactory;
 
     /**
@@ -43,7 +41,13 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
      */
     public KindSignature(EObject bKindSignature) {
         super(EcoreSignature.validateBKindSignature(bKindSignature));
+    }
 
+    @Override
+    protected void recreateControls() {
+        if(kindFunction == null) {
+            kindFunction = Maps.mutable.empty();
+        }
         // Re-create control objects
         Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
         EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);
@@ -65,13 +69,21 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
             );
             controls.add(defaultDynamicControl);
         }
+    }
 
+    @Override
+    protected void recreateSorts() {
+        if(kindFunction == null) {
+            kindFunction = Maps.mutable.empty();
+        }
+        Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
         // Re-create kind sort objects
         EReference eReferencePlaceSorts = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
         assert eReferencePlaceSorts != null;
         EList<EObject> availablePlaceSorts = (EList<EObject>) instanceModel.eGet(eReferencePlaceSorts);
         for (EObject eachPlaceSort : availablePlaceSorts) {
             String ctrlId = eachPlaceSort.eClass().getName();
+            String rectifiedCtrlId = ctrlId.substring(0, ctrlId.lastIndexOf(SORT_PREFIX));
             if (EMFUtils.eClassHasSuperType(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC, eachPlaceSort.eClass())) {
                 MutableList<DefaultDynamicControl> sorts = Lists.mutable.empty();
                 Map<String, EReference> refsOfSort = EMFUtils.findAllReferences2(eachPlaceSort.eClass());
@@ -79,17 +91,16 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
                 assert eReference != null;
                 EList<EObject> bKindSorts = (EList<EObject>) eachPlaceSort.eGet(eReference);
                 bKindSorts.forEach(x -> {
-                    String rectifiedCtrlId = x.eClass().getName().substring(0, x.eClass().getName().lastIndexOf(SORT_PREFIX));
-                    sorts.add(getControlByName(rectifiedCtrlId));
+                    String rectifiedCtrlId2 = x.eClass().getName().substring(0, x.eClass().getName().lastIndexOf(SORT_PREFIX));
+                    sorts.add(getControlByName(rectifiedCtrlId2));
                 });
-                kindFunction.put(ctrlId, KindSort.create(getControlByName(ctrlId), sorts));
+                kindFunction.put(rectifiedCtrlId, KindSort.create(getControlByName(rectifiedCtrlId), sorts));
             }
             if (EMFUtils.eClassHasSuperType(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC, eachPlaceSort.eClass())) {
-                kindFunction.put(ctrlId, KindSort.create(getControlByName(ctrlId), Lists.mutable.empty()));
+                kindFunction.put(rectifiedCtrlId, KindSort.create(getControlByName(rectifiedCtrlId), Lists.mutable.empty()));
             }
         }
     }
-
 
     /**
      * This constructor automatically assumes as the default that all controls are active, thus, the kind function
@@ -191,7 +202,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
             }
         });
 
-        // Update the reference for non-atomic kind sorts, this builds the kind function w.r.t. Ecore model
+        // Update the reference for non-atomic kind sorts, this builds the kind function w.r.t. the Ecore model
         kindSortInstanceMap.forEach((key, value) -> {
             KindSort kindSort = kindFunction.get(key);
             Map<String, EReference> allRefsBKindSort = EMFUtils.findAllReferences2(value.eClass());
@@ -221,26 +232,18 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
     // Some helper methods for Ecore-related stuff
     // ///////////////////////////////////////////
 
-    private void initKindFunction(Collection<KindSort> kindSorts) {
+    protected void initKindFunction(Collection<KindSort> kindSorts) {
+        if(kindFunction == null) {
+            kindFunction = Maps.mutable.empty();
+        }
         kindFunction.clear();
         kindSorts.forEach(eachSort -> {
             kindFunction.put(eachSort.getControl().getNamedType().stringValue(), eachSort);
         });
     }
 
-    private EClass extendBKindSortCompositeEClass(String controlName, EPackage sigPackage) {
-        EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC);
-        EClass kindOfcontrolClass = EMFUtils.createEClass(controlName);
-        EMFUtils.addSuperType(kindOfcontrolClass, (EClass) eClassifier);
-        sigPackage.getEClassifiers().add(kindOfcontrolClass);
-        return kindOfcontrolClass;
-    }
-
-    private EClass extendBKindSortLeafEClass(String controlName, EPackage sigPackage) {
-        EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC);
-        EClass kindOfControlClass = EMFUtils.createEClass(controlName);
-        EMFUtils.addSuperType(kindOfControlClass, (EClass) eClassifier);
-        sigPackage.getEClassifiers().add(kindOfControlClass);
-        return kindOfControlClass;
+    @Override
+    public Map<String, KindSort> getPlaceKindMap() {
+        return kindFunction;
     }
 }

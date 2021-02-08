@@ -38,6 +38,9 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
         this.instanceModel = signatureInstanceModel;
         this.sigPackage = this.instanceModel.eClass().getEPackage();
         assert this.sigPackage != null;
+
+        recreateControls();
+        recreateSorts();
     }
 
     protected AbstractEcoreSignature(Set<C> controls) {
@@ -63,6 +66,14 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
         return controls.equals(that.controls);
     }
 
+    protected void recreateControls() {
+
+    }
+
+    protected void recreateSorts() {
+
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(controls);
@@ -78,6 +89,22 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
     // ///////////////////////////////////////////
     // Some helper methods for Ecore-related stuff
     // ///////////////////////////////////////////
+
+    protected EClass extendBKindSortCompositeEClass(String controlName, EPackage sigPackage) {
+        EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC);
+        EClass kindOfcontrolClass = EMFUtils.createEClass(controlName);
+        EMFUtils.addSuperType(kindOfcontrolClass, (EClass) eClassifier);
+        sigPackage.getEClassifiers().add(kindOfcontrolClass);
+        return kindOfcontrolClass;
+    }
+
+    protected EClass extendBKindSortLeafEClass(String controlName, EPackage sigPackage) {
+        EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC);
+        EClass kindOfControlClass = EMFUtils.createEClass(controlName);
+        EMFUtils.addSuperType(kindOfControlClass, (EClass) eClassifier);
+        sigPackage.getEClassifiers().add(kindOfControlClass);
+        return kindOfControlClass;
+    }
 
     protected EClass extendBControlEClass(String newControlName, EPackage sigPackage) {
         EClassifier eClassifier = sigPackage.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BCONTROL);

@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
@@ -35,6 +36,12 @@ public class DynamicSignatureBuilder
         DynamicControlBuilder builder = createControlBuilder();
         builder.withControlListBuilder(this);
         return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity)).assign();
+    }
+
+    public DynamicSignatureBuilder addControl(String name, int arity, ControlStatus status) {
+        DynamicControlBuilder builder = createControlBuilder();
+        builder.withControlListBuilder(this);
+        return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity)).status(status).assign();
     }
 
     /**

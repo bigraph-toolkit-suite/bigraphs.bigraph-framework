@@ -119,7 +119,7 @@ public class BigraphSignatureUnitTest {
     }
 
     @Test
-    @DisplayName("Create a pureBuilder instance with a freshly created signature instance model")
+    @DisplayName("Create a pureBuilder instance with a freshly created kind signature instance model")
     void createPureBuilderFromKindSignatureInstanceModel() {
         KindSignatureBuilder ksb = kindSignatureBuilder();
 
@@ -138,18 +138,21 @@ public class BigraphSignatureUnitTest {
         KindSignature kindSignatureRecreated = new KindSignature(model);
         assert kindSignatureRecreated.getControls().equals(signature.getControls());
 
-//        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(kindSignatureRecreated);
-//        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
-//        assert orGetMetaModel == orGetMetaModel1;
+        assert kindSignatureRecreated.getPlaceKindMap().get("Room").equals(signature.getPlaceKindMap().get("Room"));
+        assert kindSignatureRecreated.getPlaceKindMap().equals(signature.getPlaceKindMap());
+
+        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(kindSignatureRecreated);
+        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
+        assert orGetMetaModel == orGetMetaModel1;
     }
 
     @Test
-    @DisplayName("Create a pureBuilder instance with a freshly created signature instance model")
+    @DisplayName("Create a pureBuilder instance with a freshly created dynamic signature instance model")
     void createPureBuilderFromDynamicSignatureInstanceModel() {
         DynamicSignatureBuilder dynamicSigBuilder = pureSignatureBuilder();
 
         DefaultDynamicSignature signature = dynamicSigBuilder.addControl("Room", 1)
-                .addControl("Person", 2)
+                .addControl("Person", 2, ControlStatus.ATOMIC)
                 .addControl("Computer", 2)
                 .create();
         EPackage modelPackage = signature.getMetaModel();
@@ -176,6 +179,9 @@ public class BigraphSignatureUnitTest {
         EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
         EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(dynSignatureRecreated);
         assert orGetMetaModel == orGetMetaModel1;
+
+        assert dynSignatureRecreated.getPlaceKindMap().get("Room").equals(signature.getPlaceKindMap().get("Room"));
+        assert dynSignatureRecreated.getPlaceKindMap().equals(signature.getPlaceKindMap());
 
     }
 
