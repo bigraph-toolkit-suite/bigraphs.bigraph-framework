@@ -72,9 +72,9 @@
         <dependency>
             <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
             <artifactId>bigraph-ecore-model</artifactId>
-            <scope>system</scope>
-            <type>jar</type>
-            <systemPath>${project.basedir}/../etc/auxlibs/bigraphmetamodel_v2.0-alpha.jar</systemPath>
+<!--            <scope>system</scope>-->
+<!--            <type>jar</type>-->
+<!--            <systemPath>${project.basedir}/../etc/auxlibs/bigraphmetamodel_v2.0-alpha.jar</systemPath>-->
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
