@@ -34,11 +34,45 @@ public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
      * @return {@code true} if the redex of the reaction rule is simple, otherwise {@code false}
      */
     default boolean isRedexSimple() {
-        return getRedex().isEpimorphic() && getRedex().isMonomorphic() &&
-                getRedex().isGuarding() && //"doesn't contain inner names" is checked in the guarding clause
-                getRedex().getEdges().size() == 0; // every link is open
+        return
+//                getRedex().isEpimorphic() &&
+                getRedex().getEdges().size() == 0 && // every link is open
+                        getRedex().isGuarding() && //no site has a root as parent (+ no idle inner names)
+                        getRedex().isMonomorphic(); // inner-injective
     }
 
+    /**
+     * Checks if a parametric reaction rule is well-defined subject to the constraints:
+     * <ul>
+     *     <li>Redex and Reactum are lean (=no idle edges)</li>
+     *     <li>R has no idle roots</li>
+     *     <li>R has no idle names</li>
+     * </ul>
+     *
+     * @return {@code true} if the parametric reaction rule is well-defined, otherwise {@code false}
+     */
+    default boolean isProperParametricRule() {
+        return getRedex().isLean() && getReactum().isLean() && // both must be lean
+                getRedex().isEpimorphic(); // only the redex must have no idle roots and names
+    }
+
+    /**
+     * A rule is parametric if its redex contains sites.
+     *
+     * @return {@code true}, if the rule is a parametric reaction rule.
+     */
+    default boolean isParametricRule() {
+        return getRedex().getSites().size() > 0;
+    }
+
+    /**
+     * A flag that indicates whether the rule can be also executed in reverse.
+     * For a rule R -> R' it means that R' -> R can also be used.
+     * <p>
+     * This flag is usually evaluated in a reactive system class.
+     *
+     * @return {@code true}, if the rule can also be used reversely, otherwise {@code false}
+     */
     boolean isReversible();
 
     /**

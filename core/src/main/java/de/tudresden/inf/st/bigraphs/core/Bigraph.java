@@ -82,6 +82,18 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
     }
 
     /**
+     * A bigrap is <i>lean</i> if it contains no idle edges.
+     *
+     * @return {@code true}, if the bigraph is lean, otherwise {@code false}.
+     */
+    default boolean isLean() {
+        for (BigraphEntity.Edge each : getEdges()) {
+            if (getPointsFromLink(each).size() == 0) return false;
+        }
+        return true;
+    }
+
+    /**
      * Returns the support of a bigraph. The support is a finite set comprising the nodes of the place graph and the edges
      * of the link graph of the current bigraph.
      * <p>
@@ -271,7 +283,7 @@ public interface Bigraph<S extends Signature> extends HasSignature<S> {
      */
     default <C extends Control<?, ?>> Collection<BigraphEntity.Link> getIncidentLinksOf(BigraphEntity.NodeEntity<C> node) {
         MutableSet<BigraphEntity.Link> incidentLinks = Sets.mutable.empty();
-        for(BigraphEntity.Port each: getPorts(node)) {
+        for (BigraphEntity.Port each : getPorts(node)) {
             incidentLinks.add(getLinkOfPoint(each));
         }
         return incidentLinks;

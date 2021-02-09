@@ -45,6 +45,9 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         this.assertSignaturesAreSame(this.redex.getSignature(), this.reactum.getSignature());
         this.assertInterfaceDefinitionIsCorrect(this.redex, this.reactum);
         this.assertRedexIsSimple();
+        if(isParametricRule()) {
+            this.assertIsProperParametricRule();
+        }
         this.signature = this.redex.getSignature();
         this.canReverse = isReversible;
     }
@@ -75,14 +78,17 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         if (!redex.getOuterFace().equals(reactum.getOuterFace())) {
             throw new NonConformReactionRuleInterfaces();
         }
-//        if (redex.getSites().size() != reactum.getSites().size()) {
-//            throw new NonConformReactionRuleInterfaces();
-//        }
     }
 
     protected void assertRedexIsSimple() throws RedexIsNotSimpleException {
         if (!isRedexSimple()) {
             throw new RedexIsNotSimpleException();
+        }
+    }
+
+    protected void assertIsProperParametricRule() throws ParametricReactionRuleIsNotWellDefined {
+        if(!isProperParametricRule()) {
+            throw new ParametricReactionRuleIsNotWellDefined();
         }
     }
 
@@ -117,7 +123,7 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         return this.signature;
     }
 
-    static class ReactiveSystemBoundReactionRule<B extends Bigraph<? extends Signature<?>>> extends AbstractReactionRule<B> {
+    public static class ReactiveSystemBoundReactionRule<B extends Bigraph<? extends Signature<?>>> extends AbstractReactionRule<B> {
 
         private final ReactiveSystem<B> delegate;
         private final AbstractReactionRule<B> rule;
