@@ -45,8 +45,9 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         this.assertSignaturesAreSame(this.redex.getSignature(), this.reactum.getSignature());
         this.assertInterfaceDefinitionIsCorrect(this.redex, this.reactum);
         this.assertRedexIsSimple();
-        if(isParametricRule()) {
+        if (isParametricRule()) {
             this.assertIsProperParametricRule();
+            this.assertInstantiationMapIsWellDefined();
         }
         this.signature = this.redex.getSignature();
         this.canReverse = isReversible;
@@ -87,8 +88,15 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     }
 
     protected void assertIsProperParametricRule() throws ParametricReactionRuleIsNotWellDefined {
-        if(!isProperParametricRule()) {
+        if (!isProperParametricRule()) {
             throw new ParametricReactionRuleIsNotWellDefined();
+        }
+    }
+
+    protected void assertInstantiationMapIsWellDefined() throws InstantiationMapIsNotWellDefined {
+        if (getInstantationMap().domainSize() != getReactum().getSites().size() &&
+                getInstantationMap().coDomainSize() != getRedex().getSites().size()) {
+            throw new InstantiationMapIsNotWellDefined();
         }
     }
 

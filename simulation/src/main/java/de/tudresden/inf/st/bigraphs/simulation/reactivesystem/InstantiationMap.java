@@ -53,4 +53,12 @@ public class InstantiationMap {
     public FiniteOrdinal<Integer> get(int from) {
         return mappings.get(FiniteOrdinal.ofInteger(from));
     }
+
+    public int domainSize() {
+        return this.mappings.keySet().size();
+    }
+
+    public int coDomainSize() {
+        return this.mappings.values().size();
+    }
 }
