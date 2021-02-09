@@ -333,7 +333,7 @@ Therefore, see [Maven configuration](#maven-configuration) on how to include the
 Building the documentation builds also the project without running tests.
 
 ```bash
-$ mvn package && mvn exec:java -f documentation/pom.xml && mvn -f documentation/pom.xml exec:java install -Pdistribute
+$ mvn package && mvn exec:java -f documentation/pom.xml && npm --prefix ./documentation/docusaurus/website install && mvn -f documentation/pom.xml exec:java install -Pdistribute
 ```
 
 **Java Documentation:** The generated apidoc is available from `documentation/docusaurus/website/static/apidocs`.
