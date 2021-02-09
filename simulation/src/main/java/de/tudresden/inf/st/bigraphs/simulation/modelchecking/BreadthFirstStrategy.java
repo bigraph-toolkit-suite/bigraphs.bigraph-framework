@@ -133,9 +133,11 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     }
                     getListener().onAllPredicateMatched(theAgent, label);
                     Optional<ReactionGraph.LabeledNode> node = modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW);
-                    node.ifPresent(labeledNode -> predicateChecker.getPredicates().forEach(p -> {
-                        modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, p);
-                    }));
+                    node.ifPresent(labeledNode -> {
+                        predicateChecker.getPredicates().forEach(p -> {
+                            modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, p);
+                        });
+                    });
                 } else {
                     // compute counter-example trace from w back to the root
                     try {
@@ -144,14 +146,16 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                 modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW).get(),
                                 modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(rootBfcs).get()
                         );
-                        predicateChecker.getChecked().entrySet().stream().forEach(eachPredciate -> {
-                            if (!eachPredciate.getValue()) {
+                        predicateChecker.getChecked().entrySet().stream().forEach(eachPredicate -> {
+                            if (!eachPredicate.getValue()) {
                                 logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());
-                                getListener().onPredicateViolated(theAgent, eachPredciate.getKey(), pathBetween);
+                                getListener().onPredicateViolated(theAgent, eachPredicate.getKey(), pathBetween);
                             } else {
                                 Optional<ReactionGraph.LabeledNode> node = modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW);
-                                node.ifPresent(labeledNode -> modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, (ReactiveSystemPredicates) eachPredciate));
-                                getListener().onPredicateMatched(theAgent, eachPredciate.getKey());
+                                node.ifPresent(labeledNode -> {
+                                    modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, eachPredicate.getKey());
+                                });
+                                getListener().onPredicateMatched(theAgent, eachPredicate.getKey());
                             }
                         });
                     } catch (Exception e) {
