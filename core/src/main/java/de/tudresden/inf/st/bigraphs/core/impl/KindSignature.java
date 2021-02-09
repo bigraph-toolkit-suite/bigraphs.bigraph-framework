@@ -45,7 +45,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
 
     @Override
     protected void recreateControls() {
-        if(kindFunction == null) {
+        if (kindFunction == null) {
             kindFunction = Maps.mutable.empty();
         }
         // Re-create control objects
@@ -73,7 +73,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
 
     @Override
     protected void recreateSorts() {
-        if(kindFunction == null) {
+        if (kindFunction == null) {
             kindFunction = Maps.mutable.empty();
         }
         Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
@@ -133,7 +133,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
 
         MutableMap<String, EClass> bControlClassMap = Maps.mutable.of();
         MutableMap<String, EClass> bControlSortClassMap = Maps.mutable.empty();
-        this.controls.forEach(c -> {
+        for (DefaultDynamicControl c : this.controls) {
             String ctrlId = c.getNamedType().stringValue();
             EClass controlEClass = extendBControlEClass(ctrlId, sigPackage);
             bControlClassMap.put(ctrlId, controlEClass);
@@ -156,7 +156,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
                 EClass kindSortControlEClass = extendBKindSortCompositeEClass(ctrlId + SORT_PREFIX, sigPackage);
                 bControlSortClassMap.put(ctrlId + SORT_PREFIX, kindSortControlEClass);
             }
-        });
+        }
         assert this.kindFunction.size() == this.controls.size();
 
         // Create the instance model now
@@ -168,7 +168,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
         EReference eReferenceKindSorts = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
         assert eReferenceControls != null;
         MutableMap<String, EObject> kindSortInstanceMap = Maps.mutable.empty();
-        this.controls.forEach(eachCtrl -> {
+        for (DefaultDynamicControl eachCtrl : this.controls) {
             String ctrlId = eachCtrl.getNamedType().stringValue();
             EClass ctrlEClass = bControlClassMap.get(ctrlId);
             EObject concreteControlObject = sigFactory.create(ctrlEClass);
@@ -200,7 +200,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
                 EList<EObject> bKindSortsList = (EList<EObject>) this.instanceModel.eGet(eReferenceKindSorts);
                 bKindSortsList.add(concreteKindSort);
             }
-        });
+        }
 
         // Update the reference for non-atomic kind sorts, this builds the kind function w.r.t. the Ecore model
         kindSortInstanceMap.forEach((key, value) -> {
@@ -233,7 +233,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
     // ///////////////////////////////////////////
 
     protected void initKindFunction(Collection<KindSort> kindSorts) {
-        if(kindFunction == null) {
+        if (kindFunction == null) {
             kindFunction = Maps.mutable.empty();
         }
         kindFunction.clear();

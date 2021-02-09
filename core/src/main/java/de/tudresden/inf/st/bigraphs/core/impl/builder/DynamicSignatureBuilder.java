@@ -70,7 +70,7 @@ public class DynamicSignatureBuilder
      */
     @Override
     protected DefaultDynamicSignature createEmptyStub() {
-        return new DefaultDynamicSignature(Collections.emptySet());
+        return new DefaultDynamicSignature(Collections.EMPTY_SET);
     }
 
     @Override

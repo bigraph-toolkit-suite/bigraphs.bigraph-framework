@@ -343,12 +343,6 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public <C extends Control<?, ?>> List<BigraphEntity.Link> getIncidentLinksOf
-            (BigraphEntity.NodeEntity<C> node) {
-        return new ArrayList<>(Bigraph.super.getIncidentLinksOf(node));
-    }
-
-    @Override
     public BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity<?> node) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         if (node.getInstance().eGet(prntRef) != null) {

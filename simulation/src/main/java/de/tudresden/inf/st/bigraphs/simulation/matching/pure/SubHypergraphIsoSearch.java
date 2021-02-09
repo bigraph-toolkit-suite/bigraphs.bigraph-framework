@@ -5,8 +5,10 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractDynamicMatchAdapter;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 
 import java.util.*;
@@ -61,7 +63,7 @@ public class SubHypergraphIsoSearch {
         if (linkCountRedex > 0 && linkCountAgent > 0) {
 //            long positveArityNode = redex.getNodes().stream().filter(x -> redex.getPortCount(x) > 0).count();
             if (candidates.size() == redex.getNodes().size()) {
-                return candidates.values().stream().allMatch(x -> x.size() > 0);
+                return allCandidateNodesHaveValues(candidates); //candidates.values().stream().allMatch(x -> x.size() > 0);
             }
         }
         return linkCountRedex == 0 && linkCountAgent > 0;
@@ -69,12 +71,13 @@ public class SubHypergraphIsoSearch {
 
     public void embeddings() {
         init();
+        // Get node with the highest rank
         Optional<Map.Entry<BigraphEntity.NodeEntity<Control<?, ?>>, Float>> startNode = rankMap.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst();
         BigraphEntity.NodeEntity<Control<?, ?>> u_s;
         if (startNode.isPresent()) {
             u_s = startNode.get().getKey();
         } else {
-            u_s = redex.getNodes().iterator().next();
+            u_s = (BigraphEntity.NodeEntity) ((PureBigraph) redex).getNodes().get(0); // .iterator().next();
         }
 
         for (BigraphEntity.NodeEntity<Control<?, ?>> v_s : agent.getNodes()) {
@@ -164,10 +167,25 @@ public class SubHypergraphIsoSearch {
         return b;
     }
 
+    private boolean allEmbeddingsNonNull(Embedding emb) {
+        for (BigraphEntity.NodeEntity<?> each : emb.values()) {
+            if (each == null)
+                return false;
+        }
+        return true;
+    }
+
+    private boolean allCandidateNodesHaveValues(final MutableMap<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> candidates) {
+        for (List<BigraphEntity.NodeEntity<?>> each : candidates.values()) {
+            if (each == null || each.size() == 0) return false;
+        }
+        return true;
+    }
+
     private void recursiveSearch3(BigraphEntity.NodeEntity u_s, LinkedList<BigraphEntity.NodeEntity<?>> cands, int index, Embedding emb) {
 //        System.out.println("entry of recSearch3; u_s = " + u_s);
         if (index > cands.size()) return;
-        if (emb.size() == candidates.size() && emb.values().stream().allMatch(Objects::nonNull)) {
+        if (emb.size() == candidates.size() && allEmbeddingsNonNull(emb)) { //emb.values().stream().allMatch(Objects::nonNull)) {
 //            System.out.println("\t\t begin search now ...");
 //            Iterator<Map.Entry<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>>> iterator = emb.entrySet().iterator();
             int singleMatchCnt = 0;
@@ -207,13 +225,27 @@ public class SubHypergraphIsoSearch {
     private List<BigraphEntity.NodeEntity<?>> getIncidentNodesOf(BigraphEntity.NodeEntity<?> node, Bigraph<?> bigraph) {
         Collection<BigraphEntity.Link> incidentHyperedges = bigraph.getIncidentLinksOf(node);
 
-        List<BigraphEntity.NodeEntity<?>> collect = (List) incidentHyperedges.stream()
-                .flatMap(x -> bigraph.getPointsFromLink(x).stream())
-                .filter(x -> BigraphEntityType.isPort((BigraphEntity) x))
-                .map(p -> bigraph.getNodeOfPort((BigraphEntity.Port) p))
-                .filter(n -> !n.equals(node)).distinct().collect(Collectors.toList());
-
-        return collect;
+        MutableList<BigraphEntity.NodeEntity<?>> collector = Lists.mutable.empty();
+        for (BigraphEntity.Link x : incidentHyperedges) {
+            Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink(x);
+            for (BigraphEntity<?> p : pointsFromLink) {
+                if (BigraphEntityType.isPort((BigraphEntity) p)) {
+                    BigraphEntity.NodeEntity<Control<?, ?>> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
+                    if (!nodeOfPort.equals(node) && !collector.contains(nodeOfPort)) {
+//                    if (nodeOfPort != node) {
+                        collector.add(nodeOfPort);
+                    }
+                }
+            }
+        }
+        return collector;
+//        List<BigraphEntity.NodeEntity<?>> collect = (List) incidentHyperedges.stream()
+//                .flatMap(x -> bigraph.getPointsFromLink(x).stream())
+//                .filter(x -> BigraphEntityType.isPort((BigraphEntity) x))
+//                .map(p -> bigraph.getNodeOfPort((BigraphEntity.Port) p))
+//                .filter(n -> !n.equals(node)).distinct().collect(Collectors.toList());
+//
+//        return collect;
     }
 
     public MutableMap<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> getCandidates() {

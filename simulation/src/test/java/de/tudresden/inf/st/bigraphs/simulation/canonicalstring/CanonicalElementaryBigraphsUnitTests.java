@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.canonicalstring;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -15,10 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -27,21 +24,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CanonicalElementaryBigraphsUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/elementary/";
 
-    static PureBigraphFactory factory = pure();
-    static DefaultDynamicSignature EMPTY_SIG = pureSignatureBuilder().createEmpty();
     static BigraphCanonicalForm bfcs;
     static Placings<DefaultDynamicSignature> placings;
     static Linkings<DefaultDynamicSignature> linkings;
 
     @BeforeAll
     static void setUp() throws IOException {
+        DefaultDynamicSignature EMPTY_SIG = pureSignatureBuilder().createEmpty();
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
 
         bfcs = BigraphCanonicalForm.createInstance();
-        placings = factory.createPlacings(EMPTY_SIG);
-        linkings = factory.createLinkings(EMPTY_SIG);
+        placings = purePlacings(EMPTY_SIG);
+        linkings = pureLinkings(EMPTY_SIG);
     }
 
     @Test

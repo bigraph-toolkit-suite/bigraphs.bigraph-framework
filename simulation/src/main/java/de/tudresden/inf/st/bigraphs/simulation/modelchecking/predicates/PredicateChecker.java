@@ -45,7 +45,14 @@ public class PredicateChecker<B extends Bigraph<? extends Signature<?>>> {
                 checked.put(each, each.test(agent));
             }
         }
-        return checked.values().stream().allMatch(x -> x);
+        return checkIfAllChecksAreTrue(checked); //checked.values().stream().allMatch(x -> x);
+    }
+
+    private boolean checkIfAllChecksAreTrue(Map<ReactiveSystemPredicates<B>, Boolean> checks) {
+        for (boolean b : checks.values()) {
+            if (!b) return false;
+        }
+        return true;
     }
 
     /**

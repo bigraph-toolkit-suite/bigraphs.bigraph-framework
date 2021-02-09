@@ -106,7 +106,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
 
         MutableMap<String, EClass> bControlClassMap = Maps.mutable.of();
         MutableMap<String, EClass> bControlSortClassMap = Maps.mutable.empty();
-        this.controls.forEach(c -> {
+        for(DefaultDynamicControl c: this.controls) {
             String ctrlId = c.getNamedType().stringValue();
             EClass controlEClass = extendBControlEClass(ctrlId, sigPackage);
             bControlClassMap.put(ctrlId, controlEClass);
@@ -119,7 +119,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
                 EClass kindSortControlEClass = extendBKindSortCompositeEClass(ctrlId + SORT_PREFIX, sigPackage);
                 bControlSortClassMap.put(ctrlId + SORT_PREFIX, kindSortControlEClass);
             }
-        });
+        }
         assert this.kindFunction.size() == this.controls.size();
 
         // Create the instance model now
@@ -132,7 +132,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
         EReference eReferenceKindSorts = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
         assert eReferenceControls != null;
         MutableMap<String, EObject> kindSortInstanceMap = Maps.mutable.empty();
-        this.controls.forEach(eachCtrl -> {
+        for(DefaultDynamicControl eachCtrl: this.controls) {
             String ctrlId = eachCtrl.getNamedType().stringValue();
             EClass ctrlEClass = bControlClassMap.get(ctrlId);
             EObject concreteControlObject = sigFactory.create(ctrlEClass);
@@ -164,7 +164,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
                 EList<EObject> bKindSortsList = (EList<EObject>) this.instanceModel.eGet(eReferenceKindSorts);
                 bKindSortsList.add(concreteKindSort);
             }
-        });
+        };
 
         // Update the reference for non-atomic kind sorts, this builds the kind function w.r.t. the Ecore model
         kindSortInstanceMap.forEach((key, value) -> {

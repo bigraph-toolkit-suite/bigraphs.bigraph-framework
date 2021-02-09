@@ -45,7 +45,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     MutableList<BigraphEntity> next = Lists.mutable.empty();
     PureBigraph bigraph;
     Supplier<String> rewriteEdgeNameSupplier;
-//    Supplier<String> rewriteInnerNameSupplier;
+    //    Supplier<String> rewriteInnerNameSupplier;
 //    Supplier<String> rewriteOuterNameSupplier;
     private boolean exploitSymmetries = false;
 
@@ -81,9 +81,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //        rewriteOuterNameSupplier = getBigraphCanonicalForm().createNameSupplier("y");
 
         // prepare the comparators depending on whether to consider symmetries or not (which are made up by the link names somehow)
-        Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator;
-        Comparator<BigraphEntity> levelComp2;
-        levelComp2 =
+
+        final Comparator<BigraphEntity> levelComp2 =
                 compareControlByKey3.thenComparing(
                         compareChildrenSize.reversed().thenComparing(
                                 comparePortCount.reversed()
@@ -92,7 +91,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                         )
                         )
                 );
-        levelComparator =
+        final Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> levelComparator =
                 compareControlOfParentAndChildren.thenComparing(
                         compareChildrenSizeByValue.reversed().thenComparing(
                                 compareChildrenPortSum.reversed().thenComparing(
@@ -166,7 +165,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                     // in der reihenfolge wie oben: lexicographic "from small to large", and bfs from left to right
                     Map<BigraphEntity, LinkedList<BigraphEntity>> collect = next
                             .stream()
-                        .sorted(levelComp2) //IMPORTANT (NEW@12/2020: ADDED)
+                            .sorted(levelComp2) //IMPORTANT (NEW@12/2020: ADDED)
                             .collect(groupingBy(e -> bigraph.getParent(e), Collectors.toCollection(LinkedList::new)));
                     final AtomicInteger atLevelCnt;
 
@@ -280,27 +279,27 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         // first: idle inner names are already rewritten (see beginning of the algo)
         // second: inner names connected to edges, order is important
         MutableList<BigraphEntity.InnerName> innerNames = E2.flatCollect(edge ->
-                bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
-                        .map(x -> {
-                            if (!I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isPresent()) {
+                        bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
+                                .map(x -> {
+                                    if (!I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isPresent()) {
 //                                I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
-                                I2.put(((BigraphEntity.InnerName) x).getName(), (BigraphEntity.InnerName) x);
-                            }
-                            return (BigraphEntity.InnerName) x;
-                        })
-                        .collect(Collectors.toList())
+                                        I2.put(((BigraphEntity.InnerName) x).getName(), (BigraphEntity.InnerName) x);
+                                    }
+                                    return (BigraphEntity.InnerName) x;
+                                })
+                                .collect(Collectors.toList())
         );
         // third: inner names connected to outer names, order is important
         MutableList<BigraphEntity.InnerName> innerNames2 = O2.flatCollect(edge ->
-                bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
-                        .map(x -> {
-                            if (!I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isPresent()) {
+                        bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
+                                .map(x -> {
+                                    if (!I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isPresent()) {
 //                                I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
-                                I2.put(((BigraphEntity.InnerName) x).getName(), (BigraphEntity.InnerName) x);
-                            }
-                            return (BigraphEntity.InnerName) x;
-                        })
-                        .collect(Collectors.toList())
+                                        I2.put(((BigraphEntity.InnerName) x).getName(), (BigraphEntity.InnerName) x);
+                                    }
+                                    return (BigraphEntity.InnerName) x;
+                                })
+                                .collect(Collectors.toList())
         );
         // first idle inner names, then those which are connected to edges, lastly links from inner to outer
         // Identifiers are already sorted due to the TreeSortedMap structure
@@ -448,11 +447,11 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //        return bigraph.getChildrenOf(entry).size();
 //    });
 //
-    Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenSizeByValue =
+    static final Comparator<Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenSizeByValue =
             Comparator.comparing(entry -> {
                 return entry.getValue().size();
             });
-    Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenPortSum =
+    final Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenPortSum =
             Comparator.comparing(entry -> {
 //                return (Integer) entry.getValue().stream()
 //                        .map(x -> bigraph.getPortCount((BigraphEntity.NodeEntity) x))
@@ -466,15 +465,15 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                 return sum;
             });
 
-    Comparator<BigraphEntity> compareChildrenSize = Comparator.comparing(entry -> {
+    final Comparator<BigraphEntity> compareChildrenSize = Comparator.comparing(entry -> {
         return bigraph.getChildrenOf(entry).size(); //TODO: or also string concat of all children?
     });
 
-    Comparator<BigraphEntity> comparePortCount = Comparator.comparing(entry -> {
+    final Comparator<BigraphEntity> comparePortCount = Comparator.comparing(entry -> {
         return bigraph.getPortCount((BigraphEntity.NodeEntity) entry);
     });
 
-    Comparator<BigraphEntity> compareLinkNames = Comparator.comparing(entry -> {
+    final Comparator<BigraphEntity> compareLinkNames = Comparator.comparing(entry -> {
 //        if (!printNodeIdentifiers) {
 //            BigraphEntity.Link linkOfPoint = (BigraphEntity.Link) bigraph.getLinkOfPoint(entry);
 //            return Objects.nonNull(linkOfPoint) ? linkOfPoint.getName() : "";
@@ -498,7 +497,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 //        return a;
     });
 
-    Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenLinkNames =
+    final Comparator<Map.Entry<BigraphEntity, LinkedList<BigraphEntity>>> compareChildrenLinkNames =
             Comparator.comparing((entry) -> {
 //                if (printNodeIdentifiers) {
                 String s1 = entry.getValue().stream()

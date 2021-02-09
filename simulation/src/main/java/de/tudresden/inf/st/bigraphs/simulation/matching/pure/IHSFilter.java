@@ -4,6 +4,8 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import org.eclipse.collections.api.set.MutableSet;
+import org.eclipse.collections.impl.factory.Sets;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -209,12 +211,26 @@ public class IHSFilter {
 //                .stream()
 //                .map(bigraph::getLinkOfPoint)
 //                .collect(Collectors.toList());
-        Set<BigraphEntity.NodeEntity<?>> collect1 = collect.stream()
-                .flatMap(x -> bigraph.getPointsFromLink(x).stream())
-                .filter(BigraphEntityType::isPort)
-                .map(x -> bigraph.getNodeOfPort((BigraphEntity.Port) x))
-                .filter(x -> x != node)
-                .collect(Collectors.toSet());
-        return collect1;
+//        Set<BigraphEntity.NodeEntity<?>> collect1 = collect.stream()
+//                .flatMap(x -> bigraph.getPointsFromLink(x).stream())
+//                .filter(BigraphEntityType::isPort)
+//                .map(x -> bigraph.getNodeOfPort((BigraphEntity.Port) x))
+//                .filter(x -> x != node)
+//                .collect(Collectors.toSet());
+//        return collect1;
+        MutableSet<BigraphEntity.NodeEntity<?>> collector = Sets.mutable.empty();
+        for (BigraphEntity.Link x : collect) {
+            Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink(x);
+            for (BigraphEntity<?> p : pointsFromLink) {
+                if (BigraphEntityType.isPort(p)) {
+                    BigraphEntity.NodeEntity<Control<?, ?>> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
+//                    if(!nodeOfPort.equals(node)) {
+                    if (nodeOfPort != node) {
+                        collector.add(nodeOfPort);
+                    }
+                }
+            }
+        }
+        return collector;
     }
 }

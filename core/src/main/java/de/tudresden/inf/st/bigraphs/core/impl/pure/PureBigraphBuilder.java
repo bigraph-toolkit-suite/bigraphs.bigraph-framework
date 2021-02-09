@@ -1261,11 +1261,11 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
         return false;
     }
 
-    protected EObject createNodeOfEClass(String name, @NonNull Control control) {
+    protected EObject createNodeOfEClass(final String name, @NonNull final Control control) {
         return this.createNodeOfEClass(name, control, vertexNameSupplier.get());
     }
 
-    protected EObject createNodeOfEClass(String name, @NonNull Control control, String nodeIdentifier) {
+    protected EObject createNodeOfEClass(final String name, @NonNull final Control control, String nodeIdentifier) {
         EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(name));
         EAttribute name1 = EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
         eObject.eSet(name1, nodeIdentifier);
@@ -1274,7 +1274,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
 
     //BLEIBT - HELPER
 
-    protected EObject createEdgeOfEClass0(String edgeName) {
+    protected EObject createEdgeOfEClass0(final String edgeName) {
         assert availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE) != null;
         EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE));
         eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), edgeName);
