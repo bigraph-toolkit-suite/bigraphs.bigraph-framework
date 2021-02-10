@@ -5,6 +5,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractDynamicMatchAdapter;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -15,6 +17,8 @@ import java.util.*;
  * @author Dominik Grzelak
  */
 public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBigraph> {
+    
+    MutableMap<BigraphEntity<?>, LinkedList<ControlLinkPair>> linkOfNodesMap = Maps.mutable.empty();
 
     public PureBigraphAgentAdapter(PureBigraph bigraph) {
         super(bigraph);
@@ -25,6 +29,12 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
         return (DefaultDynamicSignature) super.getSignature();
     }
 
+    @Override
+    public void clearCache() {
+//        super.clearCache();
+        linkOfNodesMap.clear();
+    }
+
     /**
      * In the list are included edges and outer names.
      *
@@ -33,6 +43,9 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
      */
 
     public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity<?> node) {
+        if (linkOfNodesMap.containsKey(node)) {
+            return linkOfNodesMap.get(node);
+        }
         EObject instance = node.getInstance();
         LinkedList<AbstractDynamicMatchAdapter.ControlLinkPair> children = new LinkedList<>();
 
@@ -67,6 +80,7 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
                 }
             }
         }
+        linkOfNodesMap.put(node, children);
         return children;
     }
 }

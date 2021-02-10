@@ -59,6 +59,10 @@ public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Si
         return getBigraphDelegate().getModel();
     }
 
+    public void clearCache() {
+
+    }
+
     /**
      * <b>Note:</b> Only the port indices are important for the order, not the name itself.
      *
