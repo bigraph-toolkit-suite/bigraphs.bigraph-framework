@@ -81,7 +81,7 @@ public class ReactiveSystemUnitTests {
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
+                BigraphModelChecker.SimulationStrategy.Type.BFS, opts);
         modelChecker.execute();
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph_ABB.png")));
 
@@ -135,7 +135,11 @@ public class ReactiveSystemUnitTests {
         reactiveSystem.addPredicate(pred1);
 //        reactiveSystem.computeTransitionSystem(agent, opts, Arrays.asList(pred1));
 
-        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.BREADTH_FIRST, opts);
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
+                reactiveSystem,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
+                opts
+        );
         modelChecker.execute();
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
     }
@@ -175,7 +179,7 @@ public class ReactiveSystemUnitTests {
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.RANDOM_STATE,
+                BigraphModelChecker.SimulationStrategy.Type.RANDOM,
                 opts);
         modelChecker.execute();
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png")));

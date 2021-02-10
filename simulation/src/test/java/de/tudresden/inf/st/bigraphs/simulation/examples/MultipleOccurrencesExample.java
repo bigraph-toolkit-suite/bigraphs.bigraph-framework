@@ -1,15 +1,11 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -79,7 +75,7 @@ public class MultipleOccurrencesExample {
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
         ReactionGraphStats<PureBigraph> graphStats = modelChecker.getReactionGraph().getGraphStats();

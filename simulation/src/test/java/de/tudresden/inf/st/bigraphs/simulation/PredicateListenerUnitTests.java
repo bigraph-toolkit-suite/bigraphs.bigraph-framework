@@ -64,7 +64,7 @@ public class PredicateListenerUnitTests {
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/")).create());
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts
         );
 

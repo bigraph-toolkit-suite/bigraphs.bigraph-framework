@@ -1,13 +1,9 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -22,7 +18,6 @@ import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationExcep
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -110,7 +105,7 @@ public class ConcurringProcessesExample {
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "partial/transition_graph_agent-2.png")));
@@ -178,7 +173,7 @@ public class ConcurringProcessesExample {
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));

@@ -42,11 +42,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
- * A bigraph model checker that allows to simulate a bigraph by reaction rules. A reactive system, the strategy and
+ * A bigraph model checker that allows to simulate a BRS by reaction rules. A reactive system, the strategy and
  * options must be provided.
  * <p>
- * The model checker allows to react on live predicate matches in the course of the simulation by listeners. They can
- * also be evaluated later by getting the reaction graph/system.
+ * The model checker allows to react on live predicate matches in the course of the simulation by <i>listeners</i>.
+ * They can also be evaluated later by getting the reaction graph/system.
  *
  * @author Dominik Grzelak
  */
@@ -54,32 +54,10 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
     private Logger logger = LoggerFactory.getLogger(BigraphModelChecker.class);
     ExecutorService executorService;
-
-    /**
-     * Enum-like class that holds all kind of simulations.
-     */
-    public static class SimulationType<B extends Bigraph<? extends Signature<?>>> {
-
-        public static final SimulationType<Bigraph<? extends Signature<?>>> BREADTH_FIRST =
-                new SimulationType<>(BreadthFirstStrategy.class);
-        public static final SimulationType<Bigraph<? extends Signature<?>>> RANDOM_STATE =
-                new SimulationType<>(RandomAgentModelCheckingStrategy.class);
-
-        private Class<? extends ModelCheckingStrategy<B>> strategyClass;
-
-        private SimulationType(Class<? extends ModelCheckingStrategy> strategyClass) {
-            this.strategyClass = (Class<? extends ModelCheckingStrategy<B>>) strategyClass;
-        }
-
-        protected Class<? extends ModelCheckingStrategy<B>> getStrategyClass() {
-            return strategyClass;
-        }
-    }
-
-    private final static BigraphModelChecker.ReactiveSystemListener<Bigraph<? extends Signature<?>>> DEFAULT_LISTENER = new BigraphModelChecker.EmptyReactiveSystemListener<>();
+    private final Class<B> genericType;
 
     protected ModelCheckingStrategy<B> modelCheckingStrategy;
-    protected SimulationType<B> simulationType;
+    protected SimulationStrategy.Type simulationStrategyType;
     protected BigraphModelChecker.ReactiveSystemListener<B> reactiveSystemListener;
     protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.createInstance(true);
     protected PredicateChecker<B> predicateChecker = null;
@@ -88,35 +66,65 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
     final ReactiveSystem<B> reactiveSystem;
     ReactionGraph<B> reactionGraph;
-//    protected MutableList<ReactiveSystemPredicates<B>> predicates = Lists.mutable.empty();
 
-    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, ModelCheckingOptions options) {
-        this(reactiveSystem, (SimulationType<B>) SimulationType.BREADTH_FIRST, options);
+    /**
+     * Enum-like class that holds all kind of simulations.
+     */
+    public static class SimulationStrategy {
+
+        public enum Type {
+            BFS, RANDOM;
+        }
+
+        public static <B extends Bigraph<? extends Signature<?>>> Class<? extends ModelCheckingStrategy> getSimulationStrategyClass(Type type, Class<B> bigraphClass) {
+            switch (type) {
+                case BFS:
+                    return BreadthFirstStrategy.class;
+                case RANDOM:
+                    return RandomAgentModelCheckingStrategy.class;
+                default:
+                    return BreadthFirstStrategy.class;
+            }
+        }
     }
 
-    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationType<B> simulationType, ModelCheckingOptions options) {
-        this(reactiveSystem, simulationType, options, null);
+    private final static BigraphModelChecker.ReactiveSystemListener<? extends Bigraph<? extends Signature<?>>> EMPTY_LISTENER =
+            new BigraphModelChecker.EmptyReactiveSystemListener<>();
+
+
+    private static class EmptyReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>
+            implements BigraphModelChecker.ReactiveSystemListener<B> {
+    }
+
+
+    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, ModelCheckingOptions options) {
+        this(reactiveSystem, SimulationStrategy.Type.BFS, options);
+    }
+
+    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationStrategy.Type simulationStrategyType, ModelCheckingOptions options) {
+        this(reactiveSystem, simulationStrategyType, options, null);
         onAttachListener(this);
     }
 
-    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationType<B> simulationType, ModelCheckingOptions options,
+    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationStrategy.Type simulationStrategyType, ModelCheckingOptions options,
                                ReactiveSystemListener<B> listener) {
-        Optional.ofNullable(listener).map(this::setReactiveSystemListener).orElseGet(() -> setReactiveSystemListener((ReactiveSystemListener<B>) DEFAULT_LISTENER));
+        Optional.ofNullable(listener).map(this::setReactiveSystemListener).orElseGet(() -> setReactiveSystemListener((ReactiveSystemListener<B>) EMPTY_LISTENER));
         loadServiceExecutor();
+        this.genericType = getGenericTypeClass();
 
         this.reactiveSystem = reactiveSystem;
         this.reactionGraph = new ReactionGraph<>();
-        this.matcher = AbstractBigraphMatcher.create(getGenericTypeClass());
+        this.matcher = AbstractBigraphMatcher.create(this.genericType);
 
         this.options = options;
         ModelCheckingOptions.TransitionOptions opts = options.get(ModelCheckingOptions.Options.TRANSITION);
         if (opts.allowReducibleClasses()) {
-            canonicalForm = BigraphCanonicalForm.createInstance();
+            this.canonicalForm = BigraphCanonicalForm.createInstance();
         }
 
-        this.simulationType = simulationType;
+        this.simulationStrategyType = simulationStrategyType;
         try {
-            this.modelCheckingStrategy = createStrategy(this.simulationType);
+            this.modelCheckingStrategy = createStrategy(this.simulationStrategyType);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -136,8 +144,11 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    private ModelCheckingStrategy<B> createStrategy(SimulationType<B> simulationType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        return simulationType.getStrategyClass().getConstructor(BigraphModelChecker.class).newInstance(this);
+    private ModelCheckingStrategy<B> createStrategy(SimulationStrategy.Type simulationStrategyType)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Class<? extends ModelCheckingStrategy> simulationStrategyClass =
+                SimulationStrategy.getSimulationStrategyClass(simulationStrategyType, this.genericType);
+        return simulationStrategyClass.getConstructor(BigraphModelChecker.class).newInstance(this);
     }
 
     /**
@@ -208,15 +219,6 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         return matcher;
     }
 
-    //    public void setPredicates(MutableList<ReactiveSystemPredicates<B>> predicates) {
-//        this.predicates = predicates;
-//    }
-
-//    protected abstract B buildGroundReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
-//
-//    protected abstract B buildParametricReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
-
-
     public synchronized ReactionGraph<B> getReactionGraph() {
         return reactionGraph;
     }
@@ -267,15 +269,16 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
     private void onAttachListener(BigraphModelChecker<B> modelChecker) {
         if (modelChecker instanceof BigraphModelChecker.ReactiveSystemListener) {
-            modelChecker.setReactiveSystemListener((BigraphModelChecker.ReactiveSystemListener) this);
+            modelChecker.setReactiveSystemListener((BigraphModelChecker.ReactiveSystemListener<B>) this);
         } else {
-            modelChecker.setReactiveSystemListener((BigraphModelChecker.ReactiveSystemListener<B>) DEFAULT_LISTENER);
+            modelChecker.setReactiveSystemListener((ReactiveSystemListener<B>) EMPTY_LISTENER);
         }
     }
 
     @SuppressWarnings("unchecked")
     private Class<B> getGenericTypeClass() {
         try {
+            //(Class<B>) GenericTypeResolver.resolveTypeArgument(getClass(), BigraphModelChecker.class);
             String className = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0].getTypeName();
             Class<?> clazz = Class.forName(className);
             return (Class<B>) clazz;
@@ -284,8 +287,6 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
-    private static class EmptyReactiveSystemListener<B extends Bigraph<? extends Signature<?>>> implements BigraphModelChecker.ReactiveSystemListener<B> {
-    }
 
     void prepareOutput() {
         exportReactionGraph(getReactionGraph());

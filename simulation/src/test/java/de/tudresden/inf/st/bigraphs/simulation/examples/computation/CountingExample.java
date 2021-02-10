@@ -9,9 +9,6 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
@@ -110,7 +107,7 @@ public class CountingExample {
         reactiveSystem.setAgent(agent_a);
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
 

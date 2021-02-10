@@ -93,7 +93,7 @@ public class TraceabilityExample {
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
 

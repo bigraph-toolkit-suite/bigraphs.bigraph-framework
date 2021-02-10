@@ -122,7 +122,7 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
 

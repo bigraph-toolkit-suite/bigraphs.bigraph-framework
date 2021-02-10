@@ -4,8 +4,6 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
@@ -83,7 +81,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
         reactiveSystem.setAgent(agent_a);
 //
         PureBigraphModelChecker modelChecker = (PureBigraphModelChecker) new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts)
                 .setReactiveSystemListener(this);
         modelChecker.execute();

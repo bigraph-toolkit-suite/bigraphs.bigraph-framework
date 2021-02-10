@@ -2,16 +2,12 @@ package de.tudresden.inf.st.bigraphs.simulation.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
@@ -176,7 +172,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         reactiveSystem.addReactionRule(createReactionRule4());
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
 //        modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
@@ -213,7 +209,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         reactiveSystem.addReactionRule(createReactionRule4());
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
         assertTrue(Files.exists(completePath));
