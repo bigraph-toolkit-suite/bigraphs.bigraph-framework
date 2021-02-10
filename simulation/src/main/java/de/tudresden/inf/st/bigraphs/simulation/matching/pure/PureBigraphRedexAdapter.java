@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBigraph> {
+public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<DefaultDynamicSignature, PureBigraph> {
 
     MutableMap<BigraphEntity<?>, List<BigraphEntity<?>>> childMap = Maps.mutable.empty();
     MutableMap<BigraphEntity<?>, LinkedList<ControlLinkPair>> linkOfNodesMap = Maps.mutable.empty();

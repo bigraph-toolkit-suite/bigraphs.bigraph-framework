@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @author Dominik Grzelak
  */
-public abstract class AbstractBigraphFactory<S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>>
+public abstract class AbstractBigraphFactory<S extends AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>>
         implements BigraphFactoryElement {
     protected Type successorClass = null; //TODO: one for the signature type (and one for the bigraph)
 

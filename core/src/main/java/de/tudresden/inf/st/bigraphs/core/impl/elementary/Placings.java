@@ -30,7 +30,7 @@ import java.util.stream.IntStream;
  * By that a special placing called {@literal merge_m: m -> 1} can be derived and is implemented here for
  * convenience. merge_0 = 1, merge_1 = id_1, merge_2 = join, hence, {@literal merge_{m+1} = join o (id_1 + merge_m)}.
  */
-public class Placings<S extends Signature<? extends Control<?, ?>>> implements Serializable {
+public class Placings<S extends AbstractEcoreSignature<? extends Control<?, ?>>> implements Serializable {
     private volatile S arbitrarySignature;
     private volatile MutableBuilder<S> mutableBuilder;
     private final EPackage loadedModelPackage;

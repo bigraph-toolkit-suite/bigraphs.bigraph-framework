@@ -31,7 +31,7 @@ import java.util.stream.StreamSupport;
  *
  * @author Dominik Grzelak
  */
-public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> extends BigraphBuilderSupport<S> {
+public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphBuilderSupport<S> {
     private Logger logger = LoggerFactory.getLogger(PureBigraphBuilder.class);
 
     protected EPackage metaModel;
@@ -189,7 +189,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
      *                                                builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModelFilePath, instanceModelFilePath);
     }
 
@@ -197,7 +197,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws SignatureValidationFailedException If the provided signature metamodel does not conform the the
      *                                            builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature, String metaModelFilePath, String instanceModelFilePath) {
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature, String metaModelFilePath, String instanceModelFilePath) {
         return new PureBigraphBuilder<>(signature, metaModelFilePath, instanceModelFilePath);
     }
 
@@ -205,7 +205,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
      *                                                builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel) throws BigraphMetaModelLoadingFailedException {
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel) throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModel, instanceModel);
     }
 
@@ -213,7 +213,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws SignatureValidationFailedException If the provided signature metamodel does not conform the the
      *                                            builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature, EPackage metaModel, EObject instanceModel) {
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature, EPackage metaModel, EObject instanceModel) {
         return new PureBigraphBuilder<>(signature, metaModel, instanceModel);
     }
 
@@ -226,7 +226,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
      *                                                builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature);
     }
@@ -235,7 +235,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws SignatureValidationFailedException If the provided signature metamodel does not conform the the
      *                                            builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature);
     }
@@ -250,7 +250,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
      *                                                builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModelData);
     }
@@ -259,7 +259,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws SignatureValidationFailedException If the provided signature metamodel does not conform the the
      *                                            builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature, EMetaModelData metaModelData)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature, EMetaModelData metaModelData)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModelData);
     }
@@ -268,7 +268,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
      *                                                builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFileName)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFileName)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModelFileName);
     }
@@ -277,7 +277,7 @@ public class PureBigraphBuilder<S extends Signature<? extends Control<?, ?>>> ex
      * @throws SignatureValidationFailedException If the provided signature metamodel does not conform the the
      *                                            builders signature type {@code S}
      */
-    public static <S extends Signature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature, String metaModelFileName)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signature, String metaModelFileName)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModelFileName);
     }

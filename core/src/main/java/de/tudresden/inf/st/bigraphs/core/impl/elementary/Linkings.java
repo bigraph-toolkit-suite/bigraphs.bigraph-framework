@@ -1,8 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public class Linkings<S extends Signature<? extends Control<?, ?>>> implements Serializable {
+public class Linkings<S extends AbstractEcoreSignature<? extends Control<?, ?>>> implements Serializable {
 
     private volatile S arbitrarySignature;
     private volatile MutableBuilder<S> mutableBuilder;

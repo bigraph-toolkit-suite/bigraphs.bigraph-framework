@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.alg.generators;
 
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
@@ -37,7 +37,7 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
     private HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
     private DistributedRandomNumberGenerator drng;
     private Supplier<String> edgeLblSupplier;
-    private MutableBuilder<Signature<? extends Control>> builder;
+    private MutableBuilder<AbstractEcoreSignature<? extends Control>> builder;
     private int numOfLinkings;
     private int cntE = 0, cntO = 0;
     private Set<BigraphEntity> nodesWithPositiveArity;
@@ -169,7 +169,7 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
 
         stats = new double[]{nodesWithPositiveArity.size(), cntO, cntE, numOfLinkings};
 
-        PureBigraphBuilder<Signature<?>>.InstanceParameter meta = builder.new InstanceParameter(
+        PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
                 builder.getMetaModel(),
                 signature,
                 newRoots,

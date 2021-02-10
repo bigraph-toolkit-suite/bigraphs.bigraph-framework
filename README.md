@@ -126,30 +126,32 @@ compositor.juxtapose(F).parallelProduct(H);
 ## Maven configuration
 
 ```xml
-<!-- the core module -->
-<dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-core</artifactId>
-  <version>${version}</version>
-</dependency>
-<!-- the rewriting module -->
-<dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-simulation</artifactId>
-  <version>${version}</version>
-</dependency>
-<!-- the visualization module -->
-<dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-visualization</artifactId>
-  <version>${version}</version>
-</dependency>
-<!-- the converter module -->
-<dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-converter</artifactId>
-  <version>${version}</version>
-</dependency>
+<dependencies>
+    <!-- the core module -->
+    <dependency>
+      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <artifactId>bigraph-core</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <!-- the rewriting module -->
+    <dependency>
+      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <artifactId>bigraph-simulation</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <!-- the visualization module -->
+    <dependency>
+      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <artifactId>bigraph-visualization</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <!-- the converter module -->
+    <dependency>
+      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <artifactId>bigraph-converter</artifactId>
+      <version>${version}</version>
+    </dependency>
+</dependencies>
 ```
 
 The following Maven remote repository must be added as well. 
@@ -163,15 +165,17 @@ To resolve the dependencies above, the following remote repository must be confi
 
 ##### A) Within the `pom.xml` of a Maven project:
 ```xml
-<-- Default -->
-<repository>
-    <snapshots>
-        <enabled>true</enabled> <!-- set false to disable snapshot releases -->
-    </snapshots>
-    <id>STFactory</id>
-    <name>st-tu-dresden-artifactory</name>
-    <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
-</repository>
+<!-- Default -->
+<repositories>
+    <repository>
+        <snapshots>
+            <enabled>true</enabled> <!-- set false to disable snapshot releases -->
+        </snapshots>
+        <id>STFactory</id>
+        <name>st-tu-dresden-artifactory</name>
+        <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
+    </repository>
+</repositories>
 ```
 
 ##### B) Via the [`settings.xml`](https://maven.apache.org/ref/3.6.3/maven-settings/settings.html) of your Maven local repository `~/.m2/`:

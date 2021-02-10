@@ -1,8 +1,8 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFailedException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
@@ -26,7 +26,7 @@ import java.util.Map;
  * @param <S> type of the signature.
  * @author Dominik Grzelak
  */
-public class MutableBuilder<S extends Signature<? extends Control<?, ?>>> extends PureBigraphBuilder<S> {
+public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends PureBigraphBuilder<S> {
 
     public MutableBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
         super(signature);
@@ -52,32 +52,32 @@ public class MutableBuilder<S extends Signature<? extends Control<?, ?>>> extend
         super(signature, metaModelData);
     }
 
-    public static <S extends Signature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature)
             throws BigraphMetaModelLoadingFailedException {
         return new MutableBuilder<>(signature);
     }
 
-    public static <S extends Signature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
             throws BigraphMetaModelLoadingFailedException {
         return new MutableBuilder<>(signature);
     }
 
-    public static <S extends Signature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EPackage metaModel)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EPackage metaModel)
             throws BigraphMetaModelLoadingFailedException {
         return new MutableBuilder<>(signature, metaModel, null);
     }
 
-    public static <S extends Signature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature, EPackage metaModel)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature, EPackage metaModel)
             throws BigraphMetaModelLoadingFailedException {
         return new MutableBuilder<>(signature, metaModel, null);
     }
 
-    public static <S extends Signature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EMetaModelData metaModelData)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EMetaModelData metaModelData)
             throws BigraphMetaModelLoadingFailedException {
         return new MutableBuilder<>(signature, metaModelData);
     }
 
-    public static <S extends Signature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature, EMetaModelData metaModelData)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature, EMetaModelData metaModelData)
             throws BigraphMetaModelLoadingFailedException {
         return new MutableBuilder<>(signature, metaModelData);
     }

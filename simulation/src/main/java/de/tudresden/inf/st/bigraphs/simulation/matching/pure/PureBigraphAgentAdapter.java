@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBigraph> {
+public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<DefaultDynamicSignature, PureBigraph> {
     
     MutableMap<BigraphEntity<?>, LinkedList<ControlLinkPair>> linkOfNodesMap = Maps.mutable.empty();
 
@@ -26,7 +26,7 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
 
     @Override
     public DefaultDynamicSignature getSignature() {
-        return (DefaultDynamicSignature) super.getSignature();
+        return super.getSignature();
     }
 
     @Override

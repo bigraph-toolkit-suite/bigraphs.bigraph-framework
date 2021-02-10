@@ -19,7 +19,7 @@ import java.util.*;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public abstract class ElementaryBigraph<S extends Signature<? extends Control<?, ?>>> extends BigraphDelegator<S> implements EcoreBigraph {
+public abstract class ElementaryBigraph<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphDelegator<S> implements EcoreBigraph<S> {
     protected EPackage metaModelPackage;
     protected EObject instanceModel;
 

@@ -2,33 +2,69 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControlStatus;
 import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.util.Diagnostician;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.kindSignatureBuilder;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.createOrGetSignature;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphSignatureUnitTest {
 
     @AfterEach
     void setUp() {
+
+    }
+
+    @Test
+    void sdfa() throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .newControl("K", 1).assign()
+                .newControl("L", 1).assign()
+                .create();
+        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
+        DiscreteIon<DefaultDynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
+        Linkings<DefaultDynamicSignature>.Closure x = pureLinkings(sig).closure("x");
+        BigraphComposite<DefaultDynamicSignature> G = ops(K_x).merge(L_x);
+        ops(x).compose(G);
+
+        Bigraph<DefaultDynamicSignature> F = ops(x).compose(G).getOuterBigraph();
+        EObject instanceModel = F.getSignature().getInstanceModel();
+        PureBigraphBuilder<DefaultDynamicSignature> newBuilder =
+                pureBuilder(createOrGetSignature(instanceModel));
+        // ... code of fluent builder API omitted ...
+        PureBigraph bigraph = newBuilder.createBigraph(); //validation triggered
+
+        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bigraph.getModel());
+        if (diagnostic.getSeverity() != Diagnostic.OK) {
+            System.out.println("ERROR in: " + diagnostic.getMessage());
+            for (Diagnostic child : diagnostic.getChildren()) {
+                System.out.println(" " + child.getMessage());
+            }
+        }
 
     }
 
@@ -141,9 +177,9 @@ public class BigraphSignatureUnitTest {
         assert kindSignatureRecreated.getPlaceKindMap().get("Room").equals(signature.getPlaceKindMap().get("Room"));
         assert kindSignatureRecreated.getPlaceKindMap().equals(signature.getPlaceKindMap());
 
-        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(kindSignatureRecreated);
-        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
-        assert orGetMetaModel == orGetMetaModel1;
+//        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(kindSignatureRecreated);
+//        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
+//        assert orGetMetaModel == orGetMetaModel1;
     }
 
     @Test

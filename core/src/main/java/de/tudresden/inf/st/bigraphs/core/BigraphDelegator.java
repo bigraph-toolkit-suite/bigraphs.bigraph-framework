@@ -1,8 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Collection;
 import java.util.List;

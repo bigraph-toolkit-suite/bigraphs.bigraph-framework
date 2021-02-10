@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @author Dominik Grzelak
  * @see BigraphBuilder
  */
-public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigraph {
+public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigraph<DefaultDynamicSignature> {
     private final EPackage modelPackage;
     private final EObject bigraphInstanceModel;
 

@@ -18,7 +18,7 @@ import java.util.Set;
  *
  * @author Dominik Grzelak
  */
-public class DiscreteIon<S extends Signature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>>
+public class DiscreteIon<S extends AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>>
         extends ElementaryBigraph<S> {
     private volatile PureBigraphBuilder<S> builder;
 

@@ -17,7 +17,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSigna
  */
 public class BigraphUtil {
 
-    public static <S extends Signature<? extends Control<?, ?>>> Bigraph<S> copyIfSame(Bigraph<S> g, Bigraph<S> f) {
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> Bigraph<S> copyIfSame(Bigraph<S> g, Bigraph<S> f) {
         if (g.equals(f)) {
             try {
                 EcoreBigraph.Stub clone = new EcoreBigraph.Stub((EcoreBigraph) f).clone();
@@ -29,7 +29,7 @@ public class BigraphUtil {
         return g;
     }
 
-    public static <S extends Signature<? extends Control<?, ?>>> Bigraph<S> copy(Bigraph<S> f) {
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> Bigraph<S> copy(Bigraph<S> f) {
         try {
             EcoreBigraph.Stub clone = new EcoreBigraph.Stub((EcoreBigraph) f).clone();
             return (Bigraph<S>) PureBigraphBuilder.create(f.getSignature(), clone.getModelPackage(), clone.getModel()).createBigraph();
@@ -40,7 +40,8 @@ public class BigraphUtil {
 
     public static EcoreBigraph copy(EcoreBigraph bigraph) throws CloneNotSupportedException {
         EcoreBigraph.Stub clone = new EcoreBigraph.Stub(bigraph).clone();
-        return PureBigraphBuilder.create(((Bigraph<?>) bigraph).getSignature(), clone.getModelPackage(), clone.getModel()).createBigraph();
+        return PureBigraphBuilder.create((AbstractEcoreSignature) bigraph.getSignature(), clone.getModelPackage(), clone.getModel())
+                .createBigraph();
     }
 
     public static void setParentOfNode(final EObject node, final EObject parent) {

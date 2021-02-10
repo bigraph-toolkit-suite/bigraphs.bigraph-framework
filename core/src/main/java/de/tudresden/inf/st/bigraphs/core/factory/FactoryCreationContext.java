@@ -2,6 +2,8 @@ package de.tudresden.inf.st.bigraphs.core.factory;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
+import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
@@ -223,11 +225,11 @@ public final class FactoryCreationContext {
     }
 
     private DiscreteIon newDiscreteIonBuilder(Signature<?> signature, String name, Set<String> outerNames) {
-        return this.factory.createDiscreteIon(name, outerNames, signature);
+        return this.factory.createDiscreteIon(name, outerNames, (AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>) signature);
     }
 
     private DiscreteIon newDiscreteIonBuilder(Signature<?> signature, String name, Set<String> outerNames, EPackage bigraphMetaModel) {
-        return this.factory.createDiscreteIon(name, outerNames, signature, bigraphMetaModel);
+        return this.factory.createDiscreteIon(name, outerNames, (AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>) signature, bigraphMetaModel);
     }
 
     private PureBigraphGenerator newRandomBigraphBuilder(Signature<?> signature) {
@@ -239,19 +241,19 @@ public final class FactoryCreationContext {
     }
 
     private Placings newPlacingsBuilder(Signature<?> signature) {
-        return this.factory.createPlacings(signature);
+        return this.factory.createPlacings((AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>) signature);
     }
 
     private Placings newPlacingsBuilder(Signature<?> signature, EPackage metaModel) {
-        return this.factory.createPlacings(signature, metaModel);
+        return this.factory.createPlacings((AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>) signature, metaModel);
     }
 
     private Linkings newLinkingsBuilder(Signature<?> signature) {
-        return this.factory.createLinkings(signature);
+        return this.factory.createLinkings((AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>) signature);
     }
 
     private Linkings newLinkingsBuilder(Signature<?> signature, EPackage metaModel) {
-        return this.factory.createLinkings(signature, metaModel);
+        return this.factory.createLinkings((AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>) signature, metaModel);
     }
 
     private BigraphBuilder newBigraphBuilder(Signature<?> signature) {

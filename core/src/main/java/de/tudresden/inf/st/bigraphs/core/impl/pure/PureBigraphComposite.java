@@ -42,7 +42,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
  * @param <S> type of the signature.
  * @author Dominik Grzelak
  */
-public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphCompositeSupport<S> implements EcoreBigraph {
+public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphCompositeSupport<S> implements EcoreBigraph<S> {
 
     private MutableBuilder<S> builder;
 

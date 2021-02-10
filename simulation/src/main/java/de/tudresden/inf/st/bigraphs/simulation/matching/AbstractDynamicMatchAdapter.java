@@ -31,11 +31,13 @@ import java.util.stream.StreamSupport;
  *
  * @author Dominik Grzelak
  */
-public abstract class AbstractDynamicMatchAdapter<B extends Bigraph<? extends Signature<?>> & EcoreBigraph> extends BigraphDelegator<Signature<?>> implements EcoreBigraph {
+//S extends AbstractEcoreSignature<? extends Control<?, ?>>
+public abstract class AbstractDynamicMatchAdapter<S extends AbstractEcoreSignature<? extends Control<?, ?>>, B extends Bigraph<S> & EcoreBigraph<S>>
+        extends BigraphDelegator<S> implements EcoreBigraph<S> {
 
-    @SuppressWarnings("unchecked")
+    //    @SuppressWarnings("unchecked")
     public AbstractDynamicMatchAdapter(B bigraph) {
-        super((Bigraph<Signature<?>>) bigraph);
+        super(bigraph);
     }
 
     @SuppressWarnings("unchecked")

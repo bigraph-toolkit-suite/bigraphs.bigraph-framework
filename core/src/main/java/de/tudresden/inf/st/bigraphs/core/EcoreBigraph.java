@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.utils.auxiliary.MemoryOperations;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
@@ -22,7 +23,11 @@ import java.util.stream.Collectors;
  *
  * @author Dominik Grzelak
  */
-public interface EcoreBigraph {
+public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSignature<S> {
+
+    @Override
+    S getSignature();
+
     default boolean isBPort(EObject eObject) {
         return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_PORT);
     }
@@ -130,7 +135,7 @@ public interface EcoreBigraph {
      *
      * @author Dominik Grzelak
      */
-    class Stub implements EcoreBigraph {
+    class Stub<S extends AbstractEcoreSignature<?>> implements EcoreBigraph<S> {
         EPackage metaModel;
         EObject instanceModel;
 
@@ -139,11 +144,8 @@ public interface EcoreBigraph {
          *
          * @param bigraph an Ecore-based bigraph
          */
-        public Stub(EcoreBigraph bigraph) {
+        public Stub(EcoreBigraph<S> bigraph) {
             this(bigraph.getModelPackage(), bigraph.getModel());
-//            this(bigraph.getModelPackage(), EcoreUtil.copy(bigraph.getModel()));
-//            this.metaModel = bigraph.getModelPackage(); //EcoreUtil.copy(bigraph.getModelPackage());
-//            this.instanceModel = EcoreUtil.copy(bigraph.getModel());
         }
 
         private Stub(EPackage metaModel, EObject instanceModel) {
@@ -169,7 +171,7 @@ public interface EcoreBigraph {
          * @return a copy of the current bigraph.
          * @throws CloneNotSupportedException
          */
-        public Stub clone() throws CloneNotSupportedException {
+        public Stub<S> clone() throws CloneNotSupportedException {
 //            try {
 //                DefaultFileSystemManager manager = MemoryOperations.getInstance().createFileSystemManager();
 //                final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
@@ -192,7 +194,7 @@ public interface EcoreBigraph {
 //            } catch (IOException e) {
 //                throw new CloneNotSupportedException(e.getMessage());
 //            }
-            return new Stub(metaModel, EcoreUtil.copy(instanceModel));
+            return new Stub<>(metaModel, EcoreUtil.copy(instanceModel));
         }
 
         /**
@@ -213,5 +215,11 @@ public interface EcoreBigraph {
                 return null;
             }
         }
+
+        @Override
+        public S getSignature() {
+            return BigraphFactory.createOrGetSignature(getModel());
+        }
+
     }
 }

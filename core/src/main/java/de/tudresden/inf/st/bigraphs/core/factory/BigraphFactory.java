@@ -32,9 +32,9 @@ public final class BigraphFactory {
     }
 
 
-    // ////////////////////////////
-    // Signature-related factories
-    // ////////////////////////////
+    // ///////////////////////////////////
+    // Signature-related factories (Ecore)
+    // ///////////////////////////////////
 
 
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> EPackage createOrGetSignatureMetaModel(S signatureObject) {
@@ -78,9 +78,9 @@ public final class BigraphFactory {
     }
 
 
-    // ////////////////////////////
-    // Bigraph-related factories
-    // ////////////////////////////
+    // /////////////////////////////////
+    // Bigraph-related factories (Ecore)
+    // /////////////////////////////////
 
 
     /**
