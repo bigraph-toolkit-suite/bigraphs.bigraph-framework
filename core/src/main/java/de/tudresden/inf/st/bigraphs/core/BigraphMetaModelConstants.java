@@ -51,15 +51,19 @@ public final class BigraphMetaModelConstants {
         String EPACKAGE_NAME = "signatureBaseModel";
         String ECLASS_BKINDSIGNATURE = "BKindSignature";
         String ECLASS_BDYNAMICSIGNATURE = "BDynamicSignature";
-        String ECLASS_BKINDPLACESORTINGS = "BKindPlaceSortings";
+        String ECLASS_BBASICSIGNATURE = "BBasicSignature";
+        String ECLASS_BKINDPLACESORTINGS = "BKindPlaceSorting";
         String ECLASS_BKINDSORTATOMIC = "BKindSortAtomic";
         String ECLASS_KINDSORTNONATOMIC = "BKindSortNonAtomic";
         String ECLASS_BCONTROL = "BControl";
         String ECLASS_BCONTROLSTATUS = "BControlStatus";
 
         String REFERENCE_BCONTROLS = "bControls";
-        String REFERENCE_BKINDPLACESORTS = "bKindPlaceSorts";
-        String REFERENCE_BKINDSORTS = "bKindSorts";
+        String REFERENCE_BSIG = "bSig";
+        String REFERENCE_BKINDPLACESORTS = "bKindPlaceSorts"; // reference to the place-sort instances
+        String REFERENCE_BPLACESORTING = "bPlaceSorting"; // reference to the container signature
+        String REFERENCE_BKINDSORTS = "bCanContain";
+        String REFERENCE_BCONTAINEDBY = "bContainedBy";
 
         // Attributes
         String ATTRIBUTE_NAME = "name";

@@ -93,17 +93,17 @@ public class BigraphSignatureUnitTest {
         EReference refBKindSorts = allRefsBKindSignature.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
         EList<EObject> kindSorts = (EList<EObject>) model.eGet(refBKindSorts);
         for (EObject eachKindSort : kindSorts) {
-            System.out.println(eachKindSort);
             if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC)) {
+                System.out.println("Active Node: " + eachKindSort);
                 Map<String, EReference> allBKindSortRefs = EMFUtils.findAllReferences2(eachKindSort.eClass());
                 EReference refKindSortChildren = allBKindSortRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDSORTS);
                 EList<EObject> kindSortChildren = (EList<EObject>) eachKindSort.eGet(refKindSortChildren);
                 for (EObject eachChild : kindSortChildren) {
-                    System.out.println(eachChild);
+                    System.out.println("\t" + eachChild);
                 }
             }
             if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC)) {
-
+                System.out.println("Passive Node: " + eachKindSort);
             }
         }
     }

@@ -51,6 +51,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
         // Re-create control objects
         Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
         EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);
+        EReference eReferenceControls2 = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BSIG);
         assert eReferenceControls != null;
         EList<EObject> availableControls = (EList<EObject>) instanceModel.eGet(eReferenceControls);
         for (EObject eachControl : availableControls) {
@@ -185,6 +186,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
 
             // Add control to signature
             EList<EObject> bControlsList = (EList<EObject>) this.instanceModel.eGet(eReferenceControls);
+            // reference bSig is set automatically: concreteControlObject.eGet(EMFUtils.findAllReferences2(ctrlEClass).get("bSig"))
             bControlsList.add(concreteControlObject);
 
             // Create concrete sort first and just add them to the bKindSorts reference of the instance BKindSignature
@@ -206,7 +208,9 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
         kindSortInstanceMap.forEach((key, value) -> {
             KindSort kindSort = kindFunction.get(key);
             Map<String, EReference> allRefsBKindSort = EMFUtils.findAllReferences2(value.eClass());
+            // the opposite edge is set automatically
             EReference bKindSortChildrenReference = allRefsBKindSort.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDSORTS);
+//            EReference bKindSortChildrenReference2 = allRefsBKindSort.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTAINEDBY);
             kindSort.getKindsOfControl().forEach(eachKind -> {
                 String ctrlKindId = eachKind.getNamedType().stringValue();
                 EObject kindObject = kindSortInstanceMap.get(ctrlKindId);
