@@ -14,6 +14,8 @@ public abstract class AbstractControl<NT extends NamedType<?>, V extends FiniteO
     protected final NT name;
     protected final V arity;
 
+    int hashed = -1;
+
     public AbstractControl(NT name, V artiy) {
         this.name = name;
         this.arity = artiy;
@@ -48,6 +50,10 @@ public abstract class AbstractControl<NT extends NamedType<?>, V extends FiniteO
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, arity);
+        if(hashed == -1) {
+            hashed = Objects.hash(name, arity);
+        }
+        return hashed;
+//        return Objects.hash(name, arity);
     }
 }

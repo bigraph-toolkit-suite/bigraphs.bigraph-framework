@@ -232,6 +232,18 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
         return this.instanceModel;
     }
 
+
+    int hashed = -1;
+
+    @Override
+    public int hashCode() {
+        if(hashed == -1) {
+            hashed = Objects.hash(controls, kindFunction);
+        }
+        return hashed;
+//        return Objects.hash(controls);
+    }
+
     // ///////////////////////////////////////////
     // Some helper methods for Ecore-related stuff
     // ///////////////////////////////////////////

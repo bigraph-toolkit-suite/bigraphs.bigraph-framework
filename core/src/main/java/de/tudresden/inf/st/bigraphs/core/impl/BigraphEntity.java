@@ -28,6 +28,7 @@ public class BigraphEntity<C extends Control> {
     private EObject instance;
     private C control;
     protected BigraphEntityType type;
+    int hashed = -1;
 
     private BigraphEntity() {
     }
@@ -97,7 +98,11 @@ public class BigraphEntity<C extends Control> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(instance, control, type);
+        if(hashed == -1) {
+            hashed = Objects.hash(instance, control, type);
+        }
+        return hashed;
+//        return Objects.hash(instance, control, type);
     }
 
     @NonNull

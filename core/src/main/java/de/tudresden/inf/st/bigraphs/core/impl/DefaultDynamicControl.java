@@ -18,6 +18,8 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
 
     private final ControlStatus statusOfControl;
 
+    int hashed = -1;
+
     /**
      * Status will be set to {@link ControlStatus#ACTIVE}
      *
@@ -57,6 +59,10 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), statusOfControl);
+        if(hashed == -1) {
+            hashed = Objects.hash(super.hashCode(), statusOfControl);
+        }
+        return hashed;
+//        return Objects.hash(super.hashCode(), statusOfControl);
     }
 }

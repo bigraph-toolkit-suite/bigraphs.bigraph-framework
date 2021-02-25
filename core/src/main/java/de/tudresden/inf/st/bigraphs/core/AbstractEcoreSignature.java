@@ -28,6 +28,8 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
     protected EPackage sigPackage;
     protected EObject instanceModel;
 
+    int hashed = -1;
+
     protected AbstractEcoreSignature() {
         this.controls = new LinkedHashSet<>();
     }
@@ -76,7 +78,11 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
 
     @Override
     public int hashCode() {
-        return Objects.hash(controls);
+        if(hashed == -1) {
+            hashed = Objects.hash(controls);
+        }
+        return hashed;
+//        return Objects.hash(controls);
     }
 
     @Override
