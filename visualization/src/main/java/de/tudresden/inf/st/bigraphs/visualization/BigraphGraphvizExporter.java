@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static guru.nidi.graphviz.attribute.Rank.RankDir.BOTTOM_TO_TOP;
 import static guru.nidi.graphviz.model.Factory.*;
 
 /**
@@ -28,7 +29,7 @@ public class BigraphGraphvizExporter {
     private static final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
     private static final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
     private static final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
-    
+
     public void toPNG(Bigraph<?> bigraph, File output) throws IOException {
         BigraphGraphvizExporter.toPNG(bigraph, true, output);
     }
@@ -74,7 +75,8 @@ public class BigraphGraphvizExporter {
                                                  GraphicalFeatureSupplier<Shape> shapeSupplier) throws IOException {
 //        Graphviz.useEngine(new GraphvizJdkEngine());
         final MutableGraph theGraph = mutGraph("Bigraph").setDirected(false)
-                .graphAttrs().add(RankDir.BOTTOM_TO_TOP);
+//                .graphAttrs().add(RankDir.BOTTOM_TO_TOP);
+                .graphAttrs().add(Rank.dir(BOTTOM_TO_TOP));
 
         if (!asTreeStructure) {
             List<MutableGraph> rootGraphs = new LinkedList<>();
@@ -88,14 +90,14 @@ public class BigraphGraphvizExporter {
 
         //RANK NODES
         // collect node heights first
-        Map<BigraphEntity, Integer> levelMap = new HashMap<>();
+        Map<BigraphEntity, Integer> levelMap = new LinkedHashMap<>();
 //        for (BigraphEntity each : bigraph.getAllPlaces()) {
 //            int levelUtil = getNodeHeight(bigraph, each, 0);
 //            levelMap.put(each, levelUtil);
 //        }
 
         // create the data structure first for creating the node hierarchy
-        final Map<String, Set<GraphVizLink>> graphMap = new HashMap<>();
+        final Map<String, Set<GraphVizLink>> graphMap = new LinkedHashMap<>();
         bigraph.getAllPlaces().forEach(s -> {
             graphMap.put(labelSupplier.with(s).get(), new HashSet<>());
 //            int levelUtil = bigraph.getLevelOf(s); //getNodeHeight(bigraph, s, 0);
@@ -130,7 +132,7 @@ public class BigraphGraphvizExporter {
             // created ranked node graph
 
             theGraph.add(collect.values().stream().map(bigraphEntities ->
-                    graph().graphAttr().with(Rank.SAME).with(
+                    graph().graphAttr().with(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM)).with(
                             bigraphEntities.stream()
                                     // (not necessary now to specify the appearance of the nodes. will be done later)
                                     .map(x -> node(labelSupplier.with(x).get()))
@@ -170,9 +172,9 @@ public class BigraphGraphvizExporter {
         List<String> duplicates = allPoints.stream().map(x -> ((BigraphEntity.InnerName) x).getName())
                 .filter(x -> outerLabels.contains(x))
                 .collect(Collectors.toList());
-        Rank rankPoints = asTreeStructure ? Rank.SOURCE : Rank.MIN;
+        Rank.RankType rankPoints = asTreeStructure ? Rank.RankType.SOURCE : Rank.RankType.MIN;
         theGraph.add(
-                graph().graphAttr().with(rankPoints).with(allPoints.stream()
+                graph().graphAttr().with(Rank.inSubgraph(rankPoints)).with(allPoints.stream()
                         .map(x -> {
                                     String label = labelSupplier.with(x).get();
                                     if (duplicates.contains(label)) label += "i";
@@ -186,9 +188,9 @@ public class BigraphGraphvizExporter {
         // make nicer graph (ranked, etc.)
 
         if (asTreeStructure) allLinks.addAll(bigraph.getEdges());
-        Rank rankLinks = asTreeStructure ? Rank.SINK : Rank.MAX;
+        Rank.RankType rankLinks = asTreeStructure ? Rank.RankType.SINK : Rank.RankType.MAX;
         theGraph.add(
-                graph().graphAttr().with(rankLinks).with(allLinks.stream()
+                graph().graphAttr().with(Rank.inSubgraph(rankLinks)).with(allLinks.stream()
                         .map(x -> node(labelSupplier.with(x).get())
                                 .with(shapeSupplier.with(x).get(), colorSupplier.with(x).get())
                         )
@@ -272,7 +274,11 @@ public class BigraphGraphvizExporter {
         return mutGraph(labelSupplier.with(eachRoot).get())
                 .setDirected(false).setCluster(true)
                 .graphAttrs()
-                .add(RankDir.BOTTOM_TO_TOP, Label.of(labelSupplier.with(eachRoot).get()), Style.DASHED);
+                .add(
+                        Rank.dir(Rank.RankDir.BOTTOM_TO_TOP),
+                        Label.of(labelSupplier.with(eachRoot).get()),
+                        Style.DASHED
+                );
     }
 
     private Node createSiteNode(BigraphEntity site) {
