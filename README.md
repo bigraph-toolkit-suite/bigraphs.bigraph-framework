@@ -267,10 +267,15 @@ Provides simple means to export bigraphs and transition systems as graphic files
 
 Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`.
 
+**Requirements**
+
+In order to use the functionality of the visualization module, the following tools must be installed on the machine:
+- Graphviz: `apt install -y graphviz`
+
 #### bigraph-converter
 
-Provides several mechanism to convert bigraphs into other representations.
-For example, bigraphs to GXL (Graph Exchange Language), BigraphER and BigMC.
+Provides several ways to convert bigraphs into other representations.
+For example, bigraphs to GraphML format, BigraphER's specification language or BigMC's term language.
 
 <!-- ### Reaction Graph / Transition System -->
 
@@ -367,7 +372,7 @@ mvn deploy -DskipTests -Pdeploy -Dusername=username -Dpassword=password
 **Bigraph Framework** is Open Source software released under the Apache 2.0 license.
 
 ```text
-   Copyright 2020 Dominik Grzelak
+   Copyright 2021-present Dominik Grzelak
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

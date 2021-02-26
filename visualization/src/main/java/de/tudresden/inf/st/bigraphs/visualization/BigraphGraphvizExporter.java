@@ -3,8 +3,8 @@ package de.tudresden.inf.st.bigraphs.visualization;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -17,7 +17,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static guru.nidi.graphviz.model.Factory.*;
-import static guru.nidi.graphviz.model.Factory.node;
 
 /**
  * This class visualizes a bigraph by means of GraphViz.
@@ -73,6 +72,7 @@ public class BigraphGraphvizExporter {
                                                  GraphicalFeatureSupplier<String> labelSupplier,
                                                  GraphicalFeatureSupplier<Color> colorSupplier,
                                                  GraphicalFeatureSupplier<Shape> shapeSupplier) throws IOException {
+//        Graphviz.useEngine(new GraphvizJdkEngine());
         final MutableGraph theGraph = mutGraph("Bigraph").setDirected(false)
                 .graphAttrs().add(RankDir.BOTTOM_TO_TOP);
 
