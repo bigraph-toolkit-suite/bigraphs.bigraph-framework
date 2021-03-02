@@ -202,6 +202,9 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         if (!reactiveSystem.getAgent().isGround()) {
             throw new AgentNotGroundException();
         }
+        if (!reactiveSystem.getAgent().isPrime()) {
+            throw new AgentNotPrimeException();
+        }
         if (Objects.isNull(modelCheckingStrategy)) {
             throw new InvalidSimulationStrategy();
         }

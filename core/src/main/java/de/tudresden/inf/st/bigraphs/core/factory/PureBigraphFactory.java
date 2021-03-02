@@ -15,6 +15,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphComposite;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Set;
@@ -59,7 +60,7 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
 
     @Override
     public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, EPackage bigraphMetaModel) {
-        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), bigraphMetaModel, null);
+        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), bigraphMetaModel, (EObject) null);
     }
 
     @Override

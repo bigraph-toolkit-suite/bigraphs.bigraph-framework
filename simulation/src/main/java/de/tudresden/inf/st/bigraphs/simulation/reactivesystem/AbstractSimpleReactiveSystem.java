@@ -11,15 +11,15 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.RedexIsNotSimpleException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
+import de.tudresden.inf.st.bigraphs.simulation.exceptions.AgentNotGroundException;
+import de.tudresden.inf.st.bigraphs.simulation.exceptions.AgentNotPrimeException;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
-import org.eclipse.collections.api.factory.Lists;
-import org.eclipse.collections.api.list.MutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Set;
 import java.util.function.Supplier;
 
 //TODO: add tactics/order/priorities for RR execution (here?): yes here we program our application.
@@ -75,6 +75,18 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
 
         if (!reactionRule.isRedexSimple()) {
             throw new RedexIsNotSimpleException();
+        }
+    }
+
+    public void assertAgentIsGround(B agent) throws AgentNotGroundException {
+        if (!agent.isGround()) {
+            throw new AgentNotGroundException();
+        }
+    }
+
+    public void assertAgentIsPrime(B agent) throws AgentNotPrimeException {
+        if (!agent.isPrime()) {
+            throw new AgentNotPrimeException();
         }
     }
 
@@ -154,6 +166,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     }
 
     public synchronized AbstractSimpleReactiveSystem<B> setAgent(B initialAgent) {
+//        assertAgentIsGround(initialAgent);
         this.initialAgent = initialAgent;
         return this;
     }
