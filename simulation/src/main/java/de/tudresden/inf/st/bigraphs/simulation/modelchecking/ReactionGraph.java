@@ -46,15 +46,30 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
     }
 
     public void addEdge(B source, String sourceLbl, B target, String targetLbl, B reaction, String reactionLbl) {
-        LabeledNode sourceNode = createNode(sourceLbl);
-        LabeledNode targetNode = createNode(targetLbl);
-        graph.addVertex(sourceNode);
-        graph.addVertex(targetNode);
-        boolean b = graph.addEdge(sourceNode, targetNode, new LabeledEdge(reactionLbl));
-
-        stateMap.putIfAbsent(sourceLbl, source);
-        stateMap.putIfAbsent(targetLbl, target);
-        transitionMap.putIfAbsent(reactionLbl, reaction);
+        LabeledNode sourceNode;
+        if (stateMap.get(sourceLbl) != null) {
+            sourceNode = graph.vertexSet().stream().filter(x -> x.canonicalForm.equals(sourceLbl)).findFirst().get();
+        } else {
+            sourceNode = createNode(sourceLbl);
+            stateMap.put(sourceLbl, source);
+            graph.addVertex(sourceNode);
+        }
+        LabeledNode targetNode;
+        if (stateMap.get(targetLbl) != null) {
+            targetNode = graph.vertexSet().stream().filter(x -> x.canonicalForm.equals(targetLbl)).findFirst().get();
+        } else {
+            targetNode = createNode(targetLbl);
+            stateMap.put(targetLbl, target);
+            graph.addVertex(targetNode);
+        }
+        Set<LabeledEdge> allEdges = graph.getAllEdges(sourceNode, targetNode);
+        Optional<LabeledEdge> first = allEdges.stream().filter(x -> x.label.equals(reactionLbl)).findFirst();
+        if (!first.isPresent()) {
+            final LabeledEdge edge = new LabeledEdge(reactionLbl);
+            boolean b = graph.addEdge(sourceNode, targetNode, edge);
+            if (b)
+                transitionMap.put(reactionLbl, reaction);
+        }
     }
 
     public Optional<LabeledNode> getLabeledNodeByCanonicalForm(String canonicalForm) {
