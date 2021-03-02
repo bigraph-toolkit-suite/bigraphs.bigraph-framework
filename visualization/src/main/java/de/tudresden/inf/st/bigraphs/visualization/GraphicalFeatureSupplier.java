@@ -11,13 +11,23 @@ import java.util.function.Supplier;
  */
 public abstract class GraphicalFeatureSupplier<V> implements Supplier<V> {
     private BigraphEntity node;
+    protected char delimiterForLabel;
 
     public GraphicalFeatureSupplier(BigraphEntity node) {
-        with(node);
+        with(node, ':');
+    }
+
+    public GraphicalFeatureSupplier(BigraphEntity node, char delimiterForLabel) {
+        with(node, delimiterForLabel);
     }
 
     public GraphicalFeatureSupplier<V> with(BigraphEntity node) {
+        return with(node, ':');
+    }
+
+    public GraphicalFeatureSupplier<V> with(BigraphEntity node, char delimiterForLabel) {
         this.node = node;
+        this.delimiterForLabel = delimiterForLabel;
         return this;
     }
 

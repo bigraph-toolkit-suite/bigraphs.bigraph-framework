@@ -77,7 +77,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
 
             @Override
             public String get() {
-                return "a_" + id++;
+                return "a:" + id++;
             }
         };
         graph = buildEmptySimpleDirectedGraph();

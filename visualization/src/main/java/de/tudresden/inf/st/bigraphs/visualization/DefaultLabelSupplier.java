@@ -10,21 +10,17 @@ public class DefaultLabelSupplier extends GraphicalFeatureSupplier<String> {
         super(null);
     }
 
-    public DefaultLabelSupplier(BigraphEntity node) {
-        super(node);
-    }
-
     @Override
     public String get() {
         if ((getNode()) == null) return "INVALID";
         switch (getNode().getType()) {
             case NODE:
                 BigraphEntity.NodeEntity node = (BigraphEntity.NodeEntity) getNode();
-                return node.getControl().getNamedType().stringValue() + "_" + node.getName();
+                return node.getControl().getNamedType().stringValue() + super.delimiterForLabel + node.getName();
             case ROOT:
-                return "r_" + ((BigraphEntity.RootEntity) getNode()).getIndex();
+                return String.format("r%s%s", super.delimiterForLabel, ((BigraphEntity.RootEntity) getNode()).getIndex());
             case SITE:
-                return "s_" + ((BigraphEntity.SiteEntity) getNode()).getIndex();
+                return String.format("s%s%s", super.delimiterForLabel, ((BigraphEntity.SiteEntity) getNode()).getIndex());
             case OUTER_NAME:
                 return ((BigraphEntity.OuterName) getNode()).getName();
             case INNER_NAME:
