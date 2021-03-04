@@ -17,11 +17,10 @@ import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -283,14 +282,32 @@ public class BigraphArtifacts {
     }
 
     /**
-     * Exports the Ecore-based metamodel of a bigraph
+     * Exports the Ecore-based metamodel of a bigraph.
+     * The filename must match the name of the EPackage of the given {@code bigraph} argument.
+     *
+     * @param bigraph      the bigraph's metamodel to export
+     * @param outputStream the output stream, e.g., {@link FileOutputStream}
+     * @see EcoreBigraph#getEMetaModelData()
      */
     public static void exportAsMetaModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
         writeDynamicMetaModel(bigraph.getModelPackage(), DEFAULT_ENCODING, outputStream);
     }
 
     /**
+     * Exports the Ecore-based metamodel of a bigraph.
+     * The filename is automatically derived and matches the name of the EPackage of the given {@code bigraph} argument.
+     *
+     * @param bigraph the bigraph's metamodel to export
+     * @param folder  the folder where the metamodel should be stored
+     */
+    public static void exportAsMetaModel(EcoreBigraph bigraph, Path folder) throws IOException {
+        String s = Paths.get(folder.toAbsolutePath().toString(), bigraph.getEMetaModelData().getName() + ".ecore").toAbsolutePath().toString();
+        writeDynamicMetaModel(bigraph.getModelPackage(), DEFAULT_ENCODING, new FileOutputStream(s));
+    }
+
+    /**
      * Exports the Ecore-based metamodel of a signature
+     * The filename must match the name of the EPackage.
      */
     public static void exportAsMetaModel(EcoreSignature signature, OutputStream outputStream) throws IOException {
         writeDynamicMetaModel(signature.getMetaModel(), DEFAULT_ENCODING, outputStream);

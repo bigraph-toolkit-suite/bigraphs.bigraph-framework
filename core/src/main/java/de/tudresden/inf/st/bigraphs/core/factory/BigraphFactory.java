@@ -190,7 +190,7 @@ public final class BigraphFactory {
         return b;
     }
 
-    public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(DefaultDynamicSignature signature) {
+    public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(S signature) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
         EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
@@ -203,7 +203,7 @@ public final class BigraphFactory {
         }
     }
 
-    public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(DefaultDynamicSignature signature, EPackage bigraphBaseModelPackage) {
+    public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(S signature, EPackage bigraphBaseModelPackage) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
         Registry.INSTANCE.put(signature, bigraphBaseModelPackage);

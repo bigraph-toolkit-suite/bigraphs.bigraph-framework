@@ -80,6 +80,8 @@ public class BigraphCompositionUnitTests {
                 .addChild("User")
                 .top()
                 .createBigraph();
+//        BigraphArtifacts.exportAsMetaModel(userBigraph, new FileOutputStream(userBigraph.getEMetaModelData().getName() + ".ecore"));
+//        BigraphArtifacts.loadBigraphMetaModel(userBigraph.getEMetaModelData().getName() + ".ecore");
         BigraphComposite<DefaultDynamicSignature> nesting = ops(bigraph).nesting(userBigraph);
         BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) nesting.getOuterBigraph(), System.out);
     }

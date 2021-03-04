@@ -76,9 +76,9 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
 
     protected PureBigraphBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
         this(signature, new EMetaModelData.MetaModelDataBuilder()
-                .setNsPrefix("bigraphMetaModel")
-                .setName("SAMPLE")
-                .setNsUri("de.tud.inf.st.bigraphs")
+                .setNsPrefix("bigraphBaseModel")
+                .setName("bigraphBaseModel")
+                .setNsUri("http://de.tudresden.inf.st.bigraphs.models")
                 .create());
     }
 
