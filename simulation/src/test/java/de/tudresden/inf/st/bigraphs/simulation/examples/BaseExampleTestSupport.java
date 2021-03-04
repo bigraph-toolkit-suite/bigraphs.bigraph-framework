@@ -24,8 +24,12 @@ public abstract class BaseExampleTestSupport {
     }
 
     public void eb(Bigraph<?> bigraph, String name) {
+        eb(bigraph, name, true);
+    }
+
+    public void eb(Bigraph<?> bigraph, String name, boolean asTree) {
         try {
-            BigraphGraphvizExporter.toPNG(bigraph, true, new File(basePath + name + ".png"));
+            BigraphGraphvizExporter.toPNG(bigraph, asTree, new File(basePath + name + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -34,6 +38,14 @@ public abstract class BaseExampleTestSupport {
     public void print(PureBigraph bigraph) {
         try {
             BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void printMetaModel(PureBigraph bigraph) {
+        try {
+            BigraphArtifacts.exportAsMetaModel(bigraph, System.out);
         } catch (IOException e) {
             e.printStackTrace();
         }
