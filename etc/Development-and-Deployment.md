@@ -70,10 +70,9 @@ The output is exported at `documentation/docusaurus/website/build/bigraph-framew
 #### Build the whole documentation
 
 ```bash
-$ mvn package # aggregation of api docs 
-$ mvn exec:java -f documentation/pom.xml # code sample generation 
+$ mvn package -Pdistribute # creation and aggregation of api docs 
 $ npm --prefix ./documentation/docusaurus/website install # install npm dependencies first
-$ mvn -f documentation/pom.xml exec:java install -Pdistribute # building static site
+$ mvn -f documentation/pom.xml install exec:java -Pdistribute # code sample generation and building static site
 ```
 
 The generated user manual is available from `documentation/docusaurus/website/`.

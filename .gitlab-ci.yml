@@ -79,11 +79,6 @@ build:
     - git remote add stgithub $REMOTE_ST_GITHUB
     - git remote -v
     - git push --force stgithub master:gh-pages
-# Old approach using git subtree
-#    - git add -A
-#    - git commit -m "updated github pages"
-#    - git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
-#    - git push stgithub master
 
 #"Deploy Artifacts":
 #  stage: deploy
