@@ -92,7 +92,7 @@ const siteConfig = {
     // For top-level user or org sites, the organization is still the same.
     // e.g., for the https://JoelMarcey.github.io site, it would be set like...
     //   organizationName: 'JoelMarcey'
-    apiDocsUrl: 'apidocs/index.html',
+    apiDocsUrl: 'apidocs/',
     disableHeaderTitle: true,
     // For no header links in the top nav bar -> headerLinks: [],
     headerLinks: [
