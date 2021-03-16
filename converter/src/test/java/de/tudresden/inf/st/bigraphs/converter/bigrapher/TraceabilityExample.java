@@ -20,7 +20,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 
 public class TraceabilityExample {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/traceability/";
