@@ -159,10 +159,10 @@ const siteConfig = {
     scripts: [
         'https://buttons.github.io/buttons.js',
         'https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js',
-        '/js/code-block-buttons.js',
+        urlConfigs.baseUrl + 'js/code-block-buttons.js',
     ],
-    stylesheets: ['/css/code-block-buttons.css', '/css/custom.css'],
-    separateCss: ['/static/apidocs/stylesheet.css'],
+    stylesheets: [urlConfigs.baseUrl + 'css/code-block-buttons.css', urlConfigs.baseUrl + 'css/custom.css'],
+    separateCss: [urlConfigs.baseUrl + 'static/apidocs/stylesheet.css'],
     // On page navigation for the current documentation page.
     onPageNav: 'separate',
     // No .html extensions for paths.

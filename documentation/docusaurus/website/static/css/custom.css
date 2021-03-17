@@ -4,11 +4,14 @@
     font-weight: normal;
     font-size: 120%;
     line-height: 1em;
-    color: $primaryColor;
+    /*color: $primaryColor;*/
     margin: 0.7em 0 1.3em;
 }
 
 @media only screen and (min-device-width: 260px) and (max-device-width: 1189px) {
+    .myCustomClass {
+        overflow-x: scroll;
+    }
     .homeContainer {
         text-align: center;
     }

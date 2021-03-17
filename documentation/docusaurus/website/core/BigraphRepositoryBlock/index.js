@@ -42,7 +42,8 @@ class BigraphRepositoryBlock extends React.Component {
                         </div>
                     </div>
                 {/*<div className="blockElement myCustomClass alignCenter threeByGridBlock">*/}
-                    <div className="blockContent">
+                {/*    style={{overflowY: 'scroll', display: 'block'}}*/}
+                    <div className="blockContent" >
                         <h2>
                             <div><span><p>Gradle</p></span></div>
                         </h2>

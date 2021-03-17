@@ -43,7 +43,10 @@ class BigraphDependencyBlock extends React.Component {
                         Dependencies
                         </p>
                     </div>
-                    <div className="blockContent">
+                    <div className="blockContent" >
+                        <h2>
+                            <div><span><p>Maven</p></span></div>
+                        </h2>
                         <SyntaxHighlighter language="xml">
                             {codeString}
                         </SyntaxHighlighter>
@@ -52,6 +55,9 @@ class BigraphDependencyBlock extends React.Component {
                     </div>
                     {/*<div className="blockElement myCustomClass alignCenter threeByGridBlock">*/}
                     <div className="blockContent">
+                        <h2>
+                            <div><span><p>Gradle</p></span></div>
+                        </h2>
                         <SyntaxHighlighter language="groovy">
                             {codeString2}
                         </SyntaxHighlighter>

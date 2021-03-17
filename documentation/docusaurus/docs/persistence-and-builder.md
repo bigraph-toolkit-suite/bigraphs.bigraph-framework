@@ -3,6 +3,8 @@ id: persistence-2
 title: Usage with Bigraph Builder
 ---
 
+> Please also refer to the methods of `de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory` which shall primarily be used.
+
 ## Creating a Builder by loading persisted Bigraph Meta-models
 
 The user must supply the signature and the filename or instance of the meta-model to instantiate a builder class.

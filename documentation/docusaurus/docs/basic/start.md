@@ -24,7 +24,9 @@ The resulting signature contains two controls: a _User_ with an arity of 1, and 
 The arity specifies how many _connections_ a control can have.
 The semantic meaning of the term "connection" is left open here - it can represent anything, for example, an ethernet link or an association relationship between elements.
 
+<!--
 > More about the specific methods of the bigraph factory, bigraph builders and signature builder can be found in [Factories and Builders](./advanced/factories-and-builders).
+-->
 
 ### Bigraph Builder
  
@@ -43,7 +45,7 @@ signature).
 
 ![basic-example-bigraph](assets/basics/basic-bigraph.png)
 
-> See [Visualization](visualization) on how to export a bigraph
+> See [Visualization](../visualization/visualization) on how to export a bigraph
 > as graphic file.
 
 
