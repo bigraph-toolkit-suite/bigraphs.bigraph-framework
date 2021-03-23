@@ -47,38 +47,38 @@ build:
     - ./etc/ci/changelog.sh .mvn/maven.config
 #    - cp ${CHANGELOG_FILE} etc/doc/docs/changelogs/
 
-"Generate Documentation":
-  stage: deploy
-  only:
-    variables:
-      - $STAGING_JOBS_ENABLED == "true"
-    refs:
-      - master
-      - develop
-      - ^v[0-9]+(?:.[0-9]+)+$
-  before_script:
-    - apt-get update && apt-get install -y git
-    - git config --global user.email "dominik.grzelak@tu-dresden.de"
-    - git config --global user.name "Dominik Grzelak"
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    #    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - rm -rf ./documentation/docusaurus/website/build
+#"Generate Documentation":
+#  stage: deploy
+#  only:
+#    variables:
+#      - $STAGING_JOBS_ENABLED == "true"
+#    refs:
+#      - master
+#      - develop
+#      - ^v[0-9]+(?:.[0-9]+)+$
+#  before_script:
+#    - apt-get update && apt-get install -y git
+#    - git config --global user.email "dominik.grzelak@tu-dresden.de"
+#    - git config --global user.name "Dominik Grzelak"
+#    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+#    - eval $(ssh-agent -s)
+#    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    #    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+#    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#  script:
+#    - rm -rf ./documentation/docusaurus/website/build
 #    - mvn $MAVEN_CLI_OPTS install exec:java -f documentation/pom.xml
 #    - mvn $MAVEN_CLI_OPTS install -Pdistribute
-    - mvn install -f documentation/pom.xml -Pdistribute
-    - cd ./documentation/docusaurus/website/build/bigraph-framework && git init
-    - touch CNAME && echo "www.bigraphs.org" > CNAME
-    - git add . && git commit -m "updated documentation"
-    - git remote add stgithub $REMOTE_ST_GITHUB
-    - git remote -v
-    - git push --force stgithub master:gh-pages
+#    - mvn install -f documentation/pom.xml -Pdistribute
+#    - cd ./documentation/docusaurus/website/build/bigraph-framework && git init
+#    - touch CNAME && echo "www.bigraphs.org" > CNAME
+#    - git add . && git commit -m "updated documentation"
+#    - git remote add stgithub $REMOTE_ST_GITHUB
+#    - git remote -v
+#    - git push --force stgithub master:gh-pages
 
 #"Deploy Artifacts":
 #  stage: deploy
