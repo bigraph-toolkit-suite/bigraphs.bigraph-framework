@@ -40,7 +40,7 @@ public class BigraphSignatureUnitTest {
     }
 
     @Test
-    void sdfa() throws IncompatibleSignatureException, IncompatibleInterfaceException {
+    void test_00() throws IncompatibleSignatureException, IncompatibleInterfaceException {
         DefaultDynamicSignature sig = pureSignatureBuilder()
                 .newControl("K", 1).assign()
                 .newControl("L", 1).assign()
