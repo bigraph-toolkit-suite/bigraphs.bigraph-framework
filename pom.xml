@@ -379,11 +379,16 @@
                 <!--                </exclusions>-->
             </dependency>
             <!-- https://github.com/ghillairet/cdo-maven -->
+<!--            <dependency>-->
+<!--                <groupId>org.eclipselabs</groupId>-->
+<!--                <artifactId>cdo</artifactId>-->
+<!--                <version>${emf.cdo.version}</version>-->
+<!--                <type>pom</type>-->
+<!--            </dependency>-->
             <dependency>
-                <groupId>org.eclipselabs</groupId>
-                <artifactId>cdo</artifactId>
-                <version>${emf.cdo.version}</version>
-                <type>pom</type>
+                <groupId>org.eclipse.emf.cdo</groupId>
+                <artifactId>org.eclipse.net4j</artifactId>
+                <version>4.10.1-SNAPSHOT</version>
             </dependency>
             <!-- Collections -->
             <dependency>
