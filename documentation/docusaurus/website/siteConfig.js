@@ -82,7 +82,7 @@ const siteConfig = {
     //   url: 'https://facebook.github.io',
     //   baseUrl: '/test-site/',
     repoUrl: "https://github.com/st-tu-dresden/bigraph-framework",
-    artifactRepoUrl: "https://bintray.com/st-tu-dresden/maven-repository/",
+    artifactRepoUrl: "https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/",
     // Used for publishing and more: Project name. This must match your GitHub repository project name (case-sensitive).
     projectName: 'bigraph-framework',
     // GitHub username of the organization or user hosting this project.

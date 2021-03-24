@@ -94,7 +94,7 @@ As long as the transition system is being built from a BRS specification,
 the provided predicates of the user are checked simultaneously for each
 new computed state in the course of a BRS simulation.
 
-> **Note:** A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker object.
+> **Note:** A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker instance.
 
 These predicates come in two forms: as safety properties or as liveness
 properties. The former represents a state in the system that should not

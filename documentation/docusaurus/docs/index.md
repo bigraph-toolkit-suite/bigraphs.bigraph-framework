@@ -46,7 +46,7 @@ and dynamics of complex systems.
 
 ## Install / Dependency Settings
 
-Artifacts are deployed to Bintray.
+Artifacts are deployed to [ST-Artifactory](https://stgroup.jfrog.io/).
 
 > #### Building from Source
 > Otherwise, to build the source by yourself, follow the

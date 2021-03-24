@@ -90,7 +90,7 @@ This type of simulation starts to apply a set of given reaction rules
 on an initial agent. After the reaction graph is expanded, the simulation
 randomly selects a new state and repeats the process.
 In other words, it follows only on path at random until now further rules can be applied.
-This form of simulation provides no guarantee that the simulation will end at some point or will reach a desired state.
+This form of simulation provides no guarantee that the simulation will end at some point or that the simulation will eventually reach a desired state.
 
 |Random Run #1 | Random Run #2 |
 |---|---|
