@@ -655,7 +655,7 @@
                                     <doclint>${doclint}</doclint>
                                     <destDir>./</destDir>
                                     <author>true</author>
-                                    <bottom>Copyright &#169; 2020. Dominik Grzelak, Software Technology Group,
+                                    <bottom>Copyright &#169; 2021-present. Dominik Grzelak, Software Technology Group,
                                         Technische Universität Dresden. All rights reserved.
                                     </bottom>
                                     <excludePackageNames>com.microstar.xml:GCF</excludePackageNames>
