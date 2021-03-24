@@ -20,7 +20,6 @@
                 <executions>
                     <execution>
                         <id>generate-code-samples</id>
-
                     </execution>
                     <execution>
                         <id>npm build user manual (docusaurus)</id>
