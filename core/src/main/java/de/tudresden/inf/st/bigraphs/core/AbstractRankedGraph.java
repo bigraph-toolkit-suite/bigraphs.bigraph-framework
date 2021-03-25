@@ -10,11 +10,14 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Abstract base class for a ranked graph representation for different kind of bigraphs, and node and edge types for the
- * ranked graph.
- *
+ * Abstract base class for a ranked graph representation for different classes of bigraphs.
+ * The node and edge types for the ranked graph can be specified.
+ * <p>
  * The concrete implementations can be found in the <strong>bigraph-converter</strong> module.
  *
+ * @param <B> type of the bigraph
+ * @param <N> type of the ranked graph's node
+ * @param <E> type of the ranked graph's edge
  * @author Dominik Grzelak
  */
 public abstract class AbstractRankedGraph<B extends Bigraph<?>, N, E> {

@@ -4,6 +4,8 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 
 /**
+ * Super interface for all control representations.
+ * <p>
  * A control is a {@link HasIdentifier} of type {@code <NT>} and has an arity of type {@code <T>}.
  *
  * @param <NT> type of the label
@@ -11,7 +13,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
  * @author Dominik Grzelak
  */
 public interface Control<NT extends NamedType, T extends FiniteOrdinal> extends HasIdentifier<NT> {
-    
+
     /**
      * Returns the arity of the control
      *

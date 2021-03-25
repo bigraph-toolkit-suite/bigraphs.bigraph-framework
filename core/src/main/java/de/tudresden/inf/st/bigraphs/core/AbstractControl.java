@@ -6,6 +6,8 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import java.util.Objects;
 
 /**
+ * Abstract class representing a control of a signature.
+ *
  * @param <NT>
  * @param <V>
  * @author Dominik Grzelak
@@ -50,7 +52,7 @@ public abstract class AbstractControl<NT extends NamedType<?>, V extends FiniteO
 
     @Override
     public int hashCode() {
-        if(hashed == -1) {
+        if (hashed == -1) {
             hashed = Objects.hash(name, arity);
         }
         return hashed;

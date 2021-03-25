@@ -6,7 +6,8 @@ import java.util.Map;
 /**
  * A distributed random number generator.
  *
- * @see <a href="https://stackoverflow.com/a/20329901">https://stackoverflow.com/a/20329901</a>
+ * @author Dominik Grzelak
+ * @see <a href="https://stackoverflow.com/a/20329901">Source: https://stackoverflow.com/a/20329901</a>
  */
 public class DistributedRandomNumberGenerator {
 

@@ -13,8 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Abstract class for signatures for many types.
- * It ascribes itself as a Ecore-based signature.
+ * Abstract class for Ecore-based signatures.
  *
  * @param <C> type of the control
  * @author Dominik Grzelak
@@ -78,7 +77,7 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
 
     @Override
     public int hashCode() {
-        if(hashed == -1) {
+        if (hashed == -1) {
             hashed = Objects.hash(controls);
         }
         return hashed;

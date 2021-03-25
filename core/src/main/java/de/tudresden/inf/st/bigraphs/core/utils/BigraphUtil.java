@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 
 /**
+ * A collection of useful bigraph-related operations and queries.
+ *
  * @author Dominik Grzelak
  */
 public class BigraphUtil {

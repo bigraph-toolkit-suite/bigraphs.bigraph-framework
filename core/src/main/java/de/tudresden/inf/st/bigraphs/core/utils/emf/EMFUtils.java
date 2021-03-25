@@ -1,8 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.utils.emf;
 
-import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
-import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
@@ -17,12 +15,19 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
-//https://sdqweb.ipd.kit.edu/wiki/Creating_EMF_Model_instances_programmatically
+/**
+ * A collection of helpful EMF model operations.
+ *
+ * @author Dominik Grzelak
+ * @see <a href="https://sdqweb.ipd.kit.edu/wiki/Creating_EMF_Model_instances_programmatically">https://sdqweb.ipd.kit.edu/wiki/Creating_EMF_Model_instances_programmatically</a>
+ */
 public class EMFUtils {
     public static final String DEFAULT_ENCODING = "UTF-8";
     private final static EcoreFactory FACTORY = EcoreFactory.eINSTANCE;
+
+    private EMFUtils() {
+    }
 
     public static EAttribute addAttribute(EClass eClass, String name,
                                           EDataType type, boolean isId, int lowerBound, int upperBound) {

@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 /**
- * Kind of a control
+ * Enum that represents the <i>kind/status</i> of a control.
  *
  * @author Dominik Grzelak
  */
