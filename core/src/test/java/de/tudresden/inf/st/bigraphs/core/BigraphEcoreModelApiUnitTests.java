@@ -76,7 +76,7 @@ public class BigraphEcoreModelApiUnitTests {
     }
 
     @Test
-    void apiestt() {
+    void api_test_01() {
         BBigraph bBigraph = BigraphBaseModelFactory.eINSTANCE.createBBigraph();
         BRoot bRoot = BigraphBaseModelFactory.eINSTANCE.createBRoot();
         bBigraph.getBRoots().add(bRoot);

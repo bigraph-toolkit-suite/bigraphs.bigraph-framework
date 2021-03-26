@@ -115,7 +115,7 @@ public class AddExample extends BaseExampleTestSupport {
                     BigraphMatch<PureBigraph> next = iterator.next();
 //                    createGraphvizOutput(getAgent(), next, TARGET_DUMP_PATH + "/");
                     System.out.println("NEXT: " + next);
-                    agentTmp = buildParametricReaction(getAgent(), next, getReactionRulesMap().get("r0"));
+                    agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r0"));
 //                    BigraphGraphvizExporter.toPNG(agentTmp,
 //                            true,
 //                            new File(TARGET_DUMP_PATH + "agent_reacted.png")
@@ -129,7 +129,7 @@ public class AddExample extends BaseExampleTestSupport {
                 BigraphMatch<PureBigraph> next = iterator.next();
 //                createGraphvizOutput(getAgent(), next, TARGET_DUMP_PATH + "/");
                 System.out.println("NEXT: " + next);
-                agentTmp = buildParametricReaction(getAgent(), next, getReactionRulesMap().get("r1"));
+                agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r1"));
             }
             return agentTmp; // the result
         }

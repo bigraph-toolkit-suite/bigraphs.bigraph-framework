@@ -32,7 +32,7 @@
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
         <emf.ecore.version>2.23.0</emf.ecore.version>
         <emf.codegen.version>2.21.0</emf.codegen.version>
-        <emf.cdo.version>4.7.0</emf.cdo.version>
+        <!--        <emf.cdo.version>4.7.0</emf.cdo.version>-->
         <eclipse.collections.version>10.4.0</eclipse.collections.version>
         <guava.version>28.1-jre</guava.version>
         <jgrapht.version>1.3.0</jgrapht.version>
@@ -378,18 +378,6 @@
                 <!--                    </exclusion>-->
                 <!--                </exclusions>-->
             </dependency>
-            <!-- https://github.com/ghillairet/cdo-maven -->
-<!--            <dependency>-->
-<!--                <groupId>org.eclipselabs</groupId>-->
-<!--                <artifactId>cdo</artifactId>-->
-<!--                <version>${emf.cdo.version}</version>-->
-<!--                <type>pom</type>-->
-<!--            </dependency>-->
-            <dependency>
-                <groupId>org.eclipse.emf.cdo</groupId>
-                <artifactId>org.eclipse.net4j</artifactId>
-                <version>4.10.1-SNAPSHOT</version>
-            </dependency>
             <!-- Collections -->
             <dependency>
                 <groupId>org.eclipse.collections</groupId>
@@ -616,7 +604,8 @@
                                         <username>${username}</username>
                                         <!--suppress UnresolvedMavenProperty -->
                                         <password>${password}</password>
-                                        <excludePatterns>*-tests.jar,*documentation-*.jar,*documentation-*.pom</excludePatterns>
+                                        <excludePatterns>*-tests.jar,*documentation-*.jar,*documentation-*.pom
+                                        </excludePatterns>
                                         <!-- Name of local repository in Artifactory @ stgroup.jfrog.io/ -->
                                         <repoKey>st-tu-dresden-maven-repository</repoKey>
                                         <snapshotRepoKey>st-tu-dresden-maven-repository</snapshotRepoKey>
