@@ -3,25 +3,20 @@ package de.tudresden.inf.st.bigraphs.core;
 import com.google.common.collect.Lists;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -31,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ElementaryBigraphUnitTests {
-    private static final PureBigraphFactory factory = pure();
 
     @Test
     void barren() {
@@ -278,7 +272,6 @@ public class ElementaryBigraphUnitTests {
     @DisplayName("Testing that all placings can be built from symmetry, barren and join: Examples from Defintion 3.1 of the Milner book")
     void placings_operation() {
         Placings placings = purePlacings(pureSignatureBuilder().createEmpty());
-//        Placings<DefaultDynamicSignature> placings = factory.createPlacings();
 
         Placings<DefaultDynamicSignature>.Merge merge_0 = placings.merge(0);
         Placings<DefaultDynamicSignature>.Barren barren = placings.barren();
@@ -358,7 +351,7 @@ public class ElementaryBigraphUnitTests {
         assertNotNull(closure_x.getModelPackage());
         assertNotNull(closure_x.getModel());
 
-        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = factory.createBigraphBuilder(factory.createSignatureBuilder().createEmpty());
+        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = pureBuilder(pureSignatureBuilder().createEmpty());
         bigraphBuilder.createOuterName("x");
         PureBigraph bx = bigraphBuilder.createBigraph();
         assertAll(() -> {
@@ -464,7 +457,6 @@ public class ElementaryBigraphUnitTests {
     @Test
     @DisplayName("Testing place axioms: Theorem 3.6")
     void place_axioms() {
-//        Placings<DefaultDynamicSignature> placings = factory.createPlacings();
         Placings placings = purePlacings(pureSignatureBuilder().createEmpty());
 
         Placings<DefaultDynamicSignature>.Join join = placings.join();

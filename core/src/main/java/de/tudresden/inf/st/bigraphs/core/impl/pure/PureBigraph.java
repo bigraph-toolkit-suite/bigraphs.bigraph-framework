@@ -11,7 +11,9 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.api.set.MutableSet;
+import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.collections.impl.factory.SortedSets;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -244,14 +246,18 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         if (portRef == null) return Collections.emptyList();
         EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
-        MutableList<BigraphEntity.Port> portsList = Lists.mutable.empty();
+        MutableSortedSet<BigraphEntity.Port> portsList = SortedSets.mutable.empty();
         for (EObject eachPort : portList) { // are ordered anyway
             BigraphEntity.Port port = BigraphEntity.create(eachPort, BigraphEntity.Port.class);
-            port.setIndex(portList.indexOf(eachPort)); //eachPort.eGet(eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_INDEX))
-            portsList.add(port);
+            EStructuralFeature indexAttr = eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+            if (indexAttr != null) {
+//                port.setIndex(portList.indexOf(eachPort));
+                port.setIndex((int) eachPort.eGet(indexAttr));
+                portsList.add(port);
+            }
         }
-        portMap.put((BigraphEntity.NodeEntity<DefaultDynamicControl>) node, portsList);
-        return portsList;
+        portMap.put((BigraphEntity.NodeEntity<DefaultDynamicControl>) node, portsList.toList());
+        return portsList.toList();
     }
 
     @Override

@@ -1,19 +1,18 @@
 package de.tudresden.inf.st.bigraphs.core.random;
 
 import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphComposite;
 import org.junit.jupiter.api.AfterEach;
@@ -34,12 +33,11 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
  * @author Dominik Grzelak
  */
 public class RandomBigraphUnitTests {
-    private PureBigraphFactory factory; // = AbstractBigraphFactory.createPureBigraphFactory();
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
 
     @BeforeEach
     void setUp() {
-        factory = pure();
+
     }
 
     @AfterEach
@@ -68,7 +66,6 @@ public class RandomBigraphUnitTests {
         PureBigraph left = builder.createBigraph();
         //TODO: add to docu: spawnNewOne() - important for ecore operations
         PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(exampleSignature);
-//        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(exampleSignature, builder.getLoadedEPackage());
 //        PureBigraphBuilder<DefaultDynamicSignature> builder2 = builder.spawnNewOne();
         BigraphEntity.OuterName login2 = builder2.createOuterName("login");
         BigraphEntity.InnerName login2User = builder2.createInnerName("nextLogin");

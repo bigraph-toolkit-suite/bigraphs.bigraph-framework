@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="F" nsURI="http://www.example.org" nsPrefix="sample">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sampleModel" nsURI="http://sample.bigraph" nsPrefix="bigraphSampleModel">
   <eClassifiers xsi:type="ecore:EClass" name="BPlace" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bChild" upperBound="-1"
-        eType="ecore:EClass F.ecore#//BPlace" containment="true" eOpposite="F.ecore#//BPlace/bPrnt"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="bPrnt" eType="ecore:EClass F.ecore#//BPlace"
-        eOpposite="F.ecore#//BPlace/bChild"/>
+        eType="ecore:EClass sampleModel.ecore#//BPlace" containment="true" eOpposite="sampleModel.ecore#//BPlace/bPrnt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bPrnt" eType="ecore:EClass sampleModel.ecore#//BPlace"
+        eOpposite="sampleModel.ecore#//BPlace/bChild"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BRoot" eSuperTypes="F.ecore#//BPlace F.ecore#//IndexableType">
+  <eClassifiers xsi:type="ecore:EClass" name="BRoot" eSuperTypes="sampleModel.ecore#//BPlace sampleModel.ecore#//IndexableType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bBigraph" lowerBound="1"
-        eType="ecore:EClass F.ecore#//BBigraph" eOpposite="F.ecore#//BBigraph/bRoots"/>
+        eType="ecore:EClass sampleModel.ecore#//BBigraph" eOpposite="sampleModel.ecore#//BBigraph/bRoots"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BNode" eSuperTypes="F.ecore#//BPlace F.ecore#//NameableType">
+  <eClassifiers xsi:type="ecore:EClass" name="BNode" eSuperTypes="sampleModel.ecore#//BPlace sampleModel.ecore#//NameableType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bPorts" upperBound="-1"
-        eType="ecore:EClass F.ecore#//BPort" containment="true" eOpposite="F.ecore#//BPort/bNode"/>
+        eType="ecore:EClass sampleModel.ecore#//BPort" containment="true" eOpposite="sampleModel.ecore#//BPort/bNode"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BSite" eSuperTypes="F.ecore#//BPlace F.ecore#//IndexableType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BSite" eSuperTypes="sampleModel.ecore#//BPlace sampleModel.ecore#//IndexableType"/>
   <eClassifiers xsi:type="ecore:EClass" name="BPoint" abstract="true">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="bLink" lowerBound="1" eType="ecore:EClass F.ecore#//BLink"
-        eOpposite="F.ecore#//BLink/bPoints"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bLink" lowerBound="1" eType="ecore:EClass sampleModel.ecore#//BLink"
+        eOpposite="sampleModel.ecore#//BLink/bPoints"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BLink" abstract="true" eSuperTypes="F.ecore#//NameableType">
+  <eClassifiers xsi:type="ecore:EClass" name="BLink" abstract="true" eSuperTypes="sampleModel.ecore#//NameableType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bPoints" upperBound="-1"
-        eType="ecore:EClass F.ecore#//BPoint" eOpposite="F.ecore#//BPoint/bLink"/>
+        eType="ecore:EClass sampleModel.ecore#//BPoint" eOpposite="sampleModel.ecore#//BPoint/bLink"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BPort" eSuperTypes="F.ecore#//BPoint F.ecore#//IndexableType">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="bNode" lowerBound="1" eType="ecore:EClass F.ecore#//BNode"
-        eOpposite="F.ecore#//BNode/bPorts"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BPort" eSuperTypes="sampleModel.ecore#//BPoint sampleModel.ecore#//IndexableType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bNode" lowerBound="1" eType="ecore:EClass sampleModel.ecore#//BNode"
+        eOpposite="sampleModel.ecore#//BNode/bPorts"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BInnerName" eSuperTypes="F.ecore#//BPoint F.ecore#//NameableType">
+  <eClassifiers xsi:type="ecore:EClass" name="BInnerName" eSuperTypes="sampleModel.ecore#//BPoint sampleModel.ecore#//NameableType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bBigraph" lowerBound="1"
-        eType="ecore:EClass F.ecore#//BBigraph" eOpposite="F.ecore#//BBigraph/bInnerNames"/>
+        eType="ecore:EClass sampleModel.ecore#//BBigraph" eOpposite="sampleModel.ecore#//BBigraph/bInnerNames"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BEdge" eSuperTypes="F.ecore#//BLink">
+  <eClassifiers xsi:type="ecore:EClass" name="BEdge" eSuperTypes="sampleModel.ecore#//BLink">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bBigraph" lowerBound="1"
-        eType="ecore:EClass F.ecore#//BBigraph" eOpposite="F.ecore#//BBigraph/bEdges"/>
+        eType="ecore:EClass sampleModel.ecore#//BBigraph" eOpposite="sampleModel.ecore#//BBigraph/bEdges"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BOuterName" eSuperTypes="F.ecore#//BLink">
+  <eClassifiers xsi:type="ecore:EClass" name="BOuterName" eSuperTypes="sampleModel.ecore#//BLink">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bBigraph" lowerBound="1"
-        eType="ecore:EClass F.ecore#//BBigraph" eOpposite="F.ecore#//BBigraph/bOuterNames"/>
+        eType="ecore:EClass sampleModel.ecore#//BBigraph" eOpposite="sampleModel.ecore#//BBigraph/bOuterNames"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NameableType" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -48,18 +48,18 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BBigraph">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bRoots" upperBound="-1"
-        eType="ecore:EClass F.ecore#//BRoot" containment="true" eOpposite="F.ecore#//BRoot/bBigraph"/>
+        eType="ecore:EClass sampleModel.ecore#//BRoot" containment="true" eOpposite="sampleModel.ecore#//BRoot/bBigraph"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bEdges" upperBound="-1"
-        eType="ecore:EClass F.ecore#//BEdge" containment="true" eOpposite="F.ecore#//BEdge/bBigraph"/>
+        eType="ecore:EClass sampleModel.ecore#//BEdge" containment="true" eOpposite="sampleModel.ecore#//BEdge/bBigraph"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bInnerNames" upperBound="-1"
-        eType="ecore:EClass F.ecore#//BInnerName" containment="true" eOpposite="F.ecore#//BInnerName/bBigraph"/>
+        eType="ecore:EClass sampleModel.ecore#//BInnerName" containment="true" eOpposite="sampleModel.ecore#//BInnerName/bBigraph"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bOuterNames" upperBound="-1"
-        eType="ecore:EClass F.ecore#//BOuterName" containment="true" eOpposite="F.ecore#//BOuterName/bBigraph"/>
+        eType="ecore:EClass sampleModel.ecore#//BOuterName" containment="true" eOpposite="sampleModel.ecore#//BOuterName/bBigraph"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Printer" eSuperTypes="F.ecore#//BNode"/>
-  <eClassifiers xsi:type="ecore:EClass" name="User" eSuperTypes="F.ecore#//BNode"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Room" eSuperTypes="F.ecore#//BNode"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Spool" eSuperTypes="F.ecore#//BNode"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Computer" eSuperTypes="F.ecore#//BNode"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Job" eSuperTypes="F.ecore#//BNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Printer" eSuperTypes="sampleModel.ecore#//BNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="User" eSuperTypes="sampleModel.ecore#//BNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Room" eSuperTypes="sampleModel.ecore#//BNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Spool" eSuperTypes="sampleModel.ecore#//BNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Computer" eSuperTypes="sampleModel.ecore#//BNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Job" eSuperTypes="sampleModel.ecore#//BNode"/>
 </ecore:EPackage>

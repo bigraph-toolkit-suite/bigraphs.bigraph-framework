@@ -98,7 +98,7 @@ public class BigraphEntity<C extends Control> {
 
     @Override
     public int hashCode() {
-        if(hashed == -1) {
+        if (hashed == -1) {
             hashed = Objects.hash(instance, control, type);
         }
         return hashed;
@@ -249,7 +249,7 @@ public class BigraphEntity<C extends Control> {
         }
     }
 
-    public static class Port extends BigraphEntity {
+    public static class Port extends BigraphEntity implements Comparable<BigraphEntity.Port> {
         String toString = null;
 
         public Port() {
@@ -279,10 +279,14 @@ public class BigraphEntity<C extends Control> {
             return toString;
         }
 
+        @Override
+        public int compareTo(BigraphEntity.Port otherPort) {
+            return Integer.compare(this.getIndex(), otherPort.getIndex());
+        }
     }
 
 
-    public static class RootEntity extends BigraphEntity {
+    public static class RootEntity extends BigraphEntity implements Comparable<BigraphEntity.RootEntity> {
         int index;
         String toString = null;
 
@@ -310,6 +314,11 @@ public class BigraphEntity<C extends Control> {
                 toString = new StringBuilder("").append(getIndex()).append(":").append("Root").toString();
             }
             return toString;
+        }
+
+        @Override
+        public int compareTo(BigraphEntity.RootEntity otherRoot) {
+            return Integer.compare(this.getIndex(), otherRoot.getIndex());
         }
     }
 }

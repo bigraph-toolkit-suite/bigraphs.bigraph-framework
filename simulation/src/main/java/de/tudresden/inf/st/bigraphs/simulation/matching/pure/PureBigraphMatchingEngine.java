@@ -771,8 +771,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 //                    .parallelProduct(bigraphBuilder.createBigraph())
 //                    .getOuterBigraph();
 
-            for(BigraphEntity.SiteEntity s: context.getSites()) {
-                if(!context.isActiveAtSite(s.getIndex())) {
+            for (BigraphEntity.SiteEntity s : context.getSites()) {
+                if (!context.isActiveAtSite(s.getIndex())) {
                     throw new ContextIsNotActive(s.getIndex());
                 }
             }
@@ -1102,8 +1102,8 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 //                            logger.debug("\t::Removing agent {} because it and its children have no connection to the redex", eachPossibleAgent);
                             removeThis.add(eachPossibleAgent);
                         } else {
-                            crossingsA.putIfAbsent(eachRedexCrossing.getKey(), new LinkedList<>());
-                            crossingsA.get(eachRedexCrossing.getKey()).addAll(allChildrenOf);
+                            crossingsA.putIfAbsent(redexInQuestion, new LinkedList<>());
+                            crossingsA.get(redexInQuestion).addAll(allChildrenOf);
 //                            logger.debug("\t::Keeping agent {}", eachPossibleAgent);
                         }
                     }

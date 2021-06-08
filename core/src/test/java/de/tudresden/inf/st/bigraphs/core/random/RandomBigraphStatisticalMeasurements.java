@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -39,7 +40,6 @@ import static java.util.stream.Collectors.groupingBy;
  */
 @Disabled
 public class RandomBigraphStatisticalMeasurements {
-    private PureBigraphFactory factory = pure();
 
     @Test
     void basic() throws IOException {
@@ -291,7 +291,7 @@ public class RandomBigraphStatisticalMeasurements {
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -304,7 +304,7 @@ public class RandomBigraphStatisticalMeasurements {
     }
 
     private DefaultDynamicSignature createRandomSignature(int n, float probOfPositiveArity) {
-        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
                 .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();
@@ -323,7 +323,7 @@ public class RandomBigraphStatisticalMeasurements {
     }
 
     private DefaultDynamicSignature createRandomSignaturePortVariation(int n, float probOfPositiveArity) {
-        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
 //        char[] chars = IntStream.rangeClosed('A', 'Z')
 //                .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();

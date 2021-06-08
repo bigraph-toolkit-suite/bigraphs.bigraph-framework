@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-//import java.util.function.Predicate;
 
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
