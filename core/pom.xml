@@ -74,7 +74,7 @@
             <artifactId>bigraph-ecore-model</artifactId>
 <!--            <scope>system</scope>-->
 <!--            <type>jar</type>-->
-<!--            <systemPath>${project.basedir}/../etc/auxlibs/bigraphmetamodel_v2.0-alpha.jar</systemPath>-->
+<!--            <systemPath>${project.basedir}/../etc/auxlibs/bigraph-ecore-model-1.3.0-SNAPSHOT.jar</systemPath>-->
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
@@ -91,6 +91,14 @@
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.codegen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.emf.cdo</groupId>
+            <artifactId>org.eclipse.emf.cdo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.emf.cdo.common</groupId>
+            <artifactId>org.eclipse.emf.cdo.common</artifactId>
         </dependency>
         <!--        <dependency>-->
         <!--            <groupId>org.eclipse.platform</groupId>-->

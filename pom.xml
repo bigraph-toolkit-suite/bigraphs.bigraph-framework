@@ -353,6 +353,21 @@
                 <version>${emf.common.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.emf.cdo</groupId>
+                <artifactId>org.eclipse.emf.cdo</artifactId>
+                <version>4.11.0.v20200902-0811</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf.cdo.common</groupId>
+                <artifactId>org.eclipse.emf.cdo.common</artifactId>
+                <version>4.11.0.v20200901-0616</version>
+            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+<!--                <artifactId>org.eclipse.net4j</artifactId>-->
+<!--                <version>4.10.1-SNAPSHOT</version>-->
+<!--            </dependency>-->
+            <dependency>
                 <groupId>org.eclipse.emf.compare</groupId>
                 <artifactId>org.eclipse.emf.compare</artifactId>
                 <version>3.5.3.201911051515</version>

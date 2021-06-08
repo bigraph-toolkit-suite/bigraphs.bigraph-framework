@@ -20,6 +20,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -34,6 +35,27 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 //@Disabled
 public class BigraphCreationUnitTest {
+
+    @Test
+    void name() throws IOException {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .addControl("User", 3, ControlStatus.ACTIVE)
+                .addControl("PC", 3, ControlStatus.ACTIVE)
+                .addControl("Computer", 3, ControlStatus.ACTIVE)
+                .create();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+        builder.createRoot().addSite();
+        builder.createOuterName("ko");
+        builder.createInnerName("cp");
+        PureBigraph bigraph = builder.createBigraph();
+        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+
+        String pathLoaded = "src/test/resources/ecore-test-models/dolore_agent_5.xmi";
+        EPackage orGetBigraphMetaModel = createOrGetBigraphMetaModel(sig);
+        PureBigraphBuilder<DefaultDynamicSignature> loadedBuilder =
+                PureBigraphBuilder.create(sig, orGetBigraphMetaModel, pathLoaded);
+        BigraphArtifacts.exportAsInstanceModel(loadedBuilder.createBigraph(), System.out);
+    }
 
     @Test
     void mutableBuilder_connectLinkUsingPortIndex() {
