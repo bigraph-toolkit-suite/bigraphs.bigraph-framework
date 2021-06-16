@@ -17,7 +17,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BSite" eSuperTypes="sampleModel.ecore#//BPlace sampleModel.ecore#//IndexableType"/>
   <eClassifiers xsi:type="ecore:EClass" name="BPoint" abstract="true">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="bLink" lowerBound="1" eType="ecore:EClass sampleModel.ecore#//BLink"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bLink" eType="ecore:EClass sampleModel.ecore#//BLink"
         eOpposite="sampleModel.ecore#//BLink/bPoints"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BLink" abstract="true" eSuperTypes="sampleModel.ecore#//NameableType">

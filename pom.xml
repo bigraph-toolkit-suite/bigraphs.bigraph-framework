@@ -22,9 +22,9 @@
 
     <properties>
         <project.type>multi</project.type>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <bigraph.metamodel.version>1.3.0-SNAPSHOT</bigraph.metamodel.version>
@@ -160,6 +160,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.1.0</version>
+                    <configuration>
+                        <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -362,11 +365,11 @@
                 <artifactId>org.eclipse.emf.cdo.common</artifactId>
                 <version>4.11.0.v20200901-0616</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.eclipse.emf.cdo</groupId>-->
-<!--                <artifactId>org.eclipse.net4j</artifactId>-->
-<!--                <version>4.10.1-SNAPSHOT</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+            <!--                <artifactId>org.eclipse.net4j</artifactId>-->
+            <!--                <version>4.10.1-SNAPSHOT</version>-->
+            <!--            </dependency>-->
             <dependency>
                 <groupId>org.eclipse.emf.compare</groupId>
                 <artifactId>org.eclipse.emf.compare</artifactId>
@@ -382,16 +385,6 @@
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>${emf.codegen.version}</version>
-                <!--                <exclusions>-->
-                <!--                    <exclusion>-->
-                <!--                        <groupId>org.eclipse.jdt</groupId>-->
-                <!--                        <artifactId>org.eclipse.jdt.core</artifactId>-->
-                <!--                    </exclusion>-->
-                <!--                    <exclusion>-->
-                <!--                        <groupId>org.eclipse.jdt</groupId>-->
-                <!--                        <artifactId>org.eclipse.jdt.launching</artifactId>-->
-                <!--                    </exclusion>-->
-                <!--                </exclusions>-->
             </dependency>
             <!-- Collections -->
             <dependency>
@@ -447,7 +440,7 @@
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker</artifactId>
-                <version>2.6.0</version>
+                <version>3.14.0</version>
             </dependency>
             <!-- Graph-related -->
             <dependency>

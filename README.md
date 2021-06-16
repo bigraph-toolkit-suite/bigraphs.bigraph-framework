@@ -38,6 +38,8 @@ bigraphs by reaction rules (synthesizing a labelled transition system) (beta)
 
 Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java.
 
+**Requirements:** Java 11
+
 ### Lean Bigraph API
 
 The lean bigraph API allows fast bigraph creation and composition.
