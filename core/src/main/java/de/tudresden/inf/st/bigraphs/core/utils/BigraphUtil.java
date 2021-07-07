@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.utils;
 
 import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
@@ -50,6 +51,17 @@ public class BigraphUtil {
         EStructuralFeature prntRef = node.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         Objects.requireNonNull(prntRef);
         node.eSet(prntRef, parent); // child is automatically added to the parent according to the ecore model
+    }
+
+    public static boolean isSomeParentOfNode(BigraphEntity node, BigraphEntity possibleParent, Bigraph bigraph) {
+        BigraphEntity currentParent = node; //bigraph.getParent(node);
+        while (currentParent != null) {
+            currentParent = bigraph.getParent(currentParent);
+            if (currentParent == possibleParent) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // somewhat necessary, if bigrids are going to be used later in combination with other models

@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching;
 
-import com.google.common.base.Stopwatch;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
@@ -10,10 +9,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -24,109 +20,31 @@ import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReaction
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 //import org.openjdk.jmh.annotations.Benchmark;
 //import org.openjdk.jmh.annotations.BenchmarkMode;
 //import org.openjdk.jmh.annotations.Fork;
 //import org.openjdk.jmh.annotations.Mode;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 //TODO write better tests here: the redex output should conform to the expected output - this makes observing things easier
 // to the equivalent bigraphER output result (means, check for num. of outer names etc.)
-public class MatchUnitTests {
-//    private static PureBigraphFactory factory = pure();
+public class MatchUnitTests extends AbstractUnitTestSupport {
+    //    private static PureBigraphFactory factory = pure();
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/matching/framework/";
 
 //    public static void main(String[] args) throws Exception {
 ////        org.openjdk.jmh.Main.main(args);
 //    }
 
-    void exportGraph(Bigraph<?> big, String path) {
-        try {
-            BigraphGraphvizExporter.toPNG((PureBigraph) big,
-                    true,
-                    new File(path)
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next, String path) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
-        PureBigraph context = (PureBigraph) next.getContext();
-        PureBigraph redex = (PureBigraph) next.getRedex();
-        Bigraph contextIdentity = next.getContextIdentity();
-        Bigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
-        PureBigraph contextComposed = (PureBigraph) ops(context).parallelProduct(contextIdentity).getOuterBigraph();
-//            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
-//                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
-        BigraphGraphvizExporter.toPNG(contextComposed,
-                true,
-                new File(path + "contextComposed.png")
-        );
-
-
-        //This takes a lot if time!
-        System.out.println("Create png's");
-        Stopwatch timer = Stopwatch.createStarted();
-        try {
-            String convert = BigraphGraphvizExporter.toPNG(context,
-                    true,
-                    new File(path + "context.png")
-            );
-//            System.out.println(convert);
-            BigraphGraphvizExporter.toPNG(agent,
-                    true,
-                    new File(path + "agent.png")
-            );
-            BigraphGraphvizExporter.toPNG(redex,
-                    true,
-                    new File(path + "redex.png")
-            );
-            BigraphGraphvizExporter.toPNG(contextIdentity,
-                    true,
-                    new File(path + "identityForContext.png")
-            );
-            BigraphGraphvizExporter.toPNG(identityForParams,
-                    true,
-                    new File(path + "identityForParams.png")
-            );
-
-//            BigraphComposite bigraphComposite = factory
-//                    .asBigraphOperator(identityForParams).parallelProduct(redex); //.compose();
-//            GraphvizConverter.toPNG(bigraphComposite.getOuterBigraph(),
-//                    true,
-//                    new File(path + "redexImage.png")
-//            );
-
-            AtomicInteger cnt = new AtomicInteger(0);
-//            next.getParameters().forEach(x -> {
-////                try {
-////                    BigraphGraphvizExporter.toPNG((PureBigraph) x,
-////                            true,
-////                            new File(path + "param_" + cnt.incrementAndGet() + ".png")
-////                    );
-////                } catch (IOException e) {
-////                    e.printStackTrace();
-////                }
-//
-//            });
-            long elapsed = timer.stop().elapsed(TimeUnit.MILLISECONDS);
-            System.out.println("Create png's took (millisecs) " + elapsed);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Test
     void model_test_0() throws Exception {
