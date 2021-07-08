@@ -1,0 +1,223 @@
+package de.tudresden.inf.st.bigraphs.converter.jlibbig;
+
+import de.tudresden.inf.st.bigraphs.converter.BigraphObjectDecoder;
+import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import it.uniud.mads.jlibbig.core.BigraphHandler;
+import it.uniud.mads.jlibbig.core.std.*;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.impl.factory.Lists;
+
+import java.util.*;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.createOrGetBigraphMetaModel;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+
+public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, it.uniud.mads.jlibbig.core.std.Bigraph> {
+    private HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
+    private HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
+    private HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
+    private HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
+    private HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
+    private HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
+    private MutableBuilder<DefaultDynamicSignature> builder;
+    private DefaultDynamicSignature signature;
+    private it.uniud.mads.jlibbig.core.std.Bigraph jBigraph;
+
+    private Map<String, it.uniud.mads.jlibbig.core.std.OuterName> jLibBigOuterNames = new LinkedHashMap<>();
+    private Map<String, it.uniud.mads.jlibbig.core.std.InnerName> jLibBigInnerNames = new LinkedHashMap<>();
+    private Map<String, it.uniud.mads.jlibbig.core.std.Edge> jLibBigEdges = new LinkedHashMap<>();
+    private Map<Integer, it.uniud.mads.jlibbig.core.std.Root> jLibBigRegions = new LinkedHashMap<>(); //PlaceEntity
+    private Map<String, it.uniud.mads.jlibbig.core.std.Node> jLibBigNodes = new LinkedHashMap<>(); // PlaceEntity
+    private Map<String, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
+
+    @Override
+    public synchronized PureBigraph decode(it.uniud.mads.jlibbig.core.std.Bigraph bigraph) {
+        this.signature = parseSignature(bigraph.getSignature());
+        this.jBigraph = bigraph;
+        createOrGetBigraphMetaModel(this.signature);
+        this.builder = new MutableBuilder<>(signature);
+
+        clearAllMaps();
+
+        parseOuterNames(bigraph);
+        parseInnerNames(bigraph);
+        parseRegions(bigraph);
+
+        // The linking all the points to links now
+        performLinkage(bigraph);
+
+        // Create bigraph
+        PureBigraphBuilder<DefaultDynamicSignature>.InstanceParameter meta = this.builder.new InstanceParameter(
+                this.builder.getMetaModel(),
+                this.signature,
+                this.newRoots,
+                this.newSites,
+                this.newNodes,
+                this.newInnerNames,
+                this.newOuterNames,
+                this.newEdges);
+        this.builder.reset();
+        PureBigraph result = new PureBigraph(meta);
+        return result;
+    }
+
+    private void performLinkage(Bigraph bigraph) {
+        // Connect outer names first
+        for (Map.Entry<String, OuterName> eachEntry : jLibBigOuterNames.entrySet()) {
+            BigraphEntity.OuterName correspondingOuterName = newOuterNames.get(eachEntry.getKey());
+
+            OuterName jOuterName = eachEntry.getValue();
+            for (Point point : jOuterName.getPoints()) {
+                if (point.isPort()) {
+                    System.out.println("is port");
+                    EditableNode node = ((EditableNode.EditablePort) ((Point) point)).getNode();
+                    Node jNode = jLibBigNodes.get(node.getName());
+                    BigraphEntity.NodeEntity correspondingNode = newNodes.get(node.getName());
+                    int portIndex = jNode.getPorts().indexOf(point);
+                    //TODO create port at specified index
+                    //TODO connect port to outer name
+                    builder.connectToLinkUsingIndex(correspondingNode, correspondingOuterName, portIndex);
+                } else if (point.isInnerName()) {
+                    System.out.println("is innername");
+                    BigraphEntity.InnerName correspondingInnerName = newInnerNames.get(((InnerName) point).getName());
+                    //TODO connect inner name to outer name
+                    builder.connectInnerToOuter(correspondingInnerName, correspondingOuterName);
+                }
+            }
+        }
+
+        // Iterate through edges
+
+        for (Edge eachEdge : bigraph.getEdges()) {
+            BigraphEntity.Edge correspondingEdge = newEdges.get(eachEdge.getEditable().getName());
+            if (correspondingEdge == null) {
+                correspondingEdge = (BigraphEntity.Edge) builder.createNewEdge(eachEdge.getEditable().getName());
+                newEdges.put(correspondingEdge.getName(), correspondingEdge);
+            }
+            for (Point point : eachEdge.getPoints()) {
+                if (point.isPort()) {
+                    EditableNode node = ((EditableNode.EditablePort) ((Point) point)).getNode();
+                    Node jNode = jLibBigNodes.get(node.getName());
+                    BigraphEntity.NodeEntity correspondingNode = newNodes.get(node.getName());
+                    int portIndex = jNode.getPorts().indexOf(point);
+                    builder.connectToLinkUsingIndex(correspondingNode, correspondingEdge, portIndex);
+                } else if (point.isInnerName()) {
+                    BigraphEntity.InnerName correspondingInnerName = newInnerNames.get(((InnerName) point).getName());
+                    builder.connectInnerToLink(correspondingInnerName, correspondingEdge);
+                }
+            }
+        }
+    }
+
+    private void parseOuterNames(Bigraph bigraph) {
+        for (OuterName each : bigraph.getOuterNames()) {
+            String name = each.getName();
+            jLibBigOuterNames.put(name, each);
+            BigraphEntity.OuterName newOuterName = (BigraphEntity.OuterName) builder.createNewOuterName(name);
+            newOuterNames.put(newOuterName.getName(), newOuterName);
+        }
+    }
+
+    private void parseInnerNames(Bigraph bigraph) {
+        for (InnerName each : bigraph.getInnerNames()) {
+            String name = each.getName();
+            jLibBigInnerNames.put(name, each);
+            BigraphEntity.InnerName x = (BigraphEntity.InnerName) builder.createNewInnerName(name);
+            newInnerNames.put(x.getName(), x);
+        }
+    }
+
+    private void parseRegions(Bigraph bigraph) {
+        for (Root each : bigraph.getRoots()) {
+            int rootIndex = bigraph.getRoots().indexOf(each);
+            jLibBigRegions.put(rootIndex, each);
+            BigraphEntity<?> newRoot = builder.createNewRoot(rootIndex);
+            newRoots.put(rootIndex, (BigraphEntity.RootEntity) newRoot);
+
+            traverseNode(each, newRoot);
+        }
+    }
+
+    private void traverseNode(it.uniud.mads.jlibbig.core.PlaceEntity parentNode, BigraphEntity currentParent) {
+        BigraphEntity nextParent = currentParent;
+        if (parentNode.isNode()) {
+            createNode((Node) parentNode, currentParent);
+            nextParent = newNodes.get(((Node) parentNode).getEditable().getName());
+            jLibBigNodes.putIfAbsent(((Node) parentNode).getEditable().getName(), (Node) parentNode);
+        } else if (parentNode.isSite()) {
+            createSite((Site) parentNode, currentParent);
+        }
+        // Does it have child nodes? If so, traverse nodes further recursively
+        if (parentNode.isParent()) {
+            Collection<Child> childNodes = (Collection<Child>) ((Parent) parentNode).getChildren();
+            for (Child n : childNodes) {
+                if (n.isNode()) {
+                    jLibBigNodes.putIfAbsent(((Node) n).getEditable().getName(), (Node) n);
+                    createNode((Node) n, nextParent);
+                    nextParent = newNodes.get(((Node) n).getEditable().getName());
+                    if (nextParent != null) {
+                        Collection<? extends Child> nextChildren = ((Parent) n).getChildren();
+                        for (Child nextChild : nextChildren) {
+                            traverseNode(nextChild, nextParent);
+                        }
+                    }
+                } else if (n.isSite()) {
+                    createSite((Site) n, nextParent);
+                }
+            }
+        }
+    }
+
+    private void createNode(Node n, BigraphEntity currentParent) {
+        String control = n.getControl().getName();
+        String nodeId = n.getEditable().getName();
+        DefaultDynamicControl controlByName = signature.getControlByName(control);
+
+        BigraphEntity.NodeEntity newNode = (BigraphEntity.NodeEntity) builder.createNewNode(controlByName, nodeId);
+        newNodes.put(nodeId, newNode);
+        builder.setParentOfNode(newNode, currentParent);
+    }
+
+    private void createSite(Site n, BigraphEntity currentParent) {
+        int siteIndex = jBigraph.getSites().indexOf(n);
+        BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) builder.createNewSite(siteIndex);
+        newSites.put(newSite.getIndex(), newSite);
+        builder.setParentOfNode(newSite, currentParent);
+    }
+
+    private DefaultDynamicSignature parseSignature(it.uniud.mads.jlibbig.core.std.Signature sig) {
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
+        for (Iterator<Control> it = sig.iterator(); it.hasNext(); ) {
+            Control control = it.next();
+            signatureBuilder.addControl(control.getName(), control.getArity(), control.isActive() ? ControlStatus.ACTIVE : ControlStatus.PASSIVE);
+        }
+        return signatureBuilder.create();
+    }
+
+    private void clearAllMaps() {
+        newRoots.clear();
+        newNodes.clear();
+        newSites.clear();
+        newEdges.clear();
+        newOuterNames.clear();
+        newInnerNames.clear();
+
+        jLibBigOuterNames.clear();
+        jLibBigInnerNames.clear();
+        jLibBigEdges.clear();
+        jLibBigRegions.clear();
+        jLibBigNodes.clear();
+        jLibBigSites.clear();
+
+        builder.reset();
+    }
+}

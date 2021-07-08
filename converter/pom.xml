@@ -71,6 +71,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>jlibbig</groupId>
+            <artifactId>jlibbig</artifactId>
+            <version>0.0.4</version>
+            <type>jar</type>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../etc/auxlibs/jlibbig-0.0.4.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>org.bigraph.model</groupId>
             <artifactId>bigred-core</artifactId>
         </dependency>

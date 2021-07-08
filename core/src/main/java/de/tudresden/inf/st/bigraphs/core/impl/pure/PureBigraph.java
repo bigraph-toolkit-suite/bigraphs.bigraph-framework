@@ -236,6 +236,15 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         return first.orElse(null);
     }
 
+    /**
+     * Return all ports of a node. If the node's control has arity 0, then the list will always be empty.
+     * If no link is attached to a port, the list will also be empty.
+     * <p>
+     * The list is ordered subject to the ports indices.
+     *
+     * @param node the node who's ports shall be returned
+     * @return all ports of a node
+     */
     @Override
     public List<BigraphEntity.Port> getPorts(BigraphEntity<?> node) {
         if (portMap.containsKey(node)) {
