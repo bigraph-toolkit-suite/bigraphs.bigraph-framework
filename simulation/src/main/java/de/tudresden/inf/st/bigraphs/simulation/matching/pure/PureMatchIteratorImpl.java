@@ -5,9 +5,9 @@ import org.eclipse.collections.impl.factory.Lists;
 
 import java.util.*;
 
-//TODO: in a future version: find matches incrementally and not all at the start (if possible)
-//  next() and hasNext() must be rewritten then
-//  see also comment in PureBigraphMatchingEngine
+//TODO: in a future version: find matches incrementally and not all at the start
+//  next() and hasNext() must be slightly rewritten then
+// do not call find
 
 /**
  * Iterator implementation for bigraph matching.

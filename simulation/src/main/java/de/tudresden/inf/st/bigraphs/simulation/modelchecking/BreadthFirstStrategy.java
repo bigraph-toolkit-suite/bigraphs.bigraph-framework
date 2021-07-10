@@ -1,12 +1,15 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.PredicateChecker;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.reactions.ReactionRuleSupplier;
 import org.eclipse.collections.api.factory.Lists;
@@ -47,7 +50,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
      * Compute the transition system of a bigraph with all added reaction rules so far.
      */
     public synchronized void synthesizeTransitionSystem() {
-        final B initialAgent = modelChecker.getReactiveSystem().getAgent();
+
 
         this.predicateChecker = new PredicateChecker<>(modelChecker.getReactiveSystem().getPredicates());
         this.options = modelChecker.options;
@@ -58,6 +61,10 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
         }
         modelChecker.getReactionGraph().reset();
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
+
+        B initialAgent = modelChecker.getReactiveSystem().getAgent();
+        it.uniud.mads.jlibbig.core.std.Bigraph encoded = new JLibBigBigraphEncoder().encode((PureBigraph) initialAgent);
+        initialAgent = (B) new JLibBigBigraphDecoder().decode(encoded);
         String rootBfcs = canonicalForm.bfcs(initialAgent);
         workingQueue.add(initialAgent);
         AtomicInteger transitionCnt = new AtomicInteger(0);
@@ -73,17 +80,17 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 //            Stream.generate(inOrder)
 //                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
             modelChecker.getReactiveSystem().getReactionRules().stream()
-                    .parallel()
+//                    .parallel()
                     .peek(x -> getListener().onCheckingReactionRule(x))
                     .flatMap(eachRule -> {
-                        MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule.getRedex()));
+                        MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule));
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
                         MutableList<MatchResult<B>> reactionResults = Lists.mutable.empty();
                         while (iterator.hasNext()) {
                             increaseOccurrenceCounter();
                             BigraphMatch<B> next = iterator.next();
                             B reaction = null;
-                            if (next.getParameters().size() == 0) {
+                            if (theAgent.getSites().size() == 0 || next.getParameters().size() == 0) {
                                 reaction = getReactiveSystem().buildGroundReaction(theAgent, next, eachRule);
                             } else {
                                 reaction = getReactiveSystem().buildParametricReaction(theAgent, next, eachRule);

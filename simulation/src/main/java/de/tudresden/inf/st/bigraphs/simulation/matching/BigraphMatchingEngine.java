@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 
 import java.util.Collection;

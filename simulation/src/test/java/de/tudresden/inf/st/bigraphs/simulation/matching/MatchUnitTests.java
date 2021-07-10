@@ -1,8 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
@@ -14,9 +12,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureBigraphParametricMatch;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,7 +61,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
         );
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_0, rr.getRedex());
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_0, rr);
         Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         int transition = 0;
         assertTrue(iterator.hasNext());
@@ -80,7 +79,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
         PureBigraph redex_model_test_1 = (PureBigraph) createRedex_model_test_1();
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_1, redex_model_test_1);
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_1, new ParametricReactionRule<>(redex_model_test_1,redex_model_test_1));
         Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         assertTrue(iterator.hasNext());
         while (iterator.hasNext()) {
@@ -133,7 +132,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
         PureBigraph redex_model_test_3 = (PureBigraph) createRedex_model_test_3();
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 
-        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_3, redex_model_test_3);
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_model_test_3, new ParametricReactionRule<>(redex_model_test_3,redex_model_test_3));
         Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
@@ -157,9 +156,9 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
                 true,
                 new File(TARGET_DUMP_PATH + "model4/redex.png")
         );
-        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent_model_test_4, redex_model_test_4);
+        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent_model_test_4, new ParametricReactionRule<>(redex_model_test_4,redex_model_test_4));
         Iterator<PureBigraphParametricMatch> iterator = match.iterator();
-        assertFalse(iterator.hasNext());
+        assertTrue(iterator.hasNext());
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
 //            createGraphvizOutput(agent_model_test_4, next, TARGET_DUMP_PATH + "model4/");
@@ -170,12 +169,12 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
 
     @Test
     @DisplayName("no matches should occur")
-    void model_test_5() throws InvalidConnectionException, LinkTypeNotExistsException {
+    void model_test_5() throws InvalidConnectionException, LinkTypeNotExistsException, InvalidReactionRuleException {
         PureBigraph agent_model_test_5 = (PureBigraph) createAgent_model_test_5();
         PureBigraph redex_model_test_5 = (PureBigraph) createRedex_model_test_5();
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 
-        MatchIterable match = matcher.match(agent_model_test_5, redex_model_test_5);
+        MatchIterable match = matcher.match(agent_model_test_5, new ParametricReactionRule<>(redex_model_test_5,redex_model_test_5));
         Iterator<BigraphMatch<?>> iterator = match.iterator();
         while (iterator.hasNext()) {
             BigraphMatch<?> next = iterator.next();
@@ -201,7 +200,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
         );
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent, redex);
+        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent, new ParametricReactionRule<>(redex,redex));
         Iterator<PureBigraphParametricMatch> iterator = match.iterator();
         assertFalse(iterator.hasNext());
         while (iterator.hasNext()) {
@@ -213,7 +212,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
 
     @Test
     @DisplayName("Only Place Graph Matching: Successful match is expected")
-    void model_test_7() throws InvalidConnectionException, LinkTypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
+    void model_test_7() throws InvalidConnectionException, LinkTypeNotExistsException, IOException, InvalidReactionRuleException, IncompatibleInterfaceException {
         PureBigraph agent_model_test_7 = createAgent_model_test_7();
         PureBigraph redex_7 = createRedex_7();
 //        BigraphGraphvizExporter.toPNG(agent_model_test_7,
@@ -227,7 +226,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 
-        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent_model_test_7, redex_7);
+        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent_model_test_7, new ParametricReactionRule<>(redex_7,redex_7));
         Iterator<PureBigraphParametricMatch> iterator = match.iterator();
         while (iterator.hasNext()) {
             PureBigraphParametricMatch next = iterator.next();
@@ -252,7 +251,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
 
 ////        GroundReactionRule<PureBigraph> rr = new GroundReactionRule<>(redexMatch, redexMatch);
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent, redexMatch);
+        MatchIterable<PureBigraphParametricMatch> match = matcher.match(agent, new ParametricReactionRule<>(redexMatch,redexMatch));
         Iterator<PureBigraphParametricMatch> iterator = match.iterator();
         assertTrue(match.iterator().hasNext());
         while (iterator.hasNext()) {
@@ -267,7 +266,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
                 true,
                 new File(TARGET_DUMP_PATH + "model_idleedge/redex-no-match.png")
         );
-        MatchIterable<PureBigraphParametricMatch> noMatchIterable = matcher.match(agent, redexNoMatch);
+        MatchIterable<PureBigraphParametricMatch> noMatchIterable = matcher.match(agent, new ParametricReactionRule<>(redexNoMatch,redexNoMatch));
         assertFalse(noMatchIterable.iterator().hasNext());
     }
 

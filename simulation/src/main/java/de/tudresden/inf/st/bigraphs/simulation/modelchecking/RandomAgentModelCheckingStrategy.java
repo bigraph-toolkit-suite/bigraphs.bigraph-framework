@@ -3,7 +3,7 @@ package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.reactions.InOrderReactionRuleSupplier;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.reactions.RandomAgentMatchSupplier;
@@ -54,7 +54,7 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
                     .parallel()
                     .forEachOrdered(eachRule -> {
                         modelChecker.reactiveSystemListener.onCheckingReactionRule(eachRule);
-                        MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule.getRedex()));
+                        MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule));
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
                         while (iterator.hasNext()) {
                             increaseOccurrenceCounter();

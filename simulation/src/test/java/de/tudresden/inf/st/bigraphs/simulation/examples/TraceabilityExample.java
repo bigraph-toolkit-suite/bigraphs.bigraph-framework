@@ -4,17 +4,18 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,7 +45,7 @@ public class TraceabilityExample {
     }
 
     @Test
-    void test() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void test() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         PureBigraph agent = createAgent();
         BigraphGraphvizExporter.toPNG(agent,
                 true,

@@ -1,5 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation;
 
+import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -8,10 +10,10 @@ import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationExcep
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.BigraphIsoPredicate;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,10 +44,12 @@ public class PredicateListenerUnitTests {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+        new File(TARGET_DUMP_PATH + "states/").mkdirs();
+        new File(TARGET_DUMP_PATH + "states2/").mkdirs();
     }
 
     @Test
-    void test_listeners() throws InvalidReactionRuleException, BigraphSimulationException {
+    void test_listeners() throws InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createExampleSignature());
 
         PureBigraph agent = builder.createRoot()
@@ -99,7 +103,7 @@ public class PredicateListenerUnitTests {
                     pureReactiveSystem.addReactionRule(createRR3());
                     PureBigraphModelChecker checker = new PureBigraphModelChecker(pureReactiveSystem, opts);
                     checker.execute();
-                } catch (InvalidReactionRuleException | BigraphSimulationException e) {
+                } catch (InvalidReactionRuleException | BigraphSimulationException | ReactiveSystemException e) {
                     e.printStackTrace();
                 }
             }
@@ -107,9 +111,9 @@ public class PredicateListenerUnitTests {
 
         modelChecker.execute();
 
-        assertTrue(allMatched.get());
         assertTrue(hasStarted.get());
         assertTrue(hasFinished.get());
+        assertTrue(allMatched.get());
     }
 
     private ReactionRule<PureBigraph> createRR3() throws InvalidReactionRuleException {

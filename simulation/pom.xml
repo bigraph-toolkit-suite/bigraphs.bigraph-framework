@@ -46,8 +46,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>it.uniud.mads.jlibbig</groupId>
+            <artifactId>jlibbig</artifactId>
+        </dependency>
+        <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
             <artifactId>bigraph-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-converter</artifactId>
         </dependency>
         <dependency>
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
@@ -115,14 +123,14 @@
             </exclusions>
         </dependency>
         <!-- Testing -->
-<!--        <dependency>-->
-<!--            <groupId>org.openjdk.jmh</groupId>-->
-<!--            <artifactId>jmh-core</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.openjdk.jmh</groupId>-->
-<!--            <artifactId>jmh-generator-annprocess</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.openjdk.jmh</groupId>-->
+        <!--            <artifactId>jmh-core</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.openjdk.jmh</groupId>-->
+        <!--            <artifactId>jmh-generator-annprocess</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

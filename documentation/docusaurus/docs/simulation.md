@@ -25,7 +25,7 @@ other constraints are applicable. The LTS can have cycles.
 
 A BRS is a system containing an agent and reaction rules.
 
-All reactive system implement the interface `de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem<B extends Bigraph<? extends Signature<?>>>`.
+All reactive system implement the interface `de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem<B extends Bigraph<? extends Signature<?>>>`.
 
 A reactive system for pure bigraphs can be created as follows:
 

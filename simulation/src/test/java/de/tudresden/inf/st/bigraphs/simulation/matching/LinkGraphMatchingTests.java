@@ -2,10 +2,8 @@ package de.tudresden.inf.st.bigraphs.simulation.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
-import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.*;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -13,7 +11,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.examples.BaseExampleTestSupport;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.simulation.matching.pure.IHSFilter;
@@ -22,8 +20,8 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -131,7 +129,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         eb(redex, "redex4");
 
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent, redex);
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent, new ParametricReactionRule<>(redex, redex));
         Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
         int transition = 0;
         while (iterator.hasNext()) {
@@ -143,7 +141,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     @Test
-    void modelCheckerTest_redex4_test() throws InvalidConnectionException, TypeNotExistsException, BigraphSimulationException, InvalidReactionRuleException {
+    void modelCheckerTest_redex4_test() throws InvalidConnectionException, TypeNotExistsException, BigraphSimulationException, InvalidReactionRuleException, ReactiveSystemException {
         PureBigraph agent = createAgent();
         PureBigraph redex = createRedex4();
         eb(agent, "agent");
@@ -180,7 +178,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     @Test
-    void modelCheckerTest_redex1_test() throws InvalidConnectionException, TypeNotExistsException, BigraphSimulationException, InvalidReactionRuleException {
+    void modelCheckerTest_redex1_test() throws InvalidConnectionException, TypeNotExistsException, BigraphSimulationException, InvalidReactionRuleException, ReactiveSystemException {
         PureBigraph agent = createAgent();
         PureBigraph redex = createRedex1();
         eb(agent, "agent");
@@ -232,27 +230,29 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         PureBigraph context = (PureBigraph) next.getContext();
         PureBigraph redex = (PureBigraph) next.getRedex();
         Bigraph contextIdentity = next.getContextIdentity();
-        Bigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
-        PureBigraph contextComposed = (PureBigraph) ops(context).parallelProduct(contextIdentity).getOuterBigraph();
+//        Bigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
+        if (context != null && contextIdentity != null && redex != null) {
+            PureBigraph contextComposed = (PureBigraph) ops(context).parallelProduct(contextIdentity).getOuterBigraph();
 
 //        try {
-        BigraphGraphvizExporter.toPNG(contextComposed,
-                true,
-                new File(path + "contextComposed.png")
-        );
+            BigraphGraphvizExporter.toPNG(contextComposed,
+                    true,
+                    new File(path + "contextComposed.png")
+            );
 
-        BigraphGraphvizExporter.toPNG(context,
-                true,
-                new File(path + "context.png")
-        );
-        BigraphGraphvizExporter.toPNG(agent,
-                true,
-                new File(path + "agent.png")
-        );
-        BigraphGraphvizExporter.toPNG(redex,
-                true,
-                new File(path + "redex.png")
-        );
+            BigraphGraphvizExporter.toPNG(context,
+                    true,
+                    new File(path + "context.png")
+            );
+            BigraphGraphvizExporter.toPNG(agent,
+                    true,
+                    new File(path + "agent.png")
+            );
+            BigraphGraphvizExporter.toPNG(redex,
+                    true,
+                    new File(path + "redex.png")
+            );
+        }
     }
 
     private PureBigraph createQueryLinkGraph() throws InvalidConnectionException, TypeNotExistsException {

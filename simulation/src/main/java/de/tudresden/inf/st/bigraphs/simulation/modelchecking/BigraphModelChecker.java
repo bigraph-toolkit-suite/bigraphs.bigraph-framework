@@ -8,17 +8,18 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.exceptions.AgentIsNullException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.AgentNotGroundException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.AgentNotPrimeException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.ReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.*;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.*;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
-import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.export.mxReactionGraph;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.export.StyleConstants;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.PredicateChecker;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.jgrapht.GraphPath;
 import org.slf4j.Logger;
@@ -156,7 +157,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
      *
      * @throws BigraphSimulationException if agent is {@code null} or the simulation strategy was not selected
      */
-    public void execute() throws BigraphSimulationException {
+    public void execute() throws BigraphSimulationException, ReactiveSystemException {
         assertReactionSystemValid();
         doWork();
         prepareOutput();
@@ -172,7 +173,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
      *
      * @throws BigraphSimulationException if agent is {@code null} or the simulation strategy was not selected
      */
-    public Future<ReactionGraph<B>> executeAsync() throws BigraphSimulationException {
+    public Future<ReactionGraph<B>> executeAsync() throws BigraphSimulationException, ReactiveSystemException {
         assertReactionSystemValid();
         return executorService.submit(() -> {
             doWork();
@@ -195,7 +196,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
      *
      * @throws BigraphSimulationException if the system is not valid
      */
-    protected void assertReactionSystemValid() throws BigraphSimulationException {
+    protected void assertReactionSystemValid() throws ReactiveSystemException {
         if ((reactiveSystem.getAgent()) == null) {
             throw new AgentIsNullException();
         }

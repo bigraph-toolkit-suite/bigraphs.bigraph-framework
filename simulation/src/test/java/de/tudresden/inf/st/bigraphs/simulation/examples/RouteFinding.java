@@ -1,21 +1,23 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.InstantiationMap;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
@@ -59,7 +61,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
     }
 
     @Test
-    void simulate_car_example() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_car_example() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
         BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
                 true,
@@ -86,13 +88,16 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 true,
                 new File(TARGET_DUMP_PATH + "reactum_car.png")
         );
+        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+        System.out.println(encoder.encode(reactionRule.getRedex()));
+        System.out.println(encoder.encode(reactionRule.getReactum()));
 //        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream(TARGET_DUMP_PATH + "meta-model.ecore"));
 //        Path currentRelativePath = Paths.get("");
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(50)
+                        .setMaximumTransitions(150)
                         .setMaximumTime(60)
                         .allowReducibleClasses(false)
                         .create()

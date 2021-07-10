@@ -5,7 +5,7 @@ title: Reaction Rules
 
 This section explains how to create reaction rules.
 
-Important generic interface: `de.tudresden.inf.st.bigraphs.simulation.ReactionRule<B extends Bigraph<? extends Signature<?>>>`.
+Important generic interface: `de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule<B extends Bigraph<? extends Signature<?>>>`.
 
 ## Example
 
@@ -43,7 +43,7 @@ Important generic interface: `de.tudresden.inf.st.bigraphs.simulation.ReactionRu
 ## Bounded Reaction Rules
 
 A reaction rule can be _bound_ to an existing reactive system structure.
-Therefore, the method `de.tudresden.inf.st.bigraphs.simulation.reactivesystem.AbstractReactionRule#withReactiveSystem(ReactiveSystem<B>)` is available.
+Therefore, the method `de.tudresden.inf.st.bigraphs.core.reactivesystem.AbstractReactionRule#withReactiveSystem(ReactiveSystem<B>)` is available.
 A new class `ReactiveSystemBoundReactionRule<B>` is returned which extends `AbstractReactionRule` and contains the previously create reaction rule as well as the reactive system.
 This may help to organize created reaction rules and give them a strong semantic affiliation to a reactive system.
 

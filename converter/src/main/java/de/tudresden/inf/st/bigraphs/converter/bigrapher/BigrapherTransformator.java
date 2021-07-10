@@ -1,15 +1,12 @@
 package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
 import de.tudresden.inf.st.bigraphs.converter.ReactiveSystemPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.MutableList;
@@ -30,7 +27,7 @@ import java.util.stream.IntStream;
  *
  * @author Dominik Grzelak
  */
-public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, PureReactiveSystem> {
+public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, ReactiveSystem<PureBigraph>> {
 
     public static final String LINE_SEP = System.getProperty("line.separator");
 
@@ -53,7 +50,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     }
 
     @Override
-    public String toString(PureReactiveSystem system) {
+    public String toString(ReactiveSystem<PureBigraph> system) {
         reset();
         StringBuilder s = new StringBuilder();
 
@@ -71,7 +68,8 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
 
         boolean hasPredicates = system.getPredicates().size() > 0;
         if (hasPredicates) {
-            s.append(toString(system.getPredicates()));
+            Collection<ReactiveSystemPredicates<PureBigraph>> predicates = system.getPredicates();
+            s.append(toString((Collection) predicates));
             s.append(LINE_SEP);
         }
 
@@ -100,7 +98,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     }
 
     @Override
-    public void toOutputStream(PureReactiveSystem system, OutputStream outputStream) throws IOException {
+    public void toOutputStream(ReactiveSystem system, OutputStream outputStream) throws IOException {
         reset();
         String s = toString(system);
         outputStream.write(s.getBytes(), 0, s.length());

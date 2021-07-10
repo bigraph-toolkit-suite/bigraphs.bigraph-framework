@@ -1,24 +1,23 @@
 package de.tudresden.inf.st.bigraphs.simulation;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ReactionGraph;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
@@ -55,7 +54,7 @@ public class ReactiveSystemUnitTests {
     }
 
     @Test
-    void simulate_basic_abbExample() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_basic_abbExample() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         PureBigraph agent_b = (PureBigraph) createAgent_A2();
         reactiveSystem.setAgent(agent_b);
@@ -87,17 +86,19 @@ public class ReactiveSystemUnitTests {
 
         Set<ReactionGraph.LabeledNode> labeledNodes = modelChecker.getReactionGraph().getGraph().vertexSet();
         assertEquals(2, labeledNodes.size());
-        // because of the unknown ordering ...
-        boolean c1 = "r0$ABB#".equals(new ArrayList<>(labeledNodes).get(0).getCanonicalForm()) &&
-                "r0$AB#".equals(new ArrayList<>(labeledNodes).get(1).getCanonicalForm());
-        boolean c11 = "r0$ABB#".equals(new ArrayList<>(labeledNodes).get(1).getCanonicalForm()) &&
-                "r0$AB#".equals(new ArrayList<>(labeledNodes).get(0).getCanonicalForm());
-        assertTrue(c1 || c11);
+        
+        String s0 = new ArrayList<>(labeledNodes).get(0).getCanonicalForm();
+        String s1 = new ArrayList<>(labeledNodes).get(1).getCanonicalForm();
+
+        boolean c10 = s0.contains("r0$A{e0}B{e1}B{e2}#") && s1.contains("r0$A{e0}B{e1}#");
+        boolean c01 = s0.contains("r0$A{e0}B{e1}#") && s1.contains("r0$A{e0}B{e1}B{e2}#");
+
+        assertTrue(c10 || c01);
     }
 
     @Test
     @DisplayName("BFS simulation test")
-    void simulate_basic_example() throws TypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_basic_example() throws TypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         // Create reaction rulesname
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();
@@ -146,7 +147,7 @@ public class ReactiveSystemUnitTests {
 
     @Test
     @DisplayName("Random simulation test: Agent is randomly chosen")
-    void random_simulation_test() throws BigraphSimulationException, TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException {
+    void random_simulation_test() throws BigraphSimulationException, TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, ReactiveSystemException {
         // Create reaction rulesname
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();

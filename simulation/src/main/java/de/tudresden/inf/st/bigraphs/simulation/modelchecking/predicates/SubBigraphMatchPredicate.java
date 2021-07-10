@@ -1,10 +1,16 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates;
 
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
-import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
+import it.uniud.mads.jlibbig.core.std.AgentMatch;
+import it.uniud.mads.jlibbig.core.std.AgentMatcher;
 
 /**
  * Simple predicate implementation that returns true if one bigraph is contained in another (subbigraph matching problem).
@@ -20,7 +26,9 @@ import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
 public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicates<B> {
 
     private final B bigraphToMatch;
+    private final it.uniud.mads.jlibbig.core.std.Bigraph jBigraphToMatch;
     private AbstractBigraphMatcher<B> matcher;
+    private JLibBigBigraphEncoder enc = new JLibBigBigraphEncoder();
 
     private SubBigraphMatchPredicate(B bigraphToMatch) {
         this(bigraphToMatch, false);
@@ -30,6 +38,7 @@ public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>>
         this.bigraphToMatch = bigraphToMatch;
         super.negate = negate;
         this.matcher = AbstractBigraphMatcher.create((Class<B>) bigraphToMatch.getClass());
+        this.jBigraphToMatch = enc.encode((PureBigraph) bigraphToMatch);
     }
 
     public static <B extends Bigraph<? extends Signature<?>>> SubBigraphMatchPredicate<B> create(B bigraphToMatch) {
@@ -47,7 +56,10 @@ public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>>
 
     @Override
     public boolean test(B agent) {
-        MatchIterable<BigraphMatch<B>> match = matcher.match(agent, bigraphToMatch);
+        //TODO substitute this with may fastersubtree+hypergraph matcher?
+        AgentMatcher matcher = new AgentMatcher();
+        it.uniud.mads.jlibbig.core.std.Bigraph a = enc.encode((PureBigraph) agent, jBigraphToMatch.getSignature());
+        Iterable<? extends AgentMatch> match = matcher.match(a, jBigraphToMatch);
         return match.iterator().hasNext();
     }
 

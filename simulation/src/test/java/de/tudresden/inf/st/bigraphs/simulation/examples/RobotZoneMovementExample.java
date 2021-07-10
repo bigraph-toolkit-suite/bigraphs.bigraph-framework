@@ -1,21 +1,24 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
-import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import it.uniud.mads.jlibbig.core.std.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -44,8 +47,60 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
         new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
 
+    private Bigraph createJBigraph() {
+        Signature signature = JLibBigBigraphEncoder.parseSignature(createSignature());
+        BigraphBuilder b = new BigraphBuilder(signature);
+
+        OuterName belongsTo = b.addOuterName("belongsTo");
+        OuterName isFree = b.addOuterName("isFree");
+        OuterName rId = b.addOuterName("rId");
+        OuterName canGrip = b.addOuterName("canGrip");
+        Root root = b.addRoot();
+        Node zone1 = b.addNode("Zone1", root);
+        Node robot = b.addNode("Robot", zone1, rId);
+        Node gripper = b.addNode("Gripper", robot, canGrip);
+
+        Node zone2 = b.addNode("Zone2", root);
+        Node zone3 = b.addNode("Zone3", zone2);
+        Node object = b.addNode("Object", zone2, isFree);
+        Node ownership = b.addNode("Ownership", object, belongsTo);
+        b.ground();
+        Bigraph bigraph = b.makeBigraph(true);
+
+        return bigraph;
+
+    }
+
     @Test
-    void simulate() throws IOException, LinkTypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException {
+    void jtest() throws InvalidConnectionException, LinkTypeNotExistsException, InvalidReactionRuleException, IOException {
+        PureBigraph agent_a = agent();
+        ReactionRule<PureBigraph> reactionRule_1 = createReactionRule_1();
+        BigraphGraphvizExporter.toPNG(agent_a,
+                true,
+                new File(TARGET_DUMP_PATH + "agent.png")
+        );
+        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+        Bigraph jAgent = encoder.encode(agent_a); //createJBigraph(); //
+
+//        System.out.println(encoder.encode(agent_a));
+        System.out.println(jAgent);
+
+        Signature jSig = jAgent.getSignature(); //JLibBigBigraphEncoder.parseSignature(agent_a.getSignature());
+        Bigraph jRedex = encoder.encode(reactionRule_1.getRedex(), jSig);
+        Bigraph jReactum = encoder.encode(reactionRule_1.getReactum(), jSig);
+
+//        RewritingRule jRule = new RewritingRule(jRedex, jReactum);
+//        AgentRewritingRule jArule = new AgentRewritingRule(jAgent, jAgent);
+        AgentRewritingRule jArule = new AgentRewritingRule(jRedex, jReactum, 0);
+        Iterable<Bigraph> apply = jArule.apply(jAgent);
+        System.out.println(apply);
+        System.out.println(apply.iterator());
+        System.out.println(apply.iterator().hasNext());
+
+    }
+
+    @Test
+    void simulate() throws IOException, LinkTypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
@@ -77,7 +132,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
                 true,
                 new File(TARGET_DUMP_PATH + "reactum1.png")
         );
-        reactiveSystem.addReactionRule(createReactionRule_1());
+        reactiveSystem.addReactionRule(reactionRule_1);
         reactiveSystem.setAgent(agent_a);
 //
         PureBigraphModelChecker modelChecker = (PureBigraphModelChecker) new PureBigraphModelChecker(reactiveSystem,
@@ -120,7 +175,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
                     true,
                     new File(TARGET_DUMP_PATH + "redexImage.png")
             );
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

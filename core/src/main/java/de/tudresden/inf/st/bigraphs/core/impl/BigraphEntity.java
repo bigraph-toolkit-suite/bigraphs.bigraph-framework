@@ -217,7 +217,7 @@ public class BigraphEntity<C extends Control> {
         }
     }
 
-    public static class SiteEntity extends BigraphEntity {
+    public static class SiteEntity extends BigraphEntity implements Comparable<BigraphEntity.SiteEntity>{
         int index;
         String toString = null;
 
@@ -246,6 +246,11 @@ public class BigraphEntity<C extends Control> {
                         .append(":").append("Site").toString();
             }
             return toString;
+        }
+
+        @Override
+        public int compareTo(BigraphEntity.SiteEntity otherPort) {
+            return Integer.compare(this.getIndex(), otherPort.getIndex());
         }
     }
 

@@ -1,11 +1,11 @@
 package de.tudresden.inf.st.bigraphs.converter.bigred;
 
+import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
 import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
@@ -104,9 +104,10 @@ public class PrintingBigraphExampleTest {
 
     @Test
     void read_simulationSpec_test() throws IOException {
-        DefaultSimulationSpecXMLLoader ssxl = new DefaultSimulationSpecXMLLoader();
+        PureReactiveSystemStub pureReactiveSystem = new PureReactiveSystemStub();
+        DefaultSimulationSpecXMLLoader ssxl = new DefaultSimulationSpecXMLLoader(pureReactiveSystem);
         ssxl.readXml(getFile("simple.bigraph-simulation-spec"));
-        PureReactiveSystem pureReactiveSystem = ssxl.importObject();
+        pureReactiveSystem = (PureReactiveSystemStub) ssxl.importObject();
         assertEquals(4, pureReactiveSystem.getReactionRules().size());
         assertNotNull(pureReactiveSystem.getAgent());
     }

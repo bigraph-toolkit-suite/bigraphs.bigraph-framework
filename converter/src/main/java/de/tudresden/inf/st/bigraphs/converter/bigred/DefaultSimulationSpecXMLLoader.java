@@ -2,7 +2,9 @@ package de.tudresden.inf.st.bigraphs.converter.bigred;
 
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.AbstractSimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -30,13 +32,14 @@ public class DefaultSimulationSpecXMLLoader implements BigRedXmlLoader {
     private DefaultBigraphXMLLoader bxl;
     protected String xmlFile;
     protected DefaultDynamicSignature signature = null;
-    private PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+    private AbstractSimpleReactiveSystem<PureBigraph> reactiveSystem;
 
-    public DefaultSimulationSpecXMLLoader() {
+    public DefaultSimulationSpecXMLLoader(AbstractSimpleReactiveSystem<PureBigraph> reactiveSystem) {
         super();
+        this.reactiveSystem = reactiveSystem;
     }
 
-    public PureReactiveSystem importObject() {
+    public ReactiveSystem<PureBigraph> importObject() {
         return reactiveSystem;
     }
 

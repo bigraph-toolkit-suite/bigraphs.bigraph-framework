@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.simulation.matching;
 
 import com.google.common.base.Stopwatch;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
@@ -32,40 +33,47 @@ public class AbstractUnitTestSupport {
         PureBigraph redex = (PureBigraph) next.getRedex();
         Bigraph contextIdentity = next.getContextIdentity();
         Bigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
-        PureBigraph contextComposed = (PureBigraph) ops(context).parallelProduct(contextIdentity).getOuterBigraph();
+        if (contextIdentity != null) {
+            PureBigraph contextComposed = (PureBigraph) ops(context).parallelProduct(contextIdentity).getOuterBigraph();
 //            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
 //                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
-        BigraphGraphvizExporter.toPNG(contextComposed,
-                true,
-                new File(path + "contextComposed.png")
-        );
+            BigraphGraphvizExporter.toPNG(contextComposed,
+                    true,
+                    new File(path + "contextComposed.png")
+            );
+        }
 
 
         //This takes a lot if time!
         System.out.println("Create png's");
         Stopwatch timer = Stopwatch.createStarted();
         try {
-            String convert = BigraphGraphvizExporter.toPNG(context,
-                    true,
-                    new File(path + "context.png")
-            );
+            if (context != null)
+                BigraphGraphvizExporter.toPNG(context,
+                        true,
+                        new File(path + "context.png")
+                );
 //            System.out.println(convert);
-            BigraphGraphvizExporter.toPNG(agent,
-                    true,
-                    new File(path + "agent.png")
-            );
-            BigraphGraphvizExporter.toPNG(redex,
-                    true,
-                    new File(path + "redex.png")
-            );
-            BigraphGraphvizExporter.toPNG(contextIdentity,
-                    true,
-                    new File(path + "identityForContext.png")
-            );
-            BigraphGraphvizExporter.toPNG(identityForParams,
-                    true,
-                    new File(path + "identityForParams.png")
-            );
+            if (agent != null)
+                BigraphGraphvizExporter.toPNG(agent,
+                        true,
+                        new File(path + "agent.png")
+                );
+            if (redex != null)
+                BigraphGraphvizExporter.toPNG(redex,
+                        true,
+                        new File(path + "redex.png")
+                );
+            if (contextIdentity != null)
+                BigraphGraphvizExporter.toPNG(contextIdentity,
+                        true,
+                        new File(path + "identityForContext.png")
+                );
+            if (identityForParams != null)
+                BigraphGraphvizExporter.toPNG(identityForParams,
+                        true,
+                        new File(path + "identityForParams.png")
+                );
 
 //            BigraphComposite bigraphComposite = factory
 //                    .asBigraphOperator(identityForParams).parallelProduct(redex); //.compose();

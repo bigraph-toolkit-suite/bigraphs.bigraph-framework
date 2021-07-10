@@ -8,12 +8,12 @@ import java.util.*;
  */
 public class CombinationMaps {
 
-    public static <K, V> void combinations(Map<K, List<V>> map, List<Map<K, V>> list) {
+    public static <K, V> void combinations(Map<K, Collection<V>> map, Collection<Map<K, V>> list) {
         recurse(map, new LinkedList<>(map.keySet()).listIterator(), new HashMap<>(), list);
     }
 
     // helper method to do the recursion
-    private static <K, V> void recurse(Map<K, List<V>> map, ListIterator<K> iter, Map<K, V> cur, List<Map<K, V>> list) {
+    private static <K, V> void recurse(Map<K, Collection<V>> map, ListIterator<K> iter, Map<K, V> cur, Collection<Map<K, V>> list) {
         // we're at a leaf node in the recursion tree, add solution to list
         if (!iter.hasNext()) {
             Map<K, V> entry = new HashMap<K, V>();
@@ -25,7 +25,7 @@ public class CombinationMaps {
             list.add(entry);
         } else {
             K key = iter.next();
-            List<V> set = map.get(key);
+            Collection<V> set = map.get(key);
 
             for (V value : set) {
                 cur.put(key, value);

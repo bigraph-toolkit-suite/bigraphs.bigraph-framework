@@ -7,7 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;

@@ -2,29 +2,24 @@ package de.tudresden.inf.st.bigraphs.simulation.examples.computation;
 
 import com.google.common.base.Stopwatch;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.examples.BaseExampleTestSupport;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
-import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -105,7 +100,7 @@ public class AddExample extends BaseExampleTestSupport {
 
             PureBigraph agentTmp = getAgent();
             while (true) {
-                MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agentTmp, getReactionRulesMap().get("r0").getRedex());
+                MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agentTmp, getReactionRulesMap().get("r0"));
                 Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
                 if (!iterator.hasNext()) {
 //                    agentTmp = null;
@@ -114,16 +109,16 @@ public class AddExample extends BaseExampleTestSupport {
                 while (iterator.hasNext()) {
                     BigraphMatch<PureBigraph> next = iterator.next();
 //                    createGraphvizOutput(getAgent(), next, TARGET_DUMP_PATH + "/");
-                    System.out.println("NEXT: " + next);
+//                    System.out.println("NEXT: " + next);
                     agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r0"));
-//                    BigraphGraphvizExporter.toPNG(agentTmp,
-//                            true,
-//                            new File(TARGET_DUMP_PATH + "agent_reacted.png")
-//                    );
+                    BigraphGraphvizExporter.toPNG(agentTmp,
+                            true,
+                            new File(TARGET_DUMP_PATH + "agent_reacted.png")
+                    );
                 }
             }
 
-            MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agentTmp, getReactionRulesMap().get("r1").getRedex());
+            MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agentTmp, getReactionRulesMap().get("r1"));
             Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
             if (iterator.hasNext()) {
                 BigraphMatch<PureBigraph> next = iterator.next();

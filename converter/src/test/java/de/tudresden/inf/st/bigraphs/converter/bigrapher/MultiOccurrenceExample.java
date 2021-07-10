@@ -1,23 +1,18 @@
 package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import org.junit.jupiter.api.Test;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
@@ -30,14 +25,14 @@ public class MultiOccurrenceExample {
 
     // bigrapher full -d ./model -f svg -s states -M 50 -t trans.svg -v model.big
     @Test
-    void simulate() throws TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate() throws TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException {
 
         PureBigraph agent = createAgent();
         ReactionRule<PureBigraph> reactionRuleJA = createReactionRuleJA();
         ReactionRule<PureBigraph> reactionRuleJB = createReactionRuleJB();
         ReactionRule<PureBigraph> reactionRuleJAC = createReactionRuleJAC();
         ReactionRule<PureBigraph> reactionRuleJBD = createReactionRuleJBD();
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
         reactiveSystem.setAgent(agent);
         reactiveSystem.addReactionRule(reactionRuleJA);
         reactiveSystem.addReactionRule(reactionRuleJB);

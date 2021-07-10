@@ -1,7 +1,6 @@
 package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
@@ -9,19 +8,14 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.InstantiationMap;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
@@ -30,8 +24,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
-import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 
 /**
  * @author Dominik Grzelak
@@ -50,11 +44,11 @@ public class RouteFinding {
      */
     @Test
     void convert_car_example() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
-        SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
-        BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
-                true,
-                new File(TARGET_DUMP_PATH + "predicate_car.png")
-        );
+//        SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
+//        BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
+//                true,
+//                new File(TARGET_DUMP_PATH + "predicate_car.png")
+//        );
 
 //        PureBigraph map = createMapSimple(8);
         PureBigraph map = createMap(8);
@@ -78,21 +72,21 @@ public class RouteFinding {
         );
         Path currentRelativePath = Paths.get("");
         Path completePath = Paths.get(currentRelativePath.toAbsolutePath().toString(), TARGET_DUMP_PATH, "transition_graph.png");
-        ModelCheckingOptions opts = ModelCheckingOptions.create();
-        opts
-                .and(transitionOpts()
-                        .setMaximumTransitions(18)
-                        .setMaximumTime(60)
-                        .create()
-                )
-                .doMeasureTime(true)
-                .and(ModelCheckingOptions.exportOpts()
-                        .setReactionGraphFile(new File(completePath.toUri()))
-                        .create()
-                )
-        ;
+//        ModelCheckingOptions opts = ModelCheckingOptions.create();
+//        opts
+//                .and(transitionOpts()
+//                        .setMaximumTransitions(18)
+//                        .setMaximumTime(60)
+//                        .create()
+//                )
+//                .doMeasureTime(true)
+//                .and(ModelCheckingOptions.exportOpts()
+//                        .setReactionGraphFile(new File(completePath.toUri()))
+//                        .create()
+//                )
+//        ;
 
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
 
@@ -208,18 +202,18 @@ public class RouteFinding {
         return rr;
     }
 
-    private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-
-        BigraphEntity.OuterName from = builder.createOuterName("from");
-
-
-        builder.createRoot()
-                .addChild("Place").linkToOuter(from)
-                .down().addSite().connectByEdge("Target", "Car").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
-        return SubBigraphMatchPredicate.create(bigraph);
-    }
+//    private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
+//        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+//
+//        BigraphEntity.OuterName from = builder.createOuterName("from");
+//
+//
+//        builder.createRoot()
+//                .addChild("Place").linkToOuter(from)
+//                .down().addSite().connectByEdge("Target", "Car").down().addSite();
+//        PureBigraph bigraph = builder.createBigraph();
+//        return SubBigraphMatchPredicate.create(bigraph);
+//    }
 
     private static DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();

@@ -1,11 +1,10 @@
 package de.tudresden.inf.st.bigraphs.converter.ecore;
 
+import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
 import de.tudresden.inf.st.bigraphs.converter.bigmc.BigMcTransformationUnitTest;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,7 +21,7 @@ public class EcoreConverterUnitTest {
 
     @Test
     void counting_bigraph() throws Exception {
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
 
         PureBigraph agent_a = BigMcTransformationUnitTest.createAgent_A(3, 4);
         ReactionRule<PureBigraph> rr_1 = BigMcTransformationUnitTest.createReactionRule_1();

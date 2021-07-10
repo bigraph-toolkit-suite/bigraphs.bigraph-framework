@@ -37,7 +37,7 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
     private Map<String, it.uniud.mads.jlibbig.core.std.Edge> jLibBigEdges = new LinkedHashMap<>();
     private Map<Integer, it.uniud.mads.jlibbig.core.std.Root> jLibBigRegions = new LinkedHashMap<>(); //PlaceEntity
     private Map<String, it.uniud.mads.jlibbig.core.std.Node> jLibBigNodes = new LinkedHashMap<>(); // PlaceEntity
-    private Map<String, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
+    private Map<Integer, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
 
     @Override
     public synchronized PureBigraph decode(it.uniud.mads.jlibbig.core.std.Bigraph bigraph) {
@@ -78,18 +78,18 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
             OuterName jOuterName = eachEntry.getValue();
             for (Point point : jOuterName.getPoints()) {
                 if (point.isPort()) {
-                    System.out.println("is port");
+//                    System.out.println("is port");
                     EditableNode node = ((EditableNode.EditablePort) ((Point) point)).getNode();
                     Node jNode = jLibBigNodes.get(node.getName());
                     BigraphEntity.NodeEntity correspondingNode = newNodes.get(node.getName());
                     int portIndex = jNode.getPorts().indexOf(point);
-                    //TODO create port at specified index
-                    //TODO connect port to outer name
+                    // create port at specified index
+                    // connect port to outer name
                     builder.connectToLinkUsingIndex(correspondingNode, correspondingOuterName, portIndex);
                 } else if (point.isInnerName()) {
-                    System.out.println("is innername");
+//                    System.out.println("is innername");
                     BigraphEntity.InnerName correspondingInnerName = newInnerNames.get(((InnerName) point).getName());
-                    //TODO connect inner name to outer name
+                    // connect inner name to outer name
                     builder.connectInnerToOuter(correspondingInnerName, correspondingOuterName);
                 }
             }
@@ -138,60 +138,103 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
 
     private void parseRegions(Bigraph bigraph) {
         for (Root each : bigraph.getRoots()) {
+            Stack<it.uniud.mads.jlibbig.core.PlaceEntity> s = new Stack<>();
             int rootIndex = bigraph.getRoots().indexOf(each);
             jLibBigRegions.put(rootIndex, each);
             BigraphEntity<?> newRoot = builder.createNewRoot(rootIndex);
             newRoots.put(rootIndex, (BigraphEntity.RootEntity) newRoot);
-
-            traverseNode(each, newRoot);
+            traverseNode(each, newRoot, bigraph);
         }
     }
 
-    private void traverseNode(it.uniud.mads.jlibbig.core.PlaceEntity parentNode, BigraphEntity currentParent) {
-        BigraphEntity nextParent = currentParent;
-        if (parentNode.isNode()) {
-            createNode((Node) parentNode, currentParent);
-            nextParent = newNodes.get(((Node) parentNode).getEditable().getName());
-            jLibBigNodes.putIfAbsent(((Node) parentNode).getEditable().getName(), (Node) parentNode);
-        } else if (parentNode.isSite()) {
-            createSite((Site) parentNode, currentParent);
+    private void traverseNode(it.uniud.mads.jlibbig.core.std.PlaceEntity currentNode,
+                              BigraphEntity currentParent,
+                              Bigraph bigraph) {
+        if (currentNode.isRoot()) {
+            jLibBigRegions.putIfAbsent(bigraph.getRoots().indexOf(currentNode), (Root) currentNode);
+        } else if (currentNode.isNode()) {
+            String name = ((Node) currentNode).getEditable().getName();
+            jLibBigNodes.putIfAbsent(name, (Node) currentNode);
+            if (newNodes.get(name) == null) {
+                createNode((Node) currentNode, currentParent);
+            }
+        } else if (currentNode.isSite()) {
+            int siteIndex = bigraph.getSites().indexOf(((Site) currentNode));
+            jLibBigSites.putIfAbsent(siteIndex, (Site) currentNode);
+            if (newSites.get(siteIndex) == null) {
+                createSite((Site) currentNode, currentParent);
+            }
         }
-        // Does it have child nodes? If so, traverse nodes further recursively
-        if (parentNode.isParent()) {
-            Collection<Child> childNodes = (Collection<Child>) ((Parent) parentNode).getChildren();
+
+        if (currentNode.isParent()) {
+            Collection<Child> childNodes = (Collection<Child>) ((Parent) currentNode).getChildren();
             for (Child n : childNodes) {
-                if (n.isNode()) {
-                    jLibBigNodes.putIfAbsent(((Node) n).getEditable().getName(), (Node) n);
-                    createNode((Node) n, nextParent);
-                    nextParent = newNodes.get(((Node) n).getEditable().getName());
-                    if (nextParent != null) {
-                        Collection<? extends Child> nextChildren = ((Parent) n).getChildren();
-                        for (Child nextChild : nextChildren) {
-                            traverseNode(nextChild, nextParent);
-                        }
-                    }
-                } else if (n.isSite()) {
-                    createSite((Site) n, nextParent);
-                }
+                BigraphEntity nextParent = getParentOfNode(n, bigraph);
+                assert nextParent != null;
+                traverseNode(n, nextParent, bigraph);
             }
         }
     }
 
-    private void createNode(Node n, BigraphEntity currentParent) {
+    private BigraphEntity getParentOfNode(PlaceEntity node, Bigraph jBigraph) {
+        if (node.isNode() || node.isSite()) {
+            Parent parent = ((Child) node).getParent();
+            if (parent.isNode()) {
+                return newNodes.get(((Node) parent).getEditable().getName());
+            } else if (parent.isRoot()) {
+                return newRoots.get(jBigraph.getRoots().indexOf((Root) parent));
+            }
+        }
+        return null;
+    }
+
+//    private void traverseNode(it.uniud.mads.jlibbig.core.PlaceEntity parentNode, BigraphEntity currentParent, Stack<it.uniud.mads.jlibbig.core.PlaceEntity> s) {
+//        BigraphEntity nextParent = currentParent;
+//        if (parentNode.isNode()) {
+//            createNode((Node) parentNode, currentParent);
+//            nextParent = newNodes.get(((Node) parentNode).getEditable().getName());
+//            jLibBigNodes.putIfAbsent(((Node) parentNode).getEditable().getName(), (Node) parentNode);
+//        } else if (parentNode.isSite()) {
+//            createSite((Site) parentNode, currentParent);
+//        }
+//        // Does it have child nodes? If so, traverse nodes further recursively
+//        if (parentNode.isParent()) {
+//            Collection<Child> childNodes = (Collection<Child>) ((Parent) parentNode).getChildren();
+//            for (Child n : childNodes) {
+//                if (n.isNode()) {
+//                    jLibBigNodes.putIfAbsent(((Node) n).getEditable().getName(), (Node) n);
+//                    createNode((Node) n, nextParent);
+//                    nextParent = newNodes.get(((Node) n).getEditable().getName());
+//                    if (nextParent != null) {
+//                        Collection<? extends Child> nextChildren = ((Parent) n).getChildren();
+//                        for (Child nextChild : nextChildren) {
+//                            traverseNode(nextChild, nextParent);
+//                        }
+//                    }
+//                } else if (n.isSite()) {
+//                    createSite((Site) n, nextParent);
+//                }
+//            }
+//        }
+//    }
+
+    private BigraphEntity.NodeEntity createNode(Node n, BigraphEntity parent) {
         String control = n.getControl().getName();
         String nodeId = n.getEditable().getName();
         DefaultDynamicControl controlByName = signature.getControlByName(control);
 
         BigraphEntity.NodeEntity newNode = (BigraphEntity.NodeEntity) builder.createNewNode(controlByName, nodeId);
         newNodes.put(nodeId, newNode);
-        builder.setParentOfNode(newNode, currentParent);
+        builder.setParentOfNode(newNode, parent);
+        return newNode;
     }
 
-    private void createSite(Site n, BigraphEntity currentParent) {
+    private BigraphEntity.SiteEntity createSite(Site n, BigraphEntity currentParent) {
         int siteIndex = jBigraph.getSites().indexOf(n);
         BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) builder.createNewSite(siteIndex);
         newSites.put(newSite.getIndex(), newSite);
         builder.setParentOfNode(newSite, currentParent);
+        return newSite;
     }
 
     private DefaultDynamicSignature parseSignature(it.uniud.mads.jlibbig.core.std.Signature sig) {

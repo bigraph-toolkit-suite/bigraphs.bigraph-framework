@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
+import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
@@ -8,10 +9,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,7 +33,7 @@ public class TraceabilityExample {
     }
 
     @Test
-    void test() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void test() throws InvalidConnectionException, IOException, InvalidReactionRuleException {
         PureBigraph agent = createAgent();
         BigraphGraphvizExporter.toPNG(agent,
                 true,
@@ -60,7 +59,7 @@ public class TraceabilityExample {
                 new File(TARGET_DUMP_PATH + "reactum2.png")
         );
 
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
         reactiveSystem.setAgent(agent);
         reactiveSystem.addReactionRule(rr1);
         reactiveSystem.addReactionRule(rr2);

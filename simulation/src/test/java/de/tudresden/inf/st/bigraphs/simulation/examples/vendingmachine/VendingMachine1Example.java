@@ -6,29 +6,25 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.examples.BaseExampleTestSupport;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -103,7 +99,6 @@ public class VendingMachine1Example extends BaseExampleTestSupport {
         reactiveSystem.addReactionRule(pushBtn2);
         reactiveSystem.addReactionRule(giveCoffee);
         reactiveSystem.addReactionRule(giveTea);
-//        reactiveSystem.addPredicate(predicate);
 
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
@@ -232,9 +227,6 @@ public class VendingMachine1Example extends BaseExampleTestSupport {
      * TODO: idea show how we can easily change the context (button can only be pressed if PHD has an ID card, or if it is in the safety zone etc.
      * phd must be present; a VM cannot press a button itself
      * For coffee.
-     *
-     * @return
-     * @throws Exception
      */
     public ReactionRule<PureBigraph> pushButton1() throws Exception {
         DefaultDynamicSignature signature = sig();

@@ -1,8 +1,10 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureBigraphMatcher;
 
 /**
@@ -25,6 +27,7 @@ import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureBigraphMatcher;
 public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signature<?>>> {
     protected B agent;
     protected B redex;
+    protected ReactionRule<B> rule;
 //    private Class<B> matcherClassType;
 
     //    @SuppressWarnings("unchecked")
@@ -45,7 +48,7 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
         throw new RuntimeException("Not Implemented Yet");
     }
 
-    public abstract <M extends BigraphMatch<B>> MatchIterable<M> match(B agent, B redex);
+    public abstract <M extends BigraphMatch<B>> MatchIterable<M> match(B agent, ReactionRule<B> rule);
 
     /**
      * Provide the matching engine for the specific bigraph type implemented by the sub class
@@ -55,7 +58,7 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
     protected abstract BigraphMatchingEngine<B> instantiateEngine();
 
     /**
-     * Returns the supplied agent passed via the {@link AbstractBigraphMatcher#match(Bigraph, Bigraph)} method.
+     * Returns the supplied agent passed via the {@link AbstractBigraphMatcher#match(Bigraph, ReactionRule)} method.
      *
      * @return the agent for the match
      */
@@ -64,7 +67,7 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
     }
 
     /**
-     * Returns the supplied redex passed via the {@link AbstractBigraphMatcher#match(Bigraph, Bigraph)} method.
+     * Returns the supplied redex passed via the {@link AbstractBigraphMatcher#match(Bigraph, ReactionRule)} method.
      *
      * @return the redex for the match
      */

@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching;
 
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
@@ -8,13 +9,12 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
@@ -33,10 +33,10 @@ public class OccurenceUnitTest extends AbstractUnitTestSupport {
 
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex_00, redex_00);
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_00, rr.getRedex());
-                int transition = 0;
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_00, rr);
+        int transition = 0;
         for (BigraphMatch<?> next : match) {
-                        createGraphvizOutput(agent_00, next, TARGET_DUMP_PATH + "model" + (transition++) + "/");
+            createGraphvizOutput(agent_00, next, TARGET_DUMP_PATH + "model00-" + (transition++) + "/");
 //            createGraphvizOutput(agent_00, next, TARGET_DUMP_PATH + "model1/");
             System.out.println("NEXT: " + next);
         }
@@ -57,11 +57,95 @@ public class OccurenceUnitTest extends AbstractUnitTestSupport {
     private PureBigraph redex_00() {
         DefaultDynamicSignature signature = signature00();
         PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot().addChild("Room").down().addChild("User");
         builder.createRoot().addChild("Room").down().addSite();
         PureBigraph bigraph = builder.createBigraph();
         return bigraph;
     }
+
+    @Test
+    @DisplayName("")
+    void test_01() throws InvalidReactionRuleException, IOException, IncompatibleInterfaceException {
+        PureBigraph agent_00 = agent_00();
+        exportGraph(agent_00, TARGET_DUMP_PATH + "agent_00.png");
+
+        PureBigraph redex_01 = redex_01();
+        exportGraph(redex_01, TARGET_DUMP_PATH + "redex_01.png");
+
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex_01, redex_01);
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_00, rr);
+        int transition = 0;
+        for (BigraphMatch<?> next : match) {
+            createGraphvizOutput(agent_00, next, TARGET_DUMP_PATH + "model01-" + (transition++) + "/");
+//            createGraphvizOutput(agent_00, next, TARGET_DUMP_PATH + "model1/");
+            System.out.println("NEXT: " + next);
+        }
+    }
+
+    //mit 1 root und 2 Rooms
+    private PureBigraph redex_01() {
+        DefaultDynamicSignature signature = signature00();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        builder.createRoot().addChild("Room").down().addSite()
+                .up().addChild("Room").down().addSite();
+        PureBigraph bigraph = builder.createBigraph();
+        return bigraph;
+    }
+
+
+    @Test
+    @DisplayName("2 roots ohne links")
+    void test_02() throws InvalidReactionRuleException, IOException, IncompatibleInterfaceException {
+        PureBigraph agent_00 = agent_00();
+        exportGraph(agent_00, TARGET_DUMP_PATH + "agent_00.png");
+
+        PureBigraph redex_02 = redex_02();
+        exportGraph(redex_02, TARGET_DUMP_PATH + "redex_02.png");
+
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex_02, redex_02);
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent_00, rr);
+        int transition = 0;
+        for (BigraphMatch<?> next : match) {
+            createGraphvizOutput(agent_00, next, TARGET_DUMP_PATH + "model02-" + (transition++) + "/");
+//            createGraphvizOutput(agent_00, next, TARGET_DUMP_PATH + "model1/");
+            System.out.println("NEXT: " + next);
+        }
+    }
+
+    //mit 2 roots
+    private PureBigraph redex_02() {
+        DefaultDynamicSignature signature = signature00();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        builder.createRoot().addChild("Room").down().addSite();
+        builder.createRoot().addChild("Room").down().addSite();
+        PureBigraph bigraph = builder.createBigraph();
+        return bigraph;
+    }
+
+//    //mit links
+//    private PureBigraph agent_03() {
+//        DefaultDynamicSignature signature = signature00();
+//        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+//
+//        builder.createRoot()
+//                .addChild("Building")
+//                .down().addChild("Room").down().addChild("Room").down().addChild("User").up().up()
+//                .addChild("Room").down().addChild("User");
+//        PureBigraph bigraph = builder.createBigraph();
+//        return bigraph;
+//    }
+//
+//    //mit links, 2 roots
+//    private PureBigraph redex_03() {
+//        DefaultDynamicSignature signature = signature00();
+//        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+//        builder.createRoot().addChild("Room").down().addChild("User");
+//        builder.createRoot().addChild("Room").down().addSite();
+//        PureBigraph bigraph = builder.createBigraph();
+//        return bigraph;
+//    }
+
 
     private static DefaultDynamicSignature signature00() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();

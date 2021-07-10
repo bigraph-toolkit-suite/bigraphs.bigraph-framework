@@ -20,10 +20,10 @@
 
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-shade-plugin</artifactId>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-shade-plugin</artifactId>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -71,12 +71,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>jlibbig</groupId>
+            <groupId>it.uniud.mads.jlibbig</groupId>
             <artifactId>jlibbig</artifactId>
-            <version>0.0.4</version>
-            <type>jar</type>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../etc/auxlibs/jlibbig-0.0.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.bigraph.model</groupId>
@@ -86,26 +82,11 @@
             <groupId>de.tudresden.inf.st.bigraphs</groupId>
             <artifactId>bigraph-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>bigraph-simulation</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>de.tudresden.inf.st.bigraphs</groupId>
-                    <artifactId>bigraph-visualization</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
-            <artifactId>bigraph-visualization</artifactId>
-            <scope>test</scope>
-        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.projectlombok</groupId>-->
-<!--            <artifactId>lombok</artifactId>-->
-<!--            <optional>true</optional>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.projectlombok</groupId>-->
+        <!--            <artifactId>lombok</artifactId>-->
+        <!--            <optional>true</optional>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -135,6 +116,27 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>de.tudresden.inf.st.bigraphs</groupId>-->
+<!--            <artifactId>bigraph-simulation</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--            <optional>true</optional>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>de.tudresden.inf.st.bigraphs</groupId>-->
+<!--                    <artifactId>bigraph-visualization</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>de.tudresden.inf.st.bigraphs</groupId>-->
+<!--                    <artifactId>bigraph-converter</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-visualization</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,10 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates;
 
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.hash.BigraphHashFunction;
@@ -26,7 +30,9 @@ public class BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>> exte
     }
 
     private BigraphIsoPredicate(B bigraphToMatch, boolean negate) {
-        this.bigraphToMatch = bigraphToMatch;
+        it.uniud.mads.jlibbig.core.std.Bigraph encoded = new JLibBigBigraphEncoder().encode((PureBigraph) bigraphToMatch);
+        this.bigraphToMatch = (B) new JLibBigBigraphDecoder().decode(encoded);
+//        this.bigraphToMatch = bigraphToMatch;
         super.negate = negate;
         this.canonicalForm = BigraphCanonicalForm.createInstance();
         this.hashFunction = (BigraphHashFunction<B>) BigraphHashFunction.get(bigraphToMatch.getClass());

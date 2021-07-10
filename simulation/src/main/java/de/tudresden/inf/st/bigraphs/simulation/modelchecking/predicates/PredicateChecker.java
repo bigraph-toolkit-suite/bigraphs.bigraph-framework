@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 
 import java.util.*;
