@@ -96,7 +96,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             Bigraph result = bb.makeBigraph(true);
 
             JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-            PureBigraph decodedResult = decoder.decode(result);
+            PureBigraph decodedResult = decoder.decode(result, agent.getSignature());
 //            System.out.println(result.toString());
 //            BigraphArtifacts.exportAsInstanceModel(decodedResult, System.out);
             return decodedResult;

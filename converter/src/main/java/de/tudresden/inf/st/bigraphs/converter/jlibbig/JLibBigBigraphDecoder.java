@@ -1,9 +1,7 @@
 package de.tudresden.inf.st.bigraphs.converter.jlibbig;
 
 import de.tudresden.inf.st.bigraphs.converter.BigraphObjectDecoder;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
@@ -11,10 +9,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import it.uniud.mads.jlibbig.core.BigraphHandler;
 import it.uniud.mads.jlibbig.core.std.*;
-import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.emf.ecore.EPackage;
 
 import java.util.*;
 
@@ -39,12 +35,17 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
     private Map<String, it.uniud.mads.jlibbig.core.std.Node> jLibBigNodes = new LinkedHashMap<>(); // PlaceEntity
     private Map<Integer, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
 
-    @Override
-    public synchronized PureBigraph decode(it.uniud.mads.jlibbig.core.std.Bigraph bigraph) {
-        this.signature = parseSignature(bigraph.getSignature());
+    public synchronized PureBigraph decode(it.uniud.mads.jlibbig.core.std.Bigraph bigraph, DefaultDynamicSignature signature) {
         this.jBigraph = bigraph;
-        createOrGetBigraphMetaModel(this.signature);
-        this.builder = new MutableBuilder<>(signature);
+        this.signature = signature;
+        EPackage ePackage = createOrGetBigraphMetaModel(this.signature);
+//        this.builder = new MutableBuilder<>(signature, EMetaModelData.builder()
+//                .setName(ePackage.getName())
+//                .setNsPrefix(ePackage.getNsPrefix())
+//                .setNsUri(ePackage.getNsURI())
+//                .create()
+//        );
+        this.builder = new MutableBuilder<>(signature, ePackage, null);
 
         clearAllMaps();
 
@@ -68,6 +69,11 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
         this.builder.reset();
         PureBigraph result = new PureBigraph(meta);
         return result;
+    }
+
+    @Override
+    public synchronized PureBigraph decode(it.uniud.mads.jlibbig.core.std.Bigraph bigraph) {
+        return this.decode(bigraph, parseSignature(bigraph.getSignature()));
     }
 
     private void performLinkage(Bigraph bigraph) {
