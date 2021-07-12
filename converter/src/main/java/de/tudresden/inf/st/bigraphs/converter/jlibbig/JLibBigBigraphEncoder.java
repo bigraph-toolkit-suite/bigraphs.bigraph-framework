@@ -81,7 +81,7 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
                     BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
 //                    System.out.format("Node %s is connected to link %s\n", nodeOfPort.getName(), l.getName());
                     // Get the port index of our bigraph node
-                    int portIndex = bigraph.getPorts(nodeOfPort).indexOf(p);
+                    int portIndex = ((BigraphEntity.Port) p).getIndex(); //bigraph.getPorts(nodeOfPort).indexOf(p);
                     PlaceEntity correspondingJNode = jlib2bbigraphNodes.inverse().get(nodeOfPort);
                     assert correspondingJNode != null;
 
