@@ -135,7 +135,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     @SuppressWarnings("unused")
     public synchronized boolean addReactionRule(ReactionRule<B> reactionRule) throws InvalidReactionRuleException {
         assertParametricRedexIsSimple(reactionRule);
-        assertNoIdleOuterName(reactionRule); // redex is captured by "simple" constraint above
+//        assertNoIdleOuterName(reactionRule); // redex is captured by "simple" constraint above
         if (!reactionRules.containsValue(reactionRule)) {
             reactionRules.put(rSupplier.get(), reactionRule);
             return true;

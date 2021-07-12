@@ -178,6 +178,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             if (t.c instanceof EditableNode) {
                 EditableNode n1 = (EditableNode) t.c;
                 EditableNode n2 = n1.replicate();
+                n2.setName(n1.getName());
                 instantiateReactumNode(n1, n2, match);
                 // set m's parent (which added adds m as its child)
                 n2.setParent(t.p);
