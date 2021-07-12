@@ -1,26 +1,36 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
+import it.uniud.mads.jlibbig.core.std.Bigraph;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
+//TODO use x for val in append
+// TODO use only append and remove appendcontrol
 public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/append/";
     private final static boolean AUTO_CLEAN_BEFORE = true;
@@ -40,59 +50,277 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     }
 
     @Test
-    void simulate() throws InvalidConnectionException, InvalidReactionRuleException {
+    void simulate() throws Exception {
 
         PureBigraph agent = createAgent();
-        ReactionRule<PureBigraph> append = rule_append();
+        ReactionRule<PureBigraph> nextRR = nextRR();
+        ReactionRule<PureBigraph> append = appendRR();
+        ReactionRule<PureBigraph> returnRR = returnRR();
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.setAgent(agent);
+        reactiveSystem.addReactionRule(nextRR);
         reactiveSystem.addReactionRule(append);
+        reactiveSystem.addReactionRule(returnRR);
+
 
         //TODO
         //attributes would make the "value check" simpler
 
+        ModelCheckingOptions modOpts = setUpSimOpts();
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
+                reactiveSystem,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
+                modOpts);
+//        modelChecker.setReactiveSystemListener(this);
+        modelChecker.execute();
+
+        System.out.println("Edges: " + modelChecker.getReactionGraph().getGraph().edgeSet().size());
+        System.out.println("Vertices: " + modelChecker.getReactionGraph().getGraph().vertexSet().size());
 
     }
 
-    PureBigraph createAgent() throws InvalidConnectionException {
+    private ModelCheckingOptions setUpSimOpts() {
+        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
+        ModelCheckingOptions opts = ModelCheckingOptions.create();
+        opts
+                .and(transitionOpts()
+                        .setMaximumTransitions(150)
+                        .setMaximumTime(60)
+                        .allowReducibleClasses(true)
+                        .create()
+                )
+                .doMeasureTime(true)
+                .and(ModelCheckingOptions.exportOpts()
+                        .setReactionGraphFile(new File(completePath.toUri()))
+                        .setPrintCanonicalStateLabel(false)
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .create()
+                )
+        ;
+        return opts;
+    }
+
+    PureBigraph createAgent() throws Exception {
         PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
+        BigraphEntity.OuterName caller1 = builder.createOuterName("caller1");
+        BigraphEntity.OuterName caller2 = builder.createOuterName("caller2");
+
+        BigraphEntity.InnerName tmpA1 = builder.createInnerName("tmpA1");
+        BigraphEntity.InnerName tmpA2 = builder.createInnerName("tmpA2");
+
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol1 = builder.hierarchy("appendcontrol");
+        appendcontrol1.linkToOuter(caller1).linkToInner(tmpA1).addChild("val").down().addChild("i5").top();
+
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol2 = builder.hierarchy("appendcontrol");
+        appendcontrol2.linkToOuter(caller2).linkToInner(tmpA2).addChild("val").down().addChild("i4").top();
+
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rootCell = builder.hierarchy("root")
+                .linkToOuter(caller1).linkToOuter(caller2);
+        rootCell
+                .addChild("list").down().addChild("cell")
+                .down().addChild("thisRef").down().addChild("thisRefCurrentBlocked").linkToInner(tmpA1)
+                .addChild("thisRefCurrentBlocked").linkToInner(tmpA2).up()
+                .addChild("val").down().addChild("i1").up()
+                .addChild("next").down().addChild("cell").down().addChild("thisRef")
+//                .down().addChild("thisRefCurrentBlocked").addChild("thisRefCurrentBlocked").up()
+                .addChild("val").down().addChild("i2").up()
+                .addChild("next").down().addChild("cell").down().addChild("thisRef")
+//                .down().addChild("thisRefCurrentBlocked").addChild("thisRefCurrentBlocked").up()
+                .addChild("val").down().addChild("i3").up()
+                .top();
+
         builder.createRoot()
-                .addChild("cell")
-//                .addChild("Process", "access2")
-//                .addChild("Resource").down().addChild("Token")
+                .addChild(rootCell)
+                .addChild(appendcontrol1)
+                .addChild(appendcontrol2)
         ;
+        builder.closeAllInnerNames();
         PureBigraph bigraph = builder.createBigraph();
+//        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        eb(bigraph, "agent");
         return bigraph;
     }
 
-    // Only append a new value when last cell is reached, ie, without a next control
-    ReactionRule<PureBigraph> rule_append() throws InvalidConnectionException, InvalidReactionRuleException {
+    //TODO ist noch nicht nebenläufig: wird noch nicht ausgeführt wenn ein append "läuft"
+    ReactionRule<PureBigraph> nextRR() throws Exception {
         PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
         PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
 
-//        builderRedex.createRoot().addChild("Process", "access");
-//        builderRedex.createRoot().addChild("Resource").down().addChild("Token", "access");
-//
-//        builderReactum.createRoot().addChild("Process", "access").down().addChild("Working").top();
-//        builderReactum.createRoot().addChild("Resource").down().addChild("Token", "access");
+        BigraphEntity.InnerName tmp0 = builderRedex.createInnerName("tmp");
+//        BigraphEntity.OuterName anyRef = builderRedex.createOuterName("anyRef");
+//        BigraphEntity.OuterName openRef = builderRedex.createOuterName("openRef");
+        builderRedex.createRoot()
+                .addChild("thisRef")
+                .down().addSite().addChild("thisRefCurrentBlocked").linkToInner(tmp0).up()
+//                .addSite()
+//                .addChild("val").down().addSite().top()
+                .addChild("next").down().addChild("cell").down().addSite().addChild("thisRef").down()
+//                .addChild("thisRefCurrentBlocked")
+                .addSite().up()
+                .top()
+        ;
+        //
+        builderRedex.createRoot()
+                .addChild("appendcontrol", "caller").linkToInner(tmp0).down() //.addSite()
+                .addChild("val").down().addSite().top()
+        ;
+        builderRedex.closeAllInnerNames();
+
+//        BigraphEntity.OuterName anyRef2 = builderReactum.createOuterName("anyRef");
+//        BigraphEntity.OuterName openRef2 = builderReactum.createOuterName("openRef");
+        BigraphEntity.InnerName tmp21 = builderReactum.createInnerName("tmp1");
+        BigraphEntity.InnerName tmp22 = builderReactum.createInnerName("tmp2");
+        builderReactum.createRoot()
+                .addChild("thisRef").down().addSite().addChild("thisRefCurrentBlocked").linkToInner(tmp22).up()
+//                .addChild("val").down().addSite().top()
+//                .addSite()
+                .addChild("next").down().addChild("cell").down().addSite()
+                .addChild("thisRef").down().addChild("thisRefCurrentBlocked").linkToInner(tmp21)
+                .addSite()
+                .top()
+        ;
+        //
+        builderReactum.createRoot()
+                .addChild("append", "caller").linkToInner(tmp22)
+                .down().addChild("appendcontrol", "caller").linkToInner(tmp21)
+                .down()
+                .addChild("val").down().addSite().up()
+
+        ;
+        builderReactum.closeAllInnerNames();
 
         PureBigraph redex = builderRedex.createBigraph();
         PureBigraph reactum = builderReactum.createBigraph();
+        eb(redex, "next_1");
+        eb(reactum, "next_2");
+
+//        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+//        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+//        Bigraph encodedRedex = encoder.encode(redex);
+//        Bigraph encodedReactum = encoder.encode(reactum, encodedRedex.getSignature());
+//        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedReactum, 0, 1, 2, 3, 4);
+
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
+    // create a new cell with the value
+    // Only append a new value when last cell is reached, ie, without a next control
+    ReactionRule<PureBigraph> appendRR() throws Exception {
+        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
+
+//        BigraphEntity.OuterName thisRefAny = builderRedex.createOuterName("thisRefAny");
+//        BigraphEntity.OuterName thisRefA1 = builderRedex.createOuterName("thisRefA1");
+        BigraphEntity.InnerName tmp = builderRedex.createInnerName("tmp");
+        builderRedex.createRoot()
+                .addChild("cell")
+                .down()
+                .addChild("thisRef").down().addChild("thisRefCurrentBlocked").linkToInner(tmp).addSite().up()
+                .addChild("val").down().addSite().top()
+        ;
+        //
+        builderRedex.createRoot()
+                .addChild("appendcontrol", "caller").linkToInner(tmp).down()
+                .addChild("val").down().addSite().up()
+
+        ;
+        builderRedex.closeAllInnerNames();
+
+//        BigraphEntity.OuterName thisRefRAny = builderReactum.createOuterName("thisRefAny");
+//        BigraphEntity.OuterName thisRefRA1 = builderReactum.createOuterName("thisRefA1");
+//        BigraphEntity.InnerName tmp1 = builderReactum.createInnerName("tmp");
+        builderReactum.createRoot()
+                .addChild("cell")
+                .down()
+                .addChild("thisRef").down().addSite().up() //.addChild("thisRefCurrentBlocked")
+                .addChild("val").down().addSite().up()
+                .addChild("next").down().addChild("cell").down().addChild("thisRef").addChild("val").down().addSite().top();
+        //
+        builderReactum.createRoot()
+                .addChild("void", "caller")
+        ;
+
+        PureBigraph redex = builderRedex.createBigraph();
+        PureBigraph reactum = builderReactum.createBigraph();
+        eb(redex, "append_1");
+        eb(reactum, "append_2");
+
+//        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+//        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+//        Bigraph encodedRedex = encoder.encode(redex);
+//        Bigraph encodedReactum = encoder.encode(reactum, encodedRedex.getSignature());
+//        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedReactum, 0, 1, 2);
+
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        return rr;
+    }
+
+    //if values are the same...
+    ReactionRule<PureBigraph> stopRR() throws Exception {
+        return null;
+    }
+
+    ReactionRule<PureBigraph> returnRR() throws Exception {
+        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
+
+        BigraphEntity.InnerName tmp1 = builderRedex.createInnerName("tmp");
+        builderRedex.createRoot()
+                .addChild("thisRefCurrentBlocked").linkToInner(tmp1)
+        ;
+        //
+        builderRedex.createRoot()
+                .addChild("append", "caller").linkToInner(tmp1).down().addChild("void", "caller")
+
+        ;
+        builderRedex.closeAllInnerNames();
+
+
+        builderReactum.createRoot()
+//                .addChild("thisRefCurrentBlocked")
+        ;
+        //
+        builderReactum.createRoot()
+                .addChild("void", "caller")
+        ;
+        builderReactum.closeAllInnerNames();
+
+        PureBigraph redex = builderRedex.createBigraph();
+        PureBigraph reactum = builderReactum.createBigraph();
+        eb(redex, "return_1");
+        eb(reactum, "return_2");
+        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+        Bigraph encodedRedex = encoder.encode(redex);
+        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+        PureBigraph decode = decoder.decode(encodedRedex, redex.getSignature());
+        eb(decode, "return_decoded_1");
+//        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedRedex, 0, 1, 2);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        return rr;
+    }
+
+
     private DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("cell")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .addControl("appendcontrol", 2)
+                .addControl("append", 2)
+                .newControl().identifier(StringTypedName.of("root")).arity(FiniteOrdinal.ofInteger(2)).assign() // as much as we callers have
+                .newControl().identifier(StringTypedName.of("list")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("thisRef")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
+                .newControl().identifier(StringTypedName.of("thisRefCurrent")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("thisRefCurrentBlocked")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("cell")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("void")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("i1")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("i2")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("i3")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("i4")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("next")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("val")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("i1")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("i2")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("i3")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("i4")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("i5")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("next")).arity(FiniteOrdinal.ofInteger(0)).assign()
         ;
         return defaultBuilder.create();
     }

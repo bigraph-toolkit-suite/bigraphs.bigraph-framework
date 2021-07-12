@@ -159,7 +159,7 @@ public class ConcurringProcessesExample {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(100)
+                        .setMaximumTransitions(50)
                         .setMaximumTime(30)
                         .allowReducibleClasses(true) // use symmetries to make the transition graph smaller?
                         .create()
