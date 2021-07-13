@@ -4,7 +4,6 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphIsNotPrimeException;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
@@ -15,7 +14,7 @@ import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import java.util.*;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -42,7 +41,8 @@ import java.util.function.Supplier;
  */
 public class BigraphCanonicalForm {
 
-    private MutableMap<Class, BigraphCanonicalFormStrategy> strategyMap = Maps.mutable.of(PureBigraph.class, new PureCanonicalForm(this));
+    private final MutableMap<Class<? extends Bigraph<?>>, BigraphCanonicalFormStrategy<? extends Bigraph<?>>> strategyMap =
+            Maps.mutable.of(PureBigraph.class, new PureCanonicalForm(this));
     boolean withNodeIdentifiers = false;
     final static char PREFIX_BARREN = 'r';
     /**
@@ -53,69 +53,60 @@ public class BigraphCanonicalForm {
 
 
     static {
-        Map<Class<?>, Function<Object, String>> _encodings = new HashMap<>();
         // All placings
-        _encodings.put(Placings.Barren.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "#");
-        _encodings.put(Placings.Join.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$01#");
-        _encodings.put(Placings.Identity1.class, (n) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$0#");
-        _encodings.put(Placings.Merge.class, (n) -> {
-            StringBuilder sb = new StringBuilder(String.valueOf(PREFIX_BARREN)).append(0);
-            if (Integer.parseInt(String.valueOf(n)) > 0) {
-                sb.append('$');
-            }
-            for (int i = 0; i < Integer.parseInt(String.valueOf(n)); i++) {
-                sb.append(i);
-            }
-            return sb.append('#').toString();
-        });
-        _encodings.put(Placings.Permutation.class, (n) -> {
-            StringBuilder sb = new StringBuilder("");
-            for (int i = 0; i < Integer.parseInt(String.valueOf(n)); i++) {
-                sb.append(PREFIX_BARREN).append(i).append('$').append(i).append('#');
-            }
-            return sb.toString();
-        });
-        _encodings.put(Placings.Symmetry.class, (n) -> {
-            int N = Integer.parseInt(String.valueOf(n));
-            StringBuilder sb = new StringBuilder("");
-            for (int i = 0, j = (N - 1); i < N; i++, j--) {
-                sb.append(PREFIX_BARREN).append(i).append('$').append(j).append('#');
-            }
-            return sb.toString();
-        });
-        // All linkings
-        _encodings.put(Linkings.Closure.class, (n) -> {
-            assert n instanceof Iterable;
-            Iterable<BigraphEntity.InnerName> names = (Iterable<BigraphEntity.InnerName>) n;
-            StringBuilder sb = new StringBuilder("");
-            for (BigraphEntity.InnerName eachName : names) {
-                sb.append(eachName.getName()).append('$');
-            }
-            sb.replace(sb.length() - 1, sb.length(), "");
-            return sb.append('#').toString();
-        });
-        _encodings.put(Linkings.Substitution.class, (outerInner) -> {
-            assert outerInner instanceof Object[];
-            assert ((Object[]) outerInner).length == 2;
-            BigraphEntity.OuterName outerName = (BigraphEntity.OuterName) ((Object[]) outerInner)[0];
-            Iterable<BigraphEntity.InnerName> innerNames = (Iterable<BigraphEntity.InnerName>) ((Object[]) outerInner)[1];
-            StringBuilder sb = new StringBuilder("");
-            for (BigraphEntity.InnerName eachName : innerNames) {
-                sb.append(eachName.getName()).append(outerName.getName()).append('$');
-            }
-            sb.replace(sb.length() - 1, sb.length(), "");
-            return sb.append('#').toString();
-        });
-        _encodings.put(Linkings.Identity.class, (outerInner) -> {
-            Iterable<BigraphEntity.InnerName> innerNames = (Iterable<BigraphEntity.InnerName>) (outerInner);
-            StringBuilder sb = new StringBuilder("");
-            for (BigraphEntity.InnerName eachName : innerNames) {
-                sb.append(eachName.getName()).append(eachName.getName()).append('$');
-            }
-            sb.replace(sb.length() - 1, sb.length(), "");
-            return sb.append('#').toString();
-        });
-        ELEMENTARY_ENCODINGS = Collections.unmodifiableMap(_encodings);
+        ELEMENTARY_ENCODINGS = Map.of(Placings.Barren.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "#", Placings.Join.class, (Void) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$01#", Placings.Identity1.class, (n) -> createNameSupplier(String.valueOf(PREFIX_BARREN)).get() + "$0#", Placings.Merge.class, (n) -> {
+                    StringBuilder sb = new StringBuilder(String.valueOf(PREFIX_BARREN)).append(0);
+                    if (Integer.parseInt(String.valueOf(n)) > 0) {
+                        sb.append('$');
+                    }
+                    for (int i = 0; i < Integer.parseInt(String.valueOf(n)); i++) {
+                        sb.append(i);
+                    }
+                    return sb.append('#').toString();
+                }, Placings.Permutation.class, (n) -> {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < Integer.parseInt(String.valueOf(n)); i++) {
+                        sb.append(PREFIX_BARREN).append(i).append('$').append(i).append('#');
+                    }
+                    return sb.toString();
+                }, Placings.Symmetry.class, (n) -> {
+                    int N = Integer.parseInt(String.valueOf(n));
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0, j = (N - 1); i < N; i++, j--) {
+                        sb.append(PREFIX_BARREN).append(i).append('$').append(j).append('#');
+                    }
+                    return sb.toString();
+                },
+                // All linkings
+                Linkings.Closure.class, (n) -> {
+                    assert n instanceof Iterable;
+                    Iterable<BigraphEntity.InnerName> names = (Iterable<BigraphEntity.InnerName>) n;
+                    StringBuilder sb = new StringBuilder();
+                    for (BigraphEntity.InnerName eachName : names) {
+                        sb.append(eachName.getName()).append('$');
+                    }
+                    sb.replace(sb.length() - 1, sb.length(), "");
+                    return sb.append('#').toString();
+                }, Linkings.Substitution.class, (outerInner) -> {
+                    assert outerInner instanceof Object[];
+                    assert ((Object[]) outerInner).length == 2;
+                    BigraphEntity.OuterName outerName = (BigraphEntity.OuterName) ((Object[]) outerInner)[0];
+                    Iterable<BigraphEntity.InnerName> innerNames = (Iterable<BigraphEntity.InnerName>) ((Object[]) outerInner)[1];
+                    StringBuilder sb = new StringBuilder();
+                    for (BigraphEntity.InnerName eachName : innerNames) {
+                        sb.append(eachName.getName()).append(outerName.getName()).append('$');
+                    }
+                    sb.replace(sb.length() - 1, sb.length(), "");
+                    return sb.append('#').toString();
+                }, Linkings.Identity.class, (outerInner) -> {
+                    Iterable<BigraphEntity.InnerName> innerNames = (Iterable<BigraphEntity.InnerName>) (outerInner);
+                    StringBuilder sb = new StringBuilder("");
+                    for (BigraphEntity.InnerName eachName : innerNames) {
+                        sb.append(eachName.getName()).append(eachName.getName()).append('$');
+                    }
+                    sb.replace(sb.length() - 1, sb.length(), "");
+                    return sb.append('#').toString();
+                });
     }
 
     public static BigraphCanonicalForm createInstance() {
@@ -150,20 +141,20 @@ public class BigraphCanonicalForm {
      * @param <B>     the type of the bigraph
      * @return the BFCS of the place graph of the given bigraph
      */
-    public <B extends Bigraph<?>> String bfcs(B bigraph) {
-        BigraphCanonicalFormStrategy canonicalFormStrategy;
+    @SuppressWarnings("unchecked")
+    public synchronized <B extends Bigraph<?>> String bfcs(B bigraph) {
+        BigraphCanonicalFormStrategy<B> canonicalFormStrategy;
         if (bigraph instanceof PureBigraph) {
-            canonicalFormStrategy = strategyMap.getOrDefault(
+            canonicalFormStrategy = (BigraphCanonicalFormStrategy<B>) strategyMap.getOrDefault(
                     bigraph.getClass(),
                     new PureCanonicalForm(this)
             ).setPrintNodeIdentifiers(withNodeIdentifiers);
+            return canonicalFormStrategy.compute(bigraph);
         } else if (bigraph instanceof ElementaryBigraph) {
             return bfcs((ElementaryBigraph<?>) bigraph);
         } else {
             throw new RuntimeException("Not implemented yet");
         }
-
-        return canonicalFormStrategy.compute(bigraph);
     }
 
     protected String bfcs(ElementaryBigraph<?> elementaryBigraph) {
@@ -239,7 +230,7 @@ public class BigraphCanonicalForm {
 
 
     static Supplier<String> createNameSupplier(final String prefix) {
-        return new Supplier<String>() {
+        return new Supplier<>() {
             private int id = 0;
 
             @Override

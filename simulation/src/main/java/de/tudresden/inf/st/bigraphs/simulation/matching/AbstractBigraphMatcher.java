@@ -7,6 +7,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureBigraphMatcher;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * This class is responsible for executing bigraph matching. A bigraph matcher consists of a bigraph
  * matching engine. A concrete matcher with the corresponding matching engine w.r.t. to the bigraph type. The correct one,
@@ -40,8 +42,8 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
     public static <B extends Bigraph<? extends Signature<?>>> AbstractBigraphMatcher<B> create(Class<B> bigraphClass) {
         if (bigraphClass == PureBigraph.class) {
             try {
-                return (AbstractBigraphMatcher<B>) Class.forName(PureBigraphMatcher.class.getCanonicalName()).newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                return (AbstractBigraphMatcher<B>) Class.forName(PureBigraphMatcher.class.getCanonicalName()).getConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
         }

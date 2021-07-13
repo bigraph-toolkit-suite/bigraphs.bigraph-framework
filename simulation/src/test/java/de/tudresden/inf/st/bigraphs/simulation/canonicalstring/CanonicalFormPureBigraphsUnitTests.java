@@ -1,6 +1,8 @@
 package de.tudresden.inf.st.bigraphs.simulation.canonicalstring;
 
 import com.google.common.collect.Lists;
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -17,6 +19,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
+import de.tudresden.inf.st.bigraphs.simulation.encoding.hash.BigraphHashFunction;
 import de.tudresden.inf.st.bigraphs.simulation.examples.RouteFinding;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.BigraphIsoPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;

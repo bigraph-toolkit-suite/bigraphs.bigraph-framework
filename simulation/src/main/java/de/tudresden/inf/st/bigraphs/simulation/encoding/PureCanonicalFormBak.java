@@ -32,6 +32,7 @@ import static java.util.stream.Collectors.groupingBy;
  *
  * @author Dominik Grzelak
  */
+@Deprecated
 public class PureCanonicalFormBak extends BigraphCanonicalFormStrategy<PureBigraph> {
 
     RewriteFunction rewriteFunction = new RewriteFunction();

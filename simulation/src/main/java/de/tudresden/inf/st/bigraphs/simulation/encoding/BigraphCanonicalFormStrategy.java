@@ -7,7 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
  */
 public abstract class BigraphCanonicalFormStrategy<B extends Bigraph<?>> {
 
-    private BigraphCanonicalForm bigraphCanonicalForm;
+    private final BigraphCanonicalForm bigraphCanonicalForm;
     boolean printNodeIdentifiers = false;
 
     public BigraphCanonicalFormStrategy(BigraphCanonicalForm bigraphCanonicalForm) {
@@ -18,7 +18,7 @@ public abstract class BigraphCanonicalFormStrategy<B extends Bigraph<?>> {
         return printNodeIdentifiers;
     }
 
-    public BigraphCanonicalFormStrategy setPrintNodeIdentifiers(boolean printNodeIdentifiers) {
+    public BigraphCanonicalFormStrategy<B> setPrintNodeIdentifiers(boolean printNodeIdentifiers) {
         this.printNodeIdentifiers = printNodeIdentifiers;
         return this;
     }

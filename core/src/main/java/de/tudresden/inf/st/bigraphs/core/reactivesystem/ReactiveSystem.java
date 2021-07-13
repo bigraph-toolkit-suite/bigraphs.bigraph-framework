@@ -36,9 +36,9 @@ public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
 
     BiMap<String, ReactiveSystemPredicates<B>> getPredicateMap();
 
-    B buildGroundReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
+    B buildGroundReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule);
 
-    B buildParametricReaction(final B agent, final BigraphMatch<B> match, ReactionRule<B> rule);
+    B buildParametricReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule);
 
     /**
      * Checks whether the bigraphical reactive system is simple. A BRS is simple if all its reaction rules are so.

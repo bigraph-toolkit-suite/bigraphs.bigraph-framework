@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
 import com.google.common.base.Stopwatch;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
@@ -63,7 +64,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.createInstance(true);
     protected PredicateChecker<B> predicateChecker = null;
     protected ModelCheckingOptions options;
-    protected AbstractBigraphMatcher<B> matcher;
+//    protected AbstractBigraphMatcher<B> matcher;
 
     final ReactiveSystem<B> reactiveSystem;
     ReactionGraph<B> reactionGraph;
@@ -115,7 +116,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
         this.reactiveSystem = reactiveSystem;
         this.reactionGraph = new ReactionGraph<>();
-        this.matcher = AbstractBigraphMatcher.create(this.genericType);
+//        this.matcher = AbstractBigraphMatcher.create(this.genericType);
 
         this.options = options;
         ModelCheckingOptions.TransitionOptions opts = options.get(ModelCheckingOptions.Options.TRANSITION);
@@ -128,6 +129,14 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
             this.modelCheckingStrategy = createStrategy(this.simulationStrategyType);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public BigraphCanonicalForm acquireCanonicalForm() {
+        if (((ModelCheckingOptions.TransitionOptions) options.get(ModelCheckingOptions.Options.TRANSITION)).allowReducibleClasses()) {
+            return BigraphCanonicalForm.createInstance();
+        } else {
+            return BigraphCanonicalForm.createInstance(true);
         }
     }
 
@@ -220,7 +229,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     }
 
     public AbstractBigraphMatcher<B> getMatcher() {
-        return matcher;
+        return AbstractBigraphMatcher.create(this.genericType); // matcher;
     }
 
     public synchronized ReactionGraph<B> getReactionGraph() {
@@ -318,8 +327,8 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         graphAdapter.getStylesheet().putCellStyle("DEFAULT_EDGE", StyleConstants.defaultEdgeStylesheet());
 //        mxIGraphLayout layout = new mxCompactTreeLayout(graphAdapter);
         mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.NORTH);
-        ((mxHierarchicalLayout) layout).setFineTuning(true);
-        ((mxHierarchicalLayout) layout).setResizeParent(true);
+//        ((mxHierarchicalLayout) layout).setFineTuning(true);
+//        ((mxHierarchicalLayout) layout).setResizeParent(true);
         layout.execute(graphAdapter.getDefaultParent());
 
         BufferedImage image =

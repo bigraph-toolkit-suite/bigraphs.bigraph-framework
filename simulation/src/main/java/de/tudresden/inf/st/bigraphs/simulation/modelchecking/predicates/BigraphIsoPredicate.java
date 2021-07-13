@@ -54,10 +54,12 @@ public class BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>> exte
 
     @Override
     public boolean test(B agent) {
-        if (this.hashFunction.hash(agent) != this.hashFunction.hash(this.bigraphToMatch)) {
+        B decodedAgent = (B) new JLibBigBigraphDecoder().decode(new JLibBigBigraphEncoder().encode((PureBigraph) agent));
+        if (this.hashFunction.hash(decodedAgent) !=
+                this.hashFunction.hash(this.bigraphToMatch)) {
             return false;
         }
-        String bfcs = this.canonicalForm.bfcs(agent);
+        String bfcs = this.canonicalForm.bfcs(decodedAgent);
         return bigraphEncoded.equals(bfcs);
     }
 

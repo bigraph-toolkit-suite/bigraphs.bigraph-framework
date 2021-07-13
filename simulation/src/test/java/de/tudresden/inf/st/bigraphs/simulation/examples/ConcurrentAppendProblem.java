@@ -84,7 +84,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(150)
+                        .setMaximumTransitions(250)
                         .setMaximumTime(60)
                         .allowReducibleClasses(true)
                         .create()
@@ -115,18 +115,18 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol2 = builder.hierarchy("appendcontrol");
         appendcontrol2.linkToOuter(caller2).linkToInner(tmpA2).addChild("val").down().addChild("i4").top();
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rootCell = builder.hierarchy("root")
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rootCell = builder.hierarchy("Root")
                 .linkToOuter(caller1).linkToOuter(caller2);
         rootCell
-                .addChild("list").down().addChild("cell")
-                .down().addChild("thisRef").down().addChild("thisRefCurrentBlocked").linkToInner(tmpA1)
-                .addChild("thisRefCurrentBlocked").linkToInner(tmpA2).up()
+                .addChild("list").down().addChild("Node")
+                .down().addChild("this").down().addChild("thisRef").linkToInner(tmpA1)
+                .addChild("thisRef").linkToInner(tmpA2).up()
                 .addChild("val").down().addChild("i1").up()
-                .addChild("next").down().addChild("cell").down().addChild("thisRef")
-//                .down().addChild("thisRefCurrentBlocked").addChild("thisRefCurrentBlocked").up()
+                .addChild("next").down().addChild("Node").down().addChild("this")
+//                .down().addChild("thisRef").addChild("thisRef").up()
                 .addChild("val").down().addChild("i2").up()
-                .addChild("next").down().addChild("cell").down().addChild("thisRef")
-//                .down().addChild("thisRefCurrentBlocked").addChild("thisRefCurrentBlocked").up()
+                .addChild("next").down().addChild("Node").down().addChild("this")
+//                .down().addChild("thisRef").addChild("thisRef").up()
                 .addChild("val").down().addChild("i3").up()
                 .top();
 
@@ -151,12 +151,12 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 //        BigraphEntity.OuterName anyRef = builderRedex.createOuterName("anyRef");
 //        BigraphEntity.OuterName openRef = builderRedex.createOuterName("openRef");
         builderRedex.createRoot()
-                .addChild("thisRef")
-                .down().addSite().addChild("thisRefCurrentBlocked").linkToInner(tmp0).up()
+                .addChild("this")
+                .down().addSite().addChild("thisRef").linkToInner(tmp0).up()
 //                .addSite()
 //                .addChild("val").down().addSite().top()
-                .addChild("next").down().addChild("cell").down().addSite().addChild("thisRef").down()
-//                .addChild("thisRefCurrentBlocked")
+                .addChild("next").down().addChild("Node").down().addSite().addChild("this").down()
+//                .addChild("thisRef")
                 .addSite().up()
                 .top()
         ;
@@ -172,11 +172,11 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         BigraphEntity.InnerName tmp21 = builderReactum.createInnerName("tmp1");
         BigraphEntity.InnerName tmp22 = builderReactum.createInnerName("tmp2");
         builderReactum.createRoot()
-                .addChild("thisRef").down().addSite().addChild("thisRefCurrentBlocked").linkToInner(tmp22).up()
+                .addChild("this").down().addSite().addChild("thisRef").linkToInner(tmp22).up()
 //                .addChild("val").down().addSite().top()
 //                .addSite()
-                .addChild("next").down().addChild("cell").down().addSite()
-                .addChild("thisRef").down().addChild("thisRefCurrentBlocked").linkToInner(tmp21)
+                .addChild("next").down().addChild("Node").down().addSite()
+                .addChild("this").down().addChild("thisRef").linkToInner(tmp21)
                 .addSite()
                 .top()
         ;
@@ -215,9 +215,9 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 //        BigraphEntity.OuterName thisRefA1 = builderRedex.createOuterName("thisRefA1");
         BigraphEntity.InnerName tmp = builderRedex.createInnerName("tmp");
         builderRedex.createRoot()
-                .addChild("cell")
+                .addChild("Node")
                 .down()
-                .addChild("thisRef").down().addChild("thisRefCurrentBlocked").linkToInner(tmp).addSite().up()
+                .addChild("this").down().addChild("thisRef").linkToInner(tmp).addSite().up()
                 .addChild("val").down().addSite().top()
         ;
         //
@@ -232,11 +232,11 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 //        BigraphEntity.OuterName thisRefRA1 = builderReactum.createOuterName("thisRefA1");
 //        BigraphEntity.InnerName tmp1 = builderReactum.createInnerName("tmp");
         builderReactum.createRoot()
-                .addChild("cell")
+                .addChild("Node")
                 .down()
-                .addChild("thisRef").down().addSite().up() //.addChild("thisRefCurrentBlocked")
+                .addChild("this").down().addSite().up() //.addChild("thisRef")
                 .addChild("val").down().addSite().up()
-                .addChild("next").down().addChild("cell").down().addChild("thisRef").addChild("val").down().addSite().top();
+                .addChild("next").down().addChild("Node").down().addChild("this").addChild("val").down().addSite().top();
         //
         builderReactum.createRoot()
                 .addChild("void", "caller")
@@ -268,7 +268,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 
         BigraphEntity.InnerName tmp1 = builderRedex.createInnerName("tmp");
         builderRedex.createRoot()
-                .addChild("thisRefCurrentBlocked").linkToInner(tmp1)
+                .addChild("thisRef").linkToInner(tmp1)
         ;
         //
         builderRedex.createRoot()
@@ -279,7 +279,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 
 
         builderReactum.createRoot()
-//                .addChild("thisRefCurrentBlocked")
+//                .addChild("thisRef")
         ;
         //
         builderReactum.createRoot()
@@ -301,18 +301,17 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         return rr;
     }
 
-
     private DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .addControl("appendcontrol", 2)
                 .addControl("append", 2)
-                .newControl().identifier(StringTypedName.of("root")).arity(FiniteOrdinal.ofInteger(2)).assign() // as much as we callers have
+                .newControl().identifier(StringTypedName.of("Root")).arity(FiniteOrdinal.ofInteger(2)).assign() // as much as we callers have
                 .newControl().identifier(StringTypedName.of("list")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("thisRef")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
-                .newControl().identifier(StringTypedName.of("thisRefCurrent")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("thisRefCurrentBlocked")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("cell")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("this")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
+//                .newControl().identifier(StringTypedName.of("thisRefCurrent")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("thisRef")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("Node")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("void")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("val")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("i1")).arity(FiniteOrdinal.ofInteger(0)).assign()
@@ -324,4 +323,27 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         return defaultBuilder.create();
     }
+
+//    private DefaultDynamicSignature createSignature() {
+//        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+//        defaultBuilder
+//                .addControl("appendcontrol", 2)
+//                .addControl("append", 2)
+//                .newControl().identifier(StringTypedName.of("Root")).arity(FiniteOrdinal.ofInteger(2)).assign() // as much as we callers have
+//                .newControl().identifier(StringTypedName.of("list")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("this")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
+////                .newControl().identifier(StringTypedName.of("thisRefCurrent")).arity(FiniteOrdinal.ofInteger(1)).assign()
+//                .newControl().identifier(StringTypedName.of("thisRef")).arity(FiniteOrdinal.ofInteger(1)).assign()
+//                .newControl().identifier(StringTypedName.of("Node")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("void")).arity(FiniteOrdinal.ofInteger(1)).assign()
+//                .newControl().identifier(StringTypedName.of("val")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("i1")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("i2")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("i3")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("i4")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("i5")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("next")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//        ;
+//        return defaultBuilder.create();
+//    }
 }

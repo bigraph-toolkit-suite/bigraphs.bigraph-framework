@@ -37,7 +37,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
     }
 
     @Override
-    public PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
+    public PureBigraph buildGroundReaction(final PureBigraph agent, final BigraphMatch<PureBigraph> match, final ReactionRule<PureBigraph> rule) {
         try {
 
             PureBigraphParametricMatch matchResult = (PureBigraphParametricMatch) match;
@@ -95,6 +95,38 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             bb.outerCompose(jLibMatchResult.getContext(), true);
             Bigraph result = bb.makeBigraph(true);
 
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+//            InstantiationMap eta = constructEta(rule);
+//            BigraphBuilder bb = new BigraphBuilder(
+//                    instantiateReactum(jLibMatchResult, rule), true);
+//            bb.leftJuxtapose(jLibMatchResult.getRedexId(), true);
+//            bb.outerCompose(jLibMatchResult.getContext(), true);
+//            Bigraph big = bb.makeBigraph(true);
+//            Iterator<Bigraph> args = eta.instantiate(jLibMatchResult.getParam()).iterator();
+//            // }
+//
+//            while (args.hasNext()) {
+//                Bigraph result;
+//                Bigraph params = args.next();
+//                if (args.hasNext())
+//                    result = Bigraph.compose(big.clone(), params, true);
+//                else
+//                    result = Bigraph.compose(big, params, true);
+////                if (DEBUG_PRINT_RESULT)
+////                    System.out.println(result);
+////                if (DEBUG_CONSISTENCY_CHECK && !result.isConsistent()) {
+////                    throw new RuntimeException("Inconsistent bigraph");
+////                }
+////                return result;
+//                JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+//                PureBigraph decodedResult = decoder.decode(result, agent.getSignature());
+//                return decodedResult;
+//            }
+//
+//            return null;
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
             JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
             PureBigraph decodedResult = decoder.decode(result, agent.getSignature());
 //            System.out.println(result.toString());
@@ -109,7 +141,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
     //TODO: hier müsste nun eine liste zurückkommen wegen eta instantiation.
     // bzw zweite methode definieren: eine die eta nicht beachtet und eine die es macht -> dann verwenden wir immer nur die zwei in BreadthFirstStrategy
     @Override
-    public PureBigraph buildParametricReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {
+    public PureBigraph buildParametricReaction(final PureBigraph agent, final BigraphMatch<PureBigraph> match, final ReactionRule<PureBigraph> rule) {
         try {
             return this.buildGroundReaction(agent, match, rule);
         } catch (Exception e) {
@@ -178,7 +210,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             if (t.c instanceof EditableNode) {
                 EditableNode n1 = (EditableNode) t.c;
                 EditableNode n2 = n1.replicate();
-                n2.setName(n1.getName());
+//                n2.setName(n1.getName());
                 instantiateReactumNode(n1, n2, match);
                 // set m's parent (which added adds m as its child)
                 n2.setParent(t.p);
