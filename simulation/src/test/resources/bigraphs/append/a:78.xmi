@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bigraphBaseModel:BBigraph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bigraphBaseModel="http://de.tudresden.inf.st.bigraphs.models" xsi:schemaLocation="http://de.tudresden.inf.st.bigraphs.models jar:file:/home/dominik/.m2/repository/de/tudresden/inf/st/bigraphs/model/bigraph-ecore-model/1.4.0-SNAPSHOT/bigraph-ecore-model-1.4.0-SNAPSHOT.jar!/model/bigraphBaseModel.ecore">
+  <bRoots>
+    <bChild xsi:type="bigraphBaseModel:void" name="N_6455">
+      <bPorts bLink="//@bOuterNames.1"/>
+    </bChild>
+    <bChild xsi:type="bigraphBaseModel:Root" name="N_6454">
+      <bChild xsi:type="bigraphBaseModel:list" name="N_6458">
+        <bChild xsi:type="bigraphBaseModel:Node" name="N_645A">
+          <bChild xsi:type="bigraphBaseModel:this" name="N_645C">
+            <bChild xsi:type="bigraphBaseModel:thisRef" name="N_645F">
+              <bPorts bLink="//@bEdges.0"/>
+            </bChild>
+          </bChild>
+          <bChild xsi:type="bigraphBaseModel:val" name="N_645D">
+            <bChild xsi:type="bigraphBaseModel:i1" name="N_6460"/>
+          </bChild>
+          <bChild xsi:type="bigraphBaseModel:next" name="N_645B">
+            <bChild xsi:type="bigraphBaseModel:Node" name="N_645E">
+              <bChild xsi:type="bigraphBaseModel:val" name="N_6462">
+                <bChild xsi:type="bigraphBaseModel:i2" name="N_6467"/>
+              </bChild>
+              <bChild xsi:type="bigraphBaseModel:this" name="N_6463"/>
+              <bChild xsi:type="bigraphBaseModel:next" name="N_6461">
+                <bChild xsi:type="bigraphBaseModel:Node" name="N_6466">
+                  <bChild xsi:type="bigraphBaseModel:next" name="N_6469">
+                    <bChild xsi:type="bigraphBaseModel:Node" name="N_646C">
+                      <bChild xsi:type="bigraphBaseModel:next" name="N_646F">
+                        <bChild xsi:type="bigraphBaseModel:Node" name="N_6471">
+                          <bChild xsi:type="bigraphBaseModel:val" name="N_6473">
+                            <bChild xsi:type="bigraphBaseModel:i5" name="N_6475"/>
+                          </bChild>
+                          <bChild xsi:type="bigraphBaseModel:this" name="N_6474"/>
+                        </bChild>
+                      </bChild>
+                      <bChild xsi:type="bigraphBaseModel:this" name="N_646E"/>
+                      <bChild xsi:type="bigraphBaseModel:val" name="N_6470">
+                        <bChild xsi:type="bigraphBaseModel:i4" name="N_6472"/>
+                      </bChild>
+                    </bChild>
+                  </bChild>
+                  <bChild xsi:type="bigraphBaseModel:this" name="N_646B"/>
+                  <bChild xsi:type="bigraphBaseModel:val" name="N_646A">
+                    <bChild xsi:type="bigraphBaseModel:i3" name="N_646D"/>
+                  </bChild>
+                </bChild>
+              </bChild>
+            </bChild>
+          </bChild>
+        </bChild>
+      </bChild>
+      <bPorts bLink="//@bOuterNames.0" index="1"/>
+      <bPorts bLink="//@bOuterNames.1"/>
+    </bChild>
+    <bChild xsi:type="bigraphBaseModel:append" name="N_6450">
+      <bChild xsi:type="bigraphBaseModel:void" name="N_6485">
+        <bPorts bLink="//@bOuterNames.0"/>
+      </bChild>
+      <bPorts bLink="//@bOuterNames.0"/>
+      <bPorts bLink="//@bEdges.0" index="1"/>
+    </bChild>
+  </bRoots>
+  <bEdges name="E_6451" bPoints="//@bRoots.0/@bChild.2/@bPorts.1 //@bRoots.0/@bChild.1/@bChild.0/@bChild.0/@bChild.0/@bChild.0/@bPorts.0"/>
+  <bOuterNames name="caller2" bPoints="//@bRoots.0/@bChild.2/@bPorts.0 //@bRoots.0/@bChild.1/@bPorts.0 //@bRoots.0/@bChild.2/@bChild.0/@bPorts.0"/>
+  <bOuterNames name="caller1" bPoints="//@bRoots.0/@bChild.1/@bPorts.1 //@bRoots.0/@bChild.0/@bPorts.0"/>
+</bigraphBaseModel:BBigraph>
