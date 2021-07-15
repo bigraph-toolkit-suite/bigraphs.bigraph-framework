@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.simulation.examples;
 
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
+import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -11,12 +12,15 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import it.uniud.mads.jlibbig.core.std.Bigraph;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -24,9 +28,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
 //TODO use x for val in append
@@ -47,6 +51,39 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
             FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
             new File(TARGET_DUMP_PATH + "states/").mkdir();
         }
+    }
+
+    private PureBigraph loadBigraphFromFS(String path) throws IOException {
+        EPackage metaModel = createOrGetBigraphMetaModel(createSignature());
+        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel,
+                path);
+
+        PureBigraphBuilder<DefaultDynamicSignature> b = PureBigraphBuilder.create(createSignature(), metaModel, eObjects.get(0));
+        PureBigraph bigraph = b.createBigraph();
+        return bigraph;
+    }
+
+    @Test
+    void simulate_single_step() throws Exception {
+        PureBigraph a4 = loadBigraphFromFS("/home/dominik/git/BigraphFramework/simulation/src/test/resources/bigraphs/append/v2/a:6.xmi");
+        eb(a4, "loaded_6");
+        PureBigraph a6 = loadBigraphFromFS("/home/dominik/git/BigraphFramework/simulation/src/test/resources/bigraphs/append/v2/a:8.xmi");
+        eb(a6, "loaded_8");
+
+        String bfcs4 = BigraphCanonicalForm.createInstance().bfcs(a4);
+        System.out.println(bfcs4);
+        String bfcs6 = BigraphCanonicalForm.createInstance().bfcs(a6);
+        System.out.println(bfcs6);
+//        ReactionRule<PureBigraph> nextRR = nextRR();
+//
+//        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+//
+//        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(bigraph, nextRR);
+//        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
+//        while (iterator.hasNext()) {
+//            BigraphMatch<?> next = iterator.next();
+//            System.out.println("OK:" + next);
+//        }
     }
 
     @Test
@@ -84,8 +121,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(250)
-                        .setMaximumTime(60)
+                        .setMaximumTransitions(5000)
+                        .setMaximumTime(-1)
                         .allowReducibleClasses(true)
                         .create()
                 )
@@ -103,24 +140,39 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     PureBigraph createAgent() throws Exception {
         PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
-        BigraphEntity.OuterName caller1 = builder.createOuterName("caller1");
-        BigraphEntity.OuterName caller2 = builder.createOuterName("caller2");
+//        BigraphEntity.OuterName caller1 = builder.createOuterName("caller1");
+//        BigraphEntity.OuterName caller2 = builder.createOuterName("caller2");
+//        BigraphEntity.OuterName caller3 = builder.createOuterName("caller3");
 
         BigraphEntity.InnerName tmpA1 = builder.createInnerName("tmpA1");
         BigraphEntity.InnerName tmpA2 = builder.createInnerName("tmpA2");
+        BigraphEntity.InnerName tmpA3 = builder.createInnerName("tmpA3");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol1 = builder.hierarchy("appendcontrol");
-        appendcontrol1.linkToOuter(caller1).linkToInner(tmpA1).addChild("val").down().addChild("i5").top();
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol1 = builder.hierarchy("append");
+        appendcontrol1
+//                .linkToOuter(caller1)
+                .linkToInner(tmpA1).addChild("val").down().addChild("i5").top();
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol2 = builder.hierarchy("appendcontrol");
-        appendcontrol2.linkToOuter(caller2).linkToInner(tmpA2).addChild("val").down().addChild("i4").top();
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol2 = builder.hierarchy("append");
+        appendcontrol2
+//                .linkToOuter(caller2)
+                .linkToInner(tmpA2).addChild("val").down().addChild("i4").top();
+
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol3 = builder.hierarchy("append");
+        appendcontrol3
+//                .linkToOuter(caller3)
+                .linkToInner(tmpA3).addChild("val").down().addChild("i6").top();
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rootCell = builder.hierarchy("Root")
-                .linkToOuter(caller1).linkToOuter(caller2);
+//                .linkToOuter(caller1).linkToOuter(caller2)
+                ;
         rootCell
                 .addChild("list").down().addChild("Node")
-                .down().addChild("this").down().addChild("thisRef").linkToInner(tmpA1)
-                .addChild("thisRef").linkToInner(tmpA2).up()
+                .down().addChild("this").down()
+                .addChild("thisRef").linkToInner(tmpA1)
+                .addChild("thisRef").linkToInner(tmpA2)
+                .addChild("thisRef").linkToInner(tmpA3)
+                .up()
                 .addChild("val").down().addChild("i1").up()
                 .addChild("next").down().addChild("Node").down().addChild("this")
 //                .down().addChild("thisRef").addChild("thisRef").up()
@@ -134,6 +186,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 .addChild(rootCell)
                 .addChild(appendcontrol1)
                 .addChild(appendcontrol2)
+                .addChild(appendcontrol3)
         ;
         builder.closeAllInnerNames();
         PureBigraph bigraph = builder.createBigraph();
@@ -162,7 +215,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderRedex.createRoot()
-                .addChild("appendcontrol", "caller").linkToInner(tmp0).down() //.addSite()
+//                .addChild("appendcontrol", "caller").linkToInner(tmp0).down()
+                .addChild("append").linkToInner(tmp0).down()
                 .addChild("val").down().addSite().top()
         ;
         builderRedex.closeAllInnerNames();
@@ -182,8 +236,10 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderReactum.createRoot()
-                .addChild("append", "caller").linkToInner(tmp22)
-                .down().addChild("appendcontrol", "caller").linkToInner(tmp21)
+//                .addChild("append", "caller").linkToInner(tmp22)
+//                .down().addChild("appendcontrol", "caller").linkToInner(tmp21)
+                .addChild("append").linkToInner(tmp22)
+                .down().addChild("append").linkToInner(tmp21)
                 .down()
                 .addChild("val").down().addSite().up()
 
@@ -222,7 +278,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderRedex.createRoot()
-                .addChild("appendcontrol", "caller").linkToInner(tmp).down()
+//                .addChild("appendcontrol", "caller").linkToInner(tmp).down()
+                .addChild("append").linkToInner(tmp).down()
                 .addChild("val").down().addSite().up()
 
         ;
@@ -239,7 +296,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 .addChild("next").down().addChild("Node").down().addChild("this").addChild("val").down().addSite().top();
         //
         builderReactum.createRoot()
-                .addChild("void", "caller")
+//                .addChild("void", "caller")
+                .addChild("void")
         ;
 
         PureBigraph redex = builderRedex.createBigraph();
@@ -272,7 +330,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderRedex.createRoot()
-                .addChild("append", "caller").linkToInner(tmp1).down().addChild("void", "caller")
+//                .addChild("append", "caller").linkToInner(tmp1).down().addChild("void", "caller")
+                .addChild("append").linkToInner(tmp1).down().addChild("void")
 
         ;
         builderRedex.closeAllInnerNames();
@@ -283,7 +342,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderReactum.createRoot()
-                .addChild("void", "caller")
+//                .addChild("void", "caller")
+                .addChild("void")
         ;
         builderReactum.closeAllInnerNames();
 
@@ -304,21 +364,22 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     private DefaultDynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .addControl("appendcontrol", 2)
-                .addControl("append", 2)
-                .newControl().identifier(StringTypedName.of("Root")).arity(FiniteOrdinal.ofInteger(2)).assign() // as much as we callers have
+//                .addControl("appendcontrol", 1)
+                .addControl("append", 1)
+                .newControl().identifier(StringTypedName.of("Root")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
                 .newControl().identifier(StringTypedName.of("list")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("this")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
 //                .newControl().identifier(StringTypedName.of("thisRefCurrent")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("thisRef")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Node")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("void")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("void")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("val")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("i1")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("i2")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("i3")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("i4")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("i5")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().identifier(StringTypedName.of("i6")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("next")).arity(FiniteOrdinal.ofInteger(0)).assign()
         ;
         return defaultBuilder.create();

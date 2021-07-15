@@ -80,7 +80,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 //                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
             Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
             modelChecker.getReactiveSystem().getReactionRules().stream()
-//                    .parallel()
+                    .parallel()
                     .peek(x -> getListener().onCheckingReactionRule(x))
                     .forEach(eachRule -> {
                         MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule));
@@ -108,7 +108,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     });
 //                    .collect(Collectors.toList());
 //            System.out.println("KLO1: " + collect.size());
-            reactionResults.stream().forEachOrdered(matchResult -> {
+            reactionResults.stream().forEach(matchResult -> {
                 String bfcf = modelChecker.acquireCanonicalForm().bfcs(matchResult.getBigraph());
                 String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(matchResult.getReactionRule());
                 if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
@@ -116,7 +116,6 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     workingQueue.add(matchResult.getBigraph());
                     modelChecker.exportState(matchResult.getBigraph(), bfcf, String.valueOf(matchResult.getOccurrenceCount()));
                     iterationCounter.incrementAndGet();
-                    System.out.println(iterationCounter.get());
                 } else {
                     modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
                 }

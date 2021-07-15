@@ -47,14 +47,18 @@ public class BigraphUtil {
                 .createBigraph();
     }
 
+    public static void setParentOfNode(final BigraphEntity<?> node, final BigraphEntity<?> parent) {
+        BigraphUtil.setParentOfNode(node.getInstance(), parent.getInstance());
+    }
+
     public static void setParentOfNode(final EObject node, final EObject parent) {
         EStructuralFeature prntRef = node.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         Objects.requireNonNull(prntRef);
         node.eSet(prntRef, parent); // child is automatically added to the parent according to the ecore model
     }
 
-    public static boolean isSomeParentOfNode(BigraphEntity node, BigraphEntity possibleParent, Bigraph bigraph) {
-        BigraphEntity currentParent = node; //bigraph.getParent(node);
+    public static boolean isSomeParentOfNode(BigraphEntity<?> node, BigraphEntity<?> possibleParent, Bigraph<?> bigraph) {
+        BigraphEntity<?> currentParent = node; //bigraph.getParent(node);
         while (currentParent != null) {
             currentParent = bigraph.getParent(currentParent);
             if (currentParent == possibleParent) {

@@ -20,6 +20,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.hash.BigraphHashFunction;
+import de.tudresden.inf.st.bigraphs.simulation.examples.BaseExampleTestSupport;
 import de.tudresden.inf.st.bigraphs.simulation.examples.RouteFinding;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.BigraphIsoPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
@@ -45,8 +46,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 /**
  * @author Dominik Grzelak
  */
-public class CanonicalFormPureBigraphsUnitTests {
+public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/";
+
+    public CanonicalFormPureBigraphsUnitTests() {
+        super(TARGET_DUMP_PATH, true);
+    }
 
 //    private PureBigraphFactory factory = pure();
 
@@ -189,6 +194,8 @@ public class CanonicalFormPureBigraphsUnitTests {
         PureBigraph bigraph_b = createBigraph_b();
         PureBigraph bigraph_c = createBigraph_c();
         PureBigraph bigraph_d = createBigraph_d();
+        eb(bigraph_c, "bigraph_c");
+
 
         String bfcs0 = BigraphCanonicalForm.createInstance().bfcs(bigraph_a);
         String bfcs1 = BigraphCanonicalForm.createInstance().bfcs(bigraph_b);
@@ -202,10 +209,10 @@ public class CanonicalFormPureBigraphsUnitTests {
         assertNotEquals(bfcs0, bfcs1);
         assertNotEquals(bfcs2, bfcs3);
 //        r0$Q$ABC$D{e0}E{e0}F{y0}$D{e1}E{e1}F{y1}$AB$$$GH$$$$$1$0#x0y1# // paper
-        assertEquals(bfcs0, "r0$Q$ABC$D{e0}E{e0}F{y1}$AB$D{e1}E{e1}F{y2}$$$GH$$1$$$$$0#by2#");
-        assertEquals(bfcs1, "r0$Q$ABC$D{e0}E{e0}F{y1}$D{e1}E{e1}F{y1}$AB$$$GH$$$$$$0#");
-        assertEquals(bfcs2, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2}E{e3}F{e2e3}$G$$H$G$$H#");
-        assertEquals(bfcs3, "r0$BB$D{e0}E{e0e1}F{e1}$D{e2e3}E{e3}F{e2}$G$$H$G$$H#");
+        assertEquals("r0$Q$ABC$D{e0}E{e0}F{y1}$AB$D{e1}E{e1}F{y2}$$$GH$$1$$$$$0#by2#", bfcs0);
+        assertEquals("r0$Q$ABC$D{e0}E{e0}F{y1}$D{e1}E{e1}F{y1}$AB$$$GH$$$$$$0#", bfcs1);
+        assertEquals("r0$BB$D{e0}E{e0e1}F{e1}$D{e2}E{e3}F{e2e3}$G$$H$G$$H#", bfcs2);
+        assertEquals("r0$BB$D{e0}E{e0e1}F{e1}$D{e2e3}E{e3}F{e2}$G$$H$G$$H#", bfcs3);
 
         PureBigraph subbigraph_b = createSubbigraph_b();
         String s1 = BigraphCanonicalForm.createInstance().bfcs(subbigraph_b);

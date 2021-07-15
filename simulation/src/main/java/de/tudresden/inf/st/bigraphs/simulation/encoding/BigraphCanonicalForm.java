@@ -12,9 +12,11 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -176,11 +178,6 @@ public class BigraphCanonicalForm {
             assert elementaryBigraph instanceof DiscreteIon;
             throw new RuntimeException("Not implemented yet");
         }
-    }
-
-    void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
-        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-        node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
 //    /**

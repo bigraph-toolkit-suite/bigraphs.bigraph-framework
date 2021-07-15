@@ -104,7 +104,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         EObject instance = node.getInstance();
         // first check the children of the node
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-        if (Objects.nonNull(chldRef)) {
+        if (chldRef != null) {
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject each : childs) {
                 addPlaceToList(neighbors, each);
@@ -112,7 +112,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         }
         // second, the parent
         EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
+        if (prntRef != null && instance.eGet(prntRef) != null) {
             final EObject each = (EObject) instance.eGet(prntRef);
             addPlaceToList(neighbors, each);
         }
