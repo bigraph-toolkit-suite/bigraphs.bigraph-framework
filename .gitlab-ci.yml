@@ -44,7 +44,7 @@ build:
   script:
     - apk update
     - apk add bash
-    - ./etc/ci/changelog.sh .mvn/maven.config
+#    - ./etc/ci/changelog.sh .mvn/maven.config
 #    - cp ${CHANGELOG_FILE} etc/doc/docs/changelogs/
 
 #"Generate Documentation":
