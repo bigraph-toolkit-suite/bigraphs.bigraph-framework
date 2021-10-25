@@ -2,10 +2,10 @@
 
 # Bigraph Framework
 
-Version | Master | Develop
+Branch | Version | Status
 ---|---|---
-0.9.0-SNAPSHOT | [![pipeline status](/../badges/master/pipeline.svg)](/../pipelines) | [![pipeline status](/../badges/develop/pipeline.svg)](/../pipelines)
-
+Master | 0.9.0 | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/master/pipeline.svg) |
+Develop | 0.9.5-SNAPSHOT | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/develop/pipeline.svg)
 -----
 
 A framework for the creation and simulation of bigraphs to expedite the experimental evaluation of the bigraph theory in

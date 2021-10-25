@@ -72,7 +72,7 @@ const siteConfig = {
         createVariableInjectionPlugin(siteVariables),
         importMd(),
     ],
-    defaultVersionShown: '0.9.0-SNAPSHOT',
+    defaultVersionShown: '0.9.0',
     noIndex: false,
     title: 'Bigraph Framework', // Title for your website.
     tagline: 'A framework written in Java for the manipulation and simulation of bigraphical reactive systems',
