@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<signature:signature xmlns:signature="http://www.itu.dk/research/pls/xmlns/2010/signature">
+  <signature:control xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red" big-red:label="C" kind="active" name="Control3">
+    <big-red:shape big-red:shape="polygon">
+      <big-red:point big-red:x="150" big-red:y="0"/>
+      <big-red:point big-red:x="279" big-red:y="225"/>
+      <big-red:point big-red:x="20" big-red:y="225"/>
+    </big-red:shape>
+  </signature:control>
+  <signature:control xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red" big-red:label="C" kind="active" name="Control1" xmlns:param="http://bigraph.org/xmlns/2012/bigraph-extension-param" param:type="STRING">
+    <signature:port name="p1">
+      <big-red:port-appearance big-red:distance="0.04" big-red:segment="0"/>
+    </signature:port>
+    <signature:port name="p2">
+      <big-red:port-appearance big-red:distance="0.62" big-red:segment="0"/>
+    </signature:port>
+    <big-red:shape big-red:shape="polygon">
+      <big-red:point big-red:x="0" big-red:y="0"/>
+      <big-red:point big-red:x="50" big-red:y="90"/>
+      <big-red:point big-red:x="-40" big-red:y="40"/>
+      <big-red:point big-red:x="-40" big-red:y="0"/>
+    </big-red:shape>
+  </signature:control>
+  <signature:control xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red" big-red:label="C" kind="active" name="Control2">
+    <big-red:shape big-red:shape="polygon">
+      <big-red:point big-red:x="150" big-red:y="0"/>
+      <big-red:point big-red:x="279" big-red:y="225"/>
+      <big-red:point big-red:x="20" big-red:y="225"/>
+    </big-red:shape>
+  </signature:control>
+  <signature:control xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red" big-red:label="C" kind="active" name="Control4">
+    <big-red:shape big-red:shape="polygon">
+      <big-red:point big-red:x="150" big-red:y="0"/>
+      <big-red:point big-red:x="279" big-red:y="225"/>
+      <big-red:point big-red:x="20" big-red:y="225"/>
+    </big-red:shape>
+  </signature:control>
+</signature:signature>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bigraphMetaModel:BBigraph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bigraphMetaModel="de.tud.inf.st.bigraphs.models" xsi:schemaLocation="de.tud.inf.st.bigraphs.models F.ecore">
+    <bRoots>
+        <bChild xsi:type="bigraphMetaModel:A" name="v0">
+            <bPorts bLink="//@bOuterNames.1"/>
+            <bPorts bLink="//@bOuterNames.0" index="1"/>
+        </bChild>
+        <bChild xsi:type="bigraphMetaModel:A" name="v1">
+            <bPorts bLink="//@bOuterNames.1"/>
+            <bPorts bLink="//@bOuterNames.0" index="1"/>
+        </bChild>
+    </bRoots>
+    <bOuterNames name="e0_innername" bPoints="//@bRoots.0/@bChild.0/@bPorts.1 //@bRoots.0/@bChild.1/@bPorts.1"/>
+    <bOuterNames name="y1" bPoints="//@bRoots.0/@bChild.0/@bPorts.0 //@bRoots.0/@bChild.1/@bPorts.0"/>
+    <bOuterNames name="y2"/>
+</bigraphMetaModel:BBigraph>

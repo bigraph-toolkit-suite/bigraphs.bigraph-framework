@@ -1,16 +1,16 @@
 package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
 import de.tudresden.inf.st.bigraphs.converter.ReactiveSystemPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.impl.factory.Lists;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,7 +27,7 @@ import java.util.stream.IntStream;
  *
  * @author Dominik Grzelak
  */
-public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, PureReactiveSystem> {
+public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, ReactiveSystem<PureBigraph>> {
 
     public static final String LINE_SEP = System.getProperty("line.separator");
 
@@ -50,7 +50,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     }
 
     @Override
-    public String toString(PureReactiveSystem system) {
+    public String toString(ReactiveSystem<PureBigraph> system) {
         reset();
         StringBuilder s = new StringBuilder();
 
@@ -68,7 +68,8 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
 
         boolean hasPredicates = system.getPredicates().size() > 0;
         if (hasPredicates) {
-            s.append(toString(system.getPredicates()));
+            Collection<ReactiveSystemPredicates<PureBigraph>> predicates = system.getPredicates();
+            s.append(toString((Collection) predicates));
             s.append(LINE_SEP);
         }
 
@@ -86,7 +87,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         return s.toString();
     }
 
-    private String toString(List<ReactiveSystemPredicates<PureBigraph>> predicates) {
+    private String toString(Set<ReactiveSystemPredicates<PureBigraph>> predicates) {
         //TODO
         StringBuilder s = new StringBuilder();
         for (ReactiveSystemPredicates<PureBigraph> predicate : predicates) {
@@ -97,7 +98,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     }
 
     @Override
-    public void toOutputStream(PureReactiveSystem system, OutputStream outputStream) throws IOException {
+    public void toOutputStream(ReactiveSystem system, OutputStream outputStream) throws IOException {
         reset();
         String s = toString(system);
         outputStream.write(s.getBytes(), 0, s.length());
@@ -132,11 +133,12 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         while (iterator.hasNext()) {
             s.append('(');
             BigraphEntity.RootEntity next = iterator.next();
-            Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(next);
+            Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(next);
             if (!childrenOf.isEmpty()) {
-                Iterator<BigraphEntity> childIterator = childrenOf.iterator();
+                Iterator<BigraphEntity<?>> childIterator = childrenOf.iterator();
                 while (childIterator.hasNext()) {
-                    List<BigraphEntity.Link> links = new ArrayList<>(bigraph.getEdges());
+                    MutableList<BigraphEntity.Link> links = Lists.mutable.withAll(bigraph.getEdges());
+//                    List<BigraphEntity.Link> links = new ArrayList<>(bigraph.getEdges());
                     links.addAll(bigraph.getOuterNames());
                     String s1 = toString(bigraph, childIterator.next(), links, bigraph.getSites());
                     s.append(s1).append(childIterator.hasNext() ? " | " : "");
@@ -168,9 +170,9 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         Iterator<BigraphEntity.RootEntity> iterator = bigraph.getRoots().iterator();
         if (!iterator.hasNext()) return s.append(";").toString();
         BigraphEntity.RootEntity next = iterator.next();
-        Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(next);
+        Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(next);
         if (!childrenOf.isEmpty()) {
-            Iterator<BigraphEntity> childIterator = childrenOf.iterator();
+            Iterator<BigraphEntity<?>> childIterator = childrenOf.iterator();
             while (childIterator.hasNext()) {
                 List<BigraphEntity.Link> links = new ArrayList<>(bigraph.getEdges());
                 links.addAll(bigraph.getOuterNames());
@@ -197,7 +199,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         if (BigraphEntityType.isSite(d)) {
             s.append("id(1)"); //.append(((BigraphEntity.SiteEntity) d).getIndex());
         } else {
-            s.append(d.getControl().getNamedType().stringValue());
+            s.append(StringUtils.capitalize(d.getControl().getNamedType().stringValue()));
             StringBuilder ns = new StringBuilder();
             int unlinked = 0;
             int arity = d.getControl().getArity().getValue().intValue();
@@ -231,19 +233,19 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
                         .collect(Collectors.joining(","));
                 s.append("{").append(s1).append("}");
             }
-            Collection<BigraphEntity> children = bigraph.getChildrenOf(d);
+            Collection<BigraphEntity<?>> children = bigraph.getChildrenOf(d);
             if (!children.isEmpty()) {
                 s.append(".");
                 if (children.size() > 1) s.append("( ");
 
-                Iterator<BigraphEntity> childIt = children.iterator();
+                Iterator<BigraphEntity<?>> childIt = children.iterator();
                 while (childIt.hasNext()) {
                     s.append(toString(bigraph, childIt.next(), collection, sitelist))
                             .append(childIt.hasNext() ? " | " : "");
                 }
 
             } else {
-                if (d.getControl().getControlKind() != ControlKind.ATOMIC) // nesting for atomic controls not allowed
+                if (d.getControl().getControlKind() != ControlStatus.ATOMIC) // nesting for atomic controls not allowed
                     s.append(".1");
             }
             if (children.size() > 1) s.append(" )");
@@ -264,9 +266,9 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         Set<Control<?, ?>> controls = sig.getControls();
         for (Control ctrl : controls) {
             s
-                    .append(ctrl.getControlKind().equals(ControlKind.ATOMIC) ? "atomic " : "")
+                    .append(ctrl.getControlKind().equals(ControlStatus.ATOMIC) ? "atomic " : "")
                     .append("ctrl ")
-                    .append(ctrl.getNamedType().stringValue()).append(" = ")
+                    .append(StringUtils.capitalize(ctrl.getNamedType().stringValue())).append(" = ")
                     .append(ctrl.getArity().getValue()).append(";")
                     .append(LINE_SEP);
         }

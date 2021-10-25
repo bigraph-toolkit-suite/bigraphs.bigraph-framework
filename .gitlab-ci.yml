@@ -1,10 +1,11 @@
-image: maven:3.6.3-jdk-8-slim
+image: maven:3.8.1-jdk-11-slim
 
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
   MAVEN_OPTS: "-Ddoclint=none"
-  CHANGELOG_FILE: "changelog_v0.7.0.md"
-  JOBS_ENABLED: "false"
+  CHANGELOG_FILE: "changelog_v0.9.0.md"
+  STAGING_JOBS_ENABLED: "false"
+  REMOTE_ST_GITHUB: "git@github.com:st-tu-dresden/bigraph-framework.git"
 
 stages:
   - build
@@ -18,13 +19,15 @@ build:
   except:
     - /^feature.*$/
   script:
-    - mvn $MAVEN_CLI_OPTS clean compile
+#    - mvn validate -f ./etc/aggregator/pom.xml
+    - mvn $MAVEN_CLI_OPTS clean install -U -DskipTests
+#    - mvn $MAVEN_CLI_OPTS clean compile
 
 "Running tests":
   stage: test
   only:
     variables:
-      - $JOBS_ENABLED == "true"
+      - $STAGING_JOBS_ENABLED == "true"
   script:
     - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test
 
@@ -44,44 +47,46 @@ build:
     - ./etc/ci/changelog.sh .mvn/maven.config
 #    - cp ${CHANGELOG_FILE} etc/doc/docs/changelogs/
 
-"Generate Documentation":
-  stage: deploy
-  only:
-    variables:
-      - $JOBS_ENABLED == "true"
-    refs:
-      - master
-      - develop
-      - ^v[0-9]+(?:.[0-9]+)+$
-  before_script:
-    - apt-get update && apt-get install -y git
-    - git config --global user.email "dominik.grzelak@tu-dresden.de"
-    - git config --global user.name "Dominik Grzelak"
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    #    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - mvn $MAVEN_CLI_OPTS install -Pdistribute
-#    - cd ./etc/ci/
-#    - git clone git@github.com:PioBeat/bigraphs.git
-    - git remote -v
-#    - cd ./bigraphs
-#    - mkdir -p apidocs
-#    - cp -a ../../../target/site/apidocs/. ./apidocs/
-    - git add -A
-    - git commit -m "updated github pages"
-#    - git push stgithub gh-pages
-    - git subtree push --prefix etc/doc/docusaurus/website/build stgithub gh-pages
+#"Generate Documentation":
+#  stage: deploy
+#  only:
+#    variables:
+#      - $STAGING_JOBS_ENABLED == "true"
+#    refs:
+#      - master
+#      - develop
+#      - ^v[0-9]+(?:.[0-9]+)+$
+#  before_script:
+#    - apt-get update && apt-get install -y git
+#    - git config --global user.email "dominik.grzelak@tu-dresden.de"
+#    - git config --global user.name "Dominik Grzelak"
+#    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+#    - eval $(ssh-agent -s)
+#    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    #    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+#    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#  script:
+#    - rm -rf ./documentation/docusaurus/website/build
+#    - mvn $MAVEN_CLI_OPTS install exec:java -f documentation/pom.xml
+#    - mvn $MAVEN_CLI_OPTS install -Pdistribute
+#    - mvn install -f documentation/pom.xml -Pdistribute
+#    - cd ./documentation/docusaurus/website/build/bigraph-framework && git init
+#    - touch CNAME && echo "www.bigraphs.org" > CNAME
+#    - git add . && git commit -m "updated documentation"
+#    - git remote add stgithub $REMOTE_ST_GITHUB
+#    - git remote -v
+#    - git push --force stgithub master:gh-pages
 
 #"Deploy Artifacts":
 #  stage: deploy
 #  only:
-#    - master
-#    - ^v[0-9]+(?:.[0-9]+)+$
+#    variables:
+#      - $STAGING_JOBS_ENABLED == "true"
+#    refs:
+#      - master
+#      - ^v[0-9]+(?:.[0-9]+)+$
 #  script:
 #    - mvn $MAVEN_CLI_OPTS deploy

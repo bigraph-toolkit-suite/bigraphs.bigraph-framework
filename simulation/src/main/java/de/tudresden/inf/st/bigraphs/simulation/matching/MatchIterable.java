@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 
 import java.util.Iterator;
 
@@ -10,9 +11,9 @@ import java.util.Iterator;
  * @param <T> type of the bigraph within a {@link BigraphMatch} "container" holding the match result
  * @author Dominik Grzelak
  */
-public class MatchIterable<T extends BigraphMatch<? extends Bigraph>> implements Iterable<T> {
+public class MatchIterable<T extends BigraphMatch<? extends Bigraph<?>>> implements Iterable<T> {
 
-    private Iterator<T> iterator;
+    private final Iterator<T> iterator;
 
     public MatchIterable(Iterator<T> iterator) {
         this.iterator = iterator;

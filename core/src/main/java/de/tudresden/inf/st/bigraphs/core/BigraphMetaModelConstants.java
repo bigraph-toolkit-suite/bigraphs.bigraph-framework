@@ -1,12 +1,19 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-//TODO: read from properties file
+/**
+ * Some metamodel constants to conveniently refer to for the <i>BigraphBaseMetaModel</i>.
+ * This is configured as a dependency here in this project.
+ *
+ * @author Dominik Grzelak
+ */
 public final class BigraphMetaModelConstants {
 
     /**
      * Relative path to the Ecore bigraph meta model inside the included bigraph model library.
      */
     public final static String BIGRAPH_BASE_MODEL = "/model/bigraphBaseModel.ecore";
+    public final static String SIGNATURE_BASE_MODEL = "/model/signatureBaseModel.ecore";
+//    public final static String KIND_SIGNATURE_BASE_MODEL = "/model/kindSignatureBaseModel.ecore";
 
     // Attributes
     public final static String ATTRIBUTE_INDEX = "index";
@@ -24,6 +31,8 @@ public final class BigraphMetaModelConstants {
     public static final String CLASS_LINK = "BLink";
     public static final String CLASS_POINT = "BPoint";
     public static final String CLASS_BIGRAPH = "BBigraph";
+    public static final String CLASS_NAMEABLETYPE = "NameableType";
+    public static final String CLASS_INDEXABLETYPE = "IndexableType";
 
     // References
     public final static String REFERENCE_CHILD = "bChild";
@@ -37,5 +46,29 @@ public final class BigraphMetaModelConstants {
     public final static String REFERENCE_BEDGES = "bEdges";
     public final static String REFERENCE_BROOTS = "bRoots";
 
+    public interface SignaturePackage {
+        String SORT_PREFIX = "Sort";
+        String EPACKAGE_NAME = "signatureBaseModel";
+        String ECLASS_BKINDSIGNATURE = "BKindSignature";
+        String ECLASS_BDYNAMICSIGNATURE = "BDynamicSignature";
+        String ECLASS_BBASICSIGNATURE = "BBasicSignature";
+        String ECLASS_BKINDPLACESORTINGS = "BKindPlaceSorting";
+        String ECLASS_BKINDSORTATOMIC = "BKindSortAtomic";
+        String ECLASS_KINDSORTNONATOMIC = "BKindSortNonAtomic";
+        String ECLASS_BCONTROL = "BControl";
+        String ECLASS_BCONTROLSTATUS = "BControlStatus";
+
+        String REFERENCE_BCONTROLS = "bControls";
+        String REFERENCE_BSIG = "bSig";
+        String REFERENCE_BKINDPLACESORTS = "bKindPlaceSorts"; // reference to the place-sort instances
+        String REFERENCE_BPLACESORTING = "bPlaceSorting"; // reference to the container signature
+        String REFERENCE_BKINDSORTS = "bCanContain";
+        String REFERENCE_BCONTAINEDBY = "bContainedBy";
+
+        // Attributes
+        String ATTRIBUTE_NAME = "name";
+        String ATTRIBUTE_ARITY = "arity";
+        String ATTRIBUTE_STATUS = "status";
+    }
 
 }

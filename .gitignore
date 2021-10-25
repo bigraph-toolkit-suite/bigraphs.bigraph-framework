@@ -11,7 +11,6 @@
 
 # User-specific stuff
 .idea/**/workspace.xml
-.idea/compiler.xml
 .idea/**/tasks.xml
 .idea/**/dictionaries
 .idea/**/shelf
@@ -56,6 +55,18 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# Gradle and Maven with auto-import
+# When using Gradle or Maven with auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.  Uncomment if using
+# auto-import.
+.idea/artifacts
+.idea/compiler.xml
+.idea/modules.xml
+.idea/*.iml
+.idea/modules
+*.iml
+*.ipr
 
 # Editor-based Rest Client
 .idea/httpRequests
@@ -116,10 +127,11 @@ gen-test-resources/*
 #!gen-test-resources/.gitkeep
 /TODO
 **/resources/dump/exported-models/*
-#**/resources/dump/graphviz/*
+**/resources/dump/graphviz/*
 !/etc/auxlibs/Gcf.zip
+!/etc/auxlibs/*.jar
 /etc/doc/site/*
-**/resources/dump/
+**/resources/dump/*
 /.idea/modules.xml
 /.idea/markdown-navigator-enh.xml
 /.idea/markdown-navigator.xml

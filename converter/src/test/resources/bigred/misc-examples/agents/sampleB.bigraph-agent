@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<bigraph:bigraph xmlns:bigraph="http://www.itu.dk/research/pls/xmlns/2010/bigraph">
+  <signature:signature src="../signatures/sampleB.bigraph-signature" xmlns:signature="http://www.itu.dk/research/pls/xmlns/2010/signature"/>
+  <bigraph:edge name="b"/>
+  <bigraph:outername name="a">
+    <big-red:appearance height="37" width="145" x="292" y="44" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+  </bigraph:outername>
+  <bigraph:root name="1">
+    <bigraph:node control="Control4" name="e">
+      <big-red:appearance height="194" width="220" x="77" y="61" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+    </bigraph:node>
+    <big-red:appearance height="345" width="375" x="635" y="204" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+  </bigraph:root>
+  <bigraph:root name="0">
+    <bigraph:node control="Control1" name="a" xmlns:param="http://bigraph.org/xmlns/2012/bigraph-extension-param" param:value="ll">
+      <bigraph:port link="a" name="p1"/>
+      <bigraph:port link="a" name="p2"/>
+      <bigraph:node control="Control1" name="d" param:value="a">
+        <bigraph:port link="b" name="p1"/>
+        <bigraph:port link="b" name="p2"/>
+        <big-red:appearance height="64" width="63" x="57" y="63" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+      </bigraph:node>
+      <big-red:appearance height="266" width="233" x="7" y="85" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+    </bigraph:node>
+    <bigraph:node control="Control2" name="b">
+      <bigraph:node control="Control1" name="c" xmlns:param="http://bigraph.org/xmlns/2012/bigraph-extension-param" param:value="a">
+        <bigraph:port link="b" name="p2"/>
+        <big-red:appearance height="76" width="84" x="113" y="140" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+      </bigraph:node>
+      <big-red:appearance height="270" width="314" x="246" y="123" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+    </bigraph:node>
+    <big-red:appearance height="422" width="578" x="25" y="194" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+  </bigraph:root>
+  <bigraph:innername link="b" name="a">
+    <big-red:appearance height="106" width="311" x="207" y="652" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+  </bigraph:innername>
+</bigraph:bigraph>

@@ -5,6 +5,10 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractDynamicMatchAdapter;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -14,7 +18,10 @@ import java.util.*;
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBigraph> {
+public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<DefaultDynamicSignature, PureBigraph> {
+
+    MutableMap<BigraphEntity<?>, List<BigraphEntity<?>>> childMap = Maps.mutable.empty();
+    MutableMap<BigraphEntity<?>, LinkedList<ControlLinkPair>> linkOfNodesMap = Maps.mutable.empty();
 
     public PureBigraphRedexAdapter(PureBigraph bigraph) {
         super(bigraph);
@@ -25,11 +32,21 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
         return (DefaultDynamicSignature) super.getSignature();
     }
 
-    public List<BigraphEntity> getChildrenWithSites(BigraphEntity node) {
+    @Override
+    public void clearCache() {
+//        super.clearCache();
+        childMap.clear();
+        linkOfNodesMap.clear();
+    }
+
+    public List<BigraphEntity<?>> getChildrenWithSites(BigraphEntity<?> node) {
+        if (childMap.containsKey(node)) {
+            return childMap.get(node);
+        }
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-        List<BigraphEntity> children = new ArrayList<>();
-        if (Objects.nonNull(chldRef)) {
+        MutableList<BigraphEntity<?>> children = Lists.mutable.empty();
+        if ((chldRef) != null) {
             @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             //control can be acquired by the class name + signature
@@ -37,6 +54,7 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
                 addPlaceToList(children, eachChild, true);
             }
         }
+        childMap.put(node, children);
         return children;
     }
 
@@ -47,12 +65,15 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
      * @param node the node
      * @return a list of all links connected to the given node
      */
-    public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
+    public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity<?> node) {
+        if (linkOfNodesMap.containsKey(node)) {
+            return linkOfNodesMap.get(node);
+        }
         EObject instance = node.getInstance();
         LinkedList<ControlLinkPair> children = new LinkedList<>();
 
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
-        if (Objects.nonNull(portRef)) {
+        if ((portRef) != null) {
             @SuppressWarnings("unchecked")
             EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
             for (EObject eachPort : portList) {
@@ -76,6 +97,8 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
                 }
             }
         }
+
+        linkOfNodesMap.put(node, children);
         return children;
     }
 
@@ -86,12 +109,12 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
      * @param nodeEntity the node
      * @return the degree of the node
      */
-    public int degreeOf(BigraphEntity nodeEntity) {
+    public int degreeOf(BigraphEntity<?> nodeEntity) {
         //get all edges
         EObject instance = nodeEntity.getInstance();
         int cnt = 0;
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-        if (Objects.nonNull(chldRef)) {
+        if ((chldRef) != null) {
             @SuppressWarnings("unchecked")
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject eObject : childs) {
@@ -100,43 +123,9 @@ public class PureBigraphRedexAdapter extends AbstractDynamicMatchAdapter<PureBig
             }
         }
         EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-        if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
+        if ((prntRef) != null && (instance.eGet(prntRef)) != null) {
             cnt++;
         }
         return cnt;
     }
-
-//    /**
-//     * Get all children of a node without sites included
-//     *
-//     * @param node
-//     * @return
-//     */
-//    public List<BigraphEntity> getChildren(BigraphEntity node) {
-//        EObject instance = node.getInstance();
-//        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-//        List<BigraphEntity> children = new ArrayList<>();
-//        if (Objects.nonNull(chldRef)) {
-//            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
-//            //control can be acquired by the class name + signature
-//            for (EObject eachChild : childs) {
-//                addPlaceToList(children, eachChild, false);
-//            }
-//        }
-//        return children;
-//    }
-
-//    public List<BigraphEntity> getChildrenWithSites(BigraphEntity node) {
-//        EObject instance = node.getInstance();
-//        EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-//        List<BigraphEntity> children = new ArrayList<>();
-//        if (Objects.nonNull(chldRef)) {
-//            EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
-//            //control can be acquired by the class name + signature
-//            for (EObject eachChild : childs) {
-//                addPlaceToList(children, eachChild, true);
-//            }
-//        }
-//        return children;
-//    }
 }

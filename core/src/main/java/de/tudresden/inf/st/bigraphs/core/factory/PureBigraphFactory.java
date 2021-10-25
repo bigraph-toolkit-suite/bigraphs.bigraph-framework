@@ -2,30 +2,32 @@ package de.tudresden.inf.st.bigraphs.core.factory;
 
 import com.google.common.reflect.TypeToken;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
+import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphComposite;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphComposite;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphFactory
-        extends AbstractBigraphFactory<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> {
+public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSignature> {
 
     PureBigraphFactory() {
-        super.successorClass = new TypeToken<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>>() {
+        super.successorClass = new TypeToken<DefaultDynamicControl>() {
         }.getType();
     }
 
@@ -33,6 +35,12 @@ public class PureBigraphFactory
     @SuppressWarnings("unchecked")
     public DynamicSignatureBuilder createSignatureBuilder() {
         return new DynamicSignatureBuilder();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public KindSignatureBuilder createKindSignatureBuilder() {
+        return new KindSignatureBuilder();
     }
 
     @Override
@@ -46,13 +54,13 @@ public class PureBigraphFactory
     }
 
     @Override
-    public BigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, String metaModelData) {
-        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelData);
+    public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, String metaModelFileName) {
+        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelFileName);
     }
 
     @Override
-    public Placings<DefaultDynamicSignature> createPlacings() {
-        return new Placings<DefaultDynamicSignature>(this.createSignatureBuilder());
+    public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, EPackage bigraphMetaModel) {
+        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), bigraphMetaModel, (EObject) null);
     }
 
     @Override
@@ -61,8 +69,13 @@ public class PureBigraphFactory
     }
 
     @Override
-    public Linkings<DefaultDynamicSignature> createLinkings() {
-        return new Linkings<DefaultDynamicSignature>(this.createSignatureBuilder());
+    public Placings<DefaultDynamicSignature> createPlacings(DefaultDynamicSignature signature, EPackage bigraphMetaModel) {
+        return new Placings<>(signature, bigraphMetaModel);
+    }
+
+    @Override
+    public Placings<DefaultDynamicSignature> createPlacings(DefaultDynamicSignature signature, EMetaModelData metaModelData) {
+        return new Placings<>(signature, metaModelData);
     }
 
     @Override
@@ -71,11 +84,55 @@ public class PureBigraphFactory
     }
 
     @Override
-    public DiscreteIon<DefaultDynamicSignature, StringTypedName, FiniteOrdinal<Integer>> createDiscreteIon(StringTypedName name, Set<StringTypedName> outerNames, DefaultDynamicSignature signature) {
+    public Linkings<DefaultDynamicSignature> createLinkings(DefaultDynamicSignature signature, EPackage bigraphMetaModel) {
+        return new Linkings<>(signature, bigraphMetaModel);
+    }
+
+    @Override
+    public Linkings<DefaultDynamicSignature> createLinkings(DefaultDynamicSignature signature, EMetaModelData metaModelData) {
+        return new Linkings<>(signature, metaModelData);
+    }
+
+    /**
+     * Throws a runtime exception either because of InvalidConnectionException or TypeNotExistsException when connecting
+     * the outer names to the node.
+     *
+     * @param name       the control's name for the ion, must be of type {@link StringTypedName}
+     * @param outerNames a set of outer names the ion shall have, must be of type {@link StringTypedName}
+     * @param signature  the signature of that ion
+     * @return a discrete ion
+     */
+    @Override
+    public DiscreteIon<DefaultDynamicSignature> createDiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, DefaultDynamicSignature signature) {
+        assert name instanceof StringTypedName;
         return new DiscreteIon<>(
                 name,
                 outerNames,
                 signature,
+                this
+        );
+    }
+
+    /**
+     * Convenient method.
+     *
+     * @see PureBigraphFactory#createDiscreteIon(NamedType, Set, DefaultDynamicSignature)
+     */
+    public DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, DefaultDynamicSignature signature) {
+        return new DiscreteIon<>(
+                StringTypedName.of(name),
+                outerNames.stream().map(StringTypedName::of).collect(Collectors.toSet()),
+                signature,
+                this
+        );
+    }
+
+    public DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, DefaultDynamicSignature signature, EPackage bigraphMetaModel) {
+        return new DiscreteIon<>(
+                StringTypedName.of(name),
+                outerNames.stream().map(StringTypedName::of).collect(Collectors.toSet()),
+                signature,
+                bigraphMetaModel,
                 this
         );
     }

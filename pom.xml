@@ -5,11 +5,11 @@
 
     <groupId>de.tudresden.inf.st.bigraphs</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>${revision}</version>
+    <version>0.9.0</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
-        A complete framework for creating bigraphs and performing simulations on bigraphical reactive systems.
+        A complete framework for creating bigraphs and performing simulations with bigraphical reactive systems.
     </description>
 
     <modules>
@@ -17,28 +17,33 @@
         <module>visualization</module>
         <module>simulation</module>
         <module>converter</module>
+        <module>documentation</module>
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.type>multi</project.type>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <bigraph.metamodel.version>1.4.0-SNAPSHOT</bigraph.metamodel.version>
+        <emf.common.version>2.21.0</emf.common.version>
+        <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
+        <emf.ecore.version>2.23.0</emf.ecore.version>
+        <emf.codegen.version>2.21.0</emf.codegen.version>
+        <!--        <emf.cdo.version>4.7.0</emf.cdo.version>-->
+        <eclipse.collections.version>10.4.0</eclipse.collections.version>
         <guava.version>28.1-jre</guava.version>
-        <jgrapht.version>1.3.0</jgrapht.version>
-        <emf.version>2.16.0</emf.version>
-        <emf.ecore.version>2.18.0</emf.ecore.version>
-        <emf.codegen.version>2.16.0</emf.codegen.version>
-        <emf.cdo.version>4.7.0</emf.cdo.version>
-        <eclipse.mirror>http://download.eclipse.org/</eclipse.mirror>
+        <jgrapht.version>1.5.1</jgrapht.version>
         <junit.version>5.4.0</junit.version>
-        <log4j.version>1.7.29</log4j.version>
-        <graphviz.version>0.8.3</graphviz.version>
-        <bintray.organization>st-tu-dresden</bintray.organization>
-        <bintray.repo>maven-repository</bintray.repo>
-        <bintray.package>${project.artifactId}</bintray.package>
+        <log4j.version>1.7.30</log4j.version>
+        <graphviz.version>0.17.1</graphviz.version>
+        <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
         <doclint>none</doclint>
-        <project.javadoc.outputDirectory>./etc/doc/docusaurus/website/static/apidocs/</project.javadoc.outputDirectory>
-        <project.usermanual.outputDirectory>etc/doc/docusaurus/website</project.usermanual.outputDirectory>
+        <!-- For documentation -->
+        <project.usermanual.outputDirectory>../documentation/docusaurus/website/static/apidocs
+        </project.usermanual.outputDirectory>
     </properties>
 
     <developers>
@@ -67,41 +72,81 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>bintray-st-tu-dresden-maven-repository</id>
+            <id>central</id>
             <name>bintray</name>
-            <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
+            <url>https://jcenter.bintray.com</url>
         </repository>
         <repository>
-            <id>Eclipse</id>
-            <layout>p2</layout>
-            <url>${eclipse.mirror}/releases/photon/</url>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
-        <!-- add TMF repository for latest Xtend -->
-        <!--        <repository>-->
-        <!--            <id>TMF Repo</id>-->
-        <!--            <url>${eclipse.mirror}/modeling/tmf/xtext/updates/releases/</url>-->
-        <!--            <layout>p2</layout>-->
-        <!--        </repository>        -->
-        <!--        <repository>-->
-        <!--            <id>TMF Repo</id>-->
-        <!--            <url>http://www.elver.org/eclipse/2.1.0/update/</url>-->
-        <!--            <layout>p2</layout>-->
-        <!--        </repository>-->
+        <repository>
+            <id>eclipse-releases-maven</id>
+            <url>https://repo.eclipse.org/content/groups/releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>STFactory</id>
+            <name>st-tu-dresden-artifactory</name>
+            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
+        </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>bintray-plugins</name>
+            <url>https://jcenter.bintray.com</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <distributionManagement>
         <repository>
-            <id>bintray-st-tu-dresden-maven-repository</id>
-            <name>st-tu-dresden-maven-repository</name>
-            <url>
-                https://api.bintray.com/maven/${bintray.organization}/${bintray.repo}/${bintray.package}/;publish=1
-            </url>
+            <id>central</id>
+            <name>STFactory-releases</name>
+            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>STFactory-snapshots</name>
+            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-maven-plugin</artifactId>
+                    <version>1.7.0</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -115,6 +160,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.1.0</version>
+                    <configuration>
+                        <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -122,9 +170,24 @@
                     <version>3.1.2</version>
                     <configuration>
                         <archive>
-                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <addMavenDescriptor>true</addMavenDescriptor>
                         </archive>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -134,31 +197,11 @@
                         <!-- disable the default existing mapping -->
                         <skip>true</skip>
                     </configuration>
-                    <executions>
-                        <execution>
-                            <configuration>
-                                <url>
-                                    https://api.bintray.com/maven/${bintray.organization}/${bintray.repo}/${bintray.package}/;publish=1
-                                </url>
-                                <repositoryId>bintray-st-tu-dresden-maven-repository</repositoryId>
-                                <file>${project.build.directory}/${project.build.finalName}.jar</file>
-                                <artifactId>${project.artifactId}</artifactId>
-                                <groupId>${project.groupId}</groupId>
-                                <version>${project.version}</version>
-                                <packaging>jar</packaging>
-                            </configuration>
-                            <phase>deploy</phase>
-                            <id>bintray-deploy</id>
-                            <goals>
-                                <goal>deploy-file</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <groupId>org.jfrog.buildinfo</groupId>
+                    <artifactId>artifactory-maven-plugin</artifactId>
+                    <version>3.2.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -166,9 +209,16 @@
                     <version>1.6.0</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring.boot.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -183,8 +233,10 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
+                            <!--                            <additionalJOptions>&#45;&#45;allow-script-in-comments</additionalJOptions>-->
                             <!-- all, none, html-->
                             <doclint>${doclint}</doclint>
+                            <!--                            <excludePackageNames>org.springframework.*</excludePackageNames>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -202,15 +254,58 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources-for-deploy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../etc/</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>log4j.properties</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
                 <artifactId>bigraph-ecore-model</artifactId>
-                <version>1.1.0</version>
+                <version>${bigraph.metamodel.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.tudresden.inf.st.bigraphs</groupId>
@@ -232,71 +327,120 @@
                 <artifactId>bigraph-converter</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!-- Misc -->
+            <dependency>
+                <groupId>org.bigraph.model</groupId>
+                <artifactId>bigred-core</artifactId>
+                <version>1.0.0.20130228</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-vfs2</artifactId>
+                <version>2.6.0</version>
+            </dependency>
             <!-- EMF -->
-            <dependency>
-                <groupId>org.eclipse.emf</groupId>
-                <artifactId>org.eclipse.emf.common</artifactId>
-                <version>${emf.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore.xmi -->
-            <dependency>
-                <groupId>org.eclipse.emf</groupId>
-                <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-                <version>${emf.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.ecore</artifactId>
                 <version>${emf.ecore.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.codegen -->
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                <version>${emf.ecore.xmi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.common</artifactId>
+                <version>${emf.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf.cdo</groupId>
+                <artifactId>org.eclipse.emf.cdo</artifactId>
+                <version>4.11.0.v20200902-0811</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf.cdo.common</groupId>
+                <artifactId>org.eclipse.emf.cdo.common</artifactId>
+                <version>4.11.0.v20200901-0616</version>
+            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+            <!--                <artifactId>org.eclipse.net4j</artifactId>-->
+            <!--                <version>4.10.1-SNAPSHOT</version>-->
+            <!--            </dependency>-->
+            <dependency>
+                <groupId>org.eclipse.emf.compare</groupId>
+                <artifactId>org.eclipse.emf.compare</artifactId>
+                <version>3.5.3.201911051515</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.core.expressions</artifactId>
+                <version>3.5.100</version>
+            </dependency>
             <dependency>
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>${emf.codegen.version}</version>
             </dependency>
-
-            <!-- https://github.com/ghillairet/cdo-maven -->
-            <dependency>
-                <groupId>org.eclipselabs</groupId>
-                <artifactId>cdo</artifactId>
-                <version>${emf.cdo.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipselabs</groupId>
-                <artifactId>net4j</artifactId>
-                <version>${emf.cdo.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipselabs</groupId>
-                <artifactId>cdo.hibernate</artifactId>
-                <version>${emf.cdo.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipselabs</groupId>
-                <artifactId>net4j.h2</artifactId>
-                <version>${emf.cdo.version}</version>
-                <type>pom</type>
-            </dependency>
             <!-- Collections -->
             <dependency>
                 <groupId>org.eclipse.collections</groupId>
                 <artifactId>eclipse-collections-api</artifactId>
-                <version>10.0.0</version>
+                <version>${eclipse.collections.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.collections</groupId>
                 <artifactId>eclipse-collections</artifactId>
-                <version>10.0.0</version>
+                <version>${eclipse.collections.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.checkerframework/checker -->
+            <!-- Spring Framework -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring.boot.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>5.2.7.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <!-- Other -->
+            <dependency>
+                <groupId>com.github.javaparser</groupId>
+                <artifactId>javaparser-core</artifactId>
+                <version>3.14.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.javaparser</groupId>
+                <artifactId>javaparser-symbol-solver-core</artifactId>
+                <version>3.15.17</version>
+            </dependency>
+            <dependency>
+                <groupId>net.jodah</groupId>
+                <artifactId>typetools</artifactId>
+                <version>0.6.2</version>
+            </dependency>
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker</artifactId>
-                <version>2.6.0</version>
+                <version>3.14.0</version>
             </dependency>
             <!-- Graph-related -->
             <dependency>
@@ -324,24 +468,39 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.9</version>
             </dependency>
-            <!-- Logging -->
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${log4j.version}</version>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.6</version>
             </dependency>
+            <dependency>
+                <groupId>it.uniud.mads.jlibbig</groupId>
+                <artifactId>jlibbig</artifactId>
+                <version>0.0.4</version>
+            </dependency>
+            <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${log4j.version}</version>
+                <scope>provided</scope> <!-- will not be exported -->
+                <optional>true</optional>
             </dependency>
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.6</version>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+                <scope>provided</scope> <!-- will not be exported -->
+                <optional>true</optional>
             </dependency>
+
             <!-- Test -->
-            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.boot.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
@@ -349,34 +508,132 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-core</artifactId>
-                <version>1.19</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-generator-annprocess</artifactId>
-                <version>1.19</version>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>org.openjdk.jmh</groupId>-->
+            <!--                <artifactId>jmh-core</artifactId>-->
+            <!--                <version>1.19</version>-->
+            <!--                <scope>test</scope>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.openjdk.jmh</groupId>-->
+            <!--                <artifactId>jmh-generator-annprocess</artifactId>-->
+            <!--                <version>1.19</version>-->
+            <!--                <scope>test</scope>-->
+            <!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-    </dependencies>
-
     <profiles>
+        <!-- ************************************************************ -->
+        <!-- Profile for building a fat jar (containing every dependency) -->
+        <!-- ************************************************************ -->
+
         <profile>
+            <id>fatJar</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>shade</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <!--<minimizeJar>true</minimizeJar>-->
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/MANIFEST.MF</exclude>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                                <exclude>schema/*</exclude>
+                                                <exclude>.options</exclude>
+                                                <exclude>.api_description</exclude>
+                                                <exclude>*.profile</exclude>
+                                                <exclude>*.html</exclude>
+                                                <exclude>about.*</exclude>
+                                                <exclude>about_files/*</exclude>
+                                                <exclude>plugin.xml</exclude>
+                                                <exclude>systembundle.properties</exclude>
+                                                <exclude>profile.list</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
-            <!-- Profile to be activated when building the documentation artifacts -->
+        <!-- ****************** -->
+        <!-- Deployment Profile -->
+        <!-- ****************** -->
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jfrog.buildinfo</groupId>
+                        <artifactId>artifactory-maven-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>build-info</id>
+                                <goals>
+                                    <goal>publish</goal>
+                                </goals>
+                                <configuration>
+                                    <deployProperties>
+                                        <groupId>${project.groupId}</groupId>
+                                        <artifactId>${project.artifactId}</artifactId>
+                                        <version>${project.version}</version>
+                                    </deployProperties>
+                                    <artifactory>
+                                        <includeEnvVars>true</includeEnvVars>
+                                        <envVarsExcludePatterns>*password*,*secret*,*key*,*token*,*passphrase*
+                                        </envVarsExcludePatterns>
+                                        <timeoutSec>60</timeoutSec>
+                                    </artifactory>
+                                    <publisher>
+                                        <contextUrl>https://stgroup.jfrog.io/artifactory/</contextUrl>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <username>${username}</username>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <password>${password}</password>
+                                        <excludePatterns>*-tests.jar,*documentation-*.jar,*documentation-*.pom
+                                        </excludePatterns>
+                                        <!-- Name of local repository in Artifactory @ stgroup.jfrog.io/ -->
+                                        <repoKey>st-tu-dresden-maven-repository</repoKey>
+                                        <snapshotRepoKey>st-tu-dresden-maven-repository</snapshotRepoKey>
+                                    </publisher>
+                                    <buildInfo>
+                                        <buildName>bigraph-framework-builds</buildName>
+                                    </buildInfo>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
+        <profile>
             <id>distribute</id>
             <properties>
                 <maven.main.skip>true</maven.main.skip>
@@ -388,23 +645,6 @@
 
             <build>
                 <plugins>
-                    <!--                    <plugin>-->
-                    <!--                        <groupId>org.shredzone.maven</groupId>-->
-                    <!--                        <artifactId>mkdocs-maven-plugin</artifactId>-->
-                    <!--                        <executions>-->
-                    <!--                            <execution>-->
-                    <!--                                <phase>install</phase>-->
-                    <!--                                <goals>-->
-                    <!--                                    <goal>build</goal>-->
-                    <!--                                </goals>-->
-                    <!--                                <configuration>-->
-                    <!--                                    <strict>true</strict>-->
-                    <!--                                    <directory>${project.basedir}/etc/doc/</directory>-->
-                    <!--                                    <outputDirectory>${project.basedir}/target/site/reference/html/</outputDirectory>-->
-                    <!--                                </configuration>-->
-                    <!--                            </execution>-->
-                    <!--                        </executions>-->
-                    <!--                    </plugin>-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -416,15 +656,15 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
+                                    <additionalJOptions>--allow-script-in-comments</additionalJOptions>
                                     <!-- all, none, html-->
                                     <doclint>${doclint}</doclint>
                                     <destDir>./</destDir>
                                     <author>true</author>
-                                    <bottom>Copyright &#169; {inceptionYear}. Software Technology Group,
+                                    <bottom>Copyright &#169; 2021-present. Dominik Grzelak, Software Technology Group,
                                         Technische Universität Dresden. All rights reserved.
                                     </bottom>
-                                    <excludePackageNames>com.microstar.xml,GCF</excludePackageNames>
-                                    <!--                                    <reportOutputDirectory>${project.javadoc.outputDirectory}</reportOutputDirectory>-->
+                                    <excludePackageNames>com.microstar.xml:GCF</excludePackageNames>
                                 </configuration>
                             </execution>
                         </executions>
@@ -434,64 +674,29 @@
                         <artifactId>maven-resources-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>copy-resources</id>
-                                <!-- here the phase you need -->
+                                <id>copy-resources-for-deploy</id>
+                                <configuration>
+                                    <skip>true</skip>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-api-resources</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.usermanual.outputDirectory}/static/apidocs
+                                    <outputDirectory>${project.usermanual.outputDirectory}
                                     </outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${basedir}/target/site/apidocs</directory>
+                                            <directory>${basedir}/../target/site/apidocs</directory>
                                             <filtering>true</filtering>
                                         </resource>
                                     </resources>
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <!--                            <execution>-->
-                            <!--                                <id>npm install (docusaurus)</id>-->
-                            <!--                                <goals>-->
-                            <!--                                    <goal>exec</goal>-->
-                            <!--                                </goals>-->
-                            <!--                                <phase>pre-clean</phase>-->
-                            <!--                                <configuration>-->
-                            <!--                                    <executable>npm</executable>-->
-                            <!--                                    <workingDirectory>${project.usermanual.outputDirectory}</workingDirectory>-->
-                            <!--                                    <arguments>-->
-                            <!--                                        <argument>install</argument>-->
-                            <!--                                    </arguments>-->
-                            <!--                                </configuration>-->
-                            <!--                            </execution>-->
-                            <execution>
-                                <id>npm build user manual (docusaurus)</id>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <phase>install</phase>
-                                <configuration>
-                                    <executable>npm</executable>
-                                    <workingDirectory>${project.usermanual.outputDirectory}
-                                    </workingDirectory>
-                                    <arguments>
-                                        <argument>run</argument>
-                                        <argument>build</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>

@@ -1,41 +1,42 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.analysis.ReactionGraphAnalysis;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ReactionGraphStats;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraphStats;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
 /**
  * @author Dominik Grzelak
  */
 public class MultipleOccurrencesExample {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/multiple/";
 
     @BeforeAll
@@ -43,10 +44,11 @@ public class MultipleOccurrencesExample {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+        new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
 
     @Test
-    void simulate() throws TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate() throws TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
 
         PureBigraph agent = createAgent();
         ReactionRule<PureBigraph> reactionRuleJA = createReactionRuleJA();
@@ -63,23 +65,33 @@ public class MultipleOccurrencesExample {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(50)
+                        .setMaximumTransitions(100)
                         .setMaximumTime(30)
                         .allowReducibleClasses(true)
                         .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
+                        .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
+
+        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
+        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        Assertions.assertEquals(10, pathsToLeaves.size());
+        pathsToLeaves.forEach(x -> {
+            System.out.println("Path has length: " + x.getPath().size());
+            Assertions.assertEquals(5, x.getPath().size());
+            System.out.println("\t" + x.getStateLabels().toString());
+        });
+
         ReactionGraphStats<PureBigraph> graphStats = modelChecker.getReactionGraph().getGraphStats();
         System.out.println("Transitions: " + graphStats.getTransitionCount());
         System.out.println("States: " + graphStats.getStateCount());
@@ -88,7 +100,7 @@ public class MultipleOccurrencesExample {
 
 
     PureBigraph createAgent() {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
         builder.createRoot()
                 .addChild("Room")
                 .addChild("Room")
@@ -97,8 +109,8 @@ public class MultipleOccurrencesExample {
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJA() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Room"); //.withNewHierarchy().addSite().top()
@@ -112,8 +124,8 @@ public class MultipleOccurrencesExample {
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJB() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Room"); //.withNewHierarchy().addSite().top()
@@ -127,8 +139,8 @@ public class MultipleOccurrencesExample {
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJAC() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Room").down().addChild("JobA").top()
@@ -142,8 +154,8 @@ public class MultipleOccurrencesExample {
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJBD() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Room").down().addChild("JobB").top()
@@ -157,8 +169,8 @@ public class MultipleOccurrencesExample {
     }
 
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+    private static DefaultDynamicSignature createSignature() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -168,6 +180,6 @@ public class MultipleOccurrencesExample {
                 .newControl().identifier(StringTypedName.of("JobC")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("JobD")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

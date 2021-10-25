@@ -1,7 +1,9 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -17,59 +19,108 @@ import java.util.*;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public abstract class ElementaryBigraph<S extends Signature> extends BigraphDelegator<S> implements EcoreBigraph {
+public abstract class ElementaryBigraph<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphDelegator<S> implements EcoreBigraph<S> {
+    protected EPackage metaModelPackage;
+    protected EObject instanceModel;
 
     public ElementaryBigraph(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);
     }
 
+    public boolean isPlacing() {
+        return this instanceof Placings.Barren ||
+                this instanceof Placings.Identity1 ||
+                this instanceof Placings.Join ||
+                this instanceof Placings.Merge ||
+                this instanceof Placings.Permutation ||
+                this instanceof Placings.Symmetry;
+    }
+
+    public boolean isLinking() {
+        return this instanceof Linkings.Closure ||
+                this instanceof Linkings.Identity ||
+                this instanceof Linkings.IdentityEmpty ||
+                this instanceof Linkings.Substitution;
+    }
+
     @Override
     public EPackage getModelPackage() {
-        return ((EcoreBigraph) bigraphDelegate).getModelPackage();
+        if (Objects.nonNull(bigraphDelegate) && bigraphDelegate instanceof EcoreBigraph)
+            return ((EcoreBigraph) bigraphDelegate).getModelPackage();
+        return metaModelPackage;
     }
 
     @Override
     public EObject getModel() {
-        return ((EcoreBigraph) bigraphDelegate).getModel();
+        if (Objects.nonNull(bigraphDelegate) && bigraphDelegate instanceof EcoreBigraph)
+            return ((EcoreBigraph) bigraphDelegate).getModel();
+        return instanceModel;
+    }
+
+    @Override
+    public List<BigraphEntity<?>> getAllPlaces() {
+        if (Objects.nonNull(bigraphDelegate)) return (List<BigraphEntity<?>>) bigraphDelegate.getAllPlaces();
+        return Lists.fixedSize.<BigraphEntity<?>>ofAll((Iterable) getRoots()).withAll((Iterable) getSites());
+    }
+
+    @Override
+    public Collection<BigraphEntity.Link> getAllLinks() {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getAllLinks();
+        return Lists.fixedSize.<BigraphEntity.Link>ofAll(getOuterNames()).withAll(getEdges());
     }
 
     @Override
     public Collection<BigraphEntity.RootEntity> getRoots() {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getRoots();
         return Collections.emptyList();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public <C extends Control<?, ?>> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getNodes();
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
     public Collection<BigraphEntity.SiteEntity> getSites() {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getSites();
         return Collections.emptyList();
     }
 
     @Override
     public Collection<BigraphEntity.OuterName> getOuterNames() {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getOuterNames();
         return Collections.emptyList();
     }
 
     @Override
     public Collection<BigraphEntity.InnerName> getInnerNames() {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getInnerNames();
         return Collections.emptyList();
     }
 
     @Override
     public Collection<BigraphEntity.Edge> getEdges() {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getEdges();
         return Collections.emptyList();
     }
 
     @Override
-    public int getPortCount(BigraphEntity node) {
+    public <C extends Control<?, ?>> int getPortCount(BigraphEntity.NodeEntity<C> node) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getPortCount(node);
         return 0;
     }
 
     @Override
-    public boolean isParentOf(BigraphEntity node, BigraphEntity possibleParent) {
+    public boolean isParentOf(BigraphEntity<?> node, BigraphEntity<?> possibleParent) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.isParentOf(node, possibleParent);
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public BigraphEntity getParent(BigraphEntity node) {
+    public BigraphEntity<?> getParent(BigraphEntity<?> node) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getParent(node);
         EObject instance = node.getInstance();
         EStructuralFeature prntRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         if (Objects.nonNull(prntRef) && Objects.nonNull(instance.eGet(prntRef))) {
@@ -82,7 +133,8 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
     }
 
     @Override
-    public BigraphEntity getLinkOfPoint(BigraphEntity point) {
+    public BigraphEntity.Link getLinkOfPoint(BigraphEntity<?> point) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getLinkOfPoint(point);
         if (!BigraphEntityType.isPointType(point)) return null;
         EObject eObject = point.getInstance();
         EStructuralFeature lnkRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
@@ -102,19 +154,16 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
     }
 
     @Override
-    public int getLevelOf(BigraphEntity place) {
-        if(BigraphEntityType.isSite(place)) return 1;
+    public int getLevelOf(BigraphEntity<?> place) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getLevelOf(place);
+        if (BigraphEntityType.isSite(place)) return 1;
         return 0;
     }
 
     @Override
     public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public Collection<BigraphEntity> getAllPlaces() {
-        return Collections.EMPTY_LIST;
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getSiblingsOfInnerName(innerName);
+        throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getSiblingsOfInnerName() yet.");
     }
 
     /**
@@ -125,12 +174,14 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
      * @return {@code null} is returned in every case
      */
     @Override
-    public <C extends Control> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
-        return null;
+    public <C extends Control<?, ?>> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getNodeOfPort(port);
+        throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getNodeOfPort() yet.");
     }
 
     @Override
-    public Collection<BigraphEntity> getPointsFromLink(BigraphEntity linkEntity) {
+    public Collection<BigraphEntity<?>> getPointsFromLink(BigraphEntity.Link linkEntity) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getPointsFromLink(linkEntity);
         if (Objects.isNull(linkEntity) || !isBLink(linkEntity.getInstance()))
             return Collections.EMPTY_LIST;
         final EObject eObject = linkEntity.getInstance();
@@ -139,7 +190,7 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
         final EList<EObject> pointsObjects = (EList<EObject>) eObject.eGet(pointsRef);
         if (Objects.isNull(pointsObjects)) return Collections.EMPTY_LIST;
 
-        final Collection<BigraphEntity> result = new ArrayList<>();
+        final Collection<BigraphEntity<?>> result = new ArrayList<>();
         for (EObject eachObject : pointsObjects) {
             if (isBPort(eachObject)) {
                 Optional<BigraphEntity.Port> first = getNodes().stream()
@@ -156,29 +207,39 @@ public abstract class ElementaryBigraph<S extends Signature> extends BigraphDele
     }
 
     @Override
-    public <C extends Control> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+    public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
+        if (Objects.nonNull(bigraphDelegate)) return (List<BigraphEntity<?>>) bigraphDelegate.getSiblingsOfNode(node);
         throw new RuntimeException("Not yet implemented! Elementary bigraph didn't implemented the method getSiblingsOfNode(BigraphEntity) yet.");
     }
 
-    //TODO for discrete ion important!
     @Override
-    public final Collection<BigraphEntity> getChildrenOf(BigraphEntity node) {
+    public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
+        if (Objects.nonNull(bigraphDelegate)) return (List<BigraphEntity<?>>) bigraphDelegate.getChildrenOf(node);
         return Collections.EMPTY_LIST;
     }
 
 
     @Override
-    public Collection<BigraphEntity.Port> getPorts(BigraphEntity node) {
+    public Collection<BigraphEntity.Port> getPorts(BigraphEntity<?> node) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getPorts(node);
         return Collections.EMPTY_LIST;
     }
 
     @Override
-    public final boolean areConnected(BigraphEntity.NodeEntity place1, BigraphEntity.NodeEntity place2) {
-        return false;
+    public final <C extends Control<?, ?>> boolean areConnected(BigraphEntity.NodeEntity<C> place1, BigraphEntity.NodeEntity<C> place2) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.areConnected(place1, place2);
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public List<BigraphEntity<?>> getOpenNeighborhoodOfVertex(BigraphEntity<?> node) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getOpenNeighborhoodOfVertex(node);
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public BigraphEntity.RootEntity getTopLevelRoot(BigraphEntity node) {
+        if (Objects.nonNull(bigraphDelegate)) return bigraphDelegate.getTopLevelRoot(node);
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

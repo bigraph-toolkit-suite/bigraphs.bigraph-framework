@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteRepositoriesConfiguration">
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="eclipse-releases-maven" />
+      <option name="name" value="eclipse-releases-maven" />
+      <option name="url" value="https://repo.eclipse.org/content/groups/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="eclipse-latest" />
+      <option name="name" value="eclipse-latest" />
+      <option name="url" value="http://download.eclipse.org/releases/latest" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="STFactory" />
+      <option name="name" value="st-tu-dresden-release" />
+      <option name="url" value="https://stgroup.jfrog.io/artifactory/st-tu-dresden-release" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="bintray" />
+      <option name="url" value="https://jcenter.bintray.com" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="STFactory" />
+      <option name="name" value="st-tu-dresden-artifactory" />
+      <option name="url" value="https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="spring-milestones" />
+      <option name="name" value="Spring Milestones" />
+      <option name="url" value="https://repo.spring.io/milestone" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="eclipse-releases" />
+      <option name="name" value="eclipse-releases" />
+      <option name="url" value="https://repo.eclipse.org/content/groups/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="eclipse-releases" />
+      <option name="name" value="eclipse-releases" />
+      <option name="url" value="http://maven.thingml.org/thirdparty/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="emf-compare" />
+      <option name="name" value="emf-compare" />
+      <option name="url" value="https://download.eclipse.org/modeling/emf/compare/updates/releases/3.3/R201911051515/core/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven-central" />
+      <option name="name" value="Maven Central Repository" />
+      <option name="url" value="https://repo1.maven.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="st-tu-dresden-release" />
+      <option name="url" value="https://stgroup.jfrog.io/artifactory/st-tu-dresden-release" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="snapshots" />
+      <option name="name" value="st-tu-dresden-snapshot" />
+      <option name="url" value="https://stgroup.jfrog.io/artifactory/st-tu-dresden-snapshot" />
+    </remote-repository>
+  </component>
+</project>

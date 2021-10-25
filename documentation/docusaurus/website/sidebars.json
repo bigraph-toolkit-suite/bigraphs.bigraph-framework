@@ -1,0 +1,35 @@
+{
+  "docs": {
+    "Basics": [
+      "index",
+      "basic/start",
+      "basic/composition",
+      "basic/traversing"
+    ],
+    "Bigraphical Reactive Systems": [
+      "simulation",
+      "simulation-reaction-rules",
+      "simulation-predicates",
+      "verification"
+    ],
+    "Converter": [
+      "converter",
+      "converter/bigrapher-converter",
+      "converter/bigred-converter",
+      "converter/bigmc-converter",
+      "converter/rankedgraphs-converter",
+      "converter/graphml-converter"
+    ],
+    "Persistence": [
+      "persistence",
+      "persistence-2"
+    ],
+    "Visualization": [
+      "visualization/visualization",
+      "visualization/visualization-styles"
+    ],
+    "Advanced": [
+      "advanced/complex-modeling"
+    ]
+  }
+}

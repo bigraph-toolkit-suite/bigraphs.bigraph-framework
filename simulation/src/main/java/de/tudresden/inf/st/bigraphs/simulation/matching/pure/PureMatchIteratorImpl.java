@@ -1,10 +1,13 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching.pure;
 
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.impl.factory.Lists;
+
 import java.util.*;
 
-//TODO: in a future version: find matches incrementally and not all at the start (if possible)
-//  next() and hasNext() must be rewritten then
-//  see also comment in PureBigraphMatchingEngine
+//TODO: in a future version: find matches incrementally and not all at the start
+//  next() and hasNext() must be slightly rewritten then
+// do not call find
 
 /**
  * Iterator implementation for bigraph matching.
@@ -15,7 +18,7 @@ import java.util.*;
  */
 public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatch> {
     private int cursor = 0;
-    private List<PureBigraphParametricMatch> matches = new ArrayList<>();
+    private MutableList<PureBigraphParametricMatch> matches = Lists.mutable.empty();
 
     private PureBigraphMatchingEngine matchingEngine;
 
@@ -31,17 +34,13 @@ public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatc
         if (this.matchingEngine.hasMatched()) {
             this.matchingEngine.createMatchResult();
         }
-        this.matches = Collections.unmodifiableList(this.matchingEngine.getMatches());
+        this.matches = Lists.mutable.ofAll(this.matchingEngine.getMatches());
     }
 
     @Override
     public boolean hasNext() {
         if (matches.size() == 0) return false;
-        boolean tmp = cursor != matches.size();
-//        if (tmp) {
-//            cursor++;
-//        }
-        return tmp; // && nextMatch != null;
+        return cursor != matches.size();
     }
 
     @Override

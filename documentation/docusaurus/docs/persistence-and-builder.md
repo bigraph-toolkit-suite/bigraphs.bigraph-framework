@@ -1,0 +1,58 @@
+---
+id: persistence-2
+title: Usage with Bigraph Builder
+---
+
+> Please also refer to the methods of `de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory` which shall primarily be used.
+
+## Creating a Builder by loading persisted Bigraph Meta-models
+
+The user must supply the signature and the filename or instance of the meta-model to instantiate a builder class.
+Therefore, the `PureBigraphBuilder` provides the following static methods:
+
+```java
+// Create a builder using only the meta-model
+public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFileName)
+public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
+
+// In combination with the instance model
+public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException
+public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel)
+```
+
+Then, the builder may produce a bigraph by using its available methods as normal.
+
+It is still necessary to supply the signature information as separate object. The reason is that not all information
+are recorded in the meta-model of the bigraph concerning the signature. Some properties that are missing include the arity
+of the control, or whether it is _active_, _passive_ or _atomic_; to mention a few.
+
+### `PureBigraphBuilder#create(Signature, EMetaModelData)`
+
+Create a builder with a given meta-model instance.
+
+### `PureBigraphBuilder#create(Signature, String)`
+
+Create a builder with a given meta-model file located on the filesystem.
+
+## Creating a Builder by loading persisted Bigraph Instance Models
+
+Though, bigraphs are per-se immutable data structures in Bigraph Framework, one can use the builder to instantiate bigraphs.
+Persisted bigraphs can be loaded and supplied to a bigraph builder.
+
+To prepare a bigraph builder:
+
+```java
+Signature<DefaultDynamicControl> signature = ...;
+PureBigraphBuilder builder = PureBigraphBuilder.create(signature, "meta-model.xmi", "instance-model.ecore");
+```
+
+Then, the builder can be used as normal. One can, however, do not alter the pre-defined structure but adding new
+elements is still possible.
+
+### `PureBigraphBuilder#create(Signature, String, String)`
+
+Provide a signature, and the filename of the meta-model and instance model to create a builder instance.
+
+### `PureBigraphBuilder#create(Signature, EPackage, EObject)`
+
+Provide a signature, and the loaded meta-model and instance model to create a builder instance.

@@ -1,38 +1,69 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching.pure;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.AbstractSimpleReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.AbstractSimpleReactiveSystem;
+import it.uniud.mads.jlibbig.core.std.Match;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Class represents the result of a match. Contains all necessary elements to perform the rewriting step later.
+ * This class represents the result of a valid match.
+ * It contains all required elements to perform the rewriting step later.
  *
  * @author Dominik Grzelak
  * @see AbstractSimpleReactiveSystem
  */
 public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
 
-    private Collection<Bigraph> parameters = new ArrayList<>();
-    private PureBigraph context;
-    private ElementaryBigraph identity;
-    private PureBigraph redex;
-    private PureBigraph redexImage;
-    private Bigraph<DefaultDynamicSignature> contextIdentity;
+    private final PureBigraph context;
+    private final PureBigraph redex;
+    private final PureBigraph redexImage;
+    private final Collection<PureBigraph> parameters;
+    private final Bigraph<DefaultDynamicSignature> redexIdentity;
+    private final Bigraph<DefaultDynamicSignature> contextIdentity;
+    private PureBigraph paramWiring;
 
-    public PureBigraphParametricMatch(PureBigraph context, PureBigraph redex,
-                                      Collection<Bigraph> parameters, ElementaryBigraph identity, Bigraph<DefaultDynamicSignature> contextIdentity) {
+    private final it.uniud.mads.jlibbig.core.std.Match jLibMatchResult;
+
+    public PureBigraphParametricMatch(it.uniud.mads.jlibbig.core.std.Match jLibMatchResult,
+                                      PureBigraph context,
+                                      PureBigraph redex,
+                                      PureBigraph redexImage,
+                                      Bigraph<DefaultDynamicSignature> redexIdentity,
+                                      PureBigraph paramWiring,
+                                      Collection<PureBigraph> parameters) {
+        this.jLibMatchResult = jLibMatchResult;
+        this.contextIdentity = null;
+        this.redexIdentity = redexIdentity;
+        this.redex = redex;
+        this.context = context;
+        this.redexImage = redexImage;
+        this.paramWiring = paramWiring;
+        this.parameters = parameters;
+    }
+
+
+    public PureBigraphParametricMatch(PureBigraph context,
+                                      PureBigraph redex,
+                                      PureBigraph redexImage,
+                                      Collection<PureBigraph> parameters,
+                                      Bigraph<DefaultDynamicSignature> redexIdentity,
+                                      Bigraph<DefaultDynamicSignature> contextIdentity) {
+        this.jLibMatchResult = null;
         this.parameters = parameters;
         this.context = context;
-        this.identity = identity;
+        this.redexImage = redexImage;
+        this.redexIdentity = redexIdentity;
         this.redex = redex;
         this.contextIdentity = contextIdentity;
+    }
+
+    public Match getJLibMatchResult() {
+        return jLibMatchResult;
     }
 
     @Override
@@ -45,6 +76,12 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
         return context;
     }
 
+    /**
+     * <b>Note:</b> The return type is of class {@link Bigraph} with a {@link DefaultDynamicSignature}. We cannot cast
+     * it to a pure bigraph because it may also be an elementary bigraph (in the form of a pure bigraph type)
+     *
+     * @return the identity link graph
+     */
     @Override
     public Bigraph<DefaultDynamicSignature> getContextIdentity() {
         return contextIdentity;
@@ -61,7 +98,7 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     }
 
     @Override
-    public ElementaryBigraph getRedexIdentity() {
-        return identity;
+    public Bigraph<DefaultDynamicSignature> getRedexIdentity() {
+        return redexIdentity;
     }
 }

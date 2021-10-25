@@ -1,17 +1,19 @@
-# Bigraphical Framework 
+<img src="./etc/bigraph-framework-logo.png" style="zoom:67%;" />
 
-**Version:** ${revision}
-Master: [![pipeline status](/../badges/master/pipeline.svg)](/../pipelines)
-Develop: [![pipeline status](/../badges/develop/pipeline.svg)](/../pipelines)
+# Bigraph Framework
 
+Branch | Version | Status
+---|---|---
+Master | 0.9.0 | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/master/pipeline.svg) |
+Develop | 0.9.5-SNAPSHOT | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/develop/pipeline.svg)
 -----
 
 A framework for the creation and simulation of bigraphs to expedite the experimental evaluation of the bigraph theory in
 real-world applications.
 
-The goal of this framework is to facilitate the implementation of context-aware and agent-based systems.
+The goal of this framework is to facilitate the implementation of context-aware and agent-based systems, and reactive systems in general.
 It provides means for model-driven software development based on the bigraph theory.
-The high level API eases the programming of bigraphical systems for real-world application.
+The high-level API eases the programming of bigraphical systems for real-world application.
 
 **Features**
 
@@ -20,74 +22,36 @@ The high level API eases the programming of bigraphical systems for real-world a
 - Visualization (beta)
     - graphical export via GraphViz, DOT
     - PNG, JPG, ...
-- Bigraph matching (beta) 
-- Bigraphical Reactive System support: simulation of the evolution of 
-bigraphs by reaction rules (synthesizing a labelled transition system) (alpha)
-    - simulation
-    - predicate checking
-    - order of reaction rules
-- Model transformation / Conversions (alpha) 
-    - e.g., to GXL, BigMC and BigraphER
+- Bigraph matching
+- Bigraphical Reactive System support: simulation of the evolution of
+bigraphs by reaction rules (synthesizing a labelled transition system) (beta)
+    - Simulation
+    - Predicate checking
+    - Specify order of reaction rules
+- Model transformation / Conversions (alpha)
+    - into other graph formats, e.g., GraphML, GXL, and Ranked Graphs
+    - for other bigraph tools: BigMC, BigraphER, and BigRed
 
 
 
 ## Getting Started
 
-Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java:
+Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java.
 
-### Creating Bigraphs
+**Requirements:** Java 11
 
-#### Factory
-A factory is necessary for accessing related builder instances for a specific kind of bigraph.
-The factory depends on the kind of bigraph and its _signature_.
-Depending on the bigraph type, the factory will return specialized methods.  
+### Lean Bigraph API
 
-```java
-// create factory for pure bigraphs (signatures and concrete bigraph instances)
-PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
-```
-
-#### Signature and Bigraph Builder
-
-The builder is responsible for instantiating and configuring concrete bigraph instances,
-depending on the specific _signature_.
-```java
-// create signature
-DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-signatureBuilder   
-    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-    .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(0)).assign()
-    .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-;
-
-DefaultDynamicSignature signature = signatureBuilder.create();
-// create a bigraph builder and supply the signature
-PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
-BigraphEntity.OuterName a = builder.createOuterName("a");
-BigraphEntity.InnerName b = builder.createInnerName("b");
-builder.createRoot().addChild("User").linkToOuter(a)
-.addChild("User", "a")
-.addChild(signature.getControlByName("User")).linkToInner(b);
-
-// create a concrete bigraph instance
-PureBigraph bigraph = builder.createBigraph();
-```
-
-### Other APIs
-
-#### Lean Bigraph API
-
-Here is a brief summary of the new lean bigraph API which allows faster
-bigraph creation and composition.
+The lean bigraph API allows fast bigraph creation and composition.
 
 To following usage assumes the import statement `import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*`.
 
 ```java
 // create the signature
 DefaultDynamicSignature signature = pureSignatureBuilder()
-    .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
-    .newControl().identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
-    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
+    .newControl("A", 0).assign()
+    .newControl(StringTypedName.of("C"), FiniteOrdinal.ofInteger(1)).assign()
+    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlKind.ATOMIC).assign()
     .create();
 
 // create two bigraphs
@@ -104,6 +68,8 @@ PureBigraph bigraph2 = pureBuilder(signature)
 BigraphComposite bigraphComposite = ops(bigraph2).compose(bigraph1);
 ```
 
+### Other APIs
+
 #### **Bigraph Builder: Connecting nodes by links**
 
 The bigraph builder provides more utility methods helping to build more
@@ -112,9 +78,12 @@ complex structures easily.
 The following one shows, how to create nodes, and at the same time connecting them all with an edge:
 
 ```java
-builder.createRoot().connectByEdge(signature.getControlByName("Job"),
-                                signature.getControlByName("Job"),
-                                signature.getControlByName("Job")); 
+PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+builder.createRoot().connectByEdge(
+    "Job",
+    "Job",
+    signature.getControlByName("Job")
+);
 ```
 
 Now, we want to connect nodes located at different "places". Therefore, we
@@ -122,7 +91,7 @@ link them through an inner name, and
 after, close the link to automatically transform it to an edge:
 ```java
 // First, create an inner name
-BigraphEntity.OuterName tmp_link = builder.createInnerName("link");
+BigraphEntity.InnerName tmp_link = builder.createInnerName("link");
 
 // Create two nodes within different hierarchies
 builder.createRoot().addChild("Printer").linkToInner(tmp_link);
@@ -132,7 +101,7 @@ builder.createRoot().addChild("Computer").linkToInner(tmp_link);
 builder.closeInnerName(tmp_link);
 ```
 
-#### **Exporting the meta-model and instance model**
+#### **Exporting the Ecore metamodel and instance model**
 
 ```java
 PureBigraph bigraph = ...;
@@ -149,92 +118,176 @@ To get the composition and tensor product of two bigraphs:
 PureBigraph G = ...;
 PureBigraph F = ...;
 PureBigraph H = ...;
-BigraphComposite<DefaultDynamicSignature> compositor = factory.asBigraphOperator(G);
+BigraphComposite<DefaultDynamicSignature> compositor = ops(G);
 
 BigraphComposite<DefaultDynamicSignature> result = compositor.compose(F);
 compositor.juxtapose(F);
 compositor.juxtapose(F).parallelProduct(H);
 ```
 
-### Maven configuration
+## Maven configuration
 
 ```xml
-<!-- the core module -->
-<dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-core</artifactId>
-  <version>${revision}</version>
-  <type>pom</type>
-</dependency>
-<!-- the rewriting module -->
-<dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-simulation</artifactId>
-  <version>${revision}</version>
-  <type>pom</type>
-</dependency>
-<!-- the visualization module -->
-<dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-visualization</artifactId>
-  <version>${revision}</version>
-  <type>pom</type>
-</dependency>
-<!-- the converter module -->
-<dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
-  <artifactId>bigraph-converter</artifactId>
-  <version>${revision}</version>
-  <type>pom</type>
-</dependency>
+<dependencies>
+    <!-- the core module -->
+    <dependency>
+      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <artifactId>bigraph-core</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <!-- the rewriting module -->
+    <dependency>
+      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <artifactId>bigraph-simulation</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <!-- the visualization module -->
+    <dependency>
+      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <artifactId>bigraph-visualization</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <!-- the converter module -->
+    <dependency>
+      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <artifactId>bigraph-converter</artifactId>
+      <version>${version}</version>
+    </dependency>
+</dependencies>
 ```
 
-The following remote Maven repository must be added as well. There are two options:
-- A) Within the `pom.xml` of a Maven project:
+The following Maven remote repository must be added as well. 
+
+There are two options:
+
+### Remote repositories
+
+Artifacts are deployed to the [ST-Group's Artifactory](https://stgroup.jfrog.io/).
+To resolve the dependencies above, the following remote repository must be configured.
+
+##### A) Within the `pom.xml` of a Maven project:
 ```xml
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-st-tu-dresden-maven-repository</id>
-            <name>bintray</name>
-            <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
-        </repository>
-    </repositories>
+<!-- Default -->
+<repositories>
+    <repository>
+        <snapshots>
+            <enabled>true</enabled> <!-- set false to disable snapshot releases -->
+        </snapshots>
+        <id>STFactory</id>
+        <name>st-tu-dresden-artifactory</name>
+        <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
+    </repository>
+</repositories>
 ```
 
-- B) Via the `settings.xml` of your Maven local repository `~/.m2/`:
+##### B) Via the [`settings.xml`](https://maven.apache.org/ref/3.6.3/maven-settings/settings.html) of your Maven local repository `~/.m2/`:
 
 ```xml
-    <profiles>
-        <!-- possibly other profiles -->
-        <profile>
-            <repositories>
-                <repository>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>bintray-st-tu-dresden-maven-repository</id>
-                    <name>bintray</name>
-                    <url>https://dl.bintray.com/st-tu-dresden/maven-repository</url>
-                </repository>
-            </repositories>
-            <id>bintray-st-tu-dresden</id>
-        </profile>
-    </profiles>
-    <activeProfiles>
-        <activeProfile>bintray-st-tu-dresden</activeProfile>
-    </activeProfiles>
+<!-- ... -->
+<profiles>
+    <profile>
+        <repositories>
+            <repository>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+                <id>STFactory-release</id>
+                <name>st-tu-dresden-releases</name>
+                <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-release</url>
+            </repository>
+            <repository>
+                <snapshots/>
+                <id>STFactory-snapshot</id>
+                <name>st-tu-dresden-snapshots</name>
+                <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-snapshot</url>
+            </repository>
+        </repositories>
+        <id>artifactory</id>
+    </profile>
+</profiles>
+<activeProfiles>
+    <activeProfile>artifactory</activeProfile>
+</activeProfiles>
+<!-- ... -->
 ```
 
-The [Bintray](https://bintray.com/) service is used for hosting Maven artifacts.
-See also [Building from Source](#Building-from-Source) if you want to build the source
-by yourself and host them in the local Maven repository. Then, both steps _A)_ and _B)_ are not needed.
+> See also [Building from Source](#Building-the-Framework-from Source) if you want to build the source by yourself and host them in your Maven local repository.
+
+#### Logging
+
+This framework employs SLF4J as a facade for the log4j logging framework.
+
+Depending on your project setup, you may need to include the following libraries in your `pom.xml` :
+
+```xml
+<!-- For Spring -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+<!-- For a bare Maven project -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+```
+
+The example above shows how to use log4j2 in your project as the underlying logging framework.
 
 ## Details
 
-### Bigraph Meta Model 
+### Modules
+
+A brief description of each module's purpose is given below.
+
+#### bigraph-core
+
+Provides builders, factories and interfaces to create concrete bigraphs and elementary bigraphs.
+
+Concrete Bigraphs and their meta model (with the signature only) can be written/loaded to/from the file system.
+
+#### bigraph-simulation
+
+Simulate bigraphs by creating bigraphical reactive systems, reaction rules and agents.
+Check a system according to some specification by defining various types of predicates.
+
+#### bigraph-visualization
+
+Provides simple means to export bigraphs and transition systems as graphic files.
+
+Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`.
+
+**Requirements**
+
+In order to use the functionality of the visualization module, the following tools must be installed on the machine:
+- Graphviz: `apt install -y graphviz`
+
+#### bigraph-converter
+
+Provides several ways to convert bigraphs into other representations.
+For example, bigraphs to GraphML format, BigraphER's specification language or BigMC's term language.
+
+<!-- ### Reaction Graph / Transition System -->
+
+<!-- TODO: some details about the algorithm -->
+
+<!-- ### Bigraph Matching -->
+
+<!-- TODO: outline algorithm -->
+
+### Bigraph Meta Model
 
 **User-Friendly API**
 
@@ -261,76 +314,67 @@ achieve Separation of concerns: The meta model itself is implementation-agnostic
 The Bigraph Framework adds specific behavior superimposed upon this meta
 model. Meaning, the implementation-specific details are kept out from the meta model.
 
+## Build Configuration
 
-### Modules
+It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper) or the regular `mvn` command. In this case, JDK 1.8 is needed.
 
-TODO
+> **Note:** The required version of Maven is 3.6.3
 
-#### core
+The recommendation here is to build it with the regular `mvn` command. You will need [Maven v3.6.3 or above](https://maven.apache.org/run-maven/index.html).
 
-Provides builder, factories and interfaces to create concrete bigraphs and elementary bigraphs.
+> **Tip:** A script called `install-maven.sh` can be found in the `./etc/ci/` folder to automatically install Maven 3.6.3.
 
-Concrete Bigraphs and their meta model (with the signature only) can be written to the file system for inspection.
+### Building the Framework from Source
 
-#### rewriting
-
-Create reaction rules and bigraphical reactive systems. Simulate bigraphs. Define Predicates.
-
-#### visualization
-
-Provides simple means to export bigraphs and transition systems as graphic files.
-
-Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`. 
-
-#### Converters
-
-Provides several mechanism to convert bigraphs into other representations.
-For example, Bigraphs to GXL (Graph Exchange Language).
-
-### Reaction Graph / Transition System
-
-TODO: some details about the algorithm
-
-### Bigraph Matching
-
-TODO: outline algorithm
-
-## Building from Source
-
-It is not necessary to build from source to use the bigraphical meta model but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper). In this case, JDK 1.8 is needed.
+The following command must be executed from the root directory of this project:
 
 ```bash
-$ ./mvnw clean install
+# Default
+$ mvn clean install -DskipTests
+
+# To create a "fat jar" for each module, run:
+$ mvn clean install -DskipTests -PfatJar
 ```
 
-If you want to build with the regular `mvn` command, you will need [Maven v3.5.0 or above](https://maven.apache.org/run-maven/index.html).
+After the command successfully finished, you can now use _Bigraph Framework_ in other Java projects. 
+Therefore, see [Maven configuration](#maven-configuration) on how to include the individual _Bigraph Framework_ dependencies.
 
 ### Building the Documentation
 
 Building the documentation builds also the project without running tests.
 
 ```bash
-$ ./mvnw clean install -Pdistribute
+$ mvn package -Pdistribute && npm --prefix ./documentation/docusaurus/website install && mvn -f documentation/pom.xml install exec:java -Pdistribute
 ```
 
-The generated apidoc is available from `etc/doc/docusaurus/website/static/apidocs`.
+**Java Documentation:** The generated apidoc is available from `documentation/docusaurus/website/static/apidocs`.
 
-The generated user manual is available from `etc/doc/docusaurus/website/`
-by calling `npm start`. The manual is generated using docusaurus which
-must be installed on the system (see [DEPLOYMENT](etc/ci/DEPLOYMENT.md)
-for further instructions).
+#### User Manual
+
+The generated user manual is available from `documentation/docusaurus/website/` by calling `npm start`.
+
+```bash
+$ cd ./documentation/docusaurus/website
+$ npm start
+```
+
+The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md) for further instructions).
 
 ### Development and Deployment
 
-See the document [DEPLOYMENT](etc/ci/DEPLOYMENT.md) for more issues regarding the development
-and deployment of _Bigraph Framework_. 
+See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development and deployment of _Bigraph Framework_.
+
+To deploy Bigraph Framework to the [ST-Group's Artifactory](https://stgroup.jfrog.io/):
+```bash
+mvn deploy -DskipTests -Pdeploy -Dusername=username -Dpassword=password
+```
 
 ## License
 
-Bigraph Framework is Open Source software released under the Apache 2.0 license.
+**Bigraph Framework** is Open Source software released under the Apache 2.0 license.
 
 ```text
-   Copyright [2019] Dominik Grzelak
+   Copyright 2021-present Dominik Grzelak
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -342,5 +386,5 @@ Bigraph Framework is Open Source software released under the Apache 2.0 license.
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
-   limitations under the License. 
+   limitations under the License.
 ```

@@ -1,29 +1,27 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.InstantiationMap;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.predicates.SubBigraphMatchPredicate;
+import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,28 +29,39 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dominik Grzelak
  */
-public class RouteFinding {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/framework/";
+    boolean carArrivedAtTarget = false;
 
     @BeforeAll
     static void setUp() throws IOException {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+        new File(TARGET_DUMP_PATH + "states/").mkdir();
+    }
+
+    @Override
+    public void onAllPredicateMatched(PureBigraph currentAgent, String label) {
+        System.out.println("Car arrived at the target");
+        System.out.println(label);
+        carArrivedAtTarget = true;
     }
 
     @Test
-    void simulate_car_example() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate_car_example() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
         BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
                 true,
@@ -79,19 +88,24 @@ public class RouteFinding {
                 true,
                 new File(TARGET_DUMP_PATH + "reactum_car.png")
         );
+        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+        System.out.println(encoder.encode(reactionRule.getRedex()));
+        System.out.println(encoder.encode(reactionRule.getReactum()));
+//        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream(TARGET_DUMP_PATH + "meta-model.ecore"));
 //        Path currentRelativePath = Paths.get("");
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(25)
+                        .setMaximumTransitions(150)
                         .setMaximumTime(60)
-                        .allowReducibleClasses(false) //if true, the simulation is endless
+                        .allowReducibleClasses(false)
                         .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setTraceFile(new File(completePath.toUri()))
+                        .setReactionGraphFile(new File(completePath.toUri()))
+                        .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )
@@ -100,18 +114,21 @@ public class RouteFinding {
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
-//        reactiveSystem.addPredicate(predicate);
+        reactiveSystem.addPredicate(predicate);
 //        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.RANDOM_STATE,
 //                opts);
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
-                BigraphModelChecker.SimulationType.BREADTH_FIRST,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
+        modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
+        assertTrue(Files.exists(completePath));
+        assertTrue(carArrivedAtTarget);
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
         BigraphEntity.OuterName p0 = builder.createOuterName("p0");
         BigraphEntity.OuterName p1 = builder.createOuterName("p1");
@@ -147,7 +164,7 @@ public class RouteFinding {
     }
 
     private PureBigraph createMapSimple(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
         BigraphEntity.OuterName p0 = builder.createOuterName("p0");
         BigraphEntity.OuterName p1 = builder.createOuterName("p1");
@@ -186,8 +203,8 @@ public class RouteFinding {
      * react r1 = Left.S | Right.S -> Left | Right;
      */
     public static ReactionRule<PureBigraph> createReactionRule() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         BigraphEntity.OuterName fromD = builder.createOuterName("fromD");
         BigraphEntity.OuterName fromS = builder.createOuterName("fromS");
@@ -238,20 +255,21 @@ public class RouteFinding {
     }
 
     private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
         BigraphEntity.OuterName from = builder.createOuterName("from");
 
-
+        // links of car and target must be connected via an outer name otherwise the predicate is not matched
         builder.createRoot()
                 .addChild("Place").linkToOuter(from)
-                .down().addSite().connectByEdge("Target", "Car").down().addSite();
+//                .down().addSite().connectByEdge("Target", "Car").down().addSite();
+                .down().addSite().addChild("Target", "target").addChild("Car", "target").down().addSite();
         PureBigraph bigraph = builder.createBigraph();
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+    public static DefaultDynamicSignature createSignature() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Car")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Fuel")).arity(FiniteOrdinal.ofInteger(0)).assign()
@@ -259,6 +277,6 @@ public class RouteFinding {
                 .newControl().identifier(StringTypedName.of("Road")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Target")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

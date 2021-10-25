@@ -1,17 +1,15 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlBuilder;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
 /**
- * Abstract builder class for all kind of signatures.
+ * Abstract base builder class for all types of signatures.
  *
  * @param <NT> type of the name representation
  * @param <FO> type of the finite ordinal representation
@@ -19,7 +17,11 @@ import java.util.Set;
  * @param <B>  type of the signature builder
  * @author Dominik Grzelak
  */
-public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOrdinal, C extends ControlBuilder<NT, FO, C>, B extends SignatureBuilder> { //<C extends ControlBuilder, B extends SignatureBuilder<C, B>> {
+public abstract class SignatureBuilder<NT extends NamedType<?>,
+        FO extends FiniteOrdinal<?>,
+        C extends ControlBuilder<NT, FO, C>,
+        B extends SignatureBuilder<?, ?, ?, ?>> {
+
     private Set<Control<NT, FO>> controls;
 
     public SignatureBuilder() {
@@ -44,14 +46,6 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
      */
     protected abstract C createControlBuilder();
 
-    private static <C extends ControlBuilder> C createControlBuilder(Class<C> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
-        }
-    }
-
     public C newControl() {
         C builder = createControlBuilder();
         builder.withControlListBuilder(this);
@@ -69,16 +63,43 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return self();
     }
 
-    public abstract Signature createSignature(Iterable<? extends Control> controls);
+    /**
+     * Create a signature with the given controls.
+     *
+     * @param controls the controls to use for the signature
+     * @return a signature with the given controls
+     */
+    public abstract Signature<?> createWith(Iterable<? extends Control<NT, FO>> controls);
+
+    /**
+     * Create the signature with the assigned controls so far.
+     *
+     * @return a signature
+     */
+    public Signature<?> create() {
+        Signature<?> sig = createWith(getControls());
+        if (sig instanceof AbstractEcoreSignature)
+            BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
+    }
 
     /**
      * Creates an empty signature, meaning that the control set is empty.<br>
      * Needed for the interaction of elementary bigraphs and user-defined bigraphs.
      *
-     * @param <S> type of the signature
      * @return an empty signature of type {@literal <S>}.
      */
-    public abstract <S extends Signature> S createSignature();
+    public Signature<? extends Control<NT, FO>> createEmpty() {
+        Signature<? extends Control<NT, FO>> sig = (Signature<? extends Control<NT, FO>>) createEmptyStub();
+        if (sig instanceof AbstractEcoreSignature)
+            BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
+    }
+
+    /**
+     * This method is not called by the user; it is called by {@link SignatureBuilder#createEmpty()}.
+     */
+    protected abstract Signature<? extends Control<NT, FO>> createEmptyStub();
 
     //    protected  abstract <S extends Signature> Class<S> getSignatureClass();
     @SuppressWarnings("unchecked")
@@ -90,7 +111,4 @@ public abstract class SignatureBuilder<NT extends NamedType, FO extends FiniteOr
         return this.controls;
     }
 
-    public <S extends Signature> S create() {
-        return (S) createSignature(getControls());
-    }
 }

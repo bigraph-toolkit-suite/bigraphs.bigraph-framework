@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
-//TODO: add tactics/order/priorities for RR execution (here?)
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.util.Map;
@@ -9,11 +10,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * This class represents the available options for the model checker {@link BigraphModelChecker}.
+ *
  * @author Dominik Grzelak
  */
+@Configuration
+@ConfigurationProperties(prefix = "model-checking", ignoreInvalidFields = true)
 public class ModelCheckingOptions {
     private final static int DEFAULT_MAX_TRANSITIONS = Integer.MAX_VALUE;
-    //    private int maximumTransitions;
+
     private ExportOptions exportOpts;
     private TransitionOptions transitionOpts;
     private Map<Options, Opts> optsMap = new ConcurrentHashMap<>();
@@ -33,7 +38,7 @@ public class ModelCheckingOptions {
         }
     }
 
-    private ModelCheckingOptions() {
+    ModelCheckingOptions() {
     }
 
     public static ExportOptions.Builder exportOpts() {
@@ -50,7 +55,17 @@ public class ModelCheckingOptions {
 
     public ModelCheckingOptions and(Opts opts) {
         optsMap.put(opts.getType(), opts);
+        if (opts.getType() == Options.TRANSITION) {
+            transitionOpts = (TransitionOptions) opts;
+        }
+        if (opts.getType() == Options.EXPORT) {
+            exportOpts = (ExportOptions) opts;
+        }
         return this;
+    }
+
+    public void setMeasureTime(boolean measureTime) {
+        this.measureTime = measureTime;
     }
 
     public boolean isMeasureTime() {
@@ -71,8 +86,24 @@ public class ModelCheckingOptions {
     }
 
     public <T extends Opts> T get(Options kind) {
-        if (Objects.isNull(optsMap.get(kind))) return null;
+        if (optsMap.size() == 0) {
+            if (transitionOpts != null) {
+                and(transitionOpts);
+            }
+            if (exportOpts != null) {
+                and(exportOpts);
+            }
+        }
+        if ((optsMap.get(kind)) == null) return null;
         return (T) kind.getOptionClassType().cast(optsMap.get(kind));
+    }
+
+    void setExportOptions(ExportOptions exportOpts) {
+        this.exportOpts = exportOpts;
+    }
+
+    void setTransitionOptions(TransitionOptions transitionOpts) {
+        this.transitionOpts = transitionOpts;
     }
 
     public interface Opts {
@@ -85,15 +116,35 @@ public class ModelCheckingOptions {
      * @author Dominik Grzelak
      */
     public static final class TransitionOptions implements Opts {
-        private int maximumTransitions;
-        private long maximumTime;
-        private TimeUnit maximumTimeUnit;
+        //        @Min(1)
+        private int maximumTransitions = 100;
+        private long maximumTime = 30;
+        private TimeUnit maximumTimeUnit = TimeUnit.SECONDS;
         private boolean allowReducibleClasses;
+
+        TransitionOptions() {
+        }
 
         TransitionOptions(int maximumTransitions, long maximumTime, TimeUnit maximumTimeUnit, boolean allowReducibleClasses) {
             this.maximumTransitions = maximumTransitions;
             this.maximumTime = maximumTime;
             this.maximumTimeUnit = maximumTimeUnit;
+            this.allowReducibleClasses = allowReducibleClasses;
+        }
+
+        void setMaximumTransitions(int maximumTransitions) {
+            this.maximumTransitions = maximumTransitions;
+        }
+
+        void setMaximumTime(long maximumTime) {
+            this.maximumTime = maximumTime;
+        }
+
+        void setMaximumTimeUnit(TimeUnit maximumTimeUnit) {
+            this.maximumTimeUnit = maximumTimeUnit;
+        }
+
+        void setAllowReducibleClasses(boolean allowReducibleClasses) {
             this.allowReducibleClasses = allowReducibleClasses;
         }
 
@@ -123,6 +174,12 @@ public class ModelCheckingOptions {
         @Override
         public Options getType() {
             return Options.TRANSITION;
+        }
+
+        public Builder toBuilder() {
+            return transitionOpts().allowReducibleClasses(this.allowReducibleClasses)
+                    .setMaximumTransitions(this.maximumTransitions)
+                    .setMaximumTime(this.maximumTime, this.maximumTimeUnit);
         }
 
         /**
@@ -155,6 +212,7 @@ public class ModelCheckingOptions {
 
             /**
              * Flag to set whether to allow reducible classes for the reaction graph.
+             *
              * @param reduceStates if {@code true}, symmetries are exploited
              * @return {@code true} reaction graph considers symmetries
              */
@@ -176,12 +234,20 @@ public class ModelCheckingOptions {
      * @author Dominik Grzelak
      */
     public static final class ExportOptions implements Opts {
-        private final File outputStatesFolder;
-        private final File traceFile;
+        private File outputStatesFolder;
+        private File reactionGraphFile;
+        private File rewriteResultFolder;
+        private Boolean printCanonicalStateLabel;
 
-        ExportOptions(File outputStatesFolder, File traceFile) {
+        ExportOptions() {
+            this(new File("./states/"), new File("./transition_graph.png"), new File("./results/"), false);
+        }
+
+        ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel) {
             this.outputStatesFolder = outputStatesFolder;
-            this.traceFile = traceFile;
+            this.reactionGraphFile = reactionGraphFile;
+            this.rewriteResultFolder = rewriteResultFolder;
+            this.printCanonicalStateLabel = printCanonicalStateLabel;
         }
 
         public File getOutputStatesFolder() {
@@ -192,13 +258,59 @@ public class ModelCheckingOptions {
             return Objects.nonNull(outputStatesFolder);
         }
 
+        public boolean hasRewriteResultFolder() {
+            return Objects.nonNull(rewriteResultFolder);
+        }
+
+        public File getRewriteResultFolder() {
+            return rewriteResultFolder;
+        }
+
+        void setOutputStatesFolder(File outputStatesFolder) {
+            this.outputStatesFolder = outputStatesFolder;
+        }
+
+        void setReactionGraphFile(File reactionGraphFile) {
+            this.reactionGraphFile = reactionGraphFile;
+        }
+
+        void setRewriteResultFolder(File rewriteResultFolder) {
+            this.rewriteResultFolder = rewriteResultFolder;
+        }
+
+        void setPrintCanonicalStateLabel(Boolean printCanonicalStateLabel) {
+            this.printCanonicalStateLabel = printCanonicalStateLabel;
+        }
+
         /**
-         * The file to store for the trace of the transition graph
+         * Flag that can be used to determine whether the labels of the states in the reaction graph should contain
+         * the canonical form of a bigraph or not, meaning, only a constant identifier is printed suffixed with an
+         * incremented number.
+         * <p>
+         * This only affects the exported reaction graph and serves visual purposes.
          *
-         * @return
+         * @return {@code true}, if the state labels of the reaction graph should contain the canonical form of a bigraph
          */
-        public File getTraceFile() {
-            return traceFile;
+        public Boolean getPrintCanonicalStateLabel() {
+            return printCanonicalStateLabel;
+        }
+
+        /**
+         * The file to store the reaction graph (i.e., transition system)
+         *
+         * @return filename of the reaction graph to store
+         */
+        public File getReactionGraphFile() {
+            return reactionGraphFile;
+        }
+
+        /**
+         * Checks if the filename for the reaction graph export was set.
+         *
+         * @return {@code true}, if the filename for the reaction graph export was set
+         */
+        public boolean hasReactionGraphFile() {
+            return Objects.nonNull(reactionGraphFile);
         }
 
         @Override
@@ -206,22 +318,52 @@ public class ModelCheckingOptions {
             return Options.EXPORT;
         }
 
+        public Builder toBuilder() {
+            return exportOpts().setOutputStatesFolder(this.outputStatesFolder)
+                    .setPrintCanonicalStateLabel(this.printCanonicalStateLabel)
+                    .setReactionGraphFile(this.reactionGraphFile)
+                    .setRewriteResultFolder(this.rewriteResultFolder);
+        }
+
         public static class Builder {
-            private File outputStatesFolder;
-            private File traceFile;
+            private File outputStatesFolder = null;
+            private File reactionGraphFile = null;
+            private File rewriteResultFolder = null;
+            private Boolean printCanonicalStateLabel = false;
 
             public Builder setOutputStatesFolder(File outputStatesFolder) {
                 this.outputStatesFolder = outputStatesFolder;
                 return this;
             }
 
-            public Builder setTraceFile(File traceFile) {
-                this.traceFile = traceFile;
+            public Builder setReactionGraphFile(File reactionGraphFile) {
+                this.reactionGraphFile = reactionGraphFile;
+                return this;
+            }
+
+            public Builder setRewriteResultFolder(File rewriteResultFolder) {
+                this.rewriteResultFolder = rewriteResultFolder;
+                return this;
+            }
+
+            /**
+             * Flag that can be used to determine whether the labels of the states in the reaction graph should contain
+             * the canonical form of a bigraph or not, meaning, only a constant identifier is printed suffixed with an
+             * incremented number.
+             * <p>
+             * This only affects the exported reaction graph and serves visual purposes.
+             * <p>
+             * Default is {@code true}.
+             *
+             * @return {@code true}, if the state labels of the reaction graph should contain the canonical form of a bigraph
+             */
+            public Builder setPrintCanonicalStateLabel(boolean flag) {
+                this.printCanonicalStateLabel = flag;
                 return this;
             }
 
             public ExportOptions create() {
-                return new ExportOptions(outputStatesFolder, traceFile);
+                return new ExportOptions(outputStatesFolder, reactionGraphFile, rewriteResultFolder, printCanonicalStateLabel);
             }
         }
     }

@@ -1,0 +1,42 @@
+---
+id: bigmc-converter
+title: BigMC
+---
+
+More information about BigMC can be found on the website: [http://bigraph.org/bigmc/](http://bigraph.org/bigmc/)
+
+## Exporting a `PureReactiveSystem`
+
+```java
+// specify some reactive system
+PureReactiveSystem reactiveSystem = ...;
+
+BigMcTransformator prettyPrinter = new BigMcTransformator();
+String bigmcEncoding = prettyPrinter.toString(reactiveSystem);
+System.out.println(bigmcEncoding);
+
+FileOutputStream fout = new FileOutputStream(new File("bigmc.bgm"));
+prettyPrinter.toOutputStream(reactiveSystem, fout);
+fout.close();
+```
+
+An exemplary output is shown below:
+
+```text
+%active Age : 0;
+%active S : 0;
+%active Z : 0;
+%active True : 1;
+%active False : 0;
+%active Left : 0;
+%active Right : 0;
+
+
+Left.S.$0 | Right.S.$1 -> Right.$1 | Left.$0;
+Right.S.$0 | Left.Z -> True.$0;
+Right.Z | Left.$0 -> False.$0;
+
+Age.( Left.S.S.S.Z | Right.S.S.S.S.Z ) ;
+
+%check
+```

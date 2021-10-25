@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rule:rule xmlns:rule="http://www.itu.dk/research/pls/xmlns/2011/rule">
+  <bigraph:bigraph xmlns:bigraph="http://www.itu.dk/research/pls/xmlns/2010/bigraph">
+    <signature:signature src="../signatures/sampleB.bigraph-signature" xmlns:signature="http://www.itu.dk/research/pls/xmlns/2010/signature"/>
+    <bigraph:outername name="a">
+      <big-red:appearance height="51" width="93" x="135" y="137" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+    </bigraph:outername>
+    <bigraph:root name="0">
+      <bigraph:node control="Control1" name="a" xmlns:param="http://bigraph.org/xmlns/2012/bigraph-extension-param" param:value="a">
+        <big-red:appearance height="105" width="150" x="119" y="103" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+      </bigraph:node>
+      <big-red:appearance height="297" width="383" x="42" y="231" xmlns:big-red="http://www.itu.dk/research/pls/xmlns/2010/big-red"/>
+    </bigraph:root>
+  </bigraph:bigraph>
+  <edit:edit xmlns:edit="http://bigraph.org/xmlns/2012/edit">
+    <edit:edit/>
+  </edit:edit>
+</rule:rule>

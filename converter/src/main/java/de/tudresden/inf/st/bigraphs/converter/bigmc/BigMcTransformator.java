@@ -1,14 +1,11 @@
 package de.tudresden.inf.st.bigraphs.converter.bigmc;
 
 import de.tudresden.inf.st.bigraphs.converter.ReactiveSystemPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlKind;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,7 +21,7 @@ import java.util.Set;
  *
  * @author Dominik Grzelak
  */
-public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, PureReactiveSystem> {
+public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, ReactiveSystem<PureBigraph>> {
 
     public static final String LINE_SEP = System.getProperty("line.separator");
 
@@ -32,7 +29,7 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
     }
 
     @Override
-    public String toString(PureReactiveSystem system) {
+    public String toString(ReactiveSystem<PureBigraph> system) {
         StringBuilder s = new StringBuilder();
 
         s.append(toString(system.getSignature()));
@@ -74,9 +71,9 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
         Iterator<BigraphEntity.RootEntity> iterator = bigraph.getRoots().iterator();
         while (iterator.hasNext()) {
             BigraphEntity.RootEntity next = iterator.next();
-            Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(next);
+            Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(next);
             if (!childrenOf.isEmpty()) {
-                Iterator<BigraphEntity> childIterator = childrenOf.iterator();
+                Iterator<BigraphEntity<?>> childIterator = childrenOf.iterator();
                 while (childIterator.hasNext()) {
                     String s1 = toString(bigraph, childIterator.next(), bigraph.getOuterNames(), bigraph.getSites());
                     s.append(s1).append(childIterator.hasNext() ? " | " : "");
@@ -94,9 +91,9 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
         Iterator<BigraphEntity.RootEntity> iterator = bigraph.getRoots().iterator();
         if (!iterator.hasNext()) return s.toString();
         BigraphEntity.RootEntity next = iterator.next();
-        Collection<BigraphEntity> childrenOf = bigraph.getChildrenOf(next);
+        Collection<BigraphEntity<?>> childrenOf = bigraph.getChildrenOf(next);
         if (!childrenOf.isEmpty()) {
-            Iterator<BigraphEntity> childIterator = childrenOf.iterator();
+            Iterator<BigraphEntity<?>> childIterator = childrenOf.iterator();
             while (childIterator.hasNext()) {
                 String s1 = toString(bigraph, childIterator.next(), bigraph.getOuterNames(), bigraph.getSites());
                 s.append(s1).append(childIterator.hasNext() ? " | " : "");
@@ -134,12 +131,12 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
             if (ns.length() > 0) {
                 s.append("[").append(ns.substring(0, ns.length() - 2)).append("]");
             }
-            Collection<BigraphEntity> children = bigraph.getChildrenOf(d);
+            Collection<BigraphEntity<?>> children = bigraph.getChildrenOf(d);
             if (!children.isEmpty()) {
                 s.append(".");
                 if (children.size() > 1) s.append("( ");
 
-                Iterator<BigraphEntity> childIt = children.iterator();
+                Iterator<BigraphEntity<?>> childIt = children.iterator();
                 while (childIt.hasNext()) {
                     s.append(toString(bigraph, childIt.next(), collection, sitelist))
                             .append(childIt.hasNext() ? " | " : "");
@@ -154,7 +151,7 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
     }
 
     @Override
-    public void toOutputStream(PureReactiveSystem system, OutputStream outputStream) throws IOException {
+    public void toOutputStream(ReactiveSystem<PureBigraph> system, OutputStream outputStream) throws IOException {
         String s = toString(system);
         outputStream.write(s.getBytes(), 0, s.length());
     }
@@ -163,7 +160,7 @@ public class BigMcTransformator implements ReactiveSystemPrettyPrinter<PureBigra
         StringBuilder s = new StringBuilder();
         Set<Control<?, ?>> controls = sig.getControls();
         for (Control ctrl : controls) {
-            s.append(ctrl.getControlKind().equals(ControlKind.ACTIVE) ? "%active " : "%passive ")
+            s.append(ctrl.getControlKind().equals(ControlStatus.ACTIVE) ? "%active " : "%passive ")
                     .append(ctrl.getNamedType().stringValue()).append(" : ")
                     .append(ctrl.getArity().getValue()).append(";").append(LINE_SEP);
         }

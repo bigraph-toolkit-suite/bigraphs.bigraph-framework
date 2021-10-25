@@ -1,41 +1,38 @@
 package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import org.junit.jupiter.api.Test;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * @author Dominik Grzelak
  */
 public class MultiOccurrenceExample {
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+//    private static PureBigraphFactory factory = pure();
 
     // bigrapher full -d ./model -f svg -s states -M 50 -t trans.svg -v model.big
     @Test
-    void simulate() throws TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException {
+    void simulate() throws TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException {
 
         PureBigraph agent = createAgent();
         ReactionRule<PureBigraph> reactionRuleJA = createReactionRuleJA();
         ReactionRule<PureBigraph> reactionRuleJB = createReactionRuleJB();
         ReactionRule<PureBigraph> reactionRuleJAC = createReactionRuleJAC();
         ReactionRule<PureBigraph> reactionRuleJBD = createReactionRuleJBD();
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
         reactiveSystem.setAgent(agent);
         reactiveSystem.addReactionRule(reactionRuleJA);
         reactiveSystem.addReactionRule(reactionRuleJB);
@@ -49,7 +46,7 @@ public class MultiOccurrenceExample {
     }
 
     PureBigraph createAgent() {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
         builder.createRoot()
                 .addChild("Room")
                 .addChild("Room")
@@ -58,8 +55,8 @@ public class MultiOccurrenceExample {
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJA() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Room"); //.withNewHierarchy().addSite().top()
@@ -73,8 +70,8 @@ public class MultiOccurrenceExample {
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJB() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Room"); //.withNewHierarchy().addSite().top()
@@ -88,8 +85,8 @@ public class MultiOccurrenceExample {
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJAC() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Room").down().addChild("JobA").top()
@@ -103,8 +100,8 @@ public class MultiOccurrenceExample {
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJBD() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Room").down().addChild("JobB").top()
@@ -118,8 +115,8 @@ public class MultiOccurrenceExample {
     }
 
 
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+    private static DefaultDynamicSignature createSignature() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -129,6 +126,6 @@ public class MultiOccurrenceExample {
                 .newControl().identifier(StringTypedName.of("JobC")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("JobD")).arity(FiniteOrdinal.ofInteger(1)).assign()
         ;
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

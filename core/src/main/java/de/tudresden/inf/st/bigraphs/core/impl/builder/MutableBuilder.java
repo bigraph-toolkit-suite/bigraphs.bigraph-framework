@@ -1,15 +1,15 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
+import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFailedException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -26,19 +26,65 @@ import java.util.Map;
  * @param <S> type of the signature.
  * @author Dominik Grzelak
  */
-public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
+public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends PureBigraphBuilder<S> {
 
     public MutableBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
         super(signature);
+    }
+
+    public MutableBuilder(EObject signature) throws BigraphMetaModelLoadingFailedException {
+        super(signature);
+    }
+
+    public MutableBuilder(S signature, EPackage metaModel, EObject instanceModel) throws BigraphMetaModelLoadingFailedException {
+        super(signature, metaModel, instanceModel);
+    }
+
+    public MutableBuilder(EObject signature, EPackage metaModel, EObject instanceModel) throws BigraphMetaModelLoadingFailedException {
+        super(signature, metaModel, instanceModel);
     }
 
     public MutableBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
         super(signature, metaModelData);
     }
 
+    public MutableBuilder(EObject signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
+        super(signature, metaModelData);
+    }
+
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature);
+    }
+
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature);
+    }
+
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EPackage metaModel)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature, metaModel, null);
+    }
+
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature, EPackage metaModel)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature, metaModel, null);
+    }
+
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull S signature, EMetaModelData metaModelData)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature, metaModelData);
+    }
+
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> MutableBuilder<S> newMutableBuilder(@NonNull EObject signature, EMetaModelData metaModelData)
+            throws BigraphMetaModelLoadingFailedException {
+        return new MutableBuilder<>(signature, metaModelData);
+    }
+
     @Override
-    public EPackage getLoadedEPackage() {
-        return loadedEPackage;
+    public EPackage getMetaModel() {
+        return metaModel;
     }
 
     public BigraphEntity createNewNode(Control<?, ?> control, String nodeIdentifier) {
@@ -76,6 +122,18 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
         return BigraphEntity.create(portWithIndex, BigraphEntity.Port.class);
     }
 
+    public void disconnectPort(BigraphEntity.NodeEntity node, int portIndex) {
+        EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(
+                node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT)
+        );
+        bPorts.remove(portIndex);
+    }
+
+    public void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
+        EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+        node.getInstance().eSet(prntRef, parent.getInstance());
+    }
+
     public void connectInnerToOuter(BigraphEntity.InnerName innerName, BigraphEntity.OuterName outerName) {
         super.connectInnerToOuterName0(innerName, outerName);
     }
@@ -86,7 +144,10 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
 
     public void connectToEdge(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge theLink) {
         super.connectToEdge(node, theLink);
+    }
 
+    public void connectInnerToLink(BigraphEntity.InnerName innerName, BigraphEntity.Link edge) {
+        super.connectInnerToLink(innerName, edge);
     }
 
     /**
@@ -142,6 +203,30 @@ public class MutableBuilder<S extends Signature> extends PureBigraphBuilder<S> {
                 signature, availableRoots, availableSites,
                 availableNodes, availableInnerNames, availableOuterNames, availableEdges);
         return meta.getbBigraphObject();
+    }
+
+    public Map<String, BigraphEntity.Edge> availableEdges() {
+        return availableEdges;
+    }
+
+    public Map<String, BigraphEntity.OuterName> availableOuterNames() {
+        return availableOuterNames;
+    }
+
+    public Map<String, BigraphEntity.InnerName> availableInnerNames() {
+        return availableInnerNames;
+    }
+
+    public Map<Integer, BigraphEntity.RootEntity> availableRoots() {
+        return availableRoots;
+    }
+
+    public Map<Integer, BigraphEntity.SiteEntity> availableSites() {
+        return availableSites;
+    }
+
+    public Map<String, BigraphEntity.NodeEntity> availableNodes() {
+        return availableNodes;
     }
 
 }

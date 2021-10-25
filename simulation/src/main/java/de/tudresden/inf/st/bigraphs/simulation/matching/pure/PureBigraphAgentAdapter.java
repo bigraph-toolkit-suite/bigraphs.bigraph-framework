@@ -5,6 +5,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractDynamicMatchAdapter;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -14,7 +16,9 @@ import java.util.*;
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBigraph> {
+public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<DefaultDynamicSignature, PureBigraph> {
+    
+    MutableMap<BigraphEntity<?>, LinkedList<ControlLinkPair>> linkOfNodesMap = Maps.mutable.empty();
 
     public PureBigraphAgentAdapter(PureBigraph bigraph) {
         super(bigraph);
@@ -22,7 +26,13 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
 
     @Override
     public DefaultDynamicSignature getSignature() {
-        return (DefaultDynamicSignature) super.getSignature();
+        return super.getSignature();
+    }
+
+    @Override
+    public void clearCache() {
+//        super.clearCache();
+        linkOfNodesMap.clear();
     }
 
     /**
@@ -32,7 +42,10 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
      * @return a list of all links connected to the given node
      */
 
-    public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity node) {
+    public LinkedList<ControlLinkPair> getLinksOfNode(BigraphEntity<?> node) {
+        if (linkOfNodesMap.containsKey(node)) {
+            return linkOfNodesMap.get(node);
+        }
         EObject instance = node.getInstance();
         LinkedList<AbstractDynamicMatchAdapter.ControlLinkPair> children = new LinkedList<>();
 
@@ -67,6 +80,7 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<PureBig
                 }
             }
         }
+        linkOfNodesMap.put(node, children);
         return children;
     }
 }

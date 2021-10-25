@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+import com.google.common.graph.Traverser;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
@@ -7,22 +8,23 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.IOException;
+import java.util.*;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,12 +36,217 @@ import static org.junit.jupiter.api.Assertions.*;
 //@Disabled
 public class BigraphCreationUnitTest {
 
-    private PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
-    private PureBigraphFactory factoryWithArgs = AbstractBigraphFactory.createPureBigraphFactory();
+    @Test
+    void name() throws IOException {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .addControl("User", 3, ControlStatus.ACTIVE)
+                .addControl("PC", 3, ControlStatus.ACTIVE)
+                .addControl("Computer", 3, ControlStatus.ACTIVE)
+                .create();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+        builder.createRoot().addSite();
+        builder.createOuterName("ko");
+        builder.createInnerName("cp");
+        PureBigraph bigraph = builder.createBigraph();
+        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+
+        String pathLoaded = "src/test/resources/ecore-test-models/dolore_agent_5.xmi";
+        EPackage orGetBigraphMetaModel = createOrGetBigraphMetaModel(sig);
+        PureBigraphBuilder<DefaultDynamicSignature> loadedBuilder =
+                PureBigraphBuilder.create(sig, orGetBigraphMetaModel, pathLoaded);
+        BigraphArtifacts.exportAsInstanceModel(loadedBuilder.createBigraph(), System.out);
+    }
+
+    @Test
+    void mutableBuilder_connectLinkUsingPortIndex() {
+        DefaultDynamicSignature signature = createExampleSignature();
+        HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
+        HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
+        HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
+        HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
+        HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
+        HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
+        MutableBuilder<DefaultDynamicSignature> builder = MutableBuilder.newMutableBuilder(signature);
+
+        BigraphEntity.OuterName y1 = (BigraphEntity.OuterName) builder.createNewOuterName("y1");
+        newOuterNames.put(y1.getName(), y1);
+
+        BigraphEntity<?> newRoot = builder.createNewRoot(0);
+        newRoots.put(0, (BigraphEntity.RootEntity) newRoot);
+        DefaultDynamicControl controlByName = signature.getControlByName("Printer");
+        BigraphEntity.NodeEntity newNode = (BigraphEntity.NodeEntity) builder.createNewNode(controlByName, "v0");
+        newNodes.put("v0", newNode);
+        builder.setParentOfNode(newNode, newRoot);
+        builder.connectToLinkUsingIndex(newNode, y1, 1);
+        builder.connectToLinkUsingIndex(newNode, y1, 0);
+
+        PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
+                builder.getMetaModel(),
+                signature,
+                newRoots,
+                newSites,
+                newNodes,
+                newInnerNames,
+                newOuterNames,
+                newEdges);
+        builder.reset();
+        PureBigraph bigraph = new PureBigraph(meta);
+        Assertions.assertDoesNotThrow(() -> {
+            BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        });
+        List<BigraphEntity.Port> ports = bigraph.getPorts(newNode);
+        System.out.println(ports.size());
+        for (BigraphEntity.Port each : ports) {
+            System.out.println(each.getIndex());
+        }
+    }
+
+    @Test
+    @DisplayName("Connecting Nodes via an Edge using connectByEdge() method")
+    void connect_nodesByEdge_test_01() throws InvalidArityOfControlException {
+        DefaultDynamicSignature sig = pureSignatureBuilder().newControl("A", 1).assign().create();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+
+        PureBigraph bigraph = builder.createRoot().connectByEdge("A", "A").createBigraph();
+
+        assertEquals(1, bigraph.getEdges().size());
+        assertEquals(2, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+    }
+
+    @Test
+    @DisplayName("Connecting Nodes via an Edge by closing inner name")
+    void connect_nodesByEdge_test_02() throws InvalidConnectionException, TypeNotExistsException {
+        DefaultDynamicSignature sig = pureSignatureBuilder().newControl("A", 1).assign().create();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+
+        BigraphEntity.InnerName tmp = builder.createInnerName("tmp");
+        builder.createRoot().addChild("A").linkToInner(tmp).addChild("A").linkToInner(tmp);
+        builder.closeInnerName(tmp);
+        PureBigraph bigraph = builder.createBigraph();
+
+        assertEquals(1, bigraph.getEdges().size());
+        assertEquals(2, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals(0, bigraph.getInnerNames().size());
+    }
+
+    @Test
+    void traversal_tests() throws InvalidConnectionException, TypeNotExistsException, IOException {
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        builder
+                .createRoot()
+                .addChild("A").down().addChild("D").up()
+                .addChild("B").down().addChild("D").addChild("D").up()
+                .addChild("E").down().addChild("D").addChild("D").addChild("D").top()
+        ;
+        PureBigraph bigraph = builder.createBigraph();
+        Traverser<BigraphEntity> traverser = Traverser.forTree(x -> {
+            List<BigraphEntity<?>> children = bigraph.getChildrenOf(x);
+            System.out.format("%s has %d children\n", x.getType(), children.size());
+            return children;
+        });
+        Iterable<BigraphEntity> bigraphEntities = traverser.breadthFirst(bigraph.getRoots());
+        bigraphEntities.forEach(x -> {
+            System.out.println(x);
+        });
+
+        builder = pureBuilder(signature);
+        BigraphEntity.OuterName y1 = builder.createOuterName("y1");
+        BigraphEntity.OuterName y2 = builder.createOuterName("y2");
+        BigraphEntity.OuterName y3 = builder.createOuterName("y3");
+        BigraphEntity.InnerName x1 = builder.createInnerName("x1");
+        builder.createRoot()
+                .connectByEdge("D", "D", "D").linkToOuter(y1)
+                .addChild("D").linkToOuter(y1).down()
+                .addChild("D").linkToOuter(y2).addChild("D").linkToOuter(y3)
+                .addChild("User").linkToOuter(y1).up()
+                .addChild("D").linkToInner(x1);
+        PureBigraph bigraph1 = builder.createBigraph();
+        BigraphArtifacts.exportAsInstanceModel(bigraph1, System.out);
+
+        bigraph1.getAllLinks().forEach(l -> {
+            List<BigraphEntity<?>> pointsFromLink = bigraph1.getPointsFromLink(l);
+            pointsFromLink.forEach(p -> {
+                if (BigraphEntityType.isPort(p)) {
+                    BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph1.getNodeOfPort((BigraphEntity.Port) p);
+                    int ix = bigraph1.getPorts(nodeOfPort).indexOf(p);
+                    System.out.format("Node %s with port at index %d is connected to link %s\n", nodeOfPort.getName(), ix, l.getName());
+                } else if (BigraphEntityType.isInnerName(p)) {
+                    System.out.format("Inner name %s is connected to link %s\n", ((BigraphEntity.InnerName) p).getName(), l.getName());
+                }
+            });
+        });
+
+    }
+
+    @Test
+    void attach_multiple_innerNames() throws InvalidConnectionException, TypeNotExistsException, IOException {
+        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.InnerName x1 = builder.createInnerName("x1");
+        BigraphEntity.InnerName tmp = builder.createInnerName("tmp");
+        builder
+                .createRoot()
+                .addChild("D").linkToInner(tmp)
+                .addChild("D").linkToInner(tmp)
+        ;
+        builder.connectInnerNames(x1, tmp);
+        builder.closeInnerName(tmp);
+        PureBigraph bigraph = builder.createBigraph();
+
+        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        assertEquals(1, bigraph.getRoots().size());
+        assertEquals(2, bigraph.getNodes().size());
+        assertEquals(0, bigraph.getPortCount(bigraph.getNodes().get(0)));
+        assertEquals(0, bigraph.getPortCount(bigraph.getNodes().get(1)));
+        assertEquals(1, bigraph.getInnerNames().size());
+        assertEquals(1, bigraph.getEdges().size());
+        assertEquals(1, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals("x1", ((BigraphEntity.InnerName) bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).get(0)).getName());
+        assertEquals("e1", ((BigraphEntity.Edge) bigraph.getLinkOfPoint(x1)).getName());
+
+
+        builder = pureBuilder(signature);
+        x1 = builder.createInnerName("x1");
+        tmp = builder.createInnerName("tmp");
+        builder
+                .createRoot()
+                .addChild("D").linkToInner(tmp)
+                .addChild("D").linkToInner(tmp)
+        ;
+        builder.addInnerNameTo(tmp, x1);
+        builder.closeInnerName(tmp);
+        bigraph = builder.createBigraph();
+
+        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        assertEquals(1, bigraph.getRoots().size());
+        assertEquals(2, bigraph.getNodes().size());
+        assertEquals(1, bigraph.getPortCount(bigraph.getNodes().get(0)));
+        assertEquals(1, bigraph.getPortCount(bigraph.getNodes().get(1)));
+        assertEquals(1, bigraph.getInnerNames().size());
+        assertEquals(1, bigraph.getEdges().size());
+        assertEquals(3, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals("e0", ((BigraphEntity.Edge) bigraph.getLinkOfPoint(x1)).getName());
+
+        builder = pureBuilder(signature);
+        x1 = builder.createInnerName("x1");
+        BigraphEntity.InnerName x2 = builder.createInnerName("x2");
+        BigraphEntity.OuterName o1 = builder.createOuterName("o1");
+        builder
+                .createRoot()
+                .addChild("D").linkToOuter(o1)
+                .addChild("D").linkToOuter(o1)
+        ;
+        builder.connectInnerToOuterName(x1, o1);
+        builder.addInnerNameTo(x1, x2);
+        builder.closeInnerName(x1);
+        bigraph = builder.createBigraph();
+        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+    }
 
     @Test
     void lean_factory_creation() throws IncompatibleSignatureException, IncompatibleInterfaceException, InvalidConnectionException {
-        pure();
+//        pure();
         DefaultDynamicSignature signature = createExampleSignature();
 
         PureBigraph bigraph = pureBuilder(signature)
@@ -60,7 +267,7 @@ public class BigraphCreationUnitTest {
         assertEquals(1, bigraphComposite.getOuterBigraph().getOuterNames().size());
         assertEquals(0, bigraphComposite.getOuterBigraph().getInnerNames().size());
 
-        end();
+//        end();
     }
 
     @Test
@@ -101,7 +308,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("Create Bigraphs test series")
     class ArityChecks {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        DefaultDynamicSignature signature;
         PureBigraphBuilder<DefaultDynamicSignature> builder;
 
         @BeforeAll
@@ -111,7 +318,7 @@ public class BigraphCreationUnitTest {
 
         @BeforeEach
         void setUp() {
-            builder = factory.createBigraphBuilder(signature);
+            builder = pureBuilder(signature);
         }
 
         @Test
@@ -119,7 +326,7 @@ public class BigraphCreationUnitTest {
         void connect_to_outername_1() {
             BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
             InvalidArityOfControlException am = assertThrows(InvalidArityOfControlException.class, () -> {
-                DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Job");
+                DefaultDynamicControl selected = signature.getControlByName("Job");
                 System.out.println("Node of control will be added: " + selected + " and connected with outer name " + jeff);
                 builder.createRoot()
                         .addSite()
@@ -138,7 +345,7 @@ public class BigraphCreationUnitTest {
             BigraphEntity.OuterName bob = builder.createOuterName("bob");
             System.out.println("exceeding a node's ports w.r.t to the corresponding control's arity");
             InvalidArityOfControlException am2 = assertThrows(InvalidArityOfControlException.class, () -> {
-                DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>> selected = signature.getControlByName("Computer");
+                DefaultDynamicControl selected = signature.getControlByName("Computer");
 
                 builder.createRoot()
                         .addChild(selected)
@@ -153,10 +360,10 @@ public class BigraphCreationUnitTest {
 
     @Test
     void biraph_is_discrete() {
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature = createExampleSignature();
+        DefaultDynamicSignature signature = createExampleSignature();
 
         assertAll(() -> {
-            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
             BigraphEntity.OuterName b = builder.createOuterName("b");
             builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
@@ -172,7 +379,7 @@ public class BigraphCreationUnitTest {
         });
 
         assertAll(() -> {
-            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
             builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
                     .addChild(signature.getControlByName("User"));
@@ -181,7 +388,7 @@ public class BigraphCreationUnitTest {
         });
 
         assertAll(() -> {
-            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
             builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
                     .addChild(signature.getControlByName("User")).linkToOuter(a);
@@ -189,7 +396,7 @@ public class BigraphCreationUnitTest {
             assertFalse(bigraph.isDiscrete());
         });
         assertAll(() -> {
-            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
             BigraphEntity.InnerName a = builder.createInnerName("a");
             builder.createRoot().addChild(signature.getControlByName("Room")).linkToInner(a)
                     .addChild(signature.getControlByName("User")).linkToInner(a);
@@ -199,7 +406,7 @@ public class BigraphCreationUnitTest {
         });
 
         assertAll(() -> {
-            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
             BigraphEntity.OuterName b = builder.createOuterName("b");
             BigraphEntity.OuterName c = builder.createOuterName("c");
@@ -213,7 +420,7 @@ public class BigraphCreationUnitTest {
         });
 
         assertAll(() -> {
-            PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature);
+            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
             BigraphEntity.OuterName a = builder.createOuterName("a");
             BigraphEntity.OuterName b = builder.createOuterName("b");
             builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
@@ -229,7 +436,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ConnectionTestSeries_InnerOuterNames {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        DefaultDynamicSignature signature;
 
         @BeforeAll
         void createSignature() {
@@ -238,7 +445,7 @@ public class BigraphCreationUnitTest {
 
         @BeforeEach
         void setUp() {
-            builder = factory.createBigraphBuilder(signature);
+            builder = pureBuilder(signature);
         }
 
         @Test
@@ -323,12 +530,12 @@ public class BigraphCreationUnitTest {
             Collection<BigraphEntity.Port> ports = bigraph.getPorts(D);
             assertEquals(1, ports.size());
             BigraphEntity.Port port = new ArrayList<>(ports).get(0);
-            BigraphEntity linkOfPoint = bigraph.getLinkOfPoint(port);
+            BigraphEntity<?> linkOfPoint = bigraph.getLinkOfPoint(port);
             assertNotNull(linkOfPoint);
-            Collection<BigraphEntity> pointsFromLink = bigraph.getPointsFromLink(linkOfPoint);
+            Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink((BigraphEntity.Link) linkOfPoint);
             assertEquals(4, pointsFromLink.size());
             int portCnt = 0, innerCnt = 0;
-            for (BigraphEntity eachPoint : pointsFromLink) {
+            for (BigraphEntity<?> eachPoint : pointsFromLink) {
                 if (BigraphEntityType.isPort(eachPoint)) portCnt++;
                 if (BigraphEntityType.isInnerName(eachPoint)) {
                     innerCnt++;
@@ -424,7 +631,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class GroundBigraphTestSeries {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        DefaultDynamicSignature signature;
 
         @BeforeAll
         void createSignature() {
@@ -433,12 +640,12 @@ public class BigraphCreationUnitTest {
 
         @BeforeEach
         void setUp() {
-            builder = factory.createBigraphBuilder(signature);
+            builder = pureBuilder(signature);
         }
 
         @Test
         void makeGround() throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
-            DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> signatureBuilder = new DefaultSignatureBuilder<>();
+            SignatureBuilder<StringTypedName, FiniteOrdinal<Integer>, ?, ?> signatureBuilder = new DynamicSignatureBuilder();
             signatureBuilder
                     .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign();
 //            Signature signature2 = signatureBuilder.createSignature();
@@ -465,7 +672,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class NestedHierarchyTestSeries {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        DefaultDynamicSignature signature;
 
         @BeforeAll
         void createSignature() {
@@ -474,7 +681,7 @@ public class BigraphCreationUnitTest {
 
         @BeforeEach
         void setUp() {
-            builder = factory.createBigraphBuilder(signature);
+            builder = pureBuilder(signature);
         }
 
         @Test
@@ -499,7 +706,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class HierarchyTestSeries {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        DefaultDynamicSignature signature;
 
         @BeforeAll
         void createSignature() {
@@ -508,7 +715,7 @@ public class BigraphCreationUnitTest {
 
         @BeforeEach
         void setUp() {
-            builder = factory.createBigraphBuilder(signature);
+            builder = pureBuilder(signature);
         }
 
         @Test
@@ -541,7 +748,7 @@ public class BigraphCreationUnitTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ControlAtomicityTests {
         PureBigraphBuilder<DefaultDynamicSignature> builder;
-        Signature<DefaultDynamicControl<StringTypedName, FiniteOrdinal<Integer>>> signature;
+        DefaultDynamicSignature signature;
 
         @BeforeAll
         void createSignature() {
@@ -550,7 +757,7 @@ public class BigraphCreationUnitTest {
 
         @BeforeEach
         void setUp() {
-            builder = factory.createBigraphBuilder(signature);
+            builder = pureBuilder(signature);
         }
 
         @Test
@@ -598,11 +805,10 @@ public class BigraphCreationUnitTest {
 
             System.out.println(bigraph);
         }
-
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -610,10 +816,11 @@ public class BigraphCreationUnitTest {
                 .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlKind.PASSIVE).identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlKind.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().kind(ControlKind.ACTIVE).identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(4)).assign()
+                .newControl().status(ControlStatus.ACTIVE).identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().status(ControlStatus.PASSIVE).identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().status(ControlStatus.ACTIVE).identifier(StringTypedName.of("E")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().status(ControlStatus.ATOMIC).identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .newControl().status(ControlStatus.ACTIVE).identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(4)).assign()
         ;
         DefaultDynamicSignature controlSignature = signatureBuilder.create();
         return (S) controlSignature;

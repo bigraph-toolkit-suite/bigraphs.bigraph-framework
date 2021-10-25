@@ -1,0 +1,73 @@
+
+.customTagline > small {
+    display: block;
+    font-weight: normal;
+    font-size: 120%;
+    line-height: 1em;
+    /*color: $primaryColor;*/
+    margin: 0.7em 0 1.3em;
+}
+
+@media only screen and (min-device-width: 260px) and (max-device-width: 1189px) {
+    .myCustomClass {
+        overflow-x: scroll;
+    }
+    .homeContainer {
+        text-align: center;
+    }
+
+    .projectLogo {
+        display: flex !important;
+    }
+
+    .projectLogo img {
+        display: block !important;
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        height: 180px !important;
+        padding-left: 2.5em;
+    }
+
+    .projectTitle {
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 1191px) {
+    .homeContainer {
+        text-align: left;
+    }
+
+    .projectLogo {
+        align-items: flex-end !important;
+        display: flex !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        position: absolute !important;
+        padding: 2em 0 2em 300px !important;
+        margin: 0 !important;
+    }
+
+    .projectTitle {
+        display: flex !important;
+    }
+}
+
+@media only screen and (min-width: 1500px) {
+    .homeContainer {
+        text-align: left;
+    }
+
+    .projectLogo {
+        align-items: flex-end;
+        display: flex;
+        position: absolute;
+        padding: 2em 200px 2em !important;
+        margin: 0 !important;
+    }
+
+    .projectTitle {
+        display: flex !important;
+    }
+}

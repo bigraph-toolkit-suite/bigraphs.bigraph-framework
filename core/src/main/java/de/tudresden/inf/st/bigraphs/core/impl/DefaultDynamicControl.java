@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.impl;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 
 import java.util.Objects;
 
@@ -12,38 +12,40 @@ import java.util.Objects;
  * A node can be atomic or non-atomic which is determined by its control. Atomic nodes are empty. Non-atomic nodes
  * can be active or passive.
  *
- * @param <NT>
- * @param <FO>
+ * @author Dominik Grzelak
  */
-public class DefaultDynamicControl<NT extends NamedType, FO extends FiniteOrdinal> extends AbstractControl<NT, FO> {
+public class DefaultDynamicControl extends AbstractControl<StringTypedName, FiniteOrdinal<Integer>> {
 
-    private final ControlKind kindOfControl;
+    private final ControlStatus statusOfControl;
+
+    int hashed = -1;
 
     /**
-     * Status will be set to {@link ControlKind#ACTIVE}
+     * Status will be set to {@link ControlStatus#ACTIVE}
      *
      * @param name  the label of the control
      * @param arity the arity of the control
      */
-    protected DefaultDynamicControl(NT name, FO arity) {
-        this(name, arity, ControlKind.ACTIVE);
+    protected DefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity) {
+        this(name, arity, ControlStatus.ACTIVE);
     }
 
-    private DefaultDynamicControl(NT name, FO arity, ControlKind kindOfControl) {
+    private DefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity, ControlStatus statusOfControl) {
         super(name, arity);
-        if (Objects.isNull(kindOfControl)) {
-            kindOfControl = ControlKind.ACTIVE;
+        if ((statusOfControl) == null) {
+            statusOfControl = ControlStatus.ACTIVE;
         }
-        this.kindOfControl = kindOfControl;
+        this.statusOfControl = statusOfControl;
     }
 
-    public static <NT extends NamedType, FO extends FiniteOrdinal> DefaultDynamicControl<NT, FO> createDefaultDynamicControl(NT name, FO arity, ControlKind kindOfControl) {
-        return new DefaultDynamicControl<>(name, arity, kindOfControl);
+    public static DefaultDynamicControl createDefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity,
+                                                                    ControlStatus kindOfControl) {
+        return new DefaultDynamicControl(name, arity, kindOfControl);
     }
 
     @Override
-    public ControlKind getControlKind() {
-        return kindOfControl;
+    public ControlStatus getControlKind() {
+        return statusOfControl;
     }
 
     @Override
@@ -51,12 +53,16 @@ public class DefaultDynamicControl<NT extends NamedType, FO extends FiniteOrdina
         if (this == o) return true;
         if (!(o instanceof DefaultDynamicControl)) return false;
         if (!super.equals(o)) return false;
-        DefaultDynamicControl<?, ?> that = (DefaultDynamicControl<?, ?>) o;
-        return kindOfControl == that.kindOfControl;
+        DefaultDynamicControl that = (DefaultDynamicControl) o;
+        return statusOfControl == that.statusOfControl;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), kindOfControl);
+        if(hashed == -1) {
+            hashed = Objects.hash(super.hashCode(), statusOfControl);
+        }
+        return hashed;
+//        return Objects.hash(super.hashCode(), statusOfControl);
     }
 }

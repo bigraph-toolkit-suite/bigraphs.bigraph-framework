@@ -2,27 +2,69 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
+import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DefaultSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EPackage;
+import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControlStatus;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.util.Diagnostician;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Map;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.createOrGetSignature;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphSignatureUnitTest {
 
-    @BeforeAll
-    static void init() {
-//        createSignatures_Test();
-    }
-
     @AfterEach
     void setUp() {
+
+    }
+
+    @Test
+    void test_00() throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .newControl("K", 1).assign()
+                .newControl("L", 1).assign()
+                .create();
+        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
+        DiscreteIon<DefaultDynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
+        Linkings<DefaultDynamicSignature>.Closure x = pureLinkings(sig).closure("x");
+        BigraphComposite<DefaultDynamicSignature> G = ops(K_x).merge(L_x);
+        ops(x).compose(G);
+
+        Bigraph<DefaultDynamicSignature> F = ops(x).compose(G).getOuterBigraph();
+        EObject instanceModel = F.getSignature().getInstanceModel();
+        PureBigraphBuilder<DefaultDynamicSignature> newBuilder =
+                pureBuilder(createOrGetSignature(instanceModel));
+        // ... code of fluent builder API omitted ...
+        PureBigraph bigraph = newBuilder.createBigraph(); //validation triggered
+
+        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bigraph.getModel());
+        if (diagnostic.getSeverity() != Diagnostic.OK) {
+            System.out.println("ERROR in: " + diagnostic.getMessage());
+            for (Diagnostic child : diagnostic.getChildren()) {
+                System.out.println(" " + child.getMessage());
+            }
+        }
 
     }
 
@@ -33,89 +75,252 @@ public class BigraphSignatureUnitTest {
         Assertions.assertEquals(edge2A, edge2B);
     }
 
+    @Test
+    @DisplayName("Create kind signature and test default behavior: All controls are active (non-atomic)")
+    void create_instanceModelFromExtendedKindSignatureClass() throws IOException {
+        KindSignatureBuilder ksb = kindSignatureBuilder();
+
+        KindSignature signature = ksb.addControl("Room", 1)
+                .addControl("Person", 2)
+                .addControl("Computer", 2)
+                .create();
+        EPackage modelPackage = signature.getMetaModel();
+        EObject model = signature.getInstanceModel();
+        assert modelPackage != null;
+        assert model != null;
+
+        Map<String, EReference> allRefsBKindSignature = EMFUtils.findAllReferences2(model.eClass());
+        EReference refBKindSorts = allRefsBKindSignature.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
+        EList<EObject> kindSorts = (EList<EObject>) model.eGet(refBKindSorts);
+        for (EObject eachKindSort : kindSorts) {
+            if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC)) {
+                System.out.println("Active Node: " + eachKindSort);
+                Map<String, EReference> allBKindSortRefs = EMFUtils.findAllReferences2(eachKindSort.eClass());
+                EReference refKindSortChildren = allBKindSortRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDSORTS);
+                EList<EObject> kindSortChildren = (EList<EObject>) eachKindSort.eGet(refKindSortChildren);
+                for (EObject eachChild : kindSortChildren) {
+                    System.out.println("\t" + eachChild);
+                }
+            }
+            if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC)) {
+                System.out.println("Passive Node: " + eachKindSort);
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Create kind signature where place-sorting is specified")
+    void create_instanceModelFromExtendedKindSignatureClass_2() throws ControlNotExistsException, IOException {
+        KindSignatureBuilder ksb = kindSignatureBuilder();
+
+        KindSignature signature = ksb.addControl("Room", 1)
+                .addControl("Person", 2)
+                .addControl("Computer", 2)
+                .addActiveKindSort("Room", Lists.mutable.of("Person", "Computer"))
+                .addPassiveKindSort("Person")
+                .addPassiveKindSort("Computer")
+                .create();
+        EPackage modelPackage = signature.getMetaModel();
+        EObject model = signature.getInstanceModel();
+        assert modelPackage != null;
+        assert model != null;
+
+        Map<String, EReference> allRefsBKindSignature = EMFUtils.findAllReferences2(model.eClass());
+        EReference refBKindSorts = allRefsBKindSignature.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
+        EList<EObject> kindSorts = (EList<EObject>) model.eGet(refBKindSorts);
+        int cntRoom = 0;
+        int cntAtomics = 0;
+        for (EObject eachKindSort : kindSorts) {
+            if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC)) {
+                Map<String, EReference> allBKindSortRefs = EMFUtils.findAllReferences2(eachKindSort.eClass());
+                EReference refKindSortChildren = allBKindSortRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDSORTS);
+                EList<EObject> kindSortChildren = (EList<EObject>) eachKindSort.eGet(refKindSortChildren);
+                System.out.println("Active control: " + eachKindSort.eClass().getName());
+                for (EObject eachChild : kindSortChildren) {
+                    System.out.println("\t" + eachChild.eClass().getName());
+                    cntRoom++;
+                }
+            }
+            if (eachKindSort.eClass().getESuperTypes().get(0).getName().equalsIgnoreCase(BigraphMetaModelConstants.SignaturePackage.ECLASS_BKINDSORTATOMIC)) {
+                System.out.println("Passive control: " + eachKindSort.eClass().getName());
+                cntAtomics++;
+            }
+        }
+
+        assert cntRoom == 2;
+        assert cntAtomics == 2;
+
+        BigraphArtifacts.exportAsMetaModel(signature, System.out);
+        BigraphArtifacts.exportAsInstanceModel(signature, System.out);
+    }
+
+    @Test
+    @DisplayName("Create a pureBuilder instance with a freshly created kind signature instance model")
+    void createPureBuilderFromKindSignatureInstanceModel() {
+        KindSignatureBuilder ksb = kindSignatureBuilder();
+
+        KindSignature signature = ksb.addControl("Room", 1)
+                .addControl("Person", 2)
+                .addControl("Computer", 2)
+                .create();
+        EPackage modelPackage = signature.getMetaModel();
+        EObject model = signature.getInstanceModel();
+        assert modelPackage != null;
+        assert model != null;
+
+        PureBigraphBuilder<KindSignature> ksBigraphBuilder = PureBigraphBuilder.<KindSignature>create(model);
+        assert ksBigraphBuilder.getMetaModel() != null;
+
+        KindSignature kindSignatureRecreated = new KindSignature(model);
+        assert kindSignatureRecreated.getControls().equals(signature.getControls());
+
+        assert kindSignatureRecreated.getPlaceKindMap().get("Room").equals(signature.getPlaceKindMap().get("Room"));
+        assert kindSignatureRecreated.getPlaceKindMap().equals(signature.getPlaceKindMap());
+
+//        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(kindSignatureRecreated);
+//        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
+//        assert orGetMetaModel == orGetMetaModel1;
+    }
+
+    @Test
+    @DisplayName("Create a pureBuilder instance with a freshly created dynamic signature instance model")
+    void createPureBuilderFromDynamicSignatureInstanceModel() throws IOException {
+        DynamicSignatureBuilder dynamicSigBuilder = pureSignatureBuilder();
+
+        DefaultDynamicSignature signature = dynamicSigBuilder.addControl("Room", 1)
+                .addControl("Person", 2, ControlStatus.ATOMIC)
+                .addControl("Computer", 2)
+                .create();
+        EPackage modelPackage = signature.getMetaModel();
+        EObject model = signature.getInstanceModel();
+        assert modelPackage != null;
+        assert model != null;
+
+        System.out.println("Check if signature is already in the BigraphFactory Registry");
+        AbstractEcoreSignature<? extends Control<?, ?>> orGetSignature = BigraphFactory.createOrGetSignature(model);
+        assert orGetSignature.equals(signature);
+        EPackage tmp1 = BigraphFactory.createOrGetSignatureMetaModel(signature);
+        EPackage tmp2 = BigraphFactory.createOrGetSignatureMetaModel(orGetSignature);
+        assert tmp1.equals(tmp2);
+        assert tmp1.equals(modelPackage);
+        assert tmp2.equals(modelPackage);
+
+        PureBigraphBuilder<DefaultDynamicSignature> ksBigraphBuilder = PureBigraphBuilder.<DefaultDynamicSignature>create(model);
+        assert ksBigraphBuilder.getMetaModel() != null;
+        assert !ksBigraphBuilder.getMetaModel().equals(modelPackage); // because only the factory ensures that the sig-registry is asked
+
+        DefaultDynamicSignature dynSignatureRecreated = new DefaultDynamicSignature(model);
+        assert dynSignatureRecreated.getControls().equals(signature.getControls());
+
+
+        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);
+        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(dynSignatureRecreated);
+        assert orGetMetaModel == orGetMetaModel1;
+
+        assert dynSignatureRecreated.getPlaceKindMap().get("Room").equals(signature.getPlaceKindMap().get("Room"));
+        assert dynSignatureRecreated.getPlaceKindMap().get("Person").equals(signature.getPlaceKindMap().get("Person"));
+        assert dynSignatureRecreated.getPlaceKindMap().get("Computer").equals(signature.getPlaceKindMap().get("Computer"));
+        assert dynSignatureRecreated.getPlaceKindMap().size() != 0;
+        assert signature.getPlaceKindMap().size() != 0;
+        assert dynSignatureRecreated.getPlaceKindMap().equals(signature.getPlaceKindMap());
+
+        BigraphArtifacts.exportAsInstanceModel(dynSignatureRecreated, System.out);
+
+    }
+
     //Feature: provide type-checking at compile time (because of type erasure)
-    @DisplayName("Create several signatures of different kinds (only atomic and dynamic ones)")
+    @DisplayName("Create a dynamic signature with atomic controls")
     @Test()
     @Order(1)
-    public void createSignatures_Test() {
+    public void createSignatures_Test() throws IOException {
         // Create signature with active controls
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
-        defaultBuilder.newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign();
-        Signature<Control<StringTypedName, FiniteOrdinal<Integer>>> defaultSignature = defaultBuilder.create();
+        DynamicSignatureBuilder defaultBuilder = new DynamicSignatureBuilder();
+        defaultBuilder.newControl("Printer", 13).status(ControlStatus.ATOMIC).assign();
+        DefaultDynamicSignature defaultSignature = defaultBuilder.create();
+
+        BigraphArtifacts.exportAsMetaModel(defaultSignature, System.out);
+        BigraphArtifacts.exportAsInstanceModel(defaultSignature, System.out);
+
+        EPackage packageObject = defaultSignature.getMetaModel();
+        EObject instanceObject = defaultSignature.getInstanceModel();
+        EClass dynSigEClass = (EClass) packageObject.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE);
+        Map<String, EReference> allRefs = EMFUtils.findAllReferences2(dynSigEClass);
+        EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);
+
+        EClass bControlEClass = (EClass) packageObject.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BCONTROL);
+        EAttribute nameAttr = EMFUtils.findAttribute(bControlEClass, BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_NAME);
+        EAttribute arityAttr = EMFUtils.findAttribute(bControlEClass, BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_ARITY);
+        EAttribute statusAttr = EMFUtils.findAttribute(bControlEClass, BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_STATUS);
+        assert nameAttr != null && arityAttr != null && statusAttr != null;
+        EList<EObject> bControlsList = (EList<EObject>) instanceObject.eGet(eReferenceControls);
+        EObject printerObject = bControlsList.get(0);
+        assert printerObject != null;
+        String o = (String) printerObject.eGet(nameAttr);
+        assert o.equals("Printer");
+        int o2 = (int) printerObject.eGet(arityAttr);
+        assert o2 == 13;
+        EEnumLiteral o3 = (EEnumLiteral) printerObject.eGet(statusAttr);
+        assert o3.getLiteral().equals(BControlStatus.ATOMIC.getLiteral());
+
+    }
+
+    @DisplayName("Create a dynamic signatures with non-atomic controls")
+    @Test()
+    @Order(2)
+    public void create_dynamicSignature() throws IOException {
+        // Create signature with active controls
         // Create signature with dynamic controls
         DynamicSignatureBuilder dynamicBuilder = new DynamicSignatureBuilder();
         dynamicBuilder
-                .newControl().arity(FiniteOrdinal.ofInteger(1)).identifier(StringTypedName.of("Spool")).assign();
-        DefaultDynamicSignature controlSignature = dynamicBuilder.create();
+                .newControl().arity(FiniteOrdinal.ofInteger(19)).identifier(StringTypedName.of("Spool")).status(ControlStatus.ACTIVE).assign()
+                .newControl("Printer", 23).status(ControlStatus.PASSIVE).assign()
+        ;
+        DefaultDynamicSignature dynamicSignature = dynamicBuilder.create();
 
 
-//        DefaultDynamicControl<RandomNameType, FiniteOrdinal<Long>> test
-//                = DefaultDynamicControl.createDefaultDynamicControl(RandomNameType.of(), FiniteOrdinal.ofLong(1), ControlKind.ACTIVE);
-//
-//        dynamicBuilder.addControl(test);
+        BigraphArtifacts.exportAsMetaModel(dynamicSignature, System.out);
+        BigraphArtifacts.exportAsInstanceModel(dynamicSignature, System.out);
 
+        EPackage packageObject = dynamicSignature.getMetaModel();
+        EObject instanceObject = dynamicSignature.getInstanceModel();
+        EClass dynSigEClass = (EClass) packageObject.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE);
+        Map<String, EReference> allRefs = EMFUtils.findAllReferences2(dynSigEClass);
+        EReference eReferenceControls = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BCONTROLS);
 
-//                .newControl();
-//                .identifier(StringTypedName.of(""))
-//                .arity(FiniteOrdinal.ofInteger(1))
-//                .assign()
-//                .createNodeOfEClass();
+        EClass bControlEClass = (EClass) packageObject.getEClassifier(BigraphMetaModelConstants.SignaturePackage.ECLASS_BCONTROL);
+        EAttribute nameAttr = EMFUtils.findAttribute(bControlEClass, BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_NAME);
+        EAttribute arityAttr = EMFUtils.findAttribute(bControlEClass, BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_ARITY);
+        EAttribute statusAttr = EMFUtils.findAttribute(bControlEClass, BigraphMetaModelConstants.SignaturePackage.ATTRIBUTE_STATUS);
+        assert nameAttr != null && arityAttr != null && statusAttr != null;
+        EList<EObject> bControlsList = (EList<EObject>) instanceObject.eGet(eReferenceControls);
+        int ctrlCnt = 0;
+        for (EObject each : bControlsList) {
+            if (each.eClass().getName().equals("Spool")) {
+                String o = (String) each.eGet(nameAttr);
+                assert o.equals("Spool");
+                int o2 = (int) each.eGet(arityAttr);
+                assert o2 == 19;
+                EEnumLiteral o3 = (EEnumLiteral) each.eGet(statusAttr);
+                assert o3.getLiteral().equals(BControlStatus.ACTIVE.getLiteral());
+                ctrlCnt++;
+            }
+            if (each.eClass().getName().equals("Printer")) {
+                String o = (String) each.eGet(nameAttr);
+                assert o.equals("Printer");
+                int o2 = (int) each.eGet(arityAttr);
+                assert o2 == 23;
+                EEnumLiteral o3 = (EEnumLiteral) each.eGet(statusAttr);
+                assert o3.getLiteral().equals(BControlStatus.PASSIVE.getLiteral());
+                ctrlCnt++;
+            }
+        }
 
-//        DefaultSignatureBuilder<Integer> integerDefaultSignatureBuilder = new DefaultSignatureBuilder<>();
-//        integerDefaultSignatureBuilder.begin()
-//                .newControl().arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().arity(FiniteOrdinal.ofInteger(1)).assign();
-//        Iterable<Control> controls = integerDefaultSignatureBuilder.getControls();
-//        System.out.println(cont);
-
-        //Create Controls
-//        DefaultControl<Integer> printer = new DefaultControl<>(null, null);
-//        printer = new DefaultControlBuilder<Integer>()
-//                .arity(FiniteOrdinal.ofInteger(1))
-//                .identifier(StringTypedName.of("printer"))
-//                .createNodeOfEClass();
-//
-//
-////        D cb = new DefaultControlBuilder();
-//        DefaultDynamicControl<Integer> printerDyn = new DefaultDynamicControl<>(null, null);
-//        printerDyn = new DynamicControlBuilder<Integer>()
-//                .identifier(StringTypedName.of("printer"))
-//                .arity(FiniteOrdinal.ofInteger(1))
-//                .createNodeOfEClass();
-
-
-        // Signature
-//        SignatureBuilder<DefaultControl, ?> builder = new DefaultSignatureBuilder();
-//        builder.withControls(controlCollection);
-
-//        SignatureBuilder<DefaultControl, ?> builder = new DefaultSignatureBuilder();
-
-//        SignatureBuilder.newBuilder();
-//        SignatureBuilder<DefaultControl> controlCollectionBuilder =
-//                SignatureBuilder.newBuilder()
-//                .newControl(new DefaultControl(StringTypedName.of("Spool"), FiniteOrdinal.ofInteger(1)))
-//                .newControl(new DefaultControl(StringTypedName.of("Printer"), FiniteOrdinal.ofInteger(1)));
-//        Collection<DefaultControl> controlList0 = controlCollectionBuilder.createNodeOfEClass();
-//
-//        List<DefaultControl> controlList = new ArrayList<>();
-//        controlList.add(new DefaultControl(StringTypedName.of("Spool"), FiniteOrdinal.ofInteger(1)));
-//        controlList.add(new DefaultControl(StringTypedName.of("Printer"), FiniteOrdinal.ofInteger(1)));
-//
-//        Signature<DefaultControl> createNodeOfEClass = builder
-//                .withControls(controlList0)
-//                .createNodeOfEClass();
-//
-//
-//        createNodeOfEClass.getControls().forEach(x -> {
-//            System.out.println(x.getNamedType().getValue() + ":" + x.getArity().getValue());
-//        });
-
-
+        assert ctrlCnt == 2;
     }
 
 
     public static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        DefaultSignatureBuilder<StringTypedName, FiniteOrdinal<Integer>> defaultBuilder = new DefaultSignatureBuilder<>();
+        SignatureBuilder<StringTypedName, FiniteOrdinal<Integer>, ?, ?> defaultBuilder = new DynamicSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -147,7 +352,7 @@ public class BigraphSignatureUnitTest {
 //        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         try {
-            EPackage metapackage = BigraphArtifacts.loadInternalBigraphMetaModel();
+            EPackage metapackage = BigraphArtifacts.loadInternalBigraphMetaMetaModel();
             System.out.println("Model loaded");
 
 //            EPackage metapackage = (EPackage) resource.getContents().get(0);

@@ -2,10 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.pure;
 
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
-import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFailedException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
@@ -34,14 +31,14 @@ import java.util.stream.StreamSupport;
  *
  * @author Dominik Grzelak
  */
-public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSupport<S> {
+public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphBuilderSupport<S> {
     private Logger logger = LoggerFactory.getLogger(PureBigraphBuilder.class);
 
-    protected EPackage loadedEPackage;
+    protected EPackage metaModel;
     protected EObject loadedInstanceModel;
     private PureBigraph bigraph;
 
-    private S signature;
+    private final S signature;
 
     private boolean loadedFromFile = false;
 
@@ -66,23 +63,57 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     private Supplier<String> vertexNameSupplier;
 
     protected final Map<String, BigraphEntity.Edge> availableEdges = new ConcurrentHashMap<>();
-    private final Map<String, BigraphEntity.OuterName> availableOuterNames = new ConcurrentHashMap<>();
-    private final Map<String, BigraphEntity.InnerName> availableInnerNames = new ConcurrentHashMap<>();
-    private final Map<Integer, BigraphEntity.RootEntity> availableRoots = new ConcurrentHashMap<>();
-    private final Map<Integer, BigraphEntity.SiteEntity> availableSites = new ConcurrentHashMap<>();
-    private final Map<String, BigraphEntity.NodeEntity> availableNodes = new ConcurrentHashMap<>();
+    protected final Map<String, BigraphEntity.OuterName> availableOuterNames = new ConcurrentHashMap<>();
+    protected final Map<String, BigraphEntity.InnerName> availableInnerNames = new ConcurrentHashMap<>();
+    protected final Map<Integer, BigraphEntity.RootEntity> availableRoots = new ConcurrentHashMap<>();
+    protected final Map<Integer, BigraphEntity.SiteEntity> availableSites = new ConcurrentHashMap<>();
+    protected final Map<String, BigraphEntity.NodeEntity> availableNodes = new ConcurrentHashMap<>();
 
+    @Override
+    public PureBigraphBuilder<S> spawnNewOne() {
+        return PureBigraphBuilder.create(signature, metaModel, (EObject) null);
+    }
 
+    protected PureBigraphBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
+        this(signature, new EMetaModelData.MetaModelDataBuilder()
+                .setNsPrefix("bigraphBaseModel")
+                .setName("bigraphBaseModel")
+                .setNsUri("http://de.tudresden.inf.st.bigraphs.models")
+                .create());
+    }
+
+    /**
+     * @throws SignatureValidationFailedException If the provided signature metamodel does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    @SuppressWarnings("unchecked")
+    protected PureBigraphBuilder(EObject signatureMetaModel) {
+        this((S) getSignatureFromMetaModel(signatureMetaModel));
+    }
+
+    /**
+     * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
+     *                                                builders signature type {@code S}
+     */
     protected PureBigraphBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
         this.bigraphicalSignatureAsTypeGraph(metaModelData);
     }
 
+    /**
+     * @throws SignatureValidationFailedException If the provided signature metamodel does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    @SuppressWarnings("unchecked")
+    protected PureBigraphBuilder(EObject signatureMetaModel, EMetaModelData metaModelData) {
+        this((S) getSignatureFromMetaModel(signatureMetaModel), metaModelData);
+    }
+
     protected PureBigraphBuilder(S signature, EPackage metaModel, EObject instanceModel) {
         this.signature = signature;
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
-        this.loadedEPackage = metaModel;
+        this.metaModel = metaModel;
         this.initReferencesAndEClasses(false);
         this.loadedInstanceModel = instanceModel;
         // acquire all entities from the instance model and map them to our maps
@@ -90,12 +121,25 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         this.loadedFromFile = true;
     }
 
+    /**
+     * @throws SignatureValidationFailedException If the provided signature metamodel does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    @SuppressWarnings("unchecked")
+    protected PureBigraphBuilder(EObject signatureMetaModel, EPackage metaModel, EObject instanceModel) {
+        this((S) getSignatureFromMetaModel(signatureMetaModel), metaModel, instanceModel);
+    }
+
+    /**
+     * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
+     *                                                builders signature type {@code S}
+     */
     protected PureBigraphBuilder(S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
         try {
             this.loadSignatureAsTypeGraph(metaModelFilePath);
-            List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(loadedEPackage, instanceModelFilePath);
+            List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, instanceModelFilePath);
             this.loadedInstanceModel = eObjects.get(0);
             // acquire all entities from the instance model and map them to our maps
             this.updateAllMaps();
@@ -105,19 +149,50 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         }
     }
 
+    protected PureBigraphBuilder(S signature, EPackage metaModel, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
+        this.signature = signature;
+        this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
+        this.metaModel = metaModel;
+        this.initReferencesAndEClasses(false);
+        try {
+            List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, instanceModelFilePath);
+            this.loadedInstanceModel = eObjects.get(0);
+            // acquire all entities from the instance model and map them to our maps
+            this.updateAllMaps();
+            this.loadedFromFile = true;
+        } catch (IOException e) {
+            throw new BigraphMetaModelLoadingFailedException(e);
+        }
+    }
+
+    /**
+     * @throws SignatureValidationFailedException If the provided signature instance model does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    @SuppressWarnings("unchecked")
+    protected PureBigraphBuilder(EObject signatureInstanceModel, String metaModelFilePath, String instanceModelFilePath) {
+        this((S) getSignatureFromMetaModel(signatureInstanceModel), metaModelFilePath, instanceModelFilePath);
+    }
+
+    /**
+     * @throws BigraphMetaModelLoadingFailedException If the provided signature instance model does not conform the the
+     *                                                builders signature type {@code S}
+     */
     protected PureBigraphBuilder(S signature, String metaModelFilePath) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
         this.loadSignatureAsTypeGraph(metaModelFilePath);
-//        this.loadedFromFile = true;
     }
 
-    protected PureBigraphBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
-        this(signature, new EMetaModelData.MetaModelDataBuilder()
-                .setNsPrefix("bigraphMetaModel")
-                .setName("SAMPLE")
-                .create());
+    /**
+     * @throws SignatureValidationFailedException If the provided signature instance model does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    @SuppressWarnings("unchecked")
+    protected PureBigraphBuilder(EObject signatureInstanceModel, String metaModelFilePath) {
+        this((S) getSignatureFromMetaModel(signatureInstanceModel), metaModelFilePath);
     }
+
 
     /**
      * Should not be directly called by the user. Instead use the {@link de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory}.
@@ -127,14 +202,40 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      * @param <S>                   the type of the signature
      * @param signature             the signature for the builder and the generated bigraph
      * @return a configured builder with the bigraph instance loaded
-     * @throws BigraphMetaModelLoadingFailedException when the model couldn't be loaded
+     * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
+     *                                                builders signature type {@code S}
      */
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModelFilePath, instanceModelFilePath);
     }
 
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel) {
+    /**
+     * @throws SignatureValidationFailedException If the provided signature instance model does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signatureInstance, String metaModelFilePath, String instanceModelFilePath) {
+        return new PureBigraphBuilder<>(signatureInstance, metaModelFilePath, instanceModelFilePath);
+    }
+
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(
+            @NonNull S signature,
+            @NonNull EPackage bigraphMetaModel, String instanceModelFilePath) {
+        return new PureBigraphBuilder<>(signature, bigraphMetaModel, instanceModelFilePath);
+    }
+
+    /**
+     * @throws BigraphMetaModelLoadingFailedException If the provided bigraph metamodel could not be loaded
+     */
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel) throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModel, instanceModel);
+    }
+
+    /**
+     * @throws SignatureValidationFailedException If the provided signature instance model does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signatureInstance, EPackage metaModel, EObject instanceModel) {
+        return new PureBigraphBuilder<>(signatureInstance, metaModel, instanceModel);
     }
 
     /**
@@ -143,11 +244,21 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      * @param signature the signature for the builder
      * @param <S>       type of the signature
      * @return a pure bigraph builder with the given signature
-     * @throws BigraphMetaModelLoadingFailedException when the model couldn't be loaded
+     * @throws BigraphMetaModelLoadingFailedException If the provided bigraph metamodel does not conform the the
+     *                                                builders signature type {@code S}
      */
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature);
+    }
+
+    /**
+     * @throws SignatureValidationFailedException If the provided signature instance model does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signatureInstance)
+            throws BigraphMetaModelLoadingFailedException {
+        return new PureBigraphBuilder<>(signatureInstance);
     }
 
     /**
@@ -157,26 +268,44 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      * @param metaModelData the meta data to use for the model
      * @param <S>           the type of the signature
      * @return a pure bigraph builder over the given signature
-     * @throws BigraphMetaModelLoadingFailedException if the bigraph meta model could not be loaded
+     * @throws BigraphMetaModelLoadingFailedException If the provided bigraph metamodel does not conform the the
+     *                                                builders signature type {@code S}
      */
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
             throws BigraphMetaModelLoadingFailedException {
         return new PureBigraphBuilder<>(signature, metaModelData);
     }
 
-    public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModel)
+    /**
+     * @throws SignatureValidationFailedException If the provided signature instance model does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signatureInstance, EMetaModelData metaModelData)
             throws BigraphMetaModelLoadingFailedException {
-        return new PureBigraphBuilder<>(signature, metaModel);
+        return new PureBigraphBuilder<>(signatureInstance, metaModelData);
     }
 
-    public static <S extends Signature> MutableBuilder<S> newMutableBuilder(@NonNull S signature)
+    /**
+     * @throws BigraphMetaModelLoadingFailedException If the provided bigraph metamodel does not conform the the
+     *                                                builders signature type {@code S}
+     */
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFileName)
             throws BigraphMetaModelLoadingFailedException {
-        return new MutableBuilder<>(signature);
+        return new PureBigraphBuilder<>(signature, metaModelFileName);
+    }
+
+    /**
+     * @throws SignatureValidationFailedException If the provided signature instance model does not conform the the
+     *                                            builders signature type {@code S}
+     */
+    public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> create(@NonNull EObject signatureInstance, String metaModelFileName)
+            throws BigraphMetaModelLoadingFailedException {
+        return new PureBigraphBuilder<>(signatureInstance, metaModelFileName);
     }
 
     @Override
-    protected EPackage getLoadedEPackage() {
-        return this.loadedEPackage;
+    public EPackage getMetaModel() {
+        return this.metaModel;
     }
 
     @Override
@@ -198,6 +327,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      * Method is used to update all necessary entity maps when a bigraph is loaded from the file system.
      */
     private void updateAllMaps() {
+        if ((loadedInstanceModel) == null) return;
         loadedInstanceModel.eContents().stream()
                 .forEach(each -> {
                     if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT))) {
@@ -299,13 +429,13 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
         @Override
         public Hierarchy up() {
-            return Objects.isNull(this.parentHierarchy) ? this : this.parentHierarchy;
+            return (this.parentHierarchy) == null ? this : this.parentHierarchy;
         }
 
         @Override
         public Hierarchy top() {
             Hierarchy tmp = this.parentHierarchy;
-            if (Objects.isNull(tmp)) return this;
+            if ((tmp) == null) return this;
             Hierarchy last = null;
             do {
                 if (tmp != null) last = tmp;
@@ -334,7 +464,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
             // First, check if node is not already in the list or being put under a different name
             // the node itself and the name is searched
             // Ensures that the correct builder was used (because of the node name supplier)
-            if (Objects.isNull(availableNodes.get(((BigraphEntity.NodeEntity) thisOne.getParent()).getName())) &&
+            if ((availableNodes.get(((BigraphEntity.NodeEntity) thisOne.getParent()).getName())) == null &&
                     availableNodes.values().stream().noneMatch(x -> x.equals(thisOne.getParent()))
             ) {
                 addChildToParent(thisOne.getParent());
@@ -395,6 +525,26 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         }
 
         /**
+         * This method will attach the inner name {@code toAttach} to {@code innerName} while respecting a possibly
+         * existing link of {@code innerName}. If no link is present for {@code innerName}, a new <i>edge</i> will be
+         * created.
+         * <p>
+         * As a comparison, for example, {@link #connectInnerNamesToNode(BigraphEntity.InnerName...)} is removing
+         * all existing linkings in order to link the given inner names with a node.
+         *
+         * @param innerName the inner name that will be linked with {@code toAttach} via an existing link or a new one
+         * @param toAttach  the inner name that will be attached to {@code innerName} via an existing link from
+         *                  {@code innerName}, or a new one
+         * @return
+         * @throws InvalidConnectionException
+         * @throws LinkTypeNotExistsException
+         */
+        public Hierarchy addInnerNameTo(BigraphEntity.InnerName innerName, BigraphEntity.InnerName toAttach) throws InvalidConnectionException, LinkTypeNotExistsException {
+            PureBigraphBuilder.this.addInnerNameTo(innerName, toAttach);
+            return this;
+        }
+
+        /**
          * Throws an exception if the given node has an atomic control
          *
          * @param bigraphEntity the bigraph node to check for atomicity
@@ -402,7 +552,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         void assertControlIsNonAtomic(BigraphEntity bigraphEntity) {
             if (Objects.nonNull(bigraphEntity) &&
                     !BigraphEntityType.isRoot(bigraphEntity) &&
-                    ControlKind.isAtomic(bigraphEntity.getControl())) {
+                    ControlStatus.isAtomic(bigraphEntity.getControl())) {
                 throw new ControlIsAtomicException();
             }
         }
@@ -571,7 +721,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     }
 
     protected EObject createSiteOfEClass(int index) {
-        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE));
+        EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE));
         eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), "index"), index);
         return eObject;
     }
@@ -585,19 +735,19 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
     }
 
     protected EObject createRootOfEClass(int index) {
-        final EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT));
+        final EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT));
         setIndexForEObject(eObject, index);
         return eObject;
     }
 
     protected EObject createInnerNameOfEClass(String name) {
-        EObject bInnerName = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME));
+        EObject bInnerName = metaModel.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME));
         bInnerName.eSet(EMFUtils.findAttribute(bInnerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
         return bInnerName;
     }
 
     protected EObject createOuterNameOfEClass(String name) {
-        EObject bInnerName = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME));
+        EObject bInnerName = metaModel.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME));
         bInnerName.eSet(EMFUtils.findAttribute(bInnerName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), name);
         return bInnerName;
     }
@@ -651,6 +801,12 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         EReference linkReference = availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK);
         portObject.eSet(linkReference, edge.getInstance()); //add edge reference for port
         bPorts.add(portObject);
+    }
+
+    protected void connectInnerToLink(BigraphEntity.InnerName innerName, BigraphEntity.Link edge) {
+        EObject innerEObject = innerName.getInstance();
+        EReference linkReference = availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK);
+        innerEObject.eSet(linkReference, edge.getInstance());
     }
 
     protected void connectToLinkUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity theLink, int customPortIndex) {
@@ -775,24 +931,36 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
             if (isInnerNameConnectedToAnyOuterName(innerName)) throw new InnerNameConnectedToOuterNameException();
 
-            //EDGE can connect many inner names: pick the specific edge of the given inner name
-            //check if innerName has an edge (secure: inner name is not connected to an outer name here
-//            EObject linkOfInner = (EObject) innerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK));
-
-            // check if node is connected with the possibly existing edge
-//            if (!isConnectedWithLink(node1, linkOfInner)) {
-            //simply switch edge
-//                if (Objects.nonNull(linkOfInner) && linkOfInner.eClass().equals(eClassEdge)) { // an edge
-////                    newEdge.setInstance(linkOfInner); // replace the instance of an edge
-//                    newEdge = createEdgeOfEClass(linkOfInner);
-//                }
             // and add it to the inner name
             innerName.getInstance().eSet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK), newEdge.getInstance());
-//                if (!isConnectedWithLink(node1, newEdge)) {
-//                    checkIfNodeIsConnectable(node1);
-//                    connectToEdge(node1, newEdge);
-//                }
-//            }
+        }
+    }
+
+    /**
+     * Connects the inner name {@code toAttach} to {@code innerName} via a <emph>link</emph> (i.e., an edge or outer name).
+     * If {@code innerName} is already connected to a <emph>link</emph>, this <emph>link</emph> will be used for
+     * attaching {@code toAttach}. If no link is present for {@code innerName}, a new <i>edge</i> will be created.
+     *
+     * @param innerName the inner name that will be linked with {@code toAttach} via a new link, or an existing one
+     * @param toAttach  the inner name that shall be linked with {@code innerName} via a new link, or an existing one from {@code innerName}
+     */
+    public void addInnerNameTo(BigraphEntity.InnerName innerName, BigraphEntity.InnerName toAttach) throws LinkTypeNotExistsException, InvalidConnectionException {
+        assert innerName.getType().equals(BigraphEntityType.INNER_NAME);
+        assert toAttach.getType().equals(BigraphEntityType.INNER_NAME);
+        if (Objects.isNull(availableInnerNames.get(innerName.getName())) ||
+                Objects.isNull(availableInnerNames.get(toAttach.getName()))) {
+            throw new InnerNameNotExistsException();
+        }
+
+        EObject linkEObject = Optional.ofNullable(getEdgeFromInnerName(innerName))
+                .orElse(getOuterNameFromInnerName(innerName));
+
+        if (Objects.nonNull(linkEObject)) {
+            toAttach.getInstance().eSet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK), linkEObject);
+        } else {
+            BigraphEntity.Edge newEdge = createEdgeOfEClass();
+            toAttach.getInstance().eSet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK), newEdge.getInstance());
+            innerName.getInstance().eSet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK), newEdge.getInstance());
         }
     }
 
@@ -949,6 +1117,20 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return link1;
     }
 
+    /**
+     * This methods will return the connected outer name of an inner name, <b>if</b> available.
+     *
+     * @param innerName the inner name
+     * @return return the outer name connected to the given inner name, otherwise {@code null}
+     */
+    @Nullable
+    private EObject getOuterNameFromInnerName(BigraphEntity.InnerName innerName) {
+        EClass eClassEdge = availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME);
+        EObject link1 = (EObject) innerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK));
+        if (Objects.isNull(link1) || !link1.eClass().equals(eClassEdge)) return null;
+        return link1;
+    }
+
 
     private boolean areInnerNamesConnectedByEdge(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2) {
         EClass eClassInnerName = availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME);
@@ -991,15 +1173,15 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         EObject instance1 = node.getInstance();
 //        EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
-        Integer numberOfConnections = bPorts1.size();
+        int numberOfConnections = bPorts1.size();
         //check arity of control
-        Number arityOfControl = node.getControl().getArity().getValue();
-        Integer castedArityOfControl = numberOfConnections.getClass().cast(arityOfControl);
+        int arityOfControl = (Integer) node.getControl().getArity().getValue();
+//        Integer castedArityOfControl = numberOfConnections.getClass().cast(arityOfControl);
 //        Integer value = (Integer) arity.getValue();
-        castedArityOfControl = castedArityOfControl == null ? 0 : castedArityOfControl;
-        if (castedArityOfControl == 0)
+//        castedArityOfControl = castedArityOfControl == null ? 0 : castedArityOfControl;
+        if (arityOfControl == 0)
             throw new InvalidArityOfControlException();
-        if (numberOfConnections.compareTo(castedArityOfControl) >= 0)
+        if (numberOfConnections >= arityOfControl)
             throw new ToManyConnections(); // numberOfConnections >= castedArityOfControl
     }
 
@@ -1037,7 +1219,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      * @return a new port instance with the index set
      */
     protected EObject createPortWithIndex(final int index) {
-        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_PORT));
+        EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_PORT));
         setIndexForEObject(eObject, index);
         return eObject;
     }
@@ -1061,7 +1243,7 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
      * @return {@code true}, if the given place is connected with the link, otherwise {@code false}.
      */
     protected boolean isConnectedWithLink(BigraphEntity.NodeEntity<Control> place, @Nullable EObject theLink) {
-        if (Objects.isNull(theLink)) return false;
+        if ((theLink) == null) return false;
         EList<EObject> bPorts = (EList<EObject>) place.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
 //        EList<EObject> bPorts = (EList<EObject>) place.getInstance().eGet(factory.getBigraphBaseModelPackage().getBNode_BPorts());
 //        EList<BPort> bPorts = place.getBPorts();
@@ -1100,12 +1282,12 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
         return false;
     }
 
-    protected EObject createNodeOfEClass(String name, @NonNull Control control) {
+    protected EObject createNodeOfEClass(final String name, @NonNull final Control control) {
         return this.createNodeOfEClass(name, control, vertexNameSupplier.get());
     }
 
-    protected EObject createNodeOfEClass(String name, @NonNull Control control, String nodeIdentifier) {
-        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(name));
+    protected EObject createNodeOfEClass(final String name, @NonNull final Control control, String nodeIdentifier) {
+        EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(name));
         EAttribute name1 = EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
         eObject.eSet(name1, nodeIdentifier);
         return eObject;
@@ -1113,9 +1295,9 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     //BLEIBT - HELPER
 
-    protected EObject createEdgeOfEClass0(String edgeName) {
+    protected EObject createEdgeOfEClass0(final String edgeName) {
         assert availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE) != null;
-        EObject eObject = loadedEPackage.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE));
+        EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE));
         eObject.eSet(EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME), edgeName);
         return eObject;
     }
@@ -1142,15 +1324,15 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     @SuppressWarnings("unchecked")
     public PureBigraph createBigraph() {
-        if (Objects.isNull(bigraph)) {
+        if ((bigraph) == null) {
             InstanceParameter meta;
             if (loadedFromFile && Objects.nonNull(loadedInstanceModel)) {
-                meta = new InstanceParameter(loadedEPackage,
+                meta = new InstanceParameter(metaModel,
                         loadedInstanceModel,
                         signature, availableRoots, availableSites,
                         availableNodes, availableInnerNames, availableOuterNames, availableEdges);
             } else {
-                meta = new InstanceParameter(loadedEPackage,
+                meta = new InstanceParameter(metaModel,
                         signature, availableRoots, availableSites,
                         availableNodes, availableInnerNames, availableOuterNames, availableEdges);
                 loadedInstanceModel = meta.getbBigraphObject();
@@ -1323,41 +1505,43 @@ public class PureBigraphBuilder<S extends Signature> extends BigraphBuilderSuppo
 
     public void loadSignatureAsTypeGraph(String metaModelFilePath) {
         try {
-            loadedEPackage = BigraphArtifacts.loadBigraphMetaModel(metaModelFilePath);
-        } catch (IOException e) {
+            metaModel = BigraphArtifacts.loadBigraphMetaModel(metaModelFilePath);
+        } catch (Exception e) {
             throw new BigraphMetaModelLoadingFailedException(e);
         }
         initReferencesAndEClasses(false);
     }
 
     private void initReferencesAndEClasses(boolean createNewNodesForMetaModel) {
-        Iterable<Control<?, ?>> controls = signature.getControls();
+        Iterable<? extends Control<?, ?>> controls = signature.getControls();
         StreamSupport.stream(controls.spliterator(), false)
                 .forEach(x -> {
-                    EClass entityClass = (EClass) loadedEPackage.getEClassifier(BigraphMetaModelConstants.CLASS_NODE);
+                    EClass entityClass = (EClass) metaModel.getEClassifier(BigraphMetaModelConstants.CLASS_NODE);
                     String s = x.getNamedType().stringValue();
                     if (createNewNodesForMetaModel) {
                         EClass newControlClass = EMFUtils.createEClass(s);
-                        EMFUtils.addSuperType(newControlClass, loadedEPackage, entityClass.getName());
-                        loadedEPackage.getEClassifiers().add(newControlClass);
+                        EMFUtils.addSuperType(newControlClass, metaModel, entityClass.getName());
+                        metaModel.getEClassifiers().add(newControlClass);
                     }
                     controlMap.put(s, entityClass);
                 });
-        Set<EReference> allrefs = new HashSet<>();
-        EList<EObject> eObjects = loadedEPackage.eContents();
+//        Set<EReference> allrefs = new HashSet<>();
+        EList<EObject> eObjects = metaModel.eContents();
         for (EObject each : eObjects) {
             availableEClasses.put(((EClassImpl) each).getName(), (EClassImpl) each);
-            allrefs.addAll(EMFUtils.findAllReferences((EClass) each));
+//            allrefs.addAll(EMFUtils.findAllReferences((EClass) each));
+            EMFUtils.findAllReferences((EClass) each).forEach(x -> availableReferences.putIfAbsent(x.getName(), x));
         }
-        allrefs.forEach(x -> availableReferences.put(x.getName(), x));
+//        allrefs.forEach(x -> availableReferences.put(x.getName(), x));
     }
 
     private void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
         try {
-            loadedEPackage = BigraphArtifacts.loadInternalBigraphMetaModel();
-            loadedEPackage.setNsPrefix(modelData.getNsPrefix());
-            loadedEPackage.setNsURI(modelData.getNsUri());
-            loadedEPackage.setName(modelData.getName());
+            // This basically creates a new package and contains all elements later that will be generated
+            metaModel = BigraphArtifacts.loadInternalBigraphMetaMetaModel();
+            metaModel.setNsPrefix(modelData.getNsPrefix());
+            metaModel.setNsURI(modelData.getNsUri());
+            metaModel.setName(modelData.getName());
         } catch (IOException e) {
             throw new BigraphMetaModelLoadingFailedException(e);
         }

@@ -15,14 +15,14 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphComposite;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public interface BigraphComposite<S extends Signature> {
+public interface BigraphComposite<S extends Signature<? extends Control<?, ?>>> {
 
     /**
      * Return the outer bigraph of a composition, that is, the left part of the operator (i.e., outer bigraph).
      *
      * @return the outer bigraph of a composition
      */
-    Bigraph<S> getOuterBigraph();
+    <B extends Bigraph<S>> B getOuterBigraph();
 
     /**
      * Composes two bigraphs where a new immutable bigraph is created.
@@ -43,6 +43,28 @@ public interface BigraphComposite<S extends Signature> {
      * @return a new bigraph composed of both arguments
      */
     BigraphComposite<S> compose(BigraphComposite<S> inner) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+
+    /**
+     * Nesting operation for two bigraphs. It works like composition but with sharing of names.
+     * It is a derived operation and uses parallel and composition operations.
+     *
+     * @param inner the inner bigraph
+     * @return a new composed bigraph
+     * @throws IncompatibleSignatureException if signatures do not match
+     * @throws IncompatibleInterfaceException if both bigraphs have incompatible interface definitions
+     */
+    BigraphComposite<S> nesting(Bigraph<S> inner) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+
+    /**
+     * Nesting operation for two bigraphs. It works like composition but with sharing of names.
+     * It is a derived operation and uses parallel and composition operations.
+     *
+     * @param inner the inner bigraph of type {@link BigraphComposite}
+     * @return a new composed bigraph
+     * @throws IncompatibleSignatureException if signatures do not match
+     * @throws IncompatibleInterfaceException if both bigraphs have incompatible interface definitions
+     */
+    BigraphComposite<S> nesting(BigraphComposite<S> inner) throws IncompatibleSignatureException, IncompatibleInterfaceException;
 
     /**
      * Compute the tensor product of two bigraphs. The outer bigraph is the composite object itself.
@@ -100,6 +122,9 @@ public interface BigraphComposite<S extends Signature> {
      * @throws IncompatibleInterfaceException if the interfaces of both bigraphs are not appropriate for the operator
      */
     BigraphComposite<S> parallelProduct(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+
+    BigraphComposite<S> merge(Bigraph<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
+    BigraphComposite<S> merge(BigraphComposite<S> f) throws IncompatibleSignatureException, IncompatibleInterfaceException;
 
     /**
      * Compute the parallel product in a row.

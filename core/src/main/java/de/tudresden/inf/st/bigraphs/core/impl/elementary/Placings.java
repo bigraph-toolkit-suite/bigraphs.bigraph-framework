@@ -1,15 +1,16 @@
 package de.tudresden.inf.st.bigraphs.core.impl.elementary;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.collections.api.factory.Maps;
+import org.eclipse.collections.api.factory.SortedMaps;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.api.map.sorted.MutableSortedMap;
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
@@ -29,69 +30,82 @@ import java.util.stream.IntStream;
  * By that a special placing called {@literal merge_m: m -> 1} can be derived and is implemented here for
  * convenience. merge_0 = 1, merge_1 = id_1, merge_2 = join, hence, {@literal merge_{m+1} = join o (id_1 + merge_m)}.
  */
-public class Placings<S extends Signature> implements Serializable {
-    private volatile S emptySignature;
+public class Placings<S extends AbstractEcoreSignature<? extends Control<?, ?>>> implements Serializable {
+    private volatile S arbitrarySignature;
     private volatile MutableBuilder<S> mutableBuilder;
-    private EPackage loadedModelPacakge;
-    private EObject instanceModel;
-
-    @Deprecated
-    public Placings(AbstractBigraphFactory factory) {
-//        AbstractBigraphFactory factory = new PureBigraphFactory<>();
-        SignatureBuilder signatureBuilder = factory.createSignatureBuilder();
-        emptySignature = (S) signatureBuilder.createSignature();
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
-        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
-    }
+    private final EPackage loadedModelPackage;
 
     /**
      * @param signatureBuilder to create an empty signature of the appropriate type for working with
      *                         user-defined bigraphs of the same type created with the same factory
      */
     public Placings(SignatureBuilder signatureBuilder) {
-        emptySignature = (S) signatureBuilder.createSignature();
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
-        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
+        arbitrarySignature = (S) signatureBuilder.createEmpty();
+        mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
+        loadedModelPackage = mutableBuilder.getMetaModel();
     }
 
     public Placings(S signature) {
-        emptySignature = signature;
-        mutableBuilder = PureBigraphBuilder.newMutableBuilder(emptySignature);
-        loadedModelPacakge = mutableBuilder.getLoadedEPackage();
+        this(signature, (EMetaModelData) null);
     }
 
+    public Placings(S signature, EMetaModelData metaModelData) {
+        arbitrarySignature = signature;
+        if (Objects.nonNull(metaModelData)) {
+            mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature, metaModelData);
+        } else {
+            mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature);
+        }
+        loadedModelPackage = mutableBuilder.getMetaModel();
+    }
+
+    public Placings(S signature, EPackage bigraphMetaModel) {
+        arbitrarySignature = signature;
+        mutableBuilder = MutableBuilder.newMutableBuilder(arbitrarySignature, bigraphMetaModel);
+        assert bigraphMetaModel == mutableBuilder.getMetaModel();
+        loadedModelPackage = mutableBuilder.getMetaModel();
+    }
+
+
     public Placings<S>.Barren barren() {
+        mutableBuilder.reset();
         return new Barren();
     }
 
     public Placings<S>.Identity1 identity1() {
+        mutableBuilder.reset();
         return new Identity1();
     }
 
     public Symmetry symmetry11() {
+        mutableBuilder.reset();
         return new Symmetry(2);
     }
 
     public Symmetry symmetry(int n) {
+        mutableBuilder.reset();
         return new Symmetry(n);
     }
 
     public Placings<S>.Merge merge(int m) {
+        mutableBuilder.reset();
         return new Merge(m);
     }
 
     public Placings<S>.Join join() {
+        mutableBuilder.reset();
         return new Join();
     }
 
     /**
-     * Create an "equally distributed permutation", similiar to an identity place graph.
+     * Create a bijection from sites to roots, similar to an identity place graph.
      * Each site will be mapped exactly to one root where the indices match.
      *
-     * @param n number of sites respectively roots mapped to each other {@literal n_i -> n_i, i in 1..n}
+     * @param n number of sites/roots that are mapped to each other: {@literal n_i -> n_i, i in 0...n-1}
      * @return an "equally distributed permutation"
      */
     public Placings<S>.Permutation permutation(int n) {
+        mutableBuilder.reset();
         return new Permutation(n);
     }
 
@@ -102,10 +116,11 @@ public class Placings<S extends Signature> implements Serializable {
             super(null);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
 
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
-                    emptySignature, new HashMap<Integer, BigraphEntity.RootEntity>() {{
-                        put(0, root);
-                    }}, Collections.emptyMap(),
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
+                    arbitrarySignature,
+                    SortedMaps.mutable.of(0, root),
+                    Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -114,12 +129,17 @@ public class Placings<S extends Signature> implements Serializable {
 
         @Override
         public S getSignature() {
-            return emptySignature;
+            return arbitrarySignature;
         }
 
         @Override
         public final Collection<BigraphEntity.RootEntity> getRoots() {
             return Collections.singletonList(root);
+        }
+
+        @Override
+        public Collection<BigraphEntity.SiteEntity> getSites() {
+            return Collections.EMPTY_LIST;
         }
 
         /**
@@ -129,7 +149,7 @@ public class Placings<S extends Signature> implements Serializable {
          * @return always returns {@code null}
          */
         @Override
-        public final BigraphEntity getParent(BigraphEntity node) {
+        public final BigraphEntity<?> getParent(BigraphEntity<?> node) {
             return null;
         }
 
@@ -139,44 +159,39 @@ public class Placings<S extends Signature> implements Serializable {
          * @return the barren's root
          */
         @Override
-        public Collection<BigraphEntity> getAllPlaces() {
-            return Collections.singletonList(root);
+        public List<BigraphEntity<?>> getAllPlaces() {
+            return super.getAllPlaces();
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             return Collections.EMPTY_LIST;
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPacakge;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.EMPTY_LIST;
         }
     }
 
     public class Join extends ElementaryBigraph<S> {
         private final BigraphEntity.RootEntity root;
-        private final List<BigraphEntity.SiteEntity> sites = new ArrayList<>(2);
+        private final ImmutableList<BigraphEntity.SiteEntity> sites;
 
         Join() {
             super(null);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
-            sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(0));
-            sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(1));
-            sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
+            sites = Lists.immutable.of(
+                    (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(0),
+                    (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(1)
+            );
 
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
-                    emptySignature, new HashMap<Integer, BigraphEntity.RootEntity>() {{
-                        put(0, root);
-                    }}, new HashMap<Integer, BigraphEntity.SiteEntity>() {{
-                        put(0, sites.get(0));
-                        put(1, sites.get(1));
-                    }},
+            sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
+                    arbitrarySignature,
+                    SortedMaps.mutable.of(0, root),
+                    SortedMaps.mutable.of(0, sites.get(0), 1, sites.get(1)),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -185,7 +200,7 @@ public class Placings<S extends Signature> implements Serializable {
 
         @Override
         public S getSignature() {
-            return emptySignature;
+            return arbitrarySignature;
         }
 
         @Override
@@ -195,38 +210,22 @@ public class Placings<S extends Signature> implements Serializable {
 
         @Override
         public final Collection<BigraphEntity.SiteEntity> getSites() {
-            return sites;
-        }
-
-        /**
-         * Returns the single root and the two sites of this join.
-         *
-         * @return the join's root and two children
-         */
-        @Override
-        public Collection<BigraphEntity> getAllPlaces() {
-            Collection<BigraphEntity> list = new ArrayList<>();
-            list.add(root);
-            list.addAll(sites);
-            return list;
+            return sites.castToList();
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
-            if (BigraphEntityType.isSite(node) && sites.contains((BigraphEntity.SiteEntity) node)) {
-                return sites.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
+            if (BigraphEntityType.isSite(node) && sites.contains(node)) {
+                return sites.stream().filter(x -> !x.equals(node))
+                        .map(x -> (BigraphEntity<?>) x)
+                        .collect(Collectors.toCollection(LinkedList<BigraphEntity<?>>::new));
             }
             return Collections.emptyList();
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPacakge;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -235,23 +234,22 @@ public class Placings<S extends Signature> implements Serializable {
      */
     public class Merge extends ElementaryBigraph<S> {
         private final BigraphEntity.RootEntity root;
-        private final List<BigraphEntity.SiteEntity> sites;
+        //        private final MutableList<BigraphEntity.SiteEntity> sites;
+        private final MutableSortedMap<Integer, BigraphEntity.SiteEntity> sitesMap = SortedMaps.mutable.empty();
 
         Merge(final int m) {
             super(null);
-            HashMap<Integer, BigraphEntity.SiteEntity> sitesMap = new HashMap<>();
-            sites = new ArrayList<>(m);
             root = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(0);
             IntStream.range(0, m).forEach(value -> {
-                sites.add((BigraphEntity.SiteEntity) mutableBuilder.createNewSite(value));
-                sitesMap.put(value, sites.get(value));
+                BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(value);
+                setParentOfNode(newSite, root);
+                sitesMap.put(value, newSite);
             });
-            sites.forEach(siteEntity -> setParentOfNode(siteEntity, root));
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
-                    emptySignature, new HashMap<Integer, BigraphEntity.RootEntity>() {{
-                        put(0, root);
-                    }}, sitesMap,
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
+                    arbitrarySignature,
+                    SortedMaps.mutable.of(0, root),
+                    sitesMap,
                     Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -261,7 +259,7 @@ public class Placings<S extends Signature> implements Serializable {
 
         @Override
         public S getSignature() {
-            return emptySignature;
+            return arbitrarySignature;
         }
 
         @Override
@@ -271,38 +269,22 @@ public class Placings<S extends Signature> implements Serializable {
 
         @Override
         public final Collection<BigraphEntity.SiteEntity> getSites() {
-            return sites;
-        }
-
-        /**
-         * Returns the single root and the {@code n} sites of this merge.
-         *
-         * @return the merge's root and {@code n} sites
-         */
-        @Override
-        public Collection<BigraphEntity> getAllPlaces() {
-            Collection<BigraphEntity> list = new ArrayList<>();
-            list.add(root);
-            list.addAll(sites);
-            return list;
+            return sitesMap.values();
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
-            if (BigraphEntityType.isSite(node) && sites.contains((BigraphEntity.SiteEntity) node)) {
-                return sites.stream().filter(x -> !x.equals(node)).collect(Collectors.toList());
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
+            if (BigraphEntityType.isSite(node) && sitesMap.containsValue(node)) {
+                return sitesMap.values().stream().filter(x -> !x.equals(node))
+                        .map(x -> (BigraphEntity<?>) x)
+                        .collect(Collectors.toCollection(LinkedList::new));
             }
             return Collections.emptyList();
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPacakge;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -313,28 +295,21 @@ public class Placings<S extends Signature> implements Serializable {
      * Each site will be mapped to one root where the indices are the same.
      */
     public class Permutation extends ElementaryBigraph<S> {
-        protected final Collection<BigraphEntity.RootEntity> roots;
-        private final Collection<BigraphEntity.SiteEntity> sites;
+        private final MutableSortedMap<Integer, BigraphEntity.RootEntity> rootsMap = SortedMaps.mutable.empty();
+        private final MutableSortedMap<Integer, BigraphEntity.SiteEntity> sitesMap = SortedMaps.mutable.empty();
 
         Permutation(int n) {
             super(null);
-            roots = new ArrayList<>(n);
-            sites = new ArrayList<>(n);
-            HashMap<Integer, BigraphEntity.RootEntity> rootsMap = new HashMap<>();
-            HashMap<Integer, BigraphEntity.SiteEntity> sitesMap = new HashMap<>();
-
             for (int i = 0; i < n; i++) {
                 BigraphEntity.RootEntity newRoot = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(i);
                 BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(i);
                 setParentOfNode(newSite, newRoot);
-                roots.add(newRoot);
-                sites.add(newSite);
                 rootsMap.put(i, newRoot);
                 sitesMap.put(i, newSite);
             }
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
-                    emptySignature, rootsMap, sitesMap,
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
+                    arbitrarySignature, rootsMap, sitesMap,
                     Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -343,32 +318,33 @@ public class Placings<S extends Signature> implements Serializable {
 
         @Override
         public Collection<BigraphEntity.RootEntity> getRoots() {
-            return roots;
+            return rootsMap.values();
         }
 
         @Override
         public Collection<BigraphEntity.SiteEntity> getSites() {
-            return sites;
+            return sitesMap.values();
         }
 
         @Override
         public S getSignature() {
-            return emptySignature;
+            return arbitrarySignature;
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
+        public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
+            if (!(node instanceof BigraphEntity.RootEntity)) return Collections.emptyList();
+            return Lists.mutable.of(sitesMap.get(((BigraphEntity.RootEntity) node).getIndex()));
+        }
+
+        @Override
+        public List<BigraphEntity<?>> getSiblingsOfNode(BigraphEntity<?> node) {
             return Collections.emptyList();
         }
 
         @Override
-        public EPackage getModelPackage() {
-            return loadedModelPacakge;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+        public Collection<BigraphEntity.InnerName> getSiblingsOfInnerName(BigraphEntity.InnerName innerName) {
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -386,25 +362,21 @@ public class Placings<S extends Signature> implements Serializable {
      * Symmetry placings
      */
     public class Symmetry extends Permutation {
-        private final Collection<BigraphEntity.RootEntity> roots = new ArrayList<>(2);
-        private final Collection<BigraphEntity.SiteEntity> sites = new ArrayList<>(2);
+        private final MutableSortedMap<Integer, BigraphEntity.RootEntity> rootsMap = SortedMaps.mutable.empty();
+        private final MutableMap<Integer, BigraphEntity.SiteEntity> sitesMap = Maps.mutable.empty();
 
         Symmetry(int n) {
             super(0);
-            HashMap<Integer, BigraphEntity.RootEntity> rootsMap = new HashMap<>();
-            HashMap<Integer, BigraphEntity.SiteEntity> sitesMap = new HashMap<>();
-            for (int i = 0, j = 1; i < n; i++, j--) {
+            for (int i = 0, j = (n - 1); i < n; i++, j--) {
                 BigraphEntity.RootEntity newRoot = (BigraphEntity.RootEntity) mutableBuilder.createNewRoot(i);
                 BigraphEntity.SiteEntity newSite = (BigraphEntity.SiteEntity) mutableBuilder.createNewSite(j);
                 setParentOfNode(newSite, newRoot);
-                roots.add(newRoot);
-                sites.add(newSite);
                 rootsMap.put(i, newRoot);
                 sitesMap.put(j, newSite);
             }
-
-            instanceModel = mutableBuilder.createInstanceModel(loadedModelPacakge,
-                    emptySignature, rootsMap, sitesMap,
+            metaModelPackage = loadedModelPackage; //EcoreUtil.copy(loadedModelPackage);
+            instanceModel = mutableBuilder.createInstanceModel(metaModelPackage,
+                    arbitrarySignature, rootsMap, sitesMap,
                     Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyMap(),
@@ -413,38 +385,35 @@ public class Placings<S extends Signature> implements Serializable {
 
         @Override
         public Collection<BigraphEntity.RootEntity> getRoots() {
-            return roots;
+            return rootsMap.values();
         }
 
         @Override
         public Collection<BigraphEntity.SiteEntity> getSites() {
-            return sites;
+            return sitesMap.values();
         }
 
         @Override
-        public Collection<BigraphEntity> getSiblingsOfNode(BigraphEntity node) {
-            return Collections.emptyList();
+        public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
+            if (!(node instanceof BigraphEntity.RootEntity)) return Collections.emptyList();
+            int n = sitesMap.size();
+            int ix = Math.abs((n - 1) - ((BigraphEntity.RootEntity) node).getIndex());
+            return Lists.mutable.of(sitesMap.get(ix));
         }
 
         @Override
         public S getSignature() {
-            return emptySignature;
-        }
-
-        @Override
-        public EPackage getModelPackage() {
-            return loadedModelPacakge;
-        }
-
-        @Override
-        public EObject getModel() {
-            return instanceModel;
+            return arbitrarySignature;
         }
     }
 
+    //TODO: move to BigraphUtils/EcoreUtils
     private void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         node.getInstance().eSet(prntRef, parent.getInstance()); // child is automatically added to the parent according to the ecore model
     }
 
+    public EPackage getLoadedModelPackage() {
+        return loadedModelPackage;
+    }
 }

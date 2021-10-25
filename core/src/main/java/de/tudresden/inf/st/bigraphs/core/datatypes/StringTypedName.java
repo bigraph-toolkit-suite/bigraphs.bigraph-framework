@@ -15,7 +15,7 @@ public class StringTypedName implements NamedType<String> {
     protected StringTypedName() {
     }
 
-    protected StringTypedName(String value) {
+    public StringTypedName(String value) {
         this.name = value;
     }
 

@@ -21,12 +21,14 @@ import java.util.Objects;
  * The objects cannot be instatiated with the constructor. Therefore, the builder shall be used.
  *
  * @param <C> type of the controls
+ * @author Dominik Grzelak
  */
 public class BigraphEntity<C extends Control> {
 
     private EObject instance;
     private C control;
     protected BigraphEntityType type;
+    int hashed = -1;
 
     private BigraphEntity() {
     }
@@ -52,7 +54,6 @@ public class BigraphEntity<C extends Control> {
      */
     @Deprecated
     BigraphEntity(BigraphEntity<C> bigraphEntity) {
-//        this.setInstance(bigraphEntity.getInstance());
         this.instance = bigraphEntity.getInstance();
         this.control = bigraphEntity.getControl();
         this.type = bigraphEntity.getType();
@@ -62,11 +63,6 @@ public class BigraphEntity<C extends Control> {
     public EObject getInstance() {
         return instance;
     }
-
-//    BigraphEntity setInstance(EObject instance) {
-//        this.instance = instance;
-//        return this;
-//    }
 
     public C getControl() {
         return control;
@@ -102,7 +98,11 @@ public class BigraphEntity<C extends Control> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(instance, control, type);
+        if (hashed == -1) {
+            hashed = Objects.hash(instance, control, type);
+        }
+        return hashed;
+//        return Objects.hash(instance, control, type);
     }
 
     @NonNull
@@ -121,6 +121,7 @@ public class BigraphEntity<C extends Control> {
     }
 
     public static class InnerName extends BigraphEntity {
+        String toString = null;
 
         InnerName(@NonNull EObject instance) {
             super(instance, null, BigraphEntityType.INNER_NAME);
@@ -130,6 +131,14 @@ public class BigraphEntity<C extends Control> {
             EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             Object name = getInstance().eGet(nameAttr);
             return String.valueOf(name);
+        }
+
+        @Override
+        public String toString() {
+            if (Objects.isNull(toString)) {
+                toString = new StringBuilder(getName()).append(":").append("InnerName").toString();
+            }
+            return toString;
         }
     }
 
@@ -148,20 +157,39 @@ public class BigraphEntity<C extends Control> {
     }
 
     public static class OuterName extends Link {
+        String toString = null;
 
         OuterName(@NonNull EObject instance) {
             super(instance, BigraphEntityType.OUTER_NAME);
         }
+
+        @Override
+        public String toString() {
+            if (Objects.isNull(toString)) {
+                toString = new StringBuilder(getName()).append(":").append("OuterName").toString();
+            }
+            return toString;
+        }
     }
 
     public static class Edge extends Link {
+        String toString = null;
 
         Edge(EObject instance) {
             super(instance, BigraphEntityType.EDGE);
         }
+
+        @Override
+        public String toString() {
+            if (Objects.isNull(toString)) {
+                toString = new StringBuilder(getName()).append(":").append("Edge").toString();
+            }
+            return toString;
+        }
     }
 
     public static class NodeEntity<C extends Control> extends BigraphEntity<C> {
+        String toString = null;
 
         NodeEntity(@NonNull EObject instance, C control) {
             super(instance, control, BigraphEntityType.NODE);
@@ -169,8 +197,6 @@ public class BigraphEntity<C extends Control> {
 
         public String getName() {
             EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-//            Object name = getInstance().eGet(nameAttr);
-//            return String.valueOf(name);
             return Objects.nonNull(nameAttr) ? String.valueOf(getInstance().eGet(nameAttr)) : "";
         }
 
@@ -181,14 +207,19 @@ public class BigraphEntity<C extends Control> {
 
         @Override
         public String toString() {
-            return "NodeEntity{" + getName() +
-                    ", control=" + getControl().getNamedType().stringValue() + ", " + getControl().getArity().getValue() +
-                    '}';
+            if (Objects.isNull(toString)) {
+                toString = new StringBuilder(getName())
+                        .append(":").append("NodeEntity").append("{")
+                        .append(getControl().getNamedType().stringValue()).append(":").append(getControl().getArity().getValue())
+                        .append("}").toString();
+            }
+            return toString;
         }
     }
 
-    public static class SiteEntity extends BigraphEntity {
+    public static class SiteEntity extends BigraphEntity implements Comparable<BigraphEntity.SiteEntity>{
         int index;
+        String toString = null;
 
         public SiteEntity() {
             super(null, BigraphEntityType.SITE);
@@ -208,9 +239,23 @@ public class BigraphEntity<C extends Control> {
             return index;
         }
 
+        @Override
+        public String toString() {
+            if (Objects.isNull(toString)) {
+                toString = new StringBuilder("").append(getIndex())
+                        .append(":").append("Site").toString();
+            }
+            return toString;
+        }
+
+        @Override
+        public int compareTo(BigraphEntity.SiteEntity otherPort) {
+            return Integer.compare(this.getIndex(), otherPort.getIndex());
+        }
     }
 
-    public static class Port extends BigraphEntity {
+    public static class Port extends BigraphEntity implements Comparable<BigraphEntity.Port> {
+        String toString = null;
 
         public Port() {
             super(null, BigraphEntityType.PORT);
@@ -231,11 +276,24 @@ public class BigraphEntity<C extends Control> {
             getInstance().eSet(idxAttr, index);
         }
 
+        @Override
+        public String toString() {
+            if (Objects.isNull(toString)) {
+                toString = new StringBuilder("Port").append(":").append(getIndex()).toString();
+            }
+            return toString;
+        }
+
+        @Override
+        public int compareTo(BigraphEntity.Port otherPort) {
+            return Integer.compare(this.getIndex(), otherPort.getIndex());
+        }
     }
 
 
-    public static class RootEntity extends BigraphEntity {
+    public static class RootEntity extends BigraphEntity implements Comparable<BigraphEntity.RootEntity> {
         int index;
+        String toString = null;
 
         RootEntity() {
             super(null, BigraphEntityType.ROOT);
@@ -253,6 +311,19 @@ public class BigraphEntity<C extends Control> {
 
         public int getIndex() {
             return index;
+        }
+
+        @Override
+        public String toString() {
+            if ((toString) == null) {
+                toString = new StringBuilder("").append(getIndex()).append(":").append("Root").toString();
+            }
+            return toString;
+        }
+
+        @Override
+        public int compareTo(BigraphEntity.RootEntity otherRoot) {
+            return Integer.compare(this.getIndex(), otherRoot.getIndex());
         }
     }
 }

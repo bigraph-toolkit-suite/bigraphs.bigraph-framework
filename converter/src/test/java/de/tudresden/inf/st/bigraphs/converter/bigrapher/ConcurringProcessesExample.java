@@ -1,25 +1,22 @@
 package de.tudresden.inf.st.bigraphs.converter.bigrapher;
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.simulation.ReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.simulation.reactivesystem.impl.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * @author Dominik Grzelak
@@ -27,7 +24,7 @@ import java.io.IOException;
 public class ConcurringProcessesExample {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/processes/";
-    private static PureBigraphFactory factory = AbstractBigraphFactory.createPureBigraphFactory();
+//    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -38,20 +35,20 @@ public class ConcurringProcessesExample {
 
     /**
      * bigrapher full -d ./model -f svg -s states -M 20 -t trans.svg -v model.big
+     *
      * @throws InvalidConnectionException
      * @throws IOException
      * @throws InvalidReactionRuleException
-     * @throws BigraphSimulationException
      */
     @Test
-    void convert_process_example() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException {
+    void convert_process_example() throws InvalidConnectionException, IOException, InvalidReactionRuleException {
         PureBigraph agent = createAgent();
         ReactionRule<PureBigraph> rule_resourceRegistrationPhase = createRule_ResourceRegistrationPhase();
         ReactionRule<PureBigraph> rule_processWorkingPhase = createRule_ProcessWorkingPhase();
         ReactionRule<PureBigraph> rule_resourceDeregistrationPhase = createRule_ResourceDeregistrationPhase();
 
 
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
         reactiveSystem.setAgent(agent);
         reactiveSystem.addReactionRule(rule_resourceRegistrationPhase);
         reactiveSystem.addReactionRule(rule_processWorkingPhase);
@@ -64,7 +61,7 @@ public class ConcurringProcessesExample {
     }
 
     PureBigraph createAgent() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
 
         builder.createRoot()
                 .addChild("Process", "access1")
@@ -76,8 +73,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ResourceRegistrationPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
 
         builderRedex.createRoot().addChild("Process", "access");
         builderRedex.createRoot().addChild("Resource").down().addChild("Token");
@@ -93,8 +90,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ResourceDeregistrationPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
 
         builderRedex.createRoot().addChild("Process", "access").down().addChild("Working").top();
         builderRedex.createRoot().addChild("Resource").down().addChild("Token", "access");
@@ -109,8 +106,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ProcessWorkingPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = factory.createBigraphBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = factory.createBigraphBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
 
         builderRedex.createRoot().addChild("Process", "access");
         builderRedex.createRoot().addChild("Resource").down().addChild("Token", "access");
@@ -124,8 +121,8 @@ public class ConcurringProcessesExample {
         return rr;
     }
 
-    private <C extends Control<?, ?>, S extends Signature<C>> S createSignature() {
-        DynamicSignatureBuilder defaultBuilder = factory.createSignatureBuilder();
+    private DefaultDynamicSignature createSignature() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Process")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Token")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -137,6 +134,6 @@ public class ConcurringProcessesExample {
 //                .newControl().identifier(StringTypedName.of("Right")).arity(FiniteOrdinal.ofInteger(0)).assign()
         ;
 
-        return (S) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 }

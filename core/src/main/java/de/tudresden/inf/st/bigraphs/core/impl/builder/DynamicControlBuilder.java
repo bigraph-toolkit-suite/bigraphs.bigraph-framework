@@ -1,22 +1,33 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
-import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.ControlBuilder;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 
-public class DynamicControlBuilder extends ControlBuilder<StringTypedName,
-        FiniteOrdinal<Integer>, DynamicControlBuilder> {
-    private ControlKind kind;
+/**
+ * The concrete dynamic control builder used by the {@link DynamicSignatureBuilder}.
+ * It allows to specify if a control is active, passive or atomic.
+ *
+ * @author Dominik Grzelak
+ * @see DynamicSignatureBuilder
+ */
+public class DynamicControlBuilder extends ControlBuilder<StringTypedName, FiniteOrdinal<Integer>, DynamicControlBuilder> {
+    private ControlStatus status;
 
     protected DynamicControlBuilder() {
         super();
     }
 
-    public DynamicControlBuilder kind(ControlKind kind) {
-        this.kind = kind;
+    public DynamicControlBuilder status(ControlStatus status) {
+        this.status = status;
         return self();
+    }
+
+    @Override
+    public DynamicSignatureBuilder assign() {
+        return (DynamicSignatureBuilder) super.assign();
     }
 
     public DynamicControlBuilder identifier(String name) {
@@ -29,6 +40,6 @@ public class DynamicControlBuilder extends ControlBuilder<StringTypedName,
 
     @Override
     protected DefaultDynamicControl build() {
-        return DefaultDynamicControl.createDefaultDynamicControl(getType(), getArity(), this.kind);
+        return DefaultDynamicControl.createDefaultDynamicControl(getType(), getArity(), this.status);
     }
 }

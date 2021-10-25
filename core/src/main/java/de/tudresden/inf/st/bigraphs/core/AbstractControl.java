@@ -5,9 +5,18 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 
 import java.util.Objects;
 
-public abstract class AbstractControl<NT extends NamedType, V extends FiniteOrdinal> implements Control<NT, V> {
+/**
+ * Abstract class representing a control of a signature.
+ *
+ * @param <NT>
+ * @param <V>
+ * @author Dominik Grzelak
+ */
+public abstract class AbstractControl<NT extends NamedType<?>, V extends FiniteOrdinal<?>> implements Control<NT, V> {
     protected final NT name;
     protected final V arity;
+
+    int hashed = -1;
 
     public AbstractControl(NT name, V artiy) {
         this.name = name;
@@ -43,6 +52,10 @@ public abstract class AbstractControl<NT extends NamedType, V extends FiniteOrdi
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, arity);
+        if (hashed == -1) {
+            hashed = Objects.hash(name, arity);
+        }
+        return hashed;
+//        return Objects.hash(name, arity);
     }
 }
