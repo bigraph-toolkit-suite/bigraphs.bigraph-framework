@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
-        A complete framework for creating bigraphs and performing simulations on bigraphical reactive systems.
+        A complete framework for creating bigraphs and performing simulations with bigraphical reactive systems.
     </description>
 
     <modules>
