@@ -3,7 +3,7 @@ image: maven:3.8.1-jdk-11-slim
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
   MAVEN_OPTS: "-Ddoclint=none"
-  CHANGELOG_FILE: "changelog_v0.9.0.md"
+  CHANGELOG_FILE: "changelog_v0.9.5-SNAPSHOT.md"
   STAGING_JOBS_ENABLED: "false"
   REMOTE_ST_GITHUB: "git@github.com:st-tu-dresden/bigraph-framework.git"
 
