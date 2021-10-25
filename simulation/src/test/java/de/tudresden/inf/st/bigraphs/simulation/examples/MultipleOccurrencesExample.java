@@ -12,6 +12,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.analysis.ReactionGraphAnalysis;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraphStats;
@@ -20,11 +21,13 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
@@ -33,7 +36,7 @@ import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckin
  * @author Dominik Grzelak
  */
 public class MultipleOccurrencesExample {
-    //    private static PureBigraphFactory factory = pure();
+
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/multiple/";
 
     @BeforeAll
@@ -79,6 +82,16 @@ public class MultipleOccurrencesExample {
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
+
+        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
+        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        Assertions.assertEquals(10, pathsToLeaves.size());
+        pathsToLeaves.forEach(x -> {
+            System.out.println("Path has length: " + x.getPath().size());
+            Assertions.assertEquals(5, x.getPath().size());
+            System.out.println("\t" + x.getStateLabels().toString());
+        });
+
         ReactionGraphStats<PureBigraph> graphStats = modelChecker.getReactionGraph().getGraphStats();
         System.out.println("Transitions: " + graphStats.getTransitionCount());
         System.out.println("States: " + graphStats.getStateCount());

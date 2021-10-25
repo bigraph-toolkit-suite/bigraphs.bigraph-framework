@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.analysis.ReactionGraphAnalysis;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
@@ -18,6 +19,7 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChe
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
@@ -46,7 +49,7 @@ public class ConcurringProcessesExample {
         new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
 
-//    @Disabled
+    //    @Disabled
     @Test
     void simulate_single_step() throws IOException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
 //        int num = 2;
@@ -166,10 +169,11 @@ public class ConcurringProcessesExample {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                        .setPrintCanonicalStateLabel(true)
-                        .create()
+                                .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
+                                .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                                .setPrintCanonicalStateLabel(true)
+//                                .setPrintCanonicalStateLabel(false)
+                                .create()
                 )
         ;
 
@@ -178,6 +182,15 @@ public class ConcurringProcessesExample {
                 opts);
         modelChecker.execute();
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
+
+        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
+        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        Assertions.assertEquals(2, pathsToLeaves.size());
+        pathsToLeaves.forEach(x -> {
+            System.out.println("Path has length: " + x.getPath().size());
+            System.out.println("\t" + x.getStateLabels().toString());
+            Assertions.assertEquals(4, x.getPath().size());
+        });
 
     }
 

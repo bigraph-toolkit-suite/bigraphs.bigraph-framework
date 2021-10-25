@@ -13,6 +13,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.analysis.ReactionGraphAnalysis;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
@@ -102,10 +104,11 @@ public class CountingExample {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setReactionGraphFile(new File(completePath.toUri()))
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                        .setPrintCanonicalStateLabel(true)
-                        .create()
+                                .setReactionGraphFile(new File(completePath.toUri()))
+//                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+//                        .setPrintCanonicalStateLabel(true)
+                                .setPrintCanonicalStateLabel(false)
+                                .create()
                 )
         ;
         reactiveSystem.setAgent(agent_a);
@@ -114,6 +117,12 @@ public class CountingExample {
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
+
+        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
+        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        pathsToLeaves.forEach(x -> {
+            System.out.println("Path has length: " + x.getPath().size());
+        });
 
         Graph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> graph = modelChecker.getReactionGraph().getGraph();
         assertEquals(5, graph.vertexSet().size());
