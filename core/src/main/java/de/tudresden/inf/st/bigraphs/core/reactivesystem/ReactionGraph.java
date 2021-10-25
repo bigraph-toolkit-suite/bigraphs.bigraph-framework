@@ -126,6 +126,33 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
         return graph;
     }
 
+    /**
+     * Get the actual bigraph by querying the string label of a state.
+     * <p>
+     * Note that the label could either be an arbitrary string (user-defined) or the canonical form of the bigraph.
+     *
+     * @return a map where state labels are mapped to bigraphs
+     */
+    public Map<String, B> getStateMap() {
+        return stateMap;
+    }
+
+    /**
+     * Get the actual redex of a rule by querying the string label of a transition.
+     * <p>
+     * Note that the label could either be an arbitrary string (user-defined) or the canonical form of the bigraph (redex).
+     *
+     * @return a map where transition labels are mapped to bigraphs (redexes)
+     */
+    public Map<String, B> getTransitionMap() {
+        return transitionMap;
+    }
+
+    /**
+     * Get an object containing some informative statistics of the reaction graph
+     *
+     * @return some statistics about the reaction graph object
+     */
     public ReactionGraphStats<B> getGraphStats() {
         graphStats.computeStatistics();
         return graphStats;
@@ -136,7 +163,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
     }
 
     private Graph<LabeledNode, LabeledEdge> buildEmptySimpleDirectedGraph() {
-        return GraphTypeBuilder.<LabeledNode, LabeledEdge>undirected()
+        return GraphTypeBuilder.<LabeledNode, LabeledEdge>directed()
                 .allowingMultipleEdges(true)
                 .allowingSelfLoops(true)
                 .weighted(false)
