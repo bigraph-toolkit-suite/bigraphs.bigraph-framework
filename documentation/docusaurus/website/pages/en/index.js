@@ -20,10 +20,11 @@ var DependencyCodeBlock = require('../../../../../core/BigraphDependencyBlock')
 class HomeSplash extends React.Component {
     render() {
         const {siteConfig, language = ''} = this.props;
-        const {baseUrl, docsUrl} = siteConfig;
+        const {baseUrl, docsUrl, defaultVersionShown} = siteConfig;
         const docsPart = `${docsUrl ? `${docsUrl}/` : ''}`;
         const langPart = `${language ? `${language}/` : ''}`;
         const docUrl = doc => `${baseUrl}${docsPart}${langPart}${doc}`;
+
 
         const SplashContainer = props => (
             <div className="homeContainer">
@@ -88,7 +89,9 @@ class Index extends React.Component {
 
     render() {
         const {config: siteConfig, language = ''} = this.props;
-        const {baseUrl} = siteConfig;
+        const {baseUrl, docsUrl, defaultVersionShown} = siteConfig;
+
+        const bigraphFrameworkVersion = `${defaultVersionShown}`;
 
         // const HowToUse = () => {
         //     return (
@@ -191,14 +194,27 @@ class Index extends React.Component {
 
         const UsageCallout = () => (
             <div id={`try`}
-                className="productShowcaseSection paddingBottom lightBackground"
-                style={{textAlign: 'center', paddingTop: '2em'}}>
+                 className="productShowcaseSection paddingBottom lightBackground"
+                 style={{textAlign: 'center', paddingTop: '2em'}}>
                 <h2>Download & Use Bigraph Framework for Java</h2>
                 <ul>
-                    <li>Maven Repository on <a href={`https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/`}>Artifactory</a> </li>
-                    <li>Source code on <a href={`https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/`}>GitLab</a></li>
-                    <li>Source code on <a href={`https://github.com/st-tu-dresden/bigraph-framework`}>GitHub (mirror)</a></li>
+                    <li>Maven Repository on <a
+                        href={`https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/`}>Artifactory</a>
+                    </li>
+                    <li>Source code on <a
+                        href={`https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/`}>GitLab</a></li>
+                    <li>Source code on <a href={`https://github.com/st-tu-dresden/bigraph-framework`}>GitHub
+                        (mirror)</a></li>
                 </ul>
+                <i>Project Skeletons that get you started:</i>
+                <ul>
+                    <li><a
+                        href={`https://www.bigraphs.org/products/bigraph-framework/download/empty-project-skeleton-bigraphframework.zip`}>Maven-based
+                        Project Skeleton for using Bigraph Framework</a></li>
+                </ul>
+                <p>
+                    Latest Version: {bigraphFrameworkVersion}
+                </p>
             </div>
         );
 
@@ -242,8 +258,8 @@ class Index extends React.Component {
                     <FeatureCallout/>
                     <Features/>
                     <UsageCallout/>
-                    <RemoteRepoCodeBlock img={`${baseUrl}img/icon-remote-repository.png`} />
-                    <DependencyCodeBlock img={`${baseUrl}img/icon-artifact.png`} />
+                    <RemoteRepoCodeBlock img={`${baseUrl}img/icon-remote-repository.png`}/>
+                    <DependencyCodeBlock img={`${baseUrl}img/icon-artifact.png`}/>
                     {/*<LearnHow/>*/}
                     {/*<TryOut/>*/}
                     {/*<HowToUse/>*/}

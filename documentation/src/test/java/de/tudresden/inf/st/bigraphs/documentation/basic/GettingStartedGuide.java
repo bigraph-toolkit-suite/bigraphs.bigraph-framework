@@ -22,7 +22,7 @@ import org.eclipse.collections.api.factory.Lists;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
                     FileUtils.writeStringToFile(
                             exportPath.toFile(),
                             sb.toString(),
-                            Charset.forName("UTF-8")
+                            StandardCharsets.UTF_8
                     );
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -102,14 +102,14 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
         builder.createRoot()
                 .addChild("User", "login").addChild("Computer", "login");
         PureBigraph bigraph = builder.createRoot()
-                .addChild("User", "login2").addChild("Computer", "login")
+                .addChild("User", "login").addChild("Computer", "login")
                 .createBigraph();
         // (2) end
 
         // (3) start
-        Placings<DefaultDynamicSignature> placings = pure().createPlacings(signature);
+        Placings<DefaultDynamicSignature> placings = purePlacings(signature);
         Placings<DefaultDynamicSignature>.Merge merge = placings.merge(2);
-        Linkings<DefaultDynamicSignature> linkings = pure().createLinkings(signature);
+        Linkings<DefaultDynamicSignature> linkings = pureLinkings(signature);
         Linkings<DefaultDynamicSignature>.Identity login = linkings.identity(StringTypedName.of("login"));
         // (3) end
 
