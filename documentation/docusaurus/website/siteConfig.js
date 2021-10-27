@@ -62,8 +62,8 @@ var urlConfigs = {
 };
 
 const siteVariables = {
-    revision: 'Version: 0.9.0',
-    revisionVar: 'Replace ${revision} with 0.9.0',
+    revision: 'Version: 0.9.5-SNAPSHOT',
+    revisionVar: 'Replace ${revision} with 0.9.5-SNAPSHOT',
     supportedConversions: '<ul><li>BigMC</li><li>BigraphER</li><li>BigRed</li></ul>'
 };
 

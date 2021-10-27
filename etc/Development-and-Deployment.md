@@ -20,7 +20,8 @@ This section gives some guidelines about the active development, documentation a
 
 ### Changelogs
 
-Changelogs belong to the [Documentation](#Documentation) and are generated via the `changelog.sh` bash script. See also [Deployment](#Deployment) on how to properly tag the commit messages.
+Changelogs belong to the [Documentation](#Documentation) and are generated via the `changelog.sh` bash script. 
+See also [Deployment](#Deployment) on how to properly tag the commit messages.
 
 ### Module Separation
 
@@ -34,9 +35,9 @@ This section explains how to build and view the user manual and Javadoc API.
 
 - The documentation includes Javadoc and a separate user manual (static website).
 And also the Changelog is part of it, see [Deployment](#Deployment).
-- Docusaurus is used as a static site generator when building the user manual
-It references also to the Javadoc.
+- [Docusaurus](https://docusaurus.io/) is used as a static site generator. 
 - The CI pipeline is responsible to copy the Javadoc API into the Docusaurus manual.
+The generated user manual can then link to the separately built Javadoc.
 
 **Requirements for the Documentation**
 
@@ -50,13 +51,13 @@ It references also to the Javadoc.
 
 First, `cd` into the `./documentation/docusaurus/website/` folder.
 Then, to view and edit the manual execute the following commands:
-
-```bash
+```console
 $ cd ./documentation/docusaurus/website
 $ npm start
 ```
+
 To actually build the static site:
-```bash
+```console
 $ npm run build
 ```
 The output is exported at `documentation/docusaurus/website/build/bigraph-framework/`.
@@ -65,11 +66,11 @@ The output is exported at `documentation/docusaurus/website/build/bigraph-framew
 
 - Some of the code samples are automatically derived from the test cases and merged into the documentation
 - The module `documentation` is in charge for that
-- Execute the following Maven goal to create the code samples: `mvn exec:java -f documentation/pom.xml`
+- Execute the following Maven goal (from the root of this project) to create the code samples: `mvn exec:java -f documentation/pom.xml`
 
 #### Build the whole documentation
 
-```bash
+```console
 $ mvn package -Pdistribute # creation and aggregation of api docs 
 $ npm --prefix ./documentation/docusaurus/website install # install npm dependencies first
 $ mvn -f documentation/pom.xml install exec:java -Pdistribute # code sample generation and building static site
@@ -81,7 +82,7 @@ The aggregated API doc will be copied to `documentation/docusaurus/website/stati
 
 ## Deployment
 
-This sections discusses the deployment process.
+This section discusses the deployment process.
 
 - The basic workflow looks like this.
   - Automated tests are executed on all branches.
@@ -97,11 +98,10 @@ This sections discusses the deployment process.
 
 ### Documentation (User Manual + Javadoc API)
 
-- Docs are pushed to GitHub to be displayed by GitHub Pages.
-
+- The whole documentation is pushed to GitHub to be displayed by GitHub Pages.
 
 - The following script builds and pushes the documentation to the remote repository:
-```bash
+```console
 $ mvn ... # build the whole documentation as described before
 $ cd ./documentation/docusaurus/website/build/bigraph-framework && git init
 $ touch CNAME && echo "www.bigraphs.org" > CNAME
@@ -114,10 +114,11 @@ $ git push --force stgithub master:gh-pages
     - see [Using SSH keys with GitLab CI/CD](https://docs.gitlab.com/ee/ci/ssh_keys/)
     and [Generating a new SSH key pair](https://docs.gitlab.com/ee/ssh/#generating-a-new-ssh-key-pair)
     - Command to execute for SSH_KNOWN_HOSTS:
-    ```bash
+    ```console
     ssh-keygen -t rsa -b 4096 -C "dominik.grzelak@tu-dresden.de"
     ssh-keyscan github.com
     ```
+- Follow the usual setup for creating and authorizing GitHub SSH keys
 
 ### Changelog Generation
 

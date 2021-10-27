@@ -4,11 +4,9 @@ sidebar_label: Introduction
 title: Welcome to Bigraph Framework
 ---
 
-<!--# Welcome to Bigraph Framework-->
-
 A Complete Guide to the Bigraph Framework.
 
-{@inject: revision}
+{@inject: revisionVar}
 
 > **Notice:** The API is subject to change. Use at your own risk.
 
@@ -17,34 +15,37 @@ A Complete Guide to the Bigraph Framework.
 **Bigraph Framework** is a software framework for the creation and simulation of bigraphs
 to expedite the experimental evaluation of the bigraph theory in real-world applications.
 
-The goal of this framework is to facilitate the implementation of context-aware and agent-based systems.
-It provides means for model-driven software development based on the bigraph theory.
-The high level API eases the programming of bigraphical systems for real-world application.
+The goal of this framework is to facilitate the implementation of context-aware, agent-based systems or cyber-physical systems, for example.
+The high level API eases the programming of bigraphical systems for various real-world application.
+The framework is developed around a _metamodel-first approach_.
+It provides several means for model-driven software development to integrate the bigraph theory into software.
+
+### Overview of the Features
+
+- Dynamic creation of bigraphs at runtime, which are based on the Ecore metamodel
+- Visualization of bigraphs (beta)
+- Bigraph Matching
+- Bigraphical Reactive Systems: Simulation of bigraphs by reaction rules and synthesisation of a labelled transition system
+- Read and write meta and instance models to the file system (Ecore/XMI)
+- Conversion of bigraphs into other file formats (e.g., GraphML, BigMC or BigraphER)
+<!-- - Model transformation (WIP) -->
+
+### What are Bigraphs?
 
 **Bigraphs** are an emerging graph theory and meta-model for global ubiquitous systems,
-mobile computing and Internet of Things (IoT).
-The theory provides a unifying framework of existing process calculi for concurrency,
-including ambient calculus, action calculi, petri nets, Calculi of communicating
-systems and π-calculus.
-The mathematical theory enables equally the modeling of static structures
-and dynamics of complex systems.
-
-## Overview of the Features
-
-- Dynamic creation of bigraphs at runtime based on an Ecore meta model; support of various bigraph operators
-- Visualization (beta)
-- Bigraph matching (beta)
-- Bigraphical reactive system support: simulation of bigraphs by reaction rules and synthesisation of a transition system (beta)
-- Read and write meta and instance model to the file system
-- Conversion of bigraphs to other file formats (e.g., GraphML, BigMC or BigraphER)
-<!-- - Model transformation (WIP) -->
+mobile computing, context-aware systems and the Internet of Things (IoT).
+The theory is a unifying framework for many process calculi, including the ambient calculus, action calculi, Petri nets, 
+the Calculus of Communicating Systems (CCS) and π-calculus.
 
 ## Requirements
 
 - Java
 - Maven or Gradle
 
-## Install / Dependency Settings
+
+## Use / Install / Dependency Settings
+
+Bigraph Framework is online available as a Maven dependency.
 
 Artifacts are deployed to [ST-Artifactory](https://stgroup.jfrog.io/).
 
@@ -52,6 +53,17 @@ Artifacts are deployed to [ST-Artifactory](https://stgroup.jfrog.io/).
 > Otherwise, to build the source by yourself, follow the
 > [README.md](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/blob/master/README.md)
 > inside the repository.
+>
+
+### Empty Project Skeleton
+
+To get started using Bigraph Framework right away, download the Maven-based Project Skeleton
+
+- [Empty Project Skeleton for using Bigraph Framework](https://www.bigraphs.org/products/bigraph-framework/download/empty-project-skeleton-bigraphframework.zip)
+
+The README contained therein, describes how to compile and start an application.
+
+Alternatively, follow the step-by-step project setup as described in the following.
 
 ### Packages
 
