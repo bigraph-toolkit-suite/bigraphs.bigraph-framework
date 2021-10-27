@@ -6,7 +6,7 @@ title: Welcome to Bigraph Framework
 
 A Complete Guide to the Bigraph Framework.
 
-{@inject: revisionVar}
+{@import: ../docs/assets/revisionLatestVersionText}
 
 > **Notice:** The API is subject to change. Use at your own risk.
 
@@ -74,7 +74,7 @@ configuration for Maven or Gradle is necessary.
 <!--DOCUSAURUS_CODE_TABS-->
 <!--Maven-->
 Add this inside the `<dependencies></dependencies>` section of your project `*.pom`:
-{@inject: revisionVar}
+{@import: ../docs/assets/revisionVar}
 ```xml
 <!-- the core module -->
 <dependency>
@@ -105,7 +105,7 @@ Add this inside the `<dependencies></dependencies>` section of your project `*.p
 <!--Gradle-->
 
 Append this in your `build.gradle` file:
-{@inject: revisionVar}
+{@import: ../docs/assets/revisionVar}
 ```gradle
 // the core module
 compile 'de.tudresden.inf.st.bigraphs:bigraph-core:${revision}'

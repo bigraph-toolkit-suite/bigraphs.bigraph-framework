@@ -14,7 +14,7 @@ encoders/pretty printers etc.
 
 The following bigraph tools are supported by now:
 
-{@inject: supportedConversions}
+{@import: ../docs/assets/supportedConversions}
 
 Two conversion strategies are followed for exporting the internal bigraph structure of _Bigraph Framework_ to various other file formats to be used by other tools. One that uses a **pretty printer** (e.g., BigMC, BigraphER), and one that uses **adapter classes** (e.g., BigRed).
 

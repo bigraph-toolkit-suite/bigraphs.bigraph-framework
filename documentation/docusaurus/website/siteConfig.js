@@ -11,30 +11,30 @@
 const {Plugin: Embed} = require('remarkable-embed');
 const importMd = require('./static/js/import-md');
 // Our custom remarkable plugin factory.
-const createVariableInjectionPlugin = variables => {
-    // `let` binding used to initialize the `Embed` plugin only once for efficiency.
-    // See `if` statement below.
-    let initializedPlugin;
-
-    const embed = new Embed();
-    embed.register({
-        // Call the render method to process the corresponding variable with
-        // the passed Remarkable instance.
-        // -> the Markdown markup in the variable will be converted to HTML.
-        inject: key => initializedPlugin.render(variables[key])
-    });
-
-    return (md, options) => {
-        if (!initializedPlugin) {
-            initializedPlugin = {
-                render: md.render.bind(md),
-                hook: embed.hook(md, options)
-            };
-        }
-
-        return initializedPlugin.hook;
-    };
-};
+// const createVariableInjectionPlugin = variables => {
+//     // `let` binding used to initialize the `Embed` plugin only once for efficiency.
+//     // See `if` statement below.
+//     let initializedPlugin;
+//
+//     const embed = new Embed();
+//     embed.register({
+//         // Call the render method to process the corresponding variable with
+//         // the passed Remarkable instance.
+//         // -> the Markdown markup in the variable will be converted to HTML.
+//         inject: key => initializedPlugin.render(variables[key])
+//     });
+//
+//     return (md, options) => {
+//         if (!initializedPlugin) {
+//             initializedPlugin = {
+//                 render: md.render.bind(md),
+//                 hook: embed.hook(md, options)
+//             };
+//         }
+//
+//         return initializedPlugin.hook;
+//     };
+// };
 
 // List of projects/orgs using your project for the users page.
 const users = [
@@ -61,16 +61,17 @@ var urlConfigs = {
     baseUrl: '/products/bigraph-framework/',
 };
 
-const siteVariables = {
-    revision: 'Version: 0.9.5-SNAPSHOT',
-    revisionVar: 'Replace ${revision} with 0.9.5-SNAPSHOT',
-    supportedConversions: '<ul><li>BigMC</li><li>BigraphER</li><li>BigRed</li></ul>'
-};
+// const siteVariables = {
+//     // revision: '0.9.0',
+//     // revisionLatestVersionText: 'Latest Version: 0.9.0',
+//     // revisionVar: 'Replace ${revision} with 0.9.0',
+//     // supportedConversions: '<ul><li>BigMC</li><li>BigraphER</li><li>BigRed</li></ul>'
+// };
 
 const siteConfig = {
     markdownPlugins: [
-        createVariableInjectionPlugin(siteVariables),
-        importMd(),
+        importMd()
+        // createVariableInjectionPlugin(siteVariables),
     ],
     defaultVersionShown: '0.9.0',
     noIndex: false,
