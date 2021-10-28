@@ -4,17 +4,15 @@ title: Verification
 sidebar_position: 4
 ---
 
-<!--# Verification-->
-
-*Verification* is a formal method in software engineering based on mathematical
-models and techniques to prove the correctness of programs.
+In the area of software engineering, formal verification is an interesting subject.
+*Verification* is a formal approach to prove the correctness of programs by means of mathematical models and techniques.
 
 In this process, a *program is checked against* a set of
 correctness properties, also called the *specification*.
+A program is said to be *correct*, if the specification conforms to the implementation.
 
-By proving specific properties of some software,
-this type of testing may assist one to develop safe and reliably software
-which cannot be detected by traditional means such as unit tests.
+By proving specific properties of some software, this type of testing assists in developing safe and reliably software.
+In fact, many bugs cannot be detected by traditional means such as unit tests.
 
 One type of verification technique is the so-called **model checking**, which
 is implemented in Bigraph Framework.
