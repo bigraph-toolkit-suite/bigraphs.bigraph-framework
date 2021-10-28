@@ -28,13 +28,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <bigraph.metamodel.version>1.4.0-SNAPSHOT</bigraph.metamodel.version>
-        <emf.common.version>2.21.0</emf.common.version>
+        <emf.common.version>2.23.0</emf.common.version>
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
-        <emf.ecore.version>2.23.0</emf.ecore.version>
-        <emf.codegen.version>2.21.0</emf.codegen.version>
-        <!--        <emf.cdo.version>4.7.0</emf.cdo.version>-->
+        <emf.ecore.version>2.25.0</emf.ecore.version>
+        <emf.codegen.version>2.22.0</emf.codegen.version>
         <eclipse.collections.version>10.4.0</eclipse.collections.version>
-        <guava.version>28.1-jre</guava.version>
+        <guava.version>31.0.1-jre</guava.version>
         <jgrapht.version>1.5.1</jgrapht.version>
         <junit.version>5.4.0</junit.version>
         <log4j.version>1.7.30</log4j.version>
