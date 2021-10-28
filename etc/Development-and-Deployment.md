@@ -72,26 +72,24 @@ The output is exported at `documentation/v2-docusaurus/build/`.
 
 ```console
 $ mvn clean install
-$ mvn package -Pdistribute # creation and aggregation of api docs 
-$ nvm use 16
-$ npm --prefix ./documentation/v2-docusaurus/ install # install npm dependencies first
-$ mvn -f documentation/pom.xml -Pdistribute install # code sample generation and building the static site
+$ mvn package -Pdistribute                              # creation and aggregation of JavaDocs 
+$ nvm use 16                                            # switch node version
+$ npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
+$ mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
 ```
 
 The generated user manual is available from `documentation/v2-docusaurus/build/` (use `npm run serve`).
-The generated Java documentation is available from `target/site/apidocs/` for each module as usual.
-The aggregated API doc will be copied to `documentation/v2-docusaurus/static/apidocs` by Maven as well.
+The generated Java documentation of all modules is available from `target/site/apidocs/`.
+This aggregated API will be copied to `documentation/v2-docusaurus/static/apidocs`.
 
 ## Deployment
 
 This section discusses the deployment process.
 
 - The basic workflow looks like this.
-  - Automated tests are executed on all branches.
-  - The deployment process is executed after every merge into master or a 
-    version tag is created.
-  - Documentation including the javadocs API are generated and pushed to an
-    external GitHub repository into the *gh-pages* branch
+  * Tests are executed on all branches.
+  * The deployment process is executed after every merge into master or a when a version tag is created.
+  * Documentation including the javadocs API are generated and pushed to an external GitHub repository into the *gh-pages* branch
 
 ### Build configuration
 
