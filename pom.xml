@@ -42,7 +42,7 @@
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
         <doclint>none</doclint>
         <!-- For documentation -->
-        <project.usermanual.outputDirectory>../documentation/docusaurus/website/static/apidocs
+        <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs
         </project.usermanual.outputDirectory>
     </properties>
 
