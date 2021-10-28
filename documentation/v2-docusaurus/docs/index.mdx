@@ -1,0 +1,154 @@
+---
+id: index
+sidebar_label: Introduction
+title: Welcome to Bigraph Framework
+sidebar_position: 1
+---
+
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+A Complete Guide to the Bigraph Framework.
+
+Latest Version: 0.9.0
+
+> **Notice:** The API is subject to change. Use at your own risk.
+
+## What is Bigraph Framework
+
+**Bigraph Framework** is a software framework for the creation and simulation of bigraphs
+to expedite the experimental evaluation of the bigraph theory in real-world applications.
+
+The goal of this framework is to facilitate the implementation of context-aware, agent-based systems or cyber-physical systems, for example.
+The high level API eases the programming of bigraphical systems for various real-world application.
+The framework is developed around a _metamodel-first approach_, when working with bigraphical structures.
+It provides several means towards model-driven software development for integrating the bigraph theory into software.
+
+### Overview of the Features
+
+- Dynamic creation of bigraphs at runtime, which are based on the Ecore metamodel
+- Visualization of bigraphs (beta)
+- Bigraph Matching
+- Bigraphical Reactive Systems: Simulation of bigraphs by reaction rules and synthesisation of a labelled transition system
+- Read and write meta and instance models to the file system (Ecore/XMI)
+- Conversion of bigraphs into other file formats (e.g., GraphML, BigMC or BigraphER)
+<!-- - Model transformation (WIP) -->
+
+### What are Bigraphs?
+
+**Bigraphs** are an emerging graph theory and meta-model for global ubiquitous systems,
+mobile computing, context-aware systems and the Internet of Things (IoT).
+The theory is a unifying framework for many process calculi, including the ambient calculus, action calculi, Petri nets, 
+the Calculus of Communicating Systems (CCS) and π-calculus.
+
+## Requirements
+
+- Java
+- Maven or Gradle
+
+
+## Use / Install / Dependency Settings
+
+Bigraph Framework is online available as a Maven dependency.
+
+Artifacts are deployed to [ST-Artifactory](https://stgroup.jfrog.io/).
+
+> #### Building from Source
+> Otherwise, to build the source by yourself, follow the
+> [README.md](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/blob/master/README.md)
+> inside the repository.
+>
+
+### Empty Project Skeleton
+
+To get started using Bigraph Framework right away, download the Maven-based Project Skeleton
+
+- [Empty Project Skeleton for using Bigraph Framework](https://www.bigraphs.org/products/bigraph-framework/download/empty-project-skeleton-bigraphframework.zip)
+
+The README contained therein, describes how to compile and start an application.
+
+Alternatively, follow the step-by-step project setup as described in the following.
+
+### Packages
+
+Depending on the build management tool you are using, one of the following
+configuration for Maven or Gradle is necessary.
+
+import * as myConstClass from "../src/components/BigraphDependencyBlock";
+import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
+
+<Tabs>
+  <TabItem value="maven" label="Maven" default>
+    Add this inside the <code>dependencies</code> section of your project's <code>*.pom</code> file.
+    Replace VERSION with the latest version.
+    <pre>
+    {myConstClass.MAVEN_DEP_CODE}
+    </pre>
+  </TabItem>
+  <TabItem value="gradle" label="Gradle">
+    Append this in your <code>build.gradle</code> file.
+    Replace VERSION with the latest version.
+    <pre>{myConstClass.GRADLE_DEP_CODE}</pre>
+  </TabItem>
+  <TabItem value="manually" label="Manually">
+    not recommended
+  </TabItem>
+</Tabs>
+
+### Repository Setup
+
+In order to resolve the dependencies above, the following custom repository
+must be added as well. We provide the configuration for Maven and Gradle below.
+
+<Tabs>
+  <TabItem value="maven" label="Maven" default>
+    The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> for a new project.
+    <pre>
+    {myConstClass2.MAVEN_REP_CODE}
+    </pre>
+    <br/>
+    Another option is to modify the <code>settings.xml</code>, usually found in <code>~/.m2/</code>.
+    <pre>
+    {myConstClass2.MAVEN_REP_CODE2}
+    </pre>
+  </TabItem>
+  <TabItem value="gradle" label="Gradle">
+    For Gradle, add this to the project's build gradle file:
+    <pre>{myConstClass2.GRADLE_REP_CODE}</pre>
+  </TabItem>
+</Tabs>
+
+### Logging Configuration
+
+Bigraph Framework employs SLF4J as a facade for the log4j logging framework.
+
+Depending on your project setup, you may need to include the following libraries in your `pom.xml` :
+
+```xml
+<!-- When used within a Spring project -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+<!-- For a bare Maven project -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+```
+
+The example above shows how to use log4j2 in your project as the underlying logging framework.

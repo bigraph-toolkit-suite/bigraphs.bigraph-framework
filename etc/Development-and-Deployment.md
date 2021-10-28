@@ -7,7 +7,7 @@ This section gives some guidelines about the active development, documentation a
 ### Git-Workflow
 - The Git workflow *Gitflow* as described [here](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) is applied for the development 
 
-- Push tags only: `git push origin --tags`
+- Push tags only: `git push gitlab --tags`
 
 ### Versioning
 
@@ -49,18 +49,18 @@ The generated user manual can then link to the separately built Javadoc.
 
 #### Live Editing
 
-First, `cd` into the `./documentation/docusaurus/website/` folder.
+First, `cd` into the `./documentation/v2-docusaurus/` folder.
 Then, to view and edit the manual execute the following commands:
 ```console
-$ cd ./documentation/docusaurus/website
-$ npm start
+$ cd ./documentation/v2-docusaurus/
+$ npx docusaurus start #or: npm run start
 ```
 
 To actually build the static site:
 ```console
 $ npm run build
 ```
-The output is exported at `documentation/docusaurus/website/build/bigraph-framework/`.
+The output is exported at `documentation/v2-docusaurus/build/`.
 
 #### Auto-generated Code Samples
 
@@ -71,25 +71,25 @@ The output is exported at `documentation/docusaurus/website/build/bigraph-framew
 #### Build the whole documentation
 
 ```console
-$ mvn package -Pdistribute # creation and aggregation of api docs 
-$ npm --prefix ./documentation/docusaurus/website install # install npm dependencies first
-$ mvn -f documentation/pom.xml install exec:java -Pdistribute # code sample generation and building static site
+$ mvn clean install
+$ mvn package -Pdistribute                              # creation and aggregation of JavaDocs 
+$ nvm use 16                                            # switch node version
+$ npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
+$ mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
 ```
 
-The generated user manual is available from `documentation/docusaurus/website/`.
-The generated Java documentation is available from `target/site/apidocs/` for each module as usual.
-The aggregated API doc will be copied to `documentation/docusaurus/website/static/apidocs` by Maven as well.
+The generated user manual is available from `documentation/v2-docusaurus/build/` (use `npm run serve`).
+The generated Java documentation of all modules is available from `target/site/apidocs/`.
+This aggregated API will be copied to `documentation/v2-docusaurus/static/apidocs`.
 
 ## Deployment
 
 This section discusses the deployment process.
 
 - The basic workflow looks like this.
-  - Automated tests are executed on all branches.
-  - The deployment process is executed after every merge into master or a 
-    version tag is created.
-  - Documentation including the javadocs API are generated and pushed to an
-    external GitHub repository into the *gh-pages* branch
+  * Tests are executed on all branches.
+  * The deployment process is executed after every merge into master or a when a version tag is created.
+  * Documentation including the javadocs API are generated and pushed to an external GitHub repository into the *gh-pages* branch
 
 ### Build configuration
 
@@ -103,7 +103,7 @@ This section discusses the deployment process.
 - The following script builds and pushes the documentation to the remote repository:
 ```console
 $ mvn ... # build the whole documentation as described before
-$ cd ./documentation/docusaurus/website/build/bigraph-framework && git init
+$ cd ./documentation/v2-docusaurus/build/ && git init
 $ touch CNAME && echo "www.bigraphs.org" > CNAME
 $ git add . && git commit -m "updated documentation"
 $ git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git

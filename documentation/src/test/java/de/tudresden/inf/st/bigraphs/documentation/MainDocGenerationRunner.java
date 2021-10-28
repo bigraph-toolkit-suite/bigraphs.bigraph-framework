@@ -11,7 +11,8 @@ import de.tudresden.inf.st.bigraphs.documentation.basic.GettingStartedGuide;
  */
 public class MainDocGenerationRunner {
 
-    public final static String BASE_EXPORT_PATH = "documentation/docusaurus/docs/assets";
+//    public final static String BASE_EXPORT_PATH = "documentation/docusaurus/docs/assets";
+    public final static String BASE_EXPORT_PATH = "documentation/v2-docusaurus/docs/assets";
 
     public static void main(String[] args) {
         GettingStartedGuide gettingStartedGuide = new GettingStartedGuide();

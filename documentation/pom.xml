@@ -20,6 +20,10 @@
                 <executions>
                     <execution>
                         <id>generate-code-samples</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
                     </execution>
                     <execution>
                         <id>npm build user manual (docusaurus)</id>
@@ -37,13 +41,13 @@
                 <configuration>
                     <filesets combine.children="append">
                         <fileset>
-                            <directory>${basedir}/docusaurus/website/static/apidocs/</directory>
+                            <directory>${basedir}/v2-docusaurus/static/apidocs/</directory>
                             <includes>
                                 <include>**/*</include>
                             </includes>
                         </fileset>
                         <fileset>
-                            <directory>${basedir}/docusaurus/website/build/</directory>
+                            <directory>${basedir}/v2-docusaurus/build/</directory>
                             <includes>
                                 <include>**/*</include>
                             </includes>
@@ -75,7 +79,7 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <executable>npm</executable>
-                                    <workingDirectory>${basedir}/docusaurus/website</workingDirectory>
+                                    <workingDirectory>${basedir}/v2-docusaurus/</workingDirectory>
                                     <arguments>
                                         <argument>run</argument>
                                         <argument>build</argument>

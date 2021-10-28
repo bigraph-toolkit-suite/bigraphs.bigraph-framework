@@ -47,8 +47,8 @@ public abstract class BaseDocumentationGeneratorSupport {
         return sourceRoot;
     }
 
-    public static final String CODE_FENCE_START = "```java";
-    public static final String CODE_FENCE_END = "```";
+    public static final String CODE_FENCE_START = ""; //""```java";
+    public static final String CODE_FENCE_END = ""; //""```";
 
     /**
      * Start the code sample generation procedure.

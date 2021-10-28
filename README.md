@@ -343,19 +343,15 @@ Therefore, see [Maven configuration](#maven-configuration) on how to include the
 
 Building the documentation builds also the project without running tests.
 
-```bash
-$ mvn package -Pdistribute && npm --prefix ./documentation/docusaurus/website install && mvn -f documentation/pom.xml install exec:java -Pdistribute
-```
-
-**Java Documentation:** The generated apidoc is available from `documentation/docusaurus/website/static/apidocs`.
+See [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details.
 
 #### User Manual
 
-The generated user manual is available from `documentation/docusaurus/website/` by calling `npm start`.
+The generated user manual is available from `documentation/v2-docusaurus/` by calling `npm run start`.
 
 ```bash
-$ cd ./documentation/docusaurus/website
-$ npm start
+$ cd ./documentation/v2-docusaurus/
+$ npm run start
 ```
 
 The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md) for further instructions).
