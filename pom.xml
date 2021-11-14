@@ -224,6 +224,7 @@
                     <artifactId>dependency-check-maven</artifactId>
                     <version>6.5.0</version>
                     <configuration>
+                        <excludes>org.eclipse.platform:org.eclipse.equinox.common</excludes>
                         <!-- fail the build for CVSS greater than or equal to 8 -->
                         <failBuildOnCVSS>8</failBuildOnCVSS>
                         <skipProvidedScope>true</skipProvidedScope>
@@ -402,6 +403,33 @@
                 <groupId>org.eclipse.emf</groupId>
                 <artifactId>org.eclipse.emf.codegen</artifactId>
                 <version>${emf.codegen.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.platform</groupId>
+                        <artifactId>org.eclipse.equinox.app</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.platform</groupId>
+                        <artifactId>org.eclipse.equinox.common</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.platform</groupId>
+                        <artifactId>org.eclipse.equinox.preferences</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.platform</groupId>
+                        <artifactId>org.eclipse.equinox.registry</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.platform</groupId>
+                        <artifactId>org.eclipse.osgi</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.equinox.common</artifactId>
+                <version>3.15.0</version>
             </dependency>
             <!-- Collections -->
             <dependency>
