@@ -23,6 +23,12 @@ This section gives some guidelines about the active development, documentation a
 Changelogs belong to the [Documentation](#Documentation) and are generated via the `changelog.sh` bash script. 
 See also [Deployment](#Deployment) on how to properly tag the commit messages.
 
+### Check Dependencies
+
+`mvn dependency-check:check`
+
+Identifies dependencies with vulnerabilities (having a CVSS score >= 8).
+
 ### Module Separation
 
 Each module represents a concrete subset of the framework's whole functionality.
