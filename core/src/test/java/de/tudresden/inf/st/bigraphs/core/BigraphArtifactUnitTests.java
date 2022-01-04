@@ -17,13 +17,12 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.List;
 import java.util.Optional;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
@@ -53,6 +52,39 @@ public class BigraphArtifactUnitTests {
 //        BigraphArtifacts.exportAsMetaModel(generate, new FileOutputStream(TARGET_TEST_PATH + "_r1.ecore"));
 //        EPackage ePackage = BigraphArtifacts.loadBigraphMetaModel(TARGET_TEST_PATH + "_r1.ecore");
 //        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, TARGET_TEST_PATH + "_r1.xmi");
+    }
+
+    @Test
+    void load_and_export_Model_Test() throws IOException {
+        String baseName = "test-case-X";
+        String instanceFilename = TARGET_TEST_PATH + baseName + ".xmi";
+        String metaFilename = TARGET_TEST_PATH + baseName + ".ecore";
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .addControl("A", 1)
+                .addControl("B", 2)
+                .addControl("C", 3)
+                .create();
+
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+        builder.createRoot()
+                .addChild("A")
+                .addChild("B")
+                .addChild("C")
+        ;
+        PureBigraph bigraph = builder.createBigraph();
+        System.out.println(bigraph.getModelPackage().getNsURI());
+        System.out.println(bigraph.getModelPackage().getNsPrefix());
+        BigraphArtifacts.exportAsInstanceModel(bigraph, new FileOutputStream(instanceFilename));
+        BigraphArtifacts.exportAsMetaModel(bigraph, new FileOutputStream(metaFilename));
+
+        //BigraphModelManagement
+        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(instanceFilename);
+        System.out.println(eObjects.get(0));
+        System.out.println(bigraph.getModel());
+
+        BigraphArtifacts.loadBigraphInstanceModel(metaFilename, instanceFilename);
+
+
     }
 
     @Test

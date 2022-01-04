@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.utils.emf;
 
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.URI;
@@ -83,7 +84,8 @@ public class EMFUtils {
         return reference;
     }
 
-    public static EPackage createPackage(final String name, final String prefix,
+    public static EPackage createPackage(final String name,
+                                         final String prefix,
                                          final String uri) {
         final EPackage epackage = FACTORY.createEPackage();
         epackage.setName(name);
@@ -147,13 +149,15 @@ public class EMFUtils {
     public static void registerEcoreResourceFactories(Resource.Factory.Registry registry) {
 //        registry.getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
         registry.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
-//        registry.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
     }
 
     public static void registerXMIResourceFactories(Resource.Factory.Registry registry) {
 //        registry.getExtensionToFactoryMap().put("*", new XMLResourceFactoryImpl());
-//        registry.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
         registry.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+    }
+
+    public static void registerPackages(EPackage.Registry registry, EPackage ePackage) {
+        registry.put(ePackage.getNsURI(), ePackage);
     }
 
     public static void writeDynamicMetaModel(EPackage ePackage, OutputStream outputStream) throws IOException {
