@@ -1,22 +1,19 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
+import de.tudresden.inf.st.bigraphs.core.exceptions.EcoreBigraphFileSystemException;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.utils.auxiliary.MemoryOperations;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
-import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Extension interface with standard methods for Ecore-based bigraph classes.
@@ -200,9 +197,12 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
         /**
          * Return the actual instance model (*.xmi) of the bigraph as an input stream.
          *
-         * @return the bigraph as an input stream.
+         * @return the bigraph's Ecore instance model as an input stream.
+         * @throws EcoreBigraphFileSystemException if the input stream for the model instance could not be created for
+         *                                         some reasons. See the wrapped Exception to retrieve a more detailed
+         *                                         error message.
          */
-        public InputStream getInputStreamOfInstanceModel() {
+        public InputStream getInputStreamOfInstanceModel() throws EcoreBigraphFileSystemException {
             try {
                 DefaultFileSystemManager manager = MemoryOperations.getInstance().createFileSystemManager();
                 final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
@@ -210,9 +210,8 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
                 BigraphArtifacts.exportAsInstanceModel(this, outputStream);
                 outputStream.close();
                 return fo1.getContent().getInputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+            } catch (Exception e) {
+                throw new EcoreBigraphFileSystemException(e);
             }
         }
 

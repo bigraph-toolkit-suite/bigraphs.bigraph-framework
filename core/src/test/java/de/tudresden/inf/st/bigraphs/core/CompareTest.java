@@ -4,11 +4,13 @@ import com.google.common.base.Predicate;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.compare.*;
 import org.eclipse.emf.compare.match.*;
 import org.eclipse.emf.compare.match.eobject.IEObjectMatcher;
 import org.eclipse.emf.compare.match.impl.MatchEngineFactoryImpl;
 import org.eclipse.emf.compare.match.impl.MatchEngineFactoryRegistryImpl;
+import org.eclipse.emf.compare.scope.DefaultComparisonScope;
 import org.eclipse.emf.compare.scope.IComparisonScope;
 import org.eclipse.emf.compare.utils.UseIdentifiers;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -46,14 +48,14 @@ public class CompareTest {
         EcoreBigraph.Stub stub = new EcoreBigraph.Stub(bigraph);
         EcoreBigraph.Stub stub2 = new EcoreBigraph.Stub(bigraph2);
 
-        ResourceSet resourceSet1 = BigraphArtifacts.getResourceSetBigraphInstanceModel(
-                stub.getModelPackage(),
-                stub.getInputStreamOfInstanceModel());
-        ResourceSet resourceSet2 = BigraphArtifacts.getResourceSetBigraphInstanceModel(
-                stub2.getModelPackage(),
-                stub2.getInputStreamOfInstanceModel());
-        System.out.println(resourceSet1);
-        System.out.println(resourceSet2);
+//        ResourceSet resourceSet1 = BigraphArtifacts.getResourceSetBigraphInstanceModel(
+//                stub.getModelPackage(),
+//                stub.getInputStreamOfInstanceModel());
+//        ResourceSet resourceSet2 = BigraphArtifacts.getResourceSetBigraphInstanceModel(
+//                stub2.getModelPackage(),
+//                stub2.getInputStreamOfInstanceModel());
+//        System.out.println(resourceSet1);
+//        System.out.println(resourceSet2);
 
 
         IEObjectMatcher matcher = DefaultMatchEngine.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
@@ -65,25 +67,25 @@ public class CompareTest {
         IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
         matchEngineRegistry.add(matchEngineFactory);
 
-        EMFCompare comparator = EMFCompare.builder()
-                .setMatchEngineFactoryRegistry(matchEngineRegistry)
-                .build();
+//        EMFCompare comparator = EMFCompare.builder()
+//                .setMatchEngineFactoryRegistry(matchEngineRegistry)
+//                .build();
 
 
-        IComparisonScope scope = EMFCompare.createDefaultScope(resourceSet1, resourceSet2);
-        Comparison comparison = comparator.compare(scope);
-        System.out.println(comparison);
-        List<Diff> differences = comparison.getDifferences();
+//        IComparisonScope scope = new DefaultComparisonScope(resourceSet1, resourceSet2, (Notifier)null); //EMFCompare.createDefaultScope(resourceSet1, resourceSet2);
+//        Comparison comparison = comparator.compare(scope);
+//        System.out.println(comparison);
+//        List<Diff> differences = comparison.getDifferences();
 
-        Predicate<? super Diff> predicate = and(fromSide(DifferenceSource.LEFT), not(hasConflict(ConflictKind.REAL, ConflictKind.PSEUDO)));
+//        Predicate<? super Diff> predicate = and(fromSide(DifferenceSource.LEFT), not(hasConflict(ConflictKind.REAL, ConflictKind.PSEUDO)));
 // Filter out the differences that do not satisfy the predicate
-        Iterable<Diff> nonConflictingDifferencesFromLeft = filter(comparison.getDifferences(), predicate);
-        System.out.println(nonConflictingDifferencesFromLeft);
-        Iterator<Diff> iterator = nonConflictingDifferencesFromLeft.iterator();
-        while (iterator.hasNext()) {
-            Diff next = iterator.next();
-            System.out.println(next);
-        }
+//        Iterable<Diff> nonConflictingDifferencesFromLeft = filter(comparison.getDifferences(), predicate);
+//        System.out.println(nonConflictingDiff/erencesFromLeft);
+//        Iterator<Diff> iterator = nonConflictingDifferencesFromLeft.iterator();
+//        while (iterator.hasNext()) {
+//            Diff next = iterator.next();
+//            System.out.println(next);
+//        }
 
     }
 }
