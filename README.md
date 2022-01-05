@@ -5,7 +5,7 @@
 Branch | Version | Status
 ---|---|---
 Master | 0.9.0 | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/master/pipeline.svg) |
-Develop | 0.9.5-SNAPSHOT | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/develop/pipeline.svg)
+Develop | 0.9.6-SNAPSHOT | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/develop/pipeline.svg)
 -----
 
 A framework for the creation and simulation of bigraphs to expedite the experimental evaluation of the bigraph theory in
@@ -362,7 +362,7 @@ See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deplo
 
 To deploy Bigraph Framework to the [ST-Group's Artifactory](https://stgroup.jfrog.io/):
 ```bash
-mvn deploy -DskipTests -Pdeploy -Dusername=username -Dpassword=password
+mvn deploy -DskipTests -Pdeploy -Dusername=dominik.grzelak@tu-dresden.de -Dpassword=password
 ```
 
 ## License
