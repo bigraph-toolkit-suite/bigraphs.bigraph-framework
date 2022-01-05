@@ -70,7 +70,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
 
 //        PureBigraph map = createMapSimple(8);
         PureBigraph map = createMap(8);
-//        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream("meta-model.ecore"));
+//        BigraphFileModelManagement.exportAsMetaModel(map, new FileOutputStream("meta-model.ecore"));
 //        PureBigraphBuilder.create(createSignature(),
 //                "/home/dominik/git/BigraphFramework/rewriting/meta-model.ecore",
 //                "/home/dominik/git/BigraphFramework/rewriting/instance-model_3.xmi");
@@ -91,7 +91,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
         System.out.println(encoder.encode(reactionRule.getRedex()));
         System.out.println(encoder.encode(reactionRule.getReactum()));
-//        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream(TARGET_DUMP_PATH + "meta-model.ecore"));
+//        BigraphFileModelManagement.exportAsMetaModel(map, new FileOutputStream(TARGET_DUMP_PATH + "meta-model.ecore"));
 //        Path currentRelativePath = Paths.get("");
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();

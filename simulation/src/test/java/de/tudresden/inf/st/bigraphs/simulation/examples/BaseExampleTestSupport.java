@@ -1,12 +1,9 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +35,7 @@ public abstract class BaseExampleTestSupport {
 
     public void print(PureBigraph bigraph) {
         try {
-            BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,7 +43,7 @@ public abstract class BaseExampleTestSupport {
 
     public void printMetaModel(PureBigraph bigraph) {
         try {
-            BigraphArtifacts.exportAsMetaModel(bigraph, System.out);
+            BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, System.out);
         } catch (IOException e) {
             e.printStackTrace();
         }

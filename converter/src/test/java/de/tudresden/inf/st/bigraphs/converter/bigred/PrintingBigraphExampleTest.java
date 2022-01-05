@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.converter.bigred;
 
 import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -57,7 +57,7 @@ public class PrintingBigraphExampleTest {
         PureBigraph complexBigraph = bxl.importObject();
         BigraphGraphvizExporter.toPNG(complexBigraph, true, (new File(DUMP_TARGET + "complexBigraph.png")));
 
-        BigraphArtifacts.exportAsInstanceModel(complexBigraph, new FileOutputStream(DUMP_TARGET + "complexBigraph.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(complexBigraph, new FileOutputStream(DUMP_TARGET + "complexBigraph.xmi"));
     }
 
     @Test
@@ -76,8 +76,8 @@ public class PrintingBigraphExampleTest {
         ParametricReactionRule<PureBigraph> finishJob = rxl.importObject();
         BigraphGraphvizExporter.toPNG(finishJob.getRedex(), true, (new File(DUMP_TARGET + "job-to-printer-redex.png")));
         BigraphGraphvizExporter.toPNG(finishJob.getReactum(), true, (new File(DUMP_TARGET + "job-to-printer-reactum.png")));
-        BigraphArtifacts.exportAsInstanceModel(finishJob.getRedex(), new FileOutputStream(DUMP_TARGET + "job-to-printer-redex.xmi"));
-        BigraphArtifacts.exportAsInstanceModel(finishJob.getReactum(), new FileOutputStream(DUMP_TARGET + "job-to-printer-reactum.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(finishJob.getRedex(), new FileOutputStream(DUMP_TARGET + "job-to-printer-redex.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(finishJob.getReactum(), new FileOutputStream(DUMP_TARGET + "job-to-printer-reactum.xmi"));
     }
 
     @Test
@@ -87,8 +87,8 @@ public class PrintingBigraphExampleTest {
         ParametricReactionRule<PureBigraph> moveRoom = rxl.importObject();
         BigraphGraphvizExporter.toPNG(moveRoom.getRedex(), true, (new File(DUMP_TARGET + "move-room-redex.png")));
         BigraphGraphvizExporter.toPNG(moveRoom.getReactum(), true, (new File(DUMP_TARGET + "move-room-reactum.png")));
-        BigraphArtifacts.exportAsInstanceModel(moveRoom.getRedex(), new FileOutputStream(DUMP_TARGET + "move-room-redex.xmi"));
-        BigraphArtifacts.exportAsInstanceModel(moveRoom.getReactum(), new FileOutputStream(DUMP_TARGET + "move-room-reactum.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(moveRoom.getRedex(), new FileOutputStream(DUMP_TARGET + "move-room-redex.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(moveRoom.getReactum(), new FileOutputStream(DUMP_TARGET + "move-room-reactum.xmi"));
     }
 
     @Test
@@ -98,8 +98,8 @@ public class PrintingBigraphExampleTest {
         ParametricReactionRule<PureBigraph> submitJob = rxl.importObject();
         BigraphGraphvizExporter.toPNG(submitJob.getRedex(), true, (new File(DUMP_TARGET + "submit-job-redex.png")));
         BigraphGraphvizExporter.toPNG(submitJob.getReactum(), true, (new File(DUMP_TARGET + "submit-job-reactum.png")));
-        BigraphArtifacts.exportAsInstanceModel(submitJob.getRedex(), new FileOutputStream(DUMP_TARGET + "submit-job-redex.xmi"));
-        BigraphArtifacts.exportAsInstanceModel(submitJob.getReactum(), new FileOutputStream(DUMP_TARGET + "submit-job-reactum.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(submitJob.getRedex(), new FileOutputStream(DUMP_TARGET + "submit-job-redex.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(submitJob.getReactum(), new FileOutputStream(DUMP_TARGET + "submit-job-reactum.xmi"));
     }
 
     @Test

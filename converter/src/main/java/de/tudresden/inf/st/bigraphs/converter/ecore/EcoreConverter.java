@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.converter.ecore;
 
 import de.tudresden.inf.st.bigraphs.converter.ReactiveSystemPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 
@@ -16,7 +16,7 @@ public class EcoreConverter extends EcoreAgentConverter implements ReactiveSyste
         super();
     }
 
-    public EcoreConverter(BigraphArtifacts.Format exportFormat) {
+    public EcoreConverter(BigraphFileModelManagement.Format exportFormat) {
         super(exportFormat);
     }
 

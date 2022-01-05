@@ -1,8 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples.computation;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
 import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -129,7 +127,7 @@ public class CountingExample {
         assertEquals(4, graph.edgeSet().size());
         System.out.println(new ArrayList<>(graph.vertexSet()).get(0).getCanonicalForm());
         System.out.println(new ArrayList<>(graph.vertexSet()).get(graph.vertexSet().size() - 1).getCanonicalForm());
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) new ArrayList<>(graph.vertexSet()).get(graph.vertexSet().size() - 1), System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) new ArrayList<>(graph.vertexSet()).get(graph.vertexSet().size() - 1), System.out);
 //        boolean c1 = "r0$Age$True$Z#".equals(new ArrayList<>(graph.vertexSet()).get(0).getCanonicalForm()) ||
 //                "r0$Age$True$Z#".equals(new ArrayList<>(graph.vertexSet()).get(graph.vertexSet().size() - 1)
 //                        .getCanonicalForm());

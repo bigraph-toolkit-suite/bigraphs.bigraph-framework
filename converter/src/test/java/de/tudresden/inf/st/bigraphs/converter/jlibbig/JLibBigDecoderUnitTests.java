@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.converter.jlibbig;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
@@ -34,7 +34,7 @@ public class JLibBigDecoderUnitTests {
         System.out.println(encoded.toString());
 
         PureBigraph decoded = decoder.decode(encoded);
-        BigraphArtifacts.exportAsInstanceModel(decoded, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(decoded, System.out);
 
         BigraphGraphvizExporter.toPNG(big_00,
                 true,
@@ -57,7 +57,7 @@ public class JLibBigDecoderUnitTests {
         System.out.println(encoded.toString());
 
         PureBigraph decoded = decoder.decode(encoded);
-        BigraphArtifacts.exportAsInstanceModel(decoded, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(decoded, System.out);
 
         BigraphGraphvizExporter.toPNG(big_02,
                 true,
@@ -79,7 +79,7 @@ public class JLibBigDecoderUnitTests {
         System.out.println(encoded.toString());
 
         PureBigraph decoded = decoder.decode(encoded);
-        BigraphArtifacts.exportAsInstanceModel(decoded, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(decoded, System.out);
 
         BigraphGraphvizExporter.toPNG(big_03,
                 true,

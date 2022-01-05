@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.reactionrules;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
@@ -36,8 +36,8 @@ public class ReactionRuleCreationUnitTest {
 
         PureBigraph redex = builderRedex.createBigraph();
         PureBigraph reactum = builderReactum.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel(redex, System.out);
-        BigraphArtifacts.exportAsInstanceModel(reactum, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(redex, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(reactum, System.out);
         ParametricReactionRule<PureBigraph> pureBigraphParametricReactionRule = new ParametricReactionRule<>(redex, reactum);
         AbstractReactionRule.ReactiveSystemBoundReactionRule<PureBigraph> rrBounded = pureBigraphParametricReactionRule.withReactiveSystem(reactiveSystem);
         Assertions.assertTrue(rrBounded.isRedexSimple());

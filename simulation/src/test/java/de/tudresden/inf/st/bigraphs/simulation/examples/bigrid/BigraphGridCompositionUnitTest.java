@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples.bigrid;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.BigridGenerator;
@@ -41,14 +41,14 @@ public class BigraphGridCompositionUnitTest {
         PureBigraph topEdge = topEdge();
         ElementaryBigraph<DefaultDynamicSignature> tl_te = TL_TE_Wiring();
 
-        BigraphArtifacts.exportAsInstanceModel(topLeft, System.out);
-        BigraphArtifacts.exportAsInstanceModel(topEdge, System.out);
-        BigraphArtifacts.exportAsInstanceModel(tl_te, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(topLeft, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(topEdge, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(tl_te, System.out);
 
         Bigraph<DefaultDynamicSignature> _tc = ops(topLeft).parallelProduct(tl_te).getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) _tc, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) _tc, System.out);
         Bigraph<DefaultDynamicSignature> _tl_te = ops(_tc).parallelProduct(topEdge).getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) _tl_te, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) _tl_te, System.out);
     }
 
     @Test
@@ -63,19 +63,19 @@ public class BigraphGridCompositionUnitTest {
         // With intermediate steps
         Bigraph<DefaultDynamicSignature> _tc = ops(topLeft).parallelProduct(tl_te_w).getOuterBigraph();
         Bigraph<DefaultDynamicSignature> m2_id = ops(merge2).juxtapose(renaming_tc).getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) m2_id, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) m2_id, System.out);
         Bigraph<DefaultDynamicSignature> _tc2 = ops(_tc).juxtapose(merge1).getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) _tc2, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) _tc2, System.out);
         Bigraph<DefaultDynamicSignature> ob = ops(m2_id).compose(_tc2).getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) ob, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) ob, System.out);
 
 //        // In one line:
 //        Bigraph<DefaultDynamicSignature> result = ops(ops(merge2).juxtapose(renaming_tc).getOuterBigraph()).compose(ops(topLeft).parallelProduct(tl_te_w).juxtapose(merge1)).getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result,alue Tree System.out);
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) topEdge, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) result,alue Tree System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) topEdge, System.out);
 //
 //        Bigraph<DefaultDynamicSignature> connected = ops(result).compose(topEdge).getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) connected, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) connected, System.out);
     }
 
     public Optional<Bigraph> createNorthSouthConnector(Bigraph<?> rowBigraph, Linkings<DefaultDynamicSignature> linkings) {
@@ -176,7 +176,7 @@ public class BigraphGridCompositionUnitTest {
         Optional<Bigraph> ew = createClosure("ew", n - 2, previous, linkings);
         BigraphGraphvizExporter.toPNG(ew.get(), true, new File(BASEPATH + "cls_" + i + ".png"));
         Bigraph finalClosed = ops(ew.get()).compose(previous).getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) finalClosed, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) finalClosed, System.out);
         BigraphGraphvizExporter.toPNG(finalClosed, true, new File(BASEPATH + "finalClosed_" + i + ".png"));
     }
 
@@ -205,7 +205,7 @@ public class BigraphGridCompositionUnitTest {
             PureBigraph next = j != n - 1 ?
                     center() :
                     rightEdge();
-//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) next, System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) next, System.out);
             BigraphGraphvizExporter.toPNG(next, true, new File(BASEPATH + "next" + i + "-" + j + ".png"));
 
             Optional<Bigraph> nextWiring = createRenaming(
@@ -223,7 +223,7 @@ public class BigraphGridCompositionUnitTest {
 
             Bigraph<DefaultDynamicSignature> previousWithRegion = ops(previous).juxtapose(placings.identity1()).getOuterBigraph();
             Bigraph<DefaultDynamicSignature> d_ij = ops(previousWithRegion).nesting(nextWithWiring).getOuterBigraph();
-//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) d_ij, System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) d_ij, System.out);
             BigraphGraphvizExporter.toPNG(d_ij, true, new File(BASEPATH + "d_" + i + "-" + j + ".png"));
             System.out.println("\tFinished i,j = " + i + ", " + j);
             previous = (PureBigraph) d_ij;
@@ -232,7 +232,7 @@ public class BigraphGridCompositionUnitTest {
         Optional<Bigraph> ew = createClosure("ew", n - 2, previous, linkings);
         BigraphGraphvizExporter.toPNG(ew.get(), true, new File(BASEPATH + "cls_" + i + ".png"));
         Bigraph finalClosed = ops(ew.get()).compose(previous).getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) finalClosed, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) finalClosed, System.out);
         BigraphGraphvizExporter.toPNG(finalClosed, true, new File(BASEPATH + "finalClosed_" + i + ".png"));
     }
 
@@ -284,7 +284,7 @@ public class BigraphGridCompositionUnitTest {
         Optional<Bigraph> ew = createClosure("ew", n - 2, previous, linkings);
         BigraphGraphvizExporter.toPNG(ew.get(), true, new File(BASEPATH + "cls_" + i + ".png"));
         Bigraph finalClosed = ops(ew.get()).compose(previous).getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) finalClosed, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) finalClosed, System.out);
         BigraphGraphvizExporter.toPNG(finalClosed, true, new File(BASEPATH + "finalClosed_" + i + ".png"));
     }
 
@@ -294,7 +294,7 @@ public class BigraphGridCompositionUnitTest {
         BigridGenerator generator = new BigridGenerator(null);
         PureBigraph generate = generator.generate(3, 3);
 
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) generate, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) generate, System.out);
         BigraphGraphvizExporter.toPNG(generate, true, new File(BASEPATH + "d_" + 0 + "-" + 2 + ".png"));
 //        BigraphGraphvizExporter.toPNG(generate[0], true, new File(BASEPATH + "d_" + 0 + "-" + 2 + ".png"));
 //        BigraphGraphvizExporter.toPNG(generate[1], true, new File(BASEPATH + "d_" + 1 + "-" + 2 + ".png"));

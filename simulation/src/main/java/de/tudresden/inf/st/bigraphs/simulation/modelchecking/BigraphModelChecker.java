@@ -2,11 +2,10 @@ package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
 import com.google.common.base.Stopwatch;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
 import de.tudresden.inf.st.bigraphs.core.exceptions.AgentIsNullException;
@@ -260,7 +259,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                     } else {
                         label = String.format("state-%s.png", suffix);
                     }
-                    BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) bigraph, new FileOutputStream(
+                    BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) bigraph, new FileOutputStream(
                             Paths.get(opts.getOutputStatesFolder().toString(), label) + ".xmi"));
                     logger.debug("Exporting state {}", label);
                     BigraphGraphvizExporter.toPNG(bigraph,
@@ -268,7 +267,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                             Paths.get(opts.getOutputStatesFolder().toString(), label + ".png").toFile()
                     );
                     return label;
-//                BigraphArtifacts.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
+//                BigraphFileModelManagement.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
                 } catch (IOException e) {
                     logger.error(e.toString());
                     if (!label.isEmpty()) {

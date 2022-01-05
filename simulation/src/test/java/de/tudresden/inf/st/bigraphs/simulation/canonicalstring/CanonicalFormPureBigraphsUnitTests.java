@@ -1,8 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.canonicalstring;
 
 import com.google.common.collect.Lists;
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -19,7 +17,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.simulation.encoding.hash.BigraphHashFunction;
 import de.tudresden.inf.st.bigraphs.simulation.examples.BaseExampleTestSupport;
 import de.tudresden.inf.st.bigraphs.simulation.examples.RouteFinding;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.BigraphIsoPredicate;
@@ -74,7 +71,7 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         b.createRoot().addChild("B").down().addChild("D").linkToInner(tmp).up().addChild("A").top();
         b.closeInnerName(tmp);
         PureBigraph bigraphA = b.createBigraph();
-//        BigraphArtifacts.exportAsInstanceModel(bigraphA, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel(bigraphA, System.out);
         String bfcsA = instance.bfcs(bigraphA);
         System.out.println(bfcsA);
 
@@ -85,7 +82,7 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         b2.createRoot().addChild("A").addChild("B").down().addChild("C").linkToInner(tmp2).top();
         b2.closeInnerName(tmp2);
         PureBigraph bigraph2 = b2.createBigraph();
-//        BigraphArtifacts.exportAsInstanceModel(bigraph2, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel(bigraph2, System.out);
 
         String bfcs2 = instance.bfcs(bigraph2);
         System.out.println(bfcs2);
@@ -93,7 +90,7 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         PureBigraphBuilder<DefaultDynamicSignature> b3 = pureBuilder(sig);
         b3.createRoot().addChild("G").down().addSite().up().addChild("H").down().addSite();
         PureBigraph big3 = b3.createBigraph();
-//        BigraphArtifacts.exportAsInstanceModel(big3, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel(big3, System.out);
         String bfcs = instance.bfcs(big3);
         System.out.println(bfcs);
 
@@ -108,8 +105,8 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
 //        Placings<DefaultDynamicSignature>.Join join = placings.join();
 //        Bigraph<DefaultDynamicSignature> compA = ops(join).nesting(bigraphA).getOuterBigraph();
 //        Bigraph<DefaultDynamicSignature> comp2 = ops(join).nesting(bigraph2).getOuterBigraph();
-////        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) compA, System.out);
-////        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) comp2, System.out);
+////        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) compA, System.out);
+////        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) comp2, System.out);
 //
 //        String bfcsCompA = instance.bfcs(compA);
 //        String bfcsComp2 = instance.bfcs(comp2);
@@ -599,7 +596,7 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
                     true,
                     new File(TARGET_DUMP_PATH + "sampleBigraph_canonicalFormTest2.png")
             );
-            BigraphArtifacts.exportAsInstanceModel(bigraph2, new FileOutputStream(new File(TARGET_DUMP_PATH + "sampleBigraph_canonicalFormTest1.xmi")));
+            BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph2, new FileOutputStream(new File(TARGET_DUMP_PATH + "sampleBigraph_canonicalFormTest1.xmi")));
 
 
             String bfcs = BigraphCanonicalForm.createInstance().bfcs(bigraph);

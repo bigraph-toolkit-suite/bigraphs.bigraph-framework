@@ -2,7 +2,7 @@ package de.tudresden.inf.st.bigraphs.simulation.examples;
 
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -59,7 +59,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 
     private PureBigraph loadBigraphFromFS(String path) throws IOException {
         EPackage metaModel = createOrGetBigraphMetaModel(createSignature());
-        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel,
+        List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(metaModel,
                 path);
 
         PureBigraphBuilder<DefaultDynamicSignature> b = PureBigraphBuilder.create(createSignature(), metaModel, eObjects.get(0));
@@ -199,7 +199,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         builder.closeAllInnerNames();
         PureBigraph bigraph = builder.createBigraph();
-//        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel(bigraph, System.out);
         eb(bigraph, "agent");
         return bigraph;
     }

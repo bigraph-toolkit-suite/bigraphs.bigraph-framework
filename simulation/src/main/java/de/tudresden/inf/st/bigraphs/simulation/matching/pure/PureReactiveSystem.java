@@ -45,11 +45,11 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             AgentMatch jLibMatchResult = (AgentMatch) matchResult.getJLibMatchResult();
 
             InstantiationMap eta = constructEta(rule);
-//            BigraphArtifacts.exportAsInstanceModel(matchResult.getContext(), System.out);
-//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) matchResult.getRedexIdentity(), System.out);
-//            BigraphArtifacts.exportAsInstanceModel(matchResult.getRedexImage(), System.out);
-//            BigraphArtifacts.exportAsInstanceModel(matchResult.getRedex(), System.out);
-//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) matchResult.getContextIdentity(), System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel(matchResult.getContext(), System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) matchResult.getRedexIdentity(), System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel(matchResult.getRedexImage(), System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel(matchResult.getRedex(), System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) matchResult.getContextIdentity(), System.out);
 
             boolean[] cloneParam = new boolean[eta.getPlaceDomain()];
             int prms[] = new int[eta.getPlaceDomain()];
@@ -130,7 +130,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
             PureBigraph decodedResult = decoder.decode(result, agent.getSignature());
 //            System.out.println(result.toString());
-//            BigraphArtifacts.exportAsInstanceModel(decodedResult, System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel(decodedResult, System.out);
             return decodedResult;
         } catch (Exception e) {
             logger.error(e.toString());

@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.converter.ecore;
 
 import de.tudresden.inf.st.bigraphs.converter.BigraphPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 
 import java.io.ByteArrayOutputStream;
@@ -13,22 +13,22 @@ import java.io.OutputStream;
  */
 public class EcoreAgentConverter implements BigraphPrettyPrinter<PureBigraph> {
 
-    private BigraphArtifacts.Format exportFormat;
+    private BigraphFileModelManagement.Format exportFormat;
 
     public EcoreAgentConverter() {
-        exportFormat = BigraphArtifacts.Format.XMI;
+        exportFormat = BigraphFileModelManagement.Format.XMI;
     }
 
-    public EcoreAgentConverter(BigraphArtifacts.Format exportFormat) {
+    public EcoreAgentConverter(BigraphFileModelManagement.Format exportFormat) {
         this.exportFormat = exportFormat;
     }
 
-    public EcoreAgentConverter withExportFormat(BigraphArtifacts.Format exportFormat) {
+    public EcoreAgentConverter withExportFormat(BigraphFileModelManagement.Format exportFormat) {
         this.exportFormat = exportFormat;
         return this;
     }
 
-    public BigraphArtifacts.Format getExportFormat() {
+    public BigraphFileModelManagement.Format getExportFormat() {
         return exportFormat;
     }
 
@@ -53,11 +53,11 @@ public class EcoreAgentConverter implements BigraphPrettyPrinter<PureBigraph> {
     public void toOutputStream(PureBigraph bigraph, OutputStream outputStream) throws IOException {
         switch (exportFormat) {
             case ECORE:
-                BigraphArtifacts.exportAsMetaModel(bigraph, outputStream);
+                BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, outputStream);
                 break;
             case XMI:
             default:
-                BigraphArtifacts.exportAsInstanceModel(bigraph, outputStream);
+                BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, outputStream);
                 break;
         }
     }

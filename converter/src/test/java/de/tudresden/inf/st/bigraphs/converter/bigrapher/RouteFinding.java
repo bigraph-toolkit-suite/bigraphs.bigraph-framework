@@ -52,7 +52,7 @@ public class RouteFinding {
 
 //        PureBigraph map = createMapSimple(8);
         PureBigraph map = createMap(8);
-//        BigraphArtifacts.exportAsMetaModel(map, new FileOutputStream("meta-model.ecore"));
+//        BigraphFileModelManagement.exportAsMetaModel(map, new FileOutputStream("meta-model.ecore"));
 //        PureBigraphBuilder.create(createSignature(),
 //                "/home/dominik/git/BigraphFramework/rewriting/meta-model.ecore",
 //                "/home/dominik/git/BigraphFramework/rewriting/instance-model_3.xmi");

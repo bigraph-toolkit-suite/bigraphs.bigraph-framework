@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
@@ -72,7 +72,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         BigraphEntity.Edge e1 = queryLinkGraph.getEdges().stream().filter(x -> x.getName().equals("e1")).findFirst().get();
         assertEquals(3, queryLinkGraph.getPointsFromLink(e0).size());
         assertEquals(3, queryLinkGraph.getPointsFromLink(e1).size());
-        BigraphArtifacts.exportAsInstanceModel(queryLinkGraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(queryLinkGraph, System.out);
 
         PureBigraph dataLinkGraph = createDataLinkGraph();
         eb(dataLinkGraph, "dataLinkGraph");
@@ -85,7 +85,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         assertEquals(3, dataLinkGraph.getPointsFromLink(e1).size());
         assertEquals(3, dataLinkGraph.getPointsFromLink(e1).size());
         assertEquals(3, dataLinkGraph.getPointsFromLink(e1).size());
-        BigraphArtifacts.exportAsInstanceModel(dataLinkGraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(dataLinkGraph, System.out);
 
 
         SubHypergraphIsoSearch search = new SubHypergraphIsoSearch(queryLinkGraph, dataLinkGraph);

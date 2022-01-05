@@ -89,7 +89,7 @@ public class ReactiveSystemUnitTests {
 
         Set<ReactionGraph.LabeledNode> labeledNodes = modelChecker.getReactionGraph().getGraph().vertexSet();
         assertEquals(2, labeledNodes.size());
-        
+
         String s0 = new ArrayList<>(labeledNodes).get(0).getCanonicalForm();
         String s1 = new ArrayList<>(labeledNodes).get(1).getCanonicalForm();
 
@@ -129,10 +129,10 @@ public class ReactiveSystemUnitTests {
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
 //                        .setPrintCanonicalStateLabel(true)
-                        .setPrintCanonicalStateLabel(false)
-                        .setReactionGraphFile(new File(completePath.toUri()))
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                        .create()
+                                .setPrintCanonicalStateLabel(false)
+                                .setReactionGraphFile(new File(completePath.toUri()))
+                                .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                                .create()
                 )
         ;
 

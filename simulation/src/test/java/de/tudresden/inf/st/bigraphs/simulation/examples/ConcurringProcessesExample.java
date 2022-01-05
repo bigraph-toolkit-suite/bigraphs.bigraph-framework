@@ -55,10 +55,10 @@ public class ConcurringProcessesExample {
 //        int num = 2;
 //        String fileNameMeta = "/home/dominik/git/BigraphFramework/rewriting/src/test/resources/dump/processes/meta-model_" + num + ".ecore";
 //        String fileNameInstance = "/home/dominik/git/BigraphFramework/rewriting/src/test/resources/dump/processes/instance-model_" + num + ".xmi";
-//        EPackage metaModel = BigraphArtifacts.loadBigraphMetaModel(fileNameMeta);
-//        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, fileNameInstance);
+//        EPackage metaModel = BigraphFileModelManagement.loadBigraphMetaModel(fileNameMeta);
+//        List<EObject> eObjects = BigraphFileModelManagement.loadBigraphInstanceModel(metaModel, fileNameInstance);
 //        assertEquals(1, eObjects.size());
-//        List<EObject> eObjects2 = BigraphArtifacts.loadBigraphInstanceModel(fileNameInstance);
+//        List<EObject> eObjects2 = BigraphFileModelManagement.loadBigraphInstanceModel(fileNameInstance);
 //        assertEquals(1, eObjects2.size());
 
         PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
@@ -122,7 +122,7 @@ public class ConcurringProcessesExample {
         ReactionRule<PureBigraph> rule_processWorkingPhase = createRule_ProcessWorkingPhase();
         ReactionRule<PureBigraph> rule_resourceDeregistrationPhase = createRule_ResourceDeregistrationPhase();
 
-//        BigraphArtifacts.exportAsInstanceModel(agent, new FileOutputStream(new File(TARGET_DUMP_PATH + "agent.xmi")));
+//        BigraphFileModelManagement.exportAsInstanceModel(agent, new FileOutputStream(new File(TARGET_DUMP_PATH + "agent.xmi")));
         BigraphGraphvizExporter.toPNG(agent,
                 true,
                 new File(TARGET_DUMP_PATH + "agent.png")

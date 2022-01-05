@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.examples;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
@@ -89,7 +89,7 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
         ParametricReactionRule<PureBigraph> rr0 = createReactionRule0(defaultDynamicSignature);
         ParametricReactionRule<PureBigraph> rr1 = initialization_Rule(defaultDynamicSignature);
         ParametricReactionRule<PureBigraph> rrCollectDev = collectDevices_Rule(defaultDynamicSignature);
-//        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel(bigraph, System.out);
 
         eb(agent, "plato_tree");
         eb(rr0.getRedex(), "rr0-redex");
@@ -137,7 +137,7 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
 //                .addSite()
         ;
         PureBigraph redex = builderRedex.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel(redex, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(redex, System.out);
 
         builderReactum.createRoot()
 //                .addSite()
@@ -145,7 +145,7 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
                 .addChild("in").down().addChild("f").top()
                 .addChild("out");
         PureBigraph reactum = builderReactum.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel(reactum, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(reactum, System.out);
         ParametricReactionRule<PureBigraph> pureBigraphParametricReactionRule = new ParametricReactionRule<>(redex, reactum);
         return pureBigraphParametricReactionRule;
     }

@@ -191,8 +191,8 @@ public class ModelCheckingOptions {
         public static class Builder {
             private int maximumTransitions;
             private TimeUnit maximumTimeUnit = TimeUnit.SECONDS;
-            private long maximumTime = 30;
-            private boolean reduceStates = false;
+            private long maximumTime = 60;
+            private boolean reduceStates = true;
 
             public Builder setMaximumTransitions(int maximumTransitions) {
                 this.maximumTransitions = maximumTransitions;

@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.documentation.basic;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
@@ -9,7 +9,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.factory.AbstractBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -49,7 +48,7 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
                 EMetaModelData.builder().setName("myMetaModel").setNsPrefix("example").setNsUri("http://example.org").create()
         );
         PureBigraph bigraph = bigraphBuilder.createBigraph();
-        BigraphArtifacts.exportAsMetaModel(bigraph,
+        BigraphFileModelManagement.Store.exportAsMetaModel(bigraph,
                 new FileOutputStream(new File(TARGET_TEST_PATH + "my-meta-model.ecore")));
 
     }
@@ -89,7 +88,7 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
 
         PureBigraph bigraph = builder.createBigraph();
 //        System.out.println(bigraph.getRoots().size());
-//        BigraphArtifacts.exportAsInstanceModel(bigraph, new FileOutputStream(new File("test.xmi")));
+//        BigraphFileModelManagement.exportAsInstanceModel(bigraph, new FileOutputStream(new File("test.xmi")));
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {

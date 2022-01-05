@@ -1,6 +1,6 @@
 package de.tudresden.inf.st.bigraphs.converter.bigred;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
@@ -55,8 +55,8 @@ public class BasicBigRedXmlParseTests {
         DefaultBigraphXMLLoader bxl = new DefaultBigraphXMLLoader();
         bxl.readXml(resource.getPath());
         PureBigraph bigraph = bxl.importObject();
-        BigraphArtifacts.exportAsMetaModel(bigraph, new FileOutputStream(new File(DUMP_TARGET + "./bigred/test-sampleB.ecore")));
-        BigraphArtifacts.exportAsInstanceModel(bigraph, new FileOutputStream(new File(DUMP_TARGET + "./bigred/test-sampleB.xmi")));
+        BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream(new File(DUMP_TARGET + "./bigred/test-sampleB.ecore")));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, new FileOutputStream(new File(DUMP_TARGET + "./bigred/test-sampleB.xmi")));
         String s = BigraphGraphvizExporter.toPNG(bigraph, true, (new File(DUMP_TARGET + "./bigred//test-sampleB.png")));
     }
 }
