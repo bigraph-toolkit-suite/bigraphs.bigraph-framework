@@ -4,8 +4,8 @@ title: Introduction
 sidebar_position: 1
 ---
 
-A bigraph model may be converted to and loaded from several formats,
-including [GraphML](http://graphml.graphdrawing.org/), [BigMC](http://bigraph.org/bigmc/), [GXL](http://www.gupro.de/GXL/) and
+A bigraph model, or in some cases a signature model, may be converted to and loaded from several formats,
+including [GraphML](http://graphml.graphdrawing.org/), [BigMC](http://bigraph.org/bigmc/), [GXL](http://www.gupro.de/GXL/), [JLibBig](https://bigraphs.github.io/jlibbig/) and
 [BigraphER](http://www.dcs.gla.ac.uk/~michele/bigrapher.html).
 
 Therefore, the module `bigraph-converter` of _Bigraph Framework_ contains the corresponding
@@ -13,9 +13,10 @@ encoders/pretty printers etc.
 
 ## Exporting Bigraphs to other File Formats
 
-The following bigraph tools are supported by now:
-
-<ul><li>BigMC</li><li>BigraphER</li><li>BigRed</li></ul>
+The following bigraph tools or libraries are supported by now:
+- BigMC
+- BigraphER
+- BigRed
 
 Two conversion strategies are followed for exporting the internal bigraph structure of _Bigraph Framework_ to various other file formats to be used by other tools. One that uses a **pretty printer** (e.g., BigMC, BigraphER), and one that uses **adapter classes** (e.g., BigRed).
 
@@ -26,6 +27,10 @@ Both approaches are explained in a general form in the following.
 
 > Note that the existing bigraph tools vary in their feature set.
 > That means that not all properties specified in Bigraph Framework may be directly translated to the language supported by each tool.
+
+For some cases (e.g., JLibBig), a different approach is chosen. They mostly rely on the following interfaces:
+- `de.tudresden.inf.st.bigraphs.converter.BigraphObjectDecoder<B extends Bigraph<?>, T>`
+- `de.tudresden.inf.st.bigraphs.converter.BigraphObjectEncoder<B extends Bigraph<?>, T>`
 
 ### PrettyPrinter Approach
 
@@ -61,3 +66,5 @@ For each respective tool different adapters for signatures, agents and reaction 
 ## Loading Bigraphs from other File Formats
 
 Currently, bigraphs can be loaded only from BigRed XML files into Bigraph Framework. See [here](converter/bigred-converter#loading-bigred-xml-files-signatures-agents-rules-simulation-specification) for more details.
+
+See also [Persisting Bigraphs](../persistence/persistence) to store and load bigraph models as `*.ecore` and `*.xmi` files.

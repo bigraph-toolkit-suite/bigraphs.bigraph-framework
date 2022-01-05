@@ -1,0 +1,20 @@
+---
+id: jlibbig-converter
+title: JLibBig
+---
+
+[JLibbig](https://github.com/bigraphs/jlibbig) is a Java library for bigraphical reactive systems.
+Bigraph Framework allows to encode its bigraph model into an object that JLibBig underlies.
+See the following examples.
+
+```java
+JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+PureBigraph big_00 = big_00();
+
+it.uniud.mads.jlibbig.core.std.Bigraph encoded = encoder.encode(big_00);
+System.out.println(encoded.toString());
+
+PureBigraph decoded = decoder.decode(encoded);
+BigraphFileModelManagement.Store.exportAsInstanceModel(decoded, System.out);
+```
