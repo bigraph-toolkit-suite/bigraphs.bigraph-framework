@@ -53,6 +53,13 @@ The generated user manual can then link to the separately built Javadoc.
 
 ###  Building and Working with the Documentation
 
+To check for npm updates or security issues, run the following inside the docusaurus folder of the documentation module:
+
+```
+npm audit
+npx npm-check-updates
+```
+
 #### Live Editing
 
 First, `cd` into the `./documentation/v2-docusaurus/` folder.
