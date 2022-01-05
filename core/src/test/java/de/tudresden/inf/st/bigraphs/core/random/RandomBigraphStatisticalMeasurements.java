@@ -2,13 +2,12 @@ package de.tudresden.inf.st.bigraphs.core.random;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.BigraphArtifacts;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
@@ -46,7 +45,7 @@ public class RandomBigraphStatisticalMeasurements {
         DefaultDynamicSignature exampleSignature = createExampleSignature();
         PureBigraph generated = new PureBigraphGenerator(exampleSignature).generate(1, 20, 1.0f);
 
-        BigraphArtifacts.exportAsInstanceModel(generated, new FileOutputStream(new File("src/test/resources/dump/exported-models/randomly-generated.xmi")));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(generated, new FileOutputStream(new File("src/test/resources/dump/exported-models/randomly-generated.xmi")));
 
         //the richer get more rich... theorem proven
         for (BigraphEntity.RootEntity each : generated.getRoots()) {

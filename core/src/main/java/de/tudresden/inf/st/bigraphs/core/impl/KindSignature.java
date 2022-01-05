@@ -125,7 +125,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
         super(controls);
         try {
             // (!) Important, because otherwise we might face a "A frozen model should not be modified" assertion exception:
-            sigPackage = BigraphArtifacts.loadInternalSignatureMetaMetaModel();
+            sigPackage = BigraphFileModelManagement.Load.internalSignatureMetaMetaModel();
             sigFactory = sigPackage.getEFactoryInstance();
         } catch (IOException e) {
             throw new RuntimeException(e);

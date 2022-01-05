@@ -220,7 +220,7 @@ public final class FactoryCreationContext {
         return current().map((ctx) -> {
             return ctx.newBigraphBuilder(signature, metaModel);
         }).orElseGet(() -> {
-            return begin(findFactoryFor(bigraphClass)).newBigraphBuilder(signature, metaModel); //TODO: factory
+            return begin(findFactoryFor(bigraphClass)).newBigraphBuilder(signature, metaModel);
         });
     }
 

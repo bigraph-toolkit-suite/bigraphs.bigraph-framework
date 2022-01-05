@@ -150,8 +150,8 @@ public class BigraphSignatureUnitTest {
         assert cntRoom == 2;
         assert cntAtomics == 2;
 
-        BigraphArtifacts.exportAsMetaModel(signature, System.out);
-        BigraphArtifacts.exportAsInstanceModel(signature, System.out);
+        BigraphFileModelManagement.Store.exportAsMetaModel(signature, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(signature, System.out);
     }
 
     @Test
@@ -224,7 +224,7 @@ public class BigraphSignatureUnitTest {
         assert signature.getPlaceKindMap().size() != 0;
         assert dynSignatureRecreated.getPlaceKindMap().equals(signature.getPlaceKindMap());
 
-        BigraphArtifacts.exportAsInstanceModel(dynSignatureRecreated, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(dynSignatureRecreated, System.out);
 
     }
 
@@ -238,8 +238,8 @@ public class BigraphSignatureUnitTest {
         defaultBuilder.newControl("Printer", 13).status(ControlStatus.ATOMIC).assign();
         DefaultDynamicSignature defaultSignature = defaultBuilder.create();
 
-        BigraphArtifacts.exportAsMetaModel(defaultSignature, System.out);
-        BigraphArtifacts.exportAsInstanceModel(defaultSignature, System.out);
+        BigraphFileModelManagement.Store.exportAsMetaModel(defaultSignature, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(defaultSignature, System.out);
 
         EPackage packageObject = defaultSignature.getMetaModel();
         EObject instanceObject = defaultSignature.getInstanceModel();
@@ -278,8 +278,8 @@ public class BigraphSignatureUnitTest {
         DefaultDynamicSignature dynamicSignature = dynamicBuilder.create();
 
 
-        BigraphArtifacts.exportAsMetaModel(dynamicSignature, System.out);
-        BigraphArtifacts.exportAsInstanceModel(dynamicSignature, System.out);
+        BigraphFileModelManagement.Store.exportAsMetaModel(dynamicSignature, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(dynamicSignature, System.out);
 
         EPackage packageObject = dynamicSignature.getMetaModel();
         EObject instanceObject = dynamicSignature.getInstanceModel();
@@ -352,7 +352,7 @@ public class BigraphSignatureUnitTest {
 //        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         try {
-            EPackage metapackage = BigraphArtifacts.loadInternalBigraphMetaMetaModel();
+            EPackage metapackage = BigraphFileModelManagement.Load.internalBigraphMetaMetaModel();
             System.out.println("Model loaded");
 
 //            EPackage metapackage = (EPackage) resource.getContents().get(0);

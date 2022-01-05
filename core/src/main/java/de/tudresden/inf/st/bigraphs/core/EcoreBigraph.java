@@ -169,28 +169,6 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
          * @throws CloneNotSupportedException
          */
         public Stub<S> clone() throws CloneNotSupportedException {
-//            try {
-//                DefaultFileSystemManager manager = MemoryOperations.getInstance().createFileSystemManager();
-//                final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
-//                final FileObject fo2 = manager.resolveFile("ram:/meta.ecore");
-//                OutputStream outputStream = fo1.getContent().getOutputStream();
-//                OutputStream outputStream2 = fo2.getContent().getOutputStream();
-//                BigraphArtifacts.exportAsInstanceModel(this, outputStream);
-//                BigraphArtifacts.exportAsMetaModel(this, outputStream2);
-//                outputStream.close();
-//                outputStream2.close();
-//                InputStream inputStream = fo1.getContent().getInputStream();
-//                InputStream inputStream2 = fo2.getContent().getInputStream();
-////                EPackage ePackage = BigraphArtifacts.loadBigraphMetaModel(inputStream2);
-////                List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, inputStream);
-//                List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, inputStream);
-//                inputStream.close();
-//                inputStream2.close();
-//                return new Stub(ePackage, eObjects.get(0));
-//                return new Stub(metaModel, eObjects.get(0));
-//            } catch (IOException e) {
-//                throw new CloneNotSupportedException(e.getMessage());
-//            }
             return new Stub<>(metaModel, EcoreUtil.copy(instanceModel));
         }
 
@@ -207,7 +185,7 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
                 DefaultFileSystemManager manager = MemoryOperations.getInstance().createFileSystemManager();
                 final FileObject fo1 = manager.resolveFile("ram:/instance.xmi");
                 OutputStream outputStream = fo1.getContent().getOutputStream();
-                BigraphArtifacts.exportAsInstanceModel(this, outputStream);
+                BigraphFileModelManagement.Store.exportAsInstanceModel(this, outputStream);
                 outputStream.close();
                 return fo1.getContent().getInputStream();
             } catch (Exception e) {

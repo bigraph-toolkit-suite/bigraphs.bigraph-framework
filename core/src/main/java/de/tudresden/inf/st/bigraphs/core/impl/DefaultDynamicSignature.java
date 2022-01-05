@@ -95,7 +95,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
         super(controls);
         try {
             // (!) Important, because otherwise we might face a "A frozen model should not be modified" assertion exception:
-            sigPackage = BigraphArtifacts.loadInternalSignatureMetaMetaModel();
+            sigPackage = BigraphFileModelManagement.Load.internalSignatureMetaMetaModel();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

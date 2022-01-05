@@ -61,8 +61,8 @@ public class BigraphCompositionUnitTests {
         Linkings<DefaultDynamicSignature>.Closure x = pureLinkings(sig).closure("x");
         BigraphComposite<DefaultDynamicSignature> G = ops(K_x).merge(L_x);
         ops(x).compose(G);
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) G, System.out);
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) (ops(x).compose(G).getOuterBigraph()), System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) G, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) (ops(x).compose(G).getOuterBigraph()), System.out);
     }
 
     @Test
@@ -80,10 +80,10 @@ public class BigraphCompositionUnitTests {
                 .addChild("User")
                 .top()
                 .createBigraph();
-//        BigraphArtifacts.exportAsMetaModel(userBigraph, new FileOutputStream(userBigraph.getEMetaModelData().getName() + ".ecore"));
-//        BigraphArtifacts.loadBigraphMetaModel(userBigraph.getEMetaModelData().getName() + ".ecore");
+//        BigraphFileModelManagement.exportAsMetaModel(userBigraph, new FileOutputStream(userBigraph.getEMetaModelData().getName() + ".ecore"));
+//        BigraphFileModelManagement.loadBigraphMetaModel(userBigraph.getEMetaModelData().getName() + ".ecore");
         BigraphComposite<DefaultDynamicSignature> nesting = ops(bigraph).nesting(userBigraph);
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) nesting.getOuterBigraph(), System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) nesting.getOuterBigraph(), System.out);
     }
 
     @Test
@@ -103,12 +103,12 @@ public class BigraphCompositionUnitTests {
                 .top()
                 .createBigraph();
         System.out.println("-----------------------------------------");
-        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
         System.out.println("-----------------------------------------");
-        BigraphArtifacts.exportAsInstanceModel(userBigraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(userBigraph, System.out);
         PureBigraph nesting = ops(bigraph).nesting(userBigraph).getOuterBigraph();
 //        System.out.println("-----------------------------------------");
-        BigraphArtifacts.exportAsInstanceModel(nesting, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(nesting, System.out);
         assertEquals(1, nesting.getRoots().size());
         assertEquals(4, nesting.getNodes().size());
         assertEquals(0, nesting.getSites().size());
@@ -128,16 +128,16 @@ public class BigraphCompositionUnitTests {
         builder.createRoot().addChild("Computer", "x").addChild("Computer", "x");
 
         PureBigraph bigraph = builder.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
 
         // (id(1) | /("x"))
         builder2.createInnerName("x");
         builder2.createRoot().addSite();
         PureBigraph left = builder2.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel(left, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(left, System.out);
 
         Bigraph<DefaultDynamicSignature> result = ops(left).compose(bigraph).getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) result, System.out);
         assertNotNull(result);
         assertEquals(3, result.getAllPlaces().size());
         assertEquals(1, result.getEdges().size());
@@ -145,7 +145,7 @@ public class BigraphCompositionUnitTests {
         assertEquals(0, result.getInnerNames().size());
         assertEquals(2, result.getPointsFromLink(result.getEdges().iterator().next()).size());
 //        Bigraph<DefaultDynamicSignature> result2 = new PureBigraphComposite<>(left).composeV2(bigraph).getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result2, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) result2, System.out);
     }
 
     @Test
@@ -161,10 +161,10 @@ public class BigraphCompositionUnitTests {
 
         BigraphComposite<DefaultDynamicSignature> comp = ops(bigraph).parallelProduct(bigraph);
         Bigraph<DefaultDynamicSignature> outerBigraph = comp.getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel((PureBigraph) outerBigraph, new FileOutputStream(TARGET_TEST_PATH + "same-instance.xmi"));
+//        BigraphFileModelManagement.exportAsInstanceModel((PureBigraph) outerBigraph, new FileOutputStream(TARGET_TEST_PATH + "same-instance.xmi"));
 
         Bigraph<DefaultDynamicSignature> comp2 = ops(bigraph).compose(bigraph).getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) comp2, new FileOutputStream(TARGET_TEST_PATH + "same-instance2.xmi"));
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) comp2, new FileOutputStream(TARGET_TEST_PATH + "same-instance2.xmi"));
     }
 
 //    @Test
@@ -186,8 +186,8 @@ public class BigraphCompositionUnitTests {
 //        BigraphComposite<DefaultDynamicSignature> composed2 = ops(building).juxtapose(user);
 //        assertNotNull(composed);
 //        assertNotNull(composed2);
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed, System.out);
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed2, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) composed, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) composed2, System.out);
 //
 ////        assertEquals(metaData.getName(), ((PureBigraph) composed.getOuterBigraph()).getModelPackage().getName());
 ////        assertEquals(metaData.getNsPrefix(), ((PureBigraph) composed.getOuterBigraph()).getModelPackage().getNsPrefix());
@@ -338,14 +338,14 @@ public class BigraphCompositionUnitTests {
         PureBigraph F = builderForF.createBigraph();
         PureBigraph G = builderForG.createBigraph();
         PureBigraph H = builderForH.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel((PureBigraph) F,
+        BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) F,
                 new FileOutputStream(TARGET_TEST_PATH + "F.xmi"));
-        BigraphArtifacts.exportAsInstanceModel((PureBigraph) G,
+        BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) G,
                 new FileOutputStream(TARGET_TEST_PATH + "G.xmi"));
 
         BigraphComposite<DefaultDynamicSignature> juxtapose = ops(F).parallelProduct(G);
         Bigraph<DefaultDynamicSignature> result = juxtapose.getOuterBigraph();
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result,
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) result,
                 new FileOutputStream(TARGET_TEST_PATH + "result.xmi"));
     }
 
@@ -430,11 +430,11 @@ public class BigraphCompositionUnitTests {
 
             ///x * User{x}
             Bigraph<DefaultDynamicSignature> outerBigraph3 = ops(placings.identity1()).juxtapose(c1).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) outerBigraph3, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) outerBigraph3, System.out);
 
             DiscreteIon<DefaultDynamicSignature> discreteIon = pureDiscreteIon(mainSignature, "User", "x");
             Bigraph<DefaultDynamicSignature> result0 = ops(outerBigraph3).compose(discreteIon).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result0, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) result0, System.out);
             assertEquals(0, result0.getOuterNames().size());
             assertEquals(0, result0.getInnerNames().size());
             assertEquals(3, result0.getAllPlaces().size());
@@ -444,7 +444,7 @@ public class BigraphCompositionUnitTests {
 
             // parallel product between linkings : shall not create root
             Bigraph<DefaultDynamicSignature> composed1 = ops(c1).parallelProduct(s1).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed1, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) composed1, System.out);
             assertEquals(1, composed1.getOuterNames().size());
             assertEquals(2, composed1.getInnerNames().size());
             assertEquals(0, composed1.getAllPlaces().size());
@@ -453,7 +453,7 @@ public class BigraphCompositionUnitTests {
 
             // parallel product between linkings: shall not create root
             Bigraph<DefaultDynamicSignature> composed2 = ops(c1).parallelProductOf(c1, s1).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed2, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) composed2, System.out);
             assertEquals(1, composed2.getOuterNames().size());
             assertEquals(2, composed2.getInnerNames().size());
             assertEquals(0, composed2.getAllPlaces().size());
@@ -462,7 +462,7 @@ public class BigraphCompositionUnitTests {
 
             // merge product between linkings
             Bigraph<DefaultDynamicSignature> merged = ops(c1).merge(s1).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) merged, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) merged, System.out);
             assertEquals(1, merged.getOuterNames().size());
             assertEquals(2, merged.getInnerNames().size());
             assertEquals(1, merged.getAllPlaces().size());
@@ -470,7 +470,7 @@ public class BigraphCompositionUnitTests {
 
             // mutliple merges
             Bigraph<DefaultDynamicSignature> merged2 = ops(c1).merge(c1).merge(c1).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) merged2, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) merged2, System.out);
             assertEquals(0, merged2.getOuterNames().size());
             assertEquals(1, merged2.getInnerNames().size());
             assertEquals(1, merged2.getAllPlaces().size());
@@ -478,7 +478,7 @@ public class BigraphCompositionUnitTests {
 
             // merge product of two different linkings
             Bigraph<DefaultDynamicSignature> merged3 = ops(c1).merge(c1).merge(c2).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) merged3, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) merged3, System.out);
             assertEquals(0, merged3.getOuterNames().size());
             assertEquals(2, merged3.getInnerNames().size());
             assertEquals(1, merged3.getAllPlaces().size());
@@ -486,7 +486,7 @@ public class BigraphCompositionUnitTests {
 
             // (/x || (/x | /a))
             Bigraph<DefaultDynamicSignature> result = ops(c1).parallelProduct(ops(c1).merge(c2)).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) result, System.out);
             assertEquals(0, result.getOuterNames().size());
             assertEquals(2, result.getInnerNames().size());
             assertEquals(1, result.getAllPlaces().size());
@@ -497,7 +497,7 @@ public class BigraphCompositionUnitTests {
             // 1 * (/x || /y): <0,{}> and <0,{}> works
             Placings<DefaultDynamicSignature>.Barren barren = placings.barren();
             Bigraph<DefaultDynamicSignature> result2 = ops(barren).compose(ops(c1).parallelProduct(y)).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result2, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) result2, System.out);
             assertEquals(0, result2.getOuterNames().size());
             assertEquals(2, result2.getInnerNames().size());
             assertEquals(1, result2.getAllPlaces().size());
@@ -526,7 +526,7 @@ public class BigraphCompositionUnitTests {
             assertEquals(0, outerBigraph.getNodes().size());
             assertEquals(1, outerBigraph.getSites().size());
             Bigraph<DefaultDynamicSignature> outerBigraph1 = ops(outerBigraph).compose(ionC).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) outerBigraph1, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) outerBigraph1, System.out);
             assertEquals(1, outerBigraph1.getOuterNames().size());
             assertEquals(0, outerBigraph1.getEdges().size());
             assertEquals(0, outerBigraph1.getInnerNames().size());
@@ -539,7 +539,7 @@ public class BigraphCompositionUnitTests {
             Linkings<DefaultDynamicSignature>.Substitution sigma_y = linkings.substitution(StringTypedName.of("y"), StringTypedName.of("y"));
             Bigraph<DefaultDynamicSignature> outerBigraph2 = ops(placings.identity1()).parallelProduct(c1).parallelProduct(sigma_y).getOuterBigraph();
             Bigraph<DefaultDynamicSignature> composed3 = ops(outerBigraph2).compose(ionC).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) composed3, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) composed3, System.out);
             assertEquals(1, composed3.getOuterNames().size());
             assertEquals("y", composed3.getOuterNames().iterator().next().getName());
             assertEquals(1, composed3.getEdges().size());
@@ -561,7 +561,7 @@ public class BigraphCompositionUnitTests {
 
         assertAll(() -> {
             Bigraph<DefaultDynamicSignature> outerBigraph = ops(K_xyz).nesting(L_yz).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) outerBigraph, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) outerBigraph, System.out);
         });
     }
 
@@ -576,7 +576,7 @@ public class BigraphCompositionUnitTests {
             Linkings<DefaultDynamicSignature>.Closure xyz = linkings.closure(
                     Sets.mutable.of(StringTypedName.of("a"), StringTypedName.of("x"), StringTypedName.of("y"))
             );
-            BigraphArtifacts.exportAsInstanceModel(xyz, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel(xyz, System.out);
             assertEquals(3, xyz.getInnerNames().size());
             assertEquals(0, xyz.getOuterNames().size());
 
@@ -592,22 +592,22 @@ public class BigraphCompositionUnitTests {
             assertEquals(3, discreteIon.getAllPlaces().size());
 
 
-//            BigraphArtifacts.exportAsInstanceModel(x, System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel(x, System.out);
             Placings.Identity1 id = purePlacings(exampleSignature).identity1();
             System.out.println("Discrete Ion:");
-            BigraphArtifacts.exportAsInstanceModel(discreteIon, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel(discreteIon, System.out);
             BigraphComposite<DefaultDynamicSignature> compose = ops(ops(x).juxtapose(id).getOuterBigraph()).compose(discreteIon);
             assertEquals(0, compose.getOuterBigraph().getInnerNames().size());
             assertEquals(0, compose.getOuterBigraph().getOuterNames().size());
             System.out.println("Composition of Closure /x and Discrete Ion:");
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) compose.getOuterBigraph(), System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) compose.getOuterBigraph(), System.out);
 //            BigraphComposite<DefaultDynamicSignature> compose = ops(x).compose(discreteIon);
 //            factory.asBigraphOperator(x).compose(discreteIon)
             Bigraph<DefaultDynamicSignature> xyzWithPGIdentity = ops(id).parallelProduct(xyz).getOuterBigraph();
             System.out.println("xyzWithPGIdentity: ");
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) xyzWithPGIdentity, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) xyzWithPGIdentity, System.out);
 //            Bigraph<DefaultDynamicSignature> nesting = factory.asBigraphOperator(xyzWithPGIdentity).nesting(discreteIon).getOuterBigraph();
-//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) nesting, System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) nesting, System.out);
 //            assertEquals(2, nesting.getInnerNames().size());
 //            assertEquals(1, nesting.getOuterNames().size());
 //            assertEquals(1, nesting.getRoots().size());
@@ -674,20 +674,20 @@ public class BigraphCompositionUnitTests {
 //        BigraphBaseModelPackageImpl.init();
 //        PureBigraphBuilder<Signature> b1 = PureBigraphBuilder.create(createSingleControlSignature(), metaModel, instanceModela);
 //        PureBigraph lhs = b1.createBigraph();
-//        BigraphArtifacts.exportAsMetaModel(lhs, new FileOutputStream(TARGET_TEST_MODEL_PATH + "F.ecore"));
+//        BigraphFileModelManagement.exportAsMetaModel(lhs, new FileOutputStream(TARGET_TEST_MODEL_PATH + "F.ecore"));
 //
-//        b1 = PureBigraphBuilder.create(createSingleControlSignature(), b1.getLoadedEPackage(), BigraphArtifacts.loadBigraphInstanceModel(instanceModelb).get(0));
+//        b1 = PureBigraphBuilder.create(createSingleControlSignature(), b1.getLoadedEPackage(), BigraphFileModelManagement.loadBigraphInstanceModel(instanceModelb).get(0));
 //        PureBigraph rhs = b1.createBigraph();
 //
-//        b1 = PureBigraphBuilder.create(createSingleControlSignature(), b1.getLoadedEPackage(), BigraphArtifacts.loadBigraphInstanceModel(instanceModelc).get(0));
+//        b1 = PureBigraphBuilder.create(createSingleControlSignature(), b1.getLoadedEPackage(), BigraphFileModelManagement.loadBigraphInstanceModel(instanceModelc).get(0));
 //        PureBigraph bc = b1.createBigraph();
-//        b1 = PureBigraphBuilder.create(createSingleControlSignature(), b1.getLoadedEPackage(), BigraphArtifacts.loadBigraphInstanceModel(instanceModeld).get(0));
+//        b1 = PureBigraphBuilder.create(createSingleControlSignature(), b1.getLoadedEPackage(), BigraphFileModelManagement.loadBigraphInstanceModel(instanceModeld).get(0));
 //        PureBigraph bd = b1.createBigraph();
 //
-//        BigraphArtifacts.exportAsInstanceModel(bc, System.out);
-//        BigraphArtifacts.exportAsInstanceModel(bd, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel(bc, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel(bd, System.out);
 //        PureBigraph reactumImage = factory.asBigraphOperator(bc).nesting(bd).getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel(reactumImage, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel(reactumImage, System.out);
 //        assertEquals(1, reactumImage.getRoots().size());
 //        assertEquals(2, reactumImage.getNodes().size());
 //        assertEquals(3, reactumImage.getOuterNames().size());
@@ -697,7 +697,7 @@ public class BigraphCompositionUnitTests {
 //        assertEquals(0, reactumImage.getPointsFromLink(reactumImage.getOuterNames().stream().filter(x -> x.getName().equals("y2")).findFirst().get()).size());
 //
 //        Bigraph<DefaultDynamicSignature> result = factory.asBigraphOperator(lhs).compose(rhs).getOuterBigraph();
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result, System.out);
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) result, System.out);
 //        assertEquals(1, result.getRoots().size());
 //        assertEquals(4, result.getNodes().size());
 //        assertEquals(0, result.getSites().size());

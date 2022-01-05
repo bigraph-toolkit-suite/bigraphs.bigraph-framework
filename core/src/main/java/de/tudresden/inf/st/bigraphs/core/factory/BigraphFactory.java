@@ -6,7 +6,6 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
@@ -27,6 +26,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class BigraphFactory {
 
+    // ///////////////////////////////////
+    // Bigraph Operator-related factories
+    // ///////////////////////////////////
+
     public static synchronized <S extends Signature<? extends Control<?, ?>>> BigraphComposite<S> ops(Bigraph<S> bigraph) {
         return FactoryCreationContext.createOperator(bigraph);
     }
@@ -38,9 +41,26 @@ public final class BigraphFactory {
 
 
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> EPackage createOrGetSignatureMetaModel(S signatureObject) {
+        return BigraphFactory.createOrGetSignatureMetaModel(signatureObject, (EMetaModelData) null);
+    }
+
+    /**
+     * Overwrites the metadata of the metamodel.
+     *
+     * @param signatureObject
+     * @param metaModelData
+     * @param <S>
+     * @return
+     */
+    public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> EPackage createOrGetSignatureMetaModel(S signatureObject, EMetaModelData metaModelData) {
         if ((Registry.INSTANCE_SIG.getEPackage(signatureObject)) == null) {
             Registry.INSTANCE_SIG.put(signatureObject, signatureObject.getMetaModel());
-            return signatureObject.getMetaModel();
+        }
+        EPackage ePackageMetaModel = signatureObject.getMetaModel();
+        if (Objects.nonNull(metaModelData)) {
+            ePackageMetaModel.setNsPrefix(metaModelData.getNsPrefix());
+            ePackageMetaModel.setNsURI(metaModelData.getNsUri());
+            ePackageMetaModel.setName(metaModelData.getName());
         }
         return Registry.INSTANCE_SIG.getEPackage(signatureObject);
     }
@@ -51,10 +71,12 @@ public final class BigraphFactory {
      * @return the signature object (freshly created, or the one already present in the internal registry)
      */
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> S createOrGetSignature(EObject signatureInstanceModel) {
-        return createOrGetSignature(signatureInstanceModel, null);
+        return createOrGetSignature(signatureInstanceModel, (EMetaModelData) null);
     }
 
     /**
+     * Overwrites the metadata of the metamodel.
+     *
      * @param signatureInstanceModel the Ecore signature instance model
      * @param metaModelData          additional meta data in case the signature metamodel is going to be re-created;
      *                               otherwise it is ignored.
@@ -64,15 +86,15 @@ public final class BigraphFactory {
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> S createOrGetSignature(EObject signatureInstanceModel, EMetaModelData metaModelData) {
         if (!Registry.INSTANCE_SIG.containsValue(signatureInstanceModel.eClass().getEPackage())) {
             AbstractEcoreSignature<? extends Control<?, ?>> signatureFromMetaModel = BigraphBuilderSupport.getSignatureFromMetaModel(signatureInstanceModel);
-            EPackage ePackageMetaModel = signatureFromMetaModel.getMetaModel();
+            createOrGetSignatureMetaModel((S) signatureFromMetaModel, metaModelData);
+            return (S) signatureFromMetaModel;
+        } else {
+            EPackage ePackageMetaModel = signatureInstanceModel.eClass().getEPackage();
             if (Objects.nonNull(metaModelData)) {
                 ePackageMetaModel.setNsPrefix(metaModelData.getNsPrefix());
                 ePackageMetaModel.setNsURI(metaModelData.getNsUri());
                 ePackageMetaModel.setName(metaModelData.getName());
             }
-            Registry.INSTANCE_SIG.put(signatureFromMetaModel, ePackageMetaModel);
-            return (S) signatureFromMetaModel;
-        } else {
             return (S) Registry.INSTANCE_SIG.getKeyForVal(signatureInstanceModel.eClass().getEPackage()).get();
         }
     }
@@ -84,47 +106,50 @@ public final class BigraphFactory {
 
 
     /**
+     * Registers the bigraph metamodel.
+     *
      * @param signature the signature object
      * @param <S>       the type of the signature
-     * @return the Ecore signature metamodel for the given signature object
+     * @return the Ecore bigraph metamodel for the given signature object
      */
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> EPackage createOrGetBigraphMetaModel(S signature) {
         return createOrGetBigraphMetaModel(signature, null);
     }
 
     /**
+     * Registers the bigraph metamodel.
+     * Overwrites the metadata of the metamodel.
+     *
      * @param signature     the signature object
      * @param metaModelData additional meta data in case the signature metamodel is going to be re-created;
      *                      otherwise it is ignored.
      * @param <S>           the type of the signature
-     * @return the Ecore signature metamodel for the given signature object
+     * @return the Ecore bigraph metamodel for the given signature object
      */
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> EPackage createOrGetBigraphMetaModel(S signature, EMetaModelData metaModelData) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
-        EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
-        if (Objects.isNull(bigraphBaseModelPackage)) {
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
+        if (bigraphBaseModelPackage == null) {
             PureBigraphBuilder<S> b = (PureBigraphBuilder<S>) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
-            EPackage loadedEPackage = b.getMetaModel();
-            if (Objects.nonNull(metaModelData)) {
-                loadedEPackage.setNsPrefix(metaModelData.getNsPrefix());
-                loadedEPackage.setNsURI(metaModelData.getNsUri());
-                loadedEPackage.setName(metaModelData.getName());
-            }
-            Registry.INSTANCE.put(signature, loadedEPackage);
-            return loadedEPackage;
-        } else {
-            return bigraphBaseModelPackage;
+            bigraphBaseModelPackage = b.getMetaModel();
+            Registry.INSTANCE_BIG.put(signature, bigraphBaseModelPackage);
         }
+        if (Objects.nonNull(metaModelData)) {
+            bigraphBaseModelPackage.setNsPrefix(metaModelData.getNsPrefix());
+            bigraphBaseModelPackage.setNsURI(metaModelData.getNsUri());
+            bigraphBaseModelPackage.setName(metaModelData.getName());
+        }
+        return bigraphBaseModelPackage;
     }
 
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> pureBuilder(S signature) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
-        EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
         if ((bigraphBaseModelPackage) == null) {
             PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
-            Registry.INSTANCE.put(signature, b.getMetaModel());
+            Registry.INSTANCE_BIG.put(signature, b.getMetaModel());
             return b;
         } else {
             return (PureBigraphBuilder<S>) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
@@ -135,10 +160,10 @@ public final class BigraphFactory {
             ? extends FiniteOrdinal<?>>>> DiscreteIon<S> pureDiscreteIon(S signature, String name, String... outerNames) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
-        EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
             DiscreteIon<S> b = FactoryCreationContext.createDiscreteIonBuilder(signature, name, new HashSet<>(Arrays.asList(outerNames)), PureBigraph.class);
-            Registry.INSTANCE.put(signature, b.getModelPackage());
+            Registry.INSTANCE_BIG.put(signature, b.getModelPackage());
             return b;
         } else {
             return FactoryCreationContext.createDiscreteIonBuilder(signature, name, new HashSet<>(Arrays.asList(outerNames)), bigraphBaseModelPackage, PureBigraph.class);
@@ -148,10 +173,10 @@ public final class BigraphFactory {
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> Placings<S> purePlacings(S signature) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
-        EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
         if ((bigraphBaseModelPackage) == null) {
             Placings<S> b = FactoryCreationContext.createPlacingsBuilder(signature, PureBigraph.class);
-            Registry.INSTANCE.put(signature, b.getLoadedModelPackage());
+            Registry.INSTANCE_BIG.put(signature, b.getLoadedModelPackage());
             return b;
         } else {
             return FactoryCreationContext.createPlacingsBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
@@ -161,10 +186,10 @@ public final class BigraphFactory {
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> Linkings<S> pureLinkings(S signature) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
-        EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
         if ((bigraphBaseModelPackage) == null) {
             Linkings<S> b = FactoryCreationContext.createLinkingsBuilder(signature, PureBigraph.class);
-            Registry.INSTANCE.put(signature, b.getLoadedModelPackage());
+            Registry.INSTANCE_BIG.put(signature, b.getLoadedModelPackage());
             return b;
         } else {
             return FactoryCreationContext.createLinkingsBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
@@ -174,8 +199,8 @@ public final class BigraphFactory {
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> pureBuilder(S signature, EPackage bigraphBaseModelPackage) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
-        if (Registry.INSTANCE.get(signature) == null) {
-            Registry.INSTANCE.put(signature, bigraphBaseModelPackage);
+        if (Registry.INSTANCE_BIG.get(signature) == null) {
+            Registry.INSTANCE_BIG.put(signature, bigraphBaseModelPackage);
         } else {
             throw new RuntimeException("Signature already in the registry");
         }
@@ -186,17 +211,17 @@ public final class BigraphFactory {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
         PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackageFile, PureBigraph.class);
-        Registry.INSTANCE.put(signature, b.getMetaModel());
+        Registry.INSTANCE_BIG.put(signature, b.getMetaModel());
         return b;
     }
 
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(S signature) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
-        EPackage bigraphBaseModelPackage = Registry.INSTANCE.getEPackage(signature);
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
             PureBigraphGenerator b = FactoryCreationContext.createRandomBigraphBuilder(signature, PureBigraph.class);
-            Registry.INSTANCE.put(signature, b.getModelPackage());
+            Registry.INSTANCE_BIG.put(signature, b.getModelPackage());
             return b;
         } else {
             return FactoryCreationContext.createRandomBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
@@ -206,7 +231,7 @@ public final class BigraphFactory {
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(S signature, EPackage bigraphBaseModelPackage) {
         // Check here as well, whether the signature metamodel is in the registry
         createOrGetSignatureMetaModel(signature);
-        Registry.INSTANCE.put(signature, bigraphBaseModelPackage);
+        Registry.INSTANCE_BIG.put(signature, bigraphBaseModelPackage);
         return FactoryCreationContext.createRandomBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
     }
 
@@ -289,7 +314,7 @@ public final class BigraphFactory {
                     .findFirst();
         }
 
-        BigraphFactory.Registry INSTANCE = new DefaultBigraphModelsRegistryImpl();
+        BigraphFactory.Registry INSTANCE_BIG = new DefaultBigraphModelsRegistryImpl();
         BigraphFactory.Registry INSTANCE_SIG = new DefaultSignatureModelsRegistryImpl();
     }
 }

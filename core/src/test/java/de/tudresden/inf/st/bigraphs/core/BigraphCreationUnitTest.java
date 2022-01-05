@@ -48,13 +48,13 @@ public class BigraphCreationUnitTest {
         builder.createOuterName("ko");
         builder.createInnerName("cp");
         PureBigraph bigraph = builder.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
 
         String pathLoaded = "src/test/resources/ecore-test-models/dolore_agent_5.xmi";
         EPackage orGetBigraphMetaModel = createOrGetBigraphMetaModel(sig);
         PureBigraphBuilder<DefaultDynamicSignature> loadedBuilder =
                 PureBigraphBuilder.create(sig, orGetBigraphMetaModel, pathLoaded);
-        BigraphArtifacts.exportAsInstanceModel(loadedBuilder.createBigraph(), System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(loadedBuilder.createBigraph(), System.out);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class BigraphCreationUnitTest {
         builder.reset();
         PureBigraph bigraph = new PureBigraph(meta);
         Assertions.assertDoesNotThrow(() -> {
-            BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
         });
         List<BigraphEntity.Port> ports = bigraph.getPorts(newNode);
         System.out.println(ports.size());
@@ -162,7 +162,7 @@ public class BigraphCreationUnitTest {
                 .addChild("User").linkToOuter(y1).up()
                 .addChild("D").linkToInner(x1);
         PureBigraph bigraph1 = builder.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel(bigraph1, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph1, System.out);
 
         bigraph1.getAllLinks().forEach(l -> {
             List<BigraphEntity<?>> pointsFromLink = bigraph1.getPointsFromLink(l);
@@ -194,7 +194,7 @@ public class BigraphCreationUnitTest {
         builder.closeInnerName(tmp);
         PureBigraph bigraph = builder.createBigraph();
 
-        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
         assertEquals(1, bigraph.getRoots().size());
         assertEquals(2, bigraph.getNodes().size());
         assertEquals(0, bigraph.getPortCount(bigraph.getNodes().get(0)));
@@ -218,7 +218,7 @@ public class BigraphCreationUnitTest {
         builder.closeInnerName(tmp);
         bigraph = builder.createBigraph();
 
-        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
         assertEquals(1, bigraph.getRoots().size());
         assertEquals(2, bigraph.getNodes().size());
         assertEquals(1, bigraph.getPortCount(bigraph.getNodes().get(0)));
@@ -241,7 +241,7 @@ public class BigraphCreationUnitTest {
         builder.addInnerNameTo(x1, x2);
         builder.closeInnerName(x1);
         bigraph = builder.createBigraph();
-        BigraphArtifacts.exportAsInstanceModel(bigraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
     }
 
     @Test

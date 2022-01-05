@@ -2,6 +2,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
@@ -113,6 +114,14 @@ public class KindSignatureBuilder extends
     }
 
     @Override
+    public KindSignature create(EMetaModelData metaModelData) {
+        if (Objects.isNull(kindSortsMap) || kindSortsMap.isEmpty())
+            return (KindSignature) super.create(metaModelData);
+        else
+            return this.createWith(getControls(), kindSortsMap.values(), metaModelData);
+    }
+
+    @Override
     public KindSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
         KindSignature sig = new KindSignature((Set<DefaultDynamicControl>) controls);
         BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
@@ -123,6 +132,13 @@ public class KindSignatureBuilder extends
                                     Collection<KindSort> kindSorts) {
         KindSignature sig = new KindSignature((Set<DefaultDynamicControl>) controls, kindSorts);
         BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
+    }
+
+    public KindSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls,
+                                    Collection<KindSort> kindSorts, EMetaModelData metaModelData) {
+        KindSignature sig = new KindSignature((Set<DefaultDynamicControl>) controls, kindSorts);
+        BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig, metaModelData);
         return sig;
     }
 

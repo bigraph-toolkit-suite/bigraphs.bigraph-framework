@@ -79,8 +79,8 @@ public class RandomBigraphUnitTests {
         PureBigraph right = builder2.createBigraph();
 
 
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) left, new FileOutputStream("src/test/resources/dump/exported-models/random_left_03_before.xmi"));
-        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) right, new FileOutputStream("src/test/resources/dump/exported-models/random_right_03_before.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) left, new FileOutputStream("src/test/resources/dump/exported-models/random_left_03_before.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) right, new FileOutputStream("src/test/resources/dump/exported-models/random_right_03_before.xmi"));
         PureBigraphComposite<DefaultDynamicSignature> comp = new PureBigraphComposite<>(left);
         Assertions.assertThrows(IncompatibleInterfaceException.class, () -> {
             BigraphComposite<DefaultDynamicSignature> result = comp.compose(right);
@@ -88,10 +88,10 @@ public class RandomBigraphUnitTests {
 //        BigraphComposite<DefaultDynamicSignature> result = comp.parallelProductV2(right);
 //        BigraphComposite<DefaultDynamicSignature> result = comp.parallelProduct(right);
 //        BigraphComposite<DefaultDynamicSignature> juxtapose = ((PureBigraphComposite) result).juxtapose(randomBigraph);
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result.getOuterBigraph(), new FileOutputStream("src/test/resources/dump/exported-models/random_comp_03_after.xmi"));
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) juxtapose.getOuterBigraph(), new FileOutputStream("src/test/resources/dump/exported-models/random_juxta_03_after.xmi"));
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) left, new FileOutputStream("src/test/resources/dump/exported-models/random_left_03_after.xmi"));
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) right, new FileOutputStream("src/test/resources/dump/exported-models/random_right_03_after.xmi"));
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) result.getOuterBigraph(), new FileOutputStream("src/test/resources/dump/exported-models/random_comp_03_after.xmi"));
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) juxtapose.getOuterBigraph(), new FileOutputStream("src/test/resources/dump/exported-models/random_juxta_03_after.xmi"));
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) left, new FileOutputStream("src/test/resources/dump/exported-models/random_left_03_after.xmi"));
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) right, new FileOutputStream("src/test/resources/dump/exported-models/random_right_03_after.xmi"));
 
 //        Assertions.assertNotNull(result);
     }
@@ -128,7 +128,7 @@ public class RandomBigraphUnitTests {
             resultsTimeCloneOp.add(secsClone);
             Assertions.assertNotNull(cloned);
             PureBigraphComposite<DefaultDynamicSignature> comp = new PureBigraphComposite<>(bigraph);
-//            BigraphArtifacts.exportAsInstanceModel(comp.getOuterBigraph(), new FileOutputStream(TARGET_TEST_PATH + "random_left_01.xmi"));
+//            BigraphFileModelManagement.exportAsInstanceModel(comp.getOuterBigraph(), new FileOutputStream(TARGET_TEST_PATH + "random_left_01.xmi"));
             long l = System.nanoTime();
             BigraphComposite<DefaultDynamicSignature> result = comp.compose(cloned);
 //            BigraphComposite<DefaultDynamicSignature> result = comp.compose(cloned);
@@ -142,7 +142,7 @@ public class RandomBigraphUnitTests {
         double total = resultsTime.stream().reduce(0d, (a, b) -> a + b).doubleValue();
         System.out.println("Avg: " + (total / resultsTime.size() - 1));
         System.out.println(resultsTimeCloneOp);
-//        BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) result, new FileOutputStream(TARGET_TEST_PATH + "random_compose_result.xmi"));
+//        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) result, new FileOutputStream(TARGET_TEST_PATH + "random_compose_result.xmi"));
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {

@@ -212,12 +212,12 @@ public class ElementaryBigraphUnitTests {
 
         assertAll(() -> {
             BigraphComposite<DefaultDynamicSignature> a = ops(K_xyz).parallelProduct(id_XY);
-//            BigraphArtifacts.exportAsInstanceModel(a.getOuterBigraph(), System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel(a.getOuterBigraph(), System.out);
             Bigraph<DefaultDynamicSignature> b = a.compose(L_yz).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) b, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) b, System.out);
 
             Bigraph<DefaultDynamicSignature> c = ops(K_xyz).nesting(L_yz).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) c, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) c, System.out);
 
             assertEquals(3, c.getOuterNames().size());
             assertEquals(3, b.getOuterNames().size());
@@ -255,15 +255,15 @@ public class ElementaryBigraphUnitTests {
 
 //        assertAll(() -> {
 //            Bigraph<DefaultDynamicSignature> r1 = ops(merge).compose(K_x).getOuterBigraph();
-//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) K_x, System.out);
-//            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) r1, System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) K_x, System.out);
+//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) r1, System.out);
 //        });
 
 
         assertAll(() -> {
             Bigraph<DefaultDynamicSignature> r = ops(x).compose(K_x).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) K_x, System.out);
-            BigraphArtifacts.exportAsInstanceModel((EcoreBigraph) r, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) K_x, System.out);
+            BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) r, System.out);
         });
 
     }
@@ -404,7 +404,7 @@ public class ElementaryBigraphUnitTests {
                     x.getInnerNames().stream().map(BigraphEntity.InnerName::getName).findFirst().get());
             assertEquals(composed.getInnerNames().stream().map(BigraphEntity.InnerName::getName).findFirst().get(),
                     "x");
-            BigraphArtifacts.exportAsInstanceModel((PureBigraph) composed, new FileOutputStream("src/test/resources/dump/exported-models/composedcomposed.xmi"));
+            BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) composed, new FileOutputStream("src/test/resources/dump/exported-models/composedcomposed.xmi"));
         });
 
         assertAll(() -> {

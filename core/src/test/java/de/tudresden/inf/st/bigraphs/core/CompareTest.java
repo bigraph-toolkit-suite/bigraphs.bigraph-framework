@@ -48,10 +48,10 @@ public class CompareTest {
         EcoreBigraph.Stub stub = new EcoreBigraph.Stub(bigraph);
         EcoreBigraph.Stub stub2 = new EcoreBigraph.Stub(bigraph2);
 
-//        ResourceSet resourceSet1 = BigraphArtifacts.getResourceSetBigraphInstanceModel(
+//        ResourceSet resourceSet1 = BigraphFileModelManagement.getResourceSetBigraphInstanceModel(
 //                stub.getModelPackage(),
 //                stub.getInputStreamOfInstanceModel());
-//        ResourceSet resourceSet2 = BigraphArtifacts.getResourceSetBigraphInstanceModel(
+//        ResourceSet resourceSet2 = BigraphFileModelManagement.getResourceSetBigraphInstanceModel(
 //                stub2.getModelPackage(),
 //                stub2.getInputStreamOfInstanceModel());
 //        System.out.println(resourceSet1);

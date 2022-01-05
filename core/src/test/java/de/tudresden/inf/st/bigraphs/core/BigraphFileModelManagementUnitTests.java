@@ -19,6 +19,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class BigraphArtifactUnitTests {
+public class BigraphFileModelManagementUnitTests {
 
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
     private final static String TARGET_TEST_EXPORT_PATH = "src/test/resources/ecore-test-models/";
@@ -48,10 +49,10 @@ public class BigraphArtifactUnitTests {
         DefaultDynamicSignature signature = createExampleSignature();
 //        PureBigraphGenerator gen = pureRandomBuilder(signature);
 //        PureBigraph generate = gen.generate(1, 10, 1f);
-//        BigraphArtifacts.exportAsInstanceModel(generate, new FileOutputStream(TARGET_TEST_PATH + "_r1.xmi"));
-//        BigraphArtifacts.exportAsMetaModel(generate, new FileOutputStream(TARGET_TEST_PATH + "_r1.ecore"));
-//        EPackage ePackage = BigraphArtifacts.loadBigraphMetaModel(TARGET_TEST_PATH + "_r1.ecore");
-//        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(ePackage, TARGET_TEST_PATH + "_r1.xmi");
+//        BigraphFileModelManagement.exportAsInstanceModel(generate, new FileOutputStream(TARGET_TEST_PATH + "_r1.xmi"));
+//        BigraphFileModelManagement.exportAsMetaModel(generate, new FileOutputStream(TARGET_TEST_PATH + "_r1.ecore"));
+//        EPackage ePackage = BigraphFileModelManagement.loadBigraphMetaModel(TARGET_TEST_PATH + "_r1.ecore");
+//        List<EObject> eObjects = BigraphFileModelManagement.loadBigraphInstanceModel(ePackage, TARGET_TEST_PATH + "_r1.xmi");
     }
 
     @Test
@@ -59,38 +60,63 @@ public class BigraphArtifactUnitTests {
         String baseName = "test-case-X";
         String instanceFilename = TARGET_TEST_PATH + baseName + ".xmi";
         String metaFilename = TARGET_TEST_PATH + baseName + ".ecore";
+        String instanceFilenameSig = TARGET_TEST_PATH + baseName + "Sig.xmi";
+        String metaFilenameSig = TARGET_TEST_PATH + baseName + "Sig.ecore";
         DefaultDynamicSignature sig = pureSignatureBuilder()
                 .addControl("A", 1)
                 .addControl("B", 2)
                 .addControl("C", 3)
                 .create();
+//        createOrGetSignatureMetaModel(sig, EMetaModelData.builder()
+//                .setName("sigsig")
+//                .create());
+        System.out.println(sig.getMetaModel().getName());
 
+//        createOrGetBigraphMetaModel(sig, EMetaModelData.builder().setName("bigbig").create());
         PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
         builder.createRoot()
                 .addChild("A")
                 .addChild("B")
                 .addChild("C")
         ;
+
+        BigraphFileModelManagement.Store.exportAsMetaModel(sig, new FileOutputStream(metaFilenameSig));
+        EPackage ePackageSigLoaded = BigraphFileModelManagement.Load.signatureMetaModel(metaFilenameSig);
+        assertNotNull(ePackageSigLoaded);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(sig, new FileOutputStream(instanceFilenameSig));
+        assertThrows(Resource.IOWrappedException.class, () -> {
+            System.out.println("Class 'A' is not found or is abstract");
+            BigraphFileModelManagement.Load.signatureInstanceModel(instanceFilenameSig);
+        });
+        List<EObject> eObjectsSigInstanceLoaded = BigraphFileModelManagement.Load.signatureInstanceModel(metaFilenameSig, instanceFilenameSig);
+        assertNotNull(eObjectsSigInstanceLoaded);
+        assertEquals(1, eObjectsSigInstanceLoaded.size());
+        DefaultDynamicSignature sigLoaded = createOrGetSignature(eObjectsSigInstanceLoaded.get(0));
+        assertEquals(sigLoaded, sig);
+
         PureBigraph bigraph = builder.createBigraph();
         System.out.println(bigraph.getModelPackage().getNsURI());
         System.out.println(bigraph.getModelPackage().getNsPrefix());
-        BigraphArtifacts.exportAsInstanceModel(bigraph, new FileOutputStream(instanceFilename));
-        BigraphArtifacts.exportAsMetaModel(bigraph, new FileOutputStream(metaFilename));
-
-        //BigraphModelManagement
-        List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(instanceFilename);
+        BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream(metaFilename));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, new FileOutputStream(instanceFilename), baseName + ".ecore");
+//
+//        //BigraphModelManagement
+        List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(instanceFilename);
+        assertEquals(1, eObjects.size());
         System.out.println(eObjects.get(0));
         System.out.println(bigraph.getModel());
-
-        BigraphArtifacts.loadBigraphInstanceModel(metaFilename, instanceFilename);
-
-
+//
+        List<EObject> eObjectsReturn = BigraphFileModelManagement.Load.bigraphInstanceModel(metaFilename, instanceFilename);
+        assertEquals(1, eObjectsReturn.size());
+        System.out.println(eObjectsReturn.get(0));
+        System.out.println(eObjectsReturn.get(0).eClass().getEPackage().getNsURI());
+        System.out.println(eObjectsReturn.get(0).eClass().getEPackage().getNsPrefix());
     }
 
     @Test
     void load_signatureBaseModel_test() {
         Assertions.assertAll(() -> {
-            EPackage ePackage = BigraphArtifacts.loadInternalSignatureMetaMetaModel();
+            EPackage ePackage = BigraphFileModelManagement.Load.internalSignatureMetaMetaModel();
             assertNotNull(ePackage);
             assertEquals(BigraphMetaModelConstants.SignaturePackage.EPACKAGE_NAME, ePackage.getName());
             Optional<EClassifier> bSignature = ePackage.getEClassifiers().stream().filter(x -> x.getName().equals(BigraphMetaModelConstants.SignaturePackage.ECLASS_BDYNAMICSIGNATURE)).findFirst();
@@ -126,9 +152,9 @@ public class BigraphArtifactUnitTests {
         assertAll(() -> {
             PureBigraph bigraph = (PureBigraph) createSampleBigraph();
 
-            BigraphArtifacts.exportAsMetaModel(bigraph,
+            BigraphFileModelManagement.Store.exportAsMetaModel(bigraph,
                     new FileOutputStream(TARGET_TEST_PATH + "test_meta-model.ecore"));
-            BigraphArtifacts.exportAsInstanceModel(bigraph,
+            BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph,
                     new FileOutputStream(TARGET_TEST_PATH + "test_instance-model.xmi"));
         });
     }
@@ -139,18 +165,18 @@ public class BigraphArtifactUnitTests {
         assertAll(() -> {
 //            String fileName = "/home/dominik/git/BigraphFramework/core/src/test/resources/ecore-test-models/test-1.ecore";
 //            String fileName2 = "/home/dominik/git/BigraphFramework/core/src/test/resources/ecore-test-models/test-1.xmi";
-//            EPackage metaModel = BigraphArtifacts.loadBigraphMetaModel(fileName);
+//            EPackage metaModel = BigraphFileModelManagement.loadBigraphMetaModel(fileName);
 //
-//            List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, fileName2);
+//            List<EObject> eObjects = BigraphFileModelManagement.loadBigraphInstanceModel(metaModel, fileName2);
 //            assertEquals(1, eObjects.size());
-//            List<EObject> eObjects2 = BigraphArtifacts.loadBigraphInstanceModel(fileName2);
+//            List<EObject> eObjects2 = BigraphFileModelManagement.loadBigraphInstanceModel(fileName2);
 //            assertEquals(1, eObjects2.size());
 //
 //            Signature<DefaultDynamicControl> signature = createExampleSignature();
 //            PureBigraphBuilder builder = PureBigraphBuilder.create(signature, fileName, fileName2);
 //            System.out.println(builder);
 //            PureBigraph bigraph = builder.createBigraph();
-//            BigraphArtifacts.exportAsInstanceModel(bigraph, new FileOutputStream(TARGET_TEST_PATH + "test-1_reloaded.xmi"));
+//            BigraphFileModelManagement.exportAsInstanceModel(bigraph, new FileOutputStream(TARGET_TEST_PATH + "test-1_reloaded.xmi"));
 //
 //            PureBigraphBuilder<Signature> signaturePureBigraphBuilder = PureBigraphBuilder.create(createExampleSignature(), fileName, fileName2);
 //            PureBigraph reloaded = signaturePureBigraphBuilder.createBigraph();
@@ -191,16 +217,16 @@ public class BigraphArtifactUnitTests {
             PureBigraph F = builderForF.createBigraph();
             PureBigraph G = builderForG.createBigraph();
 
-            BigraphArtifacts.exportAsInstanceModel(F, new FileOutputStream(TARGET_TEST_PATH + "f.xmi"));
+            BigraphFileModelManagement.Store.exportAsInstanceModel(F, new FileOutputStream(TARGET_TEST_PATH + "f.xmi"));
             BigraphComposite<DefaultDynamicSignature> compositor = ops(G);
             BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
-            BigraphArtifacts.exportAsInstanceModel((PureBigraph) composedBigraph.getOuterBigraph(),
+            BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) composedBigraph.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "composetest.xmi"));
-            BigraphArtifacts.exportAsMetaModel((PureBigraph) composedBigraph.getOuterBigraph(),
+            BigraphFileModelManagement.Store.exportAsMetaModel((PureBigraph) composedBigraph.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "composetest.ecore"));
 
             BigraphComposite<DefaultDynamicSignature> juxtapose = compositor.juxtapose(F);
-            BigraphArtifacts.exportAsInstanceModel((PureBigraph) juxtapose.getOuterBigraph(),
+            BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) juxtapose.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "juxtatest.xmi"));
 
         });
@@ -229,9 +255,9 @@ public class BigraphArtifactUnitTests {
 
         PureBigraph F = builderForF.createBigraph();
 
-        BigraphArtifacts.exportAsInstanceModel(F,
+        BigraphFileModelManagement.Store.exportAsInstanceModel(F,
                 new FileOutputStream(TARGET_TEST_EXPORT_PATH + "test-1.xmi"), "test-1.ecore");
-        BigraphArtifacts.exportAsMetaModel(F,
+        BigraphFileModelManagement.Store.exportAsMetaModel(F,
                 new FileOutputStream(TARGET_TEST_EXPORT_PATH + "test-1.ecore"));
     }
 
@@ -256,20 +282,20 @@ public class BigraphArtifactUnitTests {
             BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
             builderForG.createRoot().addChild(signature.getControlByName("User")).linkToInner(zInner);
             PureBigraph simpleBigraph = builderForG.createBigraph();
-            BigraphArtifacts.exportAsInstanceModel(
+            BigraphFileModelManagement.Store.exportAsInstanceModel(
                     simpleBigraph,
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_2a.xmi")
             );
             Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
             BigraphComposite<DefaultDynamicSignature> compose = ops(simpleBigraph);
             BigraphComposite<DefaultDynamicSignature> compose1 = compose.compose(substitution);
-            BigraphArtifacts.exportAsInstanceModel((PureBigraph) compose1.getOuterBigraph(),
+            BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) compose1.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_2b.xmi"));
 
             Linkings<DefaultDynamicSignature>.Substitution a1 = linkings.substitution(StringTypedName.of("a"), StringTypedName.of("b"), StringTypedName.of("c"));
             Linkings<DefaultDynamicSignature>.Substitution a2 = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("a"));
             Bigraph<DefaultDynamicSignature> a3 = ops(a2).compose(a1).getOuterBigraph();
-            BigraphArtifacts.exportAsInstanceModel((PureBigraph) a3,
+            BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) a3,
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_3.xmi"));
 
         } catch (LinkTypeNotExistsException | IOException | IncompatibleSignatureException | IncompatibleInterfaceException | InvalidConnectionException | ControlIsAtomicException e) {

@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core.impl.builder;
 
 import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
@@ -80,6 +81,13 @@ public abstract class SignatureBuilder<NT extends NamedType<?>,
         Signature<?> sig = createWith(getControls());
         if (sig instanceof AbstractEcoreSignature)
             BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
+        return sig;
+    }
+
+    public Signature<?> create(EMetaModelData metaModelData) {
+        Signature<?> sig = createWith(getControls());
+        if (sig instanceof AbstractEcoreSignature)
+            BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig, metaModelData);
         return sig;
     }
 

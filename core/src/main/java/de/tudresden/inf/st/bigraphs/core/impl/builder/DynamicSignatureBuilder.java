@@ -3,6 +3,7 @@ package de.tudresden.inf.st.bigraphs.core.impl.builder;
 import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ControlStatus;
+import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
@@ -76,6 +77,11 @@ public class DynamicSignatureBuilder
     @Override
     public DefaultDynamicSignature create() {
         return (DefaultDynamicSignature) super.create();
+    }
+
+    @Override
+    public DefaultDynamicSignature create(EMetaModelData metaModelData) {
+        return (DefaultDynamicSignature) super.create(metaModelData);
     }
 
     //    @Override

@@ -139,7 +139,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
         try {
             this.loadSignatureAsTypeGraph(metaModelFilePath);
-            List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, instanceModelFilePath);
+            List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(metaModel, instanceModelFilePath);
             this.loadedInstanceModel = eObjects.get(0);
             // acquire all entities from the instance model and map them to our maps
             this.updateAllMaps();
@@ -155,7 +155,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         this.metaModel = metaModel;
         this.initReferencesAndEClasses(false);
         try {
-            List<EObject> eObjects = BigraphArtifacts.loadBigraphInstanceModel(metaModel, instanceModelFilePath);
+            List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(metaModel, instanceModelFilePath);
             this.loadedInstanceModel = eObjects.get(0);
             // acquire all entities from the instance model and map them to our maps
             this.updateAllMaps();
@@ -1505,7 +1505,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
 
     public void loadSignatureAsTypeGraph(String metaModelFilePath) {
         try {
-            metaModel = BigraphArtifacts.loadBigraphMetaModel(metaModelFilePath);
+            metaModel = BigraphFileModelManagement.Load.bigraphMetaModel(metaModelFilePath);
         } catch (Exception e) {
             throw new BigraphMetaModelLoadingFailedException(e);
         }
@@ -1538,7 +1538,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     private void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
         try {
             // This basically creates a new package and contains all elements later that will be generated
-            metaModel = BigraphArtifacts.loadInternalBigraphMetaMetaModel();
+            metaModel = BigraphFileModelManagement.Load.internalBigraphMetaMetaModel();
             metaModel.setNsPrefix(modelData.getNsPrefix());
             metaModel.setNsURI(modelData.getNsUri());
             metaModel.setName(modelData.getName());
