@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -97,12 +98,18 @@ public abstract class BaseDocumentationGeneratorSupport {
     private class MethodVisitor extends VoidVisitorAdapter<String> {
         @Override
         public void visit(MethodDeclaration n, String arg) {
+            final Pattern pattern = Pattern.compile("\\s*\\(\\d+\\)");
             if (acceptedMethods().contains(n.getNameAsString())) {
                 codeBlocks.clear();
                 positionStack.clear();
                 n.getBody().ifPresent(x -> {
                     List<Comment> allContainedComments = n.getBody().get().getAllContainedComments();
-                    List<Position> collect = allContainedComments.stream()
+                    // filter out only relevant comments
+                    List<Comment> filtered = allContainedComments
+                            .stream()
+                            .filter(c -> pattern.matcher(c.getContent()).find())
+                            .collect(Collectors.toList());
+                    List<Position> collect = filtered.stream()
                             .sorted(
                                     Comparator.comparing(comment1 -> Integer.valueOf(((Comment) comment1).getBegin().get().line))
                             )

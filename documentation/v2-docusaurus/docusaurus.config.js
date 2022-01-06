@@ -24,13 +24,12 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/edit/main/website/',
+          // editUrl: 'https://github.com/facebook/docusaurus/edit/main/website/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl:
-            'https://github.com/facebook/docusaurus/edit/main/website/blog/',
+          // editUrl: 'https://github.com/facebook/docusaurus/edit/main/website/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -71,10 +70,10 @@ const config = {
             items: [
               {
                 label: 'User Manual',
-                to: '/docs/index',
+                to: '/docs/',
               },
               {
-                label: 'JavaDoc Api',
+                label: 'JavaDoc API',
                 to: 'https://www.bigraphs.org/products/bigraph-framework/apidocs/',
               },
             ],
@@ -111,7 +110,7 @@ const config = {
           },
         ],
         // copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
-        copyright: `Copyright © ${new Date().getFullYear()} Dominik Grzelak`,
+        copyright: `Copyright © ${new Date().getFullYear()}-present Dominik Grzelak`,
       },
       prism: {
         theme: lightCodeTheme,

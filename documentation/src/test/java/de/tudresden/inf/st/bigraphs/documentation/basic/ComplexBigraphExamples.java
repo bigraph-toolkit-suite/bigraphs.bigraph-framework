@@ -26,7 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**
  * Bigraphs that are used for the user manual are created here and code samples exported
@@ -35,22 +35,34 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
  */
 public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/exported-models/";
-    private static PureBigraphFactory factory = pure();
 
     @BeforeEach
     void setUp() throws IOException {
         create_meta_model();
     }
 
+    @Override
+    public List<String> acceptedMethods() {
+        return Lists.mutable.of("building_and_combining_hierarchies");
+    }
+
+
     void create_meta_model() throws IOException {
-        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = factory.createBigraphBuilder(
+        createOrGetBigraphMetaModel(
                 createExampleSignature(),
                 EMetaModelData.builder().setName("myMetaModel").setNsPrefix("example").setNsUri("http://example.org").create()
         );
-        PureBigraph bigraph = bigraphBuilder.createBigraph();
-        BigraphFileModelManagement.Store.exportAsMetaModel(bigraph,
-                new FileOutputStream(new File(TARGET_TEST_PATH + "my-meta-model.ecore")));
 
+        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = pureBuilder(
+                // it does not matter if we re-create the signature object because we registered it already
+                createExampleSignature()
+        );
+
+        PureBigraph bigraph = bigraphBuilder.createBigraph();
+        BigraphFileModelManagement.Store.exportAsMetaModel(
+                bigraph,
+                new FileOutputStream(TARGET_TEST_PATH + "my-meta-model.ecore")
+        );
     }
 
     @Test
@@ -91,8 +103,8 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
 //        BigraphFileModelManagement.exportAsInstanceModel(bigraph, new FileOutputStream(new File("test.xmi")));
     }
 
-    private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder signatureBuilder = factory.createSignatureBuilder();
+    private DefaultDynamicSignature createExampleSignature() {
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(2)).assign()
@@ -102,12 +114,7 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
                 .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
 
-        return (S) signatureBuilder.create();
-    }
-
-    @Override
-    public List<String> acceptedMethods() {
-        return Lists.mutable.of("building_and_combining_hierarchies");
+        return signatureBuilder.create();
     }
 
     @Override
