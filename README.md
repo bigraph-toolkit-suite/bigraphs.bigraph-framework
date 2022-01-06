@@ -24,7 +24,7 @@ The high-level API eases the programming of bigraphical systems for real-world a
     - PNG, JPG, ...
 - Bigraph matching
 - Bigraphical Reactive System support: simulation of the evolution of
-bigraphs by reaction rules (synthesizing a labelled transition system) (beta)
+  bigraphs by reaction rules (synthesizing a labelled transition system) (beta)
     - Simulation
     - Predicate checking
     - Specify order of reaction rules
@@ -356,7 +356,7 @@ $ npm run start
 
 The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md) for further instructions).
 
-### Development and Deployment
+### Further Development and Deployment Instructions
 
 See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development and deployment of _Bigraph Framework_.
 
@@ -364,6 +364,8 @@ To deploy Bigraph Framework to the [ST-Group's Artifactory](https://stgroup.jfro
 ```bash
 mvn deploy -DskipTests -Pdeploy -Dusername=dominik.grzelak@tu-dresden.de -Dpassword=password
 ```
+
+The hashed password can be acquired via the UI of Artifactory under the user profile settings.
 
 ## License
 
