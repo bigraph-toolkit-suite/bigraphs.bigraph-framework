@@ -1,14 +1,11 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates;
 
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
 import it.uniud.mads.jlibbig.core.std.AgentMatch;
 import it.uniud.mads.jlibbig.core.std.AgentMatcher;
 
@@ -23,7 +20,7 @@ import it.uniud.mads.jlibbig.core.std.AgentMatcher;
  *
  * @author Dominik Grzelak
  */
-public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicates<B> {
+public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicate<B> {
 
     private final B bigraphToMatch;
     private final it.uniud.mads.jlibbig.core.std.Bigraph jBigraphToMatch;

@@ -1,6 +1,7 @@
 package de.tudresden.inf.st.bigraphs.documentation;
 
 import de.tudresden.inf.st.bigraphs.documentation.basic.GettingStartedGuide;
+import de.tudresden.inf.st.bigraphs.documentation.converter.ConverterBigrapher;
 import de.tudresden.inf.st.bigraphs.documentation.persistence.PersistingBigraphs;
 
 /**
@@ -18,7 +19,10 @@ public class MainDocGenerationRunner {
         GettingStartedGuide gettingStartedGuide = new GettingStartedGuide();
         BaseDocumentationGeneratorSupport.runParser(gettingStartedGuide, "GettingStartedGuide.java");
 
-//        PersistingBigraphs persistingBigraphs = new PersistingBigraphs();
-//        BaseDocumentationGeneratorSupport.runParser(persistingBigraphs, "PersistingBigraphs.java");
+        PersistingBigraphs persistingBigraphs = new PersistingBigraphs();
+        BaseDocumentationGeneratorSupport.runParser(persistingBigraphs, "PersistingBigraphs.java");
+
+        ConverterBigrapher converterBigrapher = new ConverterBigrapher();
+        BaseDocumentationGeneratorSupport.runParser(converterBigrapher, "ConverterBigrapher.java");
     }
 }

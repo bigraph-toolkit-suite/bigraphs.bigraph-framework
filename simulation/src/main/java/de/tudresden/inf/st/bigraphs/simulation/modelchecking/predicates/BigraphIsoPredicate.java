@@ -4,7 +4,7 @@ import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.hash.BigraphHashFunction;
@@ -18,7 +18,7 @@ import de.tudresden.inf.st.bigraphs.simulation.encoding.hash.BigraphHashFunction
  *
  * @author Dominik Grzelak
  */
-public class BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicates<B> {
+public class BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicate<B> {
 
     private final B bigraphToMatch;
     private BigraphCanonicalForm canonicalForm;

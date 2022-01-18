@@ -31,8 +31,8 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
 
     protected B initialAgent;
     protected BiMap<String, ReactionRule<B>> reactionRules = HashBiMap.create();
-    protected BiMap<String, ReactiveSystemPredicates<B>> predicateMap = HashBiMap.create();
-//    protected MutableList<ReactiveSystemPredicates<B>> predicates = Lists.mutable.empty();
+    protected BiMap<String, ReactiveSystemPredicate<B>> predicateMap = HashBiMap.create();
+//    protected MutableList<ReactiveSystemPredicate<B>> predicates = Lists.mutable.empty();
 
     public AbstractSimpleReactiveSystem() {
     }
@@ -114,18 +114,17 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     }
 
     @Override
-    public synchronized BiMap<String, ReactiveSystemPredicates<B>> getPredicateMap() {
+    public synchronized BiMap<String, ReactiveSystemPredicate<B>> getPredicateMap() {
         return predicateMap;
     }
 
     @Override
-    public synchronized Set<ReactiveSystemPredicates<B>> getPredicates() {
+    public synchronized Set<ReactiveSystemPredicate<B>> getPredicates() {
         return predicateMap.values();
     }
 
-    public synchronized void addPredicate(ReactiveSystemPredicates<B> predicate) {
+    public synchronized void addPredicate(ReactiveSystemPredicate<B> predicate) {
         if (!predicateMap.containsValue(predicate)) {
-//            predicates.add(predicate);
             predicateMap.put(predSupplier.get(), predicate);
         } else {
             logger.debug("Predicate {} was not added because it is already contained in the reactive system", predicate);
@@ -137,7 +136,13 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
         assertParametricRedexIsSimple(reactionRule);
 //        assertNoIdleOuterName(reactionRule); // redex is captured by "simple" constraint above
         if (!reactionRules.containsValue(reactionRule)) {
-            reactionRules.put(rSupplier.get(), reactionRule);
+            if (reactionRule instanceof HasLabel && ((HasLabel) reactionRule).isDefined()) {
+                String lbl = ((HasLabel) reactionRule).getLabel();
+                lbl = reactionRules.containsKey(lbl) ? (lbl + rSupplier.get()) : lbl;
+                reactionRules.put(lbl, reactionRule);
+            } else {
+                reactionRules.put(rSupplier.get(), reactionRule);
+            }
             return true;
         }
         logger.debug("Reaction rule {} was not added because it is already contained in the reactive system", reactionRule);

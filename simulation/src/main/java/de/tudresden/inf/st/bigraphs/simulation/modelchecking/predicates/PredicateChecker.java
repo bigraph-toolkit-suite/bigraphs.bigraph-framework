@@ -1,14 +1,14 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The task of the class is to evaluate a given set of predicates of class {@link ReactiveSystemPredicates}.
+ * The task of the class is to evaluate a given set of predicates of class {@link ReactiveSystemPredicate}.
  * <p>
  * After evaluation, a map can be acquired to see which predicates evaluated to {@code true} or {@code false}.
  * <p>
@@ -18,13 +18,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PredicateChecker<B extends Bigraph<? extends Signature<?>>> {
 
-    private final List<ReactiveSystemPredicates<B>> predicates;
+    private final List<ReactiveSystemPredicate<B>> predicates;
     /**
      * Storage for the results of each predicate check
      */
-    private final Map<ReactiveSystemPredicates<B>, Boolean> checked = new ConcurrentHashMap<>();
+    private final Map<ReactiveSystemPredicate<B>, Boolean> checked = new ConcurrentHashMap<>();
 
-    public PredicateChecker(Collection<ReactiveSystemPredicates<B>> predicates) {
+    public PredicateChecker(Collection<ReactiveSystemPredicate<B>> predicates) {
         this.predicates = new ArrayList<>(predicates);
     }
 
@@ -39,7 +39,7 @@ public class PredicateChecker<B extends Bigraph<? extends Signature<?>>> {
      */
     public synchronized boolean checkAll(B agent) {
         checked.clear();
-        for (ReactiveSystemPredicates<B> each : predicates) {
+        for (ReactiveSystemPredicate<B> each : predicates) {
             if (each.isNegate()) {
                 checked.put(each, each.negate().test(agent));
             } else {
@@ -49,7 +49,7 @@ public class PredicateChecker<B extends Bigraph<? extends Signature<?>>> {
         return checkIfAllChecksAreTrue(checked); //checked.values().stream().allMatch(x -> x);
     }
 
-    private boolean checkIfAllChecksAreTrue(Map<ReactiveSystemPredicates<B>, Boolean> checks) {
+    private boolean checkIfAllChecksAreTrue(Map<ReactiveSystemPredicate<B>, Boolean> checks) {
         for (boolean b : checks.values()) {
             if (!b) return false;
         }
@@ -62,7 +62,7 @@ public class PredicateChecker<B extends Bigraph<? extends Signature<?>>> {
      *
      * @return a result map of the predicate evaluation
      */
-    public synchronized Map<ReactiveSystemPredicates<B>, Boolean> getChecked() {
+    public synchronized Map<ReactiveSystemPredicate<B>, Boolean> getChecked() {
         return checked;
     }
 
@@ -71,7 +71,7 @@ public class PredicateChecker<B extends Bigraph<? extends Signature<?>>> {
      *
      * @return set of predicates
      */
-    public synchronized List<ReactiveSystemPredicates<B>> getPredicates() {
+    public synchronized List<ReactiveSystemPredicate<B>> getPredicates() {
         return predicates;
     }
 }

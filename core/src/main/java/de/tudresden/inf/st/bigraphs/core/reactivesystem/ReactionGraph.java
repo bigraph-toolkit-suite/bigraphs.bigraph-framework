@@ -25,7 +25,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
     private final Map<String, B> stateMap = new ConcurrentHashMap<>();
     private final Map<String, B> transitionMap = new ConcurrentHashMap<>();
     private Graph<LabeledNode, LabeledEdge> graph;
-    private Map<LabeledNode, Set<ReactiveSystemPredicates<B>>> predicateMatches;
+    private Map<LabeledNode, Set<ReactiveSystemPredicate<B>>> predicateMatches;
     private ReactionGraphStats<B> graphStats;
     private boolean canonicalNodeLabel = false;
 
@@ -80,7 +80,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
         return this;
     }
 
-    public Map<LabeledNode, Set<ReactiveSystemPredicates<B>>> getPredicateMatches() {
+    public Map<LabeledNode, Set<ReactiveSystemPredicate<B>>> getPredicateMatches() {
         return predicateMatches;
     }
 
@@ -99,7 +99,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public ReactionGraph<B> addPredicateMatchToNode(LabeledNode node, ReactiveSystemPredicates<B> predicates) {
+    public ReactionGraph<B> addPredicateMatchToNode(LabeledNode node, ReactiveSystemPredicate<B> predicates) {
         predicateMatches.putIfAbsent(node, Sets.mutable.empty());
         predicateMatches.get(node).add(predicates);
         return this;

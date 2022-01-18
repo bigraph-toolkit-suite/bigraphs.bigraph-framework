@@ -114,7 +114,7 @@ public class BigrapherTransformationUnitTest {
         return rr;
     }
 
-//    public ReactiveSystemPredicates<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
+//    public ReactiveSystemPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
 //        DefaultDynamicSignature signature = createExampleSignature();
 //        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
 //

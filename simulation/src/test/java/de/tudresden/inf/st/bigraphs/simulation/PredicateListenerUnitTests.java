@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
@@ -13,7 +14,6 @@ import de.tudresden.inf.st.bigraphs.simulation.modelchecking.PureBigraphModelChe
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.BigraphIsoPredicate;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -126,13 +126,13 @@ public class PredicateListenerUnitTests {
         return new ParametricReactionRule<>(redex, reactum);
     }
 
-    ReactiveSystemPredicates<PureBigraph> createPredicateIso() {
+    ReactiveSystemPredicate<PureBigraph> createPredicateIso() {
         PureBigraph big = pureBuilder(createExampleSignature()).createRoot()
                 .addChild("Room").addChild("User").down().addChild("Token").addChild("Token").up().addChild("Computer").createBigraph();
         return BigraphIsoPredicate.create(big);
     }
 
-    ReactiveSystemPredicates<PureBigraph> createPredicateSubBigraph() throws InvalidReactionRuleException {
+    ReactiveSystemPredicate<PureBigraph> createPredicateSubBigraph() throws InvalidReactionRuleException {
         PureBigraph big = createRR2().getReactum();
         return SubBigraphMatchPredicate.create(big);
     }

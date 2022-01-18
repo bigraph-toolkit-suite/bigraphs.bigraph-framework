@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates;
 
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 
 import java.util.*;
@@ -12,26 +12,26 @@ import java.util.function.Predicate;
  *
  * @author Dominik Grzelak
  */
-public class AndPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicates<B> {
+public class AndPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicate<B> {
 
-    private final List<ReactiveSystemPredicates<B>> predicates = new LinkedList<>();
+    private final List<ReactiveSystemPredicate<B>> predicates = new LinkedList<>();
 
-    public AndPredicate(ReactiveSystemPredicates<B> predicateA, ReactiveSystemPredicates<B> predicateB) {
+    public AndPredicate(ReactiveSystemPredicate<B> predicateA, ReactiveSystemPredicate<B> predicateB) {
         this(predicateA, predicateB, false);
     }
 
-    public AndPredicate(ReactiveSystemPredicates<B> predicateA, ReactiveSystemPredicates<B> predicateB, boolean negate) {
+    public AndPredicate(ReactiveSystemPredicate<B> predicateA, ReactiveSystemPredicate<B> predicateB, boolean negate) {
         predicates.add(predicateA);
         predicates.add(predicateB);
         super.negate = negate;
     }
 
-    public AndPredicate(boolean negate, ReactiveSystemPredicates<B>... predicates) {
+    public AndPredicate(boolean negate, ReactiveSystemPredicate<B>... predicates) {
         super.negate = negate;
         this.predicates.addAll(Arrays.asList(predicates));
     }
 
-    public AndPredicate(ReactiveSystemPredicates<B>... predicates) {
+    public AndPredicate(ReactiveSystemPredicate<B>... predicates) {
         this(false, predicates);
     }
 
@@ -41,7 +41,7 @@ public class AndPredicate<B extends Bigraph<? extends Signature<?>>> extends Rea
     }
 
     /**
-     * Concatenates all given predicates with the <i>and</i> operator of the {@link ReactiveSystemPredicates} class and
+     * Concatenates all given predicates with the <i>and</i> operator of the {@link ReactiveSystemPredicate} class and
      * evaluates them together.
      * <p>
      * Note: if the predicate set is empty, {@code true} will be returned also.
@@ -52,10 +52,10 @@ public class AndPredicate<B extends Bigraph<? extends Signature<?>>> extends Rea
      */
     @Override
     public boolean test(final B agent) {
-        Optional<ReactiveSystemPredicates<B>> reduce = predicates.stream().reduce((bReactiveSystemPredicates, bReactiveSystemPredicates2) -> {
+        Optional<ReactiveSystemPredicate<B>> reduce = predicates.stream().reduce((bReactiveSystemPredicates, bReactiveSystemPredicates2) -> {
             Predicate<B> bPredicate = bReactiveSystemPredicates.isNegate() ? bReactiveSystemPredicates.negate() : bReactiveSystemPredicates;
             Predicate<B> bPredicate2 = bReactiveSystemPredicates2.isNegate() ? bReactiveSystemPredicates2.negate() : bReactiveSystemPredicates2;
-            return (ReactiveSystemPredicates<B>) bPredicate.and(bPredicate2);
+            return (ReactiveSystemPredicate<B>) bPredicate.and(bPredicate2);
         });
         return reduce.map(bReactiveSystemPredicates -> bReactiveSystemPredicates.test(agent)).orElse(true);
     }

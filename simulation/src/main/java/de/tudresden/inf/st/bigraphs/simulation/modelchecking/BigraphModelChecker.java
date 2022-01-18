@@ -223,7 +223,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         return reactiveSystem;
     }
 
-    public List<ReactiveSystemPredicates<B>> getPredicates() {
+    public List<ReactiveSystemPredicate<B>> getPredicates() {
         return new ArrayList<>(reactiveSystem.getPredicates());
     }
 
@@ -381,7 +381,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
         /**
          * This method is called if all available predicates of a reactive system evaluated to true in one state.
-         * In this case, the method {@link ReactiveSystemListener#onPredicateMatched(Bigraph, ReactiveSystemPredicates)}
+         * In this case, the method {@link ReactiveSystemListener#onPredicateMatched(Bigraph, ReactiveSystemPredicate)}
          * is not called.
          *
          * @param currentAgent the agent
@@ -397,7 +397,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
          * @param currentAgent the agent
          * @param predicate    the predicate
          */
-        default void onPredicateMatched(B currentAgent, ReactiveSystemPredicates<B> predicate) {
+        default void onPredicateMatched(B currentAgent, ReactiveSystemPredicate<B> predicate) {
 
         }
 
@@ -409,7 +409,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
          * @param predicate           the predicate
          * @param counterExampleTrace the trace representing a counterexample
          */
-        default void onPredicateViolated(B currentAgent, ReactiveSystemPredicates<B> predicate, GraphPath<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> counterExampleTrace) {
+        default void onPredicateViolated(B currentAgent, ReactiveSystemPredicate<B> predicate, GraphPath<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> counterExampleTrace) {
         }
 
 

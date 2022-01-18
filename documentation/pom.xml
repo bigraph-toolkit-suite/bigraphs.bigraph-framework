@@ -100,6 +100,14 @@
             <artifactId>bigraph-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-converter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <artifactId>bigraph-simulation</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>

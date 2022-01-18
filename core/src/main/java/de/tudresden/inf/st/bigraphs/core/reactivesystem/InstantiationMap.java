@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -46,8 +47,9 @@ public class InstantiationMap {
         return new InstantiationMap(mappings0);
     }
 
-    public void map(int from, int to) {
+    public InstantiationMap map(int from, int to) {
         mappings.put(FiniteOrdinal.ofInteger(from), FiniteOrdinal.ofInteger(to));
+        return this;
     }
 
     public FiniteOrdinal<Integer> get(int from) {
@@ -64,5 +66,12 @@ public class InstantiationMap {
 
     public Map<FiniteOrdinal<Integer>, FiniteOrdinal<Integer>> getMappings() {
         return mappings;
+    }
+
+    public boolean isIdentity() {
+        if (domainSize() == coDomainSize()) {
+            return this.mappings.keySet().stream().allMatch(x -> Objects.equals(x.getValue(), this.mappings.get(x).getValue()));
+        }
+        return false;
     }
 }

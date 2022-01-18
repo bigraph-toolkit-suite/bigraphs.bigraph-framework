@@ -4,47 +4,90 @@ title: BigraphER
 sidebar_position: 3
 ---
 
+import CodeBlock from '@theme/CodeBlock';
+
+import createSig0 from '!!raw-loader!../assets/converter/createSignature-0.java';
+import bigrapherTest01_0 from '!!raw-loader!../assets/converter/bigrapher_test01-0.java';
+import bigrapherTest01_1 from '!!raw-loader!../assets/converter/bigrapher_test01-1.java';
+import bigrapherTest01_2 from '!!raw-loader!../assets/converter/bigrapher_test01-2.java';
+import bigrapherTest01_3 from '!!raw-loader!../assets/converter/bigrapher_test01-3.java';
 
 More information about BigraphER can be found on the website: [http://www.dcs.gla.ac.uk/~michele/bigrapher.html](http://www.dcs.gla.ac.uk/~michele/bigrapher.html)
 
 ## Exporting a `PureReactiveSystem`
 
-```java
-// specify some reactive system
-PureReactiveSystem reactiveSystem = ...;
+The following example specifies a bigraphical actor-based system and shows how to convert it into BigraphER specification file format.
+The system's specification follows the `*.big` model file presented [here](https://uog-bigraph.bitbucket.io/actors.html).
 
-BigrapherTransformator prettyPrinter = new BigrapherTransformator();
-String bigrapherEncoding = prettyPrinter.toString(reactiveSystem);
-System.out.println(bigrapherEncoding);
+:::caution
+When converting bigraph instance models into the `.big` model file (conforming to the BigraphER specification language),
+some ambiguous cases may occur that require manual treatment.
 
-FileOutputStream fout = new FileOutputStream(new File("bigrapher.big"));
-prettyPrinter.toOutputStream(reactiveSystem, fout);
-fout.close();
-```
+For some instances, Bigraph Framework has no information whether to "finalize" the leaves of a hierarchy with a barren, i.e.,
+using the expression "`.1`".
+Bigraphs modelled within Bigraph Framework do not need this information, as the bigraph itself is represented as a graphical structure
+and not an algebraic expression as it is the case with the BigraphER specification language.
 
-An exemplary output is shown below:
+To circumvent this problem, algorithm attaches "`.1`" automatically to every control that is not atomic and has no sites
+specified.
+Vice versa, if a site is required under a node, it must be explicitly modelled within Bigraph Framework as it
+cannot be inferred automatically.
+This applies to all bigraph and predicate variable expression of the BigraphER specification language.
+For rule declarations, we do not follow this strategy, i.e., the expression "`.1`" is not attached at all.
+Therefore, instantiation map shall be used or manual edits.
+:::
+
+The signature:
+
+<CodeBlock className="language-java">{createSig0}</CodeBlock>
+
+Next, we need to specify the agent:
+<CodeBlock className="language-java">{bigrapherTest01_0}</CodeBlock>
+
+Then, followed by the rules:
+
+<CodeBlock className="language-java">{bigrapherTest01_1}</CodeBlock>
+
+Note how we attach a label to the rules. This allows the converter later to use these labels as new variable names for the `*.big` model file
+
+
+The predicate:
+
+<CodeBlock className="language-java">{bigrapherTest01_2}</CodeBlock>
+
+Now, since everything is defined, we need to create a reactive system and add the agent, rules, and the predicate:
+<CodeBlock className="language-java">{bigrapherTest01_3}</CodeBlock>
+
+The transformator will produce the output as shown below:
 
 ```text
-ctrl Printer = 2;
-ctrl Building = 0;
-ctrl User = 1;
-ctrl Room = 1;
-ctrl Spool = 1;
-ctrl Computer = 1;
-ctrl Job = 0;
 ctrl A = 1;
-ctrl B = 1;
+ctrl A' = 1;
+ctrl Mail = 0;
+atomic ctrl M = 2;
+ctrl Snd = 0;
+ctrl Ready = 0;
+ctrl New = 0;
+ctrl Fun = 0;
 
-react parametricreactionrule0 = (Printer{a, b}.1 | Computer{b1}.Job.1 | User{jeff1}.1) || (Computer{b1}.( Job.1 | User{jeff2}.1 )) -> (Printer{a, b}.1 | Computer{b1}.Job.1 | User{jeff1}.1) || (Computer{b1}.( Job.1 | User{jeff2}.1 ));
+react snd = (A{a0}.Snd.( M{a1, v} | id(1) ) | Mail) --> (A{a0} | Mail.( id(1) | M{a1, v} ));
+react ready = (A{a}.Ready | Mail.( M{a, v} | id(1) )) --> (A{a} | Mail) | {v};
+react lambda = (A{a}.Fun) --> (A{a});
+react new = (A{a0}.( id(1) | New.( id(1) | A'{a1}.id(1) ) )) --> (A{a1}.( id(1) | id(1) ) | A{a0}.( id(1) | id(1) )) @ [1, 2, 0, 2];
 
-big sample = Printer{a, b}.1 | Room{e0}.Computer{b1}.( Job.1 | User{jeff2}.1 ) | Room{e0}.( User{jeff1}.1 | Computer{b1}.Job.1 ) ;
+big bigraphbasemodel = Mail.1 | A{b}.Snd.M{a, v_b} | A{a}.Snd.( M{a, v_a} | Ready.Fun.1 ) ;
 
-big pred0 = Room{door}.( id(1) | User{name:jeff}.1 );
-big pred1 = Room{door}.( User{name:jeff}.1 | id(1) );
+big phi = Mail.( M{a, v} | id(1) );
 
 begin brs
-	init sample;
-	rules = [{parametricreactionrule0}];
-	preds = {pred0,pred1};
+	init bigraphbasemodel;
+	rules = [{snd,ready,lambda,new}];
+	preds = {phi};
 end
+```
+
+The user can verify that the output, or more specifically the behaviour of the system, resembles the one provided [here](https://uog-bigraph.bitbucket.io/actors.html):
+
+```bash
+$ bigrapher full -v -s ./states -t trans.svg -f svg,json -M 20 actors.big
 ```

@@ -4,7 +4,7 @@ import com.mxgraph.model.mxICell;
 import com.mxgraph.view.mxGraph;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.event.GraphEdgeChangeEvent;
@@ -208,7 +208,7 @@ public class mxReactionGraph extends mxGraph implements GraphListener<ReactionGr
             String oldLabel = vertex.getLabel();
             // create a new JGraphX vertex at position 0
             if (labeledNodeByCanonicalForm.isPresent()) {
-                Set<ReactiveSystemPredicates> o = (Set<ReactiveSystemPredicates>) reactionGraph.getPredicateMatches().get(labeledNodeByCanonicalForm.get());
+                Set<ReactiveSystemPredicate> o = (Set<ReactiveSystemPredicate>) reactionGraph.getPredicateMatches().get(labeledNodeByCanonicalForm.get());
                 if (Objects.nonNull(o) && o.size() > 0) {
                     style = "MATCHED";
                     String predList = o.stream().map(x -> (String) reactiveSystem.getPredicateMap().inverse().get(x))

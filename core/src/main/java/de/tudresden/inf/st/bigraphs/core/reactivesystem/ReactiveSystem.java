@@ -3,7 +3,6 @@ package de.tudresden.inf.st.bigraphs.core.reactivesystem;
 import com.google.common.collect.BiMap;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
 
 import java.util.Collection;
 
@@ -32,9 +31,9 @@ public interface ReactiveSystem<B extends Bigraph<? extends Signature<?>>> {
 
     Signature getSignature();
 
-    Collection<ReactiveSystemPredicates<B>> getPredicates();
+    Collection<ReactiveSystemPredicate<B>> getPredicates();
 
-    BiMap<String, ReactiveSystemPredicates<B>> getPredicateMap();
+    BiMap<String, ReactiveSystemPredicate<B>> getPredicateMap();
 
     B buildGroundReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule);
 

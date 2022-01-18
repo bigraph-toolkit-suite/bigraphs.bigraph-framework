@@ -4,9 +4,10 @@ import de.tudresden.inf.st.bigraphs.converter.ReactiveSystemPrettyPrinter;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.HasLabel;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicates;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.MutableList;
@@ -30,6 +31,8 @@ import java.util.stream.IntStream;
 public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureBigraph, ReactiveSystem<PureBigraph>> {
 
     public static final String LINE_SEP = System.getProperty("line.separator");
+    private static final String DEFAULT_REACTION_ARROW_SYMBOL = "-->";
+    private static final char DEFAULT_WHITESPACE_CHAR = ' ';
 
     private List<String> reactionLabels = new ArrayList<>();
     private List<String> predicateLabels = new ArrayList<>();
@@ -68,8 +71,8 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
 
         boolean hasPredicates = system.getPredicates().size() > 0;
         if (hasPredicates) {
-            Collection<ReactiveSystemPredicates<PureBigraph>> predicates = system.getPredicates();
-            s.append(toString((Collection) predicates));
+            List<ReactiveSystemPredicate<PureBigraph>> predicates = new ArrayList<>(system.getPredicates());
+            s.append(toString(predicates));
             s.append(LINE_SEP);
         }
 
@@ -87,16 +90,6 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         return s.toString();
     }
 
-    private String toString(Set<ReactiveSystemPredicates<PureBigraph>> predicates) {
-        //TODO
-        StringBuilder s = new StringBuilder();
-        for (ReactiveSystemPredicates<PureBigraph> predicate : predicates) {
-            s.append(toStringForAgent(predicate.getBigraph(), getPredicateVarName(predicate.getBigraph())))
-                    .append(";").append(LINE_SEP);
-        }
-        return s.toString();
-    }
-
     @Override
     public void toOutputStream(ReactiveSystem system, OutputStream outputStream) throws IOException {
         reset();
@@ -104,30 +97,62 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         outputStream.write(s.getBytes(), 0, s.length());
     }
 
-    private String toString(Collection<ReactionRule<PureBigraph>> reactionRules) {
+    private String toString(List<ReactiveSystemPredicate<PureBigraph>> predicates) {
         StringBuilder s = new StringBuilder();
-        for (ReactionRule<PureBigraph> reaction : reactionRules) {
-            s.append(toString(reaction)).append(";").append(LINE_SEP);
+        for (ReactiveSystemPredicate<PureBigraph> eachPredicate : predicates) {
+            String predname = getPredicateVarName(eachPredicate);
+            predicateLabels.add(predname);
+            s.append(toStringForAgent(eachPredicate.getBigraph(), predname))
+                    .append(";").append(LINE_SEP);
         }
         return s.toString();
     }
 
+    private String toString(Collection<ReactionRule<PureBigraph>> reactionRules) {
+        StringBuilder s = new StringBuilder();
+        for (ReactionRule<PureBigraph> reaction : reactionRules) {
+            s.append(toString(reaction)).append(instantiationMap(reaction)).append(";").append(LINE_SEP);
+        }
+        return s.toString();
+    }
+
+    private String instantiationMap(ReactionRule<PureBigraph> reaction) {
+        if (!reaction.getInstantationMap().isIdentity()) {
+            StringBuilder sb = new StringBuilder(" @ [");
+            String indices = reaction.getInstantationMap().getMappings().keySet()
+                    .stream().sorted()
+                    .map(x ->
+                            reaction.getInstantationMap().getMappings().get(x).getValue())
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(", "));
+            sb.append(indices).append("]");
+            return sb.toString();
+        }
+        return "";
+    }
+
     private String toString(ReactionRule<PureBigraph> reaction) {
         StringBuilder sb = new StringBuilder("react ");
-        String rrName = reaction.getClass().getSimpleName().toLowerCase() + (reactionRuleCounter++);
+        String rrName;
+        if (reaction instanceof HasLabel && ((HasLabel) reaction).isDefined()) {
+            rrName = ((HasLabel) reaction).getLabel();
+            rrName = reactionLabels.contains(rrName) ? (rrName + reactionRuleCounter++) : rrName;
+        } else {
+            rrName = reaction.getClass().getSimpleName().toLowerCase() + (reactionRuleCounter++);
+        }
         reactionLabels.add(rrName);
         sb.append(rrName).append(" = ");
-        String redex = toString(reaction.getRedex());
+        String redex = toString(reaction.getRedex(), false);
         redex = !randomLinkNames.isEmpty() ? closeFakeLinks(randomLinkNames) + " (" + redex + ")" : redex;
         randomLinkNames.clear();
-        String reactum = toString(reaction.getReactum());
+        String reactum = toString(reaction.getReactum(), false);
         reactum = !randomLinkNames.isEmpty() ? closeFakeLinks(randomLinkNames) + " (" + reactum + ")" : reactum;
         randomLinkNames.clear();
-        sb.append(redex).append(" -> ").append(reactum);
+        sb.append(redex).append(DEFAULT_WHITESPACE_CHAR).append(DEFAULT_REACTION_ARROW_SYMBOL).append(DEFAULT_WHITESPACE_CHAR).append(reactum);
         return sb.toString();
     }
 
-    private String toString(PureBigraph bigraph) {
+    private String toString(PureBigraph bigraph, boolean addBarren) {
         StringBuilder s = new StringBuilder();
         Iterator<BigraphEntity.RootEntity> iterator = bigraph.getRoots().iterator();
         while (iterator.hasNext()) {
@@ -140,13 +165,16 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
                     MutableList<BigraphEntity.Link> links = Lists.mutable.withAll(bigraph.getEdges());
 //                    List<BigraphEntity.Link> links = new ArrayList<>(bigraph.getEdges());
                     links.addAll(bigraph.getOuterNames());
-                    String s1 = toString(bigraph, childIterator.next(), links, bigraph.getSites());
+                    String s1 = toString(bigraph, childIterator.next(), links, bigraph.getSites(), addBarren);
                     s.append(s1).append(childIterator.hasNext() ? " | " : "");
                 }
-            } else {
-//                s.append("nil");
             }
             s.append(iterator.hasNext() ? ") || " : ")");
+        }
+        for (BigraphEntity.OuterName each : bigraph.getOuterNames()) {
+            if (bigraph.getPointsFromLink(each).size() == 0) {
+                s.append(DEFAULT_WHITESPACE_CHAR).append('|').append(DEFAULT_WHITESPACE_CHAR).append('{').append(each.getName()).append('}');
+            }
         }
         return s.toString();
     }
@@ -155,9 +183,17 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         return bigraph.getModelPackage().getName().toLowerCase();
     }
 
-    private String getPredicateVarName(PureBigraph bigraph) {
-        predicateLabels.add(predicateVarPrefix + (predicateVarCnt++));
-        return predicateLabels.get(predicateLabels.size() - 1);
+    private String getPredicateVarName(ReactiveSystemPredicate<PureBigraph> eachPredicate) {
+//        predicateLabels.add(predicateVarPrefix + (predicateVarCnt++));
+//        return predicateLabels.get(predicateLabels.size() - 1);
+        String predName;
+        if (eachPredicate instanceof HasLabel && ((HasLabel) eachPredicate).isDefined()) {
+            predName = ((HasLabel) eachPredicate).getLabel();
+            predName = predicateLabels.contains(predName) ? (predName + predicateVarCnt++) : predName;
+        } else {
+            predName = eachPredicate.getClass().getSimpleName().toLowerCase() + (predicateVarCnt++);
+        }
+        return predName;
     }
 
     private String toStringForAgent(PureBigraph bigraph) {
@@ -176,17 +212,27 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
             while (childIterator.hasNext()) {
                 List<BigraphEntity.Link> links = new ArrayList<>(bigraph.getEdges());
                 links.addAll(bigraph.getOuterNames());
-                String s1 = toString(bigraph, childIterator.next(), links, bigraph.getSites());
+                String s1 = toString(bigraph, childIterator.next(), links, bigraph.getSites(), true);
                 s.append(s1).append(childIterator.hasNext() ? " | " : "");
             }
         } else {
             s.append("1");
         }
 
+        StringBuilder emptyOuterCollector = new StringBuilder();
+        for (BigraphEntity.OuterName each : bigraph.getOuterNames()) {
+            if (bigraph.getPointsFromLink(each).size() == 0) {
+                emptyOuterCollector.append(" || ").append('{').append(each.getName()).append('}');
+            }
+        }
+        if (emptyOuterCollector.length() != 0) {
+            s.insert(0, '(').append(')').append(emptyOuterCollector);
+        }
+
         if (!randomLinkNames.isEmpty()) {
             StringBuilder s2 = new StringBuilder();
             String closeNames = closeFakeLinks(randomLinkNames);
-            s2.append(varPrefix).append(closeNames).append(" (").append(s.toString()).append(")");
+            s2.append(varPrefix).append(closeNames).append(" (").append(s).append(")");
             randomLinkNames.clear();
             return s2.toString();
         } else {
@@ -194,7 +240,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         }
     }
 
-    private String toString(PureBigraph bigraph, BigraphEntity d, Collection<BigraphEntity.Link> collection, Collection<BigraphEntity.SiteEntity> sitelist) {
+    private String toString(PureBigraph bigraph, BigraphEntity d, Collection<BigraphEntity.Link> collection, Collection<BigraphEntity.SiteEntity> sitelist, boolean addBarren) {
         StringBuilder s = new StringBuilder();
         if (BigraphEntityType.isSite(d)) {
             s.append("id(1)"); //.append(((BigraphEntity.SiteEntity) d).getIndex());
@@ -213,6 +259,9 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
                     }
                     String name = ((BigraphEntity.Link) link).getName();
                     ns.append(name).append(", ");
+                    if (BigraphEntityType.isEdge(link) && !randomLinkNames.contains(name)) {
+                        randomLinkNames.add(name);
+                    }
                 } else {
                     ++unlinked;
                 }
@@ -240,12 +289,11 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
 
                 Iterator<BigraphEntity<?>> childIt = children.iterator();
                 while (childIt.hasNext()) {
-                    s.append(toString(bigraph, childIt.next(), collection, sitelist))
+                    s.append(toString(bigraph, childIt.next(), collection, sitelist, addBarren))
                             .append(childIt.hasNext() ? " | " : "");
                 }
-
             } else {
-                if (d.getControl().getControlKind() != ControlStatus.ATOMIC) // nesting for atomic controls not allowed
+                if (d.getControl().getControlKind() != ControlStatus.ATOMIC && addBarren) // nesting for atomic controls not allowed
                     s.append(".1");
             }
             if (children.size() > 1) s.append(" )");

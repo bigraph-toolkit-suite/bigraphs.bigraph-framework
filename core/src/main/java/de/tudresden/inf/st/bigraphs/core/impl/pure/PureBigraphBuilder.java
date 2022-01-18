@@ -665,6 +665,10 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             return this;
         }
 
+        public Hierarchy linkToOuter(String outerName) throws TypeNotExistsException, InvalidConnectionException {
+            return linkToOuter(createOuterName(outerName));
+        }
+
         /**
          * Connect the previously created node to the given inner name.
          *
@@ -676,6 +680,10 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         public Hierarchy linkToInner(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
             PureBigraphBuilder.this.connectNodeToInnerName(getLastCreatedNode(), innerName);
             return this;
+        }
+
+        public Hierarchy linkToInner(String innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+            return linkToInner(createInnerName(innerName));
         }
 
         /**

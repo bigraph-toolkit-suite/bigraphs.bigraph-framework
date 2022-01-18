@@ -15,9 +15,11 @@ import java.util.function.Predicate;
  *
  * @author Dominik Grzelak
  */
-public abstract class ReactiveSystemPredicates<B extends Bigraph<? extends Signature<?>>> implements Predicate<B> {
+public abstract class ReactiveSystemPredicate<B extends Bigraph<? extends Signature<?>>> implements Predicate<B>, HasLabel {
 
     protected boolean negate = false;
+
+    protected String label;
 
     /**
      * Get the bigraph used in the predicate.
@@ -43,5 +45,15 @@ public abstract class ReactiveSystemPredicates<B extends Bigraph<? extends Signa
 
     public void setNegate(boolean negate) {
         this.negate = negate;
+    }
+
+    @Override
+    public String getLabel() {
+        return label;
+    }
+
+    public <T extends ReactiveSystemPredicate<B>> T withLabel(String label) {
+        this.label = label;
+        return (T) this;
     }
 }
