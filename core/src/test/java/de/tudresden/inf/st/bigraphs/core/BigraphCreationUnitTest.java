@@ -110,7 +110,7 @@ public class BigraphCreationUnitTest {
         PureBigraph bigraph = builder.createRoot().connectByEdge("A", "A").createBigraph();
 
         assertEquals(1, bigraph.getEdges().size());
-        assertEquals(2, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals(2, bigraph.getPointsFromLink(bigraph.getEdges().get(0)).size());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class BigraphCreationUnitTest {
         PureBigraph bigraph = builder.createBigraph();
 
         assertEquals(1, bigraph.getEdges().size());
-        assertEquals(2, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals(2, bigraph.getPointsFromLink(bigraph.getEdges().get(0)).size());
         assertEquals(0, bigraph.getInnerNames().size());
     }
 
@@ -201,8 +201,8 @@ public class BigraphCreationUnitTest {
         assertEquals(0, bigraph.getPortCount(bigraph.getNodes().get(1)));
         assertEquals(1, bigraph.getInnerNames().size());
         assertEquals(1, bigraph.getEdges().size());
-        assertEquals(1, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
-        assertEquals("x1", ((BigraphEntity.InnerName) bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).get(0)).getName());
+        assertEquals(1, bigraph.getPointsFromLink(bigraph.getEdges().get(0)).size());
+        assertEquals("x1", ((BigraphEntity.InnerName) bigraph.getPointsFromLink(bigraph.getEdges().get(0)).get(0)).getName());
         assertEquals("e1", ((BigraphEntity.Edge) bigraph.getLinkOfPoint(x1)).getName());
 
 
@@ -225,7 +225,7 @@ public class BigraphCreationUnitTest {
         assertEquals(1, bigraph.getPortCount(bigraph.getNodes().get(1)));
         assertEquals(1, bigraph.getInnerNames().size());
         assertEquals(1, bigraph.getEdges().size());
-        assertEquals(3, bigraph.getPointsFromLink(bigraph.getEdges().iterator().next()).size());
+        assertEquals(3, bigraph.getPointsFromLink(bigraph.getEdges().get(0)).size());
         assertEquals("e0", ((BigraphEntity.Edge) bigraph.getLinkOfPoint(x1)).getName());
 
         builder = pureBuilder(signature);
