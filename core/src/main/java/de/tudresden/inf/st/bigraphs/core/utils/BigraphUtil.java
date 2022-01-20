@@ -85,7 +85,7 @@ public class BigraphUtil {
         if (Objects.nonNull(left) && Objects.nonNull(right)) {
             DynamicSignatureBuilder sb = pureSignatureBuilder();
             Stream.concat(left.getControls().stream(), right.getControls().stream()).forEach(c -> {
-                sb.newControl(c.getNamedType(), sb.newControl().getArity())
+                sb.newControl(c.getNamedType(), c.getArity())
                         .status(c.getControlKind()).assign();
             });
             return sb.create();
