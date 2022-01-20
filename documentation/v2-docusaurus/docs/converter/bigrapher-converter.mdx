@@ -12,7 +12,9 @@ import bigrapherTest01_1 from '!!raw-loader!../assets/converter/bigrapher_test01
 import bigrapherTest01_2 from '!!raw-loader!../assets/converter/bigrapher_test01-2.java';
 import bigrapherTest01_3 from '!!raw-loader!../assets/converter/bigrapher_test01-3.java';
 
-More information about BigraphER can be found on the website: [http://www.dcs.gla.ac.uk/~michele/bigrapher.html](http://www.dcs.gla.ac.uk/~michele/bigrapher.html)
+More information about BigraphER can be found on the following websites:
+- [http://www.dcs.gla.ac.uk/~michele/bigrapher.html](http://www.dcs.gla.ac.uk/~michele/bigrapher.html)
+- [https://uog-bigraph.bitbucket.io/](https://uog-bigraph.bitbucket.io/)
 
 ## Exporting a `PureReactiveSystem`
 
@@ -28,13 +30,14 @@ using the expression "`.1`".
 Bigraphs modelled within Bigraph Framework do not need this information, as the bigraph itself is represented as a graphical structure
 and not an algebraic expression as it is the case with the BigraphER specification language.
 
-To circumvent this problem, algorithm attaches "`.1`" automatically to every control that is not atomic and has no sites
+To circumvent this problem, the encoding algorithm attaches "`.1`" automatically to every control that is not atomic and has no sites
 specified.
 Vice versa, if a site is required under a node, it must be explicitly modelled within Bigraph Framework as it
 cannot be inferred automatically.
 This applies to all bigraph and predicate variable expression of the BigraphER specification language.
 For rule declarations, we do not follow this strategy, i.e., the expression "`.1`" is not attached at all.
-Therefore, instantiation map shall be used or manual edits.
+Therefore, the rule needs to be possibly manually edited afterwards.
+Using the instantiation map is advised to clearly express control duplications or deletions.
 :::
 
 The signature:
@@ -91,3 +94,5 @@ The user can verify that the output, or more specifically the behaviour of the s
 ```bash
 $ bigrapher full -v -s ./states -t trans.svg -f svg,json -M 20 actors.big
 ```
+
+Note that a folder called `states` must exist next to the model file `actors.big`.

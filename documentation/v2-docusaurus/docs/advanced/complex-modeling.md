@@ -102,6 +102,7 @@ of "finalizing" a hierarchy.
 By using elementary bigraphs, one can easily compose multiple bigraphs at
 a higher level to achieve the structure as shown in the figure above.
 
-> #### Notice
-> There are several ways to achieve the bigraph in the figure. We are only
-> showing one of possibly many ways.
+:::info
+There are several ways to achieve the bigraph in the figure. We are only
+showing one of possibly many ways.
+:::
