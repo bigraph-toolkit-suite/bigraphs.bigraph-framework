@@ -406,7 +406,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * A bigraph consists of many node hierarchy. This inner class represents one of these.
      * These hierarchies can be built independently and added to the bigraph later.
      */
-    public class Hierarchy implements NodeHierarchy {
+    public class Hierarchy implements NodeHierarchy<S> {
         final Hierarchy parentHierarchy;
         final BigraphEntity<Control> parent;
 

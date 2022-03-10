@@ -54,7 +54,7 @@ public interface BigraphBuilder<S extends Signature> {
      * <p>
      * Can only be used with the {@link BigraphBuilder} instance which created it.
      */
-    interface NodeHierarchy<S extends Signature> {
+    interface NodeHierarchy<S extends Signature<? extends Control<?, ?>>> {
 
         NodeHierarchy addChild(Control control);
 
@@ -70,6 +70,11 @@ public interface BigraphBuilder<S extends Signature> {
          * @return the same node hierarchy instance
          */
         NodeHierarchy addChild(String controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException;
+
+        default NodeHierarchy<S> addChild(Control controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException {
+            return addChild(controlName.getNamedType().stringValue(), outerName);
+        }
+
 
         NodeHierarchy addChild(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException;
 
