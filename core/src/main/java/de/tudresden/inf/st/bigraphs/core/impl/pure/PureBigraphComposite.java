@@ -333,7 +333,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         left.eAdapters().clear();
         right.eAdapters().clear();
 
-        Stream.concat(copy.getSites().stream(), copyOuter.getSites().stream()).forEach(s -> {
+        Stream.concat(copy.getSites().stream().sorted(), copyOuter.getSites().stream().sorted()).forEachOrdered(s -> {
             EObject site = s.getInstance();
             final EStructuralFeature prnt = site.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
             if (Objects.nonNull(site.eGet(prnt))) {
