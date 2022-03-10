@@ -188,7 +188,7 @@ public class BigraphEntity<C extends Control> {
         }
     }
 
-    public static class NodeEntity<C extends Control> extends BigraphEntity<C> {
+    public static class NodeEntity<C extends Control> extends BigraphEntity<C> implements Comparable<BigraphEntity.NodeEntity<C>> {
         String toString = null;
 
         NodeEntity(@NonNull EObject instance, C control) {
@@ -197,7 +197,7 @@ public class BigraphEntity<C extends Control> {
 
         public String getName() {
             EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
-            return Objects.nonNull(nameAttr) ? String.valueOf(getInstance().eGet(nameAttr)) : "";
+            return nameAttr != null ? String.valueOf(getInstance().eGet(nameAttr)) : "";
         }
 
         public void setName(String nodeName) {
@@ -215,9 +215,14 @@ public class BigraphEntity<C extends Control> {
             }
             return toString;
         }
+
+        @Override
+        public int compareTo(NodeEntity<C> o) {
+            return this.getName().compareTo(o.getName());
+        }
     }
 
-    public static class SiteEntity extends BigraphEntity implements Comparable<BigraphEntity.SiteEntity>{
+    public static class SiteEntity extends BigraphEntity implements Comparable<BigraphEntity.SiteEntity> {
         int index;
         String toString = null;
 

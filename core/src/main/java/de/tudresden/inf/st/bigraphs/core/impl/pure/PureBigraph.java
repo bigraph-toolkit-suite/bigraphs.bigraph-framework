@@ -332,15 +332,13 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-//        Set<BigraphEntity> children = new LinkedHashSet<>();
-        MutableSet<BigraphEntity<?>> children = Sets.mutable.empty();
+        Set<BigraphEntity<?>> children = new LinkedHashSet<>(); // MutableSet<BigraphEntity<?>> children = Sets.mutable.empty();
         if (Objects.nonNull(chldRef)) {
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject eachChild : childs) {
-                if (isBNode(eachChild)) {//TODO set could be inefficient here for large bigraphs
+                if (isBNode(eachChild)) {
                     Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodeEntity =
                             Optional.ofNullable(nodesMap.get(eachChild));
-//                            nodes.stream().filter(x -> x.getInstance().equals(eachChild)).findFirst();
                     nodeEntity.ifPresent(children::add);
                 } else if (isBSite(eachChild)) {
                     Optional<BigraphEntity.SiteEntity> nodeEntity =
@@ -349,7 +347,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
                 }
             }
         }
-        return children.toList();
+        return children.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
