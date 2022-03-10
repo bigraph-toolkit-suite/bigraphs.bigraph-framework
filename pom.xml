@@ -32,7 +32,8 @@
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
         <emf.ecore.version>2.25.0</emf.ecore.version>
         <emf.codegen.version>2.22.0</emf.codegen.version>
-        <eclipse.collections.version>10.4.0</eclipse.collections.version>
+<!--        <eclipse.collections.version>10.4.0</eclipse.collections.version>-->
+        <eclipse.collections.version>11.0.0</eclipse.collections.version>
         <guava.version>31.0.1-jre</guava.version>
         <jgrapht.version>1.5.1</jgrapht.version>
         <junit.version>5.4.0</junit.version>
