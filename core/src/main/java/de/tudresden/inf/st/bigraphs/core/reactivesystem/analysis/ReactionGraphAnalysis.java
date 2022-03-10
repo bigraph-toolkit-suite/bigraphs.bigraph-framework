@@ -46,7 +46,7 @@ public class ReactionGraphAnalysis<B extends Bigraph<? extends Signature<?>>> {
     }
 
     //TODO REMOVE CYCLES
-    //https://cs.stackexchange.com/questions/124240/computing-all-paths-from-root-to-the-leaf-nodes-in-a-tree
+    //Idea: https://cs.stackexchange.com/questions/124240/computing-all-paths-from-root-to-the-leaf-nodes-in-a-tree
     private List<PathList<B>> recursPath(ReactionGraph<B> reactionGraph, ReactionGraph.LabeledNode v, List<String> labelsTraversed) {
         String label = v.getCanonicalForm();
 //        System.out.println("\tfor: " + v.getLabel());
@@ -84,13 +84,10 @@ public class ReactionGraphAnalysis<B extends Bigraph<? extends Signature<?>>> {
     }
 
     public static Function<ReactionGraph.LabeledNode, Boolean> isLeaf(Graph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> jGraph) {
-        return new Function<ReactionGraph.LabeledNode, Boolean>() {
-            @Override
-            public Boolean apply(ReactionGraph.LabeledNode nodeToCheck) {
-                Set<ReactionGraph.LabeledEdge> labeledEdges = jGraph.edgesOf(nodeToCheck);
-                boolean hasOutgoingEdges = labeledEdges.stream().allMatch(x -> jGraph.getEdgeTarget(x) == nodeToCheck);
-                return hasOutgoingEdges; //jGraph.outgoingEdgesOf(nodeToCheck).size() == 0;
-            }
+        return nodeToCheck -> {
+            Set<ReactionGraph.LabeledEdge> labeledEdges = jGraph.edgesOf(nodeToCheck);
+            boolean hasOutgoingEdges = labeledEdges.stream().allMatch(x -> jGraph.getEdgeTarget(x) == nodeToCheck);
+            return hasOutgoingEdges; //jGraph.outgoingEdgesOf(nodeToCheck).size() == 0; // <- same
         };
     }
 
