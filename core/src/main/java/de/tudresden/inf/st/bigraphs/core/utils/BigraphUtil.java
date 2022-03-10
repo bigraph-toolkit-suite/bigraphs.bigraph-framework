@@ -1,16 +1,26 @@
 package de.tudresden.inf.st.bigraphs.core.utils;
 
 import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 
 /**
@@ -68,6 +78,22 @@ public class BigraphUtil {
         return false;
     }
 
+    public static Bigraph performInstantiation(List<Bigraph> discreteBigraphs, InstantiationMap instantiationMap) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+        Bigraph d_Params;
+        List<Bigraph> parameters = new ArrayList<>(discreteBigraphs);
+        if (parameters.size() >= 2) {
+            FiniteOrdinal<Integer> mu_ix = instantiationMap.get(0);
+            BigraphComposite<?> d1 = ops((Bigraph) parameters.get(mu_ix.getValue()));
+            for (int i = 1, n = parameters.size(); i < n; i++) {
+                mu_ix = instantiationMap.get(i);
+                d1 = d1.parallelProduct((Bigraph) parameters.get(mu_ix.getValue()));
+            }
+            d_Params = d1.getOuterBigraph();
+        } else {
+            d_Params = parameters.get(0);
+        }
+        return d_Params;
+    }
     // somewhat necessary, if bigrids are going to be used later in combination with other models
 
     /**
