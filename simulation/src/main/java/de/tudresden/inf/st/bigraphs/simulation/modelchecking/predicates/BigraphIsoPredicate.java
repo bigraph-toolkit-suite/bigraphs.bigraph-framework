@@ -11,11 +11,13 @@ import de.tudresden.inf.st.bigraphs.simulation.encoding.hash.BigraphHashFunction
 
 /**
  * Predicate implementation that returns {@code true} if two bigraphs are isomorphic (i.e., structurally equivalent).
+ * Thus, it represents a complete predicate.
  * <p>
  * A predicate can be created by using the static methods the class provides.
  * <p>
  * Bigraph isomorphism is checked using the canonical string encoding.
  *
+ * @see SubBigraphMatchPredicate
  * @author Dominik Grzelak
  */
 public class BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicate<B> {

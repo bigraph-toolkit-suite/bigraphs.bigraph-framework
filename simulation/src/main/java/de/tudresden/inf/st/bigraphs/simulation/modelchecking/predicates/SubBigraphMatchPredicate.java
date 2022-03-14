@@ -11,6 +11,7 @@ import it.uniud.mads.jlibbig.core.std.AgentMatcher;
 
 /**
  * Simple predicate implementation that returns true if one bigraph is contained in another (subbigraph matching problem).
+ * Thus, it represents a partial predicate.
  * <p>
  * A predicate can be created by using the static methods the class provides.
  * <p>
@@ -19,6 +20,7 @@ import it.uniud.mads.jlibbig.core.std.AgentMatcher;
  * {@link SubBigraphMatchPredicate#test(Bigraph)} method.
  *
  * @author Dominik Grzelak
+ * @see BigraphIsoPredicate
  */
 public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>> extends ReactiveSystemPredicate<B> {
 

@@ -47,7 +47,7 @@ public class VendingMachine1Example extends BaseExampleTestSupport {
         new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
 
-    //TODO: ein pfad predicate könnte auch sein: wenn regel 1 2x ausgeführt wurde weiß man dass zweimal kaffee gegeben wurde vice versa für tea
+    //TODO: Example path predicate: if rule(1) is executed 2-times coffee was served 2-times, vice versa for tea
     @Test
     void simulate() throws Exception {
 
