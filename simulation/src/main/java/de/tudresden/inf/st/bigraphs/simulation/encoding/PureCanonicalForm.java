@@ -309,7 +309,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                             atLevelCnt.incrementAndGet();
                                             if (bigraph.getPortCount((BigraphEntity.NodeEntity) val) > 0) {
                                                 sb.append("{"); //.append(num).append(":");
-                                                bigraph.getPorts(val).stream()
+                                                bigraph.getPorts(val).stream().sorted()
                                                         .map(bigraph::getLinkOfPoint)
                                                         .filter(Objects::nonNull)
                                                         .map(l -> {
@@ -440,7 +440,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
 
     String getLinkName(PureBigraph bigraph, BigraphEntity<?> node) {
         if (!printNodeIdentifiers) return "";
-        Collection<BigraphEntity.Port> ports = bigraph.getPorts(node);
+        List<BigraphEntity.Port> ports = bigraph.getPorts(node);
         if (ports.size() == 0) return "";
         StringBuilder s = new StringBuilder();
         for (BigraphEntity.Port p : ports) {
@@ -512,7 +512,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     Comparator<BigraphEntity<?>> compareByLinkGraphOrdering =
             Comparator.comparing((entry) -> {
                         if (BigraphEntityType.isNode(entry) && bigraph.getPortCount((BigraphEntity.NodeEntity) entry) > 0) {
-                            List<Integer> collect = bigraph.getPorts(entry).stream()
+                            List<Integer> collect = bigraph.getPorts(entry).stream().sorted()
                                     .map(bigraph::getLinkOfPoint)
                                     .filter(Objects::nonNull)
                                     .flatMap(x -> bigraph.getPointsFromLink(x).stream())
@@ -599,20 +599,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     });
 
     final Comparator<BigraphEntity<?>> compareLinkNames = Comparator.comparing(entry -> {
-//        if (!printNodeIdentifiers) {
-//            BigraphEntity.Link linkOfPoint = (BigraphEntity.Link) bigraph.getLinkOfPoint(entry);
-//            return Objects.nonNull(linkOfPoint) ? linkOfPoint.getName() : "";
-//        }
-//        bigraph.getPorts(entry).stream()
-//                .map(bigraph::getLinkOfPoint)
-////                .sorted(Comparator.comparing(x -> ((BigraphEntity.Link)x).getName()))
-//                .map(l -> {
-//                    return rewriteFunction.rewrite(E2, O2, (BigraphEntity.Link) l,
-//                            rewriteEdgeNameSupplier, rewriteOuterNameSupplier, printNodeIdentifiers);
-//                }).collect(Collectors.toList());
-//        return "";
         if (rewriteLinkNames && !printNodeIdentifiers) return "";
-        String collect = bigraph.getPorts(entry).stream().map(x -> bigraph.getLinkOfPoint(x))
+        String collect = bigraph.getPorts(entry).stream().sorted().map(x -> bigraph.getLinkOfPoint(x))
                 .map(x -> ((BigraphEntity.Link) x).getName())
                 .sorted()
                 .collect(Collectors.joining(""));
@@ -631,6 +619,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                         .map(x -> bigraph.getLinkOfPoint(x))
                         .filter(Objects::nonNull)
                         .map(BigraphEntity.Link::getName)
+                        .sorted()
                         .collect(Collectors.joining(""));
 //                            String o = entry.getKey().getControl().getNamedType().stringValue() + s1;
                 String o = label(entry.getKey()) + s1;
