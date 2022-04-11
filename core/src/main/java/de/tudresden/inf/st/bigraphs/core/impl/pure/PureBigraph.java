@@ -255,7 +255,8 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         EStructuralFeature portRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         if (portRef == null) return Collections.emptyList();
         EList<EObject> portList = (EList<EObject>) instance.eGet(portRef);
-        MutableSortedSet<BigraphEntity.Port> portsList = SortedSets.mutable.empty();
+//        MutableSortedSet<BigraphEntity.Port> portsList = SortedSets.mutable.empty();
+        List<BigraphEntity.Port> portsList = new ArrayList<>();
         for (EObject eachPort : portList) { // are ordered anyway
             BigraphEntity.Port port = BigraphEntity.create(eachPort, BigraphEntity.Port.class);
             EStructuralFeature indexAttr = eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_INDEX);
@@ -265,8 +266,11 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
                 portsList.add(port);
             }
         }
-        portMap.put((BigraphEntity.NodeEntity<DefaultDynamicControl>) node, portsList.toList());
-        return portsList.toList();
+        Collections.sort(portsList);
+//        portMap.put((BigraphEntity.NodeEntity<DefaultDynamicControl>) node, portsList.toList());
+//        return portsList.toList();
+        portMap.put((BigraphEntity.NodeEntity<DefaultDynamicControl>) node, portsList);
+        return portsList;
     }
 
     @Override
