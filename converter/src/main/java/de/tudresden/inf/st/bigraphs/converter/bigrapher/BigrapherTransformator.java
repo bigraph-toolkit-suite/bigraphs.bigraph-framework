@@ -135,7 +135,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
         StringBuilder sb = new StringBuilder("react ");
         String rrName;
         if (reaction instanceof HasLabel && ((HasLabel) reaction).isDefined()) {
-            rrName = ((HasLabel) reaction).getLabel();
+            rrName = ((HasLabel) reaction).getLabel().toLowerCase();
             rrName = reactionLabels.contains(rrName) ? (rrName + reactionRuleCounter++) : rrName;
         } else {
             rrName = reaction.getClass().getSimpleName().toLowerCase() + (reactionRuleCounter++);
