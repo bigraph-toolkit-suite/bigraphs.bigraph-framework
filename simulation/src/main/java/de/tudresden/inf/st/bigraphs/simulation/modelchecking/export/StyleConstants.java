@@ -18,6 +18,7 @@ public class StyleConstants {
         style.put(mxConstants.STYLE_STROKECOLOR, "#00FF7F");
         style.put(mxConstants.STYLE_STROKEWIDTH, 2);
         style.put(mxConstants.STYLE_FONTCOLOR, "#006400");
+        style.put(mxConstants.STYLE_FONTSIZE, "8");
         return style;
     }
 
@@ -28,6 +29,7 @@ public class StyleConstants {
         style.put(mxConstants.STYLE_STROKECOLOR, "#232323");
         style.put(mxConstants.STYLE_FILLCOLOR, "#ffffff");
         style.put(mxConstants.STYLE_FONTCOLOR, "#232323");
+        style.put(mxConstants.STYLE_FONTSIZE, "8");
         return style;
     }
 
@@ -35,6 +37,7 @@ public class StyleConstants {
         Hashtable<String, Object> style = new Hashtable<>();
         style.put(mxConstants.STYLE_STROKECOLOR, "#232323");
         style.put(mxConstants.STYLE_FONTCOLOR, "#232323");
+        style.put(mxConstants.STYLE_FONTSIZE, "6");
         return style;
     }
 }
