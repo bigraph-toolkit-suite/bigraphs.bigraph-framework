@@ -333,7 +333,17 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         left.eAdapters().clear();
         right.eAdapters().clear();
 
-        Stream.concat(copy.getSites().stream().sorted(), copyOuter.getSites().stream().sorted()).forEachOrdered(s -> {
+//        Stream.concat(copy.getSites().stream().sorted(), copyOuter.getSites().stream().sorted()).forEachOrdered(s -> {
+//            EObject site = s.getInstance();
+//            final EStructuralFeature prnt = site.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+//            if (Objects.nonNull(site.eGet(prnt))) {
+//                EAttribute indexAttr = EMFUtils.findAttribute(site.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+//                if (Objects.nonNull(indexAttr)) {
+//                    site.eSet(indexAttr, rewriteSiteSupplier.get());
+//                }
+//            }
+//        });
+        copy.getSites().stream().sorted().forEachOrdered(s -> {
             EObject site = s.getInstance();
             final EStructuralFeature prnt = site.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
             if (Objects.nonNull(site.eGet(prnt))) {
@@ -343,6 +353,18 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                 }
             }
         });
+        List<BigraphEntity.SiteEntity> sTemp = new ArrayList<>(copyOuter.getSites());
+        for(int i = sTemp.size() - 1; i >= 0; i--) {
+            BigraphEntity.SiteEntity s = sTemp.get(i);
+            EObject site = s.getInstance();
+            final EStructuralFeature prnt = site.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
+            if (Objects.nonNull(site.eGet(prnt))) {
+                EAttribute indexAttr = EMFUtils.findAttribute(site.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
+                if (Objects.nonNull(indexAttr)) {
+                    site.eSet(indexAttr, rewriteSiteSupplier.get());
+                }
+            }
+        }
 
         PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getModelPackage(), ((PureBigraph) copy).getModel()).createBigraph();
         return new PureBigraphComposite<>((Bigraph<S>) bigraph);
@@ -470,6 +492,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         Bigraph<S> copyOuter = BigraphUtil.copy(g);
         Bigraph<S> copyInner = BigraphUtil.copy(f);
 
+        int copyInnerRootSize = copyInner.getRoots().size();
         // Auto-infer the identity link graph for composition when there is no ambiguity - this is just a convenience feature
         // when the outer bigraph is an elementary bigraph
         if (BigraphUtil.isBigraphElementaryPlacing(copyOuter) && copyInner.getOuterNames().size() > 0) {
@@ -478,8 +501,8 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                             .map(NamedType.class::cast).toArray(NamedType<?>[]::new)
             );
             copyOuter = ops(copyOuter).juxtapose(identity).getOuterBigraph();
-        } else if (BigraphUtil.isBigraphElementaryLinking(copyOuter) && copyInner.getRoots().size() > 0) {
-            Placings<S>.Permutation permutation = purePlacings(copyOuter.getSignature()).permutation(copyInner.getRoots().size());
+        } else if (BigraphUtil.isBigraphElementaryLinking(copyOuter) && copyInnerRootSize > 0) {
+            Placings<S>.Permutation permutation = purePlacings(copyOuter.getSignature()).permutation(copyInnerRootSize);
             copyOuter = ops(copyOuter).juxtapose(permutation).getOuterBigraph();
         }
 
@@ -505,7 +528,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                 EAttribute indexAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
                 Integer index = (Integer) next.eGet(indexAttr);
                 rootsInnerIndex.put(index, next);
-                if (rootsInnerIndex.size() == copyInner.getRoots().size()) {
+                if (rootsInnerIndex.size() == copyInnerRootSize) {
                     break;
                 }
             }
