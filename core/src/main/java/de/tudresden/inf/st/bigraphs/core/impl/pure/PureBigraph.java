@@ -151,13 +151,13 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
 
     @Override
     public List<BigraphEntity.RootEntity> getRoots() {
-        return this.roots.toList();
+        return this.roots.toList().sortThis();
     }
 
 
     @Override
     public List<BigraphEntity.SiteEntity> getSites() {
-        return this.sites.toList();
+        return this.sites.toList().sortThis();
     }
 
     @Override

@@ -143,6 +143,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
             } else {
                 reactionRules.put(rSupplier.get(), reactionRule);
             }
+//            reactionRule.isReversible()//TODO -> construct new one and set reversible false and recall method
             return true;
         }
         logger.debug("Reaction rule {} was not added because it is already contained in the reactive system", reactionRule);
