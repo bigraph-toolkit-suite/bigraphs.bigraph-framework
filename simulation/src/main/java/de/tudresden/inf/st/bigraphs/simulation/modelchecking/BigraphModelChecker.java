@@ -74,7 +74,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     public static class SimulationStrategy {
 
         public enum Type {
-            BFS, RANDOM;
+            BFS, RANDOM, SIMULATION;
         }
 
         public static <B extends Bigraph<? extends Signature<?>>> Class<? extends ModelCheckingStrategy> getSimulationStrategyClass(Type type, Class<B> bigraphClass) {
@@ -83,6 +83,8 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                     return BreadthFirstStrategy.class;
                 case RANDOM:
                     return RandomAgentModelCheckingStrategy.class;
+                case SIMULATION:
+                    return BreadthFirstSimulationStrategy.class;
                 default:
                     return BreadthFirstStrategy.class;
             }

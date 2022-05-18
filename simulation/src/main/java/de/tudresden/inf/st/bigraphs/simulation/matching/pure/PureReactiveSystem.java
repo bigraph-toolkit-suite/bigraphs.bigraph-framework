@@ -17,6 +17,8 @@ import java.util.*;
  * An implementation of an {@link AbstractSimpleReactiveSystem} providing a simple BRS data structure for pure bigraphs
  * (see {@link PureBigraph}) and possibly later also binding bigraphs, bigraphs with sharing etc.
  *
+ * Uses some functionality from jLibBig.
+ *
  * @author Dominik Grzelak
  * @see PureBigraph
  */

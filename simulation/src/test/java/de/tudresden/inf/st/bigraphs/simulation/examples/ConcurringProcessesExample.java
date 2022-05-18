@@ -162,9 +162,10 @@ public class ConcurringProcessesExample {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(50)
+                        .setMaximumTransitions(10)
                         .setMaximumTime(30)
                         .allowReducibleClasses(true) // use symmetries to make the transition graph smaller?
+//                        .allowReducibleClasses(false) // for simulation but not used
                         .create()
                 )
                 .doMeasureTime(true)
@@ -179,6 +180,7 @@ public class ConcurringProcessesExample {
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
+//                BigraphModelChecker.SimulationStrategy.Type.SIMULATION,
                 opts);
         modelChecker.execute();
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
