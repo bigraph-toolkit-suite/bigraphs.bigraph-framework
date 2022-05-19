@@ -108,7 +108,8 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     });
 //                    .collect(Collectors.toList());
 //            System.out.println("KLO1: " + collect.size());
-            reactionResults.stream().forEach(matchResult -> {
+            for (MatchResult<B> matchResult : reactionResults) {
+//            reactionResults.stream().forEach(matchResult -> {
                 String bfcf = modelChecker.acquireCanonicalForm().bfcs(matchResult.getBigraph());
                 String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(matchResult.getReactionRule());
                 if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
@@ -120,7 +121,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
                 }
 //                modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
-            });
+            }//);
             if (predicateChecker.getPredicates().size() > 0) {
                 // "Check each property p ∈ P against w."
                 //TODO evaluate in "reaction graph spec" what should happen here: violation or stop criteria?

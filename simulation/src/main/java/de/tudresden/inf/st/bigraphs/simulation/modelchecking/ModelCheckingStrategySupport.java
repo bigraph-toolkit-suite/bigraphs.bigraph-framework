@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for supporting other simulation strategy implementations.
- * Provides some useful method to keep sub-classes simple.
+ * Base class for supporting model checking strategy implementations.
+ * Provides some useful method to keep subclasses simple.
  *
  * @author Dominik Grzelak
  */

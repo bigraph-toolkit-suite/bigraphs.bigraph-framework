@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm.PREFIX_BARREN;
+import static de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalFormSupport.createNameSupplier;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -65,9 +66,9 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         frontier.clear();
         next.clear();
         bigraph = null;
-        rewriteEdgeNameSupplier = BigraphCanonicalForm.createNameSupplier("e");
-        rewriteInnerNameSupplier = BigraphCanonicalForm.createNameSupplier("x");
-        rewriteOuterNameSupplier = BigraphCanonicalForm.createNameSupplier("y");
+        rewriteEdgeNameSupplier = createNameSupplier("e");
+        rewriteInnerNameSupplier = createNameSupplier("x");
+        rewriteOuterNameSupplier = createNameSupplier("y");
     }
 
     LinkedList<BigraphEntity<?>> totalOrdering = new LinkedList<>();
@@ -543,13 +544,13 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                             .collect(Collectors.toList());
                     queue.addAll(sorted);
                     s1.append(label(currentNode)).append(getLinkName(bigraph, currentNode)).append(sorted.stream().map(x -> BigraphEntityType.isSite(x) ?
-                            String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) :
-                            label(x) + getLinkName(bigraph, x))
+                                    String.valueOf(((BigraphEntity.SiteEntity) x).getIndex()) :
+                                    label(x) + getLinkName(bigraph, x))
                             .collect(Collectors.joining("")));
                 }
                 return s1.toString();
             });
-//        Comparator<BigraphEntity<?>> compareControlByKey3 =
+    //        Comparator<BigraphEntity<?>> compareControlByKey3 =
 //            Comparator.comparing((entry) -> {
 //                String s1 = bigraph.getChildrenOf(entry).stream()
 //                        .sorted(Comparator.comparing(lhs -> BigraphEntityType.isSite(lhs) ?

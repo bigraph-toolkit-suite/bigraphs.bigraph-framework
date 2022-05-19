@@ -53,7 +53,7 @@ import java.util.function.Supplier;
  */
 public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<?>>> {
 
-    private Logger logger = LoggerFactory.getLogger(BigraphModelChecker.class);
+    private final Logger logger = LoggerFactory.getLogger(BigraphModelChecker.class);
     ExecutorService executorService;
     private final Class<B> genericType;
 
@@ -77,7 +77,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
             BFS, RANDOM, SIMULATION;
         }
 
-        public static <B extends Bigraph<? extends Signature<?>>> Class<? extends ModelCheckingStrategy> getSimulationStrategyClass(Type type, Class<B> bigraphClass) {
+        public static <B extends Bigraph<? extends Signature<?>>> Class<? extends ModelCheckingStrategy> getSimulationStrategyClass(Type type) {
             switch (type) {
                 case BFS:
                     return BreadthFirstStrategy.class;
@@ -120,15 +120,16 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 //        this.matcher = AbstractBigraphMatcher.create(this.genericType);
 
         this.options = options;
-        ModelCheckingOptions.TransitionOptions opts = options.get(ModelCheckingOptions.Options.TRANSITION);
-        if (opts.allowReducibleClasses()) {
-            this.canonicalForm = BigraphCanonicalForm.createInstance();
-        }
+//        ModelCheckingOptions.TransitionOptions opts = options.get(ModelCheckingOptions.Options.TRANSITION);
+//        if (opts.allowReducibleClasses()) {
+//            this.canonicalForm = BigraphCanonicalForm.createInstance();
+//        }
 
         this.simulationStrategyType = simulationStrategyType;
         try {
             this.modelCheckingStrategy = createStrategy(this.simulationStrategyType);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                 InstantiationException e) {
             throw new RuntimeException(e);
         }
     }
@@ -155,10 +156,22 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
+    /**
+     * Returns a specific model checking algorithm such as BFS.
+     * The appropriate strategy is created by providing the type of the algorithm via the argument of type
+     * {@link SimulationStrategy.Type}.
+     *
+     * @param simulationStrategyType type of the model checking algorithm
+     * @return the model checking strategy according to the provided type
+     * @throws NoSuchMethodException     if the strategy could not be created or does not exist
+     * @throws IllegalAccessException    if the strategy could not be created or does not exist
+     * @throws InvocationTargetException if the strategy could not be created or does not exist
+     * @throws InstantiationException    if the strategy could not be created or does not exist
+     */
     private ModelCheckingStrategy<B> createStrategy(SimulationStrategy.Type simulationStrategyType)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Class<? extends ModelCheckingStrategy> simulationStrategyClass =
-                SimulationStrategy.getSimulationStrategyClass(simulationStrategyType, this.genericType);
+                SimulationStrategy.getSimulationStrategyClass(simulationStrategyType);
         return simulationStrategyClass.getConstructor(BigraphModelChecker.class).newInstance(this);
     }
 

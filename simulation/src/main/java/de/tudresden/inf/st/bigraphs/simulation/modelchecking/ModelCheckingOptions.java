@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This class represents the available options for the model checker {@link BigraphModelChecker}.
+ * It can also be configured via an external configuration file.
  *
  * @author Dominik Grzelak
  */

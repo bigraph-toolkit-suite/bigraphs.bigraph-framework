@@ -14,6 +14,7 @@ public class FixedThreadPoolExecutorProvider implements ExecutorServicePoolProvi
 
     @Override
     public ExecutorService provide() {
-        return Executors.newFixedThreadPool(10);
+        final int cpus = Runtime.getRuntime().availableProcessors();
+        return Executors.newFixedThreadPool(cpus);
     }
 }
