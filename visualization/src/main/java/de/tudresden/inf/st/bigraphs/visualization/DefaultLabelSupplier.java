@@ -16,7 +16,7 @@ public class DefaultLabelSupplier extends GraphicalFeatureSupplier<String> {
         switch (getNode().getType()) {
             case NODE:
                 BigraphEntity.NodeEntity node = (BigraphEntity.NodeEntity) getNode();
-                return node.getControl().getNamedType().stringValue() + super.delimiterForLabel + node.getName();
+                return node.getName() + super.delimiterForLabel + node.getControl().getNamedType().stringValue();
             case ROOT:
                 return String.format("r%s%s", super.delimiterForLabel, ((BigraphEntity.RootEntity) getNode()).getIndex());
             case SITE:

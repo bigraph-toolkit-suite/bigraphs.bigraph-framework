@@ -250,7 +250,8 @@ public class BigraphGraphvizExporter {
                     case PORT:
                         BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);
                         Node grNode = node(labelSupplier.with(nodeOfPort).get())
-                                .link(Link.to(hiddenEdgeNode).with(Style.FILLED, colorSupplier.with(eachEdge).get()));
+//                                .link(Link.to(hiddenEdgeNode).with(Style.FILLED, colorSupplier.with(eachEdge).get()));
+                                .link(Link.to(hiddenEdgeNode).with(Style.SOLID, colorSupplier.with(eachEdge).get()));
                         theGraph.add(grNode);
                         break;
                     case INNER_NAME:
@@ -276,15 +277,20 @@ public class BigraphGraphvizExporter {
                 .graphAttrs()
                 .add(
                         Rank.dir(Rank.RankDir.BOTTOM_TO_TOP),
-                        Label.of(labelSupplier.with(eachRoot).get()),
-                        Style.DASHED
+                        Label.of(labelSupplier.with(eachRoot).get())
+//                        Style.DASHED
+//                        Style.FILLED
                 );
     }
 
     private Node createSiteNode(BigraphEntity site) {
         return node(labelSupplier.with(site).get())
                 .with(shapeSupplier.with(site).get(),
-                        Style.FILLED.and(Style.DOTTED),
+//                        Style.FILLED.and(Style.DOTTED),
+                        Style.FILLED,
+//                        Style.
+//                        Style.DOTTED,
+//                        Style.DOTTED,
                         Color.GRAY69.fill(),
                         Color.WHITE.font());
     }
@@ -292,7 +298,12 @@ public class BigraphGraphvizExporter {
     private Node createRootNode(BigraphEntity root) {
         return node(labelSupplier.with(root).get())
                 .with(shapeSupplier.with(root).get(),
-                        Style.lineWidth(1), colorSupplier.with(root).get().font());
+//                        Style.lineWidth(3),
+                        Style.FILLED,
+                        Color.WHITE
+//                        Style.tapered(2),
+//                        colorSupplier.with(root).get().font()
+                );
     }
 
     private MutableGraph makeHierarchyCluster(Bigraph bigraph, BigraphEntity nodeEntity, MutableGraph currentParent) {
@@ -312,7 +323,8 @@ public class BigraphGraphvizExporter {
             } else { //create a new hierarchy graph
                 MutableGraph cluster = mutGraph(labelSupplier.with(each).get()).setCluster(true)
                         .setDirected(true)
-                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), Style.SOLID);
+//                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), Style.SOLID);
+                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()));
                 cluster.add(node(labelSupplier.with(each).get()).with(Style.INVIS));
                 MutableGraph mutableGraph = makeHierarchyCluster(bigraph, each, cluster);
                 graphList.add(mutableGraph);

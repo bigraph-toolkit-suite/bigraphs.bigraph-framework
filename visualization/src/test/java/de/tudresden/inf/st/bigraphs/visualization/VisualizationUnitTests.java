@@ -86,7 +86,8 @@ public class VisualizationUnitTests {
                     .setDirected(false)
                     .setCluster(true)
                     .graphAttrs()
-                    .add(Rank.dir(Rank.RankDir.BOTTOM_TO_TOP), Label.of("root"), Style.DASHED);
+//                    .add(Rank.dir(Rank.RankDir.BOTTOM_TO_TOP), Label.of("root"), Style.DASHED);
+                    .add(Rank.dir(Rank.RankDir.BOTTOM_TO_TOP), Label.of("root"), Style.ROUNDED);
             MutableGraph graph1 = makeHierarchyCluster(simpleBigraphHierarchy, eachRoot, graphRoot, labelSupplier);
             rootGraphs.add(graph1);
         }
@@ -110,7 +111,8 @@ public class VisualizationUnitTests {
             } else { //create a new hierarchy graph
                 MutableGraph cluster = mutGraph(labelSupplier.with(each).get()).setCluster(true)
                         .setDirected(true)
-                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), Rank.dir(Rank.RankDir.BOTTOM_TO_TOP), Style.BOLD);
+//                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), Rank.dir(Rank.RankDir.BOTTOM_TO_TOP), Style.BOLD);
+                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), Rank.dir(Rank.RankDir.BOTTOM_TO_TOP), Style.ROUNDED);
                 MutableGraph mutableGraph = makeHierarchyCluster(bigraph, each, cluster, labelSupplier);
                 graphList.add(mutableGraph);
             }

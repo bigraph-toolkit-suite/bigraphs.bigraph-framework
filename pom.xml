@@ -32,13 +32,16 @@
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
         <emf.ecore.version>2.25.0</emf.ecore.version>
         <emf.codegen.version>2.22.0</emf.codegen.version>
+        <emf.cdo.version>4.11.0.v20200902-0811</emf.cdo.version>
+        <emf.cdo.common.version>4.11.0.v20200901-0616</emf.cdo.common.version>
 <!--        <eclipse.collections.version>10.4.0</eclipse.collections.version>-->
         <eclipse.collections.version>11.0.0</eclipse.collections.version>
         <guava.version>31.0.1-jre</guava.version>
         <jgrapht.version>1.5.1</jgrapht.version>
         <junit.version>5.4.0</junit.version>
         <log4j.version>1.7.30</log4j.version>
-        <graphviz.version>0.17.1</graphviz.version>
+<!--        <graphviz.version>0.17.1</graphviz.version>-->
+        <graphviz.version>0.18.0</graphviz.version>
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
         <doclint>none</doclint>
         <!-- For documentation -->
@@ -377,12 +380,12 @@
             <dependency>
                 <groupId>org.eclipse.emf.cdo</groupId>
                 <artifactId>org.eclipse.emf.cdo</artifactId>
-                <version>4.11.0.v20200902-0811</version>
+                <version>${emf.cdo.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.emf.cdo.common</groupId>
                 <artifactId>org.eclipse.emf.cdo.common</artifactId>
-                <version>4.11.0.v20200901-0616</version>
+                <version>${emf.cdo.common.version}</version>
             </dependency>
             <!--            <dependency>-->
             <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
