@@ -41,7 +41,7 @@
         <junit.version>5.4.0</junit.version>
         <log4j.version>1.7.30</log4j.version>
 <!--        <graphviz.version>0.17.1</graphviz.version>-->
-        <graphviz.version>0.18.0</graphviz.version>
+        <graphviz.version>0.18.1</graphviz.version>
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
         <doclint>none</doclint>
         <!-- For documentation -->
