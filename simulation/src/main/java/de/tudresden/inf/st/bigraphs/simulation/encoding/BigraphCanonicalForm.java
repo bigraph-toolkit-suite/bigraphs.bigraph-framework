@@ -48,6 +48,8 @@ public class BigraphCanonicalForm implements BigraphCanonicalFormSupport {
     boolean withNodeIdentifiers = false;
     final static char PREFIX_BARREN = 'r';
 
+    boolean rewriteOpenLinks = false;
+
     public static BigraphCanonicalForm createInstance() {
         return createInstance(false);
     }
@@ -85,9 +87,12 @@ public class BigraphCanonicalForm implements BigraphCanonicalFormSupport {
         BigraphCanonicalFormStrategy<B> canonicalFormStrategy;
         if (bigraph instanceof PureBigraph) {
             canonicalFormStrategy = (BigraphCanonicalFormStrategy<B>) strategyMap.getOrDefault(
-                    bigraph.getClass(),
-                    new PureCanonicalForm(this)
-            ).setPrintNodeIdentifiers(withNodeIdentifiers);
+                            bigraph.getClass(),
+                            new PureCanonicalForm(this)
+                    )
+                    // pass additional options here
+                    .setPrintNodeIdentifiers(withNodeIdentifiers)
+                    .setRewriteOpenLinks(rewriteOpenLinks);
             return canonicalFormStrategy.compute(bigraph);
         } else if (bigraph instanceof ElementaryBigraph) {
             return bfcs((ElementaryBigraph<?>) bigraph);
@@ -117,26 +122,23 @@ public class BigraphCanonicalForm implements BigraphCanonicalFormSupport {
         }
     }
 
-//    /**
-//     * the children size is sorted in reversed order where control names sorting is in lexicographic order and has
-//     * precedence of the children size.
-//     * <p>
-//     * This is for map entries where children nodes are grouped by their parents.
-//     *
-//     * @param lhs left-hand side
-//     * @param rhs right-hand side
-//     * @return integer indicating the ordering
-//     */
-//    public static int compareByControlThenChildrenSize(Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> lhs, Map.Entry<BigraphEntity, LinkedList<Map.Entry<BigraphEntity, Control>>> rhs) {
-//        if (lhs.getKey().getControl().getNamedType().stringValue().equals(rhs.getKey().getControl().getNamedType().stringValue())) {
-////            if (rhs.getValue().size() - lhs.getValue().size() == 0) {
-////                return bigraph.getPorts(rhs.getKey()).size();
-////            }
-//            return rhs.getValue().size() - lhs.getValue().size();
-//        } else {
-//            return lhs.getKey().getControl().getNamedType().stringValue().compareTo(rhs.getKey().getControl().getNamedType().stringValue());
-//        }
-//    }
+    public boolean isWithNodeIdentifiers() {
+        return withNodeIdentifiers;
+    }
+
+    public BigraphCanonicalForm setWithNodeIdentifiers(boolean withNodeIdentifiers) {
+        this.withNodeIdentifiers = withNodeIdentifiers;
+        return this;
+    }
+
+    public boolean isRewriteOpenLinks() {
+        return rewriteOpenLinks;
+    }
+
+    public BigraphCanonicalForm setRewriteOpenLinks(boolean rewriteOpenLinks) {
+        this.rewriteOpenLinks = rewriteOpenLinks;
+        return this;
+    }
 
     <B extends Bigraph<?>> void assertBigraphIsGroundAndPrime(B bigraph) {
         if (!bigraph.isGround() || !bigraph.isPrime()) {
@@ -161,18 +163,6 @@ public class BigraphCanonicalForm implements BigraphCanonicalFormSupport {
             throw new BigraphIsNotPrimeException();
         }
     }
-
-
-//    static Supplier<String> createNameSupplier(final String prefix) {
-//        return new Supplier<>() {
-//            private int id = 0;
-//
-//            @Override
-//            public String get() {
-//                return prefix + id++;
-//            }
-//        };
-//    }
 
     public void assertBigraphHasRoots(PureBigraph bigraph) {
         if (bigraph.getRoots().size() == 0) {

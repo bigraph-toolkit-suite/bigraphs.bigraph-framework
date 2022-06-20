@@ -49,7 +49,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     Supplier<String> rewriteEdgeNameSupplier;
     Supplier<String> rewriteInnerNameSupplier;
     Supplier<String> rewriteOuterNameSupplier;
-    private boolean rewriteLinkNames = false;
+//    private boolean rewriteLinkNames = false;
 
     public PureCanonicalForm(BigraphCanonicalForm bigraphCanonicalForm) {
         super(bigraphCanonicalForm);
@@ -119,7 +119,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             for (BigraphEntity.OuterName each : bigraph.getOuterNames()) {
                 if (bigraph.getPointsFromLink(each).size() == 0 &&
                         O2.flip().get(each).getFirstOptional().isEmpty()) {
-                    if (rewriteLinkNames)
+                    if (rewriteOpenLinks)
                         O2.put(rewriteOuterNameSupplier.get(), each);
                     else
                         O2.put(each.getName(), each);
@@ -130,7 +130,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
             for (BigraphEntity.InnerName each : bigraph.getInnerNames()) {
                 if ((bigraph.getLinkOfPoint(each) == null) &&
                         I2.flip().get(each).getFirstOptional().isEmpty()) {
-                    if (rewriteLinkNames) {
+                    if (rewriteOpenLinks) {
                         I2.put(rewriteInnerNameSupplier.get(), each);
                     } else {
                         I2.put(each.getName(), each);
@@ -315,7 +315,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                                         .filter(Objects::nonNull)
                                                         .map(l -> {
 //                                                            System.out.println(bigraph.getNodeOfPort((BigraphEntity.Port) bigraph.getPointsFromLink(l).get(0)));
-                                                            if (rewriteLinkNames)
+                                                            if (rewriteOpenLinks)
                                                                 return rewriteFunction.rewrite(E2, O2, l,
                                                                         rewriteEdgeNameSupplier, rewriteOuterNameSupplier, printNodeIdentifiers);
                                                             else
@@ -359,7 +359,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                         bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
                                 .forEachOrdered(x -> {
                                     if (I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isEmpty()) {
-                                        if (rewriteLinkNames) {
+                                        if (rewriteOpenLinks) {
                                             I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
                                         } else {
                                             I2.put(((BigraphEntity.InnerName) x).getName(), (BigraphEntity.InnerName) x);
@@ -374,7 +374,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                         bigraph.getPointsFromLink(edge).stream().filter(BigraphEntityType::isInnerName)
                                 .forEachOrdered(x -> {
                                     if (I2.flip().get((BigraphEntity.InnerName) x).getFirstOptional().isEmpty()) {
-                                        if (rewriteLinkNames) {
+                                        if (rewriteOpenLinks) {
                                             I2.put(rewriteInnerNameSupplier.get(), (BigraphEntity.InnerName) x);
                                         } else {
                                             I2.put(((BigraphEntity.InnerName) x).getName(), (BigraphEntity.InnerName) x);
@@ -600,7 +600,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     });
 
     final Comparator<BigraphEntity<?>> compareLinkNames = Comparator.comparing(entry -> {
-        if (rewriteLinkNames && !printNodeIdentifiers) return "";
+        if (rewriteOpenLinks && !printNodeIdentifiers) return "";
         String collect = bigraph.getPorts(entry).stream().sorted().map(x -> bigraph.getLinkOfPoint(x))
                 .map(x -> ((BigraphEntity.Link) x).getName())
                 .sorted()

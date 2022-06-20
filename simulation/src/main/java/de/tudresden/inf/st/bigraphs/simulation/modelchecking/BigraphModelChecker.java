@@ -15,6 +15,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.*;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
+import de.tudresden.inf.st.bigraphs.simulation.encoding.PureCanonicalForm;
 import de.tudresden.inf.st.bigraphs.simulation.exceptions.*;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.export.mxReactionGraph;
@@ -135,11 +136,16 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     }
 
     public BigraphCanonicalForm acquireCanonicalForm() {
+        BigraphCanonicalForm inst;
         if (((ModelCheckingOptions.TransitionOptions) options.get(ModelCheckingOptions.Options.TRANSITION)).allowReducibleClasses()) {
-            return BigraphCanonicalForm.createInstance();
+            inst = BigraphCanonicalForm.createInstance();
         } else {
-            return BigraphCanonicalForm.createInstance(true);
+            inst = BigraphCanonicalForm.createInstance(true);
         }
+        if (((ModelCheckingOptions.TransitionOptions) options.get(ModelCheckingOptions.Options.TRANSITION)).isRewriteOpenLinks()) {
+            inst.setRewriteOpenLinks(true);
+        }
+        return inst;
     }
 
     private void loadServiceExecutor() {

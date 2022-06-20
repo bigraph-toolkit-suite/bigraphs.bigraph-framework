@@ -9,6 +9,7 @@ public abstract class BigraphCanonicalFormStrategy<B extends Bigraph<?>> {
 
     private final BigraphCanonicalForm bigraphCanonicalForm;
     boolean printNodeIdentifiers = false;
+    boolean rewriteOpenLinks = false;
 
     public BigraphCanonicalFormStrategy(BigraphCanonicalForm bigraphCanonicalForm) {
         this.bigraphCanonicalForm = bigraphCanonicalForm;
@@ -20,6 +21,15 @@ public abstract class BigraphCanonicalFormStrategy<B extends Bigraph<?>> {
 
     public BigraphCanonicalFormStrategy<B> setPrintNodeIdentifiers(boolean printNodeIdentifiers) {
         this.printNodeIdentifiers = printNodeIdentifiers;
+        return this;
+    }
+
+    public boolean isRewriteOpenLinks() {
+        return rewriteOpenLinks;
+    }
+
+    public BigraphCanonicalFormStrategy<B> setRewriteOpenLinks(boolean rewriteOpenLinks) {
+        this.rewriteOpenLinks = rewriteOpenLinks;
         return this;
     }
 

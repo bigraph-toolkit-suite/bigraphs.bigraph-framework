@@ -123,14 +123,17 @@ public class ModelCheckingOptions {
         private TimeUnit maximumTimeUnit = TimeUnit.SECONDS;
         private boolean allowReducibleClasses;
 
+        private boolean rewriteOpenLinks;
+
         TransitionOptions() {
         }
 
-        TransitionOptions(int maximumTransitions, long maximumTime, TimeUnit maximumTimeUnit, boolean allowReducibleClasses) {
+        TransitionOptions(int maximumTransitions, long maximumTime, TimeUnit maximumTimeUnit, boolean allowReducibleClasses, boolean rewriteOpenLinks) {
             this.maximumTransitions = maximumTransitions;
             this.maximumTime = maximumTime;
             this.maximumTimeUnit = maximumTimeUnit;
             this.allowReducibleClasses = allowReducibleClasses;
+            this.rewriteOpenLinks = rewriteOpenLinks;
         }
 
         void setMaximumTransitions(int maximumTransitions) {
@@ -172,13 +175,19 @@ public class ModelCheckingOptions {
             return allowReducibleClasses;
         }
 
+        public boolean isRewriteOpenLinks() {
+            return rewriteOpenLinks;
+        }
+
         @Override
         public Options getType() {
             return Options.TRANSITION;
         }
 
         public Builder toBuilder() {
-            return transitionOpts().allowReducibleClasses(this.allowReducibleClasses)
+            return transitionOpts()
+                    .rewriteOpenLinks(this.rewriteOpenLinks)
+                    .allowReducibleClasses(this.allowReducibleClasses)
                     .setMaximumTransitions(this.maximumTransitions)
                     .setMaximumTime(this.maximumTime, this.maximumTimeUnit);
         }
@@ -194,6 +203,7 @@ public class ModelCheckingOptions {
             private TimeUnit maximumTimeUnit = TimeUnit.SECONDS;
             private long maximumTime = 60;
             private boolean reduceStates = true;
+            private boolean rewriteOpenLinks = false;
 
             public Builder setMaximumTransitions(int maximumTransitions) {
                 this.maximumTransitions = maximumTransitions;
@@ -222,8 +232,13 @@ public class ModelCheckingOptions {
                 return this;
             }
 
+            public Builder rewriteOpenLinks(boolean rewriteOpenLinks) {
+                this.rewriteOpenLinks = rewriteOpenLinks;
+                return this;
+            }
+
             public ModelCheckingOptions.TransitionOptions create() {
-                return new ModelCheckingOptions.TransitionOptions(maximumTransitions, maximumTime, maximumTimeUnit, reduceStates);
+                return new ModelCheckingOptions.TransitionOptions(maximumTransitions, maximumTime, maximumTimeUnit, reduceStates, rewriteOpenLinks);
             }
         }
     }
