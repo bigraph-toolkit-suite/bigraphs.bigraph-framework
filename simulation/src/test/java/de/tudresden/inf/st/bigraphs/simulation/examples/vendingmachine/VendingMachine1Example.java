@@ -12,6 +12,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import de.tudresden.inf.st.bigraphs.simulation.examples.BaseExampleTestSupport;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.BigraphModelChecker;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions;
@@ -32,7 +33,7 @@ import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class VendingMachine1Example extends BaseExampleTestSupport {
+public class VendingMachine1Example extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/vendingmachine/";
 
     public VendingMachine1Example() {
@@ -92,20 +93,20 @@ public class VendingMachine1Example extends BaseExampleTestSupport {
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.setAgent(agent);
-        reactiveSystem.addPredicate(teaEmpty);
-        reactiveSystem.addPredicate(coffeeEmpty);
         reactiveSystem.addReactionRule(insertCoinRR);
         reactiveSystem.addReactionRule(pushBtn1);
         reactiveSystem.addReactionRule(pushBtn2);
         reactiveSystem.addReactionRule(giveCoffee);
         reactiveSystem.addReactionRule(giveTea);
+        reactiveSystem.addPredicate(coffeeEmpty);
+        reactiveSystem.addPredicate(teaEmpty);
 
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts());
-//        modelChecker.setReactiveSystemListener(this);
+        modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
 //        assertTrue(Files.exists(completePath));
 //        assertTrue(carArrivedAtTarget);
@@ -116,9 +117,9 @@ public class VendingMachine1Example extends BaseExampleTestSupport {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(50)
+                        .setMaximumTransitions(60)
                         .setMaximumTime(60)
-                        .allowReducibleClasses(false)
+                        .allowReducibleClasses(true)
                         .create()
                 )
                 .doMeasureTime(true)
@@ -130,6 +131,16 @@ public class VendingMachine1Example extends BaseExampleTestSupport {
                 )
         ;
         return opts;
+    }
+
+    @Override
+    public void onPredicateMatched(PureBigraph currentAgent, ReactiveSystemPredicate<PureBigraph> predicate) {
+        System.out.println("pred matched");
+    }
+
+    @Override
+    public void onAllPredicateMatched(PureBigraph currentAgent, String label) {
+        System.out.println("all matched");
     }
 
     private SubBigraphMatchPredicate<PureBigraph> teaContainerIsEmpty() throws InvalidConnectionException, TypeNotExistsException {
