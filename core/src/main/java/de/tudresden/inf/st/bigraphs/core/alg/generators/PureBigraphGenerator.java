@@ -70,7 +70,7 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
      *
      * @param t   number of roots
      * @param n   number of nodes (inclusive {@literal t})
-     * @param p   proportion of the nodes {@literal n}) being used for linking at all
+     * @param p   proportion of the nodes {@literal n} being used for linking at all
      * @param p_l probability (or "weight") that an outer name will be created
      * @param p_e probability (or "weight") that an edge will be created
      * @return a random bigraph according to the provided parameters
