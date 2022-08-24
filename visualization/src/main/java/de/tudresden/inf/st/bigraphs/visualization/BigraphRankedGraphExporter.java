@@ -21,8 +21,9 @@ import java.util.DoubleSummaryStatistics;
  *
  * @author Dominik Grzelak
  */
-public class BigraphRankedGraphExporter {
+public class BigraphRankedGraphExporter implements BigraphGraphicsExporter<AbstractRankedGraph<?, ?, ?>> {
 
+    @Override
     public void toPNG(AbstractRankedGraph<?, ?, ?> rankedGraphEncoding, File output) throws IOException {
         if (!rankedGraphEncoding.isEncodingFinished() && !rankedGraphEncoding.isEncodingStarted()) {
             rankedGraphEncoding.encode();

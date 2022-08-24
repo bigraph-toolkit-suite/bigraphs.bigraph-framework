@@ -24,12 +24,13 @@ import static guru.nidi.graphviz.model.Factory.*;
  * <p>
  * Several styling can be configured, such as color, shape and the label format of each node.
  */
-public class BigraphGraphvizExporter {
+public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<?>> {
 
     private static final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
     private static final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
     private static final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
 
+    @Override
     public void toPNG(Bigraph<?> bigraph, File output) throws IOException {
         BigraphGraphvizExporter.toPNG(bigraph, true, output);
     }
@@ -40,7 +41,7 @@ public class BigraphGraphvizExporter {
 
     public static String toDOT(Bigraph<?> bigraph, boolean asTree) {
         try {
-            return new BigraphGraphvizExporter().convert(bigraph, null, null, asTree, labelSupplier, colorSupplier, shapeSupplier);
+            return new BigraphGraphvizExporter().convert(bigraph, null, Format.DOT, asTree, labelSupplier, colorSupplier, shapeSupplier);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -132,11 +133,11 @@ public class BigraphGraphvizExporter {
             // created ranked node graph
 
             theGraph.add(collect.values().stream().map(bigraphEntities ->
-                    graph().graphAttr().with(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM)).with(
-                            bigraphEntities.stream()
-                                    // (not necessary now to specify the appearance of the nodes. will be done later)
-                                    .map(x -> node(labelSupplier.with(x).get()))
-                                    .toArray(LinkSource[]::new)))
+                            graph().graphAttr().with(Rank.dir(Rank.RankDir.TOP_TO_BOTTOM)).with(
+                                    bigraphEntities.stream()
+                                            // (not necessary now to specify the appearance of the nodes. will be done later)
+                                            .map(x -> node(labelSupplier.with(x).get()))
+                                            .toArray(LinkSource[]::new)))
                     .collect(Collectors.toList()));
 
 
@@ -153,7 +154,7 @@ public class BigraphGraphvizExporter {
                 targetSet.forEach(l -> {
                             theGraph.add(
                                     finalNode.with(colorSupplier.with(l.getSourceEntity()).get(),
-                                            shapeSupplier.with(l.getSourceEntity()).get())
+                                                    shapeSupplier.with(l.getSourceEntity()).get())
                                             .link(
                                                     Link.to(node(l.getTarget())).with(Label.of(l.getLabel()))
                                             )
