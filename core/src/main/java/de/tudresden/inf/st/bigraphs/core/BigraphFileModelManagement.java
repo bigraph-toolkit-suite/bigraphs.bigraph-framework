@@ -251,6 +251,10 @@ public class BigraphFileModelManagement {
             EMFUtils.writeDynamicInstanceModel(signature.getMetaModel(), Collections.singleton(signature.getInstanceModel()), outputStream, null);
         }
 
+        public static void exportAsInstanceModel(EcoreSignature signature, OutputStream outputStream, String newNamespaceLocation) throws IOException {
+            EMFUtils.writeDynamicInstanceModel(signature.getMetaModel(), Collections.singleton(signature.getInstanceModel()), outputStream, newNamespaceLocation);
+        }
+
         /**
          * Exports the Ecore-based metamodel of a bigraph.
          * The filename must match the name of the EPackage of the given {@code bigraph} argument.
