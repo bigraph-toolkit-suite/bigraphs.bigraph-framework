@@ -25,6 +25,8 @@ public class ModelCheckingOptions {
     private Map<Options, Opts> optsMap = new ConcurrentHashMap<>();
     private boolean measureTime = false;
 
+    private boolean parallelRuleMatching = false;
+
     public enum Options {
         TRANSITION(TransitionOptions.class), EXPORT(ExportOptions.class);
 
@@ -71,6 +73,30 @@ public class ModelCheckingOptions {
 
     public boolean isMeasureTime() {
         return measureTime;
+    }
+
+    /**
+     * Instruct the simulation either to perform rule matching in parallel or sequentially (default).
+     *
+     * @param flag flag to enable or disable parallel rule matchings
+     */
+    public void setParallelRuleMatching(boolean flag) {
+        this.parallelRuleMatching = flag;
+    }
+
+    /**
+     * Instruct the simulation either to perform rule matching in parallel or sequentially (default).
+     *
+     * @param flag flag to enable or disable parallel rule matchings
+     * @return the current options instance
+     */
+    public ModelCheckingOptions doParallelRuleMatching(boolean flag) {
+        this.parallelRuleMatching = flag;
+        return this;
+    }
+
+    public boolean isParallelRuleMatching() {
+        return this.parallelRuleMatching;
     }
 
     /**
@@ -252,6 +278,7 @@ public class ModelCheckingOptions {
     public static final class ExportOptions implements Opts {
         private File outputStatesFolder;
         private File reactionGraphFile;
+        @Deprecated
         private File rewriteResultFolder;
         private Boolean printCanonicalStateLabel;
 
@@ -274,10 +301,12 @@ public class ModelCheckingOptions {
             return Objects.nonNull(outputStatesFolder);
         }
 
+        @Deprecated
         public boolean hasRewriteResultFolder() {
             return Objects.nonNull(rewriteResultFolder);
         }
 
+        @Deprecated
         public File getRewriteResultFolder() {
             return rewriteResultFolder;
         }
@@ -290,6 +319,7 @@ public class ModelCheckingOptions {
             this.reactionGraphFile = reactionGraphFile;
         }
 
+        @Deprecated
         void setRewriteResultFolder(File rewriteResultFolder) {
             this.rewriteResultFolder = rewriteResultFolder;
         }
@@ -344,6 +374,8 @@ public class ModelCheckingOptions {
         public static class Builder {
             private File outputStatesFolder = null;
             private File reactionGraphFile = null;
+
+            @Deprecated
             private File rewriteResultFolder = null;
             private Boolean printCanonicalStateLabel = false;
 
@@ -357,6 +389,7 @@ public class ModelCheckingOptions {
                 return this;
             }
 
+            @Deprecated
             public Builder setRewriteResultFolder(File rewriteResultFolder) {
                 this.rewriteResultFolder = rewriteResultFolder;
                 return this;
