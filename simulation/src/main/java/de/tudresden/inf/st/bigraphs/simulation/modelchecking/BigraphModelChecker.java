@@ -43,6 +43,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+//TODO: implement some static rule analysers: https://github.com/bigmc/bigmc/blob/master/src/analyser.cpp
+// as discussed in Perrone's thesis
+
 /**
  * A bigraph model checker that allows to simulate a BRS by reaction rules. A reactive system, the strategy and
  * options must be provided.
@@ -327,7 +330,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
     public void exportReactionGraph(ReactionGraph<B> reactionGraph) {
         ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
-        if (Objects.nonNull(opts.getReactionGraphFile())) {
+        if (opts != null && opts.getReactionGraphFile() != null) {
             if (!reactionGraph.isEmpty()) {
                 exportGraph(reactionGraph, opts.getReactionGraphFile());
             } else {
@@ -338,6 +341,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
+    //TODO move to visualization module
     void exportGraph(ReactionGraph<B> bReactionGraph, File imgFile) {
 
 //        Graph g = bReactionGraph.getGraph();
@@ -401,7 +405,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
 
         /**
-         * This method is called if all available predicates of a reactive system evaluated to true in one state.
+         * This method is called if all available predicates of a reactive system evaluated to true for some state.
          * In this case, the method {@link ReactiveSystemListener#onPredicateMatched(Bigraph, ReactiveSystemPredicate)}
          * is not called.
          *
@@ -412,13 +416,25 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
 
         /**
-         * This method is called if a predicate evaluated to {@code true} after a transition.
+         * This method is called if a predicate evaluated to {@code true} for some state.
          * It is only called if not all predicates yielded {@code true}.
          *
          * @param currentAgent the agent
          * @param predicate    the predicate
          */
         default void onPredicateMatched(B currentAgent, ReactiveSystemPredicate<B> predicate) {
+
+        }
+
+        /**
+         * This method is called if a sub-bigraph-predicate evaluated to {@code true} for some state.
+         * It is only called if not all predicates yielded {@code true}.
+         *
+         * @param currentAgent the agent
+         * @param predicate    the predicate
+         * @param subBigraph    the sub-bigraph as matched by the predicate in currentAgent
+         */
+        default void onSubPredicateMatched(B currentAgent, ReactiveSystemPredicate<B> predicate, B context, B subBigraph, B redexOnly, B paramsOnly) {
 
         }
 
