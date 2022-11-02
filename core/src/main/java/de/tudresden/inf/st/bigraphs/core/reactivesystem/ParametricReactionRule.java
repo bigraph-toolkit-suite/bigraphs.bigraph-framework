@@ -6,7 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException
 import de.tudresden.inf.st.bigraphs.core.exceptions.ParametricReactionRuleIsNotWellDefined;
 
 /**
- * Concrete implementation of a pamarametric reaction rule.
+ * Concrete implementation of a parametric reaction rule.
  *
  * @param <B> type of the bigraph
  * @author Dominik Grzelak
