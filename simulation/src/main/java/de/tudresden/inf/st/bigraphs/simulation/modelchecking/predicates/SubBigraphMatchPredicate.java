@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates;
 
+import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
@@ -27,7 +28,12 @@ public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>>
     private final B bigraphToMatch;
     private final it.uniud.mads.jlibbig.core.std.Bigraph jBigraphToMatch;
     private AbstractBigraphMatcher<B> matcher;
-    private JLibBigBigraphEncoder enc = new JLibBigBigraphEncoder();
+    private final JLibBigBigraphEncoder enc = new JLibBigBigraphEncoder();
+
+    private B subBigraphResult;
+    private B subBigraphParamResult;
+    private B contextBigraphResult;
+    private B subRedexResult;
 
     private SubBigraphMatchPredicate(B bigraphToMatch) {
         this(bigraphToMatch, false);
@@ -55,14 +61,40 @@ public class SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>>
 
     @Override
     public boolean test(B agent) {
-        //TODO substitute this with may fastersubtree+hypergraph matcher?
         AgentMatcher matcher = new AgentMatcher();
         it.uniud.mads.jlibbig.core.std.Bigraph a = enc.encode((PureBigraph) agent, jBigraphToMatch.getSignature());
         Iterable<? extends AgentMatch> match = matcher.match(a, jBigraphToMatch);
-        return match.iterator().hasNext();
+        if (match.iterator().hasNext()) {
+            AgentMatch next = match.iterator().next();
+            it.uniud.mads.jlibbig.core.std.Bigraph compose = it.uniud.mads.jlibbig.core.std.Bigraph.compose(next.getRedex(), next.getParam());
+            JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+            subBigraphResult = (B) decoder.decode(compose);
+            subRedexResult = (B) decoder.decode(next.getRedex());
+            subBigraphParamResult = (B) decoder.decode(next.getParam());
+            contextBigraphResult = (B) decoder.decode(next.getContext());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public B getSubBigraphResult() {
+        return subBigraphResult;
+    }
+
+    public B getSubBigraphParamResult() {
+        return subBigraphParamResult;
     }
 
     public B getBigraphToMatch() {
         return bigraphToMatch;
+    }
+
+    public B getContextBigraphResult() {
+        return contextBigraphResult;
+    }
+
+    public B getSubRedexResult() {
+        return subRedexResult;
     }
 }
