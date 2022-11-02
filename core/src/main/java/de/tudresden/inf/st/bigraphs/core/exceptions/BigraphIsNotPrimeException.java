@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core;
+package de.tudresden.inf.st.bigraphs.core.exceptions;
 
 /**
  * @author Dominik Grzelak

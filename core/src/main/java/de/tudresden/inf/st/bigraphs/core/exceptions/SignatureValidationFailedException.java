@@ -6,6 +6,10 @@ public class SignatureValidationFailedException extends RuntimeException {
         super("Signature validation failed because the model seems invalid.");
     }
 
+    public SignatureValidationFailedException(String message) {
+        super(message);
+    }
+
     public SignatureValidationFailedException(Throwable throwable) {
         super(throwable);
     }
