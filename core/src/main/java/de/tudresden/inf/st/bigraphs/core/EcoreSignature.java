@@ -1,7 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignature;
 import org.eclipse.collections.api.map.ImmutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -30,11 +30,13 @@ public interface EcoreSignature {
      */
     EObject getInstanceModel();
 
+    //TODO move this to a validation class
+    //TODO use EcoreBigraphExt interface instead of AbstractEcoreSignature: then we can store also bigraph classes
     /**
      * Keeps a list of validators for checking signature instance models.
      * If an instance model is invalid, a runtime exception will be thrown.
      */
-    final ImmutableMap<Class<? extends AbstractEcoreSignature>, Consumer<EObject>> VALIDATORS = Maps.immutable.of(
+    final ImmutableMap<Class<? extends EcoreSignature>, Consumer<EObject>> VALIDATORS = Maps.immutable.of(
             DefaultDynamicSignature.class, EcoreSignature::validateBSignature,
             KindSignature.class, EcoreSignature::validateBKindSignature
     );

@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.impl;
+package de.tudresden.inf.st.bigraphs.core.impl.signature;
 
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;

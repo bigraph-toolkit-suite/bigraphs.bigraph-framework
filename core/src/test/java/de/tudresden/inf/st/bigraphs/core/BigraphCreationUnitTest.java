@@ -10,12 +10,15 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
+import de.tudresden.inf.st.bigraphs.core.factory.FactoryCreationContext;
+import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.MutableBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.common.util.EList;
@@ -35,6 +38,40 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 //@Disabled
 public class BigraphCreationUnitTest {
+
+    @Test
+    void thesis_example() throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException, InvalidConnectionException, LinkTypeNotExistsException {
+        PureBigraphFactory factory = FactoryCreationContext.findFactoryFor(PureBigraph.class);
+//        FactoryCreationContext.current().orElse(FactoryCreationContext.begin()).getFactory();
+        DynamicSignatureBuilder sigBuilder = factory.createSignatureBuilder(); //new DynamicSignatureBuilder();
+        sigBuilder = sigBuilder
+                .newControl(StringTypedName.of("K"), FiniteOrdinal.ofInteger(1))
+                .status(ControlStatus.ACTIVE)
+                .assign();
+        sigBuilder.newControl(StringTypedName.of("L"), FiniteOrdinal.ofInteger(1))
+                .status(ControlStatus.ATOMIC)
+                .assign();
+        DefaultDynamicSignature sig0 = sigBuilder.create();
+
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .addControl("K", 1)
+                .addControl("L", 1, ControlStatus.ATOMIC)
+                .create();
+
+        assert sig.equals(sig0);
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+        PureBigraph bigraph = builder.createRoot()
+                .connectByEdge("K", "L")
+                .createBigraph();
+
+        builder.createRoot().addChild("K").linkToInner("tmp").addChild("L").linkToInner("tmp").createBigraph();builder.closeAllInnerNames();
+
+        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
+        DiscreteIon<DefaultDynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
+        Linkings<DefaultDynamicSignature>.Closure x = pureLinkings(sig).closure("x");
+        BigraphComposite<DefaultDynamicSignature> G = ops(x).compose(ops(K_x).merge(L_x));
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) G.getOuterBigraph(), System.out);
+    }
 
     @Test
     void name() throws IOException {

@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core.impl.pure;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
@@ -8,7 +8,6 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphMetaModelLoadingFaile
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;

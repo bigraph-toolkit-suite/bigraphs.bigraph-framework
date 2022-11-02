@@ -4,7 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
 import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 
 import static guru.nidi.graphviz.attribute.Rank.RankDir.BOTTOM_TO_TOP;
 import static guru.nidi.graphviz.model.Factory.*;
+
+//TODO a dot exporter for reaction graphs? https://github.com/bigmc/bigmc/blob/master/src/graph.cpp next to JGraphT
 
 /**
  * This class visualizes a bigraph by means of GraphViz.

@@ -9,8 +9,8 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.*;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
@@ -62,7 +62,7 @@ public class AddExample extends BaseExampleTestSupport {
 
     @Test
     void simulate_counting_example() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, IncompatibleInterfaceException {
-        int a = 5, b = 2;
+        int a = 2, b = 3;
         AddExpr reactiveSystem = new AddExpr(a, b);
         eb(reactiveSystem.agent_a, "agent");
         eb(reactiveSystem.reactionRule_1.getRedex(), "r1-redex");
@@ -99,11 +99,11 @@ public class AddExample extends BaseExampleTestSupport {
             AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 
             PureBigraph agentTmp = getAgent();
+            int cnt = 0;
             while (true) {
                 MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agentTmp, getReactionRulesMap().get("r0"));
                 Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
                 if (!iterator.hasNext()) {
-//                    agentTmp = null;
                     break;
                 }
                 while (iterator.hasNext()) {
@@ -113,8 +113,9 @@ public class AddExample extends BaseExampleTestSupport {
                     agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r0"));
                     BigraphGraphvizExporter.toPNG(agentTmp,
                             true,
-                            new File(TARGET_DUMP_PATH + "agent_reacted.png")
+                            new File(TARGET_DUMP_PATH + cnt + "_agent_reacted.png")
                     );
+                    cnt++;
                 }
             }
 
@@ -125,6 +126,11 @@ public class AddExample extends BaseExampleTestSupport {
 //                createGraphvizOutput(getAgent(), next, TARGET_DUMP_PATH + "/");
                 System.out.println("NEXT: " + next);
                 agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r1"));
+                BigraphGraphvizExporter.toPNG(agentTmp,
+                        true,
+                        new File(TARGET_DUMP_PATH + cnt + "_agent_reacted.png")
+                );
+                cnt++;
             }
             return agentTmp; // the result
         }
@@ -283,8 +289,8 @@ public class AddExample extends BaseExampleTestSupport {
                 .newControl().identifier(StringTypedName.of("Sum")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("S")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("Z")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("True")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("False")).arity(FiniteOrdinal.ofInteger(0)).assign()
+//                .newControl().identifier(StringTypedName.of("True")).arity(FiniteOrdinal.ofInteger(1)).assign()
+//                .newControl().identifier(StringTypedName.of("False")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("Left")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("Right")).arity(FiniteOrdinal.ofInteger(0)).assign()
         ;

@@ -1,29 +1,18 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import com.google.common.base.Predicate;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.compare.*;
 import org.eclipse.emf.compare.match.*;
 import org.eclipse.emf.compare.match.eobject.IEObjectMatcher;
 import org.eclipse.emf.compare.match.impl.MatchEngineFactoryImpl;
 import org.eclipse.emf.compare.match.impl.MatchEngineFactoryRegistryImpl;
-import org.eclipse.emf.compare.scope.DefaultComparisonScope;
-import org.eclipse.emf.compare.scope.IComparisonScope;
 import org.eclipse.emf.compare.utils.UseIdentifiers;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
-import static org.eclipse.emf.compare.utils.EMFComparePredicates.fromSide;
-import static org.eclipse.emf.compare.utils.EMFComparePredicates.hasConflict;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 /**

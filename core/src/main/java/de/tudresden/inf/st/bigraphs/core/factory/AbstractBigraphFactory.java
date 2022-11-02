@@ -5,9 +5,9 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -48,6 +48,7 @@ public abstract class AbstractBigraphFactory<S extends AbstractEcoreSignature<? 
      */
     public abstract <SB extends SignatureBuilder> SB createSignatureBuilder();
 
+    //TODO something for a kind bigraph factory
     /**
      * Creates a builder for constructing kind signatures.
      *
@@ -66,6 +67,7 @@ public abstract class AbstractBigraphFactory<S extends AbstractEcoreSignature<? 
      */
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
 
+    //TODO something for purerandombuilder, we have to create a RandomBigraphGenerator interface
     public PureBigraphGenerator createRandomBuilder(DefaultDynamicSignature signature) {
         return new PureBigraphGenerator(signature);
     }
@@ -115,6 +117,7 @@ public abstract class AbstractBigraphFactory<S extends AbstractEcoreSignature<? 
      */
     public abstract DiscreteIon<S> createDiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, S signature);
 
+    //TODO something for purefactory
     public abstract DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, S signature);
 
     public abstract DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, S signature,

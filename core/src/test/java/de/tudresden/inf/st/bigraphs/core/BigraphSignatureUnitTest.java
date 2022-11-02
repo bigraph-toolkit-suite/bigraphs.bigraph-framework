@@ -6,11 +6,10 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;

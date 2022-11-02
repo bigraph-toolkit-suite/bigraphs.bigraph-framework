@@ -2,7 +2,6 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
 
 /**
  * Abstract class for all control builder implementations.
@@ -42,7 +41,7 @@ public abstract class ControlBuilder<NT extends NamedType<?>, V extends FiniteOr
     protected abstract Control<NT, V> build();
 
     @SuppressWarnings("unchecked")
-    public final B self() {
+    protected final B self() {
         return (B) this;
     }
 

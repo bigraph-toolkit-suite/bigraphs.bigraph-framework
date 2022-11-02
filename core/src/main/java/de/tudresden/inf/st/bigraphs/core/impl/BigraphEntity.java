@@ -4,10 +4,24 @@ import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.NameableType;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.impl.NameableTypeImpl;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.cdo.CDOLock;
+import org.eclipse.emf.cdo.CDOObjectHistory;
+import org.eclipse.emf.cdo.CDOState;
+import org.eclipse.emf.cdo.common.id.CDOID;
+import org.eclipse.emf.cdo.common.lock.CDOLockState;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.security.CDOPermission;
+import org.eclipse.emf.cdo.eresource.CDOResource;
+import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.resource.Resource;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
@@ -47,17 +61,17 @@ public class BigraphEntity<C extends Control> {
         this(instance, null, type);
     }
 
-    /**
-     * Copy constructor
-     *
-     * @param bigraphEntity
-     */
-    @Deprecated
-    BigraphEntity(BigraphEntity<C> bigraphEntity) {
-        this.instance = bigraphEntity.getInstance();
-        this.control = bigraphEntity.getControl();
-        this.type = bigraphEntity.getType();
-    }
+//    /**
+//     * Copy constructor
+//     *
+//     * @param bigraphEntity
+//     */
+//    @Deprecated
+//    BigraphEntity(BigraphEntity<C> bigraphEntity) {
+//        this.instance = bigraphEntity.getInstance();
+//        this.control = bigraphEntity.getControl();
+//        this.type = bigraphEntity.getType();
+//    }
 
     @NonNull
     public EObject getInstance() {
@@ -71,10 +85,6 @@ public class BigraphEntity<C extends Control> {
 
     public BigraphEntityType getType() {
         return type;
-    }
-
-    EClass eClass() {
-        return getInstance().eClass();
     }
 
     @Override

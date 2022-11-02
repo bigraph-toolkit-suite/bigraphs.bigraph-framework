@@ -1,6 +1,5 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
@@ -111,7 +110,7 @@ public abstract class SignatureBuilder<NT extends NamedType<?>,
 
     //    protected  abstract <S extends Signature> Class<S> getSignatureClass();
     @SuppressWarnings("unchecked")
-    final B self() {
+    protected final B self() {
         return (B) this;
     }
 

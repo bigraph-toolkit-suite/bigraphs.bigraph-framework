@@ -1,10 +1,9 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core.impl.signature;
 
 import de.tudresden.inf.st.bigraphs.core.ControlBuilder;
 import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
 
 /**
  * The concrete dynamic control builder used by the {@link DynamicSignatureBuilder}.

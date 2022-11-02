@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.core.impl;
+package de.tudresden.inf.st.bigraphs.core.impl.signature;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractControl;
 import de.tudresden.inf.st.bigraphs.core.ControlStatus;

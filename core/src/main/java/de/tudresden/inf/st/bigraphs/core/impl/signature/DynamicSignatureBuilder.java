@@ -1,14 +1,13 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core.impl.signature;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.ControlStatus;
+import de.tudresden.inf.st.bigraphs.core.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 
 import java.util.Collections;
 import java.util.Set;

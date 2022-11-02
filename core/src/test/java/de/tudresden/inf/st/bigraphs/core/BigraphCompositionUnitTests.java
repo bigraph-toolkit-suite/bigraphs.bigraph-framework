@@ -4,13 +4,14 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.ControlIsAtomicException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidArityOfControlException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -63,6 +64,50 @@ public class BigraphCompositionUnitTests {
         ops(x).compose(G);
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) G, System.out);
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) (ops(x).compose(G).getOuterBigraph()), System.out);
+    }
+
+    @Test
+    void test_02() {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .addControl("K", 1, ControlStatus.ATOMIC)
+                .addControl("L", 1, ControlStatus.ATOMIC)
+                .create();
+        try {
+            pureBuilder(sig)
+                    .createRoot()
+                    .addChild("K").down();
+        } catch (ControlIsAtomicException e) {
+            // Exception handling
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void test_03() {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .addControl("K", 0, ControlStatus.ATOMIC)
+                .addControl("L", 1, ControlStatus.ATOMIC)
+                .create();
+        try {
+            pureBuilder(sig)
+                    .createRoot()
+                    .connectByEdge("K", "L");
+        } catch (InvalidArityOfControlException e) {
+            // Exception handling
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void test_04() {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .addControl("K", 1, ControlStatus.ATOMIC)
+                .addControl("L", 1, ControlStatus.ATOMIC)
+                .create();
+
+        AbstractEcoreSignature<? extends Control<?, ?>> signatureFromMetaModel
+                = BigraphBuilderSupport.getSignatureFromMetaModel(sig.getInstanceModel());
+//        System.out.println(signatureFromMetaModel);
     }
 
     @Test

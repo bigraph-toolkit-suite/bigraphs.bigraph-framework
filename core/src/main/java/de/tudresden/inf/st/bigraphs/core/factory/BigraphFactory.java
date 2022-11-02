@@ -6,8 +6,8 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.KindSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -66,6 +66,7 @@ public final class BigraphFactory {
     }
 
     /**
+     * Registers a signature metamodel.
      * @param signatureInstanceModel the Ecore signature instance model
      * @param <S>                    the type of the signature
      * @return the signature object (freshly created, or the one already present in the internal registry)
@@ -75,6 +76,7 @@ public final class BigraphFactory {
     }
 
     /**
+     * Registers a signature metamodel
      * Overwrites the metadata of the metamodel.
      *
      * @param signatureInstanceModel the Ecore signature instance model

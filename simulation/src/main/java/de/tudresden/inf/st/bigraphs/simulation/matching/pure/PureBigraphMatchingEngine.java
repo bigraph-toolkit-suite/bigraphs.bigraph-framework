@@ -1,11 +1,8 @@
 package de.tudresden.inf.st.bigraphs.simulation.matching.pure;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.primitives.Primitives;
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
 import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
-import de.tudresden.inf.st.bigraphs.core.exceptions.ContextIsNotActive;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.matching.BigraphMatchingEngine;
@@ -19,9 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
 
 /**
  * Matching algorithm for pure bigraphs (see {@link PureBigraph}).

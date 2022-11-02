@@ -1,7 +1,12 @@
 package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.*;
+import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControl;
+import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BDynamicSignature;
+import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelFactory;
+import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage;
 import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EValidator;
@@ -26,6 +31,8 @@ public class BigraphEcoreModelApiUnitTests {
 
     @Test
     void no_duplicate_controls() {
+        // not working because BControlImpl is abstract ("java.lang.IllegalArgumentException: The class 'BControl' is not a valid classifier"):
+        // EObject eObject = SignatureBaseModelFactory.eINSTANCE.create(SignatureBaseModelPackage.eINSTANCE.getBControl());
 //        BControl bControl = SignatureBaseModelFactory.eINSTANCE.createBControl();
 //        bControl.setName("User");
 //        bControl.setArity(1);

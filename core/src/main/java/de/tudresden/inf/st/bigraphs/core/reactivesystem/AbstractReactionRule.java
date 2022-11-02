@@ -28,7 +28,6 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     protected String label;
 
     public ReactiveSystemBoundReactionRule<B> withReactiveSystem(ReactiveSystem<B> reactiveSystem) {
-//        Assert.notNull(reactiveSystem, "ClientSession must not be null!");
         try {
             return new ReactiveSystemBoundReactionRule<>(reactiveSystem, AbstractReactionRule.this);
         } catch (InvalidReactionRuleException e) {

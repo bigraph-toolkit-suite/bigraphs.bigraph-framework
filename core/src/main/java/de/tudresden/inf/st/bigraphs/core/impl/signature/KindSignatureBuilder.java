@@ -1,15 +1,13 @@
-package de.tudresden.inf.st.bigraphs.core.impl.builder;
+package de.tudresden.inf.st.bigraphs.core.impl.signature;
 
 import de.tudresden.inf.st.bigraphs.core.AbstractEcoreSignature;
 import de.tudresden.inf.st.bigraphs.core.Control;
+import de.tudresden.inf.st.bigraphs.core.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicControl;
-import de.tudresden.inf.st.bigraphs.core.impl.KindSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.KindSort;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Builder class for kind signatures.
  * <p>
- * The builder returns an object of the class {@link de.tudresden.inf.st.bigraphs.core.impl.KindSignature}, which includes
+ * The builder returns an object of the class {@link KindSignature}, which includes
  * both the Ecore-based kind signature metamodel and its instance model.
  * Both the metamodel for kind signatures and the instance model are created internally.
  * The instance model is based on the extended metamodel.

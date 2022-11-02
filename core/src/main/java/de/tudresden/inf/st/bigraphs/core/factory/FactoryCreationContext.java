@@ -4,8 +4,8 @@ import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.SignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -46,7 +46,7 @@ public final class FactoryCreationContext {
         return factory;
     }
 
-    static Optional<FactoryCreationContext> current() {
+    public static Optional<FactoryCreationContext> current() {
         Stack<FactoryCreationContext> cs = CONTEXT.get();
         return cs.empty() ? Optional.empty() : Optional.of(cs.peek());
     }
@@ -65,6 +65,9 @@ public final class FactoryCreationContext {
     }
 
     static FactoryCreationContext begin(@Nullable AbstractBigraphFactory bigraphFactory) {
+        if (bigraphFactory == null) {
+            bigraphFactory = new PureBigraphFactory();
+        }
         FactoryCreationContext ctx = new FactoryCreationContext(bigraphFactory);
         ((Stack) CONTEXT.get()).push(ctx);
         return ctx;
@@ -80,18 +83,18 @@ public final class FactoryCreationContext {
 
     }
 
-    private static AbstractBigraphFactory findFactoryFor(Class<? extends Bigraph> bigraphClass) {
+    public static <T extends AbstractBigraphFactory> T findFactoryFor(Class<? extends Bigraph> bigraphClass) {
         assert Objects.nonNull(bigraphClass);
         // factory for common pure bigraphs
         if (bigraphClass.isAssignableFrom(PureBigraph.class)) {
-            return new PureBigraphFactory();
+            return (T) new PureBigraphFactory();
         }
         // factory for elementary bigraphs
         if (bigraphClass.isAssignableFrom(ElementaryBigraph.class) ||
                 (Objects.nonNull(bigraphClass.getSuperclass()) && isAssignable(bigraphClass))) {
             Class<?> typeArg = TypeResolver.resolveRawArgument(ElementaryBigraph.class, bigraphClass);
             if (typeArg.isAssignableFrom(DefaultDynamicSignature.class)) {
-                return new PureBigraphFactory();
+                return (T) new PureBigraphFactory();
             }
         }
         throw new RuntimeException("Not implemented yet");
@@ -118,6 +121,7 @@ public final class FactoryCreationContext {
         });
     }
 
+    //TODO this should not be separate but detected by createSignatureBuilder via PlaceSortedPureBigraph<KindSignature>
     static <S extends Signature> Object createKindSignatureBuilder(Class<PureBigraph> bigraphClass) {
         return current().map((ctx) -> {
             return ctx.newKindSignatureBuilder();
@@ -126,6 +130,7 @@ public final class FactoryCreationContext {
         });
     }
 
+    //TODO: use Class<>
     static BigraphComposite createOperator(Bigraph bigraph) {
         return current().map((ctx) -> {
             return ctx.newBigraphOperator(bigraph);

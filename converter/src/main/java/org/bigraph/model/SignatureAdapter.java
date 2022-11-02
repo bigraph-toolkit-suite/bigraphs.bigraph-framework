@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import org.bigraph.model.assistants.IObjectIdentifier;
 import org.bigraph.model.interfaces.ISignature;
 
@@ -16,7 +17,7 @@ import java.util.Set;
 /**
  * Adapter for our {@link Signature} class to be used with {@link org.bigraph.model.savers.SignatureXMLSaver}.
  * <p>
- * This is an adapter for the signature of type {@link de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature}.
+ * This is an adapter for the signature of type {@link DefaultDynamicSignature}.
  *
  * @author Dominik Grzelak
  */

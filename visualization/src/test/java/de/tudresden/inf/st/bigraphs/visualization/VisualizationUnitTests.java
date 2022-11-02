@@ -1,16 +1,18 @@
 package de.tudresden.inf.st.bigraphs.visualization;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.builder.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import guru.nidi.graphviz.attribute.*;
@@ -29,8 +31,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
 import static guru.nidi.graphviz.model.Factory.*;
 
 public class VisualizationUnitTests {
@@ -42,6 +44,24 @@ public class VisualizationUnitTests {
     static void setUp() {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
+    }
+
+    @Test
+    void thesis_example() throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
+        DefaultDynamicSignature sig = pureSignatureBuilder()
+                .addControl("K", 1, ControlStatus.ATOMIC)
+                .addControl("L", 1, ControlStatus.ATOMIC)
+                .create();
+        pureBuilder(sig)
+                .createRoot()
+                .addChild("K");
+        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
+        DiscreteIon<DefaultDynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
+        Linkings<DefaultDynamicSignature>.Closure x = pureLinkings(sig).closure("x");
+        BigraphComposite<DefaultDynamicSignature> G = ops(x).compose(ops(K_x).merge(L_x));
+//        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) G.getOuterBigraph(), System.out);
+        BigraphGraphvizExporter.toPNG(G.getOuterBigraph(), true, new File(TARGET_DUMP_PATH + "thesis-tree-variant.png"));
+        BigraphGraphvizExporter.toPNG(G.getOuterBigraph(), false, new File(TARGET_DUMP_PATH + "thesis-container-variant.png"));
     }
 
     @Test
