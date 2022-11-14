@@ -17,6 +17,7 @@ import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.RandomBigraphGeneratorSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,16 +61,8 @@ public class RandomBigraphStatisticalMeasurements {
     void stats() throws IOException {
 //        Signature<Control<?, ?>> exampleSignature = createExampleSignature();
 
-        List<Float> probs = new ArrayList<>();
-        probs.add(0.1f);
-        probs.add(0.25f);
-        probs.add(0.5f);
-        probs.add(0.8f);
-        List<Integer> nSize = new ArrayList<>();
-        nSize.add(10);
-        nSize.add(100);
-        nSize.add(1000);
-
+        List<Float> probs = new ArrayList<>(Arrays.asList(0.1f, 0.25f, 0.5f, 0.8f));
+        List<Integer> nSize = new ArrayList<>(Arrays.asList(10, 100, 1000));
 
         StringBuilder sb = new StringBuilder();
         int nTimes = 10000;//maximum number of nSize

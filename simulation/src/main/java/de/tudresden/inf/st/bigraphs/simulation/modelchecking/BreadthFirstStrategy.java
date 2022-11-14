@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.simulation.matching.MatchIterable;
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The algorithm implemented here to synthesize the "reaction graph" is adopted from [1].
@@ -50,11 +52,8 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
      * Compute the transition system of a bigraph with all added reaction rules so far.
      */
     public synchronized void synthesizeTransitionSystem() {
-
-
         this.predicateChecker = new PredicateChecker<>(modelChecker.getReactiveSystem().getPredicates());
         ModelCheckingOptions options = modelChecker.options;
-//        this.canonicalForm = modelChecker.canonicalForm;
         if (Objects.nonNull(options.get(ModelCheckingOptions.Options.EXPORT))) {
             ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
             modelChecker.getReactionGraph().setCanonicalNodeLabel(opts.getPrintCanonicalStateLabel());
@@ -72,20 +71,26 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
         ModelCheckingOptions.TransitionOptions transitionOptions = options.get(ModelCheckingOptions.Options.TRANSITION);
         logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
         while (!workingQueue.isEmpty() && iterationCounter.get() < transitionOptions.getMaximumTransitions()) {
+            Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
+
             // "Remove the first element w of the work queue Q."
             final B theAgent = workingQueue.remove();
             final String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(theAgent);
             // "For each reaction rule, find all matches m1 ...mn in w"
-            InOrderReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
+            ReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
+            Stream<ReactionRule<B>> rrStream = Stream.generate(inOrder);
+            if (options.isParallelRuleMatching()) {
+                rrStream = rrStream.parallel();
+            }
 //            Stream.generate(inOrder)
 //                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
-            Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
-            modelChecker.getReactiveSystem().getReactionRules().stream()
-                    .parallel()
+//            modelChecker.getReactiveSystem().getReactionRules().stream()
+//                    .parallel()
+            rrStream
+                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
                     .peek(x -> getListener().onCheckingReactionRule(x))
                     .flatMap(eachRule -> {
                         MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule));
-                        //                        MutableList<MatchResult<B>> reactionResults = Lists.mutable.empty();
                         for (BigraphMatch<B> eachMatch : match) {
                             increaseOccurrenceCounter();
                             B reaction = null;
@@ -95,15 +100,12 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                 reaction = getReactiveSystem().buildParametricReaction(theAgent, eachMatch, eachRule);
                             }
 
-                            Optional.ofNullable(reaction)
-                                    .map(x -> {
-//                                        getListener().onUpdateReactionRuleApplies(theAgent, eachRule, eachMatch);
-                                        return reactionResults.add(createMatchResult(eachRule, eachMatch, x, getOccurrenceCount()));
-                                    })
-                                    .orElseGet(() -> {
-                                        getListener().onReactionIsNull();
-                                        return false;
-                                    });
+                            Optional.ofNullable(reaction).map(x -> {
+                                return reactionResults.add(createMatchResult(eachRule, eachMatch, x, getOccurrenceCount()));
+                            }).orElseGet(() -> {
+                                getListener().onReactionIsNull();
+                                return false;
+                            });
                         }
                         return reactionResults.stream();
                     }) //;
@@ -125,6 +127,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         }
 //                modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
                     });
+
             if (predicateChecker.getPredicates().size() > 0) {
                 // "Check each property p ∈ P against w."
                 //TODO evaluate in "reaction graph spec" what should happen here: violation or stop criteria?
@@ -146,8 +149,6 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     });
                 } else {
                     // compute counter-example trace from w back to the root
-
-//                DijkstraShortestPath<String, String> dijkstraShortestPath = new DijkstraShortestPath<>(reactionGraph.getGraph());
                     predicateChecker.getChecked().entrySet().forEach(eachPredicate -> {
                         if (!eachPredicate.getValue()) {
                             try {

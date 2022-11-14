@@ -332,7 +332,7 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     @DisplayName("Testing link axioms: Theorem 3.6")
-    void link_axions() {
+    void link_axioms() {
         DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
         Linkings<DefaultDynamicSignature> linkings = pureLinkings(empty);
 
