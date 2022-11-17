@@ -1,16 +1,27 @@
 package de.tudresden.inf.st.bigraphs.core.tests.performance;
 
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
+import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
+import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
+import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
+import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.eclipse.net4j.util.io.IOUtil;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,9 +30,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Disabled
 public class BigraphOperationPerformanceTest {
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/tests/performance";
 //    private final static String TARGET_TEST_MODEL_PATH = "src/test/resources/ecore-test-models/";
@@ -29,13 +41,183 @@ public class BigraphOperationPerformanceTest {
     private static final String NL = "\r\n";
     private static final String SEP = ",";
 
+    @Test
+    void binaryOperatorTest_placeGraphsOnly() throws IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        DefaultDynamicSignature sig = createRandomSignature(1, 0);
+        ConfigSlot cs = ConfigSlot.create(10, 20, 10, 0, 0, 0);
+        int numOfRuns = 100;
+        PureBigraphGenerator generator = pureRandomBuilder(sig);
+        generator.generate(cs.t, cs.n, cs.s, 0);//pre-alloc
+        StringBuilder sb = new StringBuilder("n,t,s,time,op").append(NL);
+        for (int n = 10; n < 100; n++) {
+            cs.n = n;
+            cs.t = cs.s = n / 2;
+            if (n % 2 != 0) {
+                cs.t = cs.s = (int) Math.ceil(n / 2.0f);
+            }
+            System.out.println("Creating place graphs with roots/sites " + cs.t + " and nodes total " + n);
+            for (int r = 0; r < numOfRuns; r++) {
+                PureBigraph generate = generator.generate(cs.t, cs.n, cs.s, 0);
+//                BigraphFileModelManagement.Store.exportAsInstanceModel(generate, System.out);
+                long start1 = System.nanoTime();
+                BigraphComposite<DefaultDynamicSignature> compose1 = ops(generate).compose(generate);
+                long end1 = System.nanoTime();
+                long diff1 = (end1 - start1) / 1000000;
+                sb.append(cs.n).append(SEP).append(cs.t).append(SEP).append(cs.s).append(SEP)
+                        .append(diff1).append(SEP).append("composition").append(NL);
+
+                long start2 = System.nanoTime();
+                BigraphComposite<DefaultDynamicSignature> compose2 = ops(generate).parallelProduct(generate);
+                long end2 = System.nanoTime();
+                long diff2 = (end2 - start2) / 1000000;
+                sb.append(cs.n).append(SEP).append(cs.t).append(SEP).append(cs.s).append(SEP)
+                        .append(diff2).append(SEP).append("parallel").append(NL);
+
+                long start3 = System.nanoTime();
+                BigraphComposite<DefaultDynamicSignature> compose3 = ops(generate).merge(generate);
+                long end3 = System.nanoTime();
+                long diff3 = (end3 - start3) / 1000000;
+                sb.append(cs.n).append(SEP).append(cs.t).append(SEP).append(cs.s).append(SEP)
+                        .append(diff3).append(SEP).append("merge").append(NL);
+            }
+//            BigraphGraphvizExporter.toPNG(compose.getOuterBigraph(), true, new File("test.png"));
+        }
+        IOUtil.writeFile(new File("performance-test-operations-place-graph.csv"), sb.toString().getBytes());
+    }
+
+    @Test
+    void binaryOperatorTest_bigraphsWithLinks() throws IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        DefaultDynamicSignature sig = createSingletonSignature("A", 100);
+        ConfigSlot cs = ConfigSlot.create(250, 500, 250, 0, 0, 0);
+        int numOfRuns = 100;
+        PureBigraphGenerator generator = pureRandomBuilder(sig);
+        generator.generate(cs.t, cs.n, cs.s, 0);//pre-alloc
+        Linkings<DefaultDynamicSignature> linkings = pureLinkings(sig);
+        StringBuilder sb = new StringBuilder("p,pl,pe,time,op").append(NL);
+        for (float p = 0.1f; p <= 1.0f; p += 0.1f) {
+            cs.p = cs.p_e = cs.p_l = p;
+            System.out.println("Creating bigraphs with p= " + cs.p);
+            for (int r = 0; r < numOfRuns; r++) {
+                PureBigraph generate = generator.generate(cs.t, cs.n, cs.s, cs.p, cs.p_l, cs.p_e);
+//                BigraphFileModelManagement.Store.exportAsInstanceModel(generate, System.out);
+                long start1 = System.nanoTime();
+                if (generate.getOuterNames().size() > 0) {
+                    Linkings<DefaultDynamicSignature>.Identity id = suitableLinking(linkings, generate.getOuterNames());
+//                    BigraphFileModelManagement.Store.exportAsInstanceModel(id, System.out);
+                    generate = ops(generate).parallelProduct(id).getOuterBigraph();
+//                    BigraphFileModelManagement.Store.exportAsInstanceModel(generate, System.out);
+                }
+                long end1 = System.nanoTime();
+                BigraphComposite<DefaultDynamicSignature> compose1 = ops(generate).compose(generate);
+                long diff1 = (end1 - start1) / 1000000;
+                sb.append(cs.p).append(SEP).append(cs.p_l).append(SEP).append(cs.p_e).append(SEP)
+                        .append(diff1).append(SEP).append("composition").append(NL);
+
+                long start2 = System.nanoTime();
+                BigraphComposite<DefaultDynamicSignature> compose2 = ops(generate).parallelProduct(generate);
+                long end2 = System.nanoTime();
+                long diff2 = (end2 - start2) / 1000000;
+                sb.append(cs.p).append(SEP).append(cs.p_l).append(SEP).append(cs.p_e).append(SEP)
+                        .append(diff2).append(SEP).append("parallel").append(NL);
+//
+                long start3 = System.nanoTime();
+                BigraphComposite<DefaultDynamicSignature> compose3 = ops(generate).merge(generate);
+                long end3 = System.nanoTime();
+                long diff3 = (end3 - start3) / 1000000;
+                sb.append(cs.p).append(SEP).append(cs.p_l).append(SEP).append(cs.p_e).append(SEP)
+                        .append(diff3).append(SEP).append("merge").append(NL);
+            }
+//            BigraphGraphvizExporter.toPNG(compose.getOuterBigraph(), true, new File("test.png"));
+        }
+        IOUtil.writeFile(new File("performance-test-operations-bigraph-graph.csv"), sb.toString().getBytes());
+    }
+
+
+    @Test
+    void naryOperatorTest_bigraphsWithLinks() throws IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
+        DefaultDynamicSignature sig = createSingletonSignature("A", 100);
+        ConfigSlot cs = ConfigSlot.create(100, 200, 100, 0.5f, 0.5f, 0.5f);
+        int numOfRuns = 50;
+        PureBigraphGenerator generator = pureRandomBuilder(sig);
+        generator.generate(cs.t, cs.n, cs.s, 0);//pre-alloc
+        Linkings<DefaultDynamicSignature> linkings = pureLinkings(sig);
+        StringBuilder sb = new StringBuilder("steps,time,op").append(NL);
+        for (int ops = 1; ops <= 10; ops++) {
+            System.out.println("Creating bigraphs with c= " + cs);
+            for (int r = 0; r < numOfRuns; r++) {
+                PureBigraph generate = generator.generate(cs.t, cs.n, cs.s, cs.p, cs.p_l, cs.p_e);
+//                BigraphFileModelManagement.Store.exportAsInstanceModel(generate, System.out);
+                Linkings<DefaultDynamicSignature>.Identity id = suitableLinking(linkings, generate.getOuterNames());
+                generate = ops(generate).parallelProduct(id).getOuterBigraph();
+                PureBigraph finalGenerate = generate;
+                long start1 = System.nanoTime();
+                PureBigraph reduced = IntStream.range(0, ops - 1)
+                        .mapToObj(x -> {
+                            return finalGenerate;
+                        })
+                        .reduce(finalGenerate, (pureBigraph, pureBigraph2) -> {
+                            try {
+                                return ops(pureBigraph).compose(pureBigraph2).getOuterBigraph();
+                            } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                long end1 = System.nanoTime();
+                long diff1 = (end1 - start1) / 1000000;
+                sb.append(ops).append(SEP)
+                        .append(diff1).append(SEP).append("composition").append(NL);
+
+                long start2 = System.nanoTime();
+                PureBigraph reduced2 = IntStream.range(0, ops - 1)
+                        .mapToObj(x -> {
+                            return finalGenerate;
+                        })
+                        .reduce(finalGenerate, (pureBigraph, pureBigraph2) -> {
+                            try {
+                                return ops(pureBigraph).parallelProduct(pureBigraph2).getOuterBigraph();
+                            } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                long end2 = System.nanoTime();
+                long diff2 = (end2 - start2) / 1000000;
+                sb.append(ops).append(SEP)
+                        .append(diff2).append(SEP).append("parallel").append(NL);
+////
+                long start3 = System.nanoTime();
+                PureBigraph reduced3 = IntStream.range(0, ops - 1)
+                        .mapToObj(x -> {
+                            return finalGenerate;
+                        })
+                        .reduce(finalGenerate, (pureBigraph, pureBigraph2) -> {
+                            try {
+                                return ops(pureBigraph).merge(pureBigraph2).getOuterBigraph();
+                            } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                long end3 = System.nanoTime();
+                long diff3 = (end3 - start3) / 1000000;
+                sb.append(ops).append(SEP)
+                        .append(diff3).append(SEP).append("merge").append(NL);
+            }
+        }
+        IOUtil.writeFile(new File("time-complexity-bigraph-operations-consecutive.csv"), sb.toString().getBytes());
+    }
+
+    public static Linkings<DefaultDynamicSignature>.Identity suitableLinking(Linkings<DefaultDynamicSignature> linkings,
+                                                                             List<BigraphEntity.OuterName> outerNames) {
+
+        Linkings<DefaultDynamicSignature>.Identity identity = linkings.identity(outerNames.stream().map(x -> StringTypedName.of(x.getName())).toArray(StringTypedName[]::new));
+        return identity;
+    }
 
     @Test
     void name() throws Exception {
         int numOfSamples = 10;
 //        int n = 10;
 //        float p = 0;
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("");
         DefaultDynamicSignature sig = createRandomSignature(1, 0);
         PureBigraphGenerator generator = new PureBigraphGenerator(sig);
         List<ConfigSlot> configurations = Arrays.asList(
@@ -118,6 +300,12 @@ public class BigraphOperationPerformanceTest {
         ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
         return signatureBuilder.createWith(new LinkedHashSet<>(cs));
+    }
+
+    private DefaultDynamicSignature createSingletonSignature(String control, int arity) {
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
+        signatureBuilder.addControl(control, arity, ControlStatus.ACTIVE);
+        return signatureBuilder.create();
     }
 
     public static void writeData(StringBuilder lines, String filename) throws IOException {
