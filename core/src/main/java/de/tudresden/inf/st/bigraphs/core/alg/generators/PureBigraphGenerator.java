@@ -7,14 +7,17 @@ import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
 import de.tudresden.inf.st.bigraphs.core.utils.DistributedRandomNumberGenerator;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,8 +62,21 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
         return null;
     }
 
+    public PureBigraph generate(int t, int n, int s) {
+        return this.generate(t, n, s, 0.0f, 0.0f, 0.0f);
+    }
+
     public PureBigraph generate(int t, int n, float p) {
-        return this.generate(t, n, p, 0.5f, 0.5f);
+        return this.generate(t, n, 0, p, 0.5f, 0.5f);
+    }
+
+    public PureBigraph generate(int t, int n, int s, float p) {
+        return this.generate(t, n, s, p, 0.5f, 0.5f);
+    }
+
+
+    public PureBigraph generate(int t, int n, float p, float p_l, float p_e) {
+        return this.generate(t, n, 0, p, p_l, p_e);
     }
 
     /**
@@ -70,12 +86,13 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
      *
      * @param t   number of roots
      * @param n   number of nodes (inclusive {@literal t})
+     * @param s   number of sites (additionally to {@literal m})
      * @param p   proportion of the nodes {@literal n} being used for linking at all
      * @param p_l probability (or "weight") that an outer name will be created
      * @param p_e probability (or "weight") that an edge will be created
      * @return a random bigraph according to the provided parameters
      */
-    public PureBigraph generate(int t, int n, float p, float p_l, float p_e) {
+    public PureBigraph generate(int t, int n, int s, float p, float p_l, float p_e) {
         drng = new DistributedRandomNumberGenerator();
         newRoots.clear();
         newNodes.clear();
@@ -134,6 +151,35 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
 //            }
         }
 
+        if(s > 0) {
+            AtomicInteger siteCnt = new AtomicInteger(s);
+            // Add sites to leave
+            nodes.stream().filter(x -> !builder.isRoot(x.getInstance()))
+                    .forEach(x -> {
+                        boolean b = builder.hasChildNodes(x);
+//                        System.out.println("Node " + x + " is Leave? " + (!b));
+                        if(!b) {
+//                            System.out.println("site added to leave");
+                            int i1 = siteCnt.decrementAndGet();
+                            BigraphEntity newSite = builder.createNewSite(i1);
+                            newSites.put(i1, (BigraphEntity.SiteEntity) newSite);
+                            setParentOfNode(newSite, x);
+                        }
+                    });
+            if(siteCnt.get() > 0) {
+                nodes.stream().filter(x -> !builder.isRoot(x.getInstance()))
+                        .limit(siteCnt.get())
+                        .forEach(x -> {
+                            // add site
+//                            System.out.println("site NOT added to leave");
+                            int i1 = siteCnt.decrementAndGet();
+                            BigraphEntity newSite = builder.createNewSite(i1);
+                            newSites.put(i1, (BigraphEntity.SiteEntity) newSite);
+                            setParentOfNode(newSite, x);
+                        });
+            }
+            // If not all sites could be added take the first leaves to add remaining sites ...
+        }
 
         // Link graph generation
         // select number of percentage for linking, check if possible

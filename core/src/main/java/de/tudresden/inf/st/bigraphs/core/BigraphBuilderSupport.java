@@ -111,6 +111,14 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
         return Objects.nonNull(eObject) && eObject.eClass().equals(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_OUTERNAME));
     }
 
+    public boolean isRoot(EObject eObject) {
+        return Objects.nonNull(eObject) && eObject.eClass().equals(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_ROOT));
+    }
+
+    public boolean isNode(EObject eObject) {
+        return Objects.nonNull(eObject) && eObject.eClass().equals(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_NODE));
+    }
+
     protected boolean isEdge(EObject eObject) {
         return Objects.nonNull(eObject) && eObject.eClass().equals(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_EDGE));
     }

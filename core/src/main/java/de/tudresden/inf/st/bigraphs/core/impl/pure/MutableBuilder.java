@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
+import java.util.List;
 import java.util.Map;
 
 //TODO: do not inherit from builder directly
@@ -131,6 +132,12 @@ public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?
     public void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         node.getInstance().eSet(prntRef, parent.getInstance());
+    }
+
+    public boolean hasChildNodes(final BigraphEntity node) {
+        EStructuralFeature childRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
+        List<EObject> o = (List<EObject>) node.getInstance().eGet(childRef);
+        return o.size() > 0;
     }
 
     public void connectInnerToOuter(BigraphEntity.InnerName innerName, BigraphEntity.OuterName outerName) {
