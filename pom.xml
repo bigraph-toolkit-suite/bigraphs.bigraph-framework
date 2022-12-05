@@ -226,7 +226,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>6.5.0</version>
+                    <version>7.4.0</version>
                     <configuration>
                         <excludes>org.eclipse.platform:org.eclipse.equinox.common;org.apache.bcel:bcel</excludes>
                         <!-- fail the build for CVSS greater than or equal to 8 -->
@@ -485,21 +485,6 @@
                 <groupId>net.jodah</groupId>
                 <artifactId>typetools</artifactId>
                 <version>0.6.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.checkerframework</groupId>
-                <artifactId>checker</artifactId>
-                <version>3.27.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>findbugs</groupId>
-                        <artifactId>bcel</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.bcel</groupId>
-                        <artifactId>bcel</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <!-- Graph-related -->
             <dependency>

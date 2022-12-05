@@ -1,5 +1,6 @@
 package de.tudresden.inf.st.bigraphs.core.impl.pure;
 
+import com.google.common.collect.Lists;
 import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.exceptions.*;
@@ -8,7 +9,6 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.com.google.common.collect.Lists;
 import org.eclipse.collections.api.block.function.primitive.IntToObjectFunction;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
