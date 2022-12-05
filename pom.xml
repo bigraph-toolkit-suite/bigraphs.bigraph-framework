@@ -34,7 +34,6 @@
         <emf.codegen.version>2.22.0</emf.codegen.version>
         <emf.cdo.version>4.11.0.v20200902-0811</emf.cdo.version>
         <emf.cdo.common.version>4.11.0.v20200901-0616</emf.cdo.common.version>
-        <!--        <eclipse.collections.version>10.4.0</eclipse.collections.version>-->
         <eclipse.collections.version>11.0.0</eclipse.collections.version>
         <guava.version>31.0.1-jre</guava.version>
         <jgrapht.version>1.5.1</jgrapht.version>
