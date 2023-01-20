@@ -221,13 +221,13 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             public void notifyChanged(Notification notification) {
                 // Edges
                 if (notification.getFeature() == rightEdgesFeature) {
-                    MutableList<DynamicEObjectImpl> edges = Lists.mutable.empty(); //new ArrayList<>();
+                    MutableList<EObject> edges = Lists.mutable.empty(); //new ArrayList<>();
                     if (notification.getNewValue() instanceof Collection) {
                         edges.addAll((Collection) notification.getNewValue());
                     } else {
-                        edges.add((DynamicEObjectImpl) notification.getNewValue());
+                        edges.add((EObject) notification.getNewValue());
                     }
-                    for (DynamicEObjectImpl eachEdge : edges) {
+                    for (EObject eachEdge : edges) {
                         EAttribute nameAttr = EMFUtils.findAttribute(eachEdge.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                         eachEdge.eSet(nameAttr, rewriteEdgeNameSupplier.get());
                     }
@@ -235,13 +235,13 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
 
                 // Outer names
                 if (notification.getFeature() == rightOuterNameFeature) {
-                    MutableList<DynamicEObjectImpl> outernames = Lists.mutable.empty(); //new ArrayList<>();
+                    MutableList<EObject> outernames = Lists.mutable.empty(); //new ArrayList<>();
                     if (notification.getNewValue() instanceof Collection) {
                         outernames.addAll((Collection) notification.getNewValue());
                     } else {
-                        outernames.add((DynamicEObjectImpl) notification.getNewValue());
+                        outernames.add((EObject) notification.getNewValue());
                     }
-                    for (DynamicEObjectImpl outerNameRight : outernames) {
+                    for (EObject outerNameRight : outernames) {
                         EAttribute nameAttr = EMFUtils.findAttribute(outerNameRight.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                         String name = (String) outerNameRight.eGet(nameAttr);
                         if (outernamesOuterIndexLeft.get(name) != null) {
@@ -261,13 +261,13 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
 
                 // Inner names
                 if (notification.getFeature() == rightInnerNameFeature) {
-                    MutableList<DynamicEObjectImpl> inner = Lists.mutable.empty();
+                    MutableList<EObject> inner = Lists.mutable.empty();
                     if (notification.getNewValue() instanceof Collection) {
                         inner.addAll((Collection) notification.getNewValue());
                     } else {
-                        inner.add((DynamicEObjectImpl) notification.getNewValue());
+                        inner.add((EObject) notification.getNewValue());
                     }
-                    for (DynamicEObjectImpl eachInner : inner) {
+                    for (EObject eachInner : inner) {
                         EStructuralFeature bLink = eachInner.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
                         EObject outerInner = (EObject) eachInner.eGet(bLink);
                         if (outerInner != null) {
@@ -417,13 +417,13 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         EContentAdapter adapter2 = new EContentAdapter() {
             public void notifyChanged(Notification notification) {
                 if (notification.getFeature() == rightEdgesFeature) {
-                    MutableList<DynamicEObjectImpl> edges = Lists.mutable.empty(); //new ArrayList<>();
+                    MutableList<EObject> edges = Lists.mutable.empty(); //new ArrayList<>();
                     if (notification.getNewValue() instanceof Collection) {
                         edges.addAll((Collection) notification.getNewValue());
                     } else {
-                        edges.add((DynamicEObjectImpl) notification.getNewValue());
+                        edges.add((EObject) notification.getNewValue());
                     }
-                    for (DynamicEObjectImpl eachEdge : edges) {
+                    for (EObject eachEdge : edges) {
                         EAttribute nameAttr = EMFUtils.findAttribute(eachEdge.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                         eachEdge.eSet(nameAttr, rewriteEdgeNameSupplier.get());
                     }
@@ -617,13 +617,13 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             EContentAdapter adapter2 = new EContentAdapter() {
                 public void notifyChanged(Notification notification) {
                     if (notification.getFeature() == rightEdgesFeature) {
-                        MutableList<DynamicEObjectImpl> edges = Lists.mutable.empty(); //new ArrayList<>();
+                        MutableList<EObject> edges = Lists.mutable.empty(); //new ArrayList<>();
                         if (notification.getNewValue() instanceof Collection) {
                             edges.addAll((Collection) notification.getNewValue());
                         } else {
-                            edges.add((DynamicEObjectImpl) notification.getNewValue());
+                            edges.add((EObject) notification.getNewValue());
                         }
-                        for (DynamicEObjectImpl eachEdge : edges) {
+                        for (EObject eachEdge : edges) {
                             EAttribute nameAttr = EMFUtils.findAttribute(eachEdge.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                             eachEdge.eSet(nameAttr, rewriteEdgeNameSupplier.get());
                         }

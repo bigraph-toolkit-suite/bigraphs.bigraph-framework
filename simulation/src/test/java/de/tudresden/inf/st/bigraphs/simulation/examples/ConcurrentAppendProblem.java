@@ -113,15 +113,19 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
                 modOpts);
 //        modelChecker.setReactiveSystemListener(this);
+        long start= System.nanoTime();
         modelChecker.execute();
+        long diff = System.nanoTime() - start;
+        System.out.println(diff);
+
 
         //states=51, transitions=80
         System.out.println("Edges: " + modelChecker.getReactionGraph().getGraph().edgeSet().size());
         System.out.println("Vertices: " + modelChecker.getReactionGraph().getGraph().vertexSet().size());
 
-        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
-        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
-        System.out.println(pathsToLeaves.size());
+//        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
+//        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+//        System.out.println(pathsToLeaves.size());
 
     }
 
@@ -155,7 +159,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 
         BigraphEntity.InnerName tmpA1 = builder.createInnerName("tmpA1");
         BigraphEntity.InnerName tmpA2 = builder.createInnerName("tmpA2");
-//        BigraphEntity.InnerName tmpA3 = builder.createInnerName("tmpA3");
+        BigraphEntity.InnerName tmpA3 = builder.createInnerName("tmpA3");
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol1 = builder.hierarchy("append");
         appendcontrol1
@@ -167,10 +171,10 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 //                .linkToOuter(caller2)
                 .linkToInner(tmpA2).addChild("val").down().addChild("i4").top();
 
-//        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol3 = builder.hierarchy("append");
-//        appendcontrol3
-////                .linkToOuter(caller3)
-//                .linkToInner(tmpA3).addChild("val").down().addChild("i6").top();
+        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol3 = builder.hierarchy("append");
+        appendcontrol3
+//                .linkToOuter(caller3)
+                .linkToInner(tmpA3).addChild("val").down().addChild("i6").top();
 
         PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rootCell = builder.hierarchy("Root")
 //                .linkToOuter(caller1).linkToOuter(caller2)
@@ -180,7 +184,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 .down().addChild("this").down()
                 .addChild("thisRef").linkToInner(tmpA1)
                 .addChild("thisRef").linkToInner(tmpA2)
-//                .addChild("thisRef").linkToInner(tmpA3)
+                .addChild("thisRef").linkToInner(tmpA3)
                 .up()
                 .addChild("val").down().addChild("i1").up()
                 .addChild("next").down().addChild("Node").down().addChild("this")
@@ -195,7 +199,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 .addChild(rootCell)
                 .addChild(appendcontrol1)
                 .addChild(appendcontrol2)
-//                .addChild(appendcontrol3)
+                .addChild(appendcontrol3)
         ;
         builder.closeAllInnerNames();
         PureBigraph bigraph = builder.createBigraph();

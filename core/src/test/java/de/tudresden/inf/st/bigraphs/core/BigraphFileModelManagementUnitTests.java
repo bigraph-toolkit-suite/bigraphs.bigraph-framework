@@ -165,7 +165,7 @@ public class BigraphFileModelManagementUnitTests {
         assertAll(() -> {
 //            String fileName = "/home/dominik/git/BigraphFramework/core/src/test/resources/ecore-test-models/test-1.ecore";
 //            String fileName2 = "/home/dominik/git/BigraphFramework/core/src/test/resources/ecore-test-models/test-1.xmi";
-//            EPackage metaModel = BigraphFileModelManagement.loadBigraphMetaModel(fileName);
+//            EPackage metaModel = BigraphFileModelManagement.Load.bigraphMetaModel(fileName);
 //
 //            List<EObject> eObjects = BigraphFileModelManagement.loadBigraphInstanceModel(metaModel, fileName2);
 //            assertEquals(1, eObjects.size());
