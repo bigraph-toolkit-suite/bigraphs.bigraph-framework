@@ -130,6 +130,7 @@ gen-test-resources/*
 **/resources/dump/graphviz/*
 !/etc/auxlibs/Gcf.zip
 !/etc/auxlibs/*.jar
+!/etc/auxlibs/jlibbig-0.0.4/*.jar
 /etc/doc/site/*
 **/resources/dump/*
 /.idea/modules.xml
