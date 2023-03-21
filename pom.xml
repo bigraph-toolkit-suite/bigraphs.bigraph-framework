@@ -35,7 +35,7 @@
         <emf.cdo.version>4.11.0.v20200902-0811</emf.cdo.version>
         <emf.cdo.common.version>4.11.0.v20200901-0616</emf.cdo.common.version>
         <eclipse.collections.version>11.0.0</eclipse.collections.version>
-        <guava.version>31.0.1-jre</guava.version>
+        <guava.version>31.1-jre</guava.version>
         <jgrapht.version>1.5.1</jgrapht.version>
         <junit.version>5.4.0</junit.version>
         <log4j.version>1.7.30</log4j.version>
@@ -225,9 +225,14 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>7.4.0</version>
+                    <version>8.1.2</version>
                     <configuration>
-                        <excludes>org.eclipse.platform:org.eclipse.equinox.common;org.apache.bcel:bcel</excludes>
+                        <excludes>
+                            <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>
+                            <exclude>org.apache.bcel:bcel</exclude>
+<!--                            <exclude>org.eclipse.emf:org.eclipse.emf.codegen</exclude>-->
+<!--                            <exclude>com.google.guava:guava</exclude>-->
+                        </excludes>
                         <!-- fail the build for CVSS greater than or equal to 8 -->
                         <failBuildOnCVSS>10</failBuildOnCVSS>
                         <skipProvidedScope>true</skipProvidedScope>
@@ -359,6 +364,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
                 <version>2.9.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- EMF -->
             <dependency>
