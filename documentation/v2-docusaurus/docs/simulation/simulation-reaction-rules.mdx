@@ -32,8 +32,8 @@ Important generic interface: `de.tudresden.inf.st.bigraphs.core.reactivesystem.R
                 .addChild("Job").addChild("Job")
         ;
 
-        builder.makeGround();
-        builder2.makeGround();
+        // builder.makeGround(); // useful for instances of type GroundReactionRule
+        // builder2.makeGround(); // useful for instances of type GroundReactionRule
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);

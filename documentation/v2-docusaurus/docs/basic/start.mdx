@@ -11,19 +11,28 @@ import getting_started_guide_2 from '!!raw-loader!../assets/basics/getting_start
 import getting_started_guide_3 from '!!raw-loader!../assets/basics/getting_started_guide-3.java';
 
 
-Discover what Bigraph Framework is all about and learn the core concepts behind it.
+Discover what **Bigraph Framework** is all about and learn the core concepts behind it.
 
 ## Creating a Bigraph
 
-At the moment, Bigraph Framework supports only _pure bigraphs_.
+At the moment, Bigraph Framework supports only _pure bigraphs_ and _kind bigraphs_.
 
 ### Signature
 To create a bigraph, a so-called **signature** must be created first.
 Technically, it defines the **syntax** of a bigraph and determines what **types** (i.e., _controls_ of a bigraphs) we can create in the following.
 
-To create a signature, we begin by spawning a new _pure factory_, more specifically, a _signature builder_.
+To create a signature, we begin by spawning a _signature builder_ that is internally provided by a _pure factory_.
 All further operations will use the same factory in the current _execution context_.
-The first step is to create a signature by using the appropriate factory method.
+The first step is to create a signature builder by using the appropriate factory method.
+Here, `BigraphFactory#pureSignatureBuilder()`:
+
+:::tip
+Note that all examples use a static import of the `BigraphFactory` class' operations:
+```java
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+```
+This makes access to its operations more convenient.
+:::
 
 <CodeBlock className="language-java">{getting_started_guide_0}</CodeBlock>
 
@@ -31,6 +40,15 @@ As mentioned above, the signature specifies the syntax of a bigraph we are going
 The resulting signature contains two controls: a _User_ with an arity of 1, and a _Computer_ with an arity of 2.
 The arity specifies how many _connections_ a control can have.
 The semantic meaning of the term "connection" is left open here - it can represent anything, for example, an ethernet link or an association relationship between elements.
+
+:::tip
+A more compact form for creating controls is the following:
+```java
+signatureBuilder.addControl("User", 1, ControlStatus.ATOMIC)
+```
+The control is instantly added to the signature.
+Contrary, using `#newControl()` returns a control instance that can be used for other purposes.
+:::
 
 <!--
 > More about the specific methods of the bigraph factory, bigraph builders and signature builder can be found in [Factories and Builders](./advanced/factories-and-builders).
@@ -47,15 +65,21 @@ Therefore, we have to supply the previously created signature to the `pureBuilde
 
 The example shows how to add two nodes ("User" and "Computer") under the same root (we do it twice) and how to link all to the same _outer name_ with the label "login". The bigraph is illustrated below.
 
+:::info
 Note that the method `addChild` will throw an `InvalidConnectionException`
 if the node cannot be connected to the outer name (because of its arity specified by the
 signature).
+:::
+
+<center>
 
 ![basic-example-bigraph](../assets/basics/basic-bigraph.png)
 
-> See [Visualization](../visualization/visualization) on how to export a bigraph
-> as graphic file.
+</center>
 
+:::tip
+See [Visualization](../visualization/visualization-intro) on how to export a bigraph as graphics file.
+:::
 
 ## Elementary Bigraphs
 
@@ -64,34 +88,44 @@ termed _elementary bigraphs_. Essentially, there are two categories:
 Placings and Linkings. They do not contain any node, thus, they are node-free
 bigraphs.
 
+:::info
+Elementary bigraphs are essential building blocks in the theory and fundamental to define the normal form of bigraphs.
+:::
+
 Elementary bigraphs allow to build more complex bigraphs easily.
 We show how to create a concrete placing and linking, before we use them
 for composition later in the next section.
 
-> Even if elementary bigraphs usually do not take a signature, it must be provided.
-> This is due to technical reasons with respect to the bigraphical metamodel that is used internally.
-> See also [Factories and Builders](./advanced/factories-and-builders) for more details.
+:::info
+Even if elementary bigraphs usually do not take a signature, it must be provided.
+This is due to technical reasons with respect to the bigraphical metamodel that is used internally.
+Refer to the project [Bigraph Metamodel](https://git-st.inf.tu-dresden.de/bigraphs/ecore-bigraph-meta-model) for more details.
+[//]: # (See also [Factories and Builders]&#40;./advanced/factories-and-builders&#41; for more details.)
+:::
 
 <!--Note on equality: Object equality at the instance level is not to be compared-->
 <!--with mathematical equality of bigraphs. This is also know as bigraph isomorphism problem.-->
 
-The next code example shows how we can create a so-called _merge_n_ (i.e., a placing where
-n sites are located under one root) and an identity link graph (i.e., inner and outer
-interfaces of the link graph are connected).
+The next code example shows how we can create a so-called _merge<sub>n</sub>_ (i.e., a placing where
+_n_ sites are located under one root) and an _identity link graph_ (i.e., inner and outer
+interfaces of the link graph are connected), which can also be regarded as a bijective substitution in bigraph-jargon.
 
 <CodeBlock className="language-java">{getting_started_guide_2}</CodeBlock>
 
-The factory provides the method `createPlacings()` to create a placing builder.
-With it we create a merge and passing the integer 2 as argument to create a merge
-with two sites.
+The factory provides the method `#purePlacings()` to create a placings builder.
+With it we create a _merge_, a _join_, or a _barren_ to mention a few.
+By passing the integer 2 as argument, a merge with two sites is created.
 Further, we create an identity link graph with the name "login".
 
 The two elementary bigraphs merge and identity are depicted below.
+
+<center>
 
 |Placing: Merge | Linking: Identity |
 |---|---|
 | ![basic-merge-bigraph](../assets/basics/basic-merge-bigraph.png) | ![basic-identity-bigraph](../assets/basics/basic-identity-bigraph.png)  |
 
+</center>
 
 ## Composition of Bigraphs
 
@@ -100,23 +134,41 @@ modularize bigraphs by constructing sub-structures separately from each other
 and compose them later to build a larger bigraph.
 
 To equip a bigraph with operators we simply pass it to the static method
-`ops()` provided by the `BigraphFactory` class.
+`#ops()` provided by the `BigraphFactory` class.
 
 <CodeBlock className="language-java">{getting_started_guide_3}</CodeBlock>
 
-The code above describes a composition that merges the two roots of `bigraph`
-under one root node with index 0. At the same time we keep the links so that
-all nodes are kept connected.
+The code above describes a composition that merges the two roots of the previously created `bigraph`
+under one root node with index 0 and under one root indexed 1.
+At the same time we keep the links so that all nodes are kept connected via the link graph.
 
+:::info
 Note that composition may throw the following two exceptions `IncompatibleSignatureException` and `IncompatibleInterfaceException`
 if the signatures are not the same or the interfaces are not compatible.
-See [Theory](./advanced/theory) to get more details about how bigraphical
-composition works. All available operators are explained in [Composition](composition).
+[//]: # (See [Theory]&#40;./advanced/theory&#41; to get more details about how bigraphical composition works.)
+Some operators are explained in [Composition](composition).
+For a full account consult [JavaDoc of the `BigraphComposite` interface](https://bigraphs.org/products/bigraph-framework/apidocs/de/tudresden/inf/st/bigraphs/core/BigraphComposite.html).
+:::
 
 ![composed-bigraph](../assets/basics/composed.png)
 
+:::tip
+Bigraphs can be constructed by an operator-wise approach.
+Note that the bigraph builder also supports the creation of hierarchies that can be later combined to build a larger bigraph
+easily.
+Example:
+```java
+PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy h1 = pureBuilder(sig).hierarchy("A");
+pureBuilder(sig).createRoot().addChild(h1);
+```
+Hierarchies can separately created and extended.
+Finally, they can be added as a child node as usually at any point in the bigraph.
+
+Linkings between nodes within different hierarchies shall be established using inner or outer names.
+:::
+
 ## Conclusion
 
-This page explored some of the basic features of the Bigraph Framework
+This page explored some of the basic features of **Bigraph Framework**
 on how to create signatures, bigraphs, elementary bigraphs and how to compose them to
 form larger ones.

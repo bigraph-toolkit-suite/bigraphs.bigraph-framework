@@ -15,8 +15,10 @@ A Complete Guide to the Bigraph Framework.
 - Relatively Stable: 0.9.0 (master branch)
 - Latest Version: 0.9.6-SNAPSHOT (develop branch)
 
-> **Notice:** The API is subject to change. Use at your own risk.
-> This documentation reflects always the latest version.
+:::info Notice
+The API is subject to change. Use at your own risk.
+This documentation reflects always the latest version.
+:::
 
 ## What is Bigraph Framework
 
@@ -57,11 +59,9 @@ Bigraph Framework is online available as a Maven dependency.
 
 Artifacts are deployed to [ST-Artifactory](https://stgroup.jfrog.io/).
 
-> #### Building from Source
-> Otherwise, to build the source by yourself, follow the
-> [README.md](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/blob/master/README.md)
-> inside the repository.
->
+:::tip Building from Source
+Otherwise, to build the source by yourself, follow the [README.md](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/blob/master/README.md) inside the repository.
+:::
 
 ### Empty Project Skeleton
 
@@ -85,6 +85,8 @@ import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
   <TabItem value="maven" label="Maven" default>
     Add this inside the <code>dependencies</code> section of your project's <code>*.pom</code> file.
     Replace VERSION with the latest version.
+      <br/>
+      <br/>
     <pre>
     {myConstClass.MAVEN_DEP_CODE}
     </pre>
@@ -92,10 +94,12 @@ import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
   <TabItem value="gradle" label="Gradle">
     Append this in your <code>build.gradle</code> file.
     Replace VERSION with the latest version.
+      <br/>
+      <br/>
     <pre>{myConstClass.GRADLE_DEP_CODE}</pre>
   </TabItem>
   <TabItem value="manually" label="Manually">
-    not recommended
+    Manual setup is not recommended.
   </TabItem>
 </Tabs>
 
