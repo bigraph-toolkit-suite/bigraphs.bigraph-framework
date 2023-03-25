@@ -75,6 +75,15 @@
             <artifactId>lpg.runtime.java</artifactId>
             <version>2.0.17.v201004271640</version>
         </dependency>
+<!--        <dependency>-->
+        <!--            <groupId>org.eclipse.platform</groupId>-->
+        <!--            <artifactId>org.eclipse.equinox.common</artifactId>-->
+        <!--        </dependency>-->
+            <!-- Excluded from codegen and provided here-->
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.core.runtime</artifactId>
+        </dependency>
         <!-- for ecore -->
         <dependency>
             <groupId>org.eclipse.emf.compare</groupId>
@@ -95,11 +104,6 @@
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.codegen</artifactId>
-        </dependency>
-        <dependency>
-            <!-- Excluded from codegen and provided here-->
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.equinox.common</artifactId>
         </dependency>
         <!-- CDO -->
         <dependency>

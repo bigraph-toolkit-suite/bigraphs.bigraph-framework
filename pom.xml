@@ -32,9 +32,12 @@
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
         <emf.ecore.version>2.25.0</emf.ecore.version>
         <emf.codegen.version>2.22.0</emf.codegen.version>
-        <emf.cdo.version>4.11.0.v20200902-0811</emf.cdo.version>
+        <!-- Should match with the version in Spring Data CDO -->
+        <emf.cdo.version>4.20.0.v20221124-1637</emf.cdo.version>
         <!-- Should match with the version in Spring Data CDO -->
         <emf.cdo.common.version>4.20.0.v20221106-0628</emf.cdo.common.version>
+        <!-- Should match with the version in Spring Data CDO -->
+        <eclipse.core.runtime.version>3.26.100</eclipse.core.runtime.version>
         <eclipse.collections.version>11.0.0</eclipse.collections.version>
         <guava.version>31.1-jre</guava.version>
         <jgrapht.version>1.5.1</jgrapht.version>
@@ -365,12 +368,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
                 <version>2.9.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>commons-logging</groupId>-->
+<!--                        <artifactId>commons-logging</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
             </dependency>
             <!-- EMF -->
             <dependency>
@@ -441,10 +444,15 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.eclipse.platform</groupId>-->
+<!--                <artifactId>org.eclipse.equinox.common</artifactId>-->
+<!--                <version>3.15.0</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.equinox.common</artifactId>
-                <version>3.15.0</version>
+                <artifactId>org.eclipse.core.runtime</artifactId>
+                <version>${eclipse.core.runtime.version}</version>
             </dependency>
             <!-- Collections -->
             <dependency>
