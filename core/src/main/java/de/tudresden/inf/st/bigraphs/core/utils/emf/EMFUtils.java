@@ -215,4 +215,11 @@ public class EMFUtils {
             }
         }
     }
+
+    public static EObject getRootContainer(EObject eObject) {
+        if(eObject.eContainer() == null) {
+            return eObject;
+        }
+        return getRootContainer(eObject.eContainer());
+    }
 }
