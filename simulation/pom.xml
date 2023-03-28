@@ -149,8 +149,8 @@
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.eclipse.sensinact.gateway.nthbnd</groupId>
-                    <artifactId>parent</artifactId>
+                    <groupId>com.jayway.jsonpath</groupId>
+                    <artifactId>json-path</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
