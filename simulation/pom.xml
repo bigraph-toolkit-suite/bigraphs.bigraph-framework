@@ -148,6 +148,10 @@
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.sensinact.gateway.nthbnd</groupId>
+                    <artifactId>parent</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
