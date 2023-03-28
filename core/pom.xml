@@ -152,6 +152,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>typetools</artifactId>
         </dependency>

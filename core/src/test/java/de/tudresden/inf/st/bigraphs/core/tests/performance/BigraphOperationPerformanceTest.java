@@ -15,7 +15,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import org.eclipse.net4j.util.io.IOUtil;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -82,7 +83,7 @@ public class BigraphOperationPerformanceTest {
             }
 //            BigraphGraphvizExporter.toPNG(compose.getOuterBigraph(), true, new File("test.png"));
         }
-        IOUtil.writeFile(new File("performance-test-operations-place-graph.csv"), sb.toString().getBytes());
+        FileUtils.writeStringToFile(new File("performance-test-operations-place-graph.csv"), sb.toString(), Charset.defaultCharset());
     }
 
     @Test
@@ -129,7 +130,7 @@ public class BigraphOperationPerformanceTest {
             }
 //            BigraphGraphvizExporter.toPNG(compose.getOuterBigraph(), true, new File("test.png"));
         }
-        IOUtil.writeFile(new File("performance-test-operations-bigraph-graph.csv"), sb.toString().getBytes());
+        FileUtils.writeStringToFile(new File("performance-test-operations-bigraph-graph.csv"), sb.toString(), Charset.defaultCharset());
     }
 
 
@@ -202,7 +203,7 @@ public class BigraphOperationPerformanceTest {
                         .append(diff3).append(SEP).append("merge").append(NL);
             }
         }
-        IOUtil.writeFile(new File("time-complexity-bigraph-operations-consecutive.csv"), sb.toString().getBytes());
+        FileUtils.writeStringToFile(new File("time-complexity-bigraph-operations-consecutive.csv"), sb.toString(), Charset.defaultCharset());
     }
 
     public static Linkings<DefaultDynamicSignature>.Identity suitableLinking(Linkings<DefaultDynamicSignature> linkings,
