@@ -33,9 +33,9 @@
         <emf.ecore.version>2.25.0</emf.ecore.version>
         <emf.codegen.version>2.22.0</emf.codegen.version>
         <!-- Should match with the version in Spring Data CDO -->
-        <emf.cdo.version>4.20.0.v20221124-1637</emf.cdo.version>
+        <emf.cdo.version>4.20.0-SNAPSHOT</emf.cdo.version><!--4.20.0.v20221124-1637-->
         <!-- Should match with the version in Spring Data CDO -->
-        <emf.cdo.common.version>4.20.0.v20221106-0628</emf.cdo.common.version>
+        <emf.cdo.common.version>4.20.0-SNAPSHOT</emf.cdo.common.version><!--4.20.0.v20221106-0628-->
         <!-- Should match with the version in Spring Data CDO -->
         <eclipse.core.runtime.version>3.26.100</eclipse.core.runtime.version>
         <eclipse.collections.version>11.0.0</eclipse.collections.version>
@@ -76,11 +76,11 @@
     <repositories>
         <repository>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </snapshots>
-            <id>central</id>
-            <name>bintray</name>
-            <url>https://jcenter.bintray.com</url>
+            <id>STFactory</id>
+            <name>st-tu-dresden-artifactory</name>
+            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
         </repository>
         <repository>
             <id>spring-milestones</id>
@@ -96,14 +96,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>STFactory</id>
-            <name>st-tu-dresden-artifactory</name>
-            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
         </repository>
     </repositories>
 
@@ -234,8 +226,8 @@
                         <excludes>
                             <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>
                             <exclude>org.apache.bcel:bcel</exclude>
-<!--                            <exclude>org.eclipse.emf:org.eclipse.emf.codegen</exclude>-->
-<!--                            <exclude>com.google.guava:guava</exclude>-->
+                            <!--                            <exclude>org.eclipse.emf:org.eclipse.emf.codegen</exclude>-->
+                            <!--                            <exclude>com.google.guava:guava</exclude>-->
                         </excludes>
                         <!-- fail the build for CVSS greater than or equal to 8 -->
                         <failBuildOnCVSS>10</failBuildOnCVSS>
@@ -368,12 +360,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
                 <version>2.9.0</version>
-<!--                <exclusions>-->
-<!--                    <exclusion>-->
-<!--                        <groupId>commons-logging</groupId>-->
-<!--                        <artifactId>commons-logging</artifactId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
+                <!--                <exclusions>-->
+                <!--                    <exclusion>-->
+                <!--                        <groupId>commons-logging</groupId>-->
+                <!--                        <artifactId>commons-logging</artifactId>-->
+                <!--                    </exclusion>-->
+                <!--                </exclusions>-->
             </dependency>
             <!-- EMF -->
             <dependency>
@@ -397,7 +389,7 @@
                 <version>${emf.cdo.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.emf.cdo.common</groupId>
+                <groupId>org.eclipse.emf.cdo</groupId>
                 <artifactId>org.eclipse.emf.cdo.common</artifactId>
                 <version>${emf.cdo.common.version}</version>
             </dependency>
@@ -444,11 +436,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.eclipse.platform</groupId>-->
-<!--                <artifactId>org.eclipse.equinox.common</artifactId>-->
-<!--                <version>3.15.0</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.platform</groupId>-->
+            <!--                <artifactId>org.eclipse.equinox.common</artifactId>-->
+            <!--                <version>3.15.0</version>-->
+            <!--            </dependency>-->
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.runtime</artifactId>

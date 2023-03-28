@@ -111,7 +111,7 @@
             <artifactId>org.eclipse.emf.cdo</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.emf.cdo.common</groupId>
+            <groupId>org.eclipse.emf.cdo</groupId>
             <artifactId>org.eclipse.emf.cdo.common</artifactId>
         </dependency>
         <!-- Other -->
