@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.simulation.modelchecking.export;
+package de.tudresden.inf.st.bigraphs.visualization;
 
 import com.mxgraph.util.mxConstants;
 

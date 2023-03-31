@@ -1,13 +1,10 @@
 package de.tudresden.inf.st.bigraphs.simulation.modelchecking;
 
 import com.google.common.base.Stopwatch;
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.util.mxCellRenderer;
 import de.tudresden.inf.st.bigraphs.core.Bigraph;
 import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
-import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
+import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.exceptions.AgentIsNullException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.AgentNotGroundException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.AgentNotPrimeException;
@@ -15,28 +12,22 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
 import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.*;
 import de.tudresden.inf.st.bigraphs.simulation.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.simulation.encoding.PureCanonicalForm;
-import de.tudresden.inf.st.bigraphs.simulation.exceptions.*;
+import de.tudresden.inf.st.bigraphs.simulation.exceptions.BigraphSimulationException;
+import de.tudresden.inf.st.bigraphs.simulation.exceptions.InvalidSimulationStrategy;
+import de.tudresden.inf.st.bigraphs.simulation.exceptions.ModelCheckerExecutorServiceNotProvided;
 import de.tudresden.inf.st.bigraphs.simulation.matching.AbstractBigraphMatcher;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.export.mxReactionGraph;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.export.StyleConstants;
 import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.PredicateChecker;
 import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import de.tudresden.inf.st.bigraphs.visualization.ReactionGraphExporter;
 import org.jgrapht.GraphPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -325,52 +316,24 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
 
     void prepareOutput() {
-        exportReactionGraph(getReactionGraph());
+        try {
+            exportReactionGraph(getReactionGraph());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void exportReactionGraph(ReactionGraph<B> reactionGraph) {
+    public void exportReactionGraph(ReactionGraph<B> reactionGraph) throws IOException {
         ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
         if (opts != null && opts.getReactionGraphFile() != null) {
             if (!reactionGraph.isEmpty()) {
-                exportGraph(reactionGraph, opts.getReactionGraphFile());
+                ReactionGraphExporter<B> graphExporter = new ReactionGraphExporter<>(reactiveSystem);
+                graphExporter.toPNG(reactionGraph, opts.getReactionGraphFile());
             } else {
                 logger.debug("Trace is not exported because reaction graph is empty.");
             }
         } else {
             logger.debug("Output path for Trace wasn't set. Will not export.");
-        }
-    }
-
-    //TODO move to visualization module
-    void exportGraph(ReactionGraph<B> bReactionGraph, File imgFile) {
-
-//        Graph g = bReactionGraph.getGraph();
-        mxReactionGraph graphAdapter = new mxReactionGraph(bReactionGraph, reactiveSystem);
-        graphAdapter.getStylesheet().putCellStyle("MATCHED", StyleConstants.predicateMatchedNodeStylesheet());
-        graphAdapter.getStylesheet().putCellStyle("DEFAULT", StyleConstants.defaultNodeStylesheet());
-        graphAdapter.getStylesheet().putCellStyle("DEFAULT_EDGE", StyleConstants.defaultEdgeStylesheet());
-//        mxIGraphLayout layout = new mxCompactTreeLayout(graphAdapter);
-        mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.NORTH);
-//        ((mxHierarchicalLayout) layout).setFineTuning(true);
-//        ((mxHierarchicalLayout) layout).setResizeParent(true);
-        layout.execute(graphAdapter.getDefaultParent());
-
-        BufferedImage image =
-                mxCellRenderer.createBufferedImage(graphAdapter, null, 2, Color.WHITE, false, null);
-        try {
-            if (!imgFile.exists()) {
-                if (!imgFile.createNewFile()) {
-                    throw new IOException("Create new file failed.");
-                }
-            }
-            if (image == null) {
-                logger.warn("Image is null, cannot write image.");
-            } else {
-                ImageIO.write(image, "PNG", imgFile);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            logger.error(e.toString());
         }
     }
 
@@ -432,7 +395,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
          *
          * @param currentAgent the agent
          * @param predicate    the predicate
-         * @param subBigraph    the sub-bigraph as matched by the predicate in currentAgent
+         * @param subBigraph   the sub-bigraph as matched by the predicate in currentAgent
          */
         default void onSubPredicateMatched(B currentAgent, ReactiveSystemPredicate<B> predicate, B context, B subBigraph, B redexOnly, B paramsOnly) {
 

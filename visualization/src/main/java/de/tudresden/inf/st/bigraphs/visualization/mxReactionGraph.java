@@ -1,9 +1,9 @@
-package de.tudresden.inf.st.bigraphs.simulation.modelchecking.export;
+package de.tudresden.inf.st.bigraphs.visualization;
 
 import com.mxgraph.model.mxICell;
 import com.mxgraph.view.mxGraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
+import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
