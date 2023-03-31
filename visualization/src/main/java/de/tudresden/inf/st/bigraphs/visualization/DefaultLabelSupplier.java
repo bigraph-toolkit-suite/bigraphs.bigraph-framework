@@ -4,6 +4,12 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 
 import java.util.Objects;
 
+/**
+ * A generic supplier for String labels.
+ * Is used for edges and nodes of a graph.
+ *
+ * @author Dominik Grzelak
+ */
 public class DefaultLabelSupplier extends GraphicalFeatureSupplier<String> {
 
     DefaultLabelSupplier() {

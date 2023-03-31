@@ -5,6 +5,8 @@ import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.visualization.supplier.GraphvizColorSupplier;
+import de.tudresden.inf.st.bigraphs.visualization.supplier.GraphvizShapeSupplier;
 import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -19,31 +21,53 @@ import java.util.stream.Collectors;
 import static guru.nidi.graphviz.attribute.Rank.RankDir.BOTTOM_TO_TOP;
 import static guru.nidi.graphviz.model.Factory.*;
 
-//TODO a dot exporter for reaction graphs? https://github.com/bigmc/bigmc/blob/master/src/graph.cpp next to JGraphT
-
 /**
  * This class visualizes a bigraph by means of GraphViz.
  * <p>
  * Several styling can be configured, such as color, shape and the label format of each node.
+ *
+ * @author Dominik Grzelak
  */
 public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<?>> {
 
-    private static final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
-    private static final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
-    private static final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
+    private static final GraphicalFeatureSupplier<String> DEFAULT_labelSupplier = new DefaultLabelSupplier();
+    private static final GraphicalFeatureSupplier<Shape> DEFAULT_shapeSupplier = new GraphvizShapeSupplier();
+    private static final GraphicalFeatureSupplier<Color> DEFAULT_colorSupplier = new GraphvizColorSupplier();
+
+    private GraphicalFeatureSupplier<String> labelSupplier = DEFAULT_labelSupplier;
+    private GraphicalFeatureSupplier<Shape> shapeSupplier = DEFAULT_shapeSupplier;
+    private GraphicalFeatureSupplier<Color> colorSupplier = DEFAULT_colorSupplier;
+
 
     @Override
     public void toPNG(Bigraph<?> bigraph, File output) throws IOException {
         BigraphGraphvizExporter.toPNG(bigraph, true, output);
     }
 
+    @Override
+    public BigraphGraphicsExporter<Bigraph<?>> with(GraphicalFeatureSupplier<?> supplier) {
+        if (supplier instanceof GraphvizColorSupplier) {
+            colorSupplier = (GraphicalFeatureSupplier<Color>) supplier;
+        } else if (supplier instanceof GraphvizShapeSupplier) {
+            shapeSupplier = (GraphicalFeatureSupplier<Shape>) supplier;
+        } else if (supplier instanceof DefaultLabelSupplier) {
+            labelSupplier = (GraphicalFeatureSupplier<String>) supplier;
+        } else {
+            throw new IllegalArgumentException("This supplier is not supported by this graphics exporter: " + supplier);
+        }
+        return this;
+    }
+
+
     public static String toPNG(Bigraph<?> bigraph, boolean asTree, File output) throws IOException {
-        return new BigraphGraphvizExporter().convert(bigraph, output, Format.PNG, asTree, labelSupplier, colorSupplier, shapeSupplier);
+        return new BigraphGraphvizExporter()
+                .convert(bigraph, output, Format.PNG, asTree);
     }
 
     public static String toDOT(Bigraph<?> bigraph, boolean asTree) {
         try {
-            return new BigraphGraphvizExporter().convert(bigraph, null, Format.DOT, asTree, labelSupplier, colorSupplier, shapeSupplier);
+            return new BigraphGraphvizExporter()
+                    .convert(bigraph, null, Format.DOT, asTree);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -60,22 +84,16 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
      * <p>
      *
      * @param bigraph
-     * @param output        if {@code null} no output file is created
+     * @param output  if {@code null} no output file is created
      * @param format
-     * @param labelSupplier
-     * @param colorSupplier
-     * @param shapeSupplier
      * @param <S>
      * @return the DOT representation of the bigraph
      * @throws IOException
      */
-    private <S extends Signature> String convert(Bigraph<S> bigraph,
-                                                 File output,
-                                                 Format format,
-                                                 boolean asTreeStructure,
-                                                 GraphicalFeatureSupplier<String> labelSupplier,
-                                                 GraphicalFeatureSupplier<Color> colorSupplier,
-                                                 GraphicalFeatureSupplier<Shape> shapeSupplier) throws IOException {
+    public <S extends Signature> String convert(Bigraph<S> bigraph,
+                                                File output,
+                                                Format format,
+                                                boolean asTreeStructure) throws IOException {
 //        Graphviz.useEngine(new GraphvizJdkEngine());
         final MutableGraph theGraph = mutGraph("Bigraph").setDirected(false)
 //                .graphAttrs().add(RankDir.BOTTOM_TO_TOP);

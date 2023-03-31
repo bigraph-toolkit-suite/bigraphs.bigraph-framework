@@ -40,7 +40,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="bBigraph" lowerBound="1"
         eType="ecore:EClass F.ecore#//BBigraph" eOpposite="F.ecore#//BBigraph/bOuterNames"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="NameableType" abstract="true">
+  <eClassifiers xsi:type="ecore:EClass" name="NameableType" abstract="true" interface="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IndexableType" abstract="true" interface="true">

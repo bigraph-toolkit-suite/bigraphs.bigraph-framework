@@ -15,6 +15,8 @@ import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.visualization.supplier.GraphvizColorSupplier;
+import de.tudresden.inf.st.bigraphs.visualization.supplier.GraphvizShapeSupplier;
 import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -68,8 +70,8 @@ public class VisualizationUnitTests {
 //        PureBigraph bigraph_a = createBigraph_b();
 
         final GraphicalFeatureSupplier<String> labelSupplier = new DefaultLabelSupplier();
-        final GraphicalFeatureSupplier<Shape> shapeSupplier = new DefaultShapeSupplier();
-        final GraphicalFeatureSupplier<Color> colorSupplier = new DefaultColorSupplier();
+        final GraphicalFeatureSupplier<Shape> shapeSupplier = new GraphvizShapeSupplier();
+        final GraphicalFeatureSupplier<Color> colorSupplier = new GraphvizColorSupplier();
 
         String convert = BigraphGraphvizExporter.toPNG(createSimpleBigraphHierarchy(),
                 true,

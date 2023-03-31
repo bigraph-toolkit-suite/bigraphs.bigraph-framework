@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 
 /**
- * Exports an encoded bigraph as ranked graph to a diagram.
+ * Exports a bigraph, encoded as a ranked graph, to a diagram.
  *
  * @author Dominik Grzelak
  */
@@ -30,6 +30,12 @@ public class BigraphRankedGraphExporter implements BigraphGraphicsExporter<Abstr
         }
         drawGraph(rankedGraphEncoding.getGraph(), output);
     }
+
+    @Override
+    public BigraphGraphicsExporter<AbstractRankedGraph<?, ?, ?>> with(GraphicalFeatureSupplier<?> supplier) {
+        throw new RuntimeException("Not implemented yet.");
+    }
+
 
     private void drawGraph(Graph<?, ?> graph, File imgFile) throws IOException {
         JGraphXAdapter<?, ?> graphAdapter = new JGraphXAdapter<>(graph);

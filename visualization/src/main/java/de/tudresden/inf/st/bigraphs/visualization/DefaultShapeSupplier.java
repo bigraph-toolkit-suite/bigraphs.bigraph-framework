@@ -5,8 +5,13 @@ import guru.nidi.graphviz.attribute.Shape;
 
 import java.util.Objects;
 
-public class DefaultShapeSupplier extends GraphicalFeatureSupplier<Shape> {
-    private final static Shape DEFAULT_SHAPE = Shape.RECTANGLE;
+/**
+ * A supplier for the shape of a node.
+ *
+ * @param <V> the type
+ * @author Dominik Grzelak
+ */
+public abstract class DefaultShapeSupplier<V> extends GraphicalFeatureSupplier<V> {
 
     public DefaultShapeSupplier() {
         super(null);
@@ -14,27 +19,5 @@ public class DefaultShapeSupplier extends GraphicalFeatureSupplier<Shape> {
 
     public DefaultShapeSupplier(BigraphEntity node) {
         super(node);
-    }
-
-    @Override
-    public Shape get() {
-        if ((getNode()) == null) return DEFAULT_SHAPE;
-        switch (getNode().getType()) {
-            case ROOT:
-                return Shape.ELLIPSE;
-            case NODE:
-                return Shape.RECTANGLE;
-            case SITE:
-                return Shape.RECTANGLE;
-            case INNER_NAME:
-            case OUTER_NAME:
-                return Shape.RECTANGLE;
-            case EDGE:
-                return Shape.POINT;
-            default:
-                return DEFAULT_SHAPE;
-        }
-
-
     }
 }

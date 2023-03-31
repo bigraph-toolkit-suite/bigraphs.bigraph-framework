@@ -5,8 +5,13 @@ import guru.nidi.graphviz.attribute.Color;
 
 import java.util.Objects;
 
-public class DefaultColorSupplier extends GraphicalFeatureSupplier<Color> {
-    private final static Color DEFAULT_COLOR = Color.BLACK;
+/**
+ * A supplier for the color of a node or edge in a graph.
+ *
+ * @param <V> the type
+ * @author Dominik Grzelak
+ */
+public abstract class DefaultColorSupplier<V> extends GraphicalFeatureSupplier<V> {
 
     public DefaultColorSupplier() {
         super(null);
@@ -14,26 +19,5 @@ public class DefaultColorSupplier extends GraphicalFeatureSupplier<Color> {
 
     public DefaultColorSupplier(BigraphEntity node) {
         super(node);
-    }
-
-    @Override
-    public Color get() {
-        if ((getNode()) == null) return DEFAULT_COLOR;
-        switch (getNode().getType()) {
-            case ROOT:
-                return Color.BLACK;
-            case NODE:
-                return Color.BLACK;
-            case SITE:
-                return Color.GRAY;
-            case INNER_NAME:
-                return Color.OLIVEDRAB;
-            case OUTER_NAME:
-                return Color.GREENYELLOW;
-            case EDGE:
-                return Color.GREEN;
-            default:
-                return DEFAULT_COLOR;
-        }
     }
 }

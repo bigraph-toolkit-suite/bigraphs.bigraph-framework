@@ -11,6 +11,20 @@ sidebar_position: 2
 The visual representation of the shapes and the colors can be adjusted.
 Therefore, special suppliers must be provided by the user.
 To do so, all suppliers must extend the generic class `GraphicalFeatureSupplier<V>`.
+Direct subclasses represent the graphical attributes that can be changed.
+Implementations of these subclasses represent concrete graphical suppliers for a specific visualization library.
+
+That is, the graphical attributes that can be changed are specific to a visualization library.
+This is indicated by the generic type parameter `V` that represents the type of the object that is returned when a supplier's
+`GraphicalFeatureSupplier<V>#get()` method is called.
+
+For instance, the Java GraphViz library processes objects of type `guru.nidi.graphviz.attribute.Shape`.
+The class `de.tudresden.inf.st.bigraphs.visualization.supplier.GraphvizShapeSupplier` implements the abstract class
+`DefaultShapeSupplier<V>` by binding `V` to `guru.nidi.graphviz.attribute.Shape`.
+
+Each graphics exporter accepts some of these suppliers.
+One has to call the method `BigraphGraphicsExporter<T>#with(GraphicalFeatureSupplier<V>)` to add graphical suppliers
+to a concrete graphics exporter.
 
 ### `DefaultLabelSupplier`
 

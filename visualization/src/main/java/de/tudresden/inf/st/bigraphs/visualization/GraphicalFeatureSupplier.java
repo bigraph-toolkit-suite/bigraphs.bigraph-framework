@@ -31,7 +31,7 @@ public abstract class GraphicalFeatureSupplier<V> implements Supplier<V> {
         return this;
     }
 
-    BigraphEntity getNode() {
+    protected BigraphEntity getNode() {
         return node;
     }
 
