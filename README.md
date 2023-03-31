@@ -105,8 +105,11 @@ builder.closeInnerName(tmp_link);
 
 ```java
 PureBigraph bigraph = ...;
-BigraphArtifacts.exportAsMetaModel(bigraph, new FileOutputStream("./meta-model.ecore"));
-BigraphArtifacts.exportAsInstanceModel(bigraph, new FileOutputStream("./instance-model.xmi"));
+// Writes a bigraph to the filesystem
+BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream("./meta-model.ecore"));
+BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, new FileOutputStream("./instance-model.xmi"));
+// prints bigraph on the console
+BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
 ```
 
 See the reference and documentation for a more comprehensive overview.
