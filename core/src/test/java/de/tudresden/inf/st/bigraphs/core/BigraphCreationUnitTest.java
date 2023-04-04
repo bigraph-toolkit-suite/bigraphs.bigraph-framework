@@ -309,8 +309,6 @@ public class BigraphCreationUnitTest {
 
     @Test
     void lean_bigraph_api_signature_creation_test() {
-        pure();
-
         DefaultDynamicSignature signature = pureSignatureBuilder()
                 .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).assign()

@@ -1,18 +1,17 @@
 package de.tudresden.inf.st.bigraphs.core.factory;
 
 import de.tudresden.inf.st.bigraphs.core.*;
+import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignatureBuilder;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -101,6 +100,26 @@ public final class BigraphFactory {
         }
     }
 
+    /**
+     * After finalizing the signature builder (i.e., actually creating the signature object), it will be registered
+     * automatically by the registry of this factory.
+     *
+     * @return a dynamic signature builder
+     */
+    public static synchronized DynamicSignatureBuilder pureSignatureBuilder() {
+        return (DynamicSignatureBuilder) FactoryCreationContext.createSignatureBuilder(PureBigraph.class);
+    }
+
+    /**
+     * After finalizing the signature builder (i.e., actually creating the signature object), it will be registered
+     * automatically by the registry of this factory.
+     *
+     * @return a kind signature builder
+     */
+    public static synchronized KindSignatureBuilder kindSignatureBuilder() {
+        return (KindSignatureBuilder) FactoryCreationContext.createKindSignatureBuilder(PureBigraph.class);
+    }
+
 
     // /////////////////////////////////
     // Bigraph-related factories (Ecore)
@@ -145,19 +164,6 @@ public final class BigraphFactory {
         return bigraphBaseModelPackage;
     }
 
-    public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> pureBuilder(S signature) {
-        // Check here as well, whether the signature metamodel is in the registry
-        createOrGetSignatureMetaModel(signature);
-        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
-        if ((bigraphBaseModelPackage) == null) {
-            PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
-            Registry.INSTANCE_BIG.put(signature, b.getMetaModel());
-            return b;
-        } else {
-            return (PureBigraphBuilder<S>) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
-        }
-    }
-
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<? extends NamedType<?>,
             ? extends FiniteOrdinal<?>>>> DiscreteIon<S> pureDiscreteIon(S signature, String name, String... outerNames) {
         // Check here as well, whether the signature metamodel is in the registry
@@ -195,6 +201,19 @@ public final class BigraphFactory {
             return b;
         } else {
             return FactoryCreationContext.createLinkingsBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
+        }
+    }
+
+    public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphBuilder<S> pureBuilder(S signature) {
+        // Check here as well, whether the signature metamodel is in the registry
+        createOrGetSignatureMetaModel(signature);
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
+        if ((bigraphBaseModelPackage) == null) {
+            PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, PureBigraph.class);
+            Registry.INSTANCE_BIG.put(signature, b.getMetaModel());
+            return b;
+        } else {
+            return (PureBigraphBuilder<S>) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
         }
     }
 
@@ -237,55 +256,6 @@ public final class BigraphFactory {
         return FactoryCreationContext.createRandomBigraphBuilder(signature, bigraphBaseModelPackage, PureBigraph.class);
     }
 
-    /**
-     * After finalizing the signature builder (i.e., actually creating the signature object), it will be registered
-     * automatically by the registry of this factory.
-     *
-     * @return a dynamic signature builder
-     */
-    public static synchronized DynamicSignatureBuilder pureSignatureBuilder() {
-        return (DynamicSignatureBuilder) FactoryCreationContext.createSignatureBuilder(PureBigraph.class);
-    }
-
-    /**
-     * After finalizing the signature builder (i.e., actually creating the signature object), it will be registered
-     * automatically by the registry of this factory.
-     *
-     * @return a kind signature builder
-     */
-    public static synchronized KindSignatureBuilder kindSignatureBuilder() {
-        return (KindSignatureBuilder) FactoryCreationContext.createKindSignatureBuilder(PureBigraph.class);
-    }
-
-    /**
-     * Create a pure bigraph factory with default types for the control's label ({@link StringTypedName}) and
-     * arity ({@link FiniteOrdinal}).
-     * <p>
-     *
-     * <b>Note</b> that it is advised to use the respective builder methods (e.g., {@link #pureBuilder(AbstractEcoreSignature)})
-     * for spawning the required builder classes (e.g., signatures, bigraphs, etc.).
-     * This ensures correct management of the internal Ecore metamodel usage. Otherwise, the user has to take care about
-     * re-using the generated bigraphical metamodel over a signature with other builders when referring to the
-     * same signature.
-     *
-     * @return a pure bigraph factory
-     */
-    @Deprecated
-    public static synchronized PureBigraphFactory pure() {
-        FactoryCreationContext.begin(new PureBigraphFactory());
-        return (PureBigraphFactory) FactoryCreationContext.current().get().getFactory();
-    }
-
-    /**
-     * Uses a given factory context to create a {@link PureBigraphFactory}.
-     *
-     * @param context a valid factory context
-     * @return a pure bigraph factory created by the provided context
-     */
-    public static synchronized PureBigraphFactory pure(FactoryCreationContext context) {
-//        FactoryCreationContext.begin(FactoryCreationContext.createPureBigraphFactory());
-        return (PureBigraphFactory) context.getFactory();
-    }
 
     /**
      * Return the current factory context.

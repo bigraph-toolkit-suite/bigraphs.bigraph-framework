@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
 
 /**
  * @author Dominik Grzelak
@@ -146,7 +146,7 @@ public class CanonicalFormPaperBenchmarks {
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createRandomSignatureFixedArity(int n, float probOfPositiveArity, int arity) {
         ;
-        DynamicSignatureBuilder signatureBuilder = pure().createSignatureBuilder();
+        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
                 .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();

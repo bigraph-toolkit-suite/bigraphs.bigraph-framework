@@ -29,9 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
-import static java.util.stream.Collectors.groupingBy;
 
 /**
  * This test class is used to compute some statistical measures such as node degree or node assortativity.
