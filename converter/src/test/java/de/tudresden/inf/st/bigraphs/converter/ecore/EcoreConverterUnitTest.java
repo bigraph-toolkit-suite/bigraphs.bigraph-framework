@@ -2,7 +2,6 @@ package de.tudresden.inf.st.bigraphs.converter.ecore;
 
 import de.tudresden.inf.st.bigraphs.converter.PureReactiveSystemStub;
 import de.tudresden.inf.st.bigraphs.converter.bigmc.BigMcTransformationUnitTest;
-import de.tudresden.inf.st.bigraphs.core.factory.PureBigraphFactory;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import org.junit.jupiter.api.Test;
@@ -10,13 +9,12 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
 
 /**
  * @author Dominik Grzelak
  */
 public class EcoreConverterUnitTest {
-    private static PureBigraphFactory factory = pure();
+
     private static final String DUMP_TARGET = "src/test/resources/dump/";
 
     @Test

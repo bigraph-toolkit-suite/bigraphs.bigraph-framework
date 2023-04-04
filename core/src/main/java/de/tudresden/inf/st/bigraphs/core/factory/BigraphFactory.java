@@ -8,9 +8,12 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.KindBigraph;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.KindBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignatureBuilder;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -117,7 +120,7 @@ public final class BigraphFactory {
      * @return a kind signature builder
      */
     public static synchronized KindSignatureBuilder kindSignatureBuilder() {
-        return (KindSignatureBuilder) FactoryCreationContext.createKindSignatureBuilder(PureBigraph.class);
+        return (KindSignatureBuilder) FactoryCreationContext.createSignatureBuilder(KindBigraph.class);
     }
 
 
@@ -234,6 +237,19 @@ public final class BigraphFactory {
         PureBigraphBuilder b = (PureBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackageFile, PureBigraph.class);
         Registry.INSTANCE_BIG.put(signature, b.getMetaModel());
         return b;
+    }
+
+    public static synchronized KindBigraphBuilder kindBuilder(KindSignature signature) {
+        // Check here as well, whether the signature metamodel is in the registry
+        createOrGetSignatureMetaModel(signature);
+        EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
+        if ((bigraphBaseModelPackage) == null) {
+            KindBigraphBuilder b = (KindBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, KindBigraph.class);
+            Registry.INSTANCE_BIG.put(signature, b.getMetaModel());
+            return b;
+        } else {
+            return (KindBigraphBuilder) FactoryCreationContext.createBigraphBuilder(signature, bigraphBaseModelPackage, KindBigraph.class);
+        }
     }
 
     public static synchronized <S extends AbstractEcoreSignature<? extends Control<?, ?>>> PureBigraphGenerator pureRandomBuilder(S signature) {

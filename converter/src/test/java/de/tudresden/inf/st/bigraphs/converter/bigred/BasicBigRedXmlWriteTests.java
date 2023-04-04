@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.converter.bigred;
 
-import de.tudresden.inf.st.bigraphs.converter.BigraphPrettyPrinter;
 import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
@@ -16,11 +15,13 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pure;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Dominik Grzelak
@@ -120,7 +121,7 @@ public class BasicBigRedXmlWriteTests {
     }
 
     private static DefaultDynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = pure().createSignatureBuilder();
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(3)).status(ControlStatus.ATOMIC).assign()
                 .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(2)).status(ControlStatus.PASSIVE).assign()

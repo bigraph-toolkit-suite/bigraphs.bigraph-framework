@@ -6,6 +6,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureExcepti
 import de.tudresden.inf.st.bigraphs.core.exceptions.builder.ControlNotExistsException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.KindBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
@@ -167,7 +168,7 @@ public class BigraphSignatureUnitTest {
         assert modelPackage != null;
         assert model != null;
 
-        PureBigraphBuilder<KindSignature> ksBigraphBuilder = PureBigraphBuilder.<KindSignature>create(model);
+        KindBigraphBuilder ksBigraphBuilder = KindBigraphBuilder.create(model);
         assert ksBigraphBuilder.getMetaModel() != null;
 
         KindSignature kindSignatureRecreated = new KindSignature(model);
@@ -175,6 +176,9 @@ public class BigraphSignatureUnitTest {
 
         assert kindSignatureRecreated.getPlaceKindMap().get("Room").equals(signature.getPlaceKindMap().get("Room"));
         assert kindSignatureRecreated.getPlaceKindMap().equals(signature.getPlaceKindMap());
+
+        KindBigraphBuilder kindBigraphBuilder = kindBuilder(signature);
+        assert kindBigraphBuilder != null;
 
 //        EPackage orGetMetaModel = BigraphFactory.createOrGetBigraphMetaModel(kindSignatureRecreated);
 //        EPackage orGetMetaModel1 = BigraphFactory.createOrGetBigraphMetaModel(signature);

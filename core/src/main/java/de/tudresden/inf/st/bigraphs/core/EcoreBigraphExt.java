@@ -12,35 +12,19 @@ import org.eclipse.emf.ecore.EPackage;
 public interface EcoreBigraphExt {
 
     /**
-     * Return the metamodel of a bigraph (containing also signature information), or a signature object.
+     * Return the metamodel of a bigraph object or a signature object.
      * <p>
      * It is a metamodel that either extends the base bigraph metamodel or the base signature metamodel.
      *
-     * @return the metamodel in Ecore
+     * @return the metamodel in Ecore format
      * @see de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage
      */
-    EPackage getModelPackage();
+    EPackage getModelPackage(); //TODO rename to getMetaModel
 
     /**
-     * Return the Ecore-based instance model of a bigraph or signature object.
+     * Return the Ecore-based instance model of a bigraph object or signature object.
      *
-     * @return the instance model in Ecore
+     * @return the instance model in Ecore format
      */
-    EObject getModel();
-
-    //TODO rename methods; integrate interface in EcoreSignature
-//    /**
-//     * Return the respective Ecore-based signature metamodel.
-//     *
-//     * @return the metamodel of the base signature specification
-//     * @see de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage
-//     */
-//    EPackage getMetaModel();
-//
-//    /**
-//     * Return the respective Ecore-based signature instance model.
-//     *
-//     * @return the signature instance model
-//     */
-//    EObject getInstanceModel();
+    EObject getModel(); // TODO rename to getInstanceModel
 }

@@ -1,12 +1,16 @@
 package de.tudresden.inf.st.bigraphs.core.factory;
 
+import de.tudresden.inf.st.bigraphs.core.Bigraph;
+
 import java.lang.reflect.Type;
 
-//for chain of responsibility later used with a "factorybuilder"
 /**
  * @author Dominik Grzelak
  */
 public interface BigraphFactoryElement {
 
-    Type getSuccessorImpl();
+    Type getSignatureType();
+
+    Class<? extends Bigraph<?>> getBigraphClassType();
+
 }

@@ -6,10 +6,10 @@ import de.tudresden.inf.st.bigraphs.core.Signature;
 import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
 import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.KindSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
@@ -27,8 +27,9 @@ import java.util.stream.Collectors;
 public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSignature> {
 
     PureBigraphFactory() {
-        super.successorClass = new TypeToken<DefaultDynamicControl>() {
+        super.signatureImplType = new TypeToken<DefaultDynamicControl>() {
         }.getType();
+        super.bigraphClassType = PureBigraph.class;
     }
 
     @Override
@@ -37,11 +38,11 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
         return new DynamicSignatureBuilder();
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public KindSignatureBuilder createKindSignatureBuilder() {
-        return new KindSignatureBuilder();
-    }
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public KindSignatureBuilder createKindSignatureBuilder() {
+//        return new KindSignatureBuilder();
+//    }
 
     @Override
     public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature) {

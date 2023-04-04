@@ -4,6 +4,7 @@ import de.tudresden.inf.st.bigraphs.core.*;
 import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
 import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.datatypes.NamedType;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.KindBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.SignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
@@ -15,6 +16,7 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.emf.ecore.EPackage;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +30,6 @@ import java.util.Stack;
 public final class FactoryCreationContext {
     private static final ThreadLocal<Stack<FactoryCreationContext>> CONTEXT = ThreadLocal.withInitial(Stack::new);
 
-    @Nullable
     private final AbstractBigraphFactory factory;
 
     private int bigraphBuilderCount = 0;
@@ -41,7 +42,7 @@ public final class FactoryCreationContext {
         this.factory = factory;
     }
 
-    @Nullable
+    @Nonnull
     public AbstractBigraphFactory getFactory() {
         return factory;
     }
@@ -83,11 +84,14 @@ public final class FactoryCreationContext {
 
     }
 
-    public static <T extends AbstractBigraphFactory> T findFactoryFor(Class<? extends Bigraph> bigraphClass) {
+    public static <T extends AbstractBigraphFactory<?>> T findFactoryFor(Class<? extends Bigraph> bigraphClass) {
         assert Objects.nonNull(bigraphClass);
         // factory for common pure bigraphs
         if (bigraphClass.isAssignableFrom(PureBigraph.class)) {
             return (T) new PureBigraphFactory();
+        }
+        if (bigraphClass.isAssignableFrom(KindBigraph.class)) {
+            return (T) new KindBigraphFactory();
         }
         // factory for elementary bigraphs
         if (bigraphClass.isAssignableFrom(ElementaryBigraph.class) ||
@@ -108,32 +112,28 @@ public final class FactoryCreationContext {
         return false;
     }
 
+//    static PureBigraphFactory createPureBigraphFactory() {
+//        return current().map(FactoryCreationContext::newPureBigraphFactory).orElseGet(PureBigraphFactory::new);
+//    }
 
-    static PureBigraphFactory createPureBigraphFactory() {
-        return current().map(FactoryCreationContext::newPureBigraphFactory).orElseGet(PureBigraphFactory::new);
-    }
-
-    static <S extends Signature> Object createSignatureBuilder(Class<PureBigraph> bigraphClass) {
+    static <S extends Signature> Object createSignatureBuilder(Class<? extends Bigraph> bigraphClass) {
+        //TODO check also type and return null to create another context
+        //TODO or always create new context
         return current().map((ctx) -> {
-            return ctx.newSignatureBuilder();
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newSignatureBuilder();
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newSignatureBuilder();
-        });
-    }
-
-    //TODO this should not be separate but detected by createSignatureBuilder via PlaceSortedPureBigraph<KindSignature>
-    static <S extends Signature> Object createKindSignatureBuilder(Class<PureBigraph> bigraphClass) {
-        return current().map((ctx) -> {
-            return ctx.newKindSignatureBuilder();
-        }).orElseGet(() -> {
-            return begin(findFactoryFor(bigraphClass)).newKindSignatureBuilder();
         });
     }
 
     //TODO: use Class<>
     static BigraphComposite createOperator(Bigraph bigraph) {
         return current().map((ctx) -> {
-            return ctx.newBigraphOperator(bigraph);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraph.getClass()))
+                return ctx.newBigraphOperator(bigraph);
+            else return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraph.getClass())).newBigraphOperator(bigraph);
         });
@@ -141,7 +141,9 @@ public final class FactoryCreationContext {
 
     static BigraphBuilder createBigraphBuilder(Signature signature, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newBigraphBuilder(signature);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newBigraphBuilder(signature);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newBigraphBuilder(signature);
         });
@@ -149,7 +151,9 @@ public final class FactoryCreationContext {
 
     static DiscreteIon createDiscreteIonBuilder(Signature signature, String name, Set<String> outerNames, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newDiscreteIonBuilder(signature, name, outerNames);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newDiscreteIonBuilder(signature, name, outerNames);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newDiscreteIonBuilder(signature, name, outerNames);
         });
@@ -159,7 +163,9 @@ public final class FactoryCreationContext {
                                                 EPackage bigraphMetaModel,
                                                 Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newDiscreteIonBuilder(signature, name, outerNames, bigraphMetaModel);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newDiscreteIonBuilder(signature, name, outerNames, bigraphMetaModel);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newDiscreteIonBuilder(signature, name, outerNames, bigraphMetaModel);
         });
@@ -167,7 +173,9 @@ public final class FactoryCreationContext {
 
     static Placings createPlacingsBuilder(Signature signature, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newPlacingsBuilder(signature);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newPlacingsBuilder(signature);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newPlacingsBuilder(signature);
         });
@@ -175,7 +183,9 @@ public final class FactoryCreationContext {
 
     static Placings createPlacingsBuilder(Signature signature, EPackage metaModel, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newPlacingsBuilder(signature, metaModel);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newPlacingsBuilder(signature, metaModel);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newPlacingsBuilder(signature, metaModel);
         });
@@ -183,7 +193,9 @@ public final class FactoryCreationContext {
 
     static Linkings createLinkingsBuilder(Signature signature, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newLinkingsBuilder(signature);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newLinkingsBuilder(signature);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newLinkingsBuilder(signature);
         });
@@ -191,7 +203,9 @@ public final class FactoryCreationContext {
 
     static Linkings createLinkingsBuilder(Signature signature, EPackage metaModel, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newLinkingsBuilder(signature, metaModel);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newLinkingsBuilder(signature, metaModel);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newLinkingsBuilder(signature, metaModel);
         });
@@ -199,7 +213,9 @@ public final class FactoryCreationContext {
 
     static PureBigraphGenerator createRandomBigraphBuilder(Signature signature, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newRandomBigraphBuilder(signature);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newRandomBigraphBuilder(signature);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newRandomBigraphBuilder(signature);
         });
@@ -207,7 +223,9 @@ public final class FactoryCreationContext {
 
     static PureBigraphGenerator createRandomBigraphBuilder(Signature signature, EPackage metaModel, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newRandomBigraphBuilder(signature, metaModel);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newRandomBigraphBuilder(signature, metaModel);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newRandomBigraphBuilder(signature, metaModel);
         });
@@ -215,7 +233,9 @@ public final class FactoryCreationContext {
 
     static BigraphBuilder createBigraphBuilder(Signature signature, String metaModel, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newBigraphBuilder(signature, metaModel);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newBigraphBuilder(signature, metaModel);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newBigraphBuilder(signature, metaModel);
         });
@@ -223,7 +243,9 @@ public final class FactoryCreationContext {
 
     static BigraphBuilder createBigraphBuilder(Signature signature, EPackage metaModel, Class<? extends Bigraph> bigraphClass) {
         return current().map((ctx) -> {
-            return ctx.newBigraphBuilder(signature, metaModel);
+            if (ctx.getFactory().getBigraphClassType().equals(bigraphClass))
+                return ctx.newBigraphBuilder(signature, metaModel);
+            return null;
         }).orElseGet(() -> {
             return begin(findFactoryFor(bigraphClass)).newBigraphBuilder(signature, metaModel);
         });
@@ -280,13 +302,5 @@ public final class FactoryCreationContext {
 
     private SignatureBuilder newSignatureBuilder() {
         return this.factory.createSignatureBuilder();
-    }
-
-    private SignatureBuilder newKindSignatureBuilder() {
-        return this.factory.createKindSignatureBuilder();
-    }
-
-    private PureBigraphFactory newPureBigraphFactory() {
-        return (PureBigraphFactory) factory;
     }
 }

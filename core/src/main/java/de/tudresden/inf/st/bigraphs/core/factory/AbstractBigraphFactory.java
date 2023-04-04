@@ -23,22 +23,17 @@ import java.util.Set;
  */
 public abstract class AbstractBigraphFactory<S extends AbstractEcoreSignature<? extends Control<? extends NamedType<?>, ? extends FiniteOrdinal<?>>>>
         implements BigraphFactoryElement {
-    protected Type successorClass = null; //TODO: one for the signature type (and one for the bigraph)
+    protected Type signatureImplType = null;
+    protected Class<? extends Bigraph<S>> bigraphClassType = null;
 
     @Override
-    public Type getSuccessorImpl() {
-        return successorClass;
+    public Type getSignatureType() {
+        return signatureImplType;
     }
 
-//    /**
-//     * Create a pure bigraph factory with default types for the control's label ({@link StringTypedName}) and
-//     * arity ({@link FiniteOrdinal}.
-//     *
-//     * @return a pure bigraph factory
-//     */
-//    public static PureBigraphFactory createPureBigraphFactory() {
-//        return new PureBigraphFactory();
-//    }
+    public Class<? extends Bigraph<S>> getBigraphClassType() {
+        return bigraphClassType;
+    }
 
     /**
      * Creates a builder for constructing pure dynamic signatures .
@@ -47,15 +42,6 @@ public abstract class AbstractBigraphFactory<S extends AbstractEcoreSignature<? 
      * @return a new signature builder instance
      */
     public abstract <SB extends SignatureBuilder> SB createSignatureBuilder();
-
-    //TODO something for a kind bigraph factory
-    /**
-     * Creates a builder for constructing kind signatures.
-     *
-     * @param <SB> type of the signature builder (i.e., the type of the controls)
-     * @return a new signature builder instance
-     */
-    public abstract <SB extends SignatureBuilder> SB createKindSignatureBuilder();
 
     /**
      * Throws a class cast exception when a signature is passed as argument which was not created with the
@@ -117,10 +103,10 @@ public abstract class AbstractBigraphFactory<S extends AbstractEcoreSignature<? 
      */
     public abstract DiscreteIon<S> createDiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, S signature);
 
-    //TODO something for purefactory
-    public abstract DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, S signature);
 
-    public abstract DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, S signature,
+    public abstract DiscreteIon<S> createDiscreteIon(String name, Set<String> outerNames, S signature);
+
+    public abstract DiscreteIon<S> createDiscreteIon(String name, Set<String> outerNames, S signature,
                                                                            EPackage bigraphMetaModel);
 
     /**

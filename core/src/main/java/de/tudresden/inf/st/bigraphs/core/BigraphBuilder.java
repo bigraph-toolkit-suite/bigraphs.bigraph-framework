@@ -12,7 +12,7 @@ import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
  * @param <S> type of the signature
  * @author Dominik Grzelak
  */
-public interface BigraphBuilder<S extends Signature> {
+public interface BigraphBuilder<S extends Signature<?>> {
 
     /**
      * Create a root node under which additional nodes or hierarchies can be place.
