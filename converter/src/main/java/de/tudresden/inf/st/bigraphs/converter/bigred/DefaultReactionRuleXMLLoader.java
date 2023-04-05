@@ -321,7 +321,7 @@ public class DefaultReactionRuleXMLLoader implements BigraphXmlLoaderSupport.Xml
         try {
             EcoreBigraph.Stub stub = new EcoreBigraph.Stub(bigraph);
             EcoreBigraph.Stub clone = stub.clone();
-            builder = new MutableBuilder<>(bigraph.getSignature(), clone.getModelPackage(), clone.getModel());
+            builder = new MutableBuilder<>(bigraph.getSignature(), clone.getMetaModel(), clone.getInstanceModel());
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }

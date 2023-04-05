@@ -21,7 +21,6 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.*;
-import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
@@ -61,7 +60,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         super(bigraph);
         assert bigraph instanceof PureBigraphComposite || bigraph instanceof PureBigraph || bigraph instanceof ElementaryBigraph;
         // this is safe: S is inferred from the bigraph to where S is the same type as the builder's type S (they will have the same type thus)
-        this.builder = MutableBuilder.newMutableBuilder(getBigraphDelegate().getSignature(), ((EcoreBigraph) getBigraphDelegate()).getModelPackage()); // ((EcoreBigraph) bigraph).getEMetaModelData());
+        this.builder = MutableBuilder.newMutableBuilder(getBigraphDelegate().getSignature(), ((EcoreBigraph) getBigraphDelegate()).getMetaModel()); // ((EcoreBigraph) bigraph).getEMetaModelData());
     }
 
     /**
@@ -173,8 +172,8 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         Bigraph<S> copy = BigraphUtil.copy(g);
         Bigraph<S> copyOuter = BigraphUtil.copy(f);
 
-        EObject left = ((PureBigraph) copy).getModel();
-        EObject right = ((PureBigraph) copyOuter).getModel();
+        EObject left = ((PureBigraph) copy).getInstanceModel();
+        EObject right = ((PureBigraph) copyOuter).getInstanceModel();
 
         // Routine: Add roots side-by-side
         EStructuralFeature rightRootsFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
@@ -364,7 +363,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             }
         }
 
-        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getModelPackage(), ((PureBigraph) copy).getModel()).createBigraph();
+        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getMetaModel(), ((PureBigraph) copy).getInstanceModel()).createBigraph();
         return new PureBigraphComposite<>((Bigraph<S>) bigraph);
     }
 
@@ -382,8 +381,8 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         Bigraph<S> copy = BigraphUtil.copy(g);
         Bigraph<S> copyOuter = BigraphUtil.copy(f);
 
-        EObject left = ((PureBigraph) copy).getModel();
-        EObject right = ((PureBigraph) copyOuter).getModel();
+        EObject left = ((PureBigraph) copy).getInstanceModel();
+        EObject right = ((PureBigraph) copyOuter).getInstanceModel();
 
         // Routine: Add roots side-by-side
         EStructuralFeature rightRootsFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
@@ -448,7 +447,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         left.eAdapters().clear();
         right.eAdapters().clear();
 
-        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getModelPackage(), ((PureBigraph) copy).getModel()).createBigraph();
+        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getMetaModel(), ((PureBigraph) copy).getInstanceModel()).createBigraph();
         return new PureBigraphComposite<>((Bigraph<S>) bigraph);
     }
 
@@ -504,8 +503,8 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             copyOuter = ops(copyOuter).juxtapose(permutation).getOuterBigraph();
         }
 
-        EObject leftOuter = ((PureBigraph) copyOuter).getModel();
-        EObject rightInner = ((PureBigraph) copyInner).getModel();
+        EObject leftOuter = ((PureBigraph) copyOuter).getInstanceModel();
+        EObject rightInner = ((PureBigraph) copyInner).getInstanceModel();
 
 
         EStructuralFeature rightOuterNamesFeature = rightInner.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
@@ -675,7 +674,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
 
         leftOuter.eAdapters().clear();
         rightInner.eAdapters().clear();
-        PureBigraph bigraph = PureBigraphBuilder.create(copyOuter.getSignature(), ((PureBigraph) copyOuter).getModelPackage(), ((PureBigraph) copyOuter).getModel()).createBigraph();
+        PureBigraph bigraph = PureBigraphBuilder.create(copyOuter.getSignature(), ((PureBigraph) copyOuter).getMetaModel(), ((PureBigraph) copyOuter).getInstanceModel()).createBigraph();
         return new PureBigraphComposite<>((Bigraph<S>) bigraph);
     }
 
@@ -731,12 +730,12 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
     }
 
     @Override
-    public EPackage getModelPackage() {
-        return ((EcoreBigraph) getBigraphDelegate()).getModelPackage();
+    public EPackage getMetaModel() {
+        return ((EcoreBigraph) getBigraphDelegate()).getMetaModel();
     }
 
     @Override
-    public EObject getModel() {
-        return ((EcoreBigraph) getBigraphDelegate()).getModel();
+    public EObject getInstanceModel() {
+        return ((EcoreBigraph) getBigraphDelegate()).getInstanceModel();
     }
 }

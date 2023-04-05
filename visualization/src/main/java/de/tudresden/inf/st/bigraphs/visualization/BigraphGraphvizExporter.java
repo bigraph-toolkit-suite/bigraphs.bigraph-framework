@@ -90,7 +90,7 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
      * @return the DOT representation of the bigraph
      * @throws IOException
      */
-    public <S extends Signature> String convert(Bigraph<S> bigraph,
+    public <S extends Signature<?>> String convert(Bigraph<S> bigraph,
                                                 File output,
                                                 Format format,
                                                 boolean asTreeStructure) throws IOException {

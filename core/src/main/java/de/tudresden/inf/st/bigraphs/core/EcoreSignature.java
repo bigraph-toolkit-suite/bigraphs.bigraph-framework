@@ -12,15 +12,23 @@ import org.eclipse.emf.ecore.util.Diagnostician;
 import java.util.function.Consumer;
 
 /**
+ * Interface for all Ecore-based signatures.
+ * This interface is technology-specific, and not general as {@link Signature}.
+ * <p>
+ * It is similar to {@link EcoreBigraph}.
+ *
  * @author Dominik Grzelak
+ * @see Signature
+ * @see EcoreBigraph
  */
-public interface EcoreSignature {
+public interface EcoreSignature extends EcoreBigraphExt {
     /**
      * Return the respective signature Ecore-based metamodel.
      *
      * @return the metamodel of the base signature specification
      * @see de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage
      */
+    @Override
     EPackage getMetaModel();
 
     /**
@@ -28,6 +36,7 @@ public interface EcoreSignature {
      *
      * @return the signature instance model
      */
+    @Override
     EObject getInstanceModel();
 
     //TODO move this to a validation class

@@ -174,7 +174,7 @@ public final class BigraphFactory {
         EPackage bigraphBaseModelPackage = Registry.INSTANCE_BIG.getEPackage(signature);
         if (Objects.isNull(bigraphBaseModelPackage)) {
             DiscreteIon<S> b = FactoryCreationContext.createDiscreteIonBuilder(signature, name, new HashSet<>(Arrays.asList(outerNames)), PureBigraph.class);
-            Registry.INSTANCE_BIG.put(signature, b.getModelPackage());
+            Registry.INSTANCE_BIG.put(signature, b.getMetaModel());
             return b;
         } else {
             return FactoryCreationContext.createDiscreteIonBuilder(signature, name, new HashSet<>(Arrays.asList(outerNames)), bigraphBaseModelPackage, PureBigraph.class);

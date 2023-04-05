@@ -7,6 +7,7 @@ import java.util.Set;
 
 /**
  * Common interface of a bigraph's signature.
+ * This interface is general, and not technology-specific such as {@link EcoreSignature}.
  *
  * @param <C> type of the control
  * @author Dominik Grzelak

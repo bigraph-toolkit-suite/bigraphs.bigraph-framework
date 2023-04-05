@@ -58,7 +58,7 @@ public class BigraphSignatureUnitTest {
         // ... code of fluent builder API omitted ...
         PureBigraph bigraph = newBuilder.createBigraph(); //validation triggered
 
-        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bigraph.getModel());
+        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bigraph.getInstanceModel());
         if (diagnostic.getSeverity() != Diagnostic.OK) {
             System.out.println("ERROR in: " + diagnostic.getMessage());
             for (Diagnostic child : diagnostic.getChildren()) {

@@ -59,12 +59,12 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         this.signature = (DefaultDynamicSignature) details.getSignature(); //signature;
     }
 
-    public EPackage getModelPackage() {
+    public EPackage getMetaModel() {
         return this.modelPackage;
     }
 
     @Override
-    public EObject getModel() {
+    public EObject getInstanceModel() {
         return this.bigraphInstanceModel;
     }
 

@@ -404,7 +404,7 @@ public class BigraphCreationUnitTest {
             builder.createRoot().addChild(signature.getControlByName("Room")).linkToOuter(a)
                     .addChild(signature.getControlByName("User")).linkToOuter(b);
             PureBigraph bigraph = builder.createBigraph();
-            EObject model = bigraph.getModel();
+            EObject model = bigraph.getInstanceModel();
             EList<EObject> bRoots = (EList<EObject>) model.eGet(model.eClass().getEStructuralFeature("bRoots"));
             Assertions.assertEquals(1, bRoots.size());
             EObject eObject = bRoots.get(0);

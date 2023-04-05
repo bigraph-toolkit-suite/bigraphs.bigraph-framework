@@ -331,7 +331,7 @@ public class BigraphCompositionUnitTests {
         PureBigraph F = builderForF.createBigraph();
         PureBigraph G = builderForG.createBigraph();
 
-        EPackage modelPackage = F.getModelPackage();
+        EPackage modelPackage = F.getMetaModel();
 
 
         BigraphComposite<DefaultDynamicSignature> compositor = ops(G);

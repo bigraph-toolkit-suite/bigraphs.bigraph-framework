@@ -95,8 +95,8 @@ public class BigraphFileModelManagementUnitTests {
         assertEquals(sigLoaded, sig);
 
         PureBigraph bigraph = builder.createBigraph();
-        System.out.println(bigraph.getModelPackage().getNsURI());
-        System.out.println(bigraph.getModelPackage().getNsPrefix());
+        System.out.println(bigraph.getMetaModel().getNsURI());
+        System.out.println(bigraph.getMetaModel().getNsPrefix());
         BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream(metaFilename));
         BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, new FileOutputStream(instanceFilename), baseName + ".ecore");
 //
@@ -104,7 +104,7 @@ public class BigraphFileModelManagementUnitTests {
         List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(instanceFilename);
         assertEquals(1, eObjects.size());
         System.out.println(eObjects.get(0));
-        System.out.println(bigraph.getModel());
+        System.out.println(bigraph.getInstanceModel());
 //
         List<EObject> eObjectsReturn = BigraphFileModelManagement.Load.bigraphInstanceModel(metaFilename, instanceFilename);
         assertEquals(1, eObjectsReturn.size());
@@ -131,13 +131,13 @@ public class BigraphFileModelManagementUnitTests {
             PureBigraph bigraph = (PureBigraph) createSampleBigraph();
 
             EcoreBigraph.Stub stub = new EcoreBigraph.Stub(bigraph);
-            assertEquals(stub.getModel(), bigraph.getModel());
-            assertEquals(stub.getModelPackage(), bigraph.getModelPackage());
+            assertEquals(stub.getInstanceModel(), bigraph.getInstanceModel());
+            assertEquals(stub.getMetaModel(), bigraph.getMetaModel());
 
             EcoreBigraph.Stub clone = stub.clone();
-            assertEquals(stub.getModelPackage(), clone.getModelPackage());
+            assertEquals(stub.getMetaModel(), clone.getMetaModel());
             assertNotEquals(stub, clone);
-            assertNotEquals(stub.getModel(), clone.getModel());
+            assertNotEquals(stub.getInstanceModel(), clone.getInstanceModel());
 
             InputStream inputStreamOfInstanceModel = stub.getInputStreamOfInstanceModel();
             assertNotNull(inputStreamOfInstanceModel);

@@ -16,9 +16,14 @@ import java.io.OutputStream;
 import java.util.Objects;
 
 /**
- * Extension interface with standard methods for Ecore-based bigraph classes.
+ * Common interface with standard methods for all Ecore-based bigraph classes.
+ * This interface is technology-specific, and not general as {@link Bigraph}.
+ * <p>
+ * It is similar to {@link EcoreSignature}.
  *
  * @author Dominik Grzelak
+ * @see Bigraph
+ * @see EcoreSignature
  */
 public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSignature<S>, EcoreBigraphExt {
 
@@ -36,9 +41,9 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
     default boolean isBOuterName(EObject eObject) {
 //        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_OUTERNAME);
         return eObject.eClass().getClassifierID() ==
-                (((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
-                eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
-                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
+                (((EPackageImpl) getMetaModel()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
+                eObject.eClass().equals(((EPackageImpl) getMetaModel()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
+                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getMetaModel()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME));
     }
 
 
@@ -80,12 +85,12 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
 
     //works only for elements of the calling class
     default boolean isOfEClass(EObject eObject, String eClassifier) {
-        return ((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier) != null &&
+        return ((EPackageImpl) getMetaModel()).getEClassifierGen(eClassifier) != null &&
                 (
-                        eObject.eClass().getName().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName()) ||
-                                eObject.eClass().equals(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier)) ||
+                        eObject.eClass().getName().equals(((EPackageImpl) getMetaModel()).getEClassifierGen(eClassifier).getName()) ||
+                                eObject.eClass().equals(((EPackageImpl) getMetaModel()).getEClassifierGen(eClassifier)) ||
 //                                eObject.eClass().getEAllSuperTypes().stream().map(ENamedElement::getName).collect(Collectors.toList()).contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName()) ||
-                                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier))
+                                eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getMetaModel()).getEClassifierGen(eClassifier))
                 );
     }
 
@@ -113,10 +118,10 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
      */
     default EMetaModelData getEMetaModelData() {
         EMetaModelData.MetaModelDataBuilder builder = EMetaModelData.builder();
-        if (Objects.nonNull(getModelPackage())) {
-            builder.setNsPrefix(getModelPackage().getNsPrefix());
-            builder.setNsUri(getModelPackage().getNsURI());
-            builder.setName(getModelPackage().getName());
+        if (Objects.nonNull(getMetaModel())) {
+            builder.setNsPrefix(getMetaModel().getNsPrefix());
+            builder.setNsUri(getMetaModel().getNsURI());
+            builder.setName(getMetaModel().getName());
         }
         return builder.create();
     }
@@ -142,7 +147,7 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
          * @param bigraph an Ecore-based bigraph
          */
         public Stub(EcoreBigraph<S> bigraph) {
-            this(bigraph.getModelPackage(), bigraph.getModel());
+            this(bigraph.getMetaModel(), bigraph.getInstanceModel());
         }
 
         private Stub(EPackage metaModel, EObject instanceModel) {
@@ -151,12 +156,12 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
         }
 
         @Override
-        public EPackage getModelPackage() {
+        public EPackage getMetaModel() {
             return metaModel;
         }
 
         @Override
-        public EObject getModel() {
+        public EObject getInstanceModel() {
             return instanceModel;
         }
 
@@ -195,7 +200,7 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
 
         @Override
         public S getSignature() {
-            return BigraphFactory.createOrGetSignature(getModel());
+            return BigraphFactory.createOrGetSignature(getInstanceModel());
         }
 
     }

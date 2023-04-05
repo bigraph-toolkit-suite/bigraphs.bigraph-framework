@@ -44,16 +44,16 @@ public abstract class ElementaryBigraph<S extends AbstractEcoreSignature<? exten
     }
 
     @Override
-    public EPackage getModelPackage() {
+    public EPackage getMetaModel() {
         if (Objects.nonNull(bigraphDelegate) && bigraphDelegate instanceof EcoreBigraph)
-            return ((EcoreBigraph) bigraphDelegate).getModelPackage();
+            return ((EcoreBigraph) bigraphDelegate).getMetaModel();
         return metaModelPackage;
     }
 
     @Override
-    public EObject getModel() {
+    public EObject getInstanceModel() {
         if (Objects.nonNull(bigraphDelegate) && bigraphDelegate instanceof EcoreBigraph)
-            return ((EcoreBigraph) bigraphDelegate).getModel();
+            return ((EcoreBigraph) bigraphDelegate).getInstanceModel();
         return instanceModel;
     }
 

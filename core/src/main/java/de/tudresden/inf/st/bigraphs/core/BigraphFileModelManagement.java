@@ -237,11 +237,11 @@ public class BigraphFileModelManagement {
          * Exports the Ecore-based instance model of a bigraph.
          */
         public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
-            EMFUtils.writeDynamicInstanceModel(bigraph.getModelPackage(), Collections.singleton(bigraph.getModel()), outputStream, null);
+            EMFUtils.writeDynamicInstanceModel(bigraph.getMetaModel(), Collections.singleton(bigraph.getInstanceModel()), outputStream, null);
         }
 
         public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream, String newNamespaceLocation) throws IOException {
-            EMFUtils.writeDynamicInstanceModel(bigraph.getModelPackage(), Collections.singleton(bigraph.getModel()), outputStream, newNamespaceLocation);
+            EMFUtils.writeDynamicInstanceModel(bigraph.getMetaModel(), Collections.singleton(bigraph.getInstanceModel()), outputStream, newNamespaceLocation);
         }
 
         /**
@@ -264,7 +264,7 @@ public class BigraphFileModelManagement {
          * @see EcoreBigraph#getEMetaModelData()
          */
         public static void exportAsMetaModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
-            writeDynamicMetaModel(bigraph.getModelPackage(), DEFAULT_ENCODING, outputStream);
+            writeDynamicMetaModel(bigraph.getMetaModel(), DEFAULT_ENCODING, outputStream);
         }
 
         /**
@@ -276,7 +276,7 @@ public class BigraphFileModelManagement {
          */
         public static void exportAsMetaModel(EcoreBigraph bigraph, Path folder) throws IOException {
             String s = Paths.get(folder.toAbsolutePath().toString(), bigraph.getEMetaModelData().getName() + ".ecore").toAbsolutePath().toString();
-            writeDynamicMetaModel(bigraph.getModelPackage(), DEFAULT_ENCODING, new FileOutputStream(s));
+            writeDynamicMetaModel(bigraph.getMetaModel(), DEFAULT_ENCODING, new FileOutputStream(s));
         }
 
         /**

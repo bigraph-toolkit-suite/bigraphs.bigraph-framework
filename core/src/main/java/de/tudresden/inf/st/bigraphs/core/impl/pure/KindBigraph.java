@@ -129,12 +129,12 @@ public class KindBigraph implements Bigraph<KindSignature>, EcoreBigraph<KindSig
     }
 
     @Override
-    public EPackage getModelPackage() {
+    public EPackage getMetaModel() {
         return null;
     }
 
     @Override
-    public EObject getModel() {
+    public EObject getInstanceModel() {
         return null;
     }
 }

@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -52,13 +51,13 @@ public abstract class AbstractDynamicMatchAdapter<S extends AbstractEcoreSignatu
     }
 
     @Override
-    public EPackage getModelPackage() {
-        return getBigraphDelegate().getModelPackage();
+    public EPackage getMetaModel() {
+        return getBigraphDelegate().getMetaModel();
     }
 
     @Override
-    public EObject getModel() {
-        return getBigraphDelegate().getModel();
+    public EObject getInstanceModel() {
+        return getBigraphDelegate().getInstanceModel();
     }
 
     public void clearCache() {

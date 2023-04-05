@@ -33,8 +33,8 @@ public class ElementaryBigraphUnitTests {
         Placings<DefaultDynamicSignature> placings = purePlacings(empty);
 
         Placings<DefaultDynamicSignature>.Barren b = placings.barren();
-        assertNotNull(b.getModelPackage());
-        assertNotNull(b.getModel());
+        assertNotNull(b.getMetaModel());
+        assertNotNull(b.getInstanceModel());
         assertTrue(b.isPrime());
         assertEquals(1, b.getRoots().size());
         assertEquals(0, b.getSites().size());
@@ -42,8 +42,8 @@ public class ElementaryBigraphUnitTests {
         assertEquals(0, b.getInnerNames().size());
 
         Placings<DefaultDynamicSignature>.Barren b2 = placings.barren();
-        assertNotNull(b2.getModelPackage());
-        assertNotNull(b2.getModel());
+        assertNotNull(b2.getMetaModel());
+        assertNotNull(b2.getInstanceModel());
         assertNotEquals(b, b2);
 
         assertTrue(b.isPrime());
@@ -59,10 +59,10 @@ public class ElementaryBigraphUnitTests {
 
         Placings<DefaultDynamicSignature>.Join join1 = placings.join();
         Placings<DefaultDynamicSignature>.Join join2 = placings.join();
-        assertNotNull(join1.getModelPackage());
-        assertNotNull(join1.getModel());
-        assertNotNull(join2.getModelPackage());
-        assertNotNull(join2.getModel());
+        assertNotNull(join1.getMetaModel());
+        assertNotNull(join1.getInstanceModel());
+        assertNotNull(join2.getMetaModel());
+        assertNotNull(join2.getInstanceModel());
 
 
         assertTrue(join1.isPrime());
@@ -83,8 +83,8 @@ public class ElementaryBigraphUnitTests {
         Placings<DefaultDynamicSignature>.Merge merge = placings.merge(3);
         assertEquals(1, merge.getRoots().size());
         assertEquals(3, merge.getSites().size());
-        assertNotNull(merge.getModelPackage());
-        assertNotNull(merge.getModel());
+        assertNotNull(merge.getMetaModel());
+        assertNotNull(merge.getInstanceModel());
     }
 
     @Test
@@ -95,8 +95,8 @@ public class ElementaryBigraphUnitTests {
         int MAX_N = 10;
         for (int i = 1; i < MAX_N; i++) {
             Placings<DefaultDynamicSignature>.Permutation permutation = placings.permutation(i);
-            assertNotNull(permutation.getModelPackage());
-            assertNotNull(permutation.getModel());
+            assertNotNull(permutation.getMetaModel());
+            assertNotNull(permutation.getInstanceModel());
             assertEquals(i, permutation.getRoots().size());
             assertEquals(i, permutation.getSites().size());
             if (i == 1)
@@ -119,8 +119,8 @@ public class ElementaryBigraphUnitTests {
         }
 
         Placings<DefaultDynamicSignature>.Symmetry symmetry11 = placings.symmetry11();
-        assertNotNull(symmetry11.getModelPackage());
-        assertNotNull(symmetry11.getModel());
+        assertNotNull(symmetry11.getMetaModel());
+        assertNotNull(symmetry11.getInstanceModel());
         assertEquals(2, symmetry11.getRoots().size());
         assertEquals(2, symmetry11.getSites().size());
         assertEquals(0, symmetry11.getInnerNames().size());
@@ -136,8 +136,8 @@ public class ElementaryBigraphUnitTests {
 
         //identity barren: id_1
         Placings<DefaultDynamicSignature>.Identity1 identity1 = placings.identity1();
-        assertNotNull(identity1.getModelPackage());
-        assertNotNull(identity1.getModel());
+        assertNotNull(identity1.getMetaModel());
+        assertNotNull(identity1.getInstanceModel());
         assertEquals(1, identity1.getRoots().size());
         assertEquals(1, identity1.getSites().size());
         assertEquals(0, identity1.getInnerNames().size());
@@ -178,8 +178,8 @@ public class ElementaryBigraphUnitTests {
                 DiscreteIon<DefaultDynamicSignature> discreteIon =
                         pureDiscreteIon((DefaultDynamicSignature) signature, controlName.getValue(), outerNamesAsString);
                 Placings<DefaultDynamicSignature> placings = purePlacings(discreteIon.getSignature());
-                assertNotNull(discreteIon.getModelPackage());
-                assertNotNull(discreteIon.getModel());
+                assertNotNull(discreteIon.getMetaModel());
+                assertNotNull(discreteIon.getInstanceModel());
                 assertTrue(discreteIon.isDiscrete());
                 assertTrue(discreteIon.isPrime());
                 assertEquals(finalArity, discreteIon.getOuterNames().size());
@@ -275,10 +275,10 @@ public class ElementaryBigraphUnitTests {
 
         Placings<DefaultDynamicSignature>.Merge merge_0 = placings.merge(0);
         Placings<DefaultDynamicSignature>.Barren barren = placings.barren();
-        assertNotNull(merge_0.getModelPackage());
-        assertNotNull(merge_0.getModel());
-        assertNotNull(barren.getModelPackage());
-        assertNotNull(barren.getModel());
+        assertNotNull(merge_0.getMetaModel());
+        assertNotNull(merge_0.getInstanceModel());
+        assertNotNull(barren.getMetaModel());
+        assertNotNull(barren.getInstanceModel());
 
         // are isomorph?
         assertEquals(merge_0.getRoots().size(), barren.getRoots().size());
@@ -298,12 +298,12 @@ public class ElementaryBigraphUnitTests {
 
                 BigraphComposite<DefaultDynamicSignature> result = joinOp.compose(juxtaposed);
 
-                assertNotNull(((EcoreBigraph) result.getOuterBigraph()).getModelPackage());
-                assertNotNull(((PureBigraph) result.getOuterBigraph()).getModel());
+                assertNotNull(((EcoreBigraph) result.getOuterBigraph()).getMetaModel());
+                assertNotNull(((PureBigraph) result.getOuterBigraph()).getInstanceModel());
                 assertEquals(merge_nPlus1.getRoots().size(), result.getOuterBigraph().getRoots().size());
                 assertEquals(merge_nPlus1.getSites().size(), result.getOuterBigraph().getSites().size());
-                assertEquals(((PureBigraph) result.getOuterBigraph()).getModel().eContents().size(), result.getOuterBigraph().getRoots().size());
-                assertEquals(((PureBigraph) result.getOuterBigraph()).getModel().eContents().get(0).eContents().size(), result.getOuterBigraph().getSites().size());
+                assertEquals(((PureBigraph) result.getOuterBigraph()).getInstanceModel().eContents().size(), result.getOuterBigraph().getRoots().size());
+                assertEquals(((PureBigraph) result.getOuterBigraph()).getInstanceModel().eContents().get(0).eContents().size(), result.getOuterBigraph().getSites().size());
             }
         });
 
@@ -315,13 +315,13 @@ public class ElementaryBigraphUnitTests {
             assertEquals(0, isAlsoBarren.getOuterBigraph().getOuterNames().size());
             assertEquals(0, isAlsoBarren.getOuterBigraph().getInnerNames().size());
             assertTrue(isAlsoBarren.getOuterBigraph().isPrime());
-            assertNotNull(((PureBigraph) isAlsoBarren.getOuterBigraph()).getModelPackage());
-            assertNotNull(((PureBigraph) isAlsoBarren.getOuterBigraph()).getModel());
+            assertNotNull(((PureBigraph) isAlsoBarren.getOuterBigraph()).getMetaModel());
+            assertNotNull(((PureBigraph) isAlsoBarren.getOuterBigraph()).getInstanceModel());
 
             System.out.println("merge_1 * 1 = 1");
             BigraphComposite<DefaultDynamicSignature> isAlsoBarren2 = ops(placings.merge(1)).compose(barren);
-            assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getModelPackage());
-            assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getModel());
+            assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getMetaModel());
+            assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getInstanceModel());
             assertTrue(isAlsoBarren2.getOuterBigraph().isPrime());
             assertEquals(1, isAlsoBarren2.getOuterBigraph().getRoots().size());
             assertEquals(0, isAlsoBarren2.getOuterBigraph().getSites().size());
@@ -342,14 +342,14 @@ public class ElementaryBigraphUnitTests {
         Linkings<DefaultDynamicSignature>.Closure closure_x = linkings.closure(StringTypedName.of("x"));
 
         // Test if the Ecore-related meta-model and instance model are set
-        assertNotNull(identity_x.getModelPackage());
-        assertNotNull(identity_x.getModel());
-        assertNotNull(identity_e.getModelPackage());
-        assertNotNull(identity_e.getModel());
-        assertNotNull(substitution_x_to_x.getModelPackage());
-        assertNotNull(substitution_x_to_x.getModel());
-        assertNotNull(closure_x.getModelPackage());
-        assertNotNull(closure_x.getModel());
+        assertNotNull(identity_x.getMetaModel());
+        assertNotNull(identity_x.getInstanceModel());
+        assertNotNull(identity_e.getMetaModel());
+        assertNotNull(identity_e.getInstanceModel());
+        assertNotNull(substitution_x_to_x.getMetaModel());
+        assertNotNull(substitution_x_to_x.getInstanceModel());
+        assertNotNull(closure_x.getMetaModel());
+        assertNotNull(closure_x.getInstanceModel());
 
         PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = pureBuilder(pureSignatureBuilder().createEmpty());
         bigraphBuilder.createOuterName("x");
@@ -393,8 +393,8 @@ public class ElementaryBigraphUnitTests {
             Bigraph<DefaultDynamicSignature> composed = ops(y).compose(yx).getOuterBigraph();
             Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
 
-            assertNotNull(((PureBigraph) composed).getModelPackage());
-            assertNotNull(((PureBigraph) composed).getModel());
+            assertNotNull(((PureBigraph) composed).getMetaModel());
+            assertNotNull(((PureBigraph) composed).getInstanceModel());
 
             assertEquals(composed.getInnerNames().size() == 1,
                     x.getInnerNames().size() == 1);
@@ -421,8 +421,8 @@ public class ElementaryBigraphUnitTests {
 
             // right-hand side of the equation
             Linkings<DefaultDynamicSignature>.Substitution z_over_XY = linkings.substitution(z, Y_and_X.toArray(new StringTypedName[Y_and_y.size()]));
-            assertNotNull(z_over_XY.getModelPackage());
-            assertNotNull(z_over_XY.getModel());
+            assertNotNull(z_over_XY.getMetaModel());
+            assertNotNull(z_over_XY.getInstanceModel());
             // parts of the left-hand of the equation
             Linkings<DefaultDynamicSignature>.Substitution z_over_Yy = linkings.substitution(z, Y_and_y.toArray(new StringTypedName[Y_and_y.size()]));
             Linkings<DefaultDynamicSignature>.Identity identity_Y = linkings.identity(Y0);
@@ -434,8 +434,8 @@ public class ElementaryBigraphUnitTests {
             assertEquals(z_over_XY.getInnerNames().size(), Y_and_X.size());
             Bigraph<DefaultDynamicSignature> composedRight = ops(identity_Y).juxtapose(y_over_X).getOuterBigraph();
             Bigraph<DefaultDynamicSignature> result = ops(z_over_Yy).compose(composedRight).getOuterBigraph();
-            assertNotNull(((PureBigraph) result).getModelPackage());
-            assertNotNull(((PureBigraph) result).getModel());
+            assertNotNull(((PureBigraph) result).getMetaModel());
+            assertNotNull(((PureBigraph) result).getInstanceModel());
             assertEquals(result.getOuterNames().size(), z_over_XY.getOuterNames().size());
             assertEquals(result.getOuterNames().size(), 1);
             assertEquals(result.getOuterNames().stream().findFirst().get().getName(), z.stringValue());
@@ -463,10 +463,10 @@ public class ElementaryBigraphUnitTests {
         Placings<DefaultDynamicSignature>.Barren barren = placings.barren();
         Placings<DefaultDynamicSignature>.Symmetry symmetry11 = placings.symmetry11();
         Placings<DefaultDynamicSignature>.Identity1 identity1 = placings.identity1();
-        assertNotNull(join.getModelPackage());
-        assertNotNull(join.getModel());
-        assertNotNull(symmetry11.getModelPackage());
-        assertNotNull(symmetry11.getModel());
+        assertNotNull(join.getMetaModel());
+        assertNotNull(join.getInstanceModel());
+        assertNotNull(symmetry11.getMetaModel());
+        assertNotNull(symmetry11.getInstanceModel());
 
         assertAll(() -> {
             System.out.println("join * y_(1,1) = join");
@@ -476,8 +476,8 @@ public class ElementaryBigraphUnitTests {
             assertFalse(resultIsJoin.isGround());
             assertEquals(2, resultIsJoin.getSites().size());
             assertEquals(0, Lists.newArrayList(resultIsJoin.getRoots()).get(0).getIndex());
-            assertNotNull(((PureBigraph) resultIsJoin).getModelPackage());
-            assertNotNull(((PureBigraph) resultIsJoin).getModel());
+            assertNotNull(((PureBigraph) resultIsJoin).getMetaModel());
+            assertNotNull(((PureBigraph) resultIsJoin).getInstanceModel());
 //            assertEquals(1, Lists.newArrayList(resultIsJoin.getSites()).get(1).getIndex());
         });
 
@@ -492,8 +492,8 @@ public class ElementaryBigraphUnitTests {
             assertTrue(isIdentity_1.getOuterBigraph().isPrime());
             assertEquals(0, isIdentity_1.getOuterBigraph().getInnerNames().size());
             assertEquals(0, isIdentity_1.getOuterBigraph().getOuterNames().size());
-            assertNotNull(((PureBigraph) isIdentity_1.getOuterBigraph()).getModelPackage());
-            assertNotNull(((PureBigraph) isIdentity_1.getOuterBigraph()).getModel());
+            assertNotNull(((PureBigraph) isIdentity_1.getOuterBigraph()).getMetaModel());
+            assertNotNull(((PureBigraph) isIdentity_1.getOuterBigraph()).getInstanceModel());
         });
 
         assertAll(() -> {
@@ -513,10 +513,10 @@ public class ElementaryBigraphUnitTests {
             assertEquals(outerBigraph1.getNodes().size(), outerBigraph2.getNodes().size());
             assertEquals(1, outerBigraph1.getRoots().size());
             assertEquals(3, outerBigraph1.getSites().size());
-            assertNotNull(((PureBigraph) outerBigraph1).getModelPackage());
-            assertNotNull(((PureBigraph) outerBigraph1).getModel());
-            assertNotNull(((PureBigraph) outerBigraph2).getModelPackage());
-            assertNotNull(((PureBigraph) outerBigraph2).getModel());
+            assertNotNull(((PureBigraph) outerBigraph1).getMetaModel());
+            assertNotNull(((PureBigraph) outerBigraph1).getInstanceModel());
+            assertNotNull(((PureBigraph) outerBigraph2).getMetaModel());
+            assertNotNull(((PureBigraph) outerBigraph2).getInstanceModel());
 
         });
     }
@@ -531,11 +531,11 @@ public class ElementaryBigraphUnitTests {
                 StringTypedName.of("x2"),
                 StringTypedName.of("x3")
         );
-        assertNotNull(substitution.getModelPackage());
+        assertNotNull(substitution.getMetaModel());
         Linkings linkings1 = pureLinkings(empty);
-        assertNotNull(substitution.getModel());
-        assertNotNull(x.getModelPackage());
-        assertNotNull(x.getModel());
+        assertNotNull(substitution.getInstanceModel());
+        assertNotNull(x.getMetaModel());
+        assertNotNull(x.getInstanceModel());
         assertFalse(x.isGround());
         assertFalse(substitution.isGround());
     }

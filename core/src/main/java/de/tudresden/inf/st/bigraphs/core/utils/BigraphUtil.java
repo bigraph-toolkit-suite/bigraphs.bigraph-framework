@@ -31,7 +31,7 @@ public class BigraphUtil {
         if (g.equals(f)) {
             try {
                 EcoreBigraph.Stub clone = new EcoreBigraph.Stub((EcoreBigraph) f).clone();
-                g = (Bigraph<S>) PureBigraphBuilder.create(g.getSignature(), clone.getModelPackage(), clone.getModel()).createBigraph();
+                g = (Bigraph<S>) PureBigraphBuilder.create(g.getSignature(), clone.getMetaModel(), clone.getInstanceModel()).createBigraph();
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException("Could not clone bigraph");
             }
@@ -42,7 +42,7 @@ public class BigraphUtil {
     public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> Bigraph<S> copy(Bigraph<S> f) {
         try {
             EcoreBigraph.Stub clone = new EcoreBigraph.Stub((EcoreBigraph) f).clone();
-            return (Bigraph<S>) PureBigraphBuilder.create(f.getSignature(), clone.getModelPackage(), clone.getModel()).createBigraph();
+            return (Bigraph<S>) PureBigraphBuilder.create(f.getSignature(), clone.getMetaModel(), clone.getInstanceModel()).createBigraph();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Could not clone bigraph");
         }
@@ -50,7 +50,7 @@ public class BigraphUtil {
 
     public static EcoreBigraph copy(EcoreBigraph bigraph) throws CloneNotSupportedException {
         EcoreBigraph.Stub clone = new EcoreBigraph.Stub(bigraph).clone();
-        return PureBigraphBuilder.create((AbstractEcoreSignature) bigraph.getSignature(), clone.getModelPackage(), clone.getModel())
+        return PureBigraphBuilder.create((AbstractEcoreSignature) bigraph.getSignature(), clone.getMetaModel(), clone.getInstanceModel())
                 .createBigraph();
     }
 

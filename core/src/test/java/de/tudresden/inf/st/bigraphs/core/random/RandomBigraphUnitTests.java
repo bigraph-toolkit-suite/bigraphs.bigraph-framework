@@ -105,7 +105,7 @@ public class RandomBigraphUnitTests {
         for (int i = 1000; i < 10000; i += 1000) {
 //        for (int i = 10; i < 11; i += 1) {
             PureBigraph generated = new PureBigraphGenerator(exampleSignature).generate(1, i, 0.5f, 0f, 1f);
-            MutableBuilder<DefaultDynamicSignature> mutableBuilder = new MutableBuilder<>(exampleSignature, generated.getModelPackage(), generated.getModel());
+            MutableBuilder<DefaultDynamicSignature> mutableBuilder = new MutableBuilder<>(exampleSignature, generated.getMetaModel(), generated.getInstanceModel());
             Integer o = (Integer) mutableBuilder.availableNodes().keySet()
                     .stream()
                     .map(x -> Integer.parseInt(((String) x).replace("v", "")))
@@ -122,7 +122,7 @@ public class RandomBigraphUnitTests {
             Assertions.assertNotNull(bigraph);
             long tclone1 = System.nanoTime();
             EcoreBigraph.Stub clone = new EcoreBigraph.Stub(bigraph).clone();
-            PureBigraph cloned = PureBigraphBuilder.create(exampleSignature, clone.getModelPackage(), clone.getModel()).createBigraph();
+            PureBigraph cloned = PureBigraphBuilder.create(exampleSignature, clone.getMetaModel(), clone.getInstanceModel()).createBigraph();
             long tclone2 = System.nanoTime();
             double secsClone = (tclone2 - tclone1) * 1.f / 1e+6;
             resultsTimeCloneOp.add(secsClone);

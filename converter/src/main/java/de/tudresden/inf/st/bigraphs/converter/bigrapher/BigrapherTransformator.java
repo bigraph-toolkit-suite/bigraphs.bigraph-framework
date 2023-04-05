@@ -180,7 +180,7 @@ public class BigrapherTransformator implements ReactiveSystemPrettyPrinter<PureB
     }
 
     private String getAgentVarName(PureBigraph bigraph) {
-        return bigraph.getModelPackage().getName().toLowerCase();
+        return bigraph.getMetaModel().getName().toLowerCase();
     }
 
     private String getPredicateVarName(ReactiveSystemPredicate<PureBigraph> eachPredicate) {
