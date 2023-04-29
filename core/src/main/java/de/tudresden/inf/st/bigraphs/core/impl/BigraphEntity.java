@@ -4,12 +4,16 @@ import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Wrapper-like classes for the dynamic EMF model of bigraphs. Allowing the user to handle the bigraph entities
@@ -198,6 +202,11 @@ public class BigraphEntity<C extends Control> {
         public void setName(String nodeName) {
             EAttribute nameAttr = EMFUtils.findAttribute(getInstance().eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             getInstance().eSet(nameAttr, nodeName);
+        }
+
+        public Map<String, Object> getAttributes() {
+            List<Map.Entry<String, Object>> list = (List<Map.Entry<String, Object>>) getInstance().eGet(BigraphBaseModelPackage.Literals.BNODE__ATTRIBUTES, true);
+            return list.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
 
         @Override
