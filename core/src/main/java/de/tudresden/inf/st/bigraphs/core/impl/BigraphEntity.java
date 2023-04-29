@@ -4,10 +4,11 @@ import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
 import de.tudresden.inf.st.bigraphs.core.Control;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -108,7 +109,8 @@ public class BigraphEntity<C extends Control> {
     public static <T extends BigraphEntity> T create(@NonNull EObject param, @NonNull Class<T> tClass) {
         try {
             return tClass.getDeclaredConstructor(EObject.class).newInstance(param);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
@@ -205,8 +207,25 @@ public class BigraphEntity<C extends Control> {
         }
 
         public Map<String, Object> getAttributes() {
-            List<Map.Entry<String, Object>> list = (List<Map.Entry<String, Object>>) getInstance().eGet(BigraphBaseModelPackage.Literals.BNODE__ATTRIBUTES, true);
+            EStructuralFeature attrFeature = getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES);
+            List<Map.Entry<String, Object>> list = (List<Map.Entry<String, Object>>) getInstance().eGet(attrFeature, true);
             return list.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+
+        public void setAttributes(Map<String, Object> attributes) {
+            EStructuralFeature attrFeature = getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES);
+            // create a list of map entries
+            List<EObject> collect = attributes.entrySet().stream().map(x -> {
+                // Prepare basic EMap.Entry object
+                EClass entityClass = (EClass) getInstance().eClass().getEPackage().getEClassifier(BigraphMetaModelConstants.CLASS_ESTRING2EJAVAOBJECT_MAP);
+                EObject eMapEntry = getInstance().eClass().getEPackage().getEFactoryInstance().create(entityClass);
+                EAttribute keyAttr = EMFUtils.findAttribute(eMapEntry.eClass(), BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES_KEY);
+                EAttribute valueAttr = EMFUtils.findAttribute(eMapEntry.eClass(), BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES_VALUE);
+                eMapEntry.eSet(keyAttr, x.getKey());
+                eMapEntry.eSet(valueAttr, x.getValue());
+                return eMapEntry;
+            }).collect(Collectors.toList());
+            getInstance().eSet(attrFeature, collect);
         }
 
         @Override

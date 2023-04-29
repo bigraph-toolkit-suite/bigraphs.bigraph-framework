@@ -33,6 +33,7 @@ public final class BigraphMetaModelConstants {
     public static final String CLASS_BIGRAPH = "BBigraph";
     public static final String CLASS_NAMEABLETYPE = "NameableType";
     public static final String CLASS_INDEXABLETYPE = "IndexableType";
+    public static final String CLASS_ESTRING2EJAVAOBJECT_MAP = "EStringToEJavaObjectMap";
 
     // References
     public final static String REFERENCE_CHILD = "bChild";
@@ -46,6 +47,8 @@ public final class BigraphMetaModelConstants {
     public final static String REFERENCE_BEDGES = "bEdges";
     public final static String REFERENCE_BROOTS = "bRoots";
     public final static String REFERENCE_BNODE_ATTRIBUTES = "attributes";
+    public final static String REFERENCE_BNODE_ATTRIBUTES_KEY = "key";
+    public final static String REFERENCE_BNODE_ATTRIBUTES_VALUE = "value";
 
     public interface SignaturePackage {
         String SORT_PREFIX = "Sort";
