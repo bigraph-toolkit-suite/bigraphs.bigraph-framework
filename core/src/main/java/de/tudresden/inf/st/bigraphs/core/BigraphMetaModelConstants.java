@@ -45,6 +45,7 @@ public final class BigraphMetaModelConstants {
     public final static String REFERENCE_BOUTERNAMES = "bOuterNames";
     public final static String REFERENCE_BEDGES = "bEdges";
     public final static String REFERENCE_BROOTS = "bRoots";
+    public final static String REFERENCE_NODE_ATTRIBUTES = "attributes";
 
     public interface SignaturePackage {
         String SORT_PREFIX = "Sort";
