@@ -329,23 +329,28 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         if ((loadedInstanceModel) == null) return;
         loadedInstanceModel.eContents().stream()
                 .forEach(each -> {
-                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT))) {
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT)) ||
+                            each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_ROOT).getName())) {
                         BigraphEntity.RootEntity rootEntity = BigraphEntity.create(each, BigraphEntity.RootEntity.class);
                         availableRoots.put(rootEntity.getIndex(), rootEntity);
                     }
-                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE))) {
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE)) ||
+                            each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE).getName())) {
                         BigraphEntity.Edge edge = BigraphEntity.create(each, BigraphEntity.Edge.class);
                         availableEdges.put(edge.getName(), edge);
                     }
-                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME))) {
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
+                            each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_OUTERNAME).getName())) {
                         BigraphEntity.OuterName edge = BigraphEntity.create(each, BigraphEntity.OuterName.class);
                         availableOuterNames.put(edge.getName(), edge);
                     }
-                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME))) {
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME)) ||
+                    each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME).getName())) {
                         BigraphEntity.InnerName edge = BigraphEntity.create(each, BigraphEntity.InnerName.class);
                         availableInnerNames.put(edge.getName(), edge);
                     }
-                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE))) {
+                    if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE)) ||
+                    each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE).getName())) {
                         BigraphEntity.SiteEntity edge = BigraphEntity.create(each, BigraphEntity.SiteEntity.class);
                         availableSites.put(edge.getIndex(), edge);
                     }
