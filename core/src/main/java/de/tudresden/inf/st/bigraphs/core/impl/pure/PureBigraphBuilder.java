@@ -10,6 +10,7 @@ import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.collections.api.block.function.primitive.IntToObjectFunction;
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EClassImpl;
@@ -137,7 +138,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         this.signature = signature;
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
         try {
-            this.loadSignatureAsTypeGraph(metaModelFilePath);
+            this.loadSignatureMetaModel(metaModelFilePath);
             List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(metaModel, instanceModelFilePath);
             this.loadedInstanceModel = eObjects.get(0);
             // acquire all entities from the instance model and map them to our maps
@@ -180,7 +181,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     protected PureBigraphBuilder(S signature, String metaModelFilePath) throws BigraphMetaModelLoadingFailedException {
         this.signature = signature;
         this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
-        this.loadSignatureAsTypeGraph(metaModelFilePath);
+        this.loadSignatureMetaModel(metaModelFilePath);
     }
 
     /**
@@ -345,12 +346,12 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
                         availableOuterNames.put(edge.getName(), edge);
                     }
                     if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME)) ||
-                    each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME).getName())) {
+                            each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_INNERNAME).getName())) {
                         BigraphEntity.InnerName edge = BigraphEntity.create(each, BigraphEntity.InnerName.class);
                         availableInnerNames.put(edge.getName(), edge);
                     }
                     if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE)) ||
-                    each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE).getName())) {
+                            each.eClass().getName().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE).getName())) {
                         BigraphEntity.SiteEntity edge = BigraphEntity.create(each, BigraphEntity.SiteEntity.class);
                         availableSites.put(edge.getIndex(), edge);
                     }
@@ -1206,21 +1207,19 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @throws InvalidArityOfControlException if the node cannot connect links anymore
      */
     protected void connectNodeToOuterName(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.OuterName outerName) throws TypeNotExistsException, InvalidArityOfControlException {
-        assertOuterNameExists(outerName); //check if outername exists
+        assertOuterNameExists(outerName); // Check if outername exists
 
         if (!isConnectedWithLink(node1, outerName.getInstance())) {
-            //check arity of control
+            // Check arity of control
             checkIfNodeIsConnectable(node1);
             EObject instance1 = node1.getInstance();
-            // connect procedure
-            //Create ports
+            // Connect procedure
+            // Create ports
             EList<EObject> bPorts = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
-//            EList<EObject> bPorts = (EList<EObject>) instance1.eGet(factory.getBigraphBaseModelPackage().getBNode_BPorts());
-            int index = bPorts.size(); // auf langer sicht andere methode finden, um den Index zu bekommen (unabhängig von der liste machen)
+            int index = bPorts.size(); // TODO auf langer sicht andere methode finden, um den nächsten Index zu bekommen
             EObject portObject = createPortWithIndex(index);
-            bPorts.add(portObject); //.getInstance());
+            bPorts.add(portObject);
             portObject.eSet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK), outerName.getInstance());
-//            portObject.setBLink(outerName);
         }
     }
 
@@ -1257,12 +1256,9 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     protected boolean isConnectedWithLink(BigraphEntity.NodeEntity<Control> place, @Nullable EObject theLink) {
         if ((theLink) == null) return false;
         EList<EObject> bPorts = (EList<EObject>) place.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
-//        EList<EObject> bPorts = (EList<EObject>) place.getInstance().eGet(factory.getBigraphBaseModelPackage().getBNode_BPorts());
-//        EList<BPort> bPorts = place.getBPorts();
         for (EObject bPort : bPorts) {
-            //get link from port to a possible outername
+            // Get link from port to a possible outername
             EObject link = (EObject) bPort.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK));
-//            EObject link = (EObject) bPort.eGet(factory.getBigraphBaseModelPackage().getBPoint_BLink());
             if (link.eClass().equals(theLink.eClass())) {
                 if (theLink.equals(link)) {
                     return true;
@@ -1275,18 +1271,14 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     private boolean areNodesConnected(BigraphEntity.NodeEntity<Control> place1, BigraphEntity.NodeEntity<Control> place2) {
         EClass eClassPort = availableEClasses.get(BigraphMetaModelConstants.CLASS_PORT);
         EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
-//        EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(factory.getBigraphBaseModelPackage().getBNode_BPorts());
         for (EObject bPort : bPorts) {
-            //get link from port to a possible outername
+            // Get link from port to a possible outername
             EObject link = (EObject) bPort.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK));
-//            EObject link = (EObject) bPort.eGet(factory.getBigraphBaseModelPackage().getBPoint_BLink());
             EList<EObject> bPortsRight = (EList<EObject>) link.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
-//            EList<EObject> bPortsRight = (EList<EObject>) link.eGet(factory.getBigraphBaseModelPackage().getBLink_BPoints());
             for (EObject eachRight : bPortsRight) {
                 if (eachRight.eClass().equals(eClassPort)) {
-                    //Get reference from this port to the node
+                    // Get reference from this port to the node
                     EObject node0 = (EObject) eachRight.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_NODE));
-//                    EObject node0 = (EObject) eachRight.eGet(factory.getBigraphBaseModelPackage().getBPort_BNode());
                     if (node0.equals(place2.getInstance())) return true;
                 }
             }
@@ -1358,25 +1350,26 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * Converts the current bigraph to a ground bigraph (i.e., no sites an no inner names).
      */
     public void makeGround() {
-        // first, deal with the sites
+        // First, deal with the sites
         Iterator<Map.Entry<Integer, BigraphEntity.SiteEntity>> iterator = availableSites.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, BigraphEntity.SiteEntity> next = iterator.next();
             BigraphEntity.SiteEntity eachSite = next.getValue();
 
-            // get parent
+            // Get parent
             EObject prnt = (EObject) eachSite.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PARENT));
             assert prnt != null;
-            // get all child
+            // Get all child
             EList<EObject> childs = (EList<EObject>) prnt.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_CHILD));
             boolean remove = childs.remove(eachSite.getInstance());
             assert remove;
             iterator.remove();
         }
 
-        // lastly, deal with the inner names
+        // Lastly, deal with the inner names
         closeAllInnerNames();
     }
+
 
 
     /**
@@ -1387,7 +1380,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         while (iterator.hasNext()) {
             Map.Entry<String, BigraphEntity.InnerName> next = iterator.next();
             try {
-                // the inner name is not yet removed in the following method
+                // The inner name is not yet removed in the following method
                 closeInnerName(next.getValue(), true);
                 iterator.remove();
             } catch (LinkTypeNotExistsException ignored) { /* technically, this shouldn't happen*/
@@ -1395,6 +1388,25 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             }
         }
         return this;
+    }
+
+    public void closeInnerNames(BigraphEntity.InnerName... innerName) throws LinkTypeNotExistsException {
+        Arrays.stream(innerName).forEach(x -> {
+            try {
+                closeInnerName(x, false);
+            } catch (LinkTypeNotExistsException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    /**
+     * Convenient method for {@link #closeInnerName(BigraphEntity.InnerName, boolean)}
+     */
+    public void closeInnerName(String innerName, boolean keepIdleName) throws TypeNotExistsException {
+        if (availableInnerNames.containsKey(innerName)) {
+            this.closeInnerName(availableInnerNames.get(innerName), keepIdleName);
+        }
     }
 
     /**
@@ -1406,16 +1418,6 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      */
     public void closeInnerName(BigraphEntity.InnerName innerName) throws TypeNotExistsException {
         closeInnerName(innerName, false);
-    }
-
-    public void closeInnerNames(BigraphEntity.InnerName... innerName) throws LinkTypeNotExistsException {
-        Arrays.stream(innerName).forEach(x -> {
-            try {
-                closeInnerName(x, false);
-            } catch (LinkTypeNotExistsException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     public void closeInnerName(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException {
@@ -1456,6 +1458,13 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         return this;
     }
 
+    private void assertOuterNameExists(BigraphEntity.OuterName outername) throws OuterNameNotExistsException {
+        if (availableOuterNames.get(outername.getName()) == null ||
+                !availableOuterNames.get(outername.getName()).equals(outername)) {
+            throw new OuterNameNotExistsException();
+        }
+    }
+
     /**
      * Closes the outer name by removing all connections and the outer name itself. This method doesn't allow
      * idle names.
@@ -1468,10 +1477,13 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         this.closeOuterName(outerName, false);
     }
 
-    private void assertOuterNameExists(BigraphEntity.OuterName outername) throws OuterNameNotExistsException {
-        if (availableOuterNames.get(outername.getName()) == null ||
-                !availableOuterNames.get(outername.getName()).equals(outername)) {
-            throw new OuterNameNotExistsException();
+
+    /**
+     * Convenient method for {@link #closeOuterName(BigraphEntity.OuterName, boolean)}
+     */
+    public void closeOuterName(String outerName, boolean keepIdleName) throws TypeNotExistsException {
+        if (availableOuterNames.containsKey(outerName)) {
+            this.closeOuterName(availableOuterNames.get(outerName), keepIdleName);
         }
     }
 
@@ -1485,7 +1497,6 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      */
     public void closeOuterName(BigraphEntity.OuterName outerName, boolean keepIdleName) throws TypeNotExistsException {
         assertOuterNameExists(outerName);
-
         EList<EObject> bPoints = (EList<EObject>) outerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
         for (int i = bPoints.size() - 1; i >= 0; i--) {
             // the following is not really necessary
@@ -1515,7 +1526,14 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         }
     }
 
-    public void loadSignatureAsTypeGraph(String metaModelFilePath) {
+    /**
+     * Does not re-create control nodes of type {@link EClass} because it directly uses the bigraphical Ecore metamodel.
+     * May throw a runtime exception.
+     *
+     * @param metaModelFilePath the filepath to the bigraphical metamodel containing signature information.
+     * @throws BigraphMetaModelLoadingFailedException if metamodel could not be loaded
+     */
+    public void loadSignatureMetaModel(String metaModelFilePath) {
         try {
             metaModel = BigraphFileModelManagement.Load.bigraphMetaModel(metaModelFilePath);
         } catch (Exception e) {
@@ -1537,14 +1555,11 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
                     }
                     controlMap.put(s, entityClass);
                 });
-//        Set<EReference> allrefs = new HashSet<>();
         EList<EObject> eObjects = metaModel.eContents();
         for (EObject each : eObjects) {
             availableEClasses.put(((EClassImpl) each).getName(), (EClassImpl) each);
-//            allrefs.addAll(EMFUtils.findAllReferences((EClass) each));
             EMFUtils.findAllReferences((EClass) each).forEach(x -> availableReferences.putIfAbsent(x.getName(), x));
         }
-//        allrefs.forEach(x -> availableReferences.put(x.getName(), x));
     }
 
     private void bigraphicalSignatureAsTypeGraph(EMetaModelData modelData) throws BigraphMetaModelLoadingFailedException {
