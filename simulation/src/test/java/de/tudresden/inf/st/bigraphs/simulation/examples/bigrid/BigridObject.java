@@ -116,7 +116,7 @@ public class BigridObject {
             discreteParameterList.add(id1);
         }
         InstantiationMap map = InstantiationMap.create(numOfCols * numOfRows).map(0, indexRoot).map(indexRoot, 0);
-        Bigraph bigraph = BigraphUtil.performInstantiation(discreteParameterList, map);
+        Bigraph bigraph = BigraphUtil.reorderBigraphs(discreteParameterList, map);
 //        eb(bigraph, "xxxbigraphxxx");
         return bigraph;
 //        %-----------------
@@ -661,7 +661,7 @@ public class BigridObject {
             discreteParameterList.add(id1);
         }
         InstantiationMap map = InstantiationMap.create(numOfCols * numOfRows).map(0, indexRoot).map(indexRoot, 0);
-        Bigraph bigraph = BigraphUtil.performInstantiation(discreteParameterList, map);
+        Bigraph bigraph = BigraphUtil.reorderBigraphs(discreteParameterList, map);
         return bigraph;
     }
 
@@ -692,7 +692,7 @@ public class BigridObject {
             discreteParameterList.add(id1);
         }
         InstantiationMap map = InstantiationMap.create(numOfCols * numOfRows).map(0, indexRoot).map(indexRoot, 0);
-        Bigraph bigraph = BigraphUtil.performInstantiation(discreteParameterList, map);
+        Bigraph bigraph = BigraphUtil.reorderBigraphs(discreteParameterList, map);
         return bigraph;
     }
 }

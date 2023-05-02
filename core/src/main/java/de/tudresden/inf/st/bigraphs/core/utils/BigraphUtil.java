@@ -5,11 +5,13 @@ import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
 import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
 import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.ArrayList;
@@ -54,6 +56,14 @@ public class BigraphUtil {
                 .createBigraph();
     }
 
+    public static PureBigraph toBigraph(EcoreBigraph.Stub<DefaultDynamicSignature> stub, DefaultDynamicSignature signature) {
+        return PureBigraphBuilder.create(signature.getInstanceModel(), stub.getMetaModel(), stub.getInstanceModel()).createBigraph();
+    }
+
+    public static PureBigraph toBigraph(EPackage metaModel, EObject instanceModel, DefaultDynamicSignature signature) {
+        return PureBigraphBuilder.create(signature.getInstanceModel(), metaModel, instanceModel).createBigraph();
+    }
+
     public static void setParentOfNode(final BigraphEntity<?> node, final BigraphEntity<?> parent) {
         BigraphUtil.setParentOfNode(node.getInstance(), parent.getInstance());
     }
@@ -75,7 +85,20 @@ public class BigraphUtil {
         return false;
     }
 
-    public static Bigraph performInstantiation(List<Bigraph> discreteBigraphs, InstantiationMap instantiationMap) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+    /**
+     * Each bigraph represents a "parameter" in a list.
+     * The result of this method is the product of all parameters but each parameter is getting a new root index due to the
+     * instantiation map.
+     * The instantiation map maps the position of the initial bigraphs to a new one in the list.
+     * The resulting bigraph has as many roots as parameters in the list.
+     *
+     * @param discreteBigraphs list of bigraphs
+     * @param instantiationMap an instantiation map
+     * @return a bigraph containing all "parameters" in a new order. It has as many roots as the list size.
+     * @throws IncompatibleSignatureException
+     * @throws IncompatibleInterfaceException
+     */
+    public static Bigraph reorderBigraphs(List<Bigraph> discreteBigraphs, InstantiationMap instantiationMap) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Bigraph d_Params;
         List<Bigraph> parameters = new ArrayList<>(discreteBigraphs);
         if (parameters.size() >= 2) {
@@ -91,7 +114,6 @@ public class BigraphUtil {
         }
         return d_Params;
     }
-    // somewhat necessary, if bigrids are going to be used later in combination with other models
 
     /**
      * This method merges the two given signatures {@code left} and {@code right}.
