@@ -58,8 +58,8 @@ public final class BigraphFactory {
         if ((Registry.INSTANCE_SIG.getEPackage(signatureObject)) == null) {
             Registry.INSTANCE_SIG.put(signatureObject, signatureObject.getMetaModel());
         }
-        EPackage ePackageMetaModel = signatureObject.getMetaModel();
         if (Objects.nonNull(metaModelData)) {
+            EPackage ePackageMetaModel = signatureObject.getMetaModel();
             ePackageMetaModel.setNsPrefix(metaModelData.getNsPrefix());
             ePackageMetaModel.setNsURI(metaModelData.getNsUri());
             ePackageMetaModel.setName(metaModelData.getName());
@@ -69,6 +69,7 @@ public final class BigraphFactory {
 
     /**
      * Registers a signature metamodel.
+     *
      * @param signatureInstanceModel the Ecore signature instance model
      * @param <S>                    the type of the signature
      * @return the signature object (freshly created, or the one already present in the internal registry)
