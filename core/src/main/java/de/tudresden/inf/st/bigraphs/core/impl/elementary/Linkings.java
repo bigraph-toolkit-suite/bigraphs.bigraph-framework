@@ -68,6 +68,11 @@ public class Linkings<S extends AbstractEcoreSignature<? extends Control<?, ?>>>
         return new Identity(name);
     }
 
+    public Linkings<S>.Identity identity(String name) {
+        mutableBuilder.reset();
+        return new Identity(StringTypedName.of(name));
+    }
+
     /**
      * Creates an identity link graph from a given name set. Is also a renaming - a bijective substitution.
      *
@@ -77,6 +82,11 @@ public class Linkings<S extends AbstractEcoreSignature<? extends Control<?, ?>>>
     public Linkings<S>.Identity identity(NamedType<?>... nameSet) {
         mutableBuilder.reset();
         return new Identity(nameSet);
+    }
+
+    public Linkings<S>.Identity identity(String... nameSet) {
+        mutableBuilder.reset();
+        return new Identity(Arrays.stream(nameSet).map(StringTypedName::of).toArray(size -> new StringTypedName[nameSet.length]));
     }
 
     /**
