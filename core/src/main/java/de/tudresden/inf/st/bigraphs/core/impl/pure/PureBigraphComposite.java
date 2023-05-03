@@ -175,6 +175,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         EObject left = ((PureBigraph) copy).getInstanceModel();
         EObject right = ((PureBigraph) copyOuter).getInstanceModel();
 
+
         // Routine: Add roots side-by-side
         EStructuralFeature rightRootsFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
         EStructuralFeature leftRootsFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
@@ -199,12 +200,84 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         }
 
         // Collect outer names
-        EStructuralFeature leftOuterNameFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
-        EStructuralFeature rightOuterNameFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        EStructuralFeature leftOuterNamesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        EStructuralFeature rightOuterNamesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        EStructuralFeature leftInnerNameFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
+        EStructuralFeature rightInnerNameFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
+        EStructuralFeature leftEdgesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+        EStructuralFeature rightEdgesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
+
+        // First, collect connectedness between inner and outer names. This is later needed to satisfy (!Condition!) below
+        MutableMap<String, String> innerOuterLinkage = Maps.mutable.empty();
+        MutableMap<EObject, Boolean> edgesLinkToInners = Maps.mutable.empty();
+        MutableMap<EObject, List<String>> portsToInnerLabels = Maps.mutable.empty();
+        if (Objects.nonNull(left.eGet(leftOuterNamesFeature)) && Objects.nonNull(left.eGet(rightOuterNamesFeature))) {
+            EList<EObject> outernamesL = (EList<EObject>) left.eGet(leftOuterNamesFeature);
+            EList<EObject> outernamesR = (EList<EObject>) right.eGet(rightOuterNamesFeature);
+            List<EObject> all = new ArrayList<>();
+            all.addAll(outernamesL);
+            all.addAll(outernamesR);
+            for (EObject eachOuterName : all) {
+                EAttribute nameAttr = EMFUtils.findAttribute(eachOuterName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                String name = (String) eachOuterName.eGet(nameAttr);
+                EStructuralFeature bPoints = eachOuterName.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+                if (bPoints != null) {
+                    EList<EObject> points = (EList<EObject>) eachOuterName.eGet(bPoints);
+                    for (int i = points.size() - 1; i >= 0; i--) {
+                        EObject eachPoint = points.get(i);
+                        if (isBInnerName(eachPoint)) {
+                            EAttribute nameAttr2 = EMFUtils.findAttribute(eachPoint.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
+                            String name2 = (String) eachPoint.eGet(nameAttr2);
+                            innerOuterLinkage.put(name2, name);
+                        }
+                    }
+                }
+            }
+        }
+        // Also collect information which edge (if exists) is connected to a previously found inner name
+        if (Objects.nonNull(left.eGet(leftEdgesFeature)) && Objects.nonNull(left.eGet(rightEdgesFeature))) {
+            EList<EObject> edgesL = (EList<EObject>) left.eGet(leftEdgesFeature);
+            EList<EObject> edgesR = (EList<EObject>) right.eGet(rightEdgesFeature);
+            List<EObject> all = new ArrayList<>();
+            all.addAll(edgesL);
+            all.addAll(edgesR);
+            MutableMap<EObject, List<String>> edgesToInners = Maps.mutable.empty();
+            for (int i = all.size() - 1; i >= 0; i--) {
+                EObject edges = all.get(i);
+                if (isBEdge(edges)) {
+                    EStructuralFeature bPoint = edges.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+                    EList<EObject> allPoints = (EList<EObject>) edges.eGet(bPoint);
+                    for (EObject eachPoint2 : allPoints) {
+                        if (isBInnerName(eachPoint2)) {
+                            String innerLabel = (String) eachPoint2.eGet(EMFUtils.findAttribute(eachPoint2.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME));
+                            edgesLinkToInners.put(edges, innerOuterLinkage.containsKey(innerLabel));
+                            if (edgesToInners.get(edges) == null) {
+                                edgesToInners.put(edges, new ArrayList<>());
+                            }
+                            edgesToInners.get(edges).add(innerLabel);
+                        }
+                    }
+                }
+            }
+            for (EObject edges : all) {
+                EStructuralFeature bPoint = edges.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+                EList<EObject> allPoints = (EList<EObject>) edges.eGet(bPoint);
+                for (EObject eachPoint2 : allPoints) {
+                    if (isBPort(eachPoint2) && edgesLinkToInners.get(edges)) {
+                        if (portsToInnerLabels.get(eachPoint2) == null) {
+                            portsToInnerLabels.put(eachPoint2, new ArrayList<>());
+                        }
+                        portsToInnerLabels.get(eachPoint2).addAll(edgesToInners.get(edges));
+                    }
+                }
+            }
+        }
+
+
         MutableMap<String, EObject> outernamesOuterIndexLeft = Maps.mutable.empty(); //new HashMap<>();
-//        MutableMap<String, EObject> outernamesOuterIndexRight = Maps.mutable.empty(); //new HashMap<>();
-        if (Objects.nonNull(left.eGet(leftOuterNameFeature))) {
-            EList<EObject> outernames = (EList<EObject>) left.eGet(leftOuterNameFeature);
+        // MutableMap<String, EObject> outernamesOuterIndexRight = Maps.mutable.empty(); //new HashMap<>();
+        if (Objects.nonNull(left.eGet(leftOuterNamesFeature))) {
+            EList<EObject> outernames = (EList<EObject>) left.eGet(leftOuterNamesFeature);
             for (EObject eachOuterName : outernames) {
                 EAttribute nameAttr = EMFUtils.findAttribute(eachOuterName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                 outernamesOuterIndexLeft.put((String) eachOuterName.eGet(nameAttr), eachOuterName);
@@ -212,10 +285,6 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         }
 
         // Adapter for relinking and renaming
-        EStructuralFeature leftEdgesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
-        EStructuralFeature rightEdgesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
-        EStructuralFeature leftInnerNameFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
-        EStructuralFeature rightInnerNameFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
         EContentAdapter adapter2 = new EContentAdapter() {
             public void notifyChanged(Notification notification) {
                 // Edges
@@ -233,7 +302,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                 }
 
                 // Outer names
-                if (notification.getFeature() == rightOuterNameFeature) {
+                if (notification.getFeature() == rightOuterNamesFeature) {
                     MutableList<EObject> outernames = Lists.mutable.empty(); //new ArrayList<>();
                     if (notification.getNewValue() instanceof Collection) {
                         outernames.addAll((Collection) notification.getNewValue());
@@ -283,8 +352,8 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         ((EList<EObject>) left.eGet(leftEdgesFeature)).addAll((EList<EObject>) right.eGet(rightEdgesFeature));
 
         // add all outer names
-        EStructuralFeature leftOuterNamesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
-        EStructuralFeature rightOuterNamesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+//        EStructuralFeature leftOuterNamesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+//        EStructuralFeature rightOuterNamesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
         List<EObject> collect = ((EList<EObject>) right.eGet(rightOuterNamesFeature)).stream().filter(x -> {
             EAttribute nameAttr = EMFUtils.findAttribute(x.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             return outernamesOuterIndexLeft.get(x.eGet(nameAttr)) == null;
@@ -306,8 +375,8 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         }
 
         // collect right outer names
-        if (Objects.nonNull(right.eGet(rightOuterNameFeature))) {
-            EList<EObject> outernames = (EList<EObject>) right.eGet(rightOuterNameFeature);
+        if (Objects.nonNull(right.eGet(rightOuterNamesFeature))) {
+            EList<EObject> outernames = (EList<EObject>) right.eGet(rightOuterNamesFeature);
             for (EObject eachOuterName : outernames) {
                 EAttribute nameAttr = EMFUtils.findAttribute(eachOuterName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                 if (outernamesOuterIndexLeft.containsKey((String) eachOuterName.eGet(nameAttr))) {
@@ -330,6 +399,49 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         left.eAdapters().clear();
         right.eAdapters().clear();
 
+        // (!Condition!) "Condition that link_0 ∩ link_1 is a function amounts to requiring that,
+        // for every inner name x ∈ X_0 ∩ X_1, there exists an outer name y ∈ Y_0 ∩ Y_1 such that
+        // link_0(x) = link_1(x) = y"
+        // if for left one port is connected to an inner name, and for right, an inner name is connected to an outer name
+        // and left has also an idle outer name with the same name as right
+        // then the edge is discarded from left and linked to the same outer name of right
+        for (Map.Entry<String, String> each : innerOuterLinkage.entrySet()) {
+            String innerLabel = each.getKey();
+            String outerLabel = each.getValue();
+            Optional<EObject> first = ((EList<?>) left.eGet(leftInnerNameFeature)).stream().map(x -> (EObject) x)
+                    .filter(x -> {
+                        String name = (String) x.eGet(EMFUtils.findAttribute(x.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME));
+                        return name.equals(innerLabel);
+                    }).findFirst();
+            Optional<EObject> second = ((EList<?>) left.eGet(leftOuterNamesFeature)).stream().map(x -> (EObject) x)
+                    .filter(x -> {
+                        String name = (String) x.eGet(EMFUtils.findAttribute(x.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME));
+                        return name.equals(outerLabel);
+                    }).findFirst();
+            if (first.isPresent() && second.isPresent()) {
+                EStructuralFeature bLink = first.get().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                for (EObject eachPort : portsToInnerLabels.keySet()) {
+                    if (portsToInnerLabels.get(eachPort).contains(innerLabel)) {
+                        EStructuralFeature bLinkPort = eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
+                        eachPort.eSet(bLinkPort, second.get());
+                    }
+                }
+                first.get().eSet(bLink, second.get());
+            }
+        }
+
+        // remove idle edges (due to (!Condition!)) that may appear when mapping ports to outer names that were previously connected to an edge that
+        // was connected to an inner name that was connected to an outer name.
+        EList<EObject> edges = (EList<EObject>) left.eGet(leftEdgesFeature);
+        for (int i = edges.size() - 1; i >= 0; i--) {
+            EObject each = edges.get(i);
+            final EStructuralFeature pointsRef = each.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
+            if (Objects.nonNull(pointsRef) && ((EList<EObject>) each.eGet(pointsRef)).size() == 0) {
+                EcoreUtil.remove(each);
+            }
+        }
+
+
 //        Stream.concat(copy.getSites().stream().sorted(), copyOuter.getSites().stream().sorted()).forEachOrdered(s -> {
 //            EObject site = s.getInstance();
 //            final EStructuralFeature prnt = site.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
@@ -351,7 +463,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             }
         });
         List<BigraphEntity.SiteEntity> sTemp = new ArrayList<>(copyOuter.getSites());
-        for(int i = sTemp.size() - 1; i >= 0; i--) {
+        for (int i = sTemp.size() - 1; i >= 0; i--) {
             BigraphEntity.SiteEntity s = sTemp.get(i);
             EObject site = s.getInstance();
             final EStructuralFeature prnt = site.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);

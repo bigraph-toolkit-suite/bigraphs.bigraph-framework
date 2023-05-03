@@ -111,6 +111,23 @@ public class BigraphCompositionUnitTests {
     }
 
     @Test
+    void parallelproduct_test() throws Exception {
+        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createExampleSignature());
+        PureBigraph bigraph = b.createRoot().addChild("Computer").linkToInner("eref").createBigraph();
+        Linkings<DefaultDynamicSignature>.Identity identity = pureLinkings(createExampleSignature()).identity("eref");
+
+        Bigraph<DefaultDynamicSignature> result = ops(bigraph).parallelProduct(identity).getOuterBigraph();
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) result, System.out);
+
+
+        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createExampleSignature());
+        PureBigraph bigraph2 = b2.createRoot().addChild("Computer").linkToInner("eref").createBigraph();
+        Linkings<DefaultDynamicSignature>.Substitution substitution = pureLinkings(createExampleSignature()).substitution("eref", "eref", "a");
+        Bigraph<DefaultDynamicSignature> result2 = ops(bigraph2).parallelProduct(substitution).getOuterBigraph();
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) result2, System.out);
+    }
+
+    @Test
     void bigraphNesting_test_withoutLinks() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         EPackage exampleMetaModel = getExampleMetaModel();
         PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createExampleSignature());
