@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
 import static de.tudresden.inf.st.bigraphs.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
@@ -72,7 +73,7 @@ public class ConcurringProcessesExample {
         PureBigraph agent3 = createAgentWorking();
         BigraphGraphvizExporter.toPNG(agent3,
                 true,
-                new File(TARGET_DUMP_PATH + "partial/agent.png")
+                new File(TARGET_DUMP_PATH + "partial/agent")
         );
 
         ReactionRule<PureBigraph> rule_resourceRegistrationPhase = createRule_ResourceRegistrationPhase();
@@ -80,7 +81,7 @@ public class ConcurringProcessesExample {
         ReactionRule<PureBigraph> rule_resourceDeregistrationPhase = createRule_ResourceDeregistrationPhase();
         BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getRedex(),
                 true,
-                new File(TARGET_DUMP_PATH + "partial/redex.png")
+                new File(TARGET_DUMP_PATH + "partial/redex")
         );
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
@@ -101,7 +102,7 @@ public class ConcurringProcessesExample {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setReactionGraphFile(new File(TARGET_DUMP_PATH, "partial/transition_graph_agent-2.png"))
+                        .setReactionGraphFile(new File(TARGET_DUMP_PATH, "partial/transition_graph_agent-2"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "partial/states/"))
                         .setPrintCanonicalStateLabel(true)
                         .create()
@@ -112,7 +113,7 @@ public class ConcurringProcessesExample {
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.execute();
-        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "partial/transition_graph_agent-2.png")));
+        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "partial/transition_graph_agent-2")));
     }
 
     @Test
@@ -125,31 +126,31 @@ public class ConcurringProcessesExample {
 //        BigraphFileModelManagement.exportAsInstanceModel(agent, new FileOutputStream(new File(TARGET_DUMP_PATH + "agent.xmi")));
         BigraphGraphvizExporter.toPNG(agent,
                 true,
-                new File(TARGET_DUMP_PATH + "agent.png")
+                new File(TARGET_DUMP_PATH + "agent")
         );
         BigraphGraphvizExporter.toPNG(rule_resourceRegistrationPhase.getRedex(),
                 true,
-                new File(TARGET_DUMP_PATH + "rule_0_redex.png")
+                new File(TARGET_DUMP_PATH + "rule_0_redex")
         );
         BigraphGraphvizExporter.toPNG(rule_resourceRegistrationPhase.getReactum(),
                 true,
-                new File(TARGET_DUMP_PATH + "rule_0_reactum.png")
+                new File(TARGET_DUMP_PATH + "rule_0_reactum")
         );
         BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getRedex(),
                 true,
-                new File(TARGET_DUMP_PATH + "rule_1_redex.png")
+                new File(TARGET_DUMP_PATH + "rule_1_redex")
         );
         BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getReactum(),
                 true,
-                new File(TARGET_DUMP_PATH + "rule_1_reactum.png")
+                new File(TARGET_DUMP_PATH + "rule_1_reactum")
         );
         BigraphGraphvizExporter.toPNG(rule_resourceDeregistrationPhase.getRedex(),
                 true,
-                new File(TARGET_DUMP_PATH + "rule_2_redex.png")
+                new File(TARGET_DUMP_PATH + "rule_2_redex")
         );
         BigraphGraphvizExporter.toPNG(rule_resourceDeregistrationPhase.getReactum(),
                 true,
-                new File(TARGET_DUMP_PATH + "rule_2_reactum.png")
+                new File(TARGET_DUMP_PATH + "rule_2_reactum")
         );
 
 
@@ -205,6 +206,12 @@ public class ConcurringProcessesExample {
                 .addChild("Resource").down().addChild("Token")
         ;
         PureBigraph bigraph = builder.createBigraph();
+        bigraph.getNodes().forEach(x -> {
+            Map<String, Object> attributes = x.getAttributes();
+            attributes.put("_id", x.getName());
+            attributes.put("_eobject", x.getInstance());
+            x.setAttributes(attributes);
+        });
         return bigraph;
     }
 
@@ -242,6 +249,18 @@ public class ConcurringProcessesExample {
 
         PureBigraph redex = builderRedex.createBigraph();
         PureBigraph reactum = builderReactum.createBigraph();
+        redex.getNodes().forEach(x -> {
+            Map<String, Object> attributes = x.getAttributes();
+            attributes.put("_id", x.getName());
+            attributes.put("_eobject", x.getInstance());
+            x.setAttributes(attributes);
+        });
+        reactum.getNodes().forEach(x -> {
+            Map<String, Object> attributes = x.getAttributes();
+            attributes.put("_id", x.getName());
+            attributes.put("_eobject", x.getInstance());
+            x.setAttributes(attributes);
+        });
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }

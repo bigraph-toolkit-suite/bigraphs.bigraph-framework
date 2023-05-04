@@ -92,7 +92,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             }
             bb.outerCompose(lambda, true);
             Bigraph inreact = instantiateReactum(jLibMatchResult, rule);
-            inreact = Bigraph.juxtapose(inreact, jLibMatchResult.getRedexId());
+            inreact = Bigraph.juxtapose(inreact, jLibMatchResult.getRedexId(), true);
             bb.outerCompose(inreact, true);
             bb.outerCompose(jLibMatchResult.getContext(), true);
             Bigraph result = bb.makeBigraph(true);
@@ -131,7 +131,6 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
             JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
             PureBigraph decodedResult = decoder.decode(result, agent.getSignature());
-//            System.out.println(result.toString());
 //            BigraphFileModelManagement.exportAsInstanceModel(decodedResult, System.out);
             return decodedResult;
         } catch (Exception e) {
@@ -212,7 +211,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             if (t.c instanceof EditableNode) {
                 EditableNode n1 = (EditableNode) t.c;
                 EditableNode n2 = n1.replicate();
-//                n2.setName(n1.getName());
+                n2.setName(n1.getName());
                 instantiateReactumNode(n1, n2, match);
                 // set m's parent (which added adds m as its child)
                 n2.setParent(t.p);
@@ -229,6 +228,9 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                     }
                     n2.getPort(i).setHandle(h2);
                 }
+
+//                Collection<EditableNode> nodes = (Collection<EditableNode>) big.getNodes();
+//                nodes.add(n2);
                 // enqueue children for visit
                 for (EditableChild c : n1.getEditableChildren()) {
                     q.add(new Pair(n2, c));
@@ -256,5 +258,6 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
      */
     protected void instantiateReactumNode(Node original, Node instance,
                                           Match match) {
+        System.out.println("");
     }
 }
