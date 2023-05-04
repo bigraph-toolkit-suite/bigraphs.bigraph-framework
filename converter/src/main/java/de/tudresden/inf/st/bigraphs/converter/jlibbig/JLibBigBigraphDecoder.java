@@ -3,12 +3,14 @@ package de.tudresden.inf.st.bigraphs.converter.jlibbig;
 import de.tudresden.inf.st.bigraphs.converter.BigraphObjectDecoder;
 import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.MutableBuilder;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import it.uniud.mads.jlibbig.core.attachedProperties.Property;
+import it.uniud.mads.jlibbig.core.attachedProperties.PropertyTarget;
 import it.uniud.mads.jlibbig.core.std.*;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -194,44 +196,27 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
         return null;
     }
 
-//    private void traverseNode(it.uniud.mads.jlibbig.core.PlaceEntity parentNode, BigraphEntity currentParent, Stack<it.uniud.mads.jlibbig.core.PlaceEntity> s) {
-//        BigraphEntity nextParent = currentParent;
-//        if (parentNode.isNode()) {
-//            createNode((Node) parentNode, currentParent);
-//            nextParent = newNodes.get(((Node) parentNode).getEditable().getName());
-//            jLibBigNodes.putIfAbsent(((Node) parentNode).getEditable().getName(), (Node) parentNode);
-//        } else if (parentNode.isSite()) {
-//            createSite((Site) parentNode, currentParent);
-//        }
-//        // Does it have child nodes? If so, traverse nodes further recursively
-//        if (parentNode.isParent()) {
-//            Collection<Child> childNodes = (Collection<Child>) ((Parent) parentNode).getChildren();
-//            for (Child n : childNodes) {
-//                if (n.isNode()) {
-//                    jLibBigNodes.putIfAbsent(((Node) n).getEditable().getName(), (Node) n);
-//                    createNode((Node) n, nextParent);
-//                    nextParent = newNodes.get(((Node) n).getEditable().getName());
-//                    if (nextParent != null) {
-//                        Collection<? extends Child> nextChildren = ((Parent) n).getChildren();
-//                        for (Child nextChild : nextChildren) {
-//                            traverseNode(nextChild, nextParent);
-//                        }
-//                    }
-//                } else if (n.isSite()) {
-//                    createSite((Site) n, nextParent);
-//                }
-//            }
-//        }
-//    }
-
     private BigraphEntity.NodeEntity createNode(Node n, BigraphEntity parent) {
         String control = n.getControl().getName();
         String nodeId = n.getEditable().getName();
         DefaultDynamicControl controlByName = signature.getControlByName(control);
-
+        // Check if node has an ID property - use that instead
+        if(n.getProperty("_id") != null) {
+            nodeId = String.valueOf(n.getProperty("_id").get());
+        }
         BigraphEntity.NodeEntity newNode = (BigraphEntity.NodeEntity) builder.createNewNode(controlByName, nodeId);
+        if (n instanceof PropertyTarget) {
+            Map<String, Object> attributes = ((BigraphEntity.NodeEntity<?>) newNode).getAttributes();
+            for(Property<?> each: n.getProperties()) {
+                if(each.getName().equals("Owner")) continue;
+                attributes.put(each.getName(), each.get());
+            }
+            newNode.setAttributes(attributes);
+        }
         newNodes.put(nodeId, newNode);
         builder.setParentOfNode(newNode, parent);
+
+
         return newNode;
     }
 

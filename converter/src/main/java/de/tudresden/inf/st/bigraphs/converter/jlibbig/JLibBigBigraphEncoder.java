@@ -5,9 +5,11 @@ import de.tudresden.inf.st.bigraphs.converter.BigraphObjectEncoder;
 import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
 import de.tudresden.inf.st.bigraphs.core.ControlStatus;
 import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
 import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import it.uniud.mads.jlibbig.core.attachedProperties.PropertyTarget;
+import it.uniud.mads.jlibbig.core.attachedProperties.SimpleProperty;
 import it.uniud.mads.jlibbig.core.std.*;
 import org.eclipse.collections.api.bimap.MutableBiMap;
 import org.eclipse.collections.api.list.MutableList;
@@ -16,10 +18,7 @@ import org.eclipse.collections.impl.factory.BiMaps;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.SortedSets;
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -180,6 +179,27 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
 
                             if (BigraphEntityType.isNode(x)) {
                                 Node node = builder.addNode(((BigraphEntity.NodeEntity) x).getControl().getNamedType().stringValue(), (Parent) jParent);
+//                                System.out.println(((BigraphEntity.NodeEntity<?>) x).getAttributes());
+                                if (node instanceof PropertyTarget) {
+                                    if (((BigraphEntity.NodeEntity<?>) x).getAttributes() != null) {
+                                        for (Map.Entry<String, Object> each : ((BigraphEntity.NodeEntity<?>) x).getAttributes().entrySet()) {
+                                            try {
+                                                if(each.getKey().equals("Owner")) continue;
+                                                SimpleProperty<Object> name = new SimpleProperty<>(each.getKey(), true, Collections.emptyList());
+                                                name.set(each.getValue());
+                                                node.attachProperty(name);
+                                            } catch (IllegalArgumentException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        if(((BigraphEntity.NodeEntity<?>) x).getAttributes().get("_id") instanceof String) {
+                                            if(node instanceof EditableNode) {
+                                                ((EditableNode)node).setName(String.valueOf(((BigraphEntity.NodeEntity<?>) x).getAttributes().get("_id")));
+                                            }
+                                        }
+
+                                    }
+                                }
                                 node.getEditable().setName(((BigraphEntity.NodeEntity<?>) x).getName());
                                 jlib2bbigraphNodes.putIfAbsent(node, x);
                                 jLibBigNodes.put(node.getEditable().getName(), node);
@@ -215,9 +235,9 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
         MutableList<Control> ctrlList = Lists.mutable.empty();
         for (DefaultDynamicControl eachControl : sig.getControls()) {
             ctrlList.add(createControl(
-                    eachControl.getNamedType().stringValue(),
-                    eachControl.getArity().getValue(),
-                    ControlStatus.isActive(eachControl)
+                            eachControl.getNamedType().stringValue(),
+                            eachControl.getArity().getValue(),
+                            ControlStatus.isActive(eachControl)
                     )
             );
         }
