@@ -1,8 +1,11 @@
 package de.tudresden.inf.st.bigraphs.core;
 
+import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
 import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage;
+import org.eclipse.collections.api.factory.Maps;
+import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -23,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
@@ -237,11 +241,37 @@ public class BigraphFileModelManagement {
          * Exports the Ecore-based instance model of a bigraph.
          */
         public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
+            MutableMap<Object, Object> of = Maps.mutable.of();
+            if(bigraph instanceof PureBigraph) {
+                ((PureBigraph)bigraph).getNodes().forEach(x -> {
+                    //TODO only remove java object attributes
+                    of.put(x, x.getAttributes());
+                    x.setAttributes(Map.of());
+                });
+            }
             EMFUtils.writeDynamicInstanceModel(bigraph.getMetaModel(), Collections.singleton(bigraph.getInstanceModel()), outputStream, null);
+            if(bigraph instanceof PureBigraph) {
+                ((PureBigraph)bigraph).getNodes().forEach(x -> {
+                    x.setAttributes((Map<String, Object>) of.get(x));
+                });
+            }
         }
 
         public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream, String newNamespaceLocation) throws IOException {
+            MutableMap<Object, Object> of = Maps.mutable.of();
+            if(bigraph instanceof PureBigraph) {
+                ((PureBigraph)bigraph).getNodes().forEach(x -> {
+                    //TODO only remove java object attributes
+                    of.put(x, x.getAttributes());
+                    x.setAttributes(Map.of());
+                });
+            }
             EMFUtils.writeDynamicInstanceModel(bigraph.getMetaModel(), Collections.singleton(bigraph.getInstanceModel()), outputStream, newNamespaceLocation);
+            if(bigraph instanceof PureBigraph) {
+                ((PureBigraph)bigraph).getNodes().forEach(x -> {
+                    x.setAttributes((Map<String, Object>) of.get(x));
+                });
+            }
         }
 
         /**
