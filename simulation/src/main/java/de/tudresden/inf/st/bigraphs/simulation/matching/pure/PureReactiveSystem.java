@@ -7,6 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.reactivesystem.AbstractSimpleReactiveSy
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
 import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
 import it.uniud.mads.jlibbig.core.Owner;
+import it.uniud.mads.jlibbig.core.attachedProperties.Property;
 import it.uniud.mads.jlibbig.core.std.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,6 +213,10 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                 EditableNode n1 = (EditableNode) t.c;
                 EditableNode n2 = n1.replicate();
                 n2.setName(n1.getName());
+                for(Property each: n1.getProperties()) {
+                    if(each.getName().equals("Owner")) continue;
+                    n2.attachProperty(each);
+                }
                 instantiateReactumNode(n1, n2, match);
                 // set m's parent (which added adds m as its child)
                 n2.setParent(t.p);
