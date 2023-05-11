@@ -92,6 +92,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     .flatMap(eachRule -> {
                         MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule));
                         for (BigraphMatch<B> eachMatch : match) {
+                            //TODO check if conditional rule and call checkCondition()
                             increaseOccurrenceCounter();
                             B reaction = null;
                             if (theAgent.getSites().size() == 0 || eachMatch.getParameters().size() == 0) {
