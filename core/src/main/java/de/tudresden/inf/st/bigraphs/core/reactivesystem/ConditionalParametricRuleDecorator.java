@@ -7,7 +7,7 @@ import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException
 public class ConditionalParametricRuleDecorator<B extends Bigraph<? extends Signature<?>>> extends ParametricReactionRule<B> {
 
     public interface RuleConditionMatcher<B extends Bigraph<? extends Signature<?>>> {
-        boolean conditionIsSatisfied(BigraphMatch<B> match);
+        boolean conditionIsSatisfied(B theAgent, ReactionRule<B> theRule, BigraphMatch<B> match);
     }
 
     private final ParametricReactionRule<B> reactionRule;
@@ -15,7 +15,7 @@ public class ConditionalParametricRuleDecorator<B extends Bigraph<? extends Sign
     private final RuleConditionMatcher<B> conditionMatcher;
 
     public ConditionalParametricRuleDecorator(ParametricReactionRule<B> reactionRule) throws InvalidReactionRuleException {
-        this(reactionRule, match -> true);
+        this(reactionRule, (agent, rule, match) -> true);
     }
 
     public ConditionalParametricRuleDecorator(ParametricReactionRule<B> reactionRule, RuleConditionMatcher<B> conditionMatcher) throws InvalidReactionRuleException {
@@ -24,8 +24,8 @@ public class ConditionalParametricRuleDecorator<B extends Bigraph<? extends Sign
         this.conditionMatcher = conditionMatcher;
     }
 
-    public boolean isMatchValid(BigraphMatch<B> match) {
-        return this.conditionMatcher.conditionIsSatisfied(match);
+    public boolean isMatchValid(B theAgent, ReactionRule<B> theRule, BigraphMatch<B> match) {
+        return this.conditionMatcher.conditionIsSatisfied(theAgent, theRule, match);
     }
 
     /**
