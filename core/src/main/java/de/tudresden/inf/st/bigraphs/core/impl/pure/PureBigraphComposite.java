@@ -263,7 +263,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                 EStructuralFeature bPoint = edges.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
                 EList<EObject> allPoints = (EList<EObject>) edges.eGet(bPoint);
                 for (EObject eachPoint2 : allPoints) {
-                    if (isBPort(eachPoint2) && edgesLinkToInners.get(edges)) {
+                    if (isBPort(eachPoint2) && (edgesLinkToInners.size() > 0 && edgesLinkToInners.get(edges))) {
                         if (portsToInnerLabels.get(eachPoint2) == null) {
                             portsToInnerLabels.put(eachPoint2, new ArrayList<>());
                         }
