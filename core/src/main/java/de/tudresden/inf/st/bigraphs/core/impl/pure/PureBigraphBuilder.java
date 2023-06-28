@@ -374,6 +374,9 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             if (each.eClass().getEAllSuperTypes().contains(availableEClasses.get(BigraphMetaModelConstants.CLASS_NODE))) {
                 EAttribute nameAttr = EMFUtils.findAttribute(each.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                 String nameVal = (String) each.eGet(nameAttr);
+                if (nameVal == null) {
+                    nameVal = UUID.randomUUID().toString();
+                }
                 BigraphEntity.NodeEntity<? extends Control> node = BigraphEntity.createNode(each, signature.getControlByName(each.eClass().getName()));
                 availableNodes.put(nameVal, node);
             } else if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE))) {
@@ -1369,7 +1372,6 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         // Lastly, deal with the inner names
         closeAllInnerNames();
     }
-
 
 
     /**
