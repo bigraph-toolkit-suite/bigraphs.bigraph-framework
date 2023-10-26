@@ -75,11 +75,11 @@
             <artifactId>lpg.runtime.java</artifactId>
             <version>2.0.17.v201004271640</version>
         </dependency>
-<!--        <dependency>-->
+        <!--        <dependency>-->
         <!--            <groupId>org.eclipse.platform</groupId>-->
         <!--            <artifactId>org.eclipse.equinox.common</artifactId>-->
         <!--        </dependency>-->
-            <!-- Excluded from codegen and provided here-->
+        <!-- Excluded from codegen and provided here-->
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.runtime</artifactId>
@@ -106,14 +106,16 @@
             <artifactId>org.eclipse.emf.codegen</artifactId>
         </dependency>
         <!-- CDO -->
-        <dependency>
-            <groupId>org.eclipse.emf.cdo</groupId>
-            <artifactId>org.eclipse.emf.cdo</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.emf.cdo</groupId>
-            <artifactId>org.eclipse.emf.cdo.common</artifactId>
-        </dependency>
+        <!-- These are now packaged in Bigraph Ecore Metamodel -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse.emf.cdo</groupId>-->
+        <!--            <artifactId>org.eclipse.emf.cdo</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse.emf.cdo</groupId>-->
+        <!--            <artifactId>org.eclipse.emf.cdo.common</artifactId>-->
+        <!--        </dependency>-->
+        <!-- These are now packaged in Bigraph Ecore Metamodel -->
         <!-- Other -->
         <dependency>
             <groupId>org.eclipse.collections</groupId>

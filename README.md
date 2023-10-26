@@ -320,7 +320,7 @@ It is not necessary to build from source to use *Bigraph Framework* but if you w
 
 > **Note:** The required version of Maven is 3.6.3
 
-The recommendation here is to build it with the regular `mvn` command. You will need [Maven v3.6.3 or above](https://maven.apache.org/run-maven/index.html).
+The recommendation here is to build it with the regular `mvn` command. You will need [Maven v3.6.3 or above](https://maven.apache.org/install.html).
 
 > **Tip:** A script called `install-maven.sh` can be found in the `./etc/ci/` folder to automatically install Maven 3.6.3.
 

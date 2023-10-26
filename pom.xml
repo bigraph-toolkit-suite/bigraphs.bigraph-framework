@@ -22,7 +22,7 @@
 
     <properties>
         <project.type>multi</project.type>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -74,22 +74,22 @@
     </scm>
 
     <repositories>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>STFactory</id>
-            <name>st-tu-dresden-artifactory</name>
-            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
+<!--        <repository>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--            <id>STFactory</id>-->
+<!--            <name>st-tu-dresden-artifactory</name>-->
+<!--            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>spring-milestones</id>-->
+<!--            <name>Spring Milestones</name>-->
+<!--            <url>https://repo.spring.io/milestone</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
         <repository>
             <id>eclipse-releases-maven</id>
             <url>https://repo.eclipse.org/content/groups/releases/</url>
@@ -99,16 +99,16 @@
         </repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+<!--    <pluginRepositories>-->
+<!--        <pluginRepository>-->
+<!--            <id>spring-milestones</id>-->
+<!--            <name>Spring Milestones</name>-->
+<!--            <url>https://repo.spring.io/milestone</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
+<!--    </pluginRepositories>-->
 
     <distributionManagement>
         <repository>
@@ -375,6 +375,7 @@
                 <artifactId>org.eclipse.emf.common</artifactId>
                 <version>${emf.common.version}</version>
             </dependency>
+            <!-- These are now packaged in Bigraph Ecore Metamodel -->
             <dependency>
                 <groupId>org.eclipse.emf.cdo</groupId>
                 <artifactId>org.eclipse.emf.cdo</artifactId>
@@ -385,11 +386,7 @@
                 <artifactId>org.eclipse.emf.cdo.common</artifactId>
                 <version>${emf.cdo.common.version}</version>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
-            <!--                <artifactId>org.eclipse.net4j</artifactId>-->
-            <!--                <version>4.10.1-SNAPSHOT</version>-->
-            <!--            </dependency>-->
+            <!-- These are now packaged in Bigraph Ecore Metamodel -->
             <dependency>
                 <groupId>org.eclipse.emf.compare</groupId>
                 <artifactId>org.eclipse.emf.compare</artifactId>
