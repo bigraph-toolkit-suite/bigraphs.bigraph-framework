@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.tudresden.inf.st.bigraphs</groupId>
         <artifactId>framework-parent</artifactId>
-        <version>0.9.7-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -48,11 +48,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
+            <groupId>org.bigraphs.model</groupId>
             <artifactId>bigraph-ecore-model</artifactId>
-            <!--            <scope>system</scope>-->
-            <!--            <type>jar</type>-->
-            <!--            <systemPath>${project.basedir}/../etc/auxlibs/bigraph-ecore-model-1.3.0-SNAPSHOT.jar</systemPath>-->
         </dependency>
         <!-- for OCL -->
         <dependency>

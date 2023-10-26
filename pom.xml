@@ -5,7 +5,7 @@
 
     <groupId>de.tudresden.inf.st.bigraphs</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>0.9.7-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
@@ -27,7 +27,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <bigraph.metamodel.version>1.5.0-SNAPSHOT</bigraph.metamodel.version>
+        <bigraph.metamodel.version>1.6.0-SNAPSHOT</bigraph.metamodel.version>
         <emf.common.version>2.23.0</emf.common.version>
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
         <emf.ecore.version>2.25.0</emf.ecore.version>
@@ -74,14 +74,14 @@
     </scm>
 
     <repositories>
-<!--        <repository>-->
-<!--            <snapshots>-->
-<!--                <enabled>true</enabled>-->
-<!--            </snapshots>-->
-<!--            <id>STFactory</id>-->
-<!--            <name>st-tu-dresden-artifactory</name>-->
-<!--            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>-->
-<!--        </repository>-->
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>STFactory</id>
+            <name>st-tu-dresden-artifactory</name>
+            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
+        </repository>
 <!--        <repository>-->
 <!--            <id>spring-milestones</id>-->
 <!--            <name>Spring Milestones</name>-->
@@ -317,7 +317,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>de.tudresden.inf.st.bigraphs.model</groupId>
+                <groupId>org.bigraphs.model</groupId>
                 <artifactId>bigraph-ecore-model</artifactId>
                 <version>${bigraph.metamodel.version}</version>
             </dependency>

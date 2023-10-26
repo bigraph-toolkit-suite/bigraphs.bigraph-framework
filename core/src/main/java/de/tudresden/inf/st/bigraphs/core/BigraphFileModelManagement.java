@@ -2,8 +2,8 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage;
+import org.bigraphs.model.bigraphBaseModel.BigraphBaseModelPackage;
+import org.bigraphs.model.signatureBaseModel.SignatureBaseModelPackage;
 import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.emf.common.util.Diagnostic;

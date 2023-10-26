@@ -1,12 +1,7 @@
 package de.tudresden.inf.st.bigraphs.core;
 
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.*;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BControl;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.BDynamicSignature;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelFactory;
-import de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage;
+import org.bigraphs.model.bigraphBaseModel.*;
 import org.eclipse.emf.common.util.Diagnostic;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EValidator;
@@ -22,7 +17,7 @@ import org.eclipse.ocl.ecore.delegate.OCLValidationDelegateFactory;
 import org.junit.jupiter.api.Test;
 
 /**
- * This test class uses the generated Ecore API of the {@link de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage}
+ * This test class uses the generated Ecore API of the {@link org.bigraphs.model.bigraphBaseModel.BigraphBaseModelPackage}
  * to create some bigraphs. This is the direct approach without using the Bigraph Framework without further functionality.
  *
  * @author Dominik Grzelak

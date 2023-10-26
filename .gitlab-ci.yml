@@ -1,4 +1,4 @@
-image: maven:3.8.1-jdk-11-slim
+image: maven:3.8.1-jdk-17-slim
 
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"

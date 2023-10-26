@@ -1,6 +1,5 @@
 package de.tudresden.inf.st.bigraphs.core.utils.emf;
 
-import de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.emf.common.util.URI;
