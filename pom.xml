@@ -98,17 +98,6 @@
         </repository>
     </repositories>
 
-<!--    <pluginRepositories>-->
-<!--        <pluginRepository>-->
-<!--            <id>spring-milestones</id>-->
-<!--            <name>Spring Milestones</name>-->
-<!--            <url>https://repo.spring.io/milestone</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </pluginRepository>-->
-<!--    </pluginRepositories>-->
-
     <distributionManagement>
         <repository>
             <id>central</id>
@@ -134,12 +123,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.11.0</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
@@ -148,7 +137,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                     <configuration>
                         <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                     </configuration>
@@ -156,7 +145,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.3.0</version>
                     <configuration>
                         <archive>
                             <addMavenDescriptor>true</addMavenDescriptor>
@@ -166,27 +155,28 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
+                    <version>3.1.1</version>
                     <configuration>
                         <!-- disable the default existing mapping -->
                         <skip>true</skip>
                     </configuration>
                 </plugin>
+                <!-- TODO DELETE -->
                 <plugin>
                     <groupId>org.jfrog.buildinfo</groupId>
                     <artifactId>artifactory-maven-plugin</artifactId>
@@ -257,7 +247,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -341,6 +331,7 @@
                 <version>${project.version}</version>
             </dependency>
             <!-- Misc -->
+            <!-- TODO UPLOAD OR INIT -->
             <dependency>
                 <groupId>org.bigraph.model</groupId>
                 <artifactId>bigred-core</artifactId>
@@ -351,12 +342,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
                 <version>2.9.0</version>
-                <!--                <exclusions>-->
-                <!--                    <exclusion>-->
-                <!--                        <groupId>commons-logging</groupId>-->
-                <!--                        <artifactId>commons-logging</artifactId>-->
-                <!--                    </exclusion>-->
-                <!--                </exclusions>-->
             </dependency>
             <!-- EMF -->
             <dependency>
@@ -375,17 +360,18 @@
                 <version>${emf.common.version}</version>
             </dependency>
             <!-- These are now packaged in Bigraph Ecore Metamodel -->
-            <dependency>
-                <groupId>org.eclipse.emf.cdo</groupId>
-                <artifactId>org.eclipse.emf.cdo</artifactId>
-                <version>${emf.cdo.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.emf.cdo</groupId>
-                <artifactId>org.eclipse.emf.cdo.common</artifactId>
-                <version>${emf.cdo.common.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+<!--                <artifactId>org.eclipse.emf.cdo</artifactId>-->
+<!--                <version>${emf.cdo.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+<!--                <artifactId>org.eclipse.emf.cdo.common</artifactId>-->
+<!--                <version>${emf.cdo.common.version}</version>-->
+<!--            </dependency>-->
             <!-- These are now packaged in Bigraph Ecore Metamodel -->
+            <!-- TODO UPLOAD OR INIT -->
             <dependency>
                 <groupId>org.eclipse.emf.compare</groupId>
                 <artifactId>org.eclipse.emf.compare</artifactId>
@@ -516,6 +502,7 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.11.0</version>
             </dependency>
+            <!-- TODO UPLOAD OR INIT -->
             <dependency>
                 <groupId>it.uniud.mads.jlibbig</groupId>
                 <artifactId>jlibbig</artifactId>
