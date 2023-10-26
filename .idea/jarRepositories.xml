@@ -57,6 +57,11 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="ossrh" />
+      <option name="name" value="ossrh" />
+      <option name="url" value="https://s01.oss.sonatype.org/content/repositories/snapshots" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="emf-compare" />
       <option name="name" value="emf-compare" />
       <option name="url" value="https://download.eclipse.org/modeling/emf/compare/updates/releases/3.3/R201911051515/core/" />

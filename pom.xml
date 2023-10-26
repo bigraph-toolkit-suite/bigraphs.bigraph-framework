@@ -78,18 +78,17 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
             <id>STFactory</id>
             <name>st-tu-dresden-artifactory</name>
             <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
         </repository>
-<!--        <repository>-->
-<!--            <id>spring-milestones</id>-->
-<!--            <name>Spring Milestones</name>-->
-<!--            <url>https://repo.spring.io/milestone</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
         <repository>
             <id>eclipse-releases-maven</id>
             <url>https://repo.eclipse.org/content/groups/releases/</url>

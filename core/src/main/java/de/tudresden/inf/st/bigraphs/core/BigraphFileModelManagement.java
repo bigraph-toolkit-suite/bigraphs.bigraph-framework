@@ -2,7 +2,9 @@ package de.tudresden.inf.st.bigraphs.core;
 
 import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
 import de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils;
+import org.bigraphs.model.bigraphBaseModel.BigraphBaseModelFactory;
 import org.bigraphs.model.bigraphBaseModel.BigraphBaseModelPackage;
+import org.bigraphs.model.signatureBaseModel.SignatureBaseModelFactory;
 import org.bigraphs.model.signatureBaseModel.SignatureBaseModelPackage;
 import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.map.MutableMap;
@@ -32,7 +34,6 @@ import java.util.Objects;
 import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
 import static de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants.SIGNATURE_BASE_MODEL;
 import static de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils.*;
-import static de.tudresden.inf.st.bigraphs.core.utils.emf.EMFUtils.registerPackages;
 
 /**
  * A simple file-based model management utility class that serializes (deserializes) to (from) XMI and Ecore:
@@ -378,8 +379,11 @@ public class BigraphFileModelManagement {
      */
     private static ResourceSet initResourceSet(EPackage metaModelPackageWithSignature) {
         EcorePackage.eINSTANCE.eClass(); // Makes sure that EMF is "up and running"
-        BigraphBaseModelPackage.eINSTANCE.eClass(); // Makes sure that the Bigraph-Metamodel is "up and running"
-        SignatureBaseModelPackage.eINSTANCE.eClass(); // Makes sure that the Signature-Metamodel is "up and running"
+        SignatureBaseModelFactory.eINSTANCE.eClass(); // Makes sure that the Signature-Metamodel is "up and running"
+        BigraphBaseModelFactory.eINSTANCE.eClass(); // Makes sure that the Bigraph-Metamodel is "up and running"
+        BigraphBaseModelPackage.eINSTANCE.eClass();
+        SignatureBaseModelPackage.eINSTANCE.eClass();
+
         ResourceSet load_resourceSet = new ResourceSetImpl();
 
         // Register factories

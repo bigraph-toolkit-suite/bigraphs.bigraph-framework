@@ -94,8 +94,8 @@ public class BigraphEcoreModelApiUnitTests {
         edge2.getBPoints().add(port21);
         edge2.getBPoints().add(port22);
         BNode node2 = BigraphBaseModelFactory.eINSTANCE.createBNode();
-        node2.getAttributes().put("key", new Integer(1));
-        node2.getAttributes().put("key2", new String("1"));
+        node2.getAttributes().put("key", 1);
+        node2.getAttributes().put("key2", "1");
         node2.getBPorts().add(port21);
         node2.getBPorts().add(port22);
         bRoot.getBChild().add(node2);
