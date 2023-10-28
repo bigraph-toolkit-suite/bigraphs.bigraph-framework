@@ -14,8 +14,6 @@ import org.jgrapht.event.GraphVertexChangeEvent;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//TODO move to visu module
-
 /**
  * Custom implementation of {@link mxGraph} to adjust the node and edge styling.
  * Its source code is fully based on {@link org.jgrapht.ext.JGraphXAdapter}.

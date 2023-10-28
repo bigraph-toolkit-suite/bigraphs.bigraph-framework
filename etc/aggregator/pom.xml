@@ -88,7 +88,7 @@
                             <artifactId>bigred-core</artifactId>
                             <version>1.0.0.20130228</version>
                             <packaging>jar</packaging>
-                            <file>${basedir}/../../etc/auxlibs/bigred-core_1.0.0.20130228.jar</file>
+                            <file>${basedir}/../../etc/libs/bigred-core_1.0.0.20130228.jar</file>
                             <generatePom>true</generatePom>
                         </configuration>
                     </execution>

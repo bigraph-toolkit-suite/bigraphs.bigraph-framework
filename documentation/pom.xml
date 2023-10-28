@@ -14,13 +14,30 @@
 
     <build>
         <plugins>
+            <!-- SKIP -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>install-libs-jlibbig</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>install-libs-emf-compare</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-deploy-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <skip>true</skip>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+            <!-- SKIP -->
+            <!-- EXEC CODE GEN -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -42,6 +59,7 @@
                     <mainClass>de.tudresden.inf.st.bigraphs.documentation.MainDocGenerationRunner</mainClass>
                 </configuration>
             </plugin>
+            <!-- CLEAN -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>

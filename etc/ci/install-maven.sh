@@ -1,5 +1,5 @@
 #!/bin/bash
-export VER="3.6.3"
+export VER="3.9.5"
 
 echo "Installing Maven ${VER} ..."
 

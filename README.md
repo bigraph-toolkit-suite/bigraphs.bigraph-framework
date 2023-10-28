@@ -19,18 +19,18 @@ The high-level API eases the programming of bigraphical systems for real-world a
 
 - Dynamic creation of bigraphs at runtime based on an EMOF-based metamodel
 - Read and write the meta and instance model from and to the file system
-- Visualization (beta)
-    - graphical export via GraphViz, DOT
+- Visualization
+    - Graphical export via GraphViz/DOT
     - PNG, JPG, ...
 - Bigraph matching
 - Bigraphical Reactive System support: simulation of the evolution of
-  bigraphs by reaction rules (synthesizing a labelled transition system) (beta)
+  bigraphs by reaction rules (synthesizing a labelled transition system)
     - Simulation
-    - Predicate checking
+    - Predicate checking, logical connectors, LTL
     - Specify order of reaction rules
-- Model transformation / Conversions (alpha)
-    - into other graph formats, e.g., GraphML, GXL, and Ranked Graphs
-    - for other bigraph tools: BigMC, BigraphER, and BigRed
+- Model transformation / Conversions
+    - Other graph formats, e.g., GraphML, GXL, and Ranked Graphs
+    - Formats of other bigraph tools: BigMC, BigraphER, and BigRed
 
 
 
@@ -128,7 +128,7 @@ compositor.juxtapose(F);
 compositor.juxtapose(F).parallelProduct(H);
 ```
 
-## Maven configuration
+## Maven Configuration
 
 ```xml
 <dependencies>
@@ -163,55 +163,18 @@ The following Maven remote repository must be added as well.
 
 There are two options:
 
-### Remote repositories
+### Remote Repository for Snapshot Releases
 
-Artifacts are deployed to the [ST-Group's Artifactory](https://stgroup.jfrog.io/).
-To resolve the dependencies above, the following remote repository must be configured.
-
-##### A) Within the `pom.xml` of a Maven project:
+SNAPSHOT releases are deployed to the [Central Repository](https://s01.oss.sonatype.org/content/repositories/snapshots).
+To resolve them, the following remote repository must be configured in your `pom.xml`:
 ```xml
-<!-- Default -->
-<repositories>
-    <repository>
-        <snapshots>
-            <enabled>true</enabled> <!-- set false to disable snapshot releases -->
-        </snapshots>
-        <id>STFactory</id>
-        <name>st-tu-dresden-artifactory</name>
-        <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
-    </repository>
-</repositories>
-```
-
-##### B) Via the [`settings.xml`](https://maven.apache.org/ref/3.6.3/maven-settings/settings.html) of your Maven local repository `~/.m2/`:
-
-```xml
-<!-- ... -->
-<profiles>
-    <profile>
-        <repositories>
-            <repository>
-                <snapshots>
-                    <enabled>false</enabled>
-                </snapshots>
-                <id>STFactory-release</id>
-                <name>st-tu-dresden-releases</name>
-                <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-release</url>
-            </repository>
-            <repository>
-                <snapshots/>
-                <id>STFactory-snapshot</id>
-                <name>st-tu-dresden-snapshots</name>
-                <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-snapshot</url>
-            </repository>
-        </repositories>
-        <id>artifactory</id>
-    </profile>
-</profiles>
-<activeProfiles>
-    <activeProfile>artifactory</activeProfile>
-</activeProfiles>
-<!-- ... -->
+<repository>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+    <id>ossrh</id>
+    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
 ```
 
 > See also [Building from Source](#Building-the-Framework-from Source) if you want to build the source by yourself and host them in your Maven local repository.
@@ -316,18 +279,30 @@ model. Meaning, the implementation-specific details are kept out from the metamo
 
 ## Build Configuration
 
-It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper) or the regular `mvn` command. In this case, JDK 1.8 is needed.
+It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper) or the regular `mvn` command. 
+In this case, **JDK 17** is needed.
 
-> **Note:** The required version of Maven is 3.6.3
+> **Note:** The required version of Maven is 3.8.3 and Java JDK 17.
 
-The recommendation here is to build it with the regular `mvn` command. You will need [Maven v3.6.3 or above](https://maven.apache.org/install.html).
+The recommendation here is to build it with the regular `mvn` command. 
+You will need [Maven v3.8.3 or above](https://maven.apache.org/install.html).
 
-> **Tip:** A script called `install-maven.sh` can be found in the `./etc/ci/` folder to automatically install Maven 3.6.3.
+> **Tip:** A script called `install-maven.sh` can be found in the `./etc/ci/` folder to automatically install Maven 3.9.5.
 
 ### Building the Framework from Source
 
-The following command must be executed from the root directory of this project:
+**Initialize**
 
+The following command has to be run once:
+```shell
+mvn initialize
+```
+It installs some dependencies located in the `./etc/libs/` folder of this project in your local Maven repository, which is usually located at `~/.m2/`.
+These are required for the development.
+
+**Build/Install**
+
+One of the following commands must be executed from the root directory of this project:
 ```bash
 # Default
 $ mvn clean install -DskipTests
@@ -336,8 +311,11 @@ $ mvn clean install -DskipTests
 $ mvn clean install -DskipTests -PfatJar
 ```
 
-After the command successfully finished, you can now use _Bigraph Framework_ in other Java projects. 
+After the command successfully finishes, you can now use _Bigraph Framework_ in other Java projects.
+All modules of _Bigraph Framework_ have been installed in the local Maven repository.
 Therefore, see [Maven configuration](#maven-configuration) on how to include the individual _Bigraph Framework_ dependencies.
+
+> **Note:** All parts of Bigraph Framework are also deployed to the Central Repository.
 
 ### Building the Documentation
 
@@ -359,6 +337,8 @@ The manual is generated using [docusaurus](https://docusaurus.io/), which must b
 ### Further Development and Deployment Instructions
 
 See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development and deployment of _Bigraph Framework_.
+
+[//]: # (TODO)
 
 To deploy Bigraph Framework to the [ST-Group's Artifactory](https://stgroup.jfrog.io/):
 ```bash

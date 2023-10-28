@@ -9,8 +9,9 @@
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
-        A complete framework for creating bigraphs and performing simulations with bigraphical reactive systems.
+        A rich framework for creating bigraphs and the simulation and model checking of bigraphical reactive systems.
     </description>
+    <url>http://www.bigraphs.org/</url>
 
     <modules>
         <module>core</module>
@@ -20,6 +21,13 @@
         <module>documentation</module>
     </modules>
 
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
     <properties>
         <project.type>multi</project.type>
         <java.version>17</java.version>
@@ -27,6 +35,12 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <skip.security.check>true</skip.security.check>
+        <!-- For documentation -->
+        <doclint>none</doclint>
+        <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs
+        </project.usermanual.outputDirectory>
+        <!-- Versions -->
         <bigraph.metamodel.version>1.6.0-SNAPSHOT</bigraph.metamodel.version>
         <emf.common.version>2.23.0</emf.common.version>
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
@@ -46,10 +60,6 @@
         <!--        <graphviz.version>0.17.1</graphviz.version>-->
         <graphviz.version>0.18.1</graphviz.version>
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
-        <doclint>none</doclint>
-        <!-- For documentation -->
-        <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs
-        </project.usermanual.outputDirectory>
     </properties>
 
     <developers>
@@ -66,12 +76,29 @@
         </developer>
     </developers>
 
+<!--    <scm>-->
+<!--        <connection>scm:git:https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework.git</connection>-->
+<!--        <developerConnection>scm:git@git-st.inf.tu-dresden.de:bigraphs/bigraph-framework.git</developerConnection>-->
+<!--        <url>https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework</url>-->
+<!--        <tag>HEAD</tag>-->
+<!--    </scm>-->
     <scm>
-        <connection>scm:git:https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework.git</connection>
-        <developerConnection>scm:git@git-st.inf.tu-dresden.de:bigraphs/bigraph-framework.git</developerConnection>
-        <url>https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework</url>
+        <connection>scm:git:https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework.git</connection>
+        <developerConnection>scm:git@github.com:bigraph-toolkit-suite/bigraphs.bigraph-framework.git</developerConnection>
+        <url>https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework</url>
         <tag>HEAD</tag>
     </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <repositories>
         <repository>
@@ -98,18 +125,18 @@
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <repository>
-            <id>central</id>
-            <name>STFactory-releases</name>
-            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>STFactory-snapshots</name>
-            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>
-        </snapshotRepository>
-    </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>central</id>-->
+<!--            <name>STFactory-releases</name>-->
+<!--            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>snapshots</id>-->
+<!--            <name>STFactory-snapshots</name>-->
+<!--            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
 
     <build>
         <pluginManagement>
@@ -136,11 +163,38 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.13</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                        <!-- With the property autoReleaseAfterClose set to false you can manually inspect the staging
+                        repository in the Nexus Repository Manager and trigger a release of the staging repository
+                        later with mvn nexus-staging:release If you find something went wrong you can drop the staging
+                        repository with mvn nexus-staging:drop -->
+                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.2.0</version>
-                    <configuration>
-                        <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -149,8 +203,17 @@
                     <configuration>
                         <archive>
                             <addMavenDescriptor>true</addMavenDescriptor>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
                         </archive>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -169,12 +232,8 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
+                    <artifactId>maven-install-plugin</artifactId>
                     <version>3.1.1</version>
-                    <configuration>
-                        <!-- disable the default existing mapping -->
-                        <skip>true</skip>
-                    </configuration>
                 </plugin>
                 <!-- TODO DELETE -->
                 <plugin>
@@ -202,7 +261,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>8.1.2</version>
+                    <version>8.4.2</version>
                     <configuration>
                         <excludes>
                             <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>
@@ -226,9 +285,27 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <!-- SOURCE -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- JAVADOC -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <failOnError>false</failOnError>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -244,19 +321,22 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- DEPLOY -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <!-- disable the default existing mapping -->
+                    <skip>true</skip>
+                </configuration>
             </plugin>
+            <!-- JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <!-- RESOURCES -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -285,6 +365,44 @@
                                     </includes>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- INSTALL -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>install-libs-jlibbig</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/etc/libs/jlibbig-0.0.4/jlibbig-0.0.4.jar</file>
+                            <groupId>it.uniud.mads.jlibbig</groupId>
+                            <artifactId>jlibbig</artifactId>
+                            <version>0.0.4</version>
+                            <pomFile>${project.basedir}/etc/libs/jlibbig-0.0.4/jlibbig-0.0.4.pom</pomFile>
+                            <generatePom>false</generatePom>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-libs-emf-compare</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/etc/libs/org.eclipse.emf.compare_3.5.3.201911051515.jar</file>
+                            <groupId>org.eclipse.emf.compare</groupId>
+                            <artifactId>org.eclipse.emf.compare</artifactId>
+                            <version>3.5.3.201911051515</version>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
                         </configuration>
                     </execution>
                 </executions>
@@ -331,13 +449,18 @@
                 <version>${project.version}</version>
             </dependency>
             <!-- Misc -->
-            <!-- TODO UPLOAD OR INIT -->
             <dependency>
-                <groupId>org.bigraph.model</groupId>
+                <groupId>org.bigraphs.model</groupId>
                 <artifactId>bigred-core</artifactId>
                 <version>1.0.0.20130228</version>
-                <type>jar</type>
             </dependency>
+            <!-- TODO remove -->
+            <!--            <dependency>-->
+            <!--                <groupId>org.bigraph.model</groupId>-->
+            <!--                <artifactId>bigred-core</artifactId>-->
+            <!--                <version>1.0.0.20130228</version>-->
+            <!--                <type>jar</type>-->
+            <!--            </dependency>-->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
@@ -360,16 +483,16 @@
                 <version>${emf.common.version}</version>
             </dependency>
             <!-- These are now packaged in Bigraph Ecore Metamodel -->
-<!--            <dependency>-->
-<!--                <groupId>org.eclipse.emf.cdo</groupId>-->
-<!--                <artifactId>org.eclipse.emf.cdo</artifactId>-->
-<!--                <version>${emf.cdo.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.eclipse.emf.cdo</groupId>-->
-<!--                <artifactId>org.eclipse.emf.cdo.common</artifactId>-->
-<!--                <version>${emf.cdo.common.version}</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+            <!--                <artifactId>org.eclipse.emf.cdo</artifactId>-->
+            <!--                <version>${emf.cdo.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
+            <!--                <artifactId>org.eclipse.emf.cdo.common</artifactId>-->
+            <!--                <version>${emf.cdo.common.version}</version>-->
+            <!--            </dependency>-->
             <!-- These are now packaged in Bigraph Ecore Metamodel -->
             <!-- TODO UPLOAD OR INIT -->
             <dependency>
@@ -502,7 +625,7 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.11.0</version>
             </dependency>
-            <!-- TODO UPLOAD OR INIT -->
+            <!-- This dependency is installed in the local Maven repository from the ./etc/libs/ folder -->
             <dependency>
                 <groupId>it.uniud.mads.jlibbig</groupId>
                 <artifactId>jlibbig</artifactId>
@@ -602,6 +725,15 @@
                                                 <exclude>profile.list</exclude>
                                             </excludes>
                                         </filter>
+                                        <filter>
+                                            <artifact>it.uniud.mads.jlibbig:jlibbig</artifact>
+                                            <includes>
+                                                <include>*/**</include>
+                                                <!--                                                <include>META-INF/**</include>-->
+                                                <!--                                                <include>it/**</include>-->
+                                                <!--                                                <include>schema/**</include>-->
+                                            </includes>
+                                        </filter>
                                     </filters>
                                 </configuration>
                             </execution>
@@ -611,57 +743,6 @@
             </build>
         </profile>
 
-        <!-- ****************** -->
-        <!-- Deployment Profile -->
-        <!-- ****************** -->
-        <profile>
-            <id>deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jfrog.buildinfo</groupId>
-                        <artifactId>artifactory-maven-plugin</artifactId>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <id>build-info</id>
-                                <goals>
-                                    <goal>publish</goal>
-                                </goals>
-                                <configuration>
-                                    <deployProperties>
-                                        <groupId>${project.groupId}</groupId>
-                                        <artifactId>${project.artifactId}</artifactId>
-                                        <version>${project.version}</version>
-                                    </deployProperties>
-                                    <artifactory>
-                                        <includeEnvVars>true</includeEnvVars>
-                                        <envVarsExcludePatterns>*password*,*secret*,*key*,*token*,*passphrase*
-                                        </envVarsExcludePatterns>
-                                        <timeoutSec>60</timeoutSec>
-                                    </artifactory>
-                                    <publisher>
-                                        <contextUrl>https://stgroup.jfrog.io/artifactory/</contextUrl>
-                                        <!--suppress UnresolvedMavenProperty -->
-                                        <username>${username}</username>
-                                        <!--suppress UnresolvedMavenProperty -->
-                                        <password>${password}</password>
-                                        <excludePatterns>*-tests.jar,*documentation-*.jar,*documentation-*.pom
-                                        </excludePatterns>
-                                        <!-- Name of local repository in Artifactory @ stgroup.jfrog.io/ -->
-                                        <repoKey>st-tu-dresden-maven-repository</repoKey>
-                                        <snapshotRepoKey>st-tu-dresden-maven-repository</snapshotRepoKey>
-                                    </publisher>
-                                    <buildInfo>
-                                        <buildName>bigraph-framework-builds</buildName>
-                                    </buildInfo>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 
         <profile>
             <id>distribute</id>
@@ -731,5 +812,99 @@
                 </plugins>
             </build>
         </profile>
+
+
+
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <keyname>0x153DD2CF</keyname>
+                                    <passphraseServerId>0x153DD2CF</passphraseServerId>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+
+<!--        &lt;!&ndash; TODO : name to release and standard nexus deployment - couple with&ndash;&gt;-->
+<!--        &lt;!&ndash; ****************** &ndash;&gt;-->
+<!--        &lt;!&ndash; Deployment Profile &ndash;&gt;-->
+<!--        &lt;!&ndash; ****************** &ndash;&gt;-->
+<!--        <profile>-->
+<!--            <id>deploy</id>-->
+<!--            <build>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <groupId>org.jfrog.buildinfo</groupId>-->
+<!--                        <artifactId>artifactory-maven-plugin</artifactId>-->
+<!--                        <inherited>false</inherited>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <id>build-info</id>-->
+<!--                                <goals>-->
+<!--                                    <goal>publish</goal>-->
+<!--                                </goals>-->
+<!--                                <configuration>-->
+<!--                                    <deployProperties>-->
+<!--                                        <groupId>${project.groupId}</groupId>-->
+<!--                                        <artifactId>${project.artifactId}</artifactId>-->
+<!--                                        <version>${project.version}</version>-->
+<!--                                    </deployProperties>-->
+<!--                                    <artifactory>-->
+<!--                                        <includeEnvVars>true</includeEnvVars>-->
+<!--                                        <envVarsExcludePatterns>*password*,*secret*,*key*,*token*,*passphrase*-->
+<!--                                        </envVarsExcludePatterns>-->
+<!--                                        <timeoutSec>60</timeoutSec>-->
+<!--                                    </artifactory>-->
+<!--                                    <publisher>-->
+<!--                                        <contextUrl>https://stgroup.jfrog.io/artifactory/</contextUrl>-->
+<!--                                        &lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
+<!--                                        <username>${username}</username>-->
+<!--                                        &lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
+<!--                                        <password>${password}</password>-->
+<!--                                        <excludePatterns>*-tests.jar,*documentation-*.jar,*documentation-*.pom-->
+<!--                                        </excludePatterns>-->
+<!--                                        &lt;!&ndash; Name of local repository in Artifactory @ stgroup.jfrog.io/ &ndash;&gt;-->
+<!--                                        <repoKey>st-tu-dresden-maven-repository</repoKey>-->
+<!--                                        <snapshotRepoKey>st-tu-dresden-maven-repository</snapshotRepoKey>-->
+<!--                                    </publisher>-->
+<!--                                    <buildInfo>-->
+<!--                                        <buildName>bigraph-framework-builds</buildName>-->
+<!--                                    </buildInfo>-->
+<!--                                </configuration>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+<!--        </profile>-->
     </profiles>
 </project>
