@@ -25,8 +25,19 @@
         <license>
             <name>The Apache License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <comments>Applies to Bigraph Framework</comments>
+        </license>
+        <license>
+            <name>GNU Lesser General Public License, version 2.1</name>
+            <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+            <comments>
+                jLibBig is a Java library for bigraphs and bigraphical reactive systems and used by the simulation
+                module of Bigraph Framework.
+            </comments>
         </license>
     </licenses>
+
+
 
     <properties>
         <project.type>multi</project.type>
