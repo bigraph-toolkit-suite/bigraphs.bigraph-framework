@@ -5,7 +5,7 @@
 | Branch  | Version                         | Status |
 |---------|---------------------------------|--------|
 | Main    | 0.9.6                           |        |
- | Develop | 0.9.7-SNAPSHOT / 1.0.0-SNAPSHOT |        |
+| Develop | 0.9.7-SNAPSHOT / 1.0.0-SNAPSHOT |        |
 
 ----
 
