@@ -115,15 +115,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <groupId>org.bigraphs.framework</groupId>
             <artifactId>bigraph-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <groupId>org.bigraphs.framework</groupId>
             <artifactId>bigraph-converter</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <groupId>org.bigraphs.framework</groupId>
             <artifactId>bigraph-simulation</artifactId>
         </dependency>
         <dependency>

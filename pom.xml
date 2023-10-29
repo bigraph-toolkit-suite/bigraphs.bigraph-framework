@@ -445,22 +445,22 @@
                 <version>${bigraph.metamodel.version}</version>
             </dependency>
             <dependency>
-                <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                <groupId>org.bigraphs.framework</groupId>
                 <artifactId>bigraph-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                <groupId>org.bigraphs.framework</groupId>
                 <artifactId>bigraph-visualization</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                <groupId>org.bigraphs.framework</groupId>
                 <artifactId>bigraph-simulation</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>de.tudresden.inf.st.bigraphs</groupId>
+                <groupId>org.bigraphs.framework</groupId>
                 <artifactId>bigraph-converter</artifactId>
                 <version>${project.version}</version>
             </dependency>

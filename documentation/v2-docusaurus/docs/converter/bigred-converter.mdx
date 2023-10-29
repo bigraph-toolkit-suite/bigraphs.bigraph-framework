@@ -28,7 +28,7 @@ This approach mainly used the underlying functionality of the BigRed library.
 
 ### Loading Signatures
 
-To load a BigRed `*.bigraph-signature` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultSignatureXMLLoader` class:
+To load a BigRed `*.bigraph-signature` file use the `org.bigraphs.framework.converter.bigred.converter.DefaultSignatureXMLLoader` class:
 
 ```java
 DefaultSignatureXMLLoader sxl = new DefaultSignatureXMLLoader();
@@ -38,7 +38,7 @@ DefaultDynamicSignature signature = sxl.importObject();
 
 ### Loading Agents
 
-To load a BigRed `*.bigraph-agent` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultBigraphXMLLoader` class:
+To load a BigRed `*.bigraph-agent` file use the `org.bigraphs.framework.converter.bigred.converter.DefaultBigraphXMLLoader` class:
 
 ```java
 DefaultBigraphXMLLoader bxl = new DefaultBigraphXMLLoader();
@@ -50,7 +50,7 @@ BigRed agent specifications are imported as `PureBigraph` instances.
 
 ### Loading Reaction Rules
 
-To load a BigRed `*.bigraph-rule` file use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultReactionRuleXMLLoader` class:
+To load a BigRed `*.bigraph-rule` file use the `org.bigraphs.framework.converter.bigred.converter.DefaultReactionRuleXMLLoader` class:
 
 ```java
 DefaultReactionRuleXMLLoader rxl = new DefaultReactionRuleXMLLoader();
@@ -66,7 +66,7 @@ They do not use the underlying functionality of the BigRed library as the adapte
 
 ### Loading a Simulation Specification
 
-To load a BigRed `*.bigraph-simulation-spec` file, use the `de.tudresden.inf.st.bigraphs.converter.bigred.DefaultSimulationSpecXMLLoader` class:
+To load a BigRed `*.bigraph-simulation-spec` file, use the `org.bigraphs.framework.converter.bigred.converter.DefaultSimulationSpecXMLLoader` class:
 
 ```java
 DefaultSimulationSpecXMLLoader ssxl = new DefaultSimulationSpecXMLLoader();
