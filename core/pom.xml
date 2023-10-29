@@ -51,10 +51,11 @@
                 </configuration>
             </plugin>
             <!-- SKIP -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
+            <!-- COMPILER -->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--            </plugin>-->
             <!-- OWASP -->
             <plugin>
                 <groupId>org.owasp</groupId>

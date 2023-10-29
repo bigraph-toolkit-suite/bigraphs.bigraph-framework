@@ -13,7 +13,7 @@ specific needs, at the same time the project is logically organized.
 ### Git-Workflow
 - The Git workflow *Gitflow* as described [here](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) is applied for the development 
 
-- Push tags only: `git push gitlab --tags`
+- Push tags only: `git push <remote> --tags`
 
 ### Versioning
 
@@ -41,7 +41,7 @@ This section explains how to view, edit and build the user manual and the Javado
 
 - The documentation includes the Javadoc and a separate user manual (i.e., a static website). And also the Changelog is part of it, see [Deployment](#Deployment).
 - [Docusaurus](https://docusaurus.io/) is used as a static site generator. 
-- The CI pipeline/Maven-scripts/Bash-scripts are responsible to copy the Javadoc API into the Docusaurus manual.
+- The Maven plugins and bash scripts are responsible to copy the Javadoc API into the Docusaurus manual and can be employed in a CI pipeline.
 The generated user manual can then link to the separately built Javadoc.
 
 ### Requirements
@@ -52,42 +52,48 @@ The generated user manual can then link to the separately built Javadoc.
 
 ###  Working with the Documentation
 
-To check for npm updates or security issues, run the following inside the docusaurus folder of the documentation module:
+#### NPM Updates
+To check for npm updates or security issues, run the following inside the docusaurus folder of the documentation module,
+i.e., `./documentation/v2-docusaurus/`:
 
-```
+```shell
 npm audit
 npx npm-check-updates
 ```
 
 #### Live Editing
 
-To view and edit the manual execute the following commands. But first, `cd` into the `./documentation/v2-docusaurus/` folder:
+To view and edit the manual execute the following commands. 
+First, `cd` into the `./documentation/v2-docusaurus/` folder:
 
-```console
-$ cd ./documentation/v2-docusaurus/
-$ npx docusaurus start #or: npm run start
+```shell
+cd ./documentation/v2-docusaurus/
+npx docusaurus start #or: npm run start
 ```
 
 To actually build the static site content:
-```console
-$ npm run build
+```shell
+npm run build
 ```
 The output is exported to `documentation/v2-docusaurus/build/`.
 
 #### Auto-generated Code Samples
 
-- Some of the code samples are automatically derived from the test cases and merged into the documentation
+- Some of the code samples used in the documentation are automatically derived from the test cases and merged into the documentation
 - The module `documentation` is in charge for that
-- Execute the following Maven goal (from the root of this project) to create the code samples: `mvn exec:java -f documentation/pom.xml`
+- Execute the following Maven goal (from the root of this project) to just create the code samples: 
+  - ```shell 
+    mvn exec:java -f documentation/pom.xml
+    ```
 
 #### Build the whole documentation
 
-```console
-$ mvn clean install
-$ mvn package -Pdistribute                              # creation and aggregation of JavaDocs 
-$ nvm use 16                                            # switch node version
-$ npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
-$ mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
+```shell
+mvn clean install
+mvn package -Pdistribute                              # creation and aggregation of JavaDocs 
+nvm use 16                                            # switch node version
+npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
+mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
 ```
 
 The generated user manual is available from `documentation/v2-docusaurus/build/` (use `npm run serve`).

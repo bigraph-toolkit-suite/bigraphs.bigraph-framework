@@ -62,10 +62,10 @@
                 </configuration>
             </plugin>
             <!-- COMPILER  -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--            </plugin>-->
             <!-- SHADE -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -80,7 +80,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>it.uniud.mads.jlibbig:*</include>
+                                    <include>it.uniud.mads.jlibbig:jlibbig</include>
                                 </includes>
                             </artifactSet>
                             <filters>
@@ -89,6 +89,14 @@
                                     <includes>
                                         <include>it/**</include>
                                     </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
                                 </filter>
                             </filters>
                         </configuration>
@@ -137,6 +145,10 @@
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

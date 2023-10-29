@@ -165,7 +165,7 @@ There are two options:
 
 ### Remote Repository for Snapshot Releases
 
-SNAPSHOT releases are deployed to the [Central Repository](https://s01.oss.sonatype.org/content/repositories/snapshots).
+SNAPSHOT releases are deployed [here](https://s01.oss.sonatype.org/content/repositories/snapshots).
 To resolve them, the following remote repository must be configured in your `pom.xml`:
 ```xml
 <repository>
@@ -315,7 +315,7 @@ After the command successfully finishes, you can now use _Bigraph Framework_ in 
 All modules of _Bigraph Framework_ have been installed in the local Maven repository.
 Therefore, see [Maven configuration](#maven-configuration) on how to include the individual _Bigraph Framework_ dependencies.
 
-> **Note:** All parts of Bigraph Framework are also deployed to the Central Repository.
+> **Note:** All parts of Bigraph Framework are also deployed to the [Central Repository](https://repo.maven.apache.org/maven2/).
 
 ### Building the Documentation
 
@@ -340,12 +340,10 @@ See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deplo
 
 [//]: # (TODO)
 
-To deploy Bigraph Framework to the [ST-Group's Artifactory](https://stgroup.jfrog.io/):
+To deploy Bigraph Framework to the [Central Repository](https://repo.maven.apache.org/maven2/):
 ```bash
-mvn deploy -DskipTests -Pdeploy -Dusername=dominik.grzelak@tu-dresden.de -Dpassword=password
+mvn clean deploy -DskipTests -P release
 ```
-
-The hashed password can be acquired via the UI of Artifactory under the user profile settings.
 
 ## License
 

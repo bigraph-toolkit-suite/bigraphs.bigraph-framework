@@ -16,8 +16,8 @@
     <modules>
         <module>core</module>
         <module>visualization</module>
-        <module>simulation</module>
         <module>converter</module>
+        <module>simulation</module>
         <module>documentation</module>
     </modules>
 
@@ -87,18 +87,19 @@
         </developer>
     </developers>
 
-<!--    <scm>-->
-<!--        <connection>scm:git:https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework.git</connection>-->
-<!--        <developerConnection>scm:git@git-st.inf.tu-dresden.de:bigraphs/bigraph-framework.git</developerConnection>-->
-<!--        <url>https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework</url>-->
-<!--        <tag>HEAD</tag>-->
-<!--    </scm>-->
     <scm>
         <connection>scm:git:https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework.git</connection>
         <developerConnection>scm:git@github.com:bigraph-toolkit-suite/bigraphs.bigraph-framework.git</developerConnection>
         <url>https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework</url>
         <tag>HEAD</tag>
     </scm>
+
+    <!--    <scm>-->
+    <!--        <connection>scm:git:https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework.git</connection>-->
+    <!--        <developerConnection>scm:git@git-st.inf.tu-dresden.de:bigraphs/bigraph-framework.git</developerConnection>-->
+    <!--        <url>https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework</url>-->
+    <!--        <tag>HEAD</tag>-->
+    <!--    </scm>-->
 
     <distributionManagement>
         <snapshotRepository>
@@ -211,15 +212,15 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.3.0</version>
-                    <configuration>
-                        <archive>
-                            <addMavenDescriptor>true</addMavenDescriptor>
-                            <manifest>
-                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            </manifest>
-                        </archive>
-                    </configuration>
+<!--                    <configuration>-->
+<!--                        <archive>-->
+<!--                            <addMavenDescriptor>true</addMavenDescriptor>-->
+<!--                            <manifest>-->
+<!--                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>-->
+<!--                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
+<!--                            </manifest>-->
+<!--                        </archive>-->
+<!--                    </configuration>-->
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -332,15 +333,10 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- DEPLOY -->
+            <!-- COMPILER -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.1</version>
-                <configuration>
-                    <!-- disable the default existing mapping -->
-                    <skip>true</skip>
-                </configuration>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
             <!-- JAR -->
             <plugin>
@@ -351,6 +347,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <propertiesEncoding>${project.build.sourceEncoding}</propertiesEncoding>
+                </configuration>
                 <executions>
                     <execution>
                         <id>copy-resources</id>
@@ -379,6 +378,16 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- DEPLOY -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <!-- disable the default existing mapping -->
+                    <skip>true</skip>
+                </configuration>
             </plugin>
             <!-- INSTALL -->
             <plugin>
@@ -598,7 +607,7 @@
             <dependency>
                 <groupId>com.github.javaparser</groupId>
                 <artifactId>javaparser-symbol-solver-core</artifactId>
-                <version>3.15.17</version>
+                <version>3.25.5</version>
             </dependency>
             <dependency>
                 <groupId>net.jodah</groupId>
@@ -754,7 +763,9 @@
             </build>
         </profile>
 
-
+        <!-- ************************************** -->
+        <!-- Profile for building the Java API Docs -->
+        <!-- ************************************** -->
         <profile>
             <id>distribute</id>
             <properties>
@@ -824,8 +835,9 @@
             </build>
         </profile>
 
-
-
+        <!-- ************************************************ -->
+        <!-- Profile for deployment to the Central Repository -->
+        <!-- ************************************************ -->
         <profile>
             <id>release</id>
             <build>
@@ -862,60 +874,5 @@
                 </plugins>
             </build>
         </profile>
-
-
-
-<!--        &lt;!&ndash; TODO : name to release and standard nexus deployment - couple with&ndash;&gt;-->
-<!--        &lt;!&ndash; ****************** &ndash;&gt;-->
-<!--        &lt;!&ndash; Deployment Profile &ndash;&gt;-->
-<!--        &lt;!&ndash; ****************** &ndash;&gt;-->
-<!--        <profile>-->
-<!--            <id>deploy</id>-->
-<!--            <build>-->
-<!--                <plugins>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.jfrog.buildinfo</groupId>-->
-<!--                        <artifactId>artifactory-maven-plugin</artifactId>-->
-<!--                        <inherited>false</inherited>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <id>build-info</id>-->
-<!--                                <goals>-->
-<!--                                    <goal>publish</goal>-->
-<!--                                </goals>-->
-<!--                                <configuration>-->
-<!--                                    <deployProperties>-->
-<!--                                        <groupId>${project.groupId}</groupId>-->
-<!--                                        <artifactId>${project.artifactId}</artifactId>-->
-<!--                                        <version>${project.version}</version>-->
-<!--                                    </deployProperties>-->
-<!--                                    <artifactory>-->
-<!--                                        <includeEnvVars>true</includeEnvVars>-->
-<!--                                        <envVarsExcludePatterns>*password*,*secret*,*key*,*token*,*passphrase*-->
-<!--                                        </envVarsExcludePatterns>-->
-<!--                                        <timeoutSec>60</timeoutSec>-->
-<!--                                    </artifactory>-->
-<!--                                    <publisher>-->
-<!--                                        <contextUrl>https://stgroup.jfrog.io/artifactory/</contextUrl>-->
-<!--                                        &lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
-<!--                                        <username>${username}</username>-->
-<!--                                        &lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
-<!--                                        <password>${password}</password>-->
-<!--                                        <excludePatterns>*-tests.jar,*documentation-*.jar,*documentation-*.pom-->
-<!--                                        </excludePatterns>-->
-<!--                                        &lt;!&ndash; Name of local repository in Artifactory @ stgroup.jfrog.io/ &ndash;&gt;-->
-<!--                                        <repoKey>st-tu-dresden-maven-repository</repoKey>-->
-<!--                                        <snapshotRepoKey>st-tu-dresden-maven-repository</snapshotRepoKey>-->
-<!--                                    </publisher>-->
-<!--                                    <buildInfo>-->
-<!--                                        <buildName>bigraph-framework-builds</buildName>-->
-<!--                                    </buildInfo>-->
-<!--                                </configuration>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
-<!--                </plugins>-->
-<!--            </build>-->
-<!--        </profile>-->
     </profiles>
 </project>
