@@ -1,26 +1,26 @@
 package org.bigraphs.framework.simulation.examples.computation;
 
 import com.google.common.base.Stopwatch;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.*;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.ElementaryBigraph;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.exceptions.*;
+import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
+import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
+import org.bigraphs.framework.core.factory.BigraphFactory;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.examples.BaseExampleTestSupport;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

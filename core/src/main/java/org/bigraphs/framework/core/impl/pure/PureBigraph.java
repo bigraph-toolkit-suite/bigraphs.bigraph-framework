@@ -1,6 +1,6 @@
 package org.bigraphs.framework.core.impl.pure;
 
-import de.tudresden.inf.st.bigraphs.core.*;
+import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;

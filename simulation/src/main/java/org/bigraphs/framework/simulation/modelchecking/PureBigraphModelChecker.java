@@ -1,7 +1,7 @@
 package org.bigraphs.framework.simulation.modelchecking;
 
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

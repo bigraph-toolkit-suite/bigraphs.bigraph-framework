@@ -1,7 +1,7 @@
 package org.bigraphs.framework.simulation.modelchecking.reactions;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 

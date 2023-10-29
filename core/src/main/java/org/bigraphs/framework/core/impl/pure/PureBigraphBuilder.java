@@ -1,11 +1,11 @@
 package org.bigraphs.framework.core.impl.pure;
 
 import com.google.common.collect.Lists;
-import de.tudresden.inf.st.bigraphs.core.*;
+import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.EMetaModelData;
-import de.tudresden.inf.st.bigraphs.core.exceptions.*;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.*;
+import org.bigraphs.framework.core.exceptions.*;
+import org.bigraphs.framework.core.exceptions.builder.*;
 import org.bigraphs.framework.core.exceptions.*;
 import org.bigraphs.framework.core.exceptions.builder.*;
 import org.bigraphs.framework.core.impl.BigraphEntity;

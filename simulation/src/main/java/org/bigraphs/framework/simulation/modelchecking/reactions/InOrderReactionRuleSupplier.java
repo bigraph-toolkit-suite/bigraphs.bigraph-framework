@@ -1,8 +1,8 @@
 package org.bigraphs.framework.simulation.modelchecking.reactions;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 
 import java.util.Collection;
 

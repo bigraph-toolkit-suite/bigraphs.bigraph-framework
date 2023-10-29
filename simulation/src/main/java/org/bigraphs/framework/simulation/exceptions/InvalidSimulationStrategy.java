@@ -1,6 +1,6 @@
 package org.bigraphs.framework.simulation.exceptions;
 
-import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
+import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 
 /**
  * @author Dominik Grzelak

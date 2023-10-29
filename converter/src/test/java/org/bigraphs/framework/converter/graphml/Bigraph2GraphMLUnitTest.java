@@ -1,14 +1,14 @@
 package org.bigraphs.framework.converter.graphml;
 
 import org.bigraphs.framework.converter.BigraphPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
+import org.bigraphs.framework.core.factory.BigraphFactory;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.converter.graphml.PureBigraph2GraphMLPrettyPrinter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

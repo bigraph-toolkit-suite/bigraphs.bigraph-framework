@@ -1,7 +1,7 @@
 package org.bigraphs.framework.converter;
 
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
 
 /**
  * A simple stub for predicates to test the converter

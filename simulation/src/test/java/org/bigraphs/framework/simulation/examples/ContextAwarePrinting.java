@@ -1,18 +1,18 @@
 package org.bigraphs.framework.simulation.examples;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.BigraphFileModelManagement;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
+import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
 /**

@@ -2,7 +2,7 @@ package GCF;
 
 import com.microstar.xml.XmlHandler;
 import com.microstar.xml.XmlParser;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
+import org.bigraphs.framework.core.BigraphMetaModelConstants;
 //import lombok.AllArgsConstructor;
 //import lombok.Data;
 

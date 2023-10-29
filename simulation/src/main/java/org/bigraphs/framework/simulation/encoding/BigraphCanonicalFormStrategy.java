@@ -1,6 +1,6 @@
 package org.bigraphs.framework.simulation.encoding;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import org.bigraphs.framework.core.Bigraph;
 
 /**
  * @author Dominik Grzelak

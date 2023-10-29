@@ -1,9 +1,9 @@
 package org.bigraphs.framework.converter.bigred;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.bigraphs.framework.core.BigraphFileModelManagement;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.bigraphs.framework.converter.bigred.DefaultBigraphXMLLoader;
 import org.bigraphs.framework.converter.bigred.DefaultSignatureXMLLoader;
 import org.eclipse.collections.api.map.MutableMap;

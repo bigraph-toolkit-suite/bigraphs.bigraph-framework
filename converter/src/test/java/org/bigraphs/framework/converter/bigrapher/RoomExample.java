@@ -1,23 +1,23 @@
 package org.bigraphs.framework.converter.bigrapher;
 
 import org.bigraphs.framework.converter.PureReactiveSystemStub;
-import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.datatypes.EMetaModelData;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.ControlStatus;
+import org.bigraphs.framework.core.datatypes.EMetaModelData;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
+import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
+import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.reactivesystem.InstantiationMap;
+import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 //Example from: Christoph Luckeneder
 public class RoomExample {

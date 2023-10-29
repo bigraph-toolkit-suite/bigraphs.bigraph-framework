@@ -1,23 +1,23 @@
 package org.bigraphs.framework.simulation.matching;
 
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
 public class OccurenceUnitTest extends AbstractUnitTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/occurrence/";

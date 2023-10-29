@@ -1,10 +1,10 @@
 package org.bigraphs.framework.visualization;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.BigraphEntityType;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
 import org.bigraphs.framework.visualization.supplier.GraphvizColorSupplier;
 import org.bigraphs.framework.visualization.supplier.GraphvizShapeSupplier;
 import guru.nidi.graphviz.attribute.*;

@@ -1,6 +1,6 @@
 package org.bigraphs.framework.simulation.encoding.hash;
 
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 
 /**
  * @author Dominik Grzelak

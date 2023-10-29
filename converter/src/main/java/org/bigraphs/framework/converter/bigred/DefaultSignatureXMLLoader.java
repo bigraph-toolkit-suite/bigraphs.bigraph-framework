@@ -1,9 +1,9 @@
 package org.bigraphs.framework.converter.bigred;
 
-import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.ControlStatus;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -19,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 /**
  * Class to load a BigRed XML file containing a signature.

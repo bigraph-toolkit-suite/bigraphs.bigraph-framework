@@ -1,17 +1,17 @@
 package org.bigraphs.framework.converter.bigrapher;
 
 import org.bigraphs.framework.converter.PureReactiveSystemStub;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
+import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureBuilder;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
 public class TraceabilityExample {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/traceability/";

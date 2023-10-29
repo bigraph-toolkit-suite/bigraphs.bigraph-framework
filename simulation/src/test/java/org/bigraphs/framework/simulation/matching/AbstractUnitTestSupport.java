@@ -1,20 +1,20 @@
 package org.bigraphs.framework.simulation.matching;
 
 import com.google.common.base.Stopwatch;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
+import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.ops;
+import static org.bigraphs.framework.core.factory.BigraphFactory.ops;
 
 public class AbstractUnitTestSupport {
     void exportGraph(Bigraph<?> big, String path) {

@@ -1,11 +1,11 @@
 package org.bigraphs.framework.simulation.matching.pure;
 
 import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.BigraphEntityType;
+import org.bigraphs.framework.core.Control;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Lists;

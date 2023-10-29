@@ -2,8 +2,8 @@ package org.bigraphs.framework.converter.ecore;
 
 import org.bigraphs.framework.converter.bigmc.BigMcTransformationUnitTest;
 import org.bigraphs.framework.converter.PureReactiveSystemStub;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

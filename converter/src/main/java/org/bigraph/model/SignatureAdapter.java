@@ -1,12 +1,12 @@
 package org.bigraph.model;
 
 
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.Control;
+import org.bigraphs.framework.core.ControlStatus;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraph.model.assistants.IObjectIdentifier;
 import org.bigraph.model.interfaces.ISignature;
 

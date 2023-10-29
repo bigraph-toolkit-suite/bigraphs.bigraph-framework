@@ -1,8 +1,8 @@
 package org.bigraphs.framework.simulation.encoding.hash;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 
 /**
  * Base interface to implement hash functions for bigraphs.

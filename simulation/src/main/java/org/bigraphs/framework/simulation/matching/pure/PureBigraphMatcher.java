@@ -1,9 +1,9 @@
 package org.bigraphs.framework.simulation.matching.pure;
 
 import com.google.common.base.Stopwatch;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.slf4j.Logger;

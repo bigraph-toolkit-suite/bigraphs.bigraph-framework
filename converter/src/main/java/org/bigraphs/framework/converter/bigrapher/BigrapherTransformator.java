@@ -1,13 +1,13 @@
 package org.bigraphs.framework.converter.bigrapher;
 
 import org.bigraphs.framework.converter.ReactiveSystemPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.HasLabel;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.HasLabel;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.MutableList;

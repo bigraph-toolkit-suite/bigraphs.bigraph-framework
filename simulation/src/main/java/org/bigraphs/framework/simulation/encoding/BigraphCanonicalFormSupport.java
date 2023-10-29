@@ -1,8 +1,8 @@
 package org.bigraphs.framework.simulation.encoding;
 
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.elementary.Linkings;
+import org.bigraphs.framework.core.impl.elementary.Placings;
 
 import java.util.Map;
 import java.util.function.Function;

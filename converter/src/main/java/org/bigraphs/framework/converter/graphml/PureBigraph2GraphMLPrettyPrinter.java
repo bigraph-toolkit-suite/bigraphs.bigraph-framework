@@ -1,9 +1,9 @@
 package org.bigraphs.framework.converter.graphml;
 
 import org.bigraphs.framework.converter.BigraphPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.BigraphEntityType;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.jdom2.Element;
 
 import java.io.IOException;

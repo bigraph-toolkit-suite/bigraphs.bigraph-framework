@@ -1,9 +1,9 @@
 package org.bigraphs.framework.simulation.canonicalstring;
 
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.elementary.Linkings;
+import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.collections.impl.factory.Lists;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

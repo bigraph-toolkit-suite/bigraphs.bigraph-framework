@@ -1,10 +1,10 @@
 package org.bigraphs.framework.converter.bigred;
 
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.AbstractSimpleReactiveSystem;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;

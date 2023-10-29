@@ -1,13 +1,13 @@
 package org.bigraphs.framework.simulation.modelchecking;
 
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.core.reactivesystem.ReactionGraph;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.modelchecking.predicates.PredicateChecker;
 import org.jgrapht.GraphPath;

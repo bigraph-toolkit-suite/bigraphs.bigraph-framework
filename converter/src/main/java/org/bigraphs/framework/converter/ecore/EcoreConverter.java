@@ -1,9 +1,9 @@
 package org.bigraphs.framework.converter.ecore;
 
 import org.bigraphs.framework.converter.ReactiveSystemPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.BigraphFileModelManagement;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 
 import java.io.IOException;
 import java.io.OutputStream;

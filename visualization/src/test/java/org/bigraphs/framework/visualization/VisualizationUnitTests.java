@@ -1,20 +1,20 @@
 package org.bigraphs.framework.visualization;
 
-import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.exceptions.IncompatibleSignatureException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.LinkTypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.operations.IncompatibleInterfaceException;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
+import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
+import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
+import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
+import org.bigraphs.framework.core.impl.elementary.Linkings;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.bigraphs.framework.visualization.DefaultLabelSupplier;
 import org.bigraphs.framework.visualization.GraphicalFeatureSupplier;
@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static guru.nidi.graphviz.model.Factory.*;
 
 public class VisualizationUnitTests {

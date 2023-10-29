@@ -1,9 +1,9 @@
 package org.bigraphs.framework.simulation.modelchecking;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.modelchecking.reactions.InOrderReactionRuleSupplier;
 import org.bigraphs.framework.simulation.modelchecking.reactions.RandomAgentMatchSupplier;

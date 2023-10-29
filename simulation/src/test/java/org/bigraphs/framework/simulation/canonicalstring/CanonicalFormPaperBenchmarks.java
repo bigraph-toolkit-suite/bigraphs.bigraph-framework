@@ -1,15 +1,15 @@
 package org.bigraphs.framework.simulation.canonicalstring;
 
 import com.google.common.base.Stopwatch;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.datatypes.FiniteOrdinal;
-import de.tudresden.inf.st.bigraphs.core.datatypes.StringTypedName;
-import de.tudresden.inf.st.bigraphs.core.alg.generators.PureBigraphGenerator;
-import de.tudresden.inf.st.bigraphs.core.alg.generators.RandomBigraphGeneratorSupport;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.Control;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
+import org.bigraphs.framework.core.alg.generators.RandomBigraphGeneratorSupport;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
 /**
  * @author Dominik Grzelak

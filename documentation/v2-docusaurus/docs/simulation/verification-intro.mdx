@@ -81,7 +81,7 @@ One can then export the transition system by calling  `modelChecker.exportReacti
 The `java.util.concurrent.ExecutorService` is used to submit tasks of the model checker.
 
 Bigraph framework offers to provide a custom `ExecutorService` by implementing the interface
-`de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider`, found in the `bigraph-core` dependency.
+`org.bigraphs.framework.core.providers.ExecutorServicePoolProvider`, found in the `bigraph-core` dependency.
 The class `BigraphModelChecker` uses the `java.util.ServiceLoader` (see [https://docs.oracle.com/javase/tutorial/ext/basics/spi.html#the-serviceloader-class](https://docs.oracle.com/javase/tutorial/ext/basics/spi.html#the-serviceloader-class)
 to search for an implementation.
 

@@ -1,17 +1,17 @@
 package org.bigraphs.framework.simulation;
 
-import de.tudresden.inf.st.bigraphs.core.exceptions.ReactiveSystemException;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
+import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
 import org.bigraphs.framework.simulation.exceptions.BigraphSimulationException;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.predicates.BigraphIsoPredicate;
 import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.exportOpts;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;

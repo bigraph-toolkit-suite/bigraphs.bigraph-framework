@@ -1,4 +1,4 @@
-package de.tudresden.inf.st.bigraphs.documentation;
+package org.bigraphs.framework.documentation;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.ast.CompilationUnit;

@@ -1,6 +1,6 @@
 package org.bigraphs.framework.visualization;
 
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.BigraphEntity;
 
 /**
  * A supplier for the color of a node or edge in a graph.

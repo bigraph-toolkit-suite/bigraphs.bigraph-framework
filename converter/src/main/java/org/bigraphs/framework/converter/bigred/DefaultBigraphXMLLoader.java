@@ -1,12 +1,12 @@
 package org.bigraphs.framework.converter.bigred;
 
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.Control;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.MutableBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.BigraphEntityType;
+import org.bigraphs.framework.core.Control;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.pure.MutableBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.xml.stream.events.Attribute;

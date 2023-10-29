@@ -10,7 +10,7 @@ import storing_a_metamodel_to_the_filesystem_0 from '!!raw-loader!../assets/pers
 The framework itself provides simple means for storing and loading bigraphical metamodels and instance models using the
 capabilities of [Eclipse EMF](https://www.eclipse.org/modeling/emf/).
 
-Therefore, the utility class `de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement` within the `bigraph-core`
+Therefore, the utility class `org.bigraphs.framework.core.BigraphFileModelManagement` within the `bigraph-core`
 module comprises methods for persisting bigraphical models to the filesystem.
 Basically, `BigraphFileModelManagement` is a simple file-based model
 management utility class that serializes (deserializes) to (from) XMI and Ecore:
@@ -19,7 +19,7 @@ management utility class that serializes (deserializes) to (from) XMI and Ecore:
 
 XMI provides an XML representation for Ecore constructs.
 
-Both operations are provided by the inner classes `Load` and `Store` of `de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement`
+Both operations are provided by the inner classes `Load` and `Store` of `org.bigraphs.framework.core.BigraphFileModelManagement`
 to easily distinguish and use them.
 
 > **Note:** For a more sophisticated persistence solution, we refer the reader to [Eclipse Connected Data Objects (CDO) Model Repository](https://projects.eclipse.org/projects/modeling.emf.cdo)
@@ -46,7 +46,7 @@ For demonstration, we create a simple signature and afterwards a bigraph
 <CodeBlock className="language-java">{storing_a_metamodel_to_the_filesystem_0}</CodeBlock>
 
 As shown above, the metamodel data must be passed to a special method available
-from `de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory`. The
+from `org.bigraphs.framework.core.factory.BigraphFactory`. The
 method `exportAsMetaModel(EcoreBigraph, OutputStream)` is used then to output the Ecore representation to the
 filesystem.
 

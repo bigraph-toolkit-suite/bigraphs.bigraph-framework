@@ -1,11 +1,11 @@
 package org.bigraphs.framework.simulation.modelchecking.predicates;
 
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
+import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import it.uniud.mads.jlibbig.core.std.AgentMatch;
 import it.uniud.mads.jlibbig.core.std.AgentMatcher;

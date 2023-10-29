@@ -2,8 +2,8 @@ package org.bigraphs.framework.core.reactivesystem;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.exceptions.*;
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.exceptions.*;
 import org.bigraphs.framework.core.exceptions.*;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.AbstractEcoreSignature;

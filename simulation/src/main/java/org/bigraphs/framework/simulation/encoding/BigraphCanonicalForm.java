@@ -1,13 +1,13 @@
 package org.bigraphs.framework.simulation.encoding;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotPrimeException;
-import de.tudresden.inf.st.bigraphs.core.ElementaryBigraph;
-import de.tudresden.inf.st.bigraphs.core.exceptions.BigraphIsNotGroundException;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.DiscreteIon;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.Linkings;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.exceptions.BigraphIsNotPrimeException;
+import org.bigraphs.framework.core.ElementaryBigraph;
+import org.bigraphs.framework.core.exceptions.BigraphIsNotGroundException;
+import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
+import org.bigraphs.framework.core.impl.elementary.Linkings;
+import org.bigraphs.framework.core.impl.elementary.Placings;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 

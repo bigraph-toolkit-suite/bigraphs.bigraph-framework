@@ -1,14 +1,14 @@
 package org.bigraphs.framework.converter.jlibbig;
 
 import org.bigraphs.framework.converter.BigraphObjectDecoder;
-import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.MutableBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.ControlStatus;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.pure.MutableBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import it.uniud.mads.jlibbig.core.attachedProperties.Property;
 import it.uniud.mads.jlibbig.core.attachedProperties.PropertyTarget;
 import it.uniud.mads.jlibbig.core.std.*;
@@ -16,8 +16,8 @@ import org.eclipse.emf.ecore.EPackage;
 
 import java.util.*;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.createOrGetBigraphMetaModel;
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.pureSignatureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.createOrGetBigraphMetaModel;
+import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
 public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, it.uniud.mads.jlibbig.core.std.Bigraph> {
     private HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();

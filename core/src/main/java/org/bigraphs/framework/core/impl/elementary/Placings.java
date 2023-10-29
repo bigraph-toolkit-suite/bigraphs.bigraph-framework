@@ -1,6 +1,6 @@
 package org.bigraphs.framework.core.impl.elementary;
 
-import de.tudresden.inf.st.bigraphs.core.*;
+import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.EMetaModelData;
 import org.bigraphs.framework.core.impl.BigraphEntity;

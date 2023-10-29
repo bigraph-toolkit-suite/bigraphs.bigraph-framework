@@ -1,9 +1,9 @@
 package org.bigraphs.framework.simulation;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.BigraphFileModelManagement;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 
 import java.io.File;
 import java.io.IOException;

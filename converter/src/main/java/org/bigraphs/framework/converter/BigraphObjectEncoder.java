@@ -1,6 +1,6 @@
 package org.bigraphs.framework.converter;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import org.bigraphs.framework.core.Bigraph;
 
 public interface BigraphObjectEncoder<T, B extends Bigraph<?>> {
 

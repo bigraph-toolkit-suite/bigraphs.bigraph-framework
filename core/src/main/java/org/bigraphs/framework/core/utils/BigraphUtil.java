@@ -1,6 +1,6 @@
 package org.bigraphs.framework.core.utils;
 
-import de.tudresden.inf.st.bigraphs.core.*;
+import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;

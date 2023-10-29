@@ -3,10 +3,10 @@ package org.bigraphs.framework.visualization;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.reactivesystem.ReactionGraph;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

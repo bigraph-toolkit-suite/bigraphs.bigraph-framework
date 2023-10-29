@@ -1,10 +1,10 @@
 package org.bigraphs.framework.simulation.matching.pure;
 
 import com.google.common.base.Stopwatch;
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.matching.BigraphMatchingEngine;
 import org.bigraphs.framework.simulation.matching.BigraphMatchingSupport;
 //import it.uniud.mads.jlibbig.core.ReactionRule;
@@ -74,7 +74,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             matchingTimer = Stopwatch.createStarted();
         }
 
-        de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap instantationMap = reactionRule.getInstantationMap();
+        org.bigraphs.framework.core.reactivesystem.InstantiationMap instantationMap = reactionRule.getInstantationMap();
         int[] imArray = new int[instantationMap.getMappings().size()];
         for (int i = 0; i < imArray.length; i++) {
             imArray[i] = instantationMap.get(i).getValue();

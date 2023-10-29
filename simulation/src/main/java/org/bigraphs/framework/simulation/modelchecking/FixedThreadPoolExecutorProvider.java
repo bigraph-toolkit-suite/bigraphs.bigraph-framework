@@ -1,6 +1,6 @@
 package org.bigraphs.framework.simulation.modelchecking;
 
-import de.tudresden.inf.st.bigraphs.core.providers.ExecutorServicePoolProvider;
+import org.bigraphs.framework.core.providers.ExecutorServicePoolProvider;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

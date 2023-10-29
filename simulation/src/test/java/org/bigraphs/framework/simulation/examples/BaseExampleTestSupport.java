@@ -1,8 +1,8 @@
 package org.bigraphs.framework.simulation.examples;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
+import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 
 import java.io.File;
 import java.io.IOException;

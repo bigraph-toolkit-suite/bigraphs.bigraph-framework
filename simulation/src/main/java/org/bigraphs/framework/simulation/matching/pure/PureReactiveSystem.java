@@ -1,11 +1,11 @@
 package org.bigraphs.framework.simulation.matching.pure;
 
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphDecoder;
-import de.tudresden.inf.st.bigraphs.converter.jlibbig.JLibBigBigraphEncoder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.AbstractSimpleReactiveSystem;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import it.uniud.mads.jlibbig.core.Owner;
 import it.uniud.mads.jlibbig.core.attachedProperties.Property;
 import it.uniud.mads.jlibbig.core.std.*;
@@ -27,7 +27,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
     private final Logger logger = LoggerFactory.getLogger(PureReactiveSystem.class);
 
     private it.uniud.mads.jlibbig.core.std.InstantiationMap constructEta(ReactionRule<PureBigraph> reactionRule) {
-        de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap instantationMap = reactionRule.getInstantationMap();
+        org.bigraphs.framework.core.reactivesystem.InstantiationMap instantationMap = reactionRule.getInstantationMap();
         int[] imArray = new int[instantationMap.getMappings().size()];
         for (int i = 0; i < imArray.length; i++) {
             imArray[i] = instantationMap.get(i).getValue();

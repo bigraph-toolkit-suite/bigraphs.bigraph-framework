@@ -2,9 +2,9 @@ package org.bigraphs.framework.simulation.matching;
 
 import com.google.common.collect.Streams;
 import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.EcoreBigraph;
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.EcoreBigraph;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.list.MutableList;

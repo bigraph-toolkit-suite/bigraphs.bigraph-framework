@@ -2,9 +2,9 @@ package org.bigraphs.framework.visualization;
 
 import com.mxgraph.model.mxICell;
 import com.mxgraph.view.mxGraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionGraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
+import org.bigraphs.framework.core.reactivesystem.ReactionGraph;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.event.GraphEdgeChangeEvent;

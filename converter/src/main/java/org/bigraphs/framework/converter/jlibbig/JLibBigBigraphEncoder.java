@@ -2,12 +2,12 @@ package org.bigraphs.framework.converter.jlibbig;
 
 import com.google.common.graph.Traverser;
 import org.bigraphs.framework.converter.BigraphObjectEncoder;
-import de.tudresden.inf.st.bigraphs.core.BigraphEntityType;
-import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.BigraphEntityType;
+import org.bigraphs.framework.core.ControlStatus;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import it.uniud.mads.jlibbig.core.attachedProperties.PropertyTarget;
 import it.uniud.mads.jlibbig.core.attachedProperties.SimpleProperty;
 import it.uniud.mads.jlibbig.core.std.*;

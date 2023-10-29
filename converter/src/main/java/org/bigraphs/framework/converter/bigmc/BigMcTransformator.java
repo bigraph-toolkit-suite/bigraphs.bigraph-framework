@@ -1,11 +1,11 @@
 package org.bigraphs.framework.converter.bigmc;
 
 import org.bigraphs.framework.converter.ReactiveSystemPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.*;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
 
 import java.io.IOException;
 import java.io.OutputStream;

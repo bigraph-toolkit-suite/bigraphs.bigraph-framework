@@ -1,18 +1,18 @@
 package org.bigraphs.framework.simulation.examples.bigrid;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphComposite;
-import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
-import de.tudresden.inf.st.bigraphs.core.alg.generators.BigridGenerator;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicControl;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.elementary.Placings;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.*;
-import de.tudresden.inf.st.bigraphs.core.utils.BigraphUtil;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.BigraphComposite;
+import org.bigraphs.framework.core.BigraphFileModelManagement;
+import org.bigraphs.framework.core.alg.generators.BigridGenerator;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.elementary.Placings;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.core.utils.BigraphUtil;
 import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
-import de.tudresden.inf.st.bigraphs.visualization.BigraphGraphvizExporter;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.collections.impl.factory.Maps;
 
@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 public class BigridObject {
     String basePath = "/home/dominik/git/BigraphFramework/simulation/src/test/resources/dump/bigrid/circular/";

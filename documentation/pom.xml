@@ -50,7 +50,7 @@
                 </executions>
                 <configuration>
                     <classpathScope>test</classpathScope>
-                    <mainClass>de.tudresden.inf.st.bigraphs.documentation.MainDocGenerationRunner</mainClass>
+                    <mainClass>org.bigraphs.framework.documentation.MainDocGenerationRunner</mainClass>
                 </configuration>
             </plugin>
             <!-- CLEAN -->

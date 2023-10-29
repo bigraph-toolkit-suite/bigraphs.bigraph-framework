@@ -1,6 +1,6 @@
 package org.bigraphs.framework.core.impl.pure;
 
-import de.tudresden.inf.st.bigraphs.core.*;
+import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.NamedType;
 import org.bigraphs.framework.core.datatypes.StringTypedName;

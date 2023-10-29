@@ -1,22 +1,22 @@
-package de.tudresden.inf.st.bigraphs.documentation.converter;
+package org.bigraphs.framework.documentation.converter;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import de.tudresden.inf.st.bigraphs.converter.bigrapher.BigrapherTransformator;
-import de.tudresden.inf.st.bigraphs.core.ControlStatus;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidConnectionException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.InvalidReactionRuleException;
-import de.tudresden.inf.st.bigraphs.core.exceptions.builder.TypeNotExistsException;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DefaultDynamicSignature;
-import de.tudresden.inf.st.bigraphs.core.impl.signature.DynamicSignatureBuilder;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraphBuilder;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.InstantiationMap;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ParametricReactionRule;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
-import de.tudresden.inf.st.bigraphs.documentation.BaseDocumentationGeneratorSupport;
-import de.tudresden.inf.st.bigraphs.documentation.MainDocGenerationRunner;
-import de.tudresden.inf.st.bigraphs.simulation.matching.pure.PureReactiveSystem;
-import de.tudresden.inf.st.bigraphs.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
+import org.bigraphs.framework.converter.bigrapher.BigrapherTransformator;
+import org.bigraphs.framework.core.ControlStatus;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
+import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.reactivesystem.InstantiationMap;
+import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
+import org.bigraphs.framework.documentation.BaseDocumentationGeneratorSupport;
+import org.bigraphs.framework.documentation.MainDocGenerationRunner;
+import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
+import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.collections.api.factory.Lists;
 
@@ -26,11 +26,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 public class ConverterBigrapher extends BaseDocumentationGeneratorSupport {
 
-    String firstPrefix = "import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;";
+    String firstPrefix = "import static org.bigraphs.framework.core.factory.BigraphFactory.*;";
 
     @Override
     public List<String> acceptedMethods() {

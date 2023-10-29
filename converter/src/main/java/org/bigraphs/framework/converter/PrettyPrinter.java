@@ -1,7 +1,7 @@
 package org.bigraphs.framework.converter;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
 
 /**
  * @author Dominik Grzelak

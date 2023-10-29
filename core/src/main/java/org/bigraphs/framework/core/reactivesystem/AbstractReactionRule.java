@@ -2,7 +2,7 @@ package org.bigraphs.framework.core.reactivesystem;
 
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.exceptions.*;
+import org.bigraphs.framework.core.exceptions.*;
 import org.bigraphs.framework.core.exceptions.*;
 
 /**

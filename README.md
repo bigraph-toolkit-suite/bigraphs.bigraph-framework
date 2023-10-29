@@ -45,7 +45,7 @@ Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framew
 
 The lean bigraph API allows fast bigraph creation and composition.
 
-To following usage assumes the import statement `import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*`.
+To following usage assumes the import statement `import static org.bigraphs.framework.core.factory.BigraphFactory.*`.
 
 ```java
 // create the signature

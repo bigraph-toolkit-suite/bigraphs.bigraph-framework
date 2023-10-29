@@ -1,8 +1,8 @@
 package org.bigraphs.framework.converter.bigred;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.BigraphMetaModelConstants;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.BigraphMetaModelConstants;
+import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.emf.ecore.EStructuralFeature;
 

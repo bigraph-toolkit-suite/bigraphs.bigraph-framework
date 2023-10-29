@@ -1,8 +1,8 @@
 package org.bigraphs.framework.converter.ecore;
 
 import org.bigraphs.framework.converter.BigraphPrettyPrinter;
-import de.tudresden.inf.st.bigraphs.core.BigraphFileModelManagement;
-import de.tudresden.inf.st.bigraphs.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.BigraphFileModelManagement;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

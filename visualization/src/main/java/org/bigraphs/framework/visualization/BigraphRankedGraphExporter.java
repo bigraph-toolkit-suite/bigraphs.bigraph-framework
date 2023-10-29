@@ -3,7 +3,7 @@ package org.bigraphs.framework.visualization;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
-import de.tudresden.inf.st.bigraphs.core.AbstractRankedGraph;
+import org.bigraphs.framework.core.AbstractRankedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 

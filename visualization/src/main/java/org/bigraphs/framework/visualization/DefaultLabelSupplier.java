@@ -1,6 +1,6 @@
 package org.bigraphs.framework.visualization;
 
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.BigraphEntity;
 
 /**
  * A generic supplier for String labels.

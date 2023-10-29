@@ -1,8 +1,8 @@
 package org.bigraphs.framework.simulation.modelchecking.predicates;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystemPredicate;
-import de.tudresden.inf.st.bigraphs.core.Signature;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
+import org.bigraphs.framework.core.Signature;
 
 import java.util.Arrays;
 import java.util.LinkedList;

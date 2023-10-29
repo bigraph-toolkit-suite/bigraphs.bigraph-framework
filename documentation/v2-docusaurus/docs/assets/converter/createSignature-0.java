@@ -1,5 +1,5 @@
 
-import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 private static DefaultDynamicSignature createSignature() { 
 	DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();

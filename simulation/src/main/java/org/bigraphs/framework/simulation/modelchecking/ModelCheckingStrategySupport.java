@@ -1,10 +1,10 @@
 package org.bigraphs.framework.simulation.modelchecking;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactionRule;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

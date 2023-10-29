@@ -2,7 +2,7 @@ package org.bigraphs.framework.simulation.matching;
 
 import com.google.common.collect.Lists;
 import com.google.common.graph.Traverser;
-import de.tudresden.inf.st.bigraphs.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;

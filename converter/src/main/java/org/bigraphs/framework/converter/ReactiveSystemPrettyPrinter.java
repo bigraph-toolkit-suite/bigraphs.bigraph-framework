@@ -1,8 +1,8 @@
 package org.bigraphs.framework.converter;
 
-import de.tudresden.inf.st.bigraphs.core.Bigraph;
-import de.tudresden.inf.st.bigraphs.core.Signature;
-import de.tudresden.inf.st.bigraphs.core.reactivesystem.ReactiveSystem;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
+import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
 
 import java.io.IOException;
 import java.io.OutputStream;
