@@ -35,16 +35,17 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
+                    <!-- omit building user manual : only with profile `distribute` enabled -->
+                    <execution>
+                        <id>npm build user manual (docusaurus)</id>
+                        <phase>none</phase>
+                    </execution>
                     <execution>
                         <id>generate-code-samples</id>
                         <phase>package</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>npm build user manual (docusaurus)</id>
-                        <phase>none</phase>
                     </execution>
                 </executions>
                 <configuration>

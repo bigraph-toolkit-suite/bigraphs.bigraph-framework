@@ -53,7 +53,7 @@
         <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs
         </project.usermanual.outputDirectory>
         <!-- Versions -->
-        <bigraph.metamodel.version>1.6.0-SNAPSHOT</bigraph.metamodel.version>
+        <bigraph.metamodel.version>1.6.1-SNAPSHOT</bigraph.metamodel.version>
         <emf.common.version>2.23.0</emf.common.version>
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
         <emf.ecore.version>2.25.0</emf.ecore.version>
@@ -247,12 +247,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>3.1.1</version>
-                </plugin>
-                <!-- TODO DELETE -->
-                <plugin>
-                    <groupId>org.jfrog.buildinfo</groupId>
-                    <artifactId>artifactory-maven-plugin</artifactId>
-                    <version>3.2.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -476,13 +470,6 @@
                 <artifactId>bigred-core</artifactId>
                 <version>1.0.0.20130228</version>
             </dependency>
-            <!-- TODO remove -->
-            <!--            <dependency>-->
-            <!--                <groupId>org.bigraph.model</groupId>-->
-            <!--                <artifactId>bigred-core</artifactId>-->
-            <!--                <version>1.0.0.20130228</version>-->
-            <!--                <type>jar</type>-->
-            <!--            </dependency>-->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
@@ -516,7 +503,7 @@
             <!--                <version>${emf.cdo.common.version}</version>-->
             <!--            </dependency>-->
             <!-- These are now packaged in Bigraph Ecore Metamodel -->
-            <!-- TODO UPLOAD OR INIT -->
+            <!-- EMF Compare must be installed via `mvn initialize`. This dependency is also shaded into bigraph-core -->
             <dependency>
                 <groupId>org.eclipse.emf.compare</groupId>
                 <artifactId>org.eclipse.emf.compare</artifactId>
@@ -727,6 +714,7 @@
                                 </goals>
                                 <configuration>
                                     <!--<minimizeJar>true</minimizeJar>-->
+                                    <createDependencyReducedPom>true</createDependencyReducedPom>
                                     <filters>
                                         <filter>
                                             <artifact>*:*</artifact>
@@ -747,15 +735,12 @@
                                                 <exclude>profile.list</exclude>
                                             </excludes>
                                         </filter>
-                                        <filter>
-                                            <artifact>it.uniud.mads.jlibbig:jlibbig</artifact>
-                                            <includes>
-                                                <include>*/**</include>
-                                                <!--                                                <include>META-INF/**</include>-->
-                                                <!--                                                <include>it/**</include>-->
-                                                <!--                                                <include>schema/**</include>-->
-                                            </includes>
-                                        </filter>
+<!--                                        <filter>-->
+<!--                                            <artifact>it.uniud.mads.jlibbig:jlibbig</artifact>-->
+<!--                                            <includes>-->
+<!--                                                <include>*/**</include>-->
+<!--                                            </includes>-->
+<!--                                        </filter>-->
                                     </filters>
                                 </configuration>
                             </execution>

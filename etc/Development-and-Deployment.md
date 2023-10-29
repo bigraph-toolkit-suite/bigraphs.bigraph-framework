@@ -54,7 +54,7 @@ The generated user manual can then link to the separately built Javadoc.
 
 #### NPM Updates
 To check for npm updates or security issues, run the following inside the docusaurus folder of the documentation module,
-i.e., `./documentation/v2-docusaurus/`:
+i.e., `documentation/v2-docusaurus/`:
 
 ```shell
 npm audit
@@ -64,7 +64,7 @@ npx npm-check-updates
 #### Live Editing
 
 To view and edit the manual execute the following commands. 
-First, `cd` into the `./documentation/v2-docusaurus/` folder:
+First, `cd` into the `documentation/v2-docusaurus/` folder:
 
 ```shell
 cd ./documentation/v2-docusaurus/
@@ -88,15 +88,18 @@ The output is exported to `documentation/v2-docusaurus/build/`.
 
 #### Build the whole documentation
 
+Execute from the root of this project the following commands:
 ```shell
 mvn clean install
-mvn package -Pdistribute                              # creation and aggregation of JavaDocs 
+mvn package -P distribute                              # creation and aggregation of JavaDocs 
 nvm use 16                                            # switch node version
 npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
 mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
 ```
 
-The generated user manual is available from `documentation/v2-docusaurus/build/` (use `npm run serve`).
+The generated user manual is available from `documentation/v2-docusaurus/build/`.
+Use `npm run serve` inside the folder to start a webserver for reviewing the website.
+
 The generated Java documentation of all modules is available from `target/site/apidocs/`.
 This aggregated API (i.e., the merged result of all sub-modules) will be copied to `documentation/v2-docusaurus/static/apidocs`.
 
@@ -110,30 +113,45 @@ This section discusses the deployment process.
   * Documentation, including the Javadocs API, is generated and pushed to an external GitHub repository into the *gh-pages* branch
     * Currently it is the following repository: https://github.com/st-tu-dresden/bigraphs.org
 
-### Build configuration
+### Framework
 
 - Goals to execute for running the build: `mvn clean install`
-- Goals to execute for deploying to Artifactory: `mvn clean deploy`
+- Goals to execute for deploying to the Central Repository: `mvn clean deploy -P release,ossrh`
+
+The Sonatype account details (username + password) for the deployment must be provided to the
+Maven Sonatype Plugin as used in the project's `pom.xml` file (parent pom).
+
+The Maven GPG plugin is used to sign the components for the deployment.
+It relies on the gpg command being installed:
+```shell
+sudo apt install gnupg2
+```
+
+and the GPG credentials being available e.g. from `settings.xml`.
+
+More information can be found [here](https://central.sonatype.org/publish/requirements/gpg/).
 
 ### Documentation (User Manual + Javadoc API)
 
 - The whole documentation is pushed to GitHub to be served via GitHub Pages.
 
 - The following script builds and pushes the documentation to the remote repository:
-```console
-$ mvn ... # build the whole documentation as described before
-$ cd ./documentation/v2-docusaurus/build/ && git init
-$ touch CNAME && echo "www.bigraphs.org" > CNAME
-$ git add . && git commit -m "updated documentation"
-$ git remote add stgithub git@github.com:st-tu-dresden/bigraph-framework.git
-$ git push --force stgithub master:gh-pages
+```shell
+mvn ... # build the whole documentation as described before
+cd ./documentation/v2-docusaurus/build/ && git init
+touch CNAME && echo "www.bigraphs.org" > CNAME
+git add . && git commit -m "updated documentation"
+git remote add gh git@github.com:bigraph-toolkit-suite/bigraphs.bigraph-framework.git
+git push --force gh main:gh-pages
 ```
+
+**CI Related**
 
 - In GitLab, the variables SSH_PRIVATE_KEY and SSH_KNOWN_HOSTS must exist under **Settings | CI/CD**.
     - see [Using SSH keys with GitLab CI/CD](https://docs.gitlab.com/ee/ci/ssh_keys/)
     and [Generating a new SSH key pair](https://docs.gitlab.com/ee/ssh/#generating-a-new-ssh-key-pair)
     - Command to execute for SSH_KNOWN_HOSTS:
-    ```console
+    ```shell
     ssh-keygen -t rsa -b 4096 -C "dominik.grzelak@tu-dresden.de"
     ssh-keyscan github.com
     ```

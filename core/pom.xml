@@ -76,6 +76,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
                             <artifactSet>
                                 <includes>
                                     <include>org.eclipse.emf.compare:org.eclipse.emf.compare</include>
@@ -141,7 +142,6 @@
             <artifactId>org.eclipse.core.runtime</artifactId>
         </dependency>
         <!-- for ecore -->
-        <!-- TODO SHADE IN JAR -->
         <dependency>
             <groupId>org.eclipse.emf.compare</groupId>
             <artifactId>org.eclipse.emf.compare</artifactId>
