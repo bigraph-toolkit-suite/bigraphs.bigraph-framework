@@ -338,8 +338,6 @@ The manual is generated using [docusaurus](https://docusaurus.io/), which must b
 
 See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development and deployment of _Bigraph Framework_.
 
-[//]: # (TODO)
-
 To deploy Bigraph Framework to the [Central Repository](https://repo.maven.apache.org/maven2/):
 ```bash
 mvn clean deploy -DskipTests -P release
@@ -350,7 +348,7 @@ mvn clean deploy -DskipTests -P release
 **Bigraph Framework** is Open Source software released under the Apache 2.0 license.
 
 ```text
-   Copyright 2021-present Dominik Grzelak
+   Copyright 2023-present Dominik Grzelak
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
