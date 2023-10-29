@@ -1,1 +1,1 @@
-de.tudresden.inf.st.bigraphs.simulation.modelchecking.FixedThreadPoolExecutorProvider
+org.bigraphs.framework.simulation.modelchecking.FixedThreadPoolExecutorProvider

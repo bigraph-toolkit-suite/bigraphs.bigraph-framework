@@ -109,6 +109,7 @@ public class BasicBigRedXmlWriteTests {
 //            assertTrue(s.equals(match) || s.equals(match2) || s.equals(match3)|| s.equals(match4));
             bos.close();
 
+            // Get the schema file directly from the bigred-core dependency
             URL resource = org.bigraph.model.Signature.class.getClassLoader().getResource("resources/schema/signature.xsd");
             assertNotNull(resource);
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
