@@ -2,11 +2,12 @@
 
 # Bigraph Framework
 
-Branch | Version        | Status
----|----------------|---
-Master | 0.9.6          | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/master/pipeline.svg) |
-Develop | 0.9.7-SNAPSHOT | ![pipeline status](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/badges/develop/pipeline.svg)
------
+| Branch  | Version                         | Status |
+|---------|---------------------------------|--------|
+| Main    | 0.9.6                           |        |
+ | Develop | 0.9.7-SNAPSHOT / 1.0.0-SNAPSHOT |        |
+
+----
 
 A framework for the creation and simulation of bigraphs to expedite the experimental evaluation of the bigraph theory in
 real-world applications.
@@ -159,10 +160,6 @@ compositor.juxtapose(F).parallelProduct(H);
 </dependencies>
 ```
 
-The following Maven remote repository must be added as well. 
-
-There are two options:
-
 ### Remote Repository for Snapshot Releases
 
 SNAPSHOT releases are deployed [here](https://s01.oss.sonatype.org/content/repositories/snapshots).
@@ -177,7 +174,7 @@ To resolve them, the following remote repository must be configured in your `pom
 </repository>
 ```
 
-> See also [Building from Source](#Building-the-Framework-from Source) if you want to build the source by yourself and host them in your Maven local repository.
+> See also <a href="#Building-the-Framework-from-Source">Building from Source</a> if you want to build the source by yourself and host them in your Maven local repository.
 
 #### Logging
 
@@ -187,27 +184,27 @@ Depending on your project setup, you may need to include the following libraries
 
 ```xml
 <!-- For Spring -->
-        <dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+    <exclusions>
+        <exclusion>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-log4j2</artifactId>
+</dependency>
 
 <!-- For a bare Maven project -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.30</version>
-        </dependency>
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.30</version>
+</dependency>
 ```
 
 The example above shows how to use log4j2 in your project as the underlying logging framework.
@@ -258,7 +255,7 @@ For example, bigraphs to GraphML format, BigraphER's specification language or B
 **User-Friendly API**
 
 - Internally, bigraphs are described by a metamodel based on Ecore. 
-The project can be found in [this](https://git-st.inf.tu-dresden.de/bigraphs/ecore-bigraph-meta-model) Gitlab repository. 
+The project can be found in this [GitHub repository](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel). 
 - To create concrete bigraphs, a signature must be provided.
 To do so, this metamodel is extended when creating a new bigraphical signature which is then called "metamodel over a signature" of an abstract bigraph (described by the Ecore model). 
 We say that the signature is mapped to the metamodel over a signature. 
@@ -325,11 +322,12 @@ See [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for
 
 #### User Manual
 
-The generated user manual is available from `documentation/v2-docusaurus/` by calling `npm run start`.
+After running the build command as described above, the generated user manual will be available 
+at `documentation/v2-docusaurus/` by calling `npm run start`:
 
-```bash
-$ cd ./documentation/v2-docusaurus/
-$ npm run start
+```shell
+cd ./documentation/v2-docusaurus/
+npm run start
 ```
 
 The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md) for further instructions).
