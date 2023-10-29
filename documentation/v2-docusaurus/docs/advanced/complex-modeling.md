@@ -22,7 +22,7 @@ Both the laptop and printer are connected over the same network.
 The right building has only one room with 4 laptops.
 
 The **meta model over a signature** of the bigraph depicted in the figure above
-can be downloaded [here](assets/my-meta-model.ecore) to follow along the explanations.
+can be downloaded [here](../assets/my-meta-model.ecore) to follow along the explanations.
 
 To recreate the running example above, we first need a pure bigraph builder
 instance by initializing it with the meta model (see above):

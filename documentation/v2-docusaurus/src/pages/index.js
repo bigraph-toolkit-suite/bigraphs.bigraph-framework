@@ -16,13 +16,11 @@ function TryItOut() {
              style={{paddingTop: '2em'}}>
             <h2>Download & Use Bigraph Framework for Java</h2>
             <ul>
-                <li>Maven Repository on <a
-                    href={`https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/`}>Artifactory</a>
+                <li>The Framework is available via the <a
+                    href={`https://repo.maven.apache.org/maven2/`}>Central Repository</a>
                 </li>
-                <li>Source code on <a
-                    href={`https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/`}>GitLab</a></li>
-                <li>Source code on <a href={`https://github.com/st-tu-dresden/bigraph-framework`}>GitHub
-                    (mirror)</a></li>
+                <li>Source code on <a href={`https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework`}>GitHub (mirror)</a></li>
+                <li>Source code on <a href={`https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/`}>GitLab (mirror)</a></li>
             </ul>
             <i>Project Skeletons that get you started:</i>
             <ul>
@@ -45,14 +43,18 @@ function HomepageHeader() {
                 <h1 className="hero__title">{siteConfig.title}</h1>
                 <p className="hero__subtitle">{siteConfig.tagline}</p>
                 <div className={styles.buttons}>
+                    <div className="row">
                     <Link
                         className="button button--secondary button--lg"
+                        style={{"margin-right": "1em", "margin-top": "1em"}}
                         to="#try">Try It Out!
                     </Link>
                     <Link
                         className="button button--secondary button--lg"
+                        style={{"margin-top": "1em"}}
                         to="/docs/">View the User Manual
                     </Link>
+                    </div>
                 </div>
             </div>
         </header>
@@ -84,8 +86,8 @@ export default function Home() {
                 <FeatureCalloutTitle/>
                 <HomepageFeatures/>
                 <TryItOut/>
-                <BigraphRepositoryBlock/>
                 <BigraphDependencyBlock/>
+                <BigraphRepositoryBlock/>
             </main>
         </Layout>
     );

@@ -107,14 +107,14 @@ const config = {
                             //   to: '/blog',
                             // },
                             {
-                                label: 'GitLab',
-                                href: 'https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework',
+                                label: 'GitHub',
+                                href: 'https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework',
                             },
                         ],
                     },
                 ],
                 // copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
-                copyright: `Copyright © ${new Date().getFullYear()}-present Dominik Grzelak`,
+                copyright: `Copyright © ${new Date().getFullYear()}-present Dominik Grzelak <br/> Unless otherwise specified, the textual content and visual elements featured on this website are subject to the Creative Commons license CC BY-SA 4.0.`,
             },
             prism: {
                 // theme: lightCodeTheme,

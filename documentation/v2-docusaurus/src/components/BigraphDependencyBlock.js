@@ -6,35 +6,35 @@ import BigraphMarkdownBlock from "./BigraphMarkdownBlock"
 const mavenDepCode = `
 <!-- the core module -->
 <dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-core</artifactId>
   <version>VERSION</version>
 </dependency>
-<!-- the rewriting module -->
+<!-- the simulation module (matching and rewriting) -->
 <dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-simulation</artifactId>
   <version>VERSION</version>
 </dependency>
 <!-- the visualization module -->
 <dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-visualization</artifactId>
   <version>VERSION</version>
 </dependency>
 <!-- the converter module -->
 <dependency>
-  <groupId>de.tudresden.inf.st.bigraphs</groupId>
+  <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-converter</artifactId>
   <version>VERSION</version>
 </dependency>
 `;
 
 const gradleDepCode = `
-compile "de.tudresden.inf.st.bigraphs:bigraph-core:VERSION"
-compile "de.tudresden.inf.st.bigraphs:bigraph-simulation:VERSION"
-compile "de.tudresden.inf.st.bigraphs:bigraph-visualization:VERSION"
-compile "de.tudresden.inf.st.bigraphs:bigraph-converter:VERSION"
+compile "org.bigraphs.framework:bigraph-core:VERSION"
+compile "org.bigraphs.framework:bigraph-simulation:VERSION"
+compile "org.bigraphs.framework:bigraph-visualization:VERSION"
+compile "org.bigraphs.framework:bigraph-converter:VERSION"
 `;
 
 export const GRADLE_DEP_CODE = gradleDepCode;

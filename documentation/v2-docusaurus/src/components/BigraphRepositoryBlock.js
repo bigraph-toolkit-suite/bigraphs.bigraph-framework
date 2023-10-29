@@ -8,9 +8,8 @@ const mavenRepoCode = `
     <snapshots>
         <enabled>true</enabled>
     </snapshots>
-    <id>STFactory</id>
-    <name>st-tu-dresden-artifactory</name>
-    <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/</url>
+    <id>ossrh</id>
+    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 </repository>
 `;
 
@@ -42,7 +41,7 @@ const mavenRepoCode2 = `
 const gradleRepoCode = `
 repositories {
     maven {
-        url "https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository/"
+        url "https://s01.oss.sonatype.org/content/repositories/snapshots"
     }
 }
 `;
@@ -59,7 +58,7 @@ export default function BigraphRepositoryBlock() {
                     <div className={clsx('col col--2 text--center')}>
                         <img src={require('../../static/img/icon-remote-repository.png').default}/>
                         <p>
-                            Remote Repository Setup
+                            Repository Setup for SNAPSHOT Releases Only
                         </p>
                     </div>
                     <div className={clsx('col col--5')}>

@@ -12,58 +12,70 @@ import TabItem from '@theme/TabItem';
 
 A Complete Guide to the Bigraph Framework.
 
-- Relatively Stable: 0.9.6 (master branch)
-- Latest Version: 0.9.7-SNAPSHOT (develop branch)
+- Stable: 1.0.0 (main branch)
+    - Previous Stable Versions: 0.9.7, 0.9.6, 0.9.5
+- Latest Version: 1.0.0-SNAPSHOT (develop branch)
+
 
 :::info Notice
 The API is subject to change. Use at your own risk.
 This documentation reflects always the latest version.
 :::
 
+:::caution Caution
+Since version 1.0.0 of Bigraph Framework: The new groupID and base package name `org.bigraphs.*` is used instead of the former one
+`de.tudresden.inf.st.bigraphs.*`.
+:::
+
 ## What is Bigraph Framework
 
-**Bigraph Framework** is a software framework for the creation and simulation of bigraphs
+**Bigraph Framework** is a Java software framework for the creation and simulation of bigraphs and bigraphical reactive systems
 to expedite the experimental evaluation of the bigraph theory in real-world applications.
 
-The goal of this framework is to facilitate the implementation of context-aware, agent-based systems or cyber-physical systems, for example.
+The goal of this framework is to facilitate the implementation of context-aware, agent-based systems or cyber-physical systems, for instance.
 The high level API eases the programming of bigraphical systems for various real-world application.
-The framework is developed around a _metamodel-first approach_, when working with bigraphical structures.
-It provides several means towards model-driven software development for integrating the bigraph theory into software.
+The framework is developed around a [metamodel-first approach](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel), when working with bigraphical structures.
+Incorporating the bigraph theory into software is accomplished through a variety of model-driven software development means.
 
 ### Overview of the Features
 
-- Dynamic creation of bigraphs at runtime, which are based on the Ecore metamodel
-- Visualization of bigraphs (beta)
-- Bigraph Matching
-- Bigraphical Reactive Systems: Simulation of bigraphs by reaction rules and synthesisation of a labelled transition system
-- Read and write meta and instance models to the file system (Ecore/XMI)
-- Conversion of bigraphs into other file formats (e.g., GraphML, BigMC or BigraphER)
-<!-- - Model transformation (WIP) -->
+- Dynamic creation of bigraphs at runtime, which are based on the [Ecore metamodel of bigraphs](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
+- Visualization of bigraphs
+- Bigraph Matching and Rewriting via jLibBig
+- Bigraphical Reactive Systems
+    - Simulation of bigraphs by reaction rules
+    - Synthesisation of a labelled transition system, or reaction graph
+- Model Checking via simple bigraphical predicates, logical connectors, LTL is implicitly supported
+- Read and write metamodels and instance models to the file system (Ecore/XMI)
+- Conversion of bigraphs into other file formats
+    - e.g., GraphML, BigMC, BigRED, BigraphER, ...
 
 ### What are Bigraphs?
 
-**Bigraphs** are an emerging graph theory and meta-model for global ubiquitous systems,
-mobile computing, context-aware systems and the Internet of Things (IoT).
-The theory is a unifying framework for many process calculi, including the ambient calculus, action calculi, Petri nets, 
+**Bigraphs** are an emerging theory and metamodel for global ubiquitous systems,
+mobile computing, context-aware systems and the Internet of Things (IoT), or in general: for reactive systems.
+It is grounded on category theory and regarded as a unifying framework for many process calculi, including the ambient calculus, action calculi, Petri nets,
 the Calculus of Communicating Systems (CCS) and π-calculus.
+The theory provides an algebra and a graph-rewriting-like mechanism to describe, study and analyze the dynamic behavior of reactive systems.
 
 ## Requirements
 
-- Java 11
+- Java 17
 - Maven or Gradle
+    - Minimum version of Maven: 3.8.3
 
 
 ## Use / Install / Dependency Settings
 
-Bigraph Framework is online available as a Maven dependency.
+Bigraph Framework and its parts are online available as Maven dependencies.
 
-Artifacts are deployed to [ST-Artifactory](https://stgroup.jfrog.io/).
+Artifacts are deployed to the _Central Repository_.
 
 :::tip Building from Source
-Otherwise, to build the source by yourself, follow the [README.md](https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/blob/master/README.md) inside the repository.
+Otherwise, to build the source by yourself, follow the [README.md](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md) inside the code repository.
 :::
 
-### Empty Project Skeleton
+### Quick Start: Empty Project Skeleton
 
 To get started using Bigraph Framework right away, download the Maven-based Project Skeleton
 
@@ -73,7 +85,7 @@ The README contained therein, describes how to compile and start an application.
 
 Alternatively, follow the step-by-step project setup as described in the following.
 
-### Packages
+### Package Dependencies
 
 Depending on the build management tool you are using, one of the following
 configuration for Maven or Gradle is necessary.
@@ -100,25 +112,32 @@ import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
   </TabItem>
   <TabItem value="manually" label="Manually">
     Manual setup is not recommended.
+    Refer to the <a href={"https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md"}>README.md</a> in Bigraph Framework's code repository on how to build the framework from source.
   </TabItem>
 </Tabs>
 
-### Repository Setup
+### Repository Setup for SNAPSHOT Releases
 
-In order to resolve the dependencies above, the following custom repository
-must be added as well. We provide the configuration for Maven and Gradle below.
+No additional configuration is necessary to resolve the dependencies above!
+
+However, if you want SNAPSHOT releases, the following custom repository must be added as well.
+We provide the configuration for Maven and Gradle below.
 
 <Tabs>
   <TabItem value="maven" label="Maven" default>
-    The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> for a new project.
+    The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> of a Maven-based Java project:
     <pre>
     {myConstClass2.MAVEN_REP_CODE}
     </pre>
     <br/>
-    Another option is to modify the <code>settings.xml</code>, usually found in <code>~/.m2/</code>.
-    <pre>
-    {myConstClass2.MAVEN_REP_CODE2}
-    </pre>
+
+[//]: # (Another option is to modify the <code>settings.xml</code>, usually found in <code>~/.m2/</code>.)
+
+[//]: # (<pre>)
+
+[//]: # ({myConstClass2.MAVEN_REP_CODE2})
+
+[//]: # (</pre>)
   </TabItem>
   <TabItem value="gradle" label="Gradle">
     For Gradle, add this to the project's build gradle file:
@@ -134,27 +153,27 @@ Depending on your project setup, you may need to include the following libraries
 
 ```xml
 <!-- When used within a Spring project -->
-        <dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+    <exclusions>
+        <exclusion>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-log4j2</artifactId>
+</dependency>
 
-<!-- For a bare Maven project -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.30</version>
-        </dependency>
+<!-- For any other Maven project -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.30</version>
+</dependency>
 ```
 
 The example above shows how to use log4j2 in your project as the underlying logging framework.
