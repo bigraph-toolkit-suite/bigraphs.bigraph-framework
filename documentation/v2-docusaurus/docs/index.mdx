@@ -149,9 +149,28 @@ We provide the configuration for Maven and Gradle below.
 
 Bigraph Framework employs SLF4J as a facade for the log4j logging framework.
 
-Depending on your project setup, you may need to include the following libraries in your `pom.xml` :
+Depending on your project setup, you may need to include the following libraries in your `pom.xml`:
 
 ```xml
+<!-- For any Maven project in general -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>2.0.9</version>
+</dependency>
+<!-- Use a no-operation (NOP) logger implementation -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-nop</artifactId>
+    <version>2.0.7</version>
+</dependency>
+<!-- or, for example, the reload4j implementation (fork of log4j) -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-reload4j</artifactId>
+    <version>2.0.9</version>
+</dependency>
+
 <!-- When used within a Spring project -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -167,13 +186,7 @@ Depending on your project setup, you may need to include the following libraries
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-log4j2</artifactId>
 </dependency>
-
-<!-- For any other Maven project -->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-log4j12</artifactId>
-    <version>1.7.30</version>
-</dependency>
 ```
 
-The example above shows how to use log4j2 in your project as the underlying logging framework.
+Not including these dependencies will result in warnings.
+The example above shows how to use a NOP logger or a reload4j as the underlying logging framework in your project.
