@@ -55,11 +55,6 @@
                 </configuration>
             </plugin>
             <!-- SKIP -->
-            <!-- COMPILER -->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--            </plugin>-->
             <!-- BUILD HELPER -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -139,7 +134,7 @@
             <artifactId>bigred-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <groupId>org.bigraphs.framework</groupId>
             <artifactId>bigraph-core</artifactId>
         </dependency>
         <dependency>
@@ -186,7 +181,7 @@
             <artifactId>junit-jupiter-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.tudresden.inf.st.bigraphs</groupId>
+            <groupId>org.bigraphs.framework</groupId>
             <artifactId>bigraph-visualization</artifactId>
             <scope>test</scope>
         </dependency>
