@@ -39,7 +39,7 @@ The high-level API eases the programming of bigraphical systems for real-world a
 
 Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java.
 
-**Requirements:** Java 11
+**Requirements:** Java 17
 
 ### Lean Bigraph API
 
