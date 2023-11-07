@@ -145,10 +145,14 @@ public class BigraphFileModelManagement {
          * @throws IOException if the file does not exist
          */
         public static EPackage bigraphMetaModel(String filePath) throws IOException {
+            return bigraphMetaModel(filePath, true);
+        }
+
+        public static EPackage bigraphMetaModel(String filePath, boolean validate) throws IOException {
             assert filePath != null;
             File file = new File(filePath);
             if (!file.exists()) throw new IOException("File couldn't be found: " + filePath);
-            return bigraphMetaModel(new FileInputStream(file));
+            return bigraphMetaModel(new FileInputStream(file), validate);
         }
 
         /**
@@ -159,6 +163,10 @@ public class BigraphFileModelManagement {
          * @throws IOException if the model could not be loaded
          */
         public static EPackage bigraphMetaModel(InputStream inputStream) throws IOException {
+            return bigraphMetaModel(inputStream, true);
+        }
+
+        public static EPackage bigraphMetaModel(InputStream inputStream, boolean validate) throws IOException {
             ResourceSet resourceSet = initResourceSet(null);
             URL resource1 = EMFUtils.class.getResource(BIGRAPH_BASE_MODEL);
             URI uri = URI.createURI(Objects.requireNonNull(resource1).toString());
@@ -166,7 +174,9 @@ public class BigraphFileModelManagement {
             Resource resource = resourceSet.createResource(uri);
             resource.load(inputStream, Collections.EMPTY_MAP);
             EPackage ePackage = (EPackage) resource.getContents().get(0);
-            validateModel(ePackage);
+            if (validate) {
+                validateModel(ePackage);
+            }
             return ePackage;
         }
 
@@ -242,16 +252,16 @@ public class BigraphFileModelManagement {
          */
         public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream) throws IOException {
             MutableMap<Object, Object> of = Maps.mutable.of();
-            if(bigraph instanceof PureBigraph) {
-                ((PureBigraph)bigraph).getNodes().forEach(x -> {
+            if (bigraph instanceof PureBigraph) {
+                ((PureBigraph) bigraph).getNodes().forEach(x -> {
                     //TODO only remove java object attributes
                     of.put(x, x.getAttributes());
                     x.setAttributes(Map.of());
                 });
             }
             EMFUtils.writeDynamicInstanceModel(bigraph.getMetaModel(), Collections.singleton(bigraph.getInstanceModel()), outputStream, null);
-            if(bigraph instanceof PureBigraph) {
-                ((PureBigraph)bigraph).getNodes().forEach(x -> {
+            if (bigraph instanceof PureBigraph) {
+                ((PureBigraph) bigraph).getNodes().forEach(x -> {
                     x.setAttributes((Map<String, Object>) of.get(x));
                 });
             }
@@ -259,16 +269,16 @@ public class BigraphFileModelManagement {
 
         public static void exportAsInstanceModel(EcoreBigraph bigraph, OutputStream outputStream, String newNamespaceLocation) throws IOException {
             MutableMap<Object, Object> of = Maps.mutable.of();
-            if(bigraph instanceof PureBigraph) {
-                ((PureBigraph)bigraph).getNodes().forEach(x -> {
+            if (bigraph instanceof PureBigraph) {
+                ((PureBigraph) bigraph).getNodes().forEach(x -> {
                     //TODO only remove java object attributes
                     of.put(x, x.getAttributes());
                     x.setAttributes(Map.of());
                 });
             }
             EMFUtils.writeDynamicInstanceModel(bigraph.getMetaModel(), Collections.singleton(bigraph.getInstanceModel()), outputStream, newNamespaceLocation);
-            if(bigraph instanceof PureBigraph) {
-                ((PureBigraph)bigraph).getNodes().forEach(x -> {
+            if (bigraph instanceof PureBigraph) {
+                ((PureBigraph) bigraph).getNodes().forEach(x -> {
                     x.setAttributes((Map<String, Object>) of.get(x));
                 });
             }

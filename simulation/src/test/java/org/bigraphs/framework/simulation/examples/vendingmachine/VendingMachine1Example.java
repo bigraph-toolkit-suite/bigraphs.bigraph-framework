@@ -512,6 +512,35 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
     }
 
     /**
+     * phd must be present; a VM cannot press a button itself.
+     * for tea.
+     */
+    public ReactionRule<PureBigraph> pushButton2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+        DefaultDynamicSignature signature = sig();
+        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+
+        builder.createRoot()
+                .addChild("PHD").down().addSite()
+                .top()
+                .addChild("VM").down().addChild("Coin").addSite()
+                .addChild("Button1")
+                .addChild("Button2");
+        ;
+        builder2.createRoot()
+                .addChild("PHD").down().addSite()
+                .top()
+                .addChild("VM").down().addChild("Coin").addSite()
+                .addChild("Button1")
+                .addChild("Button2").down().addChild("Pressed")
+        ;
+        PureBigraph redex = builder.createBigraph();
+        PureBigraph reactum = builder2.createBigraph();
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        return rr;
+    }
+
+    /**
      * Several things happen:
      * Check that button was pressed;
      * check that enough money was inserted <- customization opportunity for user
@@ -572,36 +601,6 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
                 .addChild("Container").down().addSite().up()
                 .addChild("Button2")
                 .addChild("Tresor").down().addChild("Coin").addSite()
-        ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
-        return rr;
-    }
-
-
-    /**
-     * phd must be present; a VM cannot press a button itself.
-     * for tea.
-     */
-    public ReactionRule<PureBigraph> pushButton2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = sig();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
-
-        builder.createRoot()
-                .addChild("PHD").down().addSite()
-                .top()
-                .addChild("VM").down().addChild("Coin").addSite()
-                .addChild("Button1")
-                .addChild("Button2");
-        ;
-        builder2.createRoot()
-                .addChild("PHD").down().addSite()
-                .top()
-                .addChild("VM").down().addChild("Coin").addSite()
-                .addChild("Button1")
-                .addChild("Button2").down().addChild("Pressed")
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();

@@ -81,7 +81,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         this(signature, new EMetaModelData.MetaModelDataBuilder()
                 .setNsPrefix("bigraphBaseModel")
                 .setName("bigraphBaseModel")
-                .setNsUri("http://de.tudresden.inf.st.bigraphs.models")
+                .setNsUri("http://org.bigraphs.model")
                 .create());
     }
 
