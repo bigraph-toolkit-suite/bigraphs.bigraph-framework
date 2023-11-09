@@ -13,7 +13,7 @@ const config = {
     onBrokenLinks: 'warn',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    organizationName: 'st-tu-dresden', // Usually your GitHub org/user name.
+    organizationName: 'bigraph-toolkit-suite', // Usually your GitHub org/user name.
     projectName: 'bigraph-framework', // Usually your repo name.
 
     presets: [
@@ -60,8 +60,8 @@ const config = {
                         position: 'left'
                     },
                     {
-                        href: 'https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework',
-                        label: 'GitLab',
+                        href: 'https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework',
+                        label: 'GitHub',
                         position: 'right',
                     },
                 ],

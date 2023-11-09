@@ -25,7 +25,7 @@ function TryItOut() {
             <i>Project Skeletons that get you started:</i>
             <ul>
                 <li><a
-                    href={`https://www.bigraphs.org/products/bigraph-framework/download/empty-project-skeleton-bigraphframework.zip`}>Maven-based
+                    href={`https://www.bigraphs.org/products/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip`}>Maven-based
                     Project Skeleton for using Bigraph Framework</a></li>
             </ul>
             {/*<p>*/}
