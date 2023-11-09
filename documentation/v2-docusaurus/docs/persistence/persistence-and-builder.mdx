@@ -9,7 +9,7 @@ sidebar_position: 2
 > Please also refer to the methods of `org.bigraphs.framework.core.factory.BigraphFactory` which shall primarily be used.
 
 
-## Creating a Builder by loading persisted Bigraph Meta-models
+## Loading Bigraph Metamodels via the Builder
 
 The user must supply the signature and the filename or instance of the meta-model to instantiate a builder class.
 Therefore, the `PureBigraphBuilder` provides the following static methods:
@@ -27,18 +27,18 @@ public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S sign
 Then, the builder may produce a bigraph by using its available methods as normal.
 
 It is still necessary to supply the signature information as separate object. The reason is that not all information
-are recorded in the meta-model of the bigraph concerning the signature. Some properties that are missing include the arity
+are recorded in the metamodel of the bigraph concerning the signature. Some properties that are missing include the arity
 of the control, or whether it is _active_, _passive_ or _atomic_; to mention a few.
 
 ### `PureBigraphBuilder#create(Signature, EMetaModelData)`
 
-Create a builder with a given meta-model instance.
+Create a builder with a given metamodel instance.
 
 ### `PureBigraphBuilder#create(Signature, String)`
 
-Create a builder with a given meta-model file located on the filesystem.
+Create a builder with a given metamodel file located on the filesystem.
 
-## Creating a Builder by loading persisted Bigraph Instance Models
+## Loading Bigraph Instance Models via the Builder
 
 Though, bigraphs are per-se immutable data structures in Bigraph Framework, one can use the builder to instantiate bigraphs.
 Persisted bigraphs can be loaded and supplied to a bigraph builder.
@@ -55,8 +55,8 @@ elements is still possible.
 
 ### `PureBigraphBuilder#create(Signature, String, String)`
 
-Provide a signature, and the filename of the meta-model and instance model to create a builder instance.
+Provide a signature, and the filename of the metamodel and instance model to create a builder instance.
 
 ### `PureBigraphBuilder#create(Signature, EPackage, EObject)`
 
-Provide a signature, and the loaded meta-model and instance model to create a builder instance.
+Provide a signature, and the loaded metamodel and instance model to create a builder instance.
