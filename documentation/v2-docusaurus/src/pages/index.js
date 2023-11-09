@@ -19,7 +19,7 @@ function TryItOut() {
                 <li>The Framework is available via the <a
                     href={`https://repo.maven.apache.org/maven2/`}>Central Repository</a>
                 </li>
-                <li>Source code on <a href={`https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework`}>GitHub (mirror)</a></li>
+                <li>Source code on <a href={`https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework`}>GitHub</a></li>
                 <li>Source code on <a href={`https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework/`}>GitLab (mirror)</a></li>
             </ul>
             <i>Project Skeletons that get you started:</i>
