@@ -135,25 +135,25 @@ compositor.juxtapose(F).parallelProduct(H);
 <dependencies>
     <!-- the core module -->
     <dependency>
-      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <groupId>org.bigraphs.framework</groupId>
       <artifactId>bigraph-core</artifactId>
       <version>${version}</version>
     </dependency>
     <!-- the rewriting module -->
     <dependency>
-      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <groupId>org.bigraphs.framework</groupId>
       <artifactId>bigraph-simulation</artifactId>
       <version>${version}</version>
     </dependency>
     <!-- the visualization module -->
     <dependency>
-      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <groupId>org.bigraphs.framework</groupId>
       <artifactId>bigraph-visualization</artifactId>
       <version>${version}</version>
     </dependency>
     <!-- the converter module -->
     <dependency>
-      <groupId>de.tudresden.inf.st.bigraphs</groupId>
+      <groupId>org.bigraphs.framework</groupId>
       <artifactId>bigraph-converter</artifactId>
       <version>${version}</version>
     </dependency>
