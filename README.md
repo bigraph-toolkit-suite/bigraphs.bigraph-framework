@@ -39,13 +39,13 @@ The high-level API eases the programming of bigraphical systems for real-world a
 
 Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java.
 
-**Requirements:** Java 11
+**Requirements:** Java 17
 
 ### Lean Bigraph API
 
 The lean bigraph API allows fast bigraph creation and composition.
 
-To following usage assumes the import statement `import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*`.
+To following usage assumes the import statement `import static org.bigraphs.framework.core.factory.BigraphFactory.*`.
 
 ```java
 // create the signature
