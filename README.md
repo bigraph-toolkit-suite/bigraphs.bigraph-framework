@@ -4,8 +4,8 @@
 
 | Branch  | Version                         | Status |
 |---------|---------------------------------|--------|
-| Main    | 0.9.6                           |        |
-| Develop | 0.9.7-SNAPSHOT / 1.0.0-SNAPSHOT |        |
+| Main    | 1.0.0 / 0.9.6                   |        |
+| Develop | 1.0.0-SNAPSHOT / 0.9.7-SNAPSHOT |        |
 
 ----
 
@@ -39,13 +39,13 @@ The high-level API eases the programming of bigraphical systems for real-world a
 
 Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java.
 
-**Requirements:** Java 17
+**Requirements:** Java 11
 
 ### Lean Bigraph API
 
 The lean bigraph API allows fast bigraph creation and composition.
 
-To following usage assumes the import statement `import static org.bigraphs.framework.core.factory.BigraphFactory.*`.
+To following usage assumes the import statement `import static de.tudresden.inf.st.bigraphs.core.factory.BigraphFactory.*`.
 
 ```java
 // create the signature
@@ -183,26 +183,7 @@ This framework employs SLF4J as a facade for the log4j logging framework.
 Depending on your project setup, you may need to include the following libraries in your `pom.xml` :
 
 ```xml
-<!-- For any Maven project in general -->
-<dependency>
-  <groupId>org.slf4j</groupId>
-  <artifactId>slf4j-api</artifactId>
-  <version>2.0.9</version>
-</dependency>
-<!-- Use a no-operation (NOP) logger implementation -->
-<dependency>
-  <groupId>org.slf4j</groupId>
-  <artifactId>slf4j-nop</artifactId>
-  <version>2.0.7</version>
-</dependency>
-<!-- or, for example, the reload4j implementation (fork of log4j) -->
-<dependency>
-  <groupId>org.slf4j</groupId>
-  <artifactId>slf4j-reload4j</artifactId>
-  <version>2.0.9</version>
-</dependency>
-
-<!-- When used within a Spring project -->
+<!-- For Spring -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter</artifactId>
@@ -214,8 +195,15 @@ Depending on your project setup, you may need to include the following libraries
     </exclusions>
 </dependency>
 <dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-log4j2</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-log4j2</artifactId>
+</dependency>
+
+<!-- For a bare Maven project -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.30</version>
 </dependency>
 ```
 
