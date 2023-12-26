@@ -147,34 +147,39 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
 //            }
         }
 
-        if(s > 0) {
+        if (s > 0) {
             AtomicInteger siteCnt = new AtomicInteger(s);
             // Add sites to leave
+            // Take the first leaves to add sites ...
             nodes.stream().filter(x -> !builder.isRoot(x.getInstance()))
                     .forEach(x -> {
                         boolean b = builder.hasChildNodes(x);
 //                        System.out.println("Node " + x + " is Leave? " + (!b));
-                        if(!b) {
+                        if (!b) {
 //                            System.out.println("site added to leave");
                             int i1 = siteCnt.decrementAndGet();
-                            BigraphEntity newSite = builder.createNewSite(i1);
-                            newSites.put(i1, (BigraphEntity.SiteEntity) newSite);
-                            setParentOfNode(newSite, x);
+                            if (i1 > 0) {
+                                BigraphEntity newSite = builder.createNewSite(i1);
+                                newSites.put(i1, (BigraphEntity.SiteEntity) newSite);
+                                setParentOfNode(newSite, x);
+                            }
                         }
                     });
-            if(siteCnt.get() > 0) {
+            // add remaining sites anywhere
+            if (siteCnt.get() > 0) {
                 nodes.stream().filter(x -> !builder.isRoot(x.getInstance()))
                         .limit(siteCnt.get())
                         .forEach(x -> {
                             // add site
-//                            System.out.println("site NOT added to leave");
                             int i1 = siteCnt.decrementAndGet();
-                            BigraphEntity newSite = builder.createNewSite(i1);
-                            newSites.put(i1, (BigraphEntity.SiteEntity) newSite);
-                            setParentOfNode(newSite, x);
+                            if (i1 > 0) {
+                                BigraphEntity newSite = builder.createNewSite(i1);
+                                newSites.put(i1, (BigraphEntity.SiteEntity) newSite);
+                                setParentOfNode(newSite, x);
+                            }
                         });
             }
-            // If not all sites could be added take the first leaves to add remaining sites ...
+
         }
 
         // Link graph generation
