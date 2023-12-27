@@ -158,7 +158,7 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
                         if (!b) {
 //                            System.out.println("site added to leave");
                             int i1 = siteCnt.decrementAndGet();
-                            if (i1 > 0) {
+                            if (i1 >= 0) {
                                 BigraphEntity newSite = builder.createNewSite(i1);
                                 newSites.put(i1, (BigraphEntity.SiteEntity) newSite);
                                 setParentOfNode(newSite, x);
@@ -172,7 +172,7 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
                         .forEach(x -> {
                             // add site
                             int i1 = siteCnt.decrementAndGet();
-                            if (i1 > 0) {
+                            if (i1 >= 0) {
                                 BigraphEntity newSite = builder.createNewSite(i1);
                                 newSites.put(i1, (BigraphEntity.SiteEntity) newSite);
                                 setParentOfNode(newSite, x);
