@@ -28,6 +28,8 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     protected ReactiveSystem<B> reactiveSystemAffili = null; // the "affiliation" to a specific reactive system
     protected String label;
 
+    protected TrackingMap trackingMap;
+
     public ReactiveSystemBoundReactionRule<B> withReactiveSystem(ReactiveSystem<B> reactiveSystem) {
         try {
             return new ReactiveSystemBoundReactionRule<>(reactiveSystem, AbstractReactionRule.this);
@@ -161,5 +163,15 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
         public AbstractReactionRule<B> getRule() {
             return rule;
         }
+    }
+
+    public AbstractReactionRule<B> withTrackingMap(TrackingMap trackingMap) {
+        this.trackingMap = trackingMap;
+        return this;
+    }
+
+    @Override
+    public TrackingMap getTrackingMap() {
+        return this.trackingMap;
     }
 }

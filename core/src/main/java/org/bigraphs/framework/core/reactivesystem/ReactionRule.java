@@ -80,4 +80,13 @@ public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
      * @return the instantiation map of the parametric reaction rule
      */
     InstantiationMap getInstantationMap();
+
+
+    /**
+     * Returns the tracking map if one was specified for the rule.
+     * A tracking map helps to trace node and link identities through reactions.
+     *
+     * @return the tracking map of the rule
+     */
+    TrackingMap getTrackingMap();
 }
