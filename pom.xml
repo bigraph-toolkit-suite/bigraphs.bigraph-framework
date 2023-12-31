@@ -71,6 +71,7 @@
         <log4j.version>1.7.30</log4j.version>
         <!--        <graphviz.version>0.17.1</graphviz.version>-->
         <graphviz.version>0.18.1</graphviz.version>
+        <graphstream.version>2.0</graphstream.version>
         <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
     </properties>
 
@@ -615,6 +616,21 @@
                 <groupId>guru.nidi</groupId>
                 <artifactId>graphviz-java</artifactId>
                 <version>${graphviz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graphstream</groupId>
+                <artifactId>gs-core</artifactId>
+                <version>${graphstream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graphstream</groupId>
+                <artifactId>gs-ui-swing</artifactId>
+                <version>${graphstream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graphstream</groupId>
+                <artifactId>gs-algo</artifactId>
+                <version>${graphstream.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
