@@ -91,7 +91,8 @@
 
     <scm>
         <connection>scm:git:https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework.git</connection>
-        <developerConnection>scm:git@github.com:bigraph-toolkit-suite/bigraphs.bigraph-framework.git</developerConnection>
+        <developerConnection>scm:git@github.com:bigraph-toolkit-suite/bigraphs.bigraph-framework.git
+        </developerConnection>
         <url>https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework</url>
         <tag>HEAD</tag>
     </scm>
@@ -130,19 +131,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-<!--    <distributionManagement>-->
-<!--        <repository>-->
-<!--            <id>central</id>-->
-<!--            <name>STFactory-releases</name>-->
-<!--            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>-->
-<!--        </repository>-->
-<!--        <snapshotRepository>-->
-<!--            <id>snapshots</id>-->
-<!--            <name>STFactory-snapshots</name>-->
-<!--            <url>https://stgroup.jfrog.io/artifactory/st-tu-dresden-maven-repository</url>-->
-<!--        </snapshotRepository>-->
-<!--    </distributionManagement>-->
 
     <build>
         <pluginManagement>
@@ -206,15 +194,15 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.3.0</version>
-<!--                    <configuration>-->
-<!--                        <archive>-->
-<!--                            <addMavenDescriptor>true</addMavenDescriptor>-->
-<!--                            <manifest>-->
-<!--                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>-->
-<!--                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
-<!--                            </manifest>-->
-<!--                        </archive>-->
-<!--                    </configuration>-->
+                    <!--                    <configuration>-->
+                    <!--                        <archive>-->
+                    <!--                            <addMavenDescriptor>true</addMavenDescriptor>-->
+                    <!--                            <manifest>-->
+                    <!--                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>-->
+                    <!--                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
+                    <!--                            </manifest>-->
+                    <!--                        </archive>-->
+                    <!--                    </configuration>-->
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -748,12 +736,12 @@
                                                 <exclude>profile.list</exclude>
                                             </excludes>
                                         </filter>
-<!--                                        <filter>-->
-<!--                                            <artifact>it.uniud.mads.jlibbig:jlibbig</artifact>-->
-<!--                                            <includes>-->
-<!--                                                <include>*/**</include>-->
-<!--                                            </includes>-->
-<!--                                        </filter>-->
+                                        <!--                                        <filter>-->
+                                        <!--                                            <artifact>it.uniud.mads.jlibbig:jlibbig</artifact>-->
+                                        <!--                                            <includes>-->
+                                        <!--                                                <include>*/**</include>-->
+                                        <!--                                            </includes>-->
+                                        <!--                                        </filter>-->
                                     </filters>
                                 </configuration>
                             </execution>

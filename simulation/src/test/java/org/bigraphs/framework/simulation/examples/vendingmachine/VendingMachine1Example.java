@@ -476,7 +476,7 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
         ;
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("insertCoin");
         return rr;
     }
 
