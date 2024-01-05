@@ -52,6 +52,8 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
             modelChecker.getReactionGraph().setCanonicalNodeLabel(opts.getPrintCanonicalStateLabel());
         }
+        ModelCheckingOptions.TransitionOptions transitionOptions = options.get(ModelCheckingOptions.Options.TRANSITION);
+        logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
         modelChecker.getReactionGraph().reset();
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
 
@@ -62,8 +64,6 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
         workingQueue.add(initialAgent);
         AtomicInteger iterationCounter = new AtomicInteger(0);
         resetOccurrenceCounter();
-        ModelCheckingOptions.TransitionOptions transitionOptions = options.get(ModelCheckingOptions.Options.TRANSITION);
-        logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
         while (!workingQueue.isEmpty() && iterationCounter.get() < transitionOptions.getMaximumTransitions()) {
             Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
 
@@ -76,10 +76,6 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             if (options.isParallelRuleMatching()) {
                 rrStream = rrStream.parallel();
             }
-//            Stream.generate(inOrder)
-//                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
-//            modelChecker.getReactiveSystem().getReactionRules().stream()
-//                    .parallel()
             rrStream
                     .limit(modelChecker.getReactiveSystem().getReactionRules().size())
                     .peek(x -> getListener().onCheckingReactionRule(x))
@@ -99,16 +95,15 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                 return reactionResults.add(createMatchResult(eachRule, eachMatch, x, getOccurrenceCount()));
                             }).orElseGet(() -> {
                                 getListener().onReactionIsNull();
-                                return false;
+                                return false; // return value not used
                             });
                         }
                         return reactionResults.stream();
-                    }) //;
-                    .forEachOrdered(matchResult -> {
+                    })
 //                    .collect(Collectors.toList());
-
 //            for (MatchResult<B> matchResult : reactionResults) {
-//            reactionResults.stream().forEach(matchResult -> {
+                    // iterate through all occurrences
+                    .forEachOrdered(matchResult -> {
                         String bfcf = modelChecker.acquireCanonicalForm().bfcs(matchResult.getBigraph());
                         String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(matchResult.getReactionRule());
                         if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
@@ -123,7 +118,8 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 //                modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
                     });
 
-            if (predicateChecker.getPredicates().size() > 0) {
+            // Predicate evaluation for the current state
+            if (!predicateChecker.getPredicates().isEmpty()) {
                 // "Check each property p ∈ P against w."
                 //TODO evaluate in "reaction graph spec" what should happen here: violation or stop criteria?
                 // this is connected to the predicates (changes its "intent", what they are used for)
@@ -135,16 +131,18 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                     } else {
                         label = String.format("state-%s", String.valueOf(modelChecker.reactionGraph.getGraph().vertexSet().size()));
                     }
+                    // inform listeners
                     getListener().onAllPredicateMatched(theAgent, label);
-                    Optional<ReactionGraph.LabeledNode> node = modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW);
-                    node.ifPresent(labeledNode -> {
+                    // add info that predicates matched at the current state
+                    // this info is later used in class mxReactionGraph for visualization purposes
+                    modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW).ifPresent(labeledNode -> {
                         predicateChecker.getPredicates().forEach(p -> {
                             modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, p);
                         });
                     });
-                } else {
-                    // compute counter-example trace from w back to the root
+                } else { // not all predicates evaluated to true, so we have to check each return value individually
                     predicateChecker.getChecked().entrySet().forEach(eachPredicate -> {
+                        // Predicate matching failed: compute counter-example trace from w back to the root
                         if (!eachPredicate.getValue()) {
                             try {
                                 GraphPath<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(modelChecker.getReactionGraph().getGraph(),
@@ -152,15 +150,13 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                         modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(rootBfcs).get()
                                 );
                                 logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());
+                                // inform attached listeners
                                 getListener().onPredicateViolated(theAgent, eachPredicate.getKey(), pathBetween);
                             } catch (Exception e) {
                                 getListener().onError(e);
                             }
-                        } else {
-                            Optional<ReactionGraph.LabeledNode> node = modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW);
-                            node.ifPresent(labeledNode -> {
-                                modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, eachPredicate.getKey());
-                            });
+                        } else { // Predicate matching success
+                            // inform attached listeners
                             getListener().onPredicateMatched(theAgent, eachPredicate.getKey());
                             if (eachPredicate.getKey() instanceof SubBigraphMatchPredicate) {
                                 getListener().onSubPredicateMatched(
@@ -172,12 +168,17 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                         (B) ((SubBigraphMatchPredicate) eachPredicate.getKey()).getSubBigraphParamResult()
                                 );
                             }
+                            // add info that predicate matched at the current state
+                            // this info is later used in class mxReactionGraph for visualization purposes
+                            modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW).ifPresent(labeledNode -> {
+                                modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, eachPredicate.getKey());
+                            });
+
                         }
                     });
 
                 }
             }
-//            transitionCnt.set(modelChecker.getReactionGraph().getGraph().vertexSet().size());
             // "Repeat the procedure for the next item in the work queue, terminating successfully if the work queue is empty."
         }
         logger.debug("Total States: {}", iterationCounter.get());

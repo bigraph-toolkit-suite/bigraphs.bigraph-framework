@@ -62,7 +62,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
         }
         Set<LabeledEdge> allEdges = graph.getAllEdges(sourceNode, targetNode);
         Optional<LabeledEdge> first = allEdges.stream().filter(x -> x.label.equals(reactionLbl)).findFirst();
-        if (!first.isPresent()) {
+        if (first.isEmpty()) {
             final LabeledEdge edge = new LabeledEdge(reactionLbl);
             boolean b = graph.addEdge(sourceNode, targetNode, edge);
             if (b)
@@ -90,7 +90,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
 
             @Override
             public String get() {
-                return "a:" + id++;
+                return "a_" + id++;
             }
         };
         graph = buildEmptySimpleDirectedGraph();

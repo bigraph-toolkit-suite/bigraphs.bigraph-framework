@@ -78,7 +78,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                     return BreadthFirstStrategy.class;
                 case RANDOM:
                     return RandomAgentModelCheckingStrategy.class;
-                case SIMULATION:
+                case SIMULATION: // TODO deprecated
                     return BreadthFirstSimulationStrategy.class;
                 default:
                     return BreadthFirstStrategy.class;
