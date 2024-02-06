@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 /**
  * Tracking map for reaction rules.
+ * <p>
+ * Allows to trace the identities of nodes across reactions.
  *
  * @author Dominik Grzelak
  */

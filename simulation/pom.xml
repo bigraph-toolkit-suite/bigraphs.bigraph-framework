@@ -54,13 +54,13 @@
             </plugin>
             <!-- SKIP -->
             <!-- OWASP -->
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <configuration>
-                    <skip>${skip.security.check}</skip>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.owasp</groupId>-->
+<!--                <artifactId>dependency-check-maven</artifactId>-->
+<!--                <configuration>-->
+<!--                    <skip>${skip.security.check}</skip>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <!-- SHADE -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

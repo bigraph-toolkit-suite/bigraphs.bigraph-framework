@@ -35,23 +35,23 @@ public class ReactionGraphAnalysis<B extends Bigraph<? extends Signature<?>>> {
         return new ReactionGraphAnalysis<>();
     }
 
-    public List<PathList<B>> findAllPathsInGraphToLeaves(ReactionGraph<B> reactionGraph) {
+    public List<StateTrace<B>> findAllPathsInGraphToLeaves(ReactionGraph<B> reactionGraph) {
 //        System.out.println("findAllPathsInGraphToLeaves()...");
         Set<ReactionGraph.LabeledNode> labeledNodes = reactionGraph.getGraph().vertexSet();
         ReactionGraph.LabeledNode firstGraphNode = labeledNodes.stream().findFirst().get();
 //        System.out.println("firstGraphNode: " + firstGraphNode);
-        List<PathList<B>> pathLists = recursPath(reactionGraph, firstGraphNode, new ArrayList<>());
+        List<StateTrace<B>> pathLists = recursPath(reactionGraph, firstGraphNode, new ArrayList<>());
 //        System.out.println("Found pathes from node " + firstGraphNode.getLabel() + ": " + pathLists.size());
         return pathLists;
     }
 
     //TODO REMOVE CYCLES
     //Idea: https://cs.stackexchange.com/questions/124240/computing-all-paths-from-root-to-the-leaf-nodes-in-a-tree
-    private List<PathList<B>> recursPath(ReactionGraph<B> reactionGraph, ReactionGraph.LabeledNode v, List<String> labelsTraversed) {
+    private List<StateTrace<B>> recursPath(ReactionGraph<B> reactionGraph, ReactionGraph.LabeledNode v, List<String> labelsTraversed) {
         String label = v.getCanonicalForm();
 //        System.out.println("\tfor: " + v.getLabel());
         assert reactionGraph.containsBigraph(label);
-        List<PathList> collect = new ArrayList<>();
+        List<StateTrace> collect = new ArrayList<>();
 //        String clabel = v.getCanonicalForm();
         // (1) First Case: If `v` is a leaf, then the list has one single path containing `v` itself
         //Check if has outgoing edges, if not it is a leave
@@ -61,7 +61,7 @@ public class ReactionGraphAnalysis<B extends Bigraph<? extends Signature<?>>> {
             B b = reactionGraph.getStateMap().get(label);
             labelList.add(v.getLabel());
             pathList.add(b);
-            collect.add(new PathList<>(pathList, labelList));
+            collect.add(new StateTrace<>(pathList, labelList));
         } else { // If v has k children then return the union of these k lists and append v to each list
             List<String> newLabelsTraversed = new ArrayList<>(labelsTraversed);
             newLabelsTraversed.add(v.getLabel());
@@ -71,8 +71,8 @@ public class ReactionGraphAnalysis<B extends Bigraph<? extends Signature<?>>> {
 //                    .filter(x -> x != v)
                     .collect(Collectors.toList());
             for (ReactionGraph.LabeledNode eachTarget : nextChildren) {
-                List<PathList<B>> pathLists = recursPath(reactionGraph, eachTarget, newLabelsTraversed);
-                for (PathList<B> eachPath : pathLists) {
+                List<StateTrace<B>> pathLists = recursPath(reactionGraph, eachTarget, newLabelsTraversed);
+                for (StateTrace<B> eachPath : pathLists) {
                     B b = reactionGraph.getStateMap().get(label);
                     eachPath.path.add(b);
                     eachPath.stateLabels.add(v.getLabel());
@@ -96,11 +96,11 @@ public class ReactionGraphAnalysis<B extends Bigraph<? extends Signature<?>>> {
      *
      * @param <B>
      */
-    public static class PathList<B extends Bigraph<? extends Signature<?>>> {
+    public static class StateTrace<B extends Bigraph<? extends Signature<?>>> {
         List<B> path = new LinkedList<>();
         List<String> stateLabels = new LinkedList<>();
 
-        public PathList(List<B> path, List<String> stateLabels) {
+        public StateTrace(List<B> path, List<String> stateLabels) {
             this.path = path;
             this.stateLabels = stateLabels;
         }

@@ -19,27 +19,36 @@ The high-level API eases the programming of bigraphical systems for real-world a
 **Features**
 
 - Dynamic creation of bigraphs at runtime based on an EMOF-based metamodel
-- Read and write the meta and instance model from and to the file system
+- Read and write the meta and instance model of a bigraph from and to the file system
 - Visualization
   - Graphical export via GraphViz/DOT
   - PNG, JPG, ...
-- Bigraph matching
-- Bigraphical Reactive System support: simulation of the evolution of
-  bigraphs by reaction rules (synthesizing a labelled transition system)
-  - Simulation
+  - Interactive visualization UI via GraphStreamer (beta)
+- Bigraphical Reactive System support: simulate the evolution of bigraphs by reaction rules 
+  - Bigraph matching and rewriting
+  - Synthesisation of a labeled transition system (LTS)
+  - Simulation and Model Checking (BFS, Random)
   - Predicate checking, logical connectors, LTL
   - Specify order of reaction rules
+  - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
+  - Tracking rules (a rule can be assigned a tracking map)
 - Model transformation / Conversions
-  - Other graph formats, e.g., GraphML, GXL, and Ranked Graphs
-  - Formats of other bigraph tools: BigMC, BigraphER, and BigRed
+  - Export to common graph formats, e.g., DOT, GraphML, GXL
+  - Export to formats of other bigraph tools: BigMC, BigraphER, and BigRed
+  - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
+- Attributed Bigraphs
+  - Add arbitrary attributes to nodes
+  - Attributes are preserved when doing rewriting
 
-
+**Requirements**
+- Java 17
+  - (!) _not_ the headless version of the JDK (!)
+- Graphviz
+  - Ubuntu 20.04/22.04: `sudo apt install graphviz`
 
 ## Getting Started
 
 Here is a quick teaser of creating a pure concrete bigraph using _Bigraph Framework_ in Java.
-
-**Requirements:** Java 17
 
 ### Lean Bigraph API
 
@@ -50,8 +59,9 @@ To following usage assumes the import statement `import static org.bigraphs.fram
 ```java
 // create the signature
 DefaultDynamicSignature signature = pureSignatureBuilder()
-    .newControl("A", 0).assign()
-    .newControl(StringTypedName.of("C"), FiniteOrdinal.ofInteger(1)).assign()
+    .newControl("A", 0).assign() // straightforward access
+    // two other ways (more verbose):
+    .newControl(StringTypedName.of("C"), FiniteOrdinal.ofInteger(1)).assign() 
     .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlKind.ATOMIC).assign()
     .create();
 
@@ -62,11 +72,12 @@ PureBigraph bigraph1 = pureBuilder(signature)
     .createBigraph();
 
 PureBigraph bigraph2 = pureBuilder(signature)
+    // "User" is the control, "alice" is an outer name     
     .createRoot().addChild("User", "alice").addSite()
     .createBigraph();
 
 // compose two bigraphs
-BigraphComposite bigraphComposite = ops(bigraph2).compose(bigraph1);
+BigraphComposite composite = ops(bigraph2).compose(bigraph1);
 ```
 
 ### Other APIs
@@ -122,11 +133,11 @@ To get the composition and tensor product of two bigraphs:
 PureBigraph G = ...;
 PureBigraph F = ...;
 PureBigraph H = ...;
-BigraphComposite<DefaultDynamicSignature> compositor = ops(G);
+BigraphComposite<DefaultDynamicSignature> composite = ops(G);
 
-BigraphComposite<DefaultDynamicSignature> result = compositor.compose(F);
-compositor.juxtapose(F);
-compositor.juxtapose(F).parallelProduct(H);
+BigraphComposite<DefaultDynamicSignature> result = composite.compose(F);
+composite.juxtapose(F);
+composite.juxtapose(F).parallelProduct(H);
 ```
 
 ## Maven Configuration

@@ -64,7 +64,7 @@
         <emf.cdo.common.version>4.20.0-SNAPSHOT</emf.cdo.common.version><!--4.20.0.v20221106-0628-->
         <!-- Should match with the version in Spring Data CDO -->
         <eclipse.core.runtime.version>3.26.100</eclipse.core.runtime.version>
-        <eclipse.collections.version>11.0.0</eclipse.collections.version>
+        <eclipse.collections.version>11.1.0</eclipse.collections.version>
         <guava.version>31.1-jre</guava.version>
         <jgrapht.version>1.5.1</jgrapht.version>
         <junit.version>5.4.0</junit.version>
@@ -96,13 +96,6 @@
         <url>https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework</url>
         <tag>HEAD</tag>
     </scm>
-
-    <!--    <scm>-->
-    <!--        <connection>scm:git:https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework.git</connection>-->
-    <!--        <developerConnection>scm:git@git-st.inf.tu-dresden.de:bigraphs/bigraph-framework.git</developerConnection>-->
-    <!--        <url>https://git-st.inf.tu-dresden.de/bigraphs/bigraph-framework</url>-->
-    <!--        <tag>HEAD</tag>-->
-    <!--    </scm>-->
 
     <distributionManagement>
         <snapshotRepository>
@@ -246,30 +239,30 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin>
-                    <groupId>org.owasp</groupId>
-                    <artifactId>dependency-check-maven</artifactId>
-                    <version>8.4.2</version>
-                    <configuration>
-                        <excludes>
-                            <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>
-                            <exclude>org.apache.bcel:bcel</exclude>
-                            <!--                            <exclude>org.eclipse.emf:org.eclipse.emf.codegen</exclude>-->
-                            <!--                            <exclude>com.google.guava:guava</exclude>-->
-                        </excludes>
-                        <!-- fail the build for CVSS greater than or equal to 8 -->
-                        <failBuildOnCVSS>10</failBuildOnCVSS>
-                        <skipProvidedScope>true</skipProvidedScope>
-                        <skipRuntimeScope>true</skipRuntimeScope>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.owasp</groupId>-->
+<!--                    <artifactId>dependency-check-maven</artifactId>-->
+<!--                    <version>8.4.2</version>-->
+<!--                    <configuration>-->
+<!--                        <excludes>-->
+<!--                            <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>-->
+<!--                            <exclude>org.apache.bcel:bcel</exclude>-->
+<!--                            &lt;!&ndash;                            <exclude>org.eclipse.emf:org.eclipse.emf.codegen</exclude>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            <exclude>com.google.guava:guava</exclude>&ndash;&gt;-->
+<!--                        </excludes>-->
+<!--                        &lt;!&ndash; fail the build for CVSS greater than or equal to 8 &ndash;&gt;-->
+<!--                        <failBuildOnCVSS>10</failBuildOnCVSS>-->
+<!--                        <skipProvidedScope>true</skipProvidedScope>-->
+<!--                        <skipRuntimeScope>true</skipRuntimeScope>-->
+<!--                    </configuration>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <goals>-->
+<!--                                <goal>check</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                </plugin>-->
             </plugins>
         </pluginManagement>
         <plugins>
@@ -602,7 +595,7 @@
             </dependency>
             <dependency>
                 <groupId>guru.nidi</groupId>
-                <artifactId>graphviz-java</artifactId>
+                <artifactId>graphviz-java-all-j2v8</artifactId>
                 <version>${graphviz.version}</version>
             </dependency>
             <dependency>

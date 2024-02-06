@@ -60,7 +60,7 @@ public class SwingGraphStreamer {
     public void initGraph(String graphId) {
         if (graph == null) {
             graph = new SingleGraph(graphId);
-            graph.setAttribute("ui.stylesheet", "node.link { text-size: 18px; fill-color: green; } node.innername { text-size: 18px; fill-color: green; } node.control { text-size: 18px; fill-color: red; } node.root {fill-color: blue; text-size: 16px;} node.site {fill-color: gray; text-size: 16px;} edge.hyperedge { fill-color: green; stroke-width: 4px; }");
+            graph.setAttribute("ui.stylesheet", "node.link { text-size: 12px; fill-color: green; } node.innername { text-size: 12px; fill-color: green; } node.control { text-size: 12px; fill-color: red; } node.root {fill-color: blue; text-size: 12px;} node.site {fill-color: gray; text-size: 12px;} edge.hyperedge { fill-color: green; stroke-width: 3px; }");
         }
     }
 

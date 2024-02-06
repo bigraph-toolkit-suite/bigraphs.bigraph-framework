@@ -3,6 +3,7 @@ package org.bigraphs.framework.simulation.matching.pure;
 import it.uniud.mads.jlibbig.core.util.NameGenerator;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
+import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
@@ -108,14 +109,15 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             }
 
             bb.outerCompose(inreact, true);
-            bb.outerCompose(jLibMatchResult.getContext(), true);
+            Bigraph context = jLibMatchResult.getContext().clone();
+//            bb.outerCompose(jLibMatchResult.getContext(), true);
+            bb.outerCompose(context, true);
 
             // Do relabeling only when we have tracking map. Relabeling allows tracing of nodes
             // relabeling is done outside of jlibbig routine for SoC reasons
             if (rule.getTrackingMap() != null && !rule.getTrackingMap().isEmpty()) {
                 List<Parent> collectCtxNodes = new ArrayList<>();
-                Deque<Parent> q = new ArrayDeque<>();
-                q.addAll(bb.getRoots());
+                Deque<Parent> q = new ArrayDeque<>(bb.getRoots());
                 while (!q.isEmpty()) {
                     Parent currentElem = q.poll();
                     if (!collectCtxNodes.contains(currentElem) && currentElem.isNode()) {
@@ -154,7 +156,8 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             Bigraph result = bb.makeBigraph(true);
 
             PureBigraph decodedResult = new JLibBigBigraphDecoder().decode(result, agent.getSignature());
-//            BigraphFileModelManagement.exportAsInstanceModel(decodedResult, System.out);
+            copyAttributes(agent, decodedResult);
+//            BigraphFileModelManagement.Store.exportAsInstanceModel(decodedResult, System.out);
             return decodedResult;
         } catch (Exception e) {
             logger.error(e.toString());

@@ -3,8 +3,10 @@ package org.bigraphs.framework.simulation.matching.tracking;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
@@ -22,6 +24,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.Map;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
@@ -34,6 +37,8 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
     void test() throws InvalidReactionRuleException {
         SimpleBRS simpleBRS = new SimpleBRS();
         PureBigraph agent = agent();
+        //Read attributes
+        System.out.println(agent.getNodes().get(0).getAttributes());
         ParametricReactionRule<PureBigraph> rr = switchRule1().withLabel("r0");
         ParametricReactionRule<PureBigraph> rr2 = switchRule2().withLabel("r1");
         AbstractReactionRule<PureBigraph> rr3 = addSetUnderEmpty().withLabel("r2");
@@ -48,7 +53,7 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
 
         simpleBRS.setAgent(agent);
 //        simpleBRS.addReactionRule(rr); // test switching
-//        simpleBRS.addReactionRule(rr2); // test switching
+        simpleBRS.addReactionRule(rr2); // test switching
 //        simpleBRS.addReactionRule(rr3); // test addition
 
         simpleBRS.execute();
@@ -69,7 +74,7 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
             int ixCnt = 0;
             while (ruleExecCounter > 0) {
 //                int ruleIx = ruleExecCounter % 2 == 0 ? 1 : 0;
-                int ruleIx = 2;
+                int ruleIx = 1;
                 MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(currentAgent, getReactionRulesMap().get("r" + ruleIx));
                 Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
                 if (!iterator.hasNext()) {
@@ -190,7 +195,13 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
                 .addChild("Box").down()
                 .addChild("Set").addChild("Set").addChild("Set").top()
         ;
-        return b.createBigraph();
+        PureBigraph big = b.createBigraph();
+        BigraphEntity.NodeEntity<DefaultDynamicControl> theNode = big.getNodes().get(0);
+        Map<String, Object> attributes = theNode.getAttributes();
+        attributes.put("myKey", "myValue");
+        theNode.setAttributes(attributes);
+        System.out.println("Attributes set for node = " + theNode);
+        return big;
     }
 
     private DefaultDynamicSignature createTrueFalseSignature() {
