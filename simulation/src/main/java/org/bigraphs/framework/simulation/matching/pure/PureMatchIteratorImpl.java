@@ -29,8 +29,6 @@ public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatc
 
     private void findMatches() {
         this.matchingEngine.beginMatch();
-//        BigraphMatch[] bigraphMatches = this.matchingEngine.getMatches().toArray(new BigraphMatch[0]);
-//        this.matches = Collections.unmodifiableList(Arrays.<BigraphMatch<B>>asList(bigraphMatches));
         if (this.matchingEngine.hasMatched()) {
             this.matchingEngine.createMatchResult();
         }
@@ -39,7 +37,7 @@ public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatc
 
     @Override
     public boolean hasNext() {
-        if (matches.size() == 0) return false;
+        if (matches.isEmpty()) return false;
         return cursor != matches.size();
     }
 

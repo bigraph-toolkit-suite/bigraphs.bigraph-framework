@@ -87,15 +87,75 @@ public class BigraphUtil {
     }
 
     /**
+     * Returns the common label of an bigraph entity (a node, root, outer name, ...).
+     * Interface elements are prefixed such as "s" for sites, and "r" for roots.
+     * <p>
+     * Similar to {@link #getUniqueIdOfBigraphEntity(BigraphEntity)} but here for a node
+     * the control label is used instead of its name id.
+     *
+     * @param x
+     * @return
+     */
+    public static String getUniqueLabelOfBigraphEntity(BigraphEntity x) {
+        String lbl = "";
+        if (BigraphEntityType.isRoot(x)) {
+            lbl = "r" + ((BigraphEntity.RootEntity) x).getIndex();
+        } else if (BigraphEntityType.isSite(x)) {
+            lbl = "s" + ((BigraphEntity.SiteEntity) x).getIndex();
+        } else if (BigraphEntityType.isNode(x)) {
+            lbl = ((BigraphEntity.NodeEntity) x).getControl().getNamedType().stringValue();
+        } else if (BigraphEntityType.isLinkType(x)) {
+            lbl = "o" + ((BigraphEntity.Link) x).getName();
+        } else if (BigraphEntityType.isInnerName(x)) {
+            lbl = "i" + ((BigraphEntity.InnerName) x).getName();
+        } else if (BigraphEntityType.isPort(x)) {
+            //TODO also add node label here
+//            EMFUtils.findAttribute()
+            lbl = "p" + ((BigraphEntity.Port) x).getIndex();
+        }
+        return lbl;
+    }
+
+    /**
+     * Returns the unique id of an bigraph entity (a node, root, outer name, ...).
+     * Interface elements are prefixed such as "s" for sites, and "r" for roots.
+     * <p>
+     * Similar to {@link #getUniqueLabelOfBigraphEntity(BigraphEntity)} but here for node
+     * the name id is used instead of the control label.
+     *
+     * @param x
+     * @return
+     */
+    public static String getUniqueIdOfBigraphEntity(BigraphEntity x) {
+        String lbl = "";
+        if (BigraphEntityType.isRoot(x)) {
+            lbl = "r" + ((BigraphEntity.RootEntity) x).getIndex();
+        } else if (BigraphEntityType.isSite(x)) {
+            lbl = "s" + ((BigraphEntity.SiteEntity) x).getIndex();
+        } else if (BigraphEntityType.isNode(x)) {
+            lbl = ((BigraphEntity.NodeEntity) x).getName();
+        } else if (BigraphEntityType.isLinkType(x)) {
+            lbl = "o" + ((BigraphEntity.Link) x).getName();
+        } else if (BigraphEntityType.isInnerName(x)) {
+            lbl = "i" + ((BigraphEntity.InnerName) x).getName();
+        } else if (BigraphEntityType.isPort(x)) {
+            //TODO also add node label here
+//            EMFUtils.findAttribute()
+            lbl = "p" + ((BigraphEntity.Port) x).getIndex(); // id of node
+        }
+        return lbl;
+    }
+
+    /**
      * Each bigraph represents a "parameter" in a list.
-     * The result of this method is the product of all parameters but each parameter is getting a new root index due to the
+     * The result of this method is the product of all parameters {@code discreteBigraphs} but each parameter is getting a new root index due to the
      * instantiation map.
      * The instantiation map maps the position of the initial bigraphs to a new one in the list.
      * The resulting bigraph has as many roots as parameters in the list.
      *
-     * @param discreteBigraphs list of bigraphs
+     * @param discreteBigraphs list of bigraphs (parameters)
      * @param instantiationMap an instantiation map
-     * @return a bigraph containing all "parameters" in a new order. It has as many roots as the list size.
+     * @return a bigraph containing all "parameters" in a new order. It has as many roots as the list size of {@code discreteBigraphs}.
      * @throws IncompatibleSignatureException
      * @throws IncompatibleInterfaceException
      */

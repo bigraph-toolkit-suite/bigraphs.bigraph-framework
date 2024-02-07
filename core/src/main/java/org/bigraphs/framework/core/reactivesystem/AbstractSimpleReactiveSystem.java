@@ -9,9 +9,13 @@ import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.AbstractEcoreSignature;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -36,7 +40,6 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     protected B initialAgent;
     protected BiMap<String, ReactionRule<B>> reactionRules = HashBiMap.create();
     protected BiMap<String, ReactiveSystemPredicate<B>> predicateMap = HashBiMap.create();
-//    protected MutableList<ReactiveSystemPredicate<B>> predicates = Lists.mutable.empty();
 
     public AbstractSimpleReactiveSystem() {
     }
@@ -105,6 +108,21 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
             }
         }
         return isIdle;
+    }
+
+    protected void copyAttributes(B sourceBigraph, B targetBigraph) {
+        MutableMap<String, Map<String, Object>> S = Maps.mutable.empty();
+        // Iterate through all nodes and store in a map S: nodeId |-> Attributes
+        sourceBigraph.getNodes().forEach(n -> {
+            if(!n.getAttributes().isEmpty()) {
+                S.put(n.getName(), n.getAttributes());
+            }
+        });
+        // Iterate through keys in map S, for each id get the node in target and set attributes
+        S.keySet().forEach(nodeId -> {
+            Optional<BigraphEntity.NodeEntity<Control<?, ?>>> first = targetBigraph.getNodes().stream().filter(n -> n.getName().equals(nodeId)).findFirst();
+            first.ifPresent(controlNodeEntity -> controlNodeEntity.setAttributes(S.get(nodeId)));
+        });
     }
 
     @Override

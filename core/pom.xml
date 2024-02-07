@@ -52,13 +52,13 @@
             </plugin>
             <!-- SKIP -->
             <!-- OWASP -->
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <configuration>
-                    <skip>${skip.security.check}</skip>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.owasp</groupId>-->
+<!--                <artifactId>dependency-check-maven</artifactId>-->
+<!--                <configuration>-->
+<!--                    <skip>${skip.security.check}</skip>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <!-- SHADE -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -194,6 +194,10 @@
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
         </dependency>
         <!-- Test -->
         <dependency>

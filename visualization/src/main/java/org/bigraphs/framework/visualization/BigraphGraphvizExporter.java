@@ -1,20 +1,22 @@
 package org.bigraphs.framework.visualization;
 
+import guru.nidi.graphviz.attribute.*;
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.*;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.visualization.auxiliary.GraphvizProcess;
 import org.bigraphs.framework.visualization.supplier.GraphvizColorSupplier;
 import org.bigraphs.framework.visualization.supplier.GraphvizShapeSupplier;
-import guru.nidi.graphviz.attribute.*;
-import guru.nidi.graphviz.engine.Format;
-import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.model.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -91,9 +93,9 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
      * @throws IOException
      */
     public <S extends Signature<?>> String convert(Bigraph<S> bigraph,
-                                                File output,
-                                                Format format,
-                                                boolean asTreeStructure) throws IOException {
+                                                   File output,
+                                                   Format format,
+                                                   boolean asTreeStructure) throws IOException {
 //        Graphviz.useEngine(new GraphvizJdkEngine());
         final MutableGraph theGraph = mutGraph("Bigraph").setDirected(false)
 //                .graphAttrs().add(RankDir.BOTTOM_TO_TOP);
@@ -287,7 +289,16 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
         }
 
         if (Objects.nonNull(output)) {
-            Graphviz.fromGraph(theGraph).totalMemory(204800).render(format).toFile(output);
+            try {
+                GraphvizProcess process = new GraphvizProcess();
+                Process convert = process.convert(theGraph.toString(), output.getAbsolutePath().toString());
+                boolean hasExited = convert.waitFor(5, TimeUnit.SECONDS);
+                if (!hasExited) {
+                    Graphviz.fromGraph(theGraph).totalMemory(204800).render(format).toFile(output);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         return theGraph.toString();
     }

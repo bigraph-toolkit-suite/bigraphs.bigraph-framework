@@ -26,6 +26,8 @@ import java.util.stream.IntStream;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
+//TODO add also other bigrid variant with locales and routes
+
 /**
  * A class to generate bigrids as described in the dissertation.
  * <p>

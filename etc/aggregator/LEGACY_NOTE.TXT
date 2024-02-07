@@ -1,5 +1,0 @@
-This module is kept for legacy reasons.
-
-It served the purpose to automatically install required dependencies into the Maven local repository.
-
-All artifacts are now hosted at Artifactory https://stgroup.jfrog.io/

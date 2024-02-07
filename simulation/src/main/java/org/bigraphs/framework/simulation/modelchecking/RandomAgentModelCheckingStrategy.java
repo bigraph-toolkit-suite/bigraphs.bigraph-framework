@@ -19,6 +19,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
+ * Random state-space traversal without cycle-checking and predicate evaluation.
+ *
  * @author Dominik Grzelak
  */
 public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {

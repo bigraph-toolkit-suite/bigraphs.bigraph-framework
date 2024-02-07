@@ -21,6 +21,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+//TODO make variant of BreadthFirstStrategy
+// or remove, and add argument to BreadthFirstStrategy for which hashing to use
 
 /**
  * The algorithm implemented here is a variant of the BreadthFirstSimulationStrategy without cycle checking.
@@ -30,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author Dominik Grzelak
  */
+@Deprecated
 public class BreadthFirstSimulationStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
     private final Logger logger = LoggerFactory.getLogger(BreadthFirstSimulationStrategy.class);
 
@@ -50,8 +53,11 @@ public class BreadthFirstSimulationStrategy<B extends Bigraph<? extends Signatur
             ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
             modelChecker.getReactionGraph().setCanonicalNodeLabel(opts.getPrintCanonicalStateLabel());
         }
+        ModelCheckingOptions.TransitionOptions transitionOptions = options.get(ModelCheckingOptions.Options.TRANSITION);
+        logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
         modelChecker.getReactionGraph().reset();
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
+
         B initialAgent = modelChecker.getReactiveSystem().getAgent();
         it.uniud.mads.jlibbig.core.std.Bigraph encoded = new JLibBigBigraphEncoder().encode((PureBigraph) initialAgent);
         initialAgent = (B) new JLibBigBigraphDecoder().decode(encoded);
@@ -59,14 +65,13 @@ public class BreadthFirstSimulationStrategy<B extends Bigraph<? extends Signatur
         workingQueue.add(initialAgent);
         AtomicInteger iterationCounter = new AtomicInteger(0);
         resetOccurrenceCounter();
-        ModelCheckingOptions.TransitionOptions transitionOptions = options.get(ModelCheckingOptions.Options.TRANSITION);
-        logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
         while (!workingQueue.isEmpty() && iterationCounter.get() < transitionOptions.getMaximumTransitions()) {
+            Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
+
             // "Remove the first element w of the work queue Q."
             final B theAgent = workingQueue.remove();
             final String bfcfOfW = String.valueOf(theAgent.hashCode());
             // "For each reaction rule, find all matches m1 ...mn in w"
-            Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
             for (ReactionRule<B> eachRule : modelChecker.getReactiveSystem().getReactionRules()) {
                 getListener().onCheckingReactionRule(eachRule);
                 MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule));

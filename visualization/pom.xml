@@ -69,7 +69,29 @@
         </dependency>
         <dependency>
             <groupId>guru.nidi</groupId>
-            <artifactId>graphviz-java</artifactId>
+            <artifactId>graphviz-java-all-j2v8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.eclipsesource.j2v8</groupId>
+            <artifactId>j2v8_linux_x86_64</artifactId>
+            <version>4.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>20.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graphstream</groupId>
+            <artifactId>gs-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.graphstream</groupId>
+            <artifactId>gs-ui-swing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.graphstream</groupId>
+            <artifactId>gs-algo</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
