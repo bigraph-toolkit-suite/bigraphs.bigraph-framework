@@ -2,10 +2,10 @@
 
 # Bigraph Framework
 
-| Branch  | Latest Versions                                  | Status |
-|---------|--------------------------------------------------|--------|
-| Main    | 1.1.0 / 1.0.0 / 0.9.6                            |        |
-| Develop | 1.1.0-SNAPSHOT / 1.0.0-SNAPSHOT / 0.9.7-SNAPSHOT |        |
+| Branch  | Latest Versions                                  | Status       |
+|---------|--------------------------------------------------|--------------|
+| Main    | 1.1.0 / 1.0.0 / 0.9.6                            | Releases     |
+| Develop | 1.1.0-SNAPSHOT / 1.0.0-SNAPSHOT / 0.9.7-SNAPSHOT | Experimental |
 
 ----
 
