@@ -349,7 +349,7 @@ See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deplo
 
 To deploy Bigraph Framework to the [Central Repository](https://repo.maven.apache.org/maven2/):
 ```bash
-mvn clean deploy -DskipTests -P release
+mvn clean deploy -DskipTests -P release,ossrh
 ```
 
 ## License

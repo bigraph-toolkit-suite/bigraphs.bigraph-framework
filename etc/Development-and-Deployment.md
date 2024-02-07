@@ -115,11 +115,19 @@ This section discusses the deployment process.
 
 ### Framework
 
-- Goals to execute for running the build: `mvn clean install`
-- Goals to execute for deploying to the Central Repository: `mvn clean deploy -P release,ossrh`
+#### TLDR
+- For running the build and local installation of the framework modules: `mvn clean install`
+- For deploying the framework modules to the Central Repository: 
+  - `mvn clean deploy -P release,ossrh`
+  - `mvn clean deploy -P release,ossrh -DskipTests `
+
+Note: When `SNAPSHOT` prefix is present in the version name, a Snapshot Deployment is performed.
+Otherwise, a Release Deployment is performed and the artifacts must be released manually after review (see [here](https://central.sonatype.org/publish/release/)).
 
 The Sonatype account details (username + password) for the deployment must be provided to the
 Maven Sonatype Plugin as used in the project's `pom.xml` file (parent pom).
+
+#### Requirements
 
 The Maven GPG plugin is used to sign the components for the deployment.
 It relies on the gpg command being installed:
@@ -127,9 +135,18 @@ It relies on the gpg command being installed:
 sudo apt install gnupg2
 ```
 
-and the GPG credentials being available e.g. from `settings.xml`.
+and the GPG credentials being available e.g. from `settings.xml` (see [here](https://central.sonatype.org/publish/publish-maven/))
 
-More information can be found [here](https://central.sonatype.org/publish/requirements/gpg/).
+Listing keys: `gpg --list-keys --keyid-format short`
+
+The `pom.xml` must also conform to the minimal requirements containing all relevant tags as required by Sonatype.
+
+#### General Steps
+
+- Generate GPG key pair (remember passphrase)
+- Distribute Public Key to key server (e.g., keys.openpgp.org)
+  - More information can be found [here](https://central.sonatype.org/publish/requirements/gpg/).
+- Follow https://central.sonatype.org/publish/publish-maven/#performing-a-snapshot-deployment for deployment instructions
 
 ### Documentation (User Manual + Javadoc API)
 
