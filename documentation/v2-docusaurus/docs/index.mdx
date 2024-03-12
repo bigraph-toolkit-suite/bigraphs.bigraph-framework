@@ -13,7 +13,7 @@ A Complete Guide to the Bigraph Framework.
 
 - Stable: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>1.1.0</span> (main branch)
     - Previous Stable Versions: 1.0.0, 0.9.7, 0.9.6
-- Latest Version: <span class="badge badge-secondary" style={{backgroundColor: '#7952b3'}}>1.0.0-SNAPSHOT</span> (develop branch)
+- Latest Version: <span class="badge badge-secondary" style={{backgroundColor: '#7952b3'}}>2.0.0-SNAPSHOT</span> (develop branch)
 
 
 :::info Notice
@@ -31,23 +31,33 @@ Since version 1.0.0 of Bigraph Framework: The new groupID and base package name 
 **Bigraph Framework** is a Java software framework for the creation and simulation of bigraphs and bigraphical reactive systems
 to expedite the experimental evaluation of the bigraph theory in real-world applications.
 
-The goal of this framework is to facilitate the implementation of context-aware, agent-based systems or cyber-physical systems, for instance.
-The high level API eases the programming of bigraphical systems for various real-world application.
+The goal of this framework is to facilitate the implementation of reactive systems, including context-aware, agent-based systems or cyber-physical systems.
+The high level API eases the programming of bigraphical systems for various applications.
 The framework is developed around a [metamodel-first approach](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel), when working with bigraphical structures.
-Incorporating the bigraph theory into software is accomplished through a variety of model-driven software development means.
 
 ### Overview of the Features
 
-- Dynamic creation of bigraphs at runtime, which are based on the [Ecore metamodel of bigraphs](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
-- Visualization of bigraphs
-- Bigraph Matching and Rewriting via jLibBig
-- Bigraphical Reactive Systems
-    - Simulation of bigraphs by reaction rules
-    - Synthesisation of a labelled transition system, or reaction graph
-- Model Checking via simple bigraphical predicates, logical connectors, LTL is implicitly supported
-- Read and write metamodels and instance models to the file system (Ecore/XMI)
-- Conversion of bigraphs into other file formats
-    - e.g., GraphML, BigMC, BigRED, BigraphER, ...
+- Dynamic creation of bigraphs at design time and runtime based on an [EMOF-based metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
+- Read and write the meta and instance model of a bigraph from and to the file system
+- Visualization
+    - Graphical export via GraphViz/DOT
+    - PNG, JPG, ...
+    - Interactive visualization UI via GraphStream
+- Bigraphical Reactive System support: Simulate the evolution of bigraphs by reaction rules
+    - Bigraph matching and rewriting via jLibBig
+    - Synthesisation of a labeled transition system (LTS)
+    - Simulation and Model Checking (BFS, Random)
+    - Predicate checking, logical connectors, LTL
+    - Specify order of reaction rules
+    - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
+    - Tracking rules (a rule can be assigned a tracking map)
+- Model transformation / Conversions
+    - Export to common graph formats, e.g., DOT, GraphML, GXL
+    - Export to formats of other bigraph tools: BigMC, BigraphER, and BigRed
+    - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
+- Attributed Bigraphs
+    - Add arbitrary attributes to nodes
+    - Attributes are preserved when rewriting
 
 ### What are Bigraphs?
 
@@ -55,7 +65,7 @@ Incorporating the bigraph theory into software is accomplished through a variety
 mobile computing, context-aware systems and the Internet of Things (IoT), or in general: for reactive systems.
 It is grounded on category theory and regarded as a unifying framework for many process calculi, including the ambient calculus, action calculi, Petri nets,
 the Calculus of Communicating Systems (CCS) and π-calculus.
-The theory provides an algebra and a graph-rewriting-like mechanism to describe, study and analyze the dynamic behavior of reactive systems.
+The theory provides an algebra and a graph rewriting mechanism to describe, study and analyze the dynamic behavior of reactive systems.
 
 ## Requirements
 
@@ -71,7 +81,7 @@ Bigraph Framework and its parts are online available as Maven dependencies.
 Artifacts are deployed to the _Central Repository_.
 
 :::tip Building from Source
-Otherwise, to build the source by yourself, follow the [README.md](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md) inside the code repository.
+To build the source by yourself, follow the [README.md](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md) inside the code repository.
 :::
 
 ### Quick Start: Empty Project Skeleton
@@ -79,6 +89,7 @@ Otherwise, to build the source by yourself, follow the [README.md](https://githu
 To get started using Bigraph Framework right away, download the Maven-based Project Skeleton
 
 - [Empty Project Skeleton for using Bigraph Framework](https://www.bigraphs.org/products/bigraph-framework/download/empty-project-skeleton-bigraphframework.zip)
+- See <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>here</a> for the latest version on GitHub
 
 The README contained therein, describes how to compile and start an application.
 
@@ -120,7 +131,7 @@ import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
 No additional configuration is necessary to resolve the dependencies above!
 
 However, if you want SNAPSHOT releases, the following custom repository must be added as well.
-We provide the configuration for Maven and Gradle below.
+The configuration for Maven and Gradle is provided below.
 
 <Tabs>
   <TabItem value="maven" label="Maven" default>
