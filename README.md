@@ -18,14 +18,14 @@ The high-level API eases the programming of bigraphical systems for real-world a
 
 **Features**
 
-- Dynamic creation of bigraphs at runtime based on an EMOF-based metamodel
+- Dynamic creation of bigraphs at design time and runtime based on an [EMOF-based metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
 - Read and write the meta and instance model of a bigraph from and to the file system
 - Visualization
   - Graphical export via GraphViz/DOT
   - PNG, JPG, ...
-  - Interactive visualization UI via GraphStreamer (beta)
-- Bigraphical Reactive System support: simulate the evolution of bigraphs by reaction rules 
-  - Bigraph matching and rewriting
+  - Interactive visualization UI via GraphStream
+- Bigraphical Reactive System support: Simulate the evolution of bigraphs by reaction rules 
+  - Bigraph matching and rewriting via jLibBig
   - Synthesisation of a labeled transition system (LTS)
   - Simulation and Model Checking (BFS, Random)
   - Predicate checking, logical connectors, LTL
