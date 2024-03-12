@@ -86,13 +86,14 @@ The output is exported to `documentation/v2-docusaurus/build/`.
     mvn exec:java -f documentation/pom.xml
     ```
 
-#### Build the whole documentation
+### Build the whole documentation
 
 Execute from the root of this project the following commands:
 ```shell
 mvn clean install
-mvn package -P distribute                              # creation and aggregation of JavaDocs 
-nvm use 16                                            # switch node version
+mvn package -P distribute                             # creation and aggregation of JavaDocs 
+nvm install 16                                        # install node version 16 if not already installed
+nvm use 16                                            # switch to this node version (needed for docusaurus)
 npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
 mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
 ```
@@ -119,7 +120,7 @@ This section discusses the deployment process.
 - For running the build and local installation of the framework modules: `mvn clean install`
 - For deploying the framework modules to the Central Repository: 
   - `mvn clean deploy -P release,ossrh`
-  - `mvn clean deploy -P release,ossrh -DskipTests `
+  - `mvn clean deploy -P release,ossrh -DskipTests`
 
 Note: When `SNAPSHOT` prefix is present in the version name, a Snapshot Deployment is performed.
 Otherwise, a Release Deployment is performed and the artifacts must be released manually after review (see [here](https://central.sonatype.org/publish/release/)).
@@ -135,7 +136,10 @@ It relies on the gpg command being installed:
 sudo apt install gnupg2
 ```
 
-and the GPG credentials being available e.g. from `settings.xml` (see [here](https://central.sonatype.org/publish/publish-maven/))
+and the GPG credentials being available e.g. from `settings.xml` (see [here](https://central.sonatype.org/publish/publish-maven/)).
+In `settings.xml` should be a profile and server configuration both with the `<id>ossrh</id>`.
+
+More information can be found [here](https://central.sonatype.org/publish/requirements/gpg/).
 
 Listing keys: `gpg --list-keys --keyid-format short`
 
