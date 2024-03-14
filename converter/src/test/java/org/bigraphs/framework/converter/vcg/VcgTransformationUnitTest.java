@@ -36,7 +36,7 @@ public class VcgTransformationUnitTest {
         String s = vcgTransformator.toString(big);
         System.out.println(s);
 
-        FileOutputStream fout = new FileOutputStream(new File(DUMP_TARGET + "ycomp-test.vcg"));
+        FileOutputStream fout = new FileOutputStream(DUMP_TARGET + "ycomp-test.vcg");
         vcgTransformator.toOutputStream(big, fout);
         fout.close();
     }

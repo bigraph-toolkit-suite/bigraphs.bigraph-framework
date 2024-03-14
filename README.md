@@ -24,6 +24,7 @@ The high-level API eases the programming of bigraphical systems for real-world a
   - Graphical export via GraphViz/DOT
   - PNG, JPG, ...
   - Interactive visualization UI via GraphStream
+  - Visualization of Compiler Graphs (VCG) format via yComp
 - Bigraphical Reactive System support: Simulate the evolution of bigraphs by reaction rules 
   - Bigraph matching and rewriting via jLibBig
   - Synthesisation of a labeled transition system (LTS)
@@ -33,7 +34,7 @@ The high-level API eases the programming of bigraphical systems for real-world a
   - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
   - Tracking rules (a rule can be assigned a tracking map)
 - Model transformation / Conversions
-  - Export to common graph formats, e.g., DOT, GraphML, GXL
+  - Export to common graph formats, e.g., DOT, GraphML, GXL, VCG
   - Export to formats of other bigraph tools: BigMC, BigraphER, and BigRed
   - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
