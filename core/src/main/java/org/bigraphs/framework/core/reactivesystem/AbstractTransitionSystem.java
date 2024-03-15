@@ -1,12 +1,9 @@
 package org.bigraphs.framework.core.reactivesystem;
 
-import org.bigraphs.framework.core.AbstractRankedGraph;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
-import org.jgrapht.graph.DefaultEdge;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -14,7 +11,7 @@ import java.util.function.Supplier;
  * Abstract base class representing the minimal data structure for all concrete transition system implementations.
  * This class generalizes all possible variations of transition systems.
  *
- * @param <B> the type of the bigraph
+ * @param <B> the type of the bigraph of the states and transition relations of the transition system
  * @author Dominik Grzelak
  */
 public class AbstractTransitionSystem<B extends Bigraph<? extends Signature<?>>> {

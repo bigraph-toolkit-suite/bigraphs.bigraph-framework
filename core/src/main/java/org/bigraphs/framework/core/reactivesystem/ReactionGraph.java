@@ -14,14 +14,15 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * An extended data structure to build up a reaction graph, analogous to a labeled transition system.
- * It uses the abstract base class {@link AbstractTransitionSystem} as support.
+ * An "extended" data structure to build up a "reaction graph", analogous to a labeled transition system.
+ * It extends the abstract base class {@link AbstractTransitionSystem}.
  * <p>
  * A reaction graph is not to be confused with the notion of minimal LTSs in bigraphs.
  * This reaction graph has no minimal context labels as transitions; it has reactions as labels.
  * <p>
- * Here the transition relations are reaction rules, and the nodes are states (i.e., bigraphs, represented by their unique string encoding).
+ * Here the transition relations are reaction rules (i.e., the redex), and the nodes are states (i.e., bigraphs, represented by their unique string encoding).
  *
+ * @param <B> the type of the bigraph of the states and transition relations of the transition system
  * @author Dominik Grzelak
  */
 public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B> {
