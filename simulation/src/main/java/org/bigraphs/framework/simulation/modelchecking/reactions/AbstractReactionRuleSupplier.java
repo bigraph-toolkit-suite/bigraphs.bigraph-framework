@@ -11,13 +11,18 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
+ * Abstract base class for all reaction rule suppliers.
+ * A supplier is a argument-less function that returns something.
+ * <p>
+ * This class is used in the model checking procedure as a generic interface.
+ *
  * @author Dominik Grzelak
  */
-public abstract class ReactionRuleSupplier<B extends Bigraph<? extends Signature<?>>> implements Supplier<ReactionRule<B>> {
+public abstract class AbstractReactionRuleSupplier<B extends Bigraph<? extends Signature<?>>> implements Supplier<ReactionRule<B>> {
 
     protected final ImmutableList<ReactionRule<B>> availableRules;
 
-    protected ReactionRuleSupplier(Collection<ReactionRule<B>> availableRules) {
+    protected AbstractReactionRuleSupplier(Collection<ReactionRule<B>> availableRules) {
         this.availableRules = Lists.immutable.withAll(availableRules);
     }
 

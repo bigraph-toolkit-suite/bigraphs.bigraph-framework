@@ -21,8 +21,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-//TODO make variant of BreadthFirstStrategy
-// or remove, and add argument to BreadthFirstStrategy for which hashing to use
 
 /**
  * The algorithm implemented here is a variant of the BreadthFirstSimulationStrategy without cycle checking.

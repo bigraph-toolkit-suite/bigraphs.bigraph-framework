@@ -7,7 +7,7 @@ import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.modelchecking.reactions.InOrderReactionRuleSupplier;
 import org.bigraphs.framework.simulation.modelchecking.reactions.RandomAgentMatchSupplier;
-import org.bigraphs.framework.simulation.modelchecking.reactions.ReactionRuleSupplier;
+import org.bigraphs.framework.simulation.modelchecking.reactions.AbstractReactionRuleSupplier;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
 import org.slf4j.Logger;
@@ -17,6 +17,9 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
+//TODO make variant of BreadthFirstStrategy
+// also allow configuring BreadthFirstStrategy which hashing to use for iso check
 
 /**
  * Random state-space traversal without cycle-checking and predicate evaluation.
@@ -48,7 +51,7 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
         while (!workingQueue.isEmpty() && transitionCnt < transitionOptions.getMaximumTransitions()) {
             final B theAgent = workingQueue.remove();
             final String bfcfOfW = canonicalForm.bfcs(theAgent);
-            final InOrderReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.<B>createInOrder(modelChecker.getReactiveSystem().getReactionRules());
+            final InOrderReactionRuleSupplier<B> inOrder = AbstractReactionRuleSupplier.<B>createInOrder(modelChecker.getReactiveSystem().getReactionRules());
             MutableList<B> rewrittenAgents = Lists.mutable.empty();
 //            Stream.generate(inOrder)
 //                    .limit(modelChecker.getReactiveSystem().getReactionRules().size())
@@ -82,7 +85,7 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
                         }
                     });
             if (rewrittenAgents.size() > 0) {
-                RandomAgentMatchSupplier<B> randomSupplier = ReactionRuleSupplier.createRandom(rewrittenAgents);
+                RandomAgentMatchSupplier<B> randomSupplier = AbstractReactionRuleSupplier.createRandom(rewrittenAgents);
                 workingQueue.add(randomSupplier.get());
             }
 

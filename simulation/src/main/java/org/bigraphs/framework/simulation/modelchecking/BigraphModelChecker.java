@@ -69,14 +69,14 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     public static class SimulationStrategy {
 
         public enum Type {
-            BFS, RANDOM, SIMULATION;
+            BFS, RANDOM, SIMULATION;//TODO deprecated
         }
 
         public static <B extends Bigraph<? extends Signature<?>>> Class<? extends ModelCheckingStrategy> getSimulationStrategyClass(Type type) {
             switch (type) {
                 case BFS:
                     return BreadthFirstStrategy.class;
-                case RANDOM:
+                case RANDOM: //This is like simulation
                     return RandomAgentModelCheckingStrategy.class;
                 case SIMULATION: // TODO deprecated
                     return BreadthFirstSimulationStrategy.class;

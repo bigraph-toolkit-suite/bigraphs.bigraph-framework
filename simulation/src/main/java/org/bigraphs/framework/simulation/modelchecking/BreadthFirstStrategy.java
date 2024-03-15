@@ -11,7 +11,7 @@ import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.modelchecking.predicates.PredicateChecker;
 import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
-import org.bigraphs.framework.simulation.modelchecking.reactions.ReactionRuleSupplier;
+import org.bigraphs.framework.simulation.modelchecking.reactions.AbstractReactionRuleSupplier;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             final B theAgent = workingQueue.remove();
             final String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(theAgent);
             // "For each reaction rule, find all matches m1 ...mn in w"
-            ReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
+            AbstractReactionRuleSupplier<B> inOrder = AbstractReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
             Stream<ReactionRule<B>> rrStream = Stream.generate(inOrder);
             if (options.isParallelRuleMatching()) {
                 rrStream = rrStream.parallel();
