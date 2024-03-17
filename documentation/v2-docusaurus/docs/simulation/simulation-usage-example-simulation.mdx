@@ -1,0 +1,30 @@
+---
+id: usage-example-brs-simulation
+title: Getting Started with BRSs
+sidebar_position: 2
+---
+
+This guide provides a complete walkthrough on how to simulate bigraphical reactive systems (BRS).
+The following aspects are covered:
+- Specification of the signature
+- Specification of the initial state
+- Specification of the reaction rules
+
+This is done along a running example.
+
+**Scenario Description**
+The running example describes a "system", where a user can put a fruit into a basket.
+The environment of this "system" comprises a `Table`, a `Basket`, some generic `Fruit` entities and a `User`.
+Only one high-level 1action exists, namely, picking a fruit and placing it into the available `Basket`.
+This simple system description might sound simple but when more users and baskets are introduced the problem becomes more challenging to manage.
+This type of problem involves concurrent behavior and dynamic allocation and arises from a category of challenging problems in the field of computer science.
+
+
+In the following, we are going to translate this scenario description into a BRS-based specification and simulate its behavior.
+That allows us to observe and look into the behavior of the system.
+
+
+:::tip
+Bigraphs can be exported using the Visualization Module of Bigraph Framework.
+See, for example, [Exporting Bigraphs as Images](../visualization/visualization-intro) on how to export a bigraph as PNG using the DOT format.
+:::

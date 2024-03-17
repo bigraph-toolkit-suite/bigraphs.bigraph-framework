@@ -35,7 +35,7 @@ public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
     default boolean isRedexSimple() {
         return
 //                getRedex().isEpimorphic() &&
-                getRedex().getEdges().size() == 0 && // every link is open
+                getRedex().getEdges().isEmpty() && // every link is open
                         getRedex().isGuarding() && //no site has a root as parent (+ no idle inner names)
                         getRedex().isMonomorphic(); // inner-injective
     }

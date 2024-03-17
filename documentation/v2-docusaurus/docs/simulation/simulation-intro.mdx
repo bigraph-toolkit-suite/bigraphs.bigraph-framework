@@ -1,32 +1,41 @@
 ---
 id: simulation-intro
-title: Introduction
+title: Overview
 sidebar_position: 1
 ---
 
-In bigraphs, the system's dynamic is represented by means of reaction
-rules of the form $a \to_R a'$ where $a$ and $a'$ are called agents.
-A reaction rule comprises a redex and reactum, where the redex is to be
-found in an agent; then the matched part of the agent can be rewritten by
-the reactum.
+In bigraphs, the dynamic behavior of a system is represented by means of _reaction
+rules_ written ![reaction-relation-between-agents](../assets/simulation/eq/eqn-reaction-relation.svg), where ![reaction-relation-between-agents](../assets/simulation/eq/eqn-agent-vars.svg) are called _agents_ (in bigraph-jargon), and _R_ is a reaction rule.
+Generally, an _agent_ is a bigraphical state of the system; a snapshot of the system at a specific point in time.
 
-> This enables a form of rule-based programming paradigm.
+Given a signature, a set of reaction rules and an initial agent (all defined over the same signature), one can create a so-called **bigraphical reactive system** that acts like a container including all these components.
+A BRS can be regarded as the specification of a system, process or model under consideration.
 
-Reaction rule allow some kind of simulation. Specifically, enabled by means of *graph rewriting*.
-This form of expression allows to synthesize a labelled transition system (LTS).
-Each node of the LTS is a state. States are connected
-by edges denoting the specific reaction rule that lead to this state.
-Beginning with an agent, a set of reaction rules is applied as long
-as a match can be found, until some stop criteria eventuates or some
-other constraints are applicable. The LTS can have cycles.
+BRSs introduce a temporal notion to bigraphs and allows to perform and track changes of the system over time.
+
+This page explains how to create BRSs.
+Moreover, the structure of reaction rules and their different kinds are introduced.
+
+:::tip BRS Model Checking
+Refer to [Verification](verification-intro) to get to know more about how to use a BRS specification for model checking.
+:::
+
+
 
 ## Bigraphical Reactive System (BRS)
 
-A BRS is a system containing an agent and reaction rules.
+A BRS is a model of a system specification containing an agent (i.e., the host graph, the initial state) and a collection of reaction rules.
 
-All reactive system implement the interface `org.bigraphs.framework.core.reactivesystem.ReactiveSystem<B extends Bigraph<? extends Signature<?>>>`.
+:::info Mathematical Definition
+In category theory, BRSs are defined as syntactical categories endowed with reaction rules.
+Specifically, a concrete BRS is a s-category ![reaction-relation-between-agents](../assets/simulation/eq/eqn-brs-category.svg) containing a signature and a set of rules.
+:::
 
-A reactive system for pure bigraphs can be created as follows:
+All reactive system implementations extend the interface `org.bigraphs.framework.core.reactivesystem.ReactiveSystem<B extends Bigraph<? extends Signature<?>>>` of the Core Module in Bigraph Framework.
+
+### By Instantiation
+
+A reactive system for _pure bigraphs_ can be created by calling its constructor as follows:
 
 ```java
 PureReactiveSystem reactiveSystem = new PureReactiveSystem();
@@ -34,139 +43,138 @@ PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
 Then, an agent and reaction rules can be added like this:
 ```java
+// Set the initial agent
+PureBigraph agent = ...;
 reactiveSystem.setAgent(agent);
+// Add a reaction rule
 ReactionRule<PureBigraph> rr = ...;
 reactiveSystem.addReactionRule(rr);
 ```
 
-An _agent_ is any ground bigraph, i.e., a bigraph that has no sites and inner names.
-It must also be prime, i.e., it must have only one root.
+:::info Format of the Agent
+In the bigraph theory, an _agent_ is any _ground bigraph_, i.e., a bigraph that has no sites and inner names.
+It must also be prime, i.e., it must have only _one root_.
+:::
 
-Some further remarks:
-- Predicates for [model checking](verification-intro) can be added using `PureReactiveSystem#addPredicate(ReactiveSystemPredicates<B> predicate)`.
-- See [here](simulation-predicates) on how to create predicates.
+:::note Exceptions
+An exception will be thrown if the rules or agent are not in the correct format.
+:::
 
-<!-- ## Examples -->
+:::note Some further remarks
+- Predicates as used in [model checking](verification-intro) for reachability checking can be added using the method `PureReactiveSystem#addPredicate(ReactiveSystemPredicates<B> predicate)`.
+- See also [here](simulation-predicates) on how to create predicates.
+:::
 
-<!-- ### Home computer example -->
+### By Inheritance
 
-<!-- A room with a computer is modelled with the following dynamics. -->
+Inheriting a reactive system implementation allows for an object-oriented approach to better organize and manage domain-specific BRSs in an application.
 
-<!-- - The first and fourth rules are structurally the same but different instances -->
-<!-- - The second rule is a no-op rule, just for demonstration purposes -->
-<!-- - The third rule allows to create a new "job" on the computer residing in  -->
-<!-- the room -->
-
-<!-- The agent of our BRS is shown below with  -->
-<!-- the corresponding reaction rules. For the simulation, we set the maximal -->
-<!-- allowed transitions to 4.  -->
-
-
-<!-- ```java -->
-<!-- class -->
-<!-- ``` -->
-
-## Simulation types
-
-The frameworks builds the reaction graph in the course of the simulation.
-Only the canonical form of an agent is stored in the graph to reduce the
-number of admissable states in order to minimize the state-space explosion problem.
-
-### Breadth-first simulation
-
-The algorithm described in [\[1\]](#ref1) is implemented.
-
-The respective reaction graph of the above example is shown below after
-the BFS simulation finished.
-
-![imgs](../assets/simulation/home-example-reaction-graph.png)
-
-This form of simulation provides no guarantee that the simulation will end at some point.
-
-### Random simulation
-
-This type of simulation starts to apply a set of given reaction rules
-on an initial agent. After the reaction graph is expanded, the simulation
-randomly selects a new state and repeats the process.
-In other words, it follows only on path at random until now further rules can be applied.
-This form of simulation provides no guarantee that the simulation will end at some point or that the simulation will eventually reach a desired state.
-
-|Random Run #1 | Random Run #2 |
-|---|---|
-|![imgs](../assets/simulation/transition_graph_random.png)|![imgs](../assets/simulation/transition_graph_random2.png)|
-
-Regarding the first random run of our example (left-hand figure above), rules (r0) and (r4) were applied on the agent. The algorithm
-was selecting the second agent (the one where (r4) points to), however, also
-stops here, since no further rules could be applied.
-
-If the agent were chosen (where (r0) points to), rules (r1), (r2) and (r3) could be applied.
-This case is illustrated in the right-hand figure above.
-
-## Additional Model Checking Options
-
-Model checking options may be provided to the model checker.
-Therefore, the class `ModelCheckingOptions` needs to be created. An
-example is shown below.
+The following examples defines a BRS that can compute the sum of two integers, which are represented in bigraphs in [unary form](https://en.wikipedia.org/wiki/Peano_axioms).
+In this form the symbol _S_ is used to denote successor, and _Z_ to mean zero.
+For example, the number 2 would be writing as _S.S.Z_.
 
 ```java
-ModelCheckingOptions opts = ModelCheckingOptions.create();
-opts
-    .and(transitionOpts()
-            .setMaximumTransitions(4)
-            .setMaximumTime(30)
-            .allowReducibleClasses(true)
-            .create()
-    )
-    .doMeasureTime(true)
-    .and(ModelCheckingOptions.exportOpts()
-            .setTraceFile(new File("./"))
-            .setOutputStatesFolder(new File("./states/"))
-            .create()
-    )
-;
+public class AddExpr extends PureReactiveSystem {
+
+    public AddExpr(int a, int b) throws Exception {
+        setAgent(createAgent(a, b));
+        addReactionRule(createReactionRule_1());
+        addReactionRule(createReactionRule_2());
+    }
+
+    // Custom extended method of this reactive system specification that allows execution
+    public PureBigraph execute() throws Exception {
+        // Instantiate a matcher
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+        // Get the current state
+        PureBigraph agentTmp = getAgent();
+
+        // ...
+        // apply rules according to some strategy or randomly
+        // ...
+
+        // Return the final state
+        return agentTmp;
+    }
+}
 ```
 
-The individual options are divided into several categories which can be accessed by
-their respective builder classes.
-Currently, the following categories are available:
+The concrete methods `AddExpr#createAgent()`, `AddExpr#createReactionRule_1()` and `AddExpr#createReactionRule_2()` are omitted in this example for clarity.
 
-- `ModelCheckingOptions.TransitionOptions`
-- `ModelCheckingOptions.ExportOptions`
+:::tip More Details
+Refer to the [Usage Example](usage-example-brs-simulation), which describes a complete procedure on how to practically use bigraph matching and rewriting in Bigraph Framework.
+It introduces the basic functionality regarding matching and rewriting.
 
-They are explained in the following.
+An overview of the most important classes is also listed on this page in section [Changing Bigraphs over Time: Overview](#changing-bigraphs-over-time-overview).
+:::
 
-### Transition options
+## Structure of Reaction Rules
 
-#### Stopping Criteria
-Notice that `ModelCheckingOptions.TransitionOptions` let us specify some stopping criteria by
-acquiring its builder by calling `ModelCheckingOptions.TransitionOptions.transitionOpts()`:
+BRS introduce a time-varying notion to bigraphs through _reaction rules_.
+That is, reaction rules allow some kind of _simulation_, which internally is enabled by means of _graph rewriting_.
+The bigraph rewriting formalism allows to synthesize a (potentially infinite) labelled transition system (LTS).
+Each node of the LTS is a bigraph state.
+States are connected by edges called _transition relations_ labeled with the reaction rule that led to this state.
+The LTS can have cycles.
 
-- Maximal Number of transitions to allow
-- Maximal Number of states to compute
-- Time
-- Predicates (are explained in [Verification](verification-intro))
+To generate an LTS, reaction rules must be applied.
+A reaction rule comprises a _redex_ and _reactum_.
+That is, a rule consists of a left-hand side, and a right-hand side.
+The meaning of a rule is as follows:
+The redex specifies the pre-conditions and the reactum the post-conditions.
+If the redex could be found in some agent (i.e., host graph), the matched part of the agent is replaced by the reactum.
+This is also called _graph rewriting_, which solves the subgraph matching problem.
 
-The following methods are available through the `ModelCheckingOptions.exportOpts()` builder instance:
+![bigraph-reaction-rule-example](../assets/simulation/bigraph-rule-example-1.png)
+*Example of a bigraphical reaction rule comprising a redex (left-hand side) and reactum (right-hand side), which both are bigraphs. The rule describes the movement of the smaller circle from one place to another place (larger circles).*
 
-### Export options
-
-The `ModelCheckingOptions.ExportOptions` class allows specifying a file path where the reaction graph (i.e., transition system)
-and the individual states shall be written to. If these options are left empty then the graphs are not exported.
-
-[//]: # (The following methods are available through the `ModelCheckingOptions.exportOpts&#40;&#41;` builder instance:)
-
-[//]: # ()
-[//]: # (| Method  |)
-
-[//]: # (|---|)
-
-[//]: # (|   |)
+[//]: # (See [here]&#40;&#41; for more details regarding rule strategies.)
 
 
 
-## References
+**Simulating a BRS works as follows:**
+Beginning with an _agent_ (i.e., the initial bigraph state of the BRS), a set of reaction rules is applied as long
+as a match can be found, or until some stopping criteria eventuates (such as time, number of states explored, any convergence criteria, etc.).
+Note that the _agent_ and the _reaction rules_ need to be defined over the same _signature_.
 
-- \[1\] <a id="ref1" href="https://pure.itu.dk/portal/files/39500908/thesis_GianDavidPerrone.pdf">G. Perrone, “Domain-Specific Modelling Languages in Bigraphs,” IT University of Copenhagen, 2013.</a>
+
+:::info Non-Deterministic Rules
+Sometimes a rule can have multiple occurrences in a host graph.
+Thus, rules are often _non-deterministic_.
+:::
+
+:::tip Reaction Rules
+Refer to section [Reaction Rules](simulation-reaction-rules), which explains bigraphical reaction rules in more detail.
+:::
+
+:::tip Rule Strategies
+Bigraphical reaction rules enable a form of the more general rule-based programming paradigm.
+Therefore, you can use advanced rule strategies to control the execution order of rules.
+:::
+
+[//]: # (Refer to advanced rule strategies)
+
+## Changing Bigraphs over Time: Overview
+
+Having explained the essentials of BRSs until here, the _matching_ and _rewriting_ functionality from the following classes can be used to conveniently execute BRSs in arbitrary ways:
+
+**Matching**
+
+- [`org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher<B extends Bigraph<? extends Signature<?>>>`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/AbstractBigraphMatcher.html)
+    - This abstract class defines a _matcher_ and needs a _host graph_ and _rule_ to perform bigraph matching.
+    - A bigraph matcher consists of a bigraph matching engine w.r.t. to the bigraph type.
+    - The correct one is automatically created using the factory method `#create(Class)` by supplying the bigraph class type.
+    - Matches are returned via an iterator (the instances of the matches are of type [`BigraphMatch`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/BigraphMatch.html)).
+
+**Rewriting**
+- [`org.bigraphs.framework.core.reactivesystem.ReactiveSystem`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html)
+    - This interface defines two methods for rewriting after a match was found:
+        - [`ReactiveSystem#buildGroundReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildGroundReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
+        - [`ReactiveSystem#buildParametricReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildParametricReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
+    - Implementations of this interface:
+        - Core Module: [`org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/AbstractSimpleReactiveSystem.html) is an abstract base class for all reactive systems in Bigraph Framework.
+        - Simulation Module: [`org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/pure/PureReactiveSystem.html) (extends `AbstractSimpleReactiveSystem`) is a concrete implementation of a reactive system for the class of pure bigraphs.
+
 
 
 
