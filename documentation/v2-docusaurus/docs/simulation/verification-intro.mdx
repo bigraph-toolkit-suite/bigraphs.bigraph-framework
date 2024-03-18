@@ -48,8 +48,8 @@ modelChecker.execute();
 
 Some remarks:
 - The `execute()` method may throw a `BigraphSimulationException`
-- Simulation types are covered [here](simulation-intro#simulation-types).
-- Model checking options are explained [here](simulation-intro#additional-model-checking-options).
+- Simulation types are covered [here](#simulation-types).
+- Model checking options are explained [here](#additional-model-checking-options).
 
 ### Reachability Checking
 
@@ -171,18 +171,19 @@ example is shown below.
 ```java
 ModelCheckingOptions opts = ModelCheckingOptions.create();
 opts
-    .and(transitionOpts()
-            .setMaximumTransitions(4)
-            .setMaximumTime(30)
-            .allowReducibleClasses(true)
-            .create()
-    )
-    .doMeasureTime(true)
-    .and(ModelCheckingOptions.exportOpts()
-            .setTraceFile(new File("./"))
-            .setOutputStatesFolder(new File("./states/"))
-            .create()
-    )
+        .and(transitionOpts()
+                .setMaximumTransitions(100)
+                .setMaximumTime(60)
+                .allowReducibleClasses(true)
+                .rewriteOpenLinks(false)
+                .create()
+        )
+        .and(ModelCheckingOptions.exportOpts()
+                .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph.png").toFile())
+                .setPrintCanonicalStateLabel(false)
+                .setOutputStatesFolder(Paths.get(TARGET_DUMP_PATH, "states/").toFile())
+                .create()
+        )
 ;
 ```
 
@@ -202,16 +203,24 @@ Notice that `ModelCheckingOptions.TransitionOptions` let us specify some stoppin
 acquiring its builder by calling `ModelCheckingOptions.TransitionOptions.transitionOpts()`:
 
 - Maximal Number of transitions to allow
-- Maximal Number of states to compute
 - Time
-- Predicates (are explained in [Verification](verification-intro))
+- ...
 
-The following methods are available through the `ModelCheckingOptions.exportOpts()` builder instance:
+[//]: # (- Maximal Number of states to compute &#40;TODO&#41;)
+[//]: # (- Predicates &#40;are explained in [Verification]&#40;verification-intro&#41;&#41;)
+
+The following methods are available through the `ModelCheckingOptions.transitionOpts()` builder instance to adjust the [canonical string encoding algorithm of bigraphs](https://link.springer.com/article/10.1007/s42979-021-00552-5), which is used for cycle checking of the transition system:
+- `TransitionOptions.Builder#allowReducibleClasses(bool)`
+- `TransitionOptions.Builder#rewriteOpenLinks(bool)`
+
+The default values are good for most of the cases.
 
 ### Export options
 
 The `ModelCheckingOptions.ExportOptions` class allows specifying a file path where the reaction graph (i.e., transition system)
-and the individual states shall be written to. If these options are left empty then the graphs are not exported.
+and the individual states shall be written to.
+If these options are left empty then the graphs are not exported.
+Also one can decide if the state labels of the reaction graph are simple identifiers _a<sub>1</sub>_, _a<sub>2</sub>_, _a<sub>3</sub>_, ... or [canonical string encodings of bigraphs](https://link.springer.com/article/10.1007/s42979-021-00552-5) in its graphic output.
 
 [//]: # (The following methods are available through the `ModelCheckingOptions.exportOpts&#40;&#41;` builder instance:)
 

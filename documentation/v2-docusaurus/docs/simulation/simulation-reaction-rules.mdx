@@ -9,12 +9,12 @@ Reaction rules define the behavior of a bigraphical reactive system (BRS) specif
 
 Important generic interface: `org.bigraphs.framework.core.reactivesystem.ReactionRule<B extends Bigraph<? extends Signature<?>>>`.
 
-Different kind of rules exist:
+There are different types of rules:
 - ground rules, parametric rules, conditional rules, probabilistic rules, tracking rules, ...
 
 To put simply, a ground rule has no sites (i.e., placeholders), whereas a parametric reaction rules includes them.
 Sites are used to abstract elements of the system's environment away and allow to specify only the parts of the environment of interest.
-The properties and usage of the other rules are explain in the following.
+The properties and usage of the rules are explain in the following.
 
 ## General Format of a Reaction Rule
 
@@ -25,7 +25,7 @@ Moreover, a parametric reaction rule is simple if it is (see [\[1\]](#references
 - open: every link is open
 - guarding: no site has a root as parent
 
-Bigraph Framework uses simple parametric reaction rules.
+Bigraph Framework implements simple parametric reaction rules.
 These conditions are automatically checked.
 If a rule does not conform to these conditions an exception is thrown.
 
@@ -81,6 +81,8 @@ BigraphGraphvizExporter.toPNG(rr.getReactum(), true, new File("reactum.png"));
 The rule visualized:
 
 ![parametric-reaction-rule-example](../assets/simulation/parametric-reaction-rule-example.png)
+
+*The rule adds another `Job` to the `Computer` only if there is already one `Job`. The contents below `Room` are preserved after the reaction, which is indicated by the same site index under `Room`.*
 
 ### Instantiation Maps
 

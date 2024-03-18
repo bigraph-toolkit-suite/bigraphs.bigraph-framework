@@ -5,35 +5,43 @@ sidebar_position: 1
 ---
 
 In bigraphs, the dynamic behavior of a system is represented by means of _reaction
-rules_ written ![reaction-relation-between-agents](../assets/simulation/eq/eqn-reaction-relation.svg), where ![reaction-relation-between-agents](../assets/simulation/eq/eqn-agent-vars.svg) are called _agents_ (in bigraph-jargon), and _R_ is a reaction rule.
+rules_ written ![reaction-relation-between-agents](../assets/simulation/eq/eqn-reaction-relation.svg), where ![reaction-relation-between-agents](../assets/simulation/eq/eqn-agent-vars.svg) are called _agents_ (in bigraph-jargon) before and after a reaction, and _R_ is a reaction rule.
 Generally, an _agent_ is a bigraphical state of the system; a snapshot of the system at a specific point in time.
 
-Given a signature, a set of reaction rules and an initial agent (all defined over the same signature), one can create a so-called **bigraphical reactive system** that acts like a container including all these components.
+Given a signature, a set of reaction rules and an initial agent (all defined over the same signature), one can create a so-called **bigraphical reactive system**.
+It acts like a container including all these components.
 A BRS can be regarded as the specification of a system, process or model under consideration.
 
-BRSs introduce a temporal notion to bigraphs and allows to perform and track changes of the system over time.
+
+BRSs introduce a _temporal notion_ to bigraphs and allows to perform and track changes of the system over time.
 
 This page explains how to create BRSs.
 Moreover, the structure of reaction rules and their different kinds are introduced.
 
-:::tip BRS Model Checking
+:::info BRS Model Checking
 Refer to [Verification](verification-intro) to get to know more about how to use a BRS specification for model checking.
 :::
 
+:::tip Example
+Refer to the [Usage Example](usage-example-brs-simulation), which describes a complete procedure on how to practically use bigraph matching and rewriting in Bigraph Framework.
+It introduces the basic functionality regarding matching and rewriting.
+
+An overview of the most important classes is also listed on this page in section [Changing Bigraphs over Time: Overview](#changing-bigraphs-over-time-overview).
+:::
 
 
 ## Bigraphical Reactive System (BRS)
 
-A BRS is a model of a system specification containing an agent (i.e., the host graph, the initial state) and a collection of reaction rules.
+A BRS is a model of a system or system specification containing an agent (i.e., the host graph, the initial state) and a collection of reaction rules.
 
 :::info Mathematical Definition
-In category theory, BRSs are defined as syntactical categories endowed with reaction rules.
+In category theory, BRSs are defined as syntactical categories endowed with a set of reaction rules.
 Specifically, a concrete BRS is a s-category ![reaction-relation-between-agents](../assets/simulation/eq/eqn-brs-category.svg) containing a signature and a set of rules.
 :::
 
 All reactive system implementations extend the interface `org.bigraphs.framework.core.reactivesystem.ReactiveSystem<B extends Bigraph<? extends Signature<?>>>` of the Core Module in Bigraph Framework.
 
-### By Instantiation
+### Creating a BRS by Instantiation
 
 A reactive system for _pure bigraphs_ can be created by calling its constructor as follows:
 
@@ -65,7 +73,7 @@ An exception will be thrown if the rules or agent are not in the correct format.
 - See also [here](simulation-predicates) on how to create predicates.
 :::
 
-### By Inheritance
+### Creating a BRS by Inheritance
 
 Inheriting a reactive system implementation allows for an object-oriented approach to better organize and manage domain-specific BRSs in an application.
 
@@ -101,14 +109,7 @@ public class AddExpr extends PureReactiveSystem {
 
 The concrete methods `AddExpr#createAgent()`, `AddExpr#createReactionRule_1()` and `AddExpr#createReactionRule_2()` are omitted in this example for clarity.
 
-:::tip More Details
-Refer to the [Usage Example](usage-example-brs-simulation), which describes a complete procedure on how to practically use bigraph matching and rewriting in Bigraph Framework.
-It introduces the basic functionality regarding matching and rewriting.
-
-An overview of the most important classes is also listed on this page in section [Changing Bigraphs over Time: Overview](#changing-bigraphs-over-time-overview).
-:::
-
-## Structure of Reaction Rules
+## Anatomy of Reaction Rules
 
 BRS introduce a time-varying notion to bigraphs through _reaction rules_.
 That is, reaction rules allow some kind of _simulation_, which internally is enabled by means of _graph rewriting_.
@@ -160,7 +161,7 @@ Having explained the essentials of BRSs until here, the _matching_ and _rewritin
 
 **Matching**
 
-- [`org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher<B extends Bigraph<? extends Signature<?>>>`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/AbstractBigraphMatcher.html)
+- [`org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/AbstractBigraphMatcher.html)
     - This abstract class defines a _matcher_ and needs a _host graph_ and _rule_ to perform bigraph matching.
     - A bigraph matcher consists of a bigraph matching engine w.r.t. to the bigraph type.
     - The correct one is automatically created using the factory method `#create(Class)` by supplying the bigraph class type.
