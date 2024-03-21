@@ -3,18 +3,22 @@ package org.bigraphs.framework.core.reactivesystem;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+//TODO add new generic type for transition relations
 
 /**
  * Abstract base class representing the minimal data structure for all concrete transition system implementations.
  * This class generalizes all possible variations of transition systems.
  *
- * @param <B> the type of the bigraph of the states and transition relations of the transition system
+ * @param <B> the bigraph type of the states of the transition systems
+ * @param <T> the type of the transition relations of the transition systems
  * @author Dominik Grzelak
  */
-public class AbstractTransitionSystem<B extends Bigraph<? extends Signature<?>>> {
+public class AbstractTransitionSystem<B extends Object, T extends Object> {
     protected final Map<String, B> stateMap = new ConcurrentHashMap<>();
     protected final Map<String, B> transitionMap = new ConcurrentHashMap<>();
 
@@ -26,6 +30,7 @@ public class AbstractTransitionSystem<B extends Bigraph<? extends Signature<?>>>
         stateMap.put(sourceLbl, source);
     }
 
+    //TODO change B reaction to Object
     public void addTransition(String reactionLbl, B reaction) {
         transitionMap.put(reactionLbl, reaction);
     }
@@ -50,6 +55,10 @@ public class AbstractTransitionSystem<B extends Bigraph<? extends Signature<?>>>
      */
     public Map<String, B> getTransitionMap() {
         return transitionMap;
+    } //TODO use different type
+
+    public Set<B> getTransitions(B state) {
+        return Collections.emptySet();
     }
 
     /**

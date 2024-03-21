@@ -14,18 +14,19 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * An "extended" data structure to build up a "reaction graph", analogous to a labeled transition system.
+ * This data structure represents a "reaction graph", analogous to a labeled transition system.
  * It extends the abstract base class {@link AbstractTransitionSystem}.
+ * Its states are bigraphs, and its transition relations are reaction rules of the same bigraph class type.
  * <p>
  * A reaction graph is not to be confused with the notion of minimal LTSs in bigraphs.
  * This reaction graph has no minimal context labels as transitions; it has reactions as labels.
  * <p>
- * Here the transition relations are reaction rules (i.e., the redex), and the nodes are states (i.e., bigraphs, represented by their unique string encoding).
+ * The canonical string encoding of a bigraph is also stored here.
  *
  * @param <B> the type of the bigraph of the states and transition relations of the transition system
  * @author Dominik Grzelak
  */
-public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B> {
+public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B, ReactionRule<B>> {
 
     private Graph<LabeledNode, LabeledEdge> graph;
     private Map<LabeledNode, Set<ReactiveSystemPredicate<B>>> predicateMatches;
@@ -43,6 +44,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
         }
     }
 
+    //TODO change B reaction to ReactionRule<B>
     public void addEdge(B source, String sourceLbl, B target, String targetLbl, B reaction, String reactionLbl) {
         LabeledNode sourceNode;
         if (stateMap.get(sourceLbl) != null) {
@@ -66,6 +68,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
             final LabeledEdge edge = new LabeledEdge(reactionLbl);
             boolean b = graph.addEdge(sourceNode, targetNode, edge);
             if (b) {
+                //TODO pass reaction as type ReactionRule<B>
                 addTransition(reactionLbl, reaction);
             }
         }

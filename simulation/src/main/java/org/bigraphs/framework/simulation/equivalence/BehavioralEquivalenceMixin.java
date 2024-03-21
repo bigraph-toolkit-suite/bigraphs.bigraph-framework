@@ -3,6 +3,7 @@ package org.bigraphs.framework.simulation.equivalence;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem;
+import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 
 /**
  * Mixin interface for behavioral equivalences on transition systems of type {@link AbstractTransitionSystem} in BTS.
@@ -19,6 +20,7 @@ import org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem;
  * @param <R> type of the transition system
  * @author Dominik Grzelak
  */
-public interface BehavioralEquivalenceMixin<R extends AbstractTransitionSystem<? extends Bigraph<? extends Signature<?>>>> {
+// <R extends AbstractTransitionSystem<? extends Bigraph<? extends Signature<?>>, ? extends ReactionRule<?>>>
+public interface BehavioralEquivalenceMixin<R extends AbstractTransitionSystem<?, ?>> {
     boolean isEquivalentTo(R transitionSystem);
 }
