@@ -31,6 +31,10 @@
                         <id>install-libs-emf-compare</id>
                         <phase>none</phase>
                     </execution>
+                    <execution>
+                        <id>install-libs-bighuggies-bisimulation</id>
+                        <phase>none</phase>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -77,6 +81,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>it.uniud.mads.jlibbig:jlibbig</include>
+                                    <include>bighuggies:bisimulation</include>
                                 </includes>
                             </artifactSet>
                             <filters>
@@ -84,6 +89,12 @@
                                     <artifact>it.uniud.mads.jlibbig:jlibbig</artifact>
                                     <includes>
                                         <include>it/**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>bighuggies:bisimulation</artifact>
+                                    <includes>
+                                        <include>bighuggies/**</include>
                                     </includes>
                                 </filter>
                                 <filter>
@@ -115,6 +126,10 @@
         <dependency>
             <groupId>it.uniud.mads.jlibbig</groupId>
             <artifactId>jlibbig</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>bighuggies</groupId>
+            <artifactId>bisimulation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.choco-solver</groupId>

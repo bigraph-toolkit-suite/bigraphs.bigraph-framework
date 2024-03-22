@@ -29,6 +29,10 @@
                         <id>install-libs-emf-compare</id>
                         <phase>none</phase>
                     </execution>
+                    <execution>
+                        <id>install-libs-bighuggies-bisimulation</id>
+                        <phase>none</phase>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

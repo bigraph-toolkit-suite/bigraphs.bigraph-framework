@@ -395,6 +395,21 @@
                             <packaging>jar</packaging>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>install-libs-bighuggies-bisimulation</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/etc/libs/bighuggies-bisimulation-1.0-SNAPSHOT.jar</file>
+                            <groupId>bighuggies</groupId>
+                            <artifactId>bisimulation</artifactId>
+                            <version>1.0-SNAPSHOT</version>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
@@ -633,6 +648,12 @@
                 <groupId>it.uniud.mads.jlibbig</groupId>
                 <artifactId>jlibbig</artifactId>
                 <version>0.0.4</version>
+            </dependency>
+            <!-- This dependency is installed in the local Maven repository from the ./etc/libs/ folder -->
+            <dependency>
+                <groupId>bighuggies</groupId>
+                <artifactId>bisimulation</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
             <!-- Logging -->
             <dependency>
