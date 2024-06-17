@@ -7,12 +7,6 @@ sidebar_position: 2
 The [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel) (version >= 1.5.0) supports the specification of attributes on bigraph nodes.
 This page shows how to read and write attributes using a high-level and low-level approach via Bigraph Framework and EMF's API from the BEM specification, respectively.
 
-:::info
-The latter is just for demonstration purposes.
-Bigraph Framework provides a semantically leaner interface to create and manipulate bigraphs.
-Refer also to the [Rationale of the BEM Specification](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel?tab=readme-ov-file#rationale-of-this-specification) for more details.
-:::
-
 ## Node Attributes API
 
 Bigraph Framework faithfully implements the BEM specification and offers via the class `org.bigraphs.framework.core.impl.BigraphEntity.NodeEntity` the following high-level methods to access and store attributes on nodes.
@@ -48,6 +42,12 @@ v2.setAttributes(attributes);
 ## EMF's API: Low-level Access
 
 This section demonstrates the usage of the EMF API of the generated model classes of the BEM specification.
+
+:::info
+This approach is just for demonstration purposes.
+The Bigraph Framework API as described above provides a semantically leaner interface to create and manipulate bigraphs.
+Refer also to the [Rationale of the BEM Specification](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel?tab=readme-ov-file#rationale-of-this-specification) for more details.
+:::
 
 The [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel) is based on the Eclipse EMF Ecore metamodel.
 EMF allows to generate code from those Ecore models.
