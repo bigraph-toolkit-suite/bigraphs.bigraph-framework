@@ -5,7 +5,7 @@
 | Branch  | Latest Versions                                  | Status       |
 |---------|--------------------------------------------------|--------------|
 | Main    | 1.1.0 / 1.0.0 / 0.9.6                            | Releases     |
-| Develop | 1.1.0-SNAPSHOT / 1.0.0-SNAPSHOT / 0.9.7-SNAPSHOT | Experimental |
+| Develop | 2.0.0-SNAPSHOT / 1.1.0-SNAPSHOT / 1.0.0-SNAPSHOT | Experimental |
 
 ----
 
@@ -326,13 +326,11 @@ Therefore, see [Maven configuration](#maven-configuration) on how to include the
 
 > **Note:** All parts of Bigraph Framework are also deployed to the [Central Repository](https://repo.maven.apache.org/maven2/).
 
-### Building the Documentation
+### Building the Documentation: User Manual
 
 Building the documentation builds also the project without running tests.
 
 See [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details.
-
-#### User Manual
 
 After running the build command as described above, the generated user manual will be available
 at `documentation/v2-docusaurus/` by calling `npm run start`:
