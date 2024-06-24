@@ -104,14 +104,15 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             // (they get lost after jLibBig composition)
             List<String> reactumLabelNames = new ArrayList<>();
             if (rule.getTrackingMap() != null && !rule.getTrackingMap().isEmpty()) {
-                reactumLabelNames.addAll(inreact.getNodes().stream().map(x -> x.getEditable().getName()).collect(Collectors.toList()));
+                reactumLabelNames.addAll(inreact.getNodes().stream().map(x -> x.getEditable().getName())
+                        .toList());
 //                System.out.println(inreact.getNodes());
             }
 
             bb.outerCompose(inreact, true);
-            Bigraph context = jLibMatchResult.getContext().clone();
-//            bb.outerCompose(jLibMatchResult.getContext(), true);
-            bb.outerCompose(context, true);
+//            Bigraph context = jLibMatchResult.getContext().clone();
+//            bb.outerCompose(context, true);
+            bb.outerCompose(jLibMatchResult.getContext(), true);
 
             // Do relabeling only when we have tracking map. Relabeling allows tracing of nodes
             // relabeling is done outside of jlibbig routine for SoC reasons

@@ -11,7 +11,7 @@ import org.bigraphs.framework.core.Signature;
  * @param <B> type of the bigraph
  * @author Dominik Grzelak
  */
-public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
+public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> extends HasLabel {
 
     /**
      * Return the redex of the reaction rule

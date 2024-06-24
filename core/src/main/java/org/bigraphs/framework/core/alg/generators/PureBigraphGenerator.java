@@ -118,25 +118,10 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
         }
 
         for (i = t; i < n; i++) {
-            // create a new node with a random control
-//                    V v = target.addVertex();
-
             BigraphEntity<?> entity = nodes.get(rnd.nextInt(nodes.size()));
-            // get an existing node randomly
-//                    V u = nodes.get(this.rng.nextInt(nodes.size()));
-//            BigraphEntity entity = null; //nodes.get(rnd.nextInt(nodes.size()));
-//            boolean created_edge = false;
-////            do {
-//                entity = nodes.get(rnd.nextInt(nodes.size()));
-//                double degree = degreeOf(entity);
-////            double attach_prob = (degree + 1) / (mGraph.getEdgeCount() + mGraph.getVertexCount() - 1);
-//                double attach_prob = (degree + 1) / (edgeCnt + nodeCnt);
-//                if (attach_prob >= rnd.nextDouble())
-//                    created_edge = true;
-//            } while (!created_edge);
-//            if(!created_edge) continue;
             String vlbl = vertexLabelSupplier.get();
-            BigraphEntity<?> newNode = builder.createNewNode(controlSupplier.get(), vertexLabelSupplier.get());
+            // create a new node with a random control
+            BigraphEntity<?> newNode = builder.createNewNode(controlSupplier.get(), vlbl);
             newNodes.put(vlbl, (BigraphEntity.NodeEntity<?>) newNode);
 
             //add as parent

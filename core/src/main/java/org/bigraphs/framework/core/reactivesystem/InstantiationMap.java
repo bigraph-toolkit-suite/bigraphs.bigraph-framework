@@ -22,7 +22,7 @@ public class InstantiationMap {
 
     /**
      * Creates an empty instantiation map. The method calls the {@link InstantiationMap#create(int)} method
-     * with <i>0</i> as argument. The user must supply values by using {@link InstantiationMap#map(int, int)} afterwards.
+     * with <i>0</i> as argument. The user must supply values by using {@link InstantiationMap#map(int, int)} afterward.
      *
      * @return an empty instantiation map
      * @see InstantiationMap#create(int)
