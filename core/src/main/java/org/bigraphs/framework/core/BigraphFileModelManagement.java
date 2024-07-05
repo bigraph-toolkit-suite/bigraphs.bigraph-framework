@@ -388,10 +388,10 @@ public class BigraphFileModelManagement {
      */
     private static ResourceSet initResourceSet(EPackage metaModelPackageWithSignature) {
         EcorePackage.eINSTANCE.eClass(); // Makes sure that EMF is "up and running"
-        SignatureBaseModelFactory.eINSTANCE.eClass(); // Makes sure that the Signature-Metamodel is "up and running"
         BigraphBaseModelFactory.eINSTANCE.eClass(); // Makes sure that the Bigraph-Metamodel is "up and running"
-        BigraphBaseModelPackage.eINSTANCE.eClass();
-        SignatureBaseModelPackage.eINSTANCE.eClass();
+//        SignatureBaseModelFactory.eINSTANCE.eClass(); // Makes sure that the Signature-Metamodel is "up and running"
+//        BigraphBaseModelPackage.eINSTANCE.eClass();
+//        SignatureBaseModelPackage.eINSTANCE.eClass();
 
         ResourceSet load_resourceSet = new ResourceSetImpl();
 
@@ -407,9 +407,9 @@ public class BigraphFileModelManagement {
             // See also: https://www.cct.lsu.edu/~rguidry/eclipse-doc36/src-html/org/eclipse/emf/cdo/common/model/EMFUtil.html
             // EPackage.Registry.INSTANCE.put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
             // load_resourceSet.getPackageRegistry().put(BigraphBaseModelPackage.eNS_URI, BigraphBaseModelPackage.eINSTANCE);
-            EMFUtils.registerPackages(EPackage.Registry.INSTANCE, SignatureBaseModelPackage.eINSTANCE);
+//            EMFUtils.registerPackages(EPackage.Registry.INSTANCE, SignatureBaseModelPackage.eINSTANCE);
             EMFUtils.registerPackages(EPackage.Registry.INSTANCE, BigraphBaseModelPackage.eINSTANCE);
-            EMFUtils.registerPackages(load_resourceSet.getPackageRegistry(), SignatureBaseModelPackage.eINSTANCE);
+//            EMFUtils.registerPackages(load_resourceSet.getPackageRegistry(), SignatureBaseModelPackage.eINSTANCE);
             EMFUtils.registerPackages(load_resourceSet.getPackageRegistry(), BigraphBaseModelPackage.eINSTANCE);
             if (Objects.nonNull(metaModelPackageWithSignature.getNsURI()) && !metaModelPackageWithSignature.getNsURI().isEmpty()) {
                 EMFUtils.registerPackages(EPackage.Registry.INSTANCE, metaModelPackageWithSignature);
