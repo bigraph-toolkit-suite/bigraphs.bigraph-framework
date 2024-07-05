@@ -92,7 +92,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                             }
 
                             Optional.ofNullable(reaction).map(x -> {
-                                return reactionResults.add(createMatchResult(eachRule, eachMatch, x, getOccurrenceCount()));
+                                return reactionResults.add(createMatchResult(eachRule, eachMatch, x, bfcfOfW, getOccurrenceCount()));
                             }).orElseGet(() -> {
                                 getListener().onReactionIsNull();
                                 return false; // return value not used
@@ -107,13 +107,14 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         String bfcf = modelChecker.acquireCanonicalForm().bfcs(matchResult.getBigraph());
                         String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(matchResult.getReactionRule());
                         if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
-                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
+//                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
+                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult, reactionLbl);
                             workingQueue.add(matchResult.getBigraph());
                             getListener().onUpdateReactionRuleApplies(theAgent, matchResult.getReactionRule(), matchResult.getMatch());
                             modelChecker.exportState(matchResult.getBigraph(), bfcf, String.valueOf(matchResult.getOccurrenceCount()));
                             iterationCounter.incrementAndGet();
                         } else {
-                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
+                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult, reactionLbl);
                         }
 //                modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
                     });

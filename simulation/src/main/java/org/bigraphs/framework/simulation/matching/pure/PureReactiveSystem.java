@@ -3,7 +3,6 @@ package org.bigraphs.framework.simulation.matching.pure;
 import it.uniud.mads.jlibbig.core.util.NameGenerator;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
-import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * An implementation of an {@link AbstractSimpleReactiveSystem} providing a simple BRS data structure for pure bigraphs
@@ -28,7 +26,8 @@ import java.util.stream.Collectors;
  */
 public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph> {
     private final Logger logger = LoggerFactory.getLogger(PureReactiveSystem.class);
-
+    JLibBigBigraphDecoder decoder =   new JLibBigBigraphDecoder();
+    JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
     private it.uniud.mads.jlibbig.core.std.InstantiationMap constructEta(ReactionRule<PureBigraph> reactionRule) {
         org.bigraphs.framework.core.reactivesystem.InstantiationMap instantationMap = reactionRule.getInstantationMap();
         int[] imArray = new int[instantationMap.getMappings().size()];
@@ -45,19 +44,15 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
     @Override
     public PureBigraph buildGroundReaction(final PureBigraph agent, final BigraphMatch<PureBigraph> match, final ReactionRule<PureBigraph> rule) {
         try {
+            //TODO try to use "AgentRewritingRule" from jLibBig
 
             PureBigraphParametricMatch matchResult = (PureBigraphParametricMatch) match;
-
             AgentMatch jLibMatchResult = (AgentMatch) matchResult.getJLibMatchResult();
-
             InstantiationMap eta = constructEta(rule);
-//            if (DEBUG) { }
-//            BigraphFileModelManagement.exportAsInstanceModel(matchResult.getContext(), System.out);
-//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) matchResult.getRedexIdentity(), System.out);
-//            BigraphFileModelManagement.exportAsInstanceModel(matchResult.getRedexImage(), System.out);
-//            BigraphFileModelManagement.exportAsInstanceModel(matchResult.getRedex(), System.out);
-//            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) matchResult.getContextIdentity(), System.out);
-//            }
+
+            // Store params as pure bigraph object
+            PureBigraph decodedParam = decoder.decode(jLibMatchResult.getParam());
+            ((PureBigraphParametricMatch)match).setParam(decodedParam);
 
             boolean[] cloneParam = new boolean[eta.getPlaceDomain()];
             int prms[] = new int[eta.getPlaceDomain()];
@@ -78,6 +73,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                 bb.leftJuxtapose(jLibMatchResult.getParams().get(eta.getPlaceInstance(i)),
                         !cloneParam[i]);
             }
+
             Bigraph lambda = jLibMatchResult.getParamWiring();
             for (EditableInnerName n : lambda.inners.values()) {
                 if (!bb.containsOuterName(n.getName())) {
@@ -97,8 +93,14 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                 lambda.sites.add(s);
             }
             bb.outerCompose(lambda, true);
+
+            // Note: instantiateReactumV2 from AgentRewritingRule doesn't work well with our copyAttributes procedure
             Bigraph inreact = instantiateReactum(jLibMatchResult, rule);
             inreact = Bigraph.juxtapose(inreact, jLibMatchResult.getRedexId(), true);
+
+            // Store redexImage as pure bigraph object
+            PureBigraph decodedRdxImg = decoder.decode(jLibMatchResult.getRedex());
+            ((PureBigraphParametricMatch)match).setRedexImage(decodedRdxImg);
 
             // Collect the reactum nodes for later when we do the relabeling
             // (they get lost after jLibBig composition)
@@ -106,12 +108,14 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             if (rule.getTrackingMap() != null && !rule.getTrackingMap().isEmpty()) {
                 reactumLabelNames.addAll(inreact.getNodes().stream().map(x -> x.getEditable().getName())
                         .toList());
-//                System.out.println(inreact.getNodes());
             }
 
             bb.outerCompose(inreact, true);
-//            Bigraph context = jLibMatchResult.getContext().clone();
-//            bb.outerCompose(context, true);
+
+            // Store context as pure bigraph object
+            PureBigraph decodedContext = decoder.decode(jLibMatchResult.getContext());
+            ((PureBigraphParametricMatch)match).setContext(decodedContext);
+
             bb.outerCompose(jLibMatchResult.getContext(), true);
 
             // Do relabeling only when we have tracking map. Relabeling allows tracing of nodes
@@ -154,11 +158,10 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                     }
                 }
             }
-            Bigraph result = bb.makeBigraph(true);
 
-            PureBigraph decodedResult = new JLibBigBigraphDecoder().decode(result, agent.getSignature());
+            Bigraph result = bb.makeBigraph(true);
+            PureBigraph decodedResult = decoder.decode(result, agent.getSignature());
             copyAttributes(agent, decodedResult);
-//            BigraphFileModelManagement.Store.exportAsInstanceModel(decodedResult, System.out);
             return decodedResult;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -184,9 +187,9 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
      * @param match the match with respect to the reactum has to be instantiated.
      * @return the reactum instance.
      */
+    // from RewritingRule
     protected final Bigraph instantiateReactum(Match match, ReactionRule<PureBigraph> rule) {
-        JLibBigBigraphEncoder decoder = new JLibBigBigraphEncoder();
-        Bigraph reactum = decoder.encode(rule.getReactum(), match.getRedex().getSignature());
+        Bigraph reactum = encoder.encode(rule.getReactum(), match.getRedex().getSignature());
         Bigraph big = new Bigraph(reactum.getSignature());
         Owner owner = big;
         Map<Handle, EditableHandle> hnd_dic = new HashMap<>();
@@ -259,6 +262,93 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
                     n2.getPort(i).setHandle(h2);
                 }
 
+                // enqueue children for visit
+                for (EditableChild c : n1.getEditableChildren()) {
+                    q.add(new Pair(n2, c));
+                }
+            } else {
+                // c instanceof EditableSite
+                EditableSite s1 = (EditableSite) t.c;
+                EditableSite s2 = s1.replicate();
+                s2.setParent(t.p);
+                sites[reactum.sites.indexOf(s1)] = s2;
+            }
+        }
+        big.sites.addAll(Arrays.asList(sites));
+        return big;
+    }
+
+    // from AgentRewritingRule
+    protected final Bigraph instantiateReactumV2(Match match, ReactionRule<PureBigraph> rule) {
+        Bigraph reactum = encoder.encode(rule.getReactum(), match.getRedex().getSignature());
+        Bigraph big = new Bigraph(reactum.getSignature());
+//        Bigraph reactum = getReactum();
+//        Bigraph big = new Bigraph(reactum.signature);
+        Owner owner = big;
+        Map<Handle, EditableHandle> hnd_dic = new HashMap<>();
+        // replicate outer names
+        for (EditableOuterName o1 : reactum.outers.values()) {
+            EditableOuterName o2 = o1.replicate();
+            big.outers.put(o2.getName(), o2);
+            o2.setOwner(owner);
+            hnd_dic.put(o1, o2);
+        }
+        // replicate inner names
+        for (EditableInnerName i1 : reactum.inners.values()) {
+            EditableInnerName i2 = i1.replicate();
+            EditableHandle h1 = i1.getHandle();
+            EditableHandle h2 = hnd_dic.get(h1);
+            if (h2 == null) {
+                // the bigraph is inconsistent if g is null
+                h2 = h1.replicate();
+                h2.setOwner(owner);
+                hnd_dic.put(h1, h2);
+            }
+            i2.setHandle(h2);
+            big.inners.put(i2.getName(), i2);
+        }
+        // replicate place structure
+        // the queue is used for a breadth first visit
+        class Pair {
+            final EditableChild c;
+            final EditableParent p;
+
+            Pair(EditableParent p, EditableChild c) {
+                this.c = c;
+                this.p = p;
+            }
+        }
+        Deque<Pair> q = new ArrayDeque<>();
+        for (EditableRoot r1 : reactum.roots) {
+            EditableRoot r2 = r1.replicate();
+            big.roots.add(r2);
+            r2.setOwner(owner);
+            for (EditableChild c : r1.getEditableChildren()) {
+                q.add(new Pair(r2, c));
+            }
+        }
+        EditableSite[] sites = new EditableSite[reactum.sites.size()];
+        while (!q.isEmpty()) {
+            Pair t = q.poll();
+            if (t.c instanceof EditableNode) {
+                EditableNode n1 = (EditableNode) t.c;
+                EditableNode n2 = n1.replicate();
+                instantiateReactumNode(n1, n2, match);
+                // set m's parent (which added adds m as its child)
+                n2.setParent(t.p);
+                for (int i = n1.getControl().getArity() - 1; 0 <= i; i--) {
+                    EditableNode.EditablePort p1 = n1.getPort(i);
+                    EditableHandle h1 = p1.getHandle();
+                    // looks for an existing replica
+                    EditableHandle h2 = hnd_dic.get(h1);
+                    if (h2 == null) {
+                        // the bigraph is inconsistent if g is null
+                        h2 = h1.replicate();
+                        h2.setOwner(owner);
+                        hnd_dic.put(h1, h2);
+                    }
+                    n2.getPort(i).setHandle(h2);
+                }
                 // enqueue children for visit
                 for (EditableChild c : n1.getEditableChildren()) {
                     q.add(new Pair(n2, c));

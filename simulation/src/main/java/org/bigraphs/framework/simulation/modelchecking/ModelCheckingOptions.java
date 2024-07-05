@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -276,21 +277,51 @@ public class ModelCheckingOptions {
      * @author Dominik Grzelak
      */
     public static final class ExportOptions implements Opts {
+        public enum Format {
+            PNG, XMI;
+        }
+
         private File outputStatesFolder;
         private File reactionGraphFile;
         @Deprecated
         private File rewriteResultFolder;
         private Boolean printCanonicalStateLabel;
+        private List<Format> formatsEnabled;
 
         ExportOptions() {
-            this(new File("./states/"), new File("./transition_graph.png"), new File("./results/"), false);
+            this(
+                    new File("./states/"),
+                    new File("./transition_graph.png"),
+                    new File("./results/"),
+                    false,
+                    Format.XMI, Format.PNG
+            );
         }
 
-        ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel) {
+        ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel, Format... formatsEnabled) {
+            this(
+                    outputStatesFolder,
+                    reactionGraphFile,
+                    rewriteResultFolder,
+                    printCanonicalStateLabel,
+                    formatsEnabled == null || formatsEnabled.length == 0 ? List.of() : List.of(formatsEnabled)
+            );
+        }
+
+        ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel, List<Format> formatsEnabled) {
             this.outputStatesFolder = outputStatesFolder;
             this.reactionGraphFile = reactionGraphFile;
             this.rewriteResultFolder = rewriteResultFolder;
             this.printCanonicalStateLabel = printCanonicalStateLabel;
+            this.formatsEnabled = formatsEnabled;
+        }
+
+        boolean isPNGEnabled() {
+            return formatsEnabled != null && formatsEnabled.contains(Format.PNG);
+        }
+
+        boolean isXMIEnabled() {
+            return formatsEnabled != null && formatsEnabled.contains(Format.XMI);
         }
 
         public File getOutputStatesFolder() {
@@ -326,6 +357,14 @@ public class ModelCheckingOptions {
 
         void setPrintCanonicalStateLabel(Boolean printCanonicalStateLabel) {
             this.printCanonicalStateLabel = printCanonicalStateLabel;
+        }
+
+        public List<Format> getFormatsEnabled() {
+            return formatsEnabled;
+        }
+
+        public void setFormatsEnabled(List<Format> formatsEnabled) {
+            this.formatsEnabled = formatsEnabled;
         }
 
         /**
@@ -368,13 +407,15 @@ public class ModelCheckingOptions {
             return exportOpts().setOutputStatesFolder(this.outputStatesFolder)
                     .setPrintCanonicalStateLabel(this.printCanonicalStateLabel)
                     .setReactionGraphFile(this.reactionGraphFile)
-                    .setRewriteResultFolder(this.rewriteResultFolder);
+                    .setRewriteResultFolder(this.rewriteResultFolder)
+                    .setFormatsEnabled(this.formatsEnabled)
+                    ;
         }
 
         public static class Builder {
             private File outputStatesFolder = null;
             private File reactionGraphFile = null;
-
+            private List<Format> formatsEnabled = List.of();
             @Deprecated
             private File rewriteResultFolder = null;
             private Boolean printCanonicalStateLabel = false;
@@ -395,6 +436,16 @@ public class ModelCheckingOptions {
                 return this;
             }
 
+            public Builder setFormatsEnabled(List<Format> formatsEnabled) {
+                this.formatsEnabled = formatsEnabled;
+                return this;
+            }
+
+            public Builder disableAllFormats() {
+                this.formatsEnabled = List.of();
+                return this;
+            }
+
             /**
              * Flag that can be used to determine whether the labels of the states in the reaction graph should contain
              * the canonical form of a bigraph or not, meaning, only a constant identifier is printed suffixed with an
@@ -412,7 +463,7 @@ public class ModelCheckingOptions {
             }
 
             public ExportOptions create() {
-                return new ExportOptions(outputStatesFolder, reactionGraphFile, rewriteResultFolder, printCanonicalStateLabel);
+                return new ExportOptions(outputStatesFolder, reactionGraphFile, rewriteResultFolder, printCanonicalStateLabel, formatsEnabled);
             }
         }
     }

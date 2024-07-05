@@ -85,7 +85,7 @@ public class BreadthFirstSimulationStrategy<B extends Bigraph<? extends Signatur
                     Optional.ofNullable(reaction)
                             .map(x -> {
                                 getListener().onUpdateReactionRuleApplies(theAgent, eachRule, eachMatch);
-                                return reactionResults.add(createMatchResult(eachRule, eachMatch, x, getOccurrenceCount()));
+                                return reactionResults.add(createMatchResult(eachRule, eachMatch, x, bfcfOfW, getOccurrenceCount()));
                             })
                             .orElseGet(() -> {
                                 getListener().onReactionIsNull();
@@ -97,7 +97,7 @@ public class BreadthFirstSimulationStrategy<B extends Bigraph<? extends Signatur
             for (MatchResult<B> matchResult : reactionResults) {
                 String bfcf = String.valueOf(matchResult.getBigraph().hashCode());
                 String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(matchResult.getReactionRule());
-                modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
+                modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult, reactionLbl);
                 workingQueue.add(matchResult.getBigraph());
                 modelChecker.exportState(matchResult.getBigraph(), bfcf, String.valueOf(matchResult.getOccurrenceCount()));
                 iterationCounter.incrementAndGet();

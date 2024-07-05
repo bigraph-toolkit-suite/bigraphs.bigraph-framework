@@ -11,12 +11,8 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
-import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
-import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
-import org.bigraphs.framework.core.reactivesystem.ReactionGraph;
+import org.bigraphs.framework.core.reactivesystem.*;
 import org.bigraphs.framework.simulation.exceptions.BigraphSimulationException;
-import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
-import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
@@ -28,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Iterator;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
@@ -103,18 +98,23 @@ public class FruitBasketExampleTest {
 
         ReactionGraph<PureBigraph> reactionGraph = modelChecker.getReactionGraph();
 
+//        Set<AbstractTransitionSystem<PureBigraph, BMatchResult<PureBigraph>>.Transition> transitions = reactionGraph.getTransitions(reactionGraph.getStates().iterator().next());
+//        System.out.println(reactionGraph.getLabelByState(transitions.stream().toList().get(0).getSource()));
+//        System.out.println(transitions.stream().toList().get(0).getLabel());
+//        System.out.println(reactionGraph.getLabelByState(transitions.stream().toList().get(0).getTarget()));
+//        System.out.println(reactionGraph);
 
-        ParametricReactionRule<PureBigraph> rr11 = createRR1();
-        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent, rr11);
-        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
-        while (iterator.hasNext()) {
-            BigraphMatch<PureBigraph> next = iterator.next();
-            PureBigraph result = rs.buildParametricReaction(agent, next, rr11);
-            // do something with `result`
-            System.out.println(result);
-            assert result != null;
-        }
+//        ParametricReactionRule<PureBigraph> rr11 = createRR1();
+//        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+//        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent, rr11);
+//        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
+//        while (iterator.hasNext()) {
+//            BigraphMatch<PureBigraph> next = iterator.next();
+//            PureBigraph result = rs.buildParametricReaction(agent, next, rr11);
+//            // do something with `result`
+//            System.out.println(result);
+//            assert result != null;
+//        }
 
     }
 
@@ -136,6 +136,22 @@ public class FruitBasketExampleTest {
                 .addChild("User")
                 .addChild("Table").down()
                 .addChild("Basket")
+                .addChild("Fruit", "f")
+                .addChild("Fruit", "f")
+                .addChild("Fruit", "f")
+                .createBigraph();
+
+    }
+
+    public static PureBigraph createAgent2() throws InvalidConnectionException {
+        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createSignature());
+
+        return b.createRoot()
+                .addChild("User")
+                .addChild("Table").down()
+                .addChild("Basket")
+                .addChild("Fruit", "f")
+                .addChild("Fruit", "f")
                 .addChild("Fruit", "f")
                 .addChild("Fruit", "f")
                 .addChild("Fruit", "f")
@@ -221,6 +237,39 @@ public class FruitBasketExampleTest {
         PureBigraph redex = b1.createBigraph();
         PureBigraph reactum = b2.createBigraph();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr4");
+        return rr;
+    }
+
+    //every state a self-loop
+    public static ParametricReactionRule<PureBigraph> createRR5_noop() throws InvalidReactionRuleException, InvalidConnectionException {
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
+        b1.createRoot()
+                .addChild("User", "f")
+        ;
+        b2.createRoot()
+                .addChild("User", "f")
+        ;
+        PureBigraph redex = b1.createBigraph();
+        PureBigraph reactum = b2.createBigraph();
+        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr5");
+        return rr;
+    }
+
+    public static ParametricReactionRule<PureBigraph> createRR6_noop() throws InvalidReactionRuleException, InvalidConnectionException {
+        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
+        b1.createRoot()
+                .addChild("Table").down().addSite()
+                .addChild("Basket", "f").down().addChild("Fruit", "f").addSite()
+        ;
+        b2.createRoot()
+                .addChild("Table").down().addSite()
+                .addChild("Basket", "f").down().addChild("Fruit", "f").addSite()
+        ;
+        PureBigraph redex = b1.createBigraph();
+        PureBigraph reactum = b2.createBigraph();
+        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr6");
         return rr;
     }
 }

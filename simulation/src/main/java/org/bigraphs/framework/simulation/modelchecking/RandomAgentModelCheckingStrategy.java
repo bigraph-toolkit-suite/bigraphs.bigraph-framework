@@ -74,10 +74,13 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
                                 String bfcf = canonicalForm.bfcs(reaction);
                                 String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(eachRule);
                                 rewrittenAgents.add(reaction);
+                                MatchResult<B> matchResult = createMatchResult(eachRule, next, reaction, bfcfOfW, getOccurrenceCount());
                                 if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
-                                    modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction, bfcf, next.getRedex(), reactionLbl);
+//                                    modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction, bfcf, next.getRedex(), reactionLbl);
+                                    modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction, bfcf, matchResult, reactionLbl);
                                 } else {
-                                    modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction, bfcf, next.getRedex(), reactionLbl);
+//                                    modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction, bfcf, next.getRedex(), reactionLbl);
+                                    modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, reaction, bfcf, matchResult, reactionLbl);
                                 }
                             } else {
                                 modelChecker.reactiveSystemListener.onReactionIsNull();

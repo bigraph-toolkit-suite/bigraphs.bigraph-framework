@@ -262,6 +262,14 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         }
     }
 
+    /**
+     * Exports a bigraph to the filesystem using the export options setting from the member variable {@link #options}.
+     *
+     * @param bigraph       the bigraph to be exported
+     * @param canonicalForm its canonical form
+     * @param suffix        a suffix for the filename
+     * @return the exported state label, or {@code null}
+     */
     protected String exportState(B bigraph, String canonicalForm, String suffix) {
         if (Objects.nonNull(options.get(ModelCheckingOptions.Options.EXPORT))) {
             ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
@@ -274,15 +282,20 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                     } else {
                         label = String.format("state-%s.png", suffix);
                     }
-                    BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) bigraph, new FileOutputStream(
-                            Paths.get(opts.getOutputStatesFolder().toString(), label) + ".xmi"));
-                    logger.debug("Exporting state {}", label);
-                    BigraphGraphvizExporter.toPNG(bigraph,
-                            true,
-                            Paths.get(opts.getOutputStatesFolder().toString(), label + ".png").toFile()
-                    );
+
+                    if (opts.isXMIEnabled()) {
+                        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) bigraph, new FileOutputStream(
+                                Paths.get(opts.getOutputStatesFolder().toString(), label) + ".xmi"));
+                        logger.debug("Exporting state as xmi {}", label);
+                    }
+                    if (opts.isPNGEnabled()) {
+                        BigraphGraphvizExporter.toPNG(bigraph,
+                                true,
+                                Paths.get(opts.getOutputStatesFolder().toString(), label + ".png").toFile()
+                        );
+                        logger.debug("Exporting state as png {}", label);
+                    }
                     return label;
-//                BigraphFileModelManagement.exportAsInstanceModel(agentReacted, new FileOutputStream(String.format("instance-model_%s.xmi", cnt)));
                 } catch (IOException e) {
                     logger.error(e.toString());
                     if (!label.isEmpty()) {
