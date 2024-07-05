@@ -75,27 +75,6 @@ public class BigraphCreationUnitTest {
     }
 
     @Test
-    void name() throws IOException {
-        DefaultDynamicSignature sig = pureSignatureBuilder()
-                .addControl("User", 3, ControlStatus.ACTIVE)
-                .addControl("PC", 3, ControlStatus.ACTIVE)
-                .addControl("Computer", 3, ControlStatus.ACTIVE)
-                .create();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
-        builder.createRoot().addSite();
-        builder.createOuterName("ko");
-        builder.createInnerName("cp");
-        PureBigraph bigraph = builder.createBigraph();
-        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
-
-        String pathLoaded = "src/test/resources/ecore-test-models/dolore_agent_5.xmi";
-        EPackage orGetBigraphMetaModel = createOrGetBigraphMetaModel(sig);
-        PureBigraphBuilder<DefaultDynamicSignature> loadedBuilder =
-                PureBigraphBuilder.create(sig, orGetBigraphMetaModel, pathLoaded);
-        BigraphFileModelManagement.Store.exportAsInstanceModel(loadedBuilder.createBigraph(), System.out);
-    }
-
-    @Test
     void mutableBuilder_connectLinkUsingPortIndex() {
         DefaultDynamicSignature signature = createExampleSignature();
         HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();

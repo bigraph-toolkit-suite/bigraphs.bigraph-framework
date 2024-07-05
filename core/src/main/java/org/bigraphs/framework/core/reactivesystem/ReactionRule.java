@@ -11,7 +11,7 @@ import org.bigraphs.framework.core.Signature;
  * @param <B> type of the bigraph
  * @author Dominik Grzelak
  */
-public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> extends HasLabel {
+public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> extends HasLabel, HasPriority {
 
     /**
      * Return the redex of the reaction rule
@@ -61,7 +61,7 @@ public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> extends
      * @return {@code true}, if the rule is a parametric reaction rule.
      */
     default boolean isParametricRule() {
-        return getRedex().getSites().size() > 0;
+        return !getRedex().getSites().isEmpty();
     }
 
     /**

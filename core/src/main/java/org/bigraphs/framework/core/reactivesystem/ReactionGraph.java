@@ -8,10 +8,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This data structure represents a "reaction graph", analogous to a labeled transition system.
@@ -26,9 +23,11 @@ import java.util.Set;
  * @param <B> the type of the bigraph of the states and transition relations of the transition system
  * @author Dominik Grzelak
  */
-public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B, ReactionRule<B>> {
+public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B, BMatchResult<B>> {
 
-    private Graph<LabeledNode, LabeledEdge> graph;
+    //TODO better: instead of keeping to copies (ATS also maintains graph), just transform the native one to JGraphT's graph
+    protected Graph<LabeledNode, LabeledEdge> graph; // this structure is also for rendering the graph via JGraphT
+
     private Map<LabeledNode, Set<ReactiveSystemPredicate<B>>> predicateMatches;
     private ReactionGraphStats<B> graphStats;
 
@@ -44,8 +43,11 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
         }
     }
 
-    //TODO change B reaction to ReactionRule<B>
-    public void addEdge(B source, String sourceLbl, B target, String targetLbl, B reaction, String reactionLbl) {
+    protected CollapsedLabeledNode collapseNodes(String newLabel, LabeledNode ...labeledNodes) {
+        return new CollapsedLabeledNode(newLabel, newLabel, labeledNodes);
+    }
+
+    public void addEdge(B source, String sourceLbl, B target, String targetLbl, BMatchResult<B> reaction, String reactionLbl) {
         LabeledNode sourceNode;
         if (stateMap.get(sourceLbl) != null) {
             sourceNode = graph.vertexSet().stream().filter(x -> x.canonicalForm.equals(sourceLbl)).findFirst().get();
@@ -68,8 +70,9 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
             final LabeledEdge edge = new LabeledEdge(reactionLbl);
             boolean b = graph.addEdge(sourceNode, targetNode, edge);
             if (b) {
-                //TODO pass reaction as type ReactionRule<B>
-                addTransition(reactionLbl, reaction);
+                addTransition(source, target, reactionLbl, reaction);
+            } else {
+                transitionMap.get(reactionLbl).add(reaction);
             }
         }
     }
@@ -181,6 +184,26 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
         }
     }
 
+    public static class CollapsedLabeledNode extends LabeledNode {
+        List<LabeledNode> collapsedNodes;
+        public CollapsedLabeledNode(String label, String canonicalForm, List<LabeledNode> collapsedNodes) {
+            super(label, canonicalForm);
+            this.collapsedNodes = new ArrayList<>(collapsedNodes);
+        }
+
+        public CollapsedLabeledNode(String label, String canonicalForm, LabeledNode ...collapsedNodes) {
+            this(label, canonicalForm, Arrays.asList(collapsedNodes));
+        }
+
+        public List<LabeledNode> getCollapsedNodes() {
+            return collapsedNodes;
+        }
+
+        public void setCollapsedNodes(List<LabeledNode> collapsedNodes) {
+            this.collapsedNodes = collapsedNodes;
+        }
+    }
+
     public static class CanonicalLabeledNode extends LabeledNode {
 
         public CanonicalLabeledNode(String label, String canonicalForm) {
@@ -231,6 +254,22 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
         public String toString() {
 //            return "(" + getSource() + " : " + getTarget() + " : " + label + ")";
             return "(" + label + ")";
+        }
+    }
+
+    public static class CollapsedLabeledEdge extends LabeledEdge {
+        List<LabeledEdge> collapsedEdges;
+        public CollapsedLabeledEdge(String label, List<LabeledEdge> collapsedEdges) {
+            super(label);
+            this.collapsedEdges = new ArrayList<>(collapsedEdges);
+        }
+
+        public List<LabeledEdge> getCollapsedEdges() {
+            return collapsedEdges;
+        }
+
+        public void setCollapsedEdges(List<LabeledEdge> collapsedEdges) {
+            this.collapsedEdges = collapsedEdges;
         }
     }
 

@@ -27,6 +27,7 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
     protected InstantiationMap instantiationMap;
     protected ReactiveSystem<B> reactiveSystemAffili = null; // the "affiliation" to a specific reactive system
     protected String label;
+    protected long priority = 0;
 
     protected TrackingMap trackingMap;
 
@@ -45,6 +46,16 @@ public abstract class AbstractReactionRule<B extends Bigraph<? extends Signature
 
     public <T extends AbstractReactionRule<B>> T withLabel(String label) {
         this.label = label;
+        return (T) this;
+    }
+
+    @Override
+    public long getPriority() {
+        return priority;
+    }
+
+    public <T extends AbstractReactionRule<B>> T withPriority(long priority) {
+        this.priority = priority;
         return (T) this;
     }
 

@@ -62,7 +62,7 @@ public class AbstractTransitionSystem<B, T> {
 
     //TODO can be merged in Transition
     // A transition is labeled. This stores an data object to a transition relation via its label
-    protected final Map<String, T> transitionMap = new ConcurrentHashMap<>();
+    protected final Map<String, List<T>> transitionMap = new ConcurrentHashMap<>();
 
     private final Map<B, Set<Transition>> transitionRelations = new ConcurrentHashMap<>();
 
@@ -94,7 +94,7 @@ public class AbstractTransitionSystem<B, T> {
      *
      * @return a map where transition labels are mapped to bigraphs (redexes)
      */
-    public Map<String, T> getTransitionMap() {
+    public Map<String, List<T>> getTransitionMap() {
         return transitionMap;
     }
 
@@ -174,7 +174,8 @@ public class AbstractTransitionSystem<B, T> {
 
     // Method to add a transition to the transition system
     public void addTransition(B source, B target, String reactionLbl, T transitionRelationObject) {
-        transitionMap.put(reactionLbl, transitionRelationObject);
+        transitionMap.computeIfAbsent(reactionLbl, k -> new LinkedList<>());
+        transitionMap.get(reactionLbl).add(transitionRelationObject);
         transitionRelations.computeIfAbsent(source, k -> new HashSet<>())
                 .add(new Transition(source, target, reactionLbl));
     }

@@ -56,4 +56,8 @@ public interface BigraphMatch<B extends Bigraph<? extends Signature<?>>> {
      */
     Collection<B> getParameters();
 
+    B getParam();
+
+    boolean wasRewritten();
+
 }
