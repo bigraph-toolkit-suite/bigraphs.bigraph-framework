@@ -129,7 +129,7 @@ public class SwingGraphStreamer {
         // Execute the actuall drawing by placing elements on the graph
         // Attach a callback to be executed when the CompletableFuture completes
         futureResult.thenAccept(result -> {
-            System.out.println("Layouting finished: " + result);
+//            System.out.println("Layouting finished: " + result);
             try {
 //                 Await termination of the ExecutorService
                 executorService.shutdown();
@@ -149,14 +149,14 @@ public class SwingGraphStreamer {
             // Draw the place graph
             Traverser<BigraphEntity> traverser = Traverser.forTree(x -> {
                 List<BigraphEntity<?>> children = bigraph.getChildrenOf(x);
-                System.out.format("%s has %d children\n", x.getType(), children.size());
-                if (children.size() > 0)
-                    System.out.println("Level: " + bigraph.getLevelOf(children.get(0)));
+//                System.out.format("%s has %d children\n", x.getType(), children.size());
+//                if (children.size() > 0)
+//                    System.out.println("Level: " + bigraph.getLevelOf(children.get(0)));
                 return children;
             });
             Iterable<BigraphEntity> bigraphEntities = traverser.breadthFirst(bigraph.getRoots());
             bigraphEntities.forEach(x -> {
-                System.out.println(x);
+//                System.out.println(x);
                 if (BigraphEntityType.isRoot(x) && !withRoots) {
                     return;
                 }

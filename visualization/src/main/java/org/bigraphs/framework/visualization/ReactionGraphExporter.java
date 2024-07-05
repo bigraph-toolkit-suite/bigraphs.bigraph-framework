@@ -24,7 +24,7 @@ import java.io.IOException;
  *
  * @author Dominik Grzelak
  */
-public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> implements BigraphGraphicsExporter<ReactionGraph<?>> {
+public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> implements BigraphGraphicsExporter<ReactionGraph<B>> {
     private final Logger logger = LoggerFactory.getLogger(ReactionGraphExporter.class);
     ReactiveSystem<B> reactiveSystem;
     ReactionGraph<B> bReactionGraph;
@@ -48,7 +48,7 @@ public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> im
      * @throws IOException
      */
     @Override
-    public void toPNG(ReactionGraph<?> bReactionGraph, File file) throws IOException {
+    public void toPNG(ReactionGraph<B> bReactionGraph, File file) throws IOException {
 //        Graph g = bReactionGraph.getGraph();
         mxReactionGraph graphAdapter = new mxReactionGraph(bReactionGraph, reactiveSystem);
         graphAdapter.getStylesheet().putCellStyle("MATCHED", StyleConstants.predicateMatchedNodeStylesheet());
@@ -80,7 +80,7 @@ public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> im
     }
 
     @Override
-    public BigraphGraphicsExporter<ReactionGraph<?>> with(GraphicalFeatureSupplier<?> supplier) {
+    public BigraphGraphicsExporter<ReactionGraph<B>> with(GraphicalFeatureSupplier<?> supplier) {
         throw new RuntimeException("Not implemented yet.");
     }
 }
