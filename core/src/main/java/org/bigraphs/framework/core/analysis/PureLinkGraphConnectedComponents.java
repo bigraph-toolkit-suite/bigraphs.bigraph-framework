@@ -20,10 +20,16 @@ import java.util.stream.Collectors;
  * The number of connected components is computed as well.
  * <p>
  * This implementation is suited for hypergraphs (i.e., link graphs).
+ * See note below for trees and forests.
  * Each hyperedge is treated as a set of vertices that are "unioned" together in the algorithm.
  * <p>
  * Complexity: O(E * α(V)), where E is the number of hyperedges, V is the number of vertices, and α the inverse of
  * the Ackermann function.
+ * <p>
+ * Note: A tree is a connected, acyclic graph, which means every pair of nodes in a tree is connected by exactly one path,
+ * and there are no cycles.
+ * Given these properties, we do not have to handle connected components in trees.
+ * For forests, we just need to identify and count each individual tree as a connected component.
  *
  * @author Dominik Grzelak
  */
@@ -32,7 +38,6 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
     Map<BigraphEntity<?>, Integer> idMap = new HashMap<>();
     UnionFind uf;
     PureBigraph originalBigraph;
-
 
 
     @Override
@@ -161,13 +166,13 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
             // these have to be checked before to get the right root/site index when we construct the PG
 
             nodes.forEach(n -> {
-                if(BigraphEntityType.isNode(n)) {
+                if (BigraphEntityType.isNode(n)) {
                     String vLbl = ((BigraphEntity.NodeEntity) n).getName();
 
 //                    BigraphEntity newNode = builder.createNewNode(n.getControl(), vLbl);
 //                    newNodes.put(vLbl, (BigraphEntity.NodeEntity) newNode);
                     BigraphEntity newNode = newNodes.computeIfAbsent(vLbl, s -> {
-                        return (BigraphEntity.NodeEntity)builder.createNewNode(n.getControl(), vLbl);
+                        return (BigraphEntity.NodeEntity) builder.createNewNode(n.getControl(), vLbl);
 //                        return newNodes.put(vLbl,  (BigraphEntity.NodeEntity)builder.createNewNode(n.getControl(), vLbl));
                     });
 
@@ -175,7 +180,7 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
                     // we may need to nest the new node under a new root
                     BigraphEntity<?> parent = originalBigraph.getParent(n);
                     assert parent != null;
-                    if(!nodes.contains(parent)) {
+                    if (!nodes.contains(parent)) {
                         // before creating root, check if there is a corresponding site index
                         int rootIx = bigraphEntityToRootIndex.get(parent) == null ? rootCnt.getAndIncrement() : bigraphEntityToRootIndex.get(parent);
                         bigraphEntityToRootIndex.putIfAbsent(parent, rootIx);
