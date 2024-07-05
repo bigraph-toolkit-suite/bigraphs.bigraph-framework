@@ -2,10 +2,10 @@
 
 # Bigraph Framework
 
-| Branch  | Latest Versions                                  | Status |
-|---------|--------------------------------------------------|--------|
-| Main    | 1.1.0 / 1.0.0 / 0.9.6                            |        |
-| Develop | 1.1.0-SNAPSHOT / 1.0.0-SNAPSHOT / 0.9.7-SNAPSHOT |        |
+| Branch  | Latest Versions                                  | Status       |
+|---------|--------------------------------------------------|--------------|
+| Main    | 1.1.0 / 1.0.0 / 0.9.6                            | Releases     |
+| Develop | 2.0.0-SNAPSHOT / 1.1.0-SNAPSHOT / 1.0.0-SNAPSHOT | Experimental |
 
 ----
 
@@ -18,14 +18,15 @@ The high-level API eases the programming of bigraphical systems for real-world a
 
 **Features**
 
-- Dynamic creation of bigraphs at runtime based on an EMOF-based metamodel
+- Dynamic creation of bigraphs at design time and runtime based on an [EMOF-based metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
 - Read and write the meta and instance model of a bigraph from and to the file system
 - Visualization
   - Graphical export via GraphViz/DOT
   - PNG, JPG, ...
-  - Interactive visualization UI via GraphStreamer (beta)
-- Bigraphical Reactive System support: simulate the evolution of bigraphs by reaction rules 
-  - Bigraph matching and rewriting
+  - Interactive visualization UI via GraphStream
+  - Visualization of Compiler Graphs (VCG) format via yComp
+- Bigraphical Reactive System support: Simulate the evolution of bigraphs by reaction rules
+  - Bigraph matching and rewriting via jLibBig
   - Synthesisation of a labeled transition system (LTS)
   - Simulation and Model Checking (BFS, Random)
   - Predicate checking, logical connectors, LTL
@@ -33,7 +34,7 @@ The high-level API eases the programming of bigraphical systems for real-world a
   - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
   - Tracking rules (a rule can be assigned a tracking map)
 - Model transformation / Conversions
-  - Export to common graph formats, e.g., DOT, GraphML, GXL
+  - Export to common graph formats, e.g., DOT, GraphML, GXL, VCG
   - Export to formats of other bigraph tools: BigMC, BigraphER, and BigRed
   - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
@@ -325,13 +326,11 @@ Therefore, see [Maven configuration](#maven-configuration) on how to include the
 
 > **Note:** All parts of Bigraph Framework are also deployed to the [Central Repository](https://repo.maven.apache.org/maven2/).
 
-### Building the Documentation
+### Building the Documentation: User Manual
 
 Building the documentation builds also the project without running tests.
 
 See [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details.
-
-#### User Manual
 
 After running the build command as described above, the generated user manual will be available
 at `documentation/v2-docusaurus/` by calling `npm run start`:
