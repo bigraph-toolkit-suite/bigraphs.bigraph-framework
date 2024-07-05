@@ -1,11 +1,10 @@
 package org.bigraphs.framework.simulation.equivalence;
 
-import org.bigraphs.framework.core.Bigraph;
-import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem;
-import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 
 /**
+ * Mixin Infrastructure-related class.
+ * <p>
  * Mixin interface for behavioral equivalences on transition systems of type {@link AbstractTransitionSystem} in BTS.
  * Behavioral equivalences are used to compare two transition systems to determine whether they exhibit similar behavior.
  * This Mixin adds additional functionality to existing classes of {@link AbstractTransitionSystem} without
@@ -22,5 +21,12 @@ import org.bigraphs.framework.core.reactivesystem.ReactionRule;
  */
 // <R extends AbstractTransitionSystem<? extends Bigraph<? extends Signature<?>>, ? extends ReactionRule<?>>>
 public interface BehavioralEquivalenceMixin<R extends AbstractTransitionSystem<?, ?>> {
+
+    enum Algorithms {
+        KANELLAKIS_SMOLKA // Partitioning splitter algorithm (such as Paige-Tarjan-algorithm)
+    }
+
     boolean isEquivalentTo(R transitionSystem);
+
+    void attachToObject(R transitionSystem);
 }
