@@ -162,6 +162,8 @@ public class ConcurringProcessesExample {
 
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
+                .doMeasureTime(true)
+                .reactionGraphAsDAG(false)
                 .and(transitionOpts()
                                 .setMaximumTransitions(10)
                                 .setMaximumTime(30)
@@ -169,7 +171,6 @@ public class ConcurringProcessesExample {
 //                        .allowReducibleClasses(false) // for simulation but not used
                                 .create()
                 )
-                .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                                 .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
                                 .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))

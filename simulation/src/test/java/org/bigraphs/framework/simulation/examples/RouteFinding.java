@@ -96,13 +96,14 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
+                .doMeasureTime(true)
+                .reactionGraphAsDAG(false)
                 .and(transitionOpts()
                         .setMaximumTransitions(150)
                         .setMaximumTime(60)
                         .allowReducibleClasses(false)
                         .create()
                 )
-                .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
