@@ -14,13 +14,12 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 public interface BigraphHashFunction<B extends Bigraph<? extends Signature<?>>> {
 
     /**
-     * Compute a hash for a given bigraph.
+     * Factory method to create the respective hashing function class for the given bigraph class {@code bClass}.
      *
-     * @param bigraph the bigraph
-     * @return a hash of a bigraph.
+     * @param bClass the class of the bigraph variant (e.g., {@link PureBigraph}).
+     * @param <B>    the bigraph class type
+     * @return the hashing function for the bigraph class type
      */
-    long hash(B bigraph);
-
     @SuppressWarnings("unchecked")
     static <B extends Bigraph<? extends Signature<?>>> BigraphHashFunction<B> get(Class<B> bClass) {
         if (bClass.equals(PureBigraph.class)) {
@@ -28,4 +27,14 @@ public interface BigraphHashFunction<B extends Bigraph<? extends Signature<?>>> 
         }
         throw new RuntimeException("Not yet implemented.");
     }
+
+    /**
+     * Compute a hash for a given bigraph.
+     *
+     * @param bigraph the bigraph
+     * @return a hash of a bigraph.
+     */
+    long hash(B bigraph);
+
+
 }

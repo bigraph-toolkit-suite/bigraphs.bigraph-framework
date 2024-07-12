@@ -88,6 +88,10 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
             return next;
         }
 
+        /**
+         * This stores the rewritten bigraph for reference
+         * @return
+         */
         public B getBigraph() {
             return bigraph;
         }

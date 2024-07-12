@@ -1,5 +1,8 @@
 package org.bigraphs.framework.core.reactivesystem;
 
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -31,11 +34,17 @@ public class AbstractTransitionSystem<B, T> {
         private final B source;
         private final B target;
         private final String label;
+        private final List<BMatchResult<? extends Bigraph<? extends Signature<?>>>> matchResults;
 
         public Transition(B source, B target, String label) {
+            this(source, target, label, List.of());
+        }
+
+        public Transition(B source, B target, String label, List<BMatchResult<? extends Bigraph<? extends Signature<?>>>> matchResults) {
             this.source = source;
             this.target = target;
             this.label = label;
+            this.matchResults = matchResults;
         }
 
         public B getSource() {
@@ -48,6 +57,10 @@ public class AbstractTransitionSystem<B, T> {
 
         public String getLabel() {
             return label;
+        }
+
+        public List<BMatchResult<? extends Bigraph<? extends Signature<?>>>> getMatchResults() {
+            return matchResults;
         }
 
         @Override
@@ -177,7 +190,7 @@ public class AbstractTransitionSystem<B, T> {
         transitionMap.computeIfAbsent(reactionLbl, k -> new LinkedList<>());
         transitionMap.get(reactionLbl).add(transitionRelationObject);
         transitionRelations.computeIfAbsent(source, k -> new HashSet<>())
-                .add(new Transition(source, target, reactionLbl));
+                .add(new Transition(source, target, reactionLbl, (List) List.of(transitionRelationObject)));
     }
 
 

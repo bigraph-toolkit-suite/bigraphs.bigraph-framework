@@ -251,6 +251,16 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
         }
 
         @Override
+        public Object getSource() {
+            return super.getSource();
+        }
+
+        @Override
+        public Object getTarget() {
+            return super.getTarget();
+        }
+
+        @Override
         public String toString() {
 //            return "(" + getSource() + " : " + getTarget() + " : " + label + ")";
             return "(" + label + ")";

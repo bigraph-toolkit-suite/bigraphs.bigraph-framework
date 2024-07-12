@@ -34,8 +34,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BreadthFirstSimulationStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
     private final Logger logger = LoggerFactory.getLogger(BreadthFirstSimulationStrategy.class);
 
-    private PredicateChecker<B> predicateChecker;
+    protected PredicateChecker<B> predicateChecker;
     //    private BigraphCanonicalForm canonicalForm;
+    protected JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+    protected JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
 
     public BreadthFirstSimulationStrategy(BigraphModelChecker<B> modelChecker) {
         super(modelChecker);
@@ -57,8 +59,8 @@ public class BreadthFirstSimulationStrategy<B extends Bigraph<? extends Signatur
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
 
         B initialAgent = modelChecker.getReactiveSystem().getAgent();
-        it.uniud.mads.jlibbig.core.std.Bigraph encoded = new JLibBigBigraphEncoder().encode((PureBigraph) initialAgent);
-        initialAgent = (B) new JLibBigBigraphDecoder().decode(encoded);
+        it.uniud.mads.jlibbig.core.std.Bigraph encoded = encoder.encode((PureBigraph) initialAgent);
+        initialAgent = (B) decoder.decode(encoded);
         String rootBfcs = String.valueOf(initialAgent.hashCode());
         workingQueue.add(initialAgent);
         AtomicInteger iterationCounter = new AtomicInteger(0);

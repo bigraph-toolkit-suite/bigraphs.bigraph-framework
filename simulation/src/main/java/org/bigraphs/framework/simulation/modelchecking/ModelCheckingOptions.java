@@ -21,12 +21,13 @@ import java.util.concurrent.TimeUnit;
 public class ModelCheckingOptions {
     private final static int DEFAULT_MAX_TRANSITIONS = Integer.MAX_VALUE;
 
+    private Map<Options, Opts> optsMap = new ConcurrentHashMap<>();
     private ExportOptions exportOpts;
     private TransitionOptions transitionOpts;
-    private Map<Options, Opts> optsMap = new ConcurrentHashMap<>();
-    private boolean measureTime = false;
 
+    private boolean measureTime = false;
     private boolean parallelRuleMatching = false;
+    private boolean reactionGraphAsDAG = true;
 
     public enum Options {
         TRANSITION(TransitionOptions.class), EXPORT(ExportOptions.class);
@@ -77,6 +78,19 @@ public class ModelCheckingOptions {
     }
 
     /**
+     * Instruct the simulation to measure the time for individual steps of the current used simulation algorithm.
+     * Defaults to {@code false}.
+     * Useful for debugging purposes.
+     *
+     * @param measureTime flag to enable or disable time measurement
+     * @return the current options instance
+     */
+    public ModelCheckingOptions doMeasureTime(boolean measureTime) {
+        this.measureTime = measureTime;
+        return this;
+    }
+
+    /**
      * Instruct the simulation either to perform rule matching in parallel or sequentially (default).
      *
      * @param flag flag to enable or disable parallel rule matchings
@@ -91,7 +105,7 @@ public class ModelCheckingOptions {
      * @param flag flag to enable or disable parallel rule matchings
      * @return the current options instance
      */
-    public ModelCheckingOptions doParallelRuleMatching(boolean flag) {
+    public ModelCheckingOptions withParallelRuleMatching(boolean flag) {
         this.parallelRuleMatching = flag;
         return this;
     }
@@ -100,16 +114,16 @@ public class ModelCheckingOptions {
         return this.parallelRuleMatching;
     }
 
-    /**
-     * Instruct the simulation to measure the time for individual steps of the current used simulation algorithm.
-     * Defaults to {@code false}.
-     * Useful for debugging purposes.
-     *
-     * @param measureTime flag to enable or disable time measurement
-     * @return the current options instance
-     */
-    public ModelCheckingOptions doMeasureTime(boolean measureTime) {
-        this.measureTime = measureTime;
+    public boolean isReactionGraphAsDAG() {
+        return reactionGraphAsDAG;
+    }
+
+    public void setReactionGraphAsDAG(boolean reactionGraphAsDAG) {
+        this.reactionGraphAsDAG = reactionGraphAsDAG;
+    }
+
+    public ModelCheckingOptions reactionGraphAsDAG(boolean reactionGraphAsDAG) {
+        this.reactionGraphAsDAG = reactionGraphAsDAG;
         return this;
     }
 
