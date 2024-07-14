@@ -14,6 +14,7 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.ops;
 
 public class ReactionRuleComposer<R extends ReactionRule<?>> {
 
+    //TODO add tensor product (distinct names)
 
     public R parallelProduct(ReactionRule<PureBigraph> left, ReactionRule<PureBigraph> right) throws InvalidReactionRuleException, IncompatibleInterfaceException {
         PureBigraph redexLHS = left.getRedex();
@@ -22,8 +23,7 @@ public class ReactionRuleComposer<R extends ReactionRule<?>> {
         PureBigraph reactumLHS = left.getReactum();
         PureBigraph reactumRHS = right.getReactum();
 
-        ops(redexLHS).parallelProduct(redexRHS);
-
+//        ops(redexLHS).parallelProduct(redexRHS);
 
         BigraphComposite<DefaultDynamicSignature> productRedex = ops(redexLHS).parallelProduct(redexRHS);
         BigraphComposite<DefaultDynamicSignature> productReactum = ops(reactumLHS).parallelProduct(reactumRHS);
@@ -63,6 +63,12 @@ public class ReactionRuleComposer<R extends ReactionRule<?>> {
         ParametricReactionRule<PureBigraph> ruleProduct = new ParametricReactionRule<>(productRedex.getOuterBigraph(), productReactum.getOuterBigraph());
         ruleProduct.withTrackingMap(tMap)
                 .withInstantiationMap(iMap);
+
+        if(left.getLabel() != null && !left.getLabel().isEmpty() &&
+                right.getLabel() != null && !right.getLabel().isEmpty()) {
+            String labelComp = left.getLabel() + "_PP_" + right.getLabel();
+            ruleProduct.withLabel(labelComp);
+        }
         return (R) ruleProduct;
     }
 
