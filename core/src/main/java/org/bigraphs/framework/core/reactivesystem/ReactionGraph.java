@@ -8,6 +8,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -23,7 +24,7 @@ import java.util.*;
  * @param <B> the type of the bigraph of the states and transition relations of the transition system
  * @author Dominik Grzelak
  */
-public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B, BMatchResult<B>> {
+public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B, BMatchResult<B>> implements Serializable {
 
     //TODO better: instead of keeping to copies (ATS also maintains graph), just transform the native one to JGraphT's graph
     protected Graph<LabeledNode, LabeledEdge> graph; // this structure is also for rendering the graph via JGraphT
@@ -137,7 +138,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
                 .buildGraph();
     }
 
-    public static abstract class LabeledNode {
+    public static abstract class LabeledNode implements Serializable {
         protected String label;
         protected String canonicalForm;
 
