@@ -34,7 +34,7 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
     private final static String DUMP = "src/test/resources/dump/rulecomposition/";
 
     @Test
-    void test_rule_parallelProduct_01() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException, IncompatibleInterfaceException {
+    void test_rule_parallelProduct_01() throws InvalidReactionRuleException, IncompatibleInterfaceException {
 
         ReactionRule<PureBigraph> rr01 = createRR_01();
         eb(rr01.getRedex(), DUMP + "rr01_LHS");
@@ -48,6 +48,8 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
         ParametricReactionRule<Bigraph<?>> product = rComp.parallelProduct(rr01, rr02);
         eb(product.getRedex(), DUMP + "product_LHS");
         eb(product.getReactum(), DUMP + "product_RHS");
+        System.out.println("product label = " + product.getLabel());
+        assert product.getLabel().equals("R1_PP_R2");
 
         System.out.println(product.getTrackingMap());
         product.getInstantationMap().getMappings().forEach((k,v) -> {
