@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.ops;
@@ -188,6 +189,7 @@ public class BigraphUtil {
      * @throws RuntimeException if the underlying meta-model is invalid that is created in the merging process.
      */
     public static DefaultDynamicSignature mergeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+        //TODO: define left, or right merge
         if (Objects.nonNull(left) && Objects.nonNull(right)) {
             DynamicSignatureBuilder sb = pureSignatureBuilder();
             Stream.concat(left.getControls().stream(), right.getControls().stream()).forEach(c -> {
@@ -198,6 +200,29 @@ public class BigraphUtil {
         }
         return Objects.isNull(right) ? left : right;
     }
+
+
+    public static DefaultDynamicSignature composeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+        assertSignaturesAreConsistent(left, right);
+        if (Objects.nonNull(left) && Objects.nonNull(right)) {
+            DynamicSignatureBuilder sb = pureSignatureBuilder();
+            Stream.concat(left.getControls().stream(), right.getControls().stream()).forEach(c -> {
+                sb.newControl(c.getNamedType(), c.getArity())
+                        .status(c.getControlKind()).assign();
+            });
+            return sb.create();
+        }
+        return Objects.isNull(right) ? left : right;
+    }
+    
+    public static Optional<DefaultDynamicSignature> composeSignatures(List<DefaultDynamicSignature> signatures) {
+        return signatures.stream().reduce(BigraphUtil::composeSignatures);
+    }
+
+    private static void assertSignaturesAreConsistent(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+
+    }
+
 
     /**
      * Basic checking method for simple elementary bigraphs such as a merge or closure.

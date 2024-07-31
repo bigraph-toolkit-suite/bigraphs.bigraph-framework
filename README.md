@@ -25,21 +25,21 @@ The high-level API eases the programming of bigraphical systems for real-world a
   - PNG, JPG, ...
   - Interactive visualization UI via GraphStream
   - Visualization of Compiler Graphs (VCG) format via yComp
-- Bigraphical Reactive System support: Simulate the evolution of bigraphs by reaction rules 
+- Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules 
   - Bigraph matching and rewriting via jLibBig
   - Synthesisation of a labeled transition system (LTS)
   - Simulation and Model Checking (BFS, Random)
   - Predicate checking, logical connectors, LTL
-  - Specify order of reaction rules
+  - Specify order of reaction rules via priorities
   - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
   - Tracking rules (a rule can be assigned a tracking map)
-- Model transformation / Conversions
+- Model Transformations
   - Export to common graph formats, e.g., DOT, GraphML, GXL, VCG
-  - Export to formats of other bigraph tools: BigMC, BigraphER, and BigRed
+  - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
   - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
   - Add arbitrary attributes to nodes
-  - Attributes are preserved when doing rewriting
+  - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 **Requirements**
 - Java 17

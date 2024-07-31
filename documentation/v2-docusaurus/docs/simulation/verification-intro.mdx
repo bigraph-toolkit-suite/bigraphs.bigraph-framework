@@ -1,7 +1,7 @@
 ---
 id: verification-intro
 title: Verification
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 In the area of software engineering, formal verification is an interesting subject.
@@ -112,7 +112,9 @@ As long as the transition system is being built from a BRS specification,
 the provided predicates of the user are checked simultaneously for each
 new computed state in the course of a BRS simulation.
 
-> **Note:** A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker instance.
+:::note
+A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker instance.
+:::
 
 These predicates come in two forms: as safety properties or as liveness
 properties. The former represents a state in the system that should not
@@ -124,7 +126,10 @@ a result (liveness).
 Some further safety properties are: partial correctness, absence of deadlocks,
 and mutual exclusion (see [\[1\]](#ref1)).
 
-> **Note:** Fairness properties are important for reactive systems. Safety is easier to check then liveness.
+:::tip
+Fairness properties are important for reactive systems.
+Safety is easier to check than liveness.
+:::
 
 ## Simulation types
 
@@ -206,9 +211,6 @@ acquiring its builder by calling `ModelCheckingOptions.TransitionOptions.transit
 - Time
 - ...
 
-[//]: # (- Maximal Number of states to compute &#40;TODO&#41;)
-[//]: # (- Predicates &#40;are explained in [Verification]&#40;verification-intro&#41;&#41;)
-
 The following methods are available through the `ModelCheckingOptions.transitionOpts()` builder instance to adjust the [canonical string encoding algorithm of bigraphs](https://link.springer.com/article/10.1007/s42979-021-00552-5), which is used for cycle checking of the transition system:
 - `TransitionOptions.Builder#allowReducibleClasses(bool)`
 - `TransitionOptions.Builder#rewriteOpenLinks(bool)`
@@ -221,15 +223,6 @@ The `ModelCheckingOptions.ExportOptions` class allows specifying a file path whe
 and the individual states shall be written to.
 If these options are left empty then the graphs are not exported.
 Also one can decide if the state labels of the reaction graph are simple identifiers _a<sub>1</sub>_, _a<sub>2</sub>_, _a<sub>3</sub>_, ... or [canonical string encodings of bigraphs](https://link.springer.com/article/10.1007/s42979-021-00552-5) in its graphic output.
-
-[//]: # (The following methods are available through the `ModelCheckingOptions.exportOpts&#40;&#41;` builder instance:)
-
-[//]: # ()
-[//]: # (| Method  |)
-
-[//]: # (|---|)
-
-[//]: # (|   |)
 
 ## References
 

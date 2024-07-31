@@ -6,6 +6,7 @@ import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceEx
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,15 +17,37 @@ public class ReactionRuleComposer<R extends ReactionRule<?>> {
 
     //TODO add tensor product (distinct names)
 
+    /**
+     * This is the intermediate string used when composing the labels of two rules.
+     */
+    private String separator = "_PP_";
+
+    /**
+     * This method composes two rules by using the parallel product.
+     * The instantiation map, the tracking map (if employed), and the labels are also updated accordingly.
+     * If redexes or reactums of both rules share the same outer name, they will be merged.
+     * <p>
+     * Note: The labels of both rules must be set.
+     *
+     * @param left  the left rule
+     * @param right the right rule
+     * @return the parallel product of the two rules
+     * @throws InvalidReactionRuleException   if the product is invalid
+     * @throws IncompatibleInterfaceException if the product is invalid
+     */
     public R parallelProduct(ReactionRule<PureBigraph> left, ReactionRule<PureBigraph> right) throws InvalidReactionRuleException, IncompatibleInterfaceException {
+        assertRuleLabelNotEmpty(left.getLabel());
+        assertRuleLabelNotEmpty(right.getLabel());
+        assertSeparatorStringNotContainedInRuleLabel(left.getLabel());
+        assertSeparatorStringNotContainedInRuleLabel(right.getLabel());
+
+        // Redexes
         PureBigraph redexLHS = left.getRedex();
         PureBigraph redexRHS = right.getRedex();
-
+        // Reactums
         PureBigraph reactumLHS = left.getReactum();
         PureBigraph reactumRHS = right.getReactum();
-
-//        ops(redexLHS).parallelProduct(redexRHS);
-
+        // Create product between redexes, and reactums
         BigraphComposite<DefaultDynamicSignature> productRedex = ops(redexLHS).parallelProduct(redexRHS);
         BigraphComposite<DefaultDynamicSignature> productReactum = ops(reactumLHS).parallelProduct(reactumRHS);
 
@@ -64,9 +87,9 @@ public class ReactionRuleComposer<R extends ReactionRule<?>> {
         ruleProduct.withTrackingMap(tMap)
                 .withInstantiationMap(iMap);
 
-        if(left.getLabel() != null && !left.getLabel().isEmpty() &&
+        if (left.getLabel() != null && !left.getLabel().isEmpty() &&
                 right.getLabel() != null && !right.getLabel().isEmpty()) {
-            String labelComp = left.getLabel() + "_PP_" + right.getLabel();
+            String labelComp = left.getLabel() + separator + right.getLabel();
             ruleProduct.withLabel(labelComp);
         }
         return (R) ruleProduct;
@@ -92,4 +115,39 @@ public class ReactionRuleComposer<R extends ReactionRule<?>> {
         }
     }
 
+    /**
+     * When two rules are composed, their labels are also composed.
+     * The "separator string" is the intermediate string between these two rule labels.
+     *
+     * {@link ReactionRuleComposer#withSeparator(String)}
+     * @param separator any string used to separate two rule labels
+     * @return this instance
+     */
+    public ReactionRuleComposer<R> withSeparator(String separator) {
+        this.separator = Objects.requireNonNull(separator);
+        return this;
+    }
+
+    /**
+     * Get the "intermediate string" used to separate two rule labels when they are composed.
+     */
+    public String getSeparator() {
+        return separator;
+    }
+
+    protected void assertSeparatorStringNotContainedInRuleLabel(String ruleLabel) {
+        if (ruleLabel.contains(separator)) {
+            throw new RuntimeException(
+                    String.format("The separator string '%s' cannot be used because it is contained already in the rule label", separator)
+            );
+        }
+    }
+
+    protected void assertRuleLabelNotEmpty(String ruleLabel) {
+        if (ruleLabel.trim().isEmpty()) {
+            throw new RuntimeException(
+                    "The rule has no rule label, which is required for composition"
+            );
+        }
+    }
 }

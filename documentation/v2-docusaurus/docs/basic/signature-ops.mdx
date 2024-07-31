@@ -1,0 +1,93 @@
+---
+id: signatureops
+title: Signature Operations
+sidebar_position: 4
+---
+
+In section [Composition of Bigraphs](../basic/composition), methods are introduced to
+combine bigraphs in arbitrary ways via operators (e.g., composition, parallel product, or merge).
+
+Signatures can be defined using similar operations, which are useful when combining bigraphs that adhere to different signatures.
+Additionally, we can build signatures incrementally, starting from a singleton signature.
+A singleton signature contains a single control and can be regarded as a notational convenience.
+
+Some operations for signature are formally defined in [\[1\]](#ref1) and implemented in **Bigraph Framework**.
+Variations of signature composition are discussed in [\[2\]](#ref2).
+Below are some examples.
+
+
+## Signature Consistency
+
+Some operations on signatures require the notion of _signature consistency_.
+
+Two signatures <math>A</math> and <math>B</math> are consistent if and only if for every control <math>c</math> that is present in both signatures:
+- The control <math>c</math> has the same arity in both signatures.
+- The control <math>c</math> is either active in both signatures, passive, or atomic in both (i.e., they have the same _status_).
+
+## Signature Composition
+
+Signature composition is commutative and associative iff signatures are _consistent_ as defined above:
+
+<center>
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+            <mi>A</mi>
+            <mo>∪</mo>
+            <mi>B</mi>
+        </mrow>
+    </math>
+</center>
+<br/>
+<br/>
+
+Signature composition can be performed via the method [org.bigraphs.framework.core.utils.BigraphUtil#composeSignatures](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/utils/BigraphUtil.html#composeSignatures(org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature,org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature)).
+
+If signatures are not consistent, an exception will be thrown.
+
+**Example**
+
+
+## Signature Merge
+
+
+When signatures are _non-consistent_, a variant of signature composition can still be performed, where we need to
+agree on the arity and status of either side.
+That is, at least one duplicate control can be found among two signatures.
+Therefore, we define a left-side and right-side merge
+operator.
+
+<center>
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mi>A</mi>
+        <msub>
+            <mi>&#x229E;</mi>
+            <mo>&#x25C0;</mo>
+        </msub>
+        <mi>B</mi>
+    </mrow>
+</math>
+&nbsp; and &nbsp;
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mi>A</mi>
+        <msub>
+            <mi>&#x229E;</mi>
+            <mo>&#x25B6;</mo>
+        </msub>
+        <mi>B</mi>
+    </mrow>
+</math>
+</center>
+<br/>
+<br/>
+
+Merging signatures can be performed via the method [org.bigraphs.framework.core.utils.BigraphUtil#mergeSignatures](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/utils/BigraphUtil.html#mergeSignatures(org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature,org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature))
+
+**Example**
+
+
+## References
+
+- \[1\] <a id="ref1" href="https://pure.itu.dk/en/publications/domain-specific-modelling-languages-in-bigraphs">Perrone, G. D. (2013). Domain-Specific Modelling Languages in Bigraphs. IT-Universitetet i København. ITU-DS No. 87</a>
+- \[2\] <a id="ref2" href="https://nbn-resolving.org/urn:nbn:de:bsz:14-qucosa2-910504">Grzelak, D. (2024). Model-oriented Programming with Bigraphical Reactive Systems: Theory and Implementation. Technische Universität Dresden.</a>

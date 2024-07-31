@@ -48,7 +48,7 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
         ParametricReactionRule<Bigraph<?>> product = rComp.parallelProduct(rr01, rr02);
         eb(product.getRedex(), DUMP + "product_LHS");
         eb(product.getReactum(), DUMP + "product_RHS");
-        System.out.println("product label = " + product.getLabel());
+        System.out.println("Product label = " + product.getLabel());
         assert product.getLabel().equals("R1_PP_R2");
 
         System.out.println(product.getTrackingMap());
@@ -127,6 +127,5 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
         ;
         return defaultBuilder.create();
     }
-
 
 }

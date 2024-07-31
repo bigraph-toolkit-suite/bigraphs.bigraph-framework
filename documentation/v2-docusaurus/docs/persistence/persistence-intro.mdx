@@ -84,12 +84,12 @@ EMetaModelData.builder().setName("sample")
 
 located in the package `de.tudresden.inf.st.bigraphs.core.datatypes` of the `bigraph-core` module.
 
-[//]  # (Its purpose should be self-explanatory from the above example &#40;see also below&#41;.)
-
 Some BigraphFactory methods accept the metadata object.
 
-> **Note:** Changing the metadata of a metamodel introduces problems concerning model validation.
-> When modified metamodels are imported again, validation may fail.
+:::note
+Changing the metadata of a metamodel introduces problems concerning model validation.
+When modified metamodels are imported again, validation may fail.
+:::
 
 ## Bigraphical Instance Model
 
@@ -138,6 +138,7 @@ List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(
 );
 ```
 
-> **Note:** If the metadata of the metamodel was changed, this may produce errors and validation may fail.
-
+:::note
+If the metadata of the metamodel was changed, this may produce errors and validation may fail.
+:::
 

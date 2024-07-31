@@ -13,7 +13,7 @@ function TryItOut() {
     return (
         <div id={`try`}
              className="text--center padding-horiz--md"
-             style={{paddingTop: '2em'}}>
+             style={{paddingTop: '2em', backgroundColor: '#efefef', paddingBottom: '1.8em', marginBottom: '2em'}}>
             <h2>Download & Use Bigraph Framework for Java</h2>
             <ul style={{listStyleType: "none"}}>
                 <li>The framework is available via the <a
