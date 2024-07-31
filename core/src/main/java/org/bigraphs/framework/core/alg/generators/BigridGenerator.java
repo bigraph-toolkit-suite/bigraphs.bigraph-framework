@@ -29,7 +29,7 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 //TODO add also other bigrid variant with locales and routes
 
 /**
- * A class to generate bigrids as described in the dissertation.
+ * A class to generate bigrids (legacy variant).
  * <p>
  * The bigrid is constructed via a composition-based approach using only elementary bigraphs instead of using
  * the bigraph builder (e.g., {@link PureBigraphBuilder}).
@@ -39,6 +39,7 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
  *
  * @author Dominik Grzelak
  */
+@Deprecated
 public class BigridGenerator {
 
     //    private int n = 2, m = 2;
