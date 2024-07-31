@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  * Instantiation is provided via a factory method {@link #createInstance()}.
  *
  * @param <B> type of the bigraph
+ * @author Dominik Grzelak
  */
 public class ReactionGraphAnalysis<B extends Bigraph<? extends Signature<?>>> {
 
@@ -93,8 +94,11 @@ public class ReactionGraphAnalysis<B extends Bigraph<? extends Signature<?>>> {
 
     /**
      * Object containing one path from a state v of a reaction graph to one leave of the subtree rooted at state v
+     * <p>
+     * Both lists share the same index set to map from a bigraph state to the state label and vice versa.
      *
      * @param <B>
+     * @author Dominik Grzelak
      */
     public static class StateTrace<B extends Bigraph<? extends Signature<?>>> {
         List<B> path = new LinkedList<>();
