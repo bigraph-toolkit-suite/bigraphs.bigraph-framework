@@ -1,9 +1,9 @@
 package org.bigraphs.framework.core;
 
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
+import org.bigraphs.framework.core.exceptions.SignatureNotConsistentException;
 import org.bigraphs.framework.core.exceptions.builder.ControlNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.factory.BigraphFactory;
@@ -16,6 +16,7 @@ import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.utils.BigraphUtil;
 import org.bigraphs.framework.core.utils.emf.EMFUtils;
 import org.bigraphs.model.signatureBaseModel.BControlStatus;
 import org.eclipse.collections.impl.factory.Lists;
@@ -37,6 +38,51 @@ public class BigraphSignatureUnitTest {
 
     @AfterEach
     void setUp() {
+
+    }
+
+    @Test
+    void composeSignatureTest() {
+        DefaultDynamicSignature sig1 = pureSignatureBuilder()
+                .addControl("A", 1)
+                .addControl("B", 1)
+                .addControl("C", 1)
+                .addControl("D", 1)
+                .create();
+
+        DefaultDynamicSignature sig2 = pureSignatureBuilder()
+                .addControl("A", 2)
+                .addControl("B", 2)
+                .addControl("C", 2)
+                .addControl("D", 2)
+                .create();
+
+        Assertions.assertThrows(SignatureNotConsistentException.class, () -> {
+            BigraphUtil.composeSignatures(sig1, sig2);
+        });
+
+        DefaultDynamicSignature sig3 = pureSignatureBuilder()
+                .addControl("E", 2)
+                .addControl("F", 3)
+                .addControl("G", 4)
+                .create();
+
+        DefaultDynamicSignature sigComp_1_3 = BigraphUtil.composeSignatures(sig1, sig3);
+        assert sigComp_1_3.getControls().size() == 7;
+
+        DefaultDynamicSignature sigMerge_1_2 = BigraphUtil.mergeSignatures(sig1, sig2, 0);
+        assert sigMerge_1_2.getControls().size() == 4;
+
+        sigMerge_1_2.getControls().forEach(c -> {
+            assert c.getArity().getValue() == 1;
+        });
+
+        DefaultDynamicSignature sigMerge_1_2_right = BigraphUtil.mergeSignatures(sig1, sig2, 1);
+        assert sigMerge_1_2_right.getControls().size() == 4;
+
+        sigMerge_1_2_right.getControls().forEach(c -> {
+            assert c.getArity().getValue() == 2;
+        });
 
     }
 

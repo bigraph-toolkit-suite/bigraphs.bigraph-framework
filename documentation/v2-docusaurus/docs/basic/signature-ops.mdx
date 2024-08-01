@@ -24,6 +24,10 @@ Two signatures <math>A</math> and <math>B</math> are consistent if and only if f
 - The control <math>c</math> has the same arity in both signatures.
 - The control <math>c</math> is either active in both signatures, passive, or atomic in both (i.e., they have the same _status_).
 
+:::note
+Signature consistency is automatically checked when composing signatures.
+:::
+
 ## Signature Composition
 
 Signature composition is commutative and associative iff signatures are _consistent_ as defined above:
@@ -42,9 +46,29 @@ Signature composition is commutative and associative iff signatures are _consist
 
 Signature composition can be performed via the method [org.bigraphs.framework.core.utils.BigraphUtil#composeSignatures](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/utils/BigraphUtil.html#composeSignatures(org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature,org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature)).
 
-If signatures are not consistent, an exception will be thrown.
+:::note
+If signatures are not consistent, the exception `SignatureNotConsistentException` will be thrown.
+:::
 
 **Example**
+
+```java
+DefaultDynamicSignature sig1 = pureSignatureBuilder()
+        .addControl("A", 1)
+        .addControl("B", 1)
+        .addControl("C", 1)
+        .addControl("D", 1)
+        .create();
+
+DefaultDynamicSignature sig3 = pureSignatureBuilder()
+        .addControl("E", 2)
+        .addControl("F", 3)
+        .addControl("G", 4)
+        .create();
+
+DefaultDynamicSignature sigComp_1_3 = BigraphUtil.composeSignatures(sig1, sig3);
+assert sigComp_1_3.getControls().size() == 7;
+```
 
 
 ## Signature Merge
@@ -54,30 +78,30 @@ When signatures are _non-consistent_, a variant of signature composition can sti
 agree on the arity and status of either side.
 That is, at least one duplicate control can be found among two signatures.
 Therefore, we define a left-side and right-side merge
-operator.
+operator [\[2\]](#ref2).
 
 <center>
-<math xmlns="http://www.w3.org/1998/Math/MathML">
-    <mrow>
-        <mi>A</mi>
-        <msub>
-            <mi>&#x229E;</mi>
-            <mo>&#x25C0;</mo>
-        </msub>
-        <mi>B</mi>
-    </mrow>
-</math>
-&nbsp; and &nbsp;
-<math xmlns="http://www.w3.org/1998/Math/MathML">
-    <mrow>
-        <mi>A</mi>
-        <msub>
-            <mi>&#x229E;</mi>
-            <mo>&#x25B6;</mo>
-        </msub>
-        <mi>B</mi>
-    </mrow>
-</math>
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+            <mi>A</mi>
+            <msub>
+                <mi>&#x229E;</mi>
+                <mo>&#x25C0;</mo>
+            </msub>
+            <mi>B</mi>
+        </mrow>
+    </math>
+    &nbsp; and &nbsp;
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+            <mi>A</mi>
+            <msub>
+                <mi>&#x229E;</mi>
+                <mo>&#x25B6;</mo>
+            </msub>
+            <mi>B</mi>
+        </mrow>
+    </math>
 </center>
 <br/>
 <br/>
@@ -86,6 +110,23 @@ Merging signatures can be performed via the method [org.bigraphs.framework.core.
 
 **Example**
 
+```java
+DefaultDynamicSignature sig1 = pureSignatureBuilder()
+        .addControl("A", 1)
+        .addControl("B", 1)
+        .addControl("C", 1)
+        .addControl("D", 1)
+        .create();
+DefaultDynamicSignature sig2 = pureSignatureBuilder()
+        .addControl("A", 2)
+        .addControl("B", 2)
+        .addControl("C", 2)
+        .addControl("D", 2)
+        .create();
+// The last argument specifies the left-side merging (0), or the right-side merging (1)
+DefaultDynamicSignature sigMerge_1_2 = BigraphUtil.mergeSignatures(sig1, sig2, 0);
+assert sigMerge_1_2.getControls().size() == 4;
+```
 
 ## References
 

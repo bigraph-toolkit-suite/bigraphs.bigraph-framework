@@ -1,6 +1,5 @@
 package org.bigraphs.framework.core.impl.signature;
 
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.AbstractControl;
 import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
@@ -20,7 +19,7 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
 
     private final ControlStatus statusOfControl;
 
-    int hashed = -1;
+    private int hashed = -1;
 
     /**
      * Status will be set to {@link ControlStatus#ACTIVE}
@@ -53,9 +52,8 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DefaultDynamicControl)) return false;
+        if (!(o instanceof DefaultDynamicControl that)) return false;
         if (!super.equals(o)) return false;
-        DefaultDynamicControl that = (DefaultDynamicControl) o;
         return statusOfControl == that.statusOfControl;
     }
 
@@ -65,6 +63,5 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
             hashed = Objects.hash(super.hashCode(), statusOfControl);
         }
         return hashed;
-//        return Objects.hash(super.hashCode(), statusOfControl);
     }
 }
