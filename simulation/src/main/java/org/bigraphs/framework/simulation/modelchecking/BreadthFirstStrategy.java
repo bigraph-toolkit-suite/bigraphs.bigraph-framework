@@ -54,7 +54,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             modelChecker.getReactionGraph().setCanonicalNodeLabel(opts.getPrintCanonicalStateLabel());
         }
         ModelCheckingOptions.TransitionOptions transitionOptions = options.get(ModelCheckingOptions.Options.TRANSITION);
-        boolean reactionGraphWithCycles = options.isReactionGraphAsDAG();
+        boolean reactionGraphWithCycles = options.isReactionGraphWithCycles();
         logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
         logger.debug("reactionGraphWithCycles={}", reactionGraphWithCycles);
         modelChecker.getReactionGraph().reset();

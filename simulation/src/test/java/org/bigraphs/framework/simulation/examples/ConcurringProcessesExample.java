@@ -163,7 +163,7 @@ public class ConcurringProcessesExample {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .doMeasureTime(true)
-                .reactionGraphAsDAG(false)
+                .setReactionGraphWithCycles(false)
                 .and(transitionOpts()
                                 .setMaximumTransitions(10)
                                 .setMaximumTime(30)

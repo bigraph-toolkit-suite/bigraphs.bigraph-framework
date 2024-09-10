@@ -27,7 +27,7 @@ public class ModelCheckingOptions {
 
     private boolean measureTime = false;
     private boolean parallelRuleMatching = false;
-    private boolean reactionGraphAsDAG = true;
+    private boolean reactionGraphWithCycles = true;
 
     public enum Options {
         TRANSITION(TransitionOptions.class), EXPORT(ExportOptions.class);
@@ -93,7 +93,7 @@ public class ModelCheckingOptions {
     /**
      * Instruct the simulation either to perform rule matching in parallel or sequentially (default).
      *
-     * @param flag flag to enable or disable parallel rule matchings
+     * @param flag flag to enable or disable parallel rule matching
      */
     public void setParallelRuleMatching(boolean flag) {
         this.parallelRuleMatching = flag;
@@ -114,16 +114,32 @@ public class ModelCheckingOptions {
         return this.parallelRuleMatching;
     }
 
-    public boolean isReactionGraphAsDAG() {
-        return reactionGraphAsDAG;
+    /**
+     * Indicates, whether the reaction graph should permit the depiction of cycles.
+     * If {@code false}, the reaction graph will visually represent a Directed Acyclic Graph (DAG).
+     * Otherwise, they are drawn if the BRS simulation produces cycles.
+     * <p>
+     * <strong>Note:</strong>
+     * This configuration does not imply that cycles are absent during simulation.
+     * Rather, cycles are simply not displayed in the reaction graph.
+     */
+    public boolean isReactionGraphWithCycles() {
+        return reactionGraphWithCycles;
     }
 
-    public void setReactionGraphAsDAG(boolean reactionGraphAsDAG) {
-        this.reactionGraphAsDAG = reactionGraphAsDAG;
-    }
-
-    public ModelCheckingOptions reactionGraphAsDAG(boolean reactionGraphAsDAG) {
-        this.reactionGraphAsDAG = reactionGraphAsDAG;
+    /**
+     * Configure whether the reaction graph should permit the depiction of cycles.
+     * If disabled, the reaction graph will visually represent a Directed Acyclic Graph (DAG).
+     * <p>
+     * <strong>Note:</strong>
+     * This configuration does not imply that cycles are absent during simulation.
+     * Rather, cycles are simply not displayed in the reaction graph.
+     *
+     * @param reactionGraphWithCycles if set to {@code false} the reaction graph will visually represent a Directed Acyclic Graph (DAG)
+     *                                even if the BRS simulation produces cycles.
+     */
+    public ModelCheckingOptions setReactionGraphWithCycles(boolean reactionGraphWithCycles) {
+        this.reactionGraphWithCycles = reactionGraphWithCycles;
         return this;
     }
 

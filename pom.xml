@@ -53,7 +53,7 @@
         <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs
         </project.usermanual.outputDirectory>
         <!-- Versions -->
-        <bigraph.metamodel.version>1.6.1-SNAPSHOT</bigraph.metamodel.version>
+        <bigraph.metamodel.version>2.0.0-SNAPSHOT</bigraph.metamodel.version>
         <emf.common.version>2.23.0</emf.common.version>
         <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
         <emf.ecore.version>2.25.0</emf.ecore.version>
