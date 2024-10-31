@@ -158,6 +158,11 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
         public void changeLabel(String newLabel) {
             this.label = newLabel;
         }
+
+        @Override
+        public String toString() {
+            return getLabel();
+        }
     }
 
     public static class DefaultLabeledNode extends LabeledNode {
