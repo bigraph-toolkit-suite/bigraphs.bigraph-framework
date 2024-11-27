@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bigraphs.framework.core.alg.generators.BigridGenerator.DiscreteIons.NodeType.*;
+import static org.bigraphs.framework.simulation.examples.bigrid.BigridGeneratorOld.DiscreteIons.NodeType.*;
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;

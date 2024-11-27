@@ -1,4 +1,4 @@
-package org.bigraphs.framework.core.alg.generators;
+package org.bigraphs.framework.simulation.examples.bigrid;
 
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.datatypes.NamedType;
@@ -26,9 +26,10 @@ import java.util.stream.IntStream;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
-//TODO add also other bigrid variant with locales and routes
-
 /**
+ * THIS CLASS IS RETAINED FOR LEGACY PURPOSES.
+ * This class exists to ensure support and demonstration for older implementations.
+ * <p>
  * A class to generate bigrids (legacy variant).
  * <p>
  * The bigrid is constructed via a composition-based approach using only elementary bigraphs instead of using
@@ -40,7 +41,7 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
  * @author Dominik Grzelak
  */
 @Deprecated
-public class BigridGenerator {
+public class BigridGeneratorOld {
 
     //    private int n = 2, m = 2;
     protected final DefaultDynamicSignature signature;
@@ -59,9 +60,9 @@ public class BigridGenerator {
      * If the signature is {@code null}, the internal bigrid signature is used, see {@link #signature()}.
      *
      * @param signature another signature to be merged with the internal bigrid signature
-     * @see BigridGenerator#signature()
+     * @see BigridGeneratorOld#signature()
      */
-    public BigridGenerator(DefaultDynamicSignature signature) {
+    public BigridGeneratorOld(DefaultDynamicSignature signature) {
         this.signature = BigraphUtil.mergeSignatures(signature(), signature);
         this.linkings = pureLinkings(this.signature);
         this.placings = purePlacings(this.signature);
