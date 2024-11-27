@@ -38,7 +38,7 @@ public class ReactionRuleComposer<R extends ReactionRule<?>> {
     public R parallelProduct(ReactionRule<PureBigraph> left, ReactionRule<PureBigraph> right) throws InvalidReactionRuleException, IncompatibleInterfaceException {
         assertRuleLabelNotEmpty(left.getLabel());
         assertRuleLabelNotEmpty(right.getLabel());
-        assertSeparatorStringNotContainedInRuleLabel(left.getLabel());
+//        assertSeparatorStringNotContainedInRuleLabel(left.getLabel());
         assertSeparatorStringNotContainedInRuleLabel(right.getLabel());
 
         // Redexes
@@ -118,8 +118,9 @@ public class ReactionRuleComposer<R extends ReactionRule<?>> {
     /**
      * When two rules are composed, their labels are also composed.
      * The "separator string" is the intermediate string between these two rule labels.
-     *
+     * <p>
      * {@link ReactionRuleComposer#withSeparator(String)}
+     *
      * @param separator any string used to separate two rule labels
      * @return this instance
      */
