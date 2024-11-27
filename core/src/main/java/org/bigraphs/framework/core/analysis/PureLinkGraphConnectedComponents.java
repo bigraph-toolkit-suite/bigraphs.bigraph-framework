@@ -1,8 +1,6 @@
 package org.bigraphs.framework.core.analysis;
 
-import org.bigraphs.framework.core.AbstractEcoreSignature;
 import org.bigraphs.framework.core.BigraphEntityType;
-import org.bigraphs.framework.core.Control;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.MutableBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
  * The number of connected components is computed as well.
  * <p>
  * This implementation is suited for hypergraphs (i.e., link graphs).
- * See note below for trees and forests.
+ * See the note below for trees and forests.
  * Each hyperedge is treated as a set of vertices that are "unioned" together in the algorithm.
  * <p>
  * Complexity: O(E * α(V)), where E is the number of hyperedges, V is the number of vertices, and α the inverse of
@@ -29,7 +27,7 @@ import java.util.stream.Collectors;
  * Note: A tree is a connected, acyclic graph, which means every pair of nodes in a tree is connected by exactly one path,
  * and there are no cycles.
  * Given these properties, we do not have to handle connected components in trees.
- * For forests, we just need to identify and count each individual tree as a connected component.
+ * For forests, we just need to identify and count each tree as a connected component.
  *
  * @author Dominik Grzelak
  */
@@ -124,10 +122,12 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
 
     /**
      * Get the connected component as disjoint bigraphs. They can be composed from left to right.
-     * Therefore, a linked list is returned that determines the order. Otherwise, the interfaces have to be checked manually.
+     * Therefore, a linked list is returned that determines the order.
+     * Otherwise, the interfaces have to be checked manually.
      * <p>
      * The bigraphs are separated according to the link graph structure.
-     * If the bigraph is just a tree or if there is a single path through all nodes w.r.t. the link graph, then the tree will be returned.
+     * If the bigraph is just a tree, or if there is a single path through all nodes w.r.t.
+     * the link graph, then the tree will be returned.
      * That is, the number of connected components is 1.
      *
      * @return the connected components as bigraphs
@@ -138,20 +138,18 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
         //TODO combine partitions that are only nodes. do matching to extract context + params.
         // so we always get at most 2 components extra if the rest of the graph is not fully connected.
 
-        Supplier<String> edgeLblSupplier;
-        Supplier<String> vertexLabelSupplier;
-        vertexLabelSupplier = vertexLabelSupplier();
-        edgeLblSupplier = edgeLabelSupplier();
+        Supplier<String> edgeLblSupplier = edgeLabelSupplier();
+        Supplier<String> vertexLabelSupplier = vertexLabelSupplier();
         AtomicInteger rootCnt = new AtomicInteger(0);
         AtomicInteger siteCnt = new AtomicInteger(0);
-        Map<BigraphEntity, Integer> bigraphEntityToSiteIndex = new LinkedHashMap<>(); // the bigraph node containing a site
-        Map<BigraphEntity, Integer> bigraphEntityToRootIndex = new LinkedHashMap<>(); // the bigraph node below a root Index
+        Map<BigraphEntity<?>, Integer> bigraphEntityToSiteIndex = new LinkedHashMap<>(); // the bigraph node containing a site
+        Map<BigraphEntity<?>, Integer> bigraphEntityToRootIndex = new LinkedHashMap<>(); // the bigraph node below a root Index
 
         List<PureBigraph> components = new LinkedList<>();
         Map<Integer, List<BigraphEntity<?>>> partitions = getPartitions();
         for (Map.Entry<Integer, List<BigraphEntity<?>>> eachPartition : partitions.entrySet()) {
             HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
-            HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
+            HashMap<String, BigraphEntity.NodeEntity<?>> newNodes = new LinkedHashMap<>();
             HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
             HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
             HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
@@ -167,12 +165,12 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
 
             nodes.forEach(n -> {
                 if (BigraphEntityType.isNode(n)) {
-                    String vLbl = ((BigraphEntity.NodeEntity) n).getName();
+                    String vLbl = ((BigraphEntity.NodeEntity<?>) n).getName();
 
 //                    BigraphEntity newNode = builder.createNewNode(n.getControl(), vLbl);
 //                    newNodes.put(vLbl, (BigraphEntity.NodeEntity) newNode);
                     BigraphEntity newNode = newNodes.computeIfAbsent(vLbl, s -> {
-                        return (BigraphEntity.NodeEntity) builder.createNewNode(n.getControl(), vLbl);
+                        return (BigraphEntity.NodeEntity<?>) builder.createNewNode(n.getControl(), vLbl);
 //                        return newNodes.put(vLbl,  (BigraphEntity.NodeEntity)builder.createNewNode(n.getControl(), vLbl));
                     });
 
@@ -214,12 +212,12 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
             });
 
             // Create the component bigraph
-            PureBigraphBuilder.InstanceParameter meta = builder.new InstanceParameter(
+            PureBigraphBuilder<?>.InstanceParameter meta = builder.new InstanceParameter(
                     builder.getMetaModel(),
                     originalBigraph.getSignature(),
                     newRoots,
                     newSites,
-                    newNodes,
+                    (HashMap)newNodes,
                     newInnerNames, newOuterNames, newEdges);
             builder.reset();
             PureBigraph generated = new PureBigraph(meta);
@@ -228,8 +226,8 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
 
         //TODO: merge components that have the same root index?
 
-        //TODO
-//        assert getUnionFindDataStructure().getCount() == components.size();
+
+        assert getUnionFindDataStructure().getCount() == components.size();
         return components;
     }
 
@@ -365,7 +363,7 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
     }
 
     protected Supplier<String> vertexLabelSupplier() {
-        return new Supplier<String>() {
+        return new Supplier<>() {
             private int id = 0;
 
             @Override
@@ -376,7 +374,7 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
     }
 
     protected Supplier<String> edgeLabelSupplier() {
-        return new Supplier<String>() {
+        return new Supplier<>() {
             private int id = 0;
 
             @Override
