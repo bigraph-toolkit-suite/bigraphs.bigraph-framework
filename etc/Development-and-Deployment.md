@@ -1,6 +1,6 @@
 # Development Guidelines
 
-This section gives some guidelines about the active development, documentation and deployment process and can be regarded as a soft version of a more comprehensive "Code of Conduct".
+This section gives some guidelines about the development, documentation and deployment process.
 
 ## Technical Standards and Best Practices
 
@@ -146,7 +146,7 @@ sudo apt install gnupg2
 ```
 
 and the GPG credentials being available e.g. from `settings.xml` (see [here](https://central.sonatype.org/publish/publish-maven/)).
-In `settings.xml` should be a profile and server configuration both with the `<id>ossrh</id>`.
+In `settings.xml` should be a `<profile/>` and `<server/>` configuration both with the `<id>ossrh</id>`.
 
 More information can be found [here](https://central.sonatype.org/publish/requirements/gpg/).
 
