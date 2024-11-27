@@ -1,7 +1,7 @@
 package org.bigraphs.framework.simulation.examples;
 
-import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
-import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
+import org.bigraphs.framework.converter.bigrapher.BigrapherTransformator;
+import org.bigraphs.framework.converter.dot.DOTReactionGraphExporter;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -102,7 +103,6 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         reactiveSystem.addReactionRule(append);
         reactiveSystem.addReactionRule(returnRR);
 
-
         //TODO
         //attributes would make the "value check" simpler
 
@@ -112,20 +112,40 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
                 modOpts);
 //        modelChecker.setReactiveSystemListener(this);
-        long start= System.nanoTime();
+        long start = System.nanoTime();
         modelChecker.execute();
         long diff = System.nanoTime() - start;
         System.out.println(diff);
-
 
         //states=51, transitions=80
         System.out.println("Edges: " + modelChecker.getReactionGraph().getGraph().edgeSet().size());
         System.out.println("Vertices: " + modelChecker.getReactionGraph().getGraph().vertexSet().size());
 
+        DOTReactionGraphExporter exporter = new DOTReactionGraphExporter();
+        String dotFile = exporter.toString(modelChecker.getReactionGraph());
+        System.out.println(dotFile);
+        exporter.toOutputStream(modelChecker.getReactionGraph(), new FileOutputStream(TARGET_DUMP_PATH + "reaction_graph.dot"));
+
 //        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
 //        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
 //        System.out.println(pathsToLeaves.size());
+    }
 
+    @Test
+    void exportBigrapher() throws Exception {
+        PureBigraph agent = createAgent(); //specify the number of processes here
+        ReactionRule<PureBigraph> nextRR = nextRR();
+        ReactionRule<PureBigraph> append = appendRR();
+        ReactionRule<PureBigraph> returnRR = returnRR();
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        reactiveSystem.setAgent(agent);
+        reactiveSystem.addReactionRule(nextRR);
+        reactiveSystem.addReactionRule(append);
+        reactiveSystem.addReactionRule(returnRR);
+
+        BigrapherTransformator encoder = new BigrapherTransformator();
+        String export = encoder.toString(reactiveSystem);
+        System.out.println(export);
     }
 
     private ModelCheckingOptions setUpSimOpts() {
@@ -140,10 +160,11 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                                .setReactionGraphFile(new File(completePath.toUri()))
-                                .setPrintCanonicalStateLabel(false)
-//                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                                .create()
+                        .setReactionGraphFile(new File(completePath.toUri()))
+                        .setPrintCanonicalStateLabel(false)
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .create()
                 )
         ;
         return opts;
@@ -264,7 +285,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 //        Bigraph encodedReactum = encoder.encode(reactum, encodedRedex.getSignature());
 //        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedReactum, 0, 1, 2, 3, 4);
 
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("next");
         return rr;
     }
 
@@ -318,7 +339,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 //        Bigraph encodedReactum = encoder.encode(reactum, encodedRedex.getSignature());
 //        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedReactum, 0, 1, 2);
 
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("append");
         return rr;
     }
 
@@ -356,15 +377,17 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 
         PureBigraph redex = builderRedex.createBigraph();
         PureBigraph reactum = builderReactum.createBigraph();
+
+
         eb(redex, "return_1");
         eb(reactum, "return_2");
-        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
-        Bigraph encodedRedex = encoder.encode(redex);
-        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-        PureBigraph decode = decoder.decode(encodedRedex, redex.getSignature());
-        eb(decode, "return_decoded_1");
+//        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+//        Bigraph encodedRedex = encoder.encode(redex);
+//        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+//        PureBigraph decode = decoder.decode(encodedRedex, redex.getSignature());
+//        eb(decode, "return_decoded_1");
 //        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedRedex, 0, 1, 2);
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("return");
         return rr;
     }
 
@@ -391,27 +414,4 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         return defaultBuilder.create();
     }
-
-//    private DefaultDynamicSignature createSignature() {
-//        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-//        defaultBuilder
-//                .addControl("appendcontrol", 2)
-//                .addControl("append", 2)
-//                .newControl().identifier(StringTypedName.of("Root")).arity(FiniteOrdinal.ofInteger(2)).assign() // as much as we callers have
-//                .newControl().identifier(StringTypedName.of("list")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("this")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
-////                .newControl().identifier(StringTypedName.of("thisRefCurrent")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("thisRef")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("Node")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("void")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("val")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("i1")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("i2")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("i3")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("i4")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("i5")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("next")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//        ;
-//        return defaultBuilder.create();
-//    }
 }
