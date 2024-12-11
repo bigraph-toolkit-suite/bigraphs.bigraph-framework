@@ -4,7 +4,7 @@
 
 | Branch  | Latest Versions       | Status       |
 |---------|-----------------------|--------------|
-| Main    | 2.0.0 / 1.1.0 / 1.0.0 | Releases     |
+| Main    | 2.0.1 / 1.1.0 / 1.0.0 | Releases     |
 | Develop | 3.0.0-SNAPSHOT        | Experimental |
 
 - User Manual: https://bigraphs.org/products/bigraph-framework/docs/
@@ -34,7 +34,7 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
   - PNG, JPG, ...
   - Interactive visualization UI via GraphStream
   - Visualization of Compiler Graphs (VCG) format via yComp
-- Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules 
+- Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
   - Bigraph matching and rewriting via jLibBig
   - Generation of a labeled transition system (LTS)
   - Simulation and Model Checking (BFS, Random)
@@ -69,22 +69,22 @@ To following usage assumes the import statement `import static org.bigraphs.fram
 ```java
 // create the signature
 DefaultDynamicSignature signature = pureSignatureBuilder()
-    .newControl("A", 0).assign() // straightforward access
-    // two other ways (more verbose):
-    .newControl(StringTypedName.of("C"), FiniteOrdinal.ofInteger(1)).assign() 
-    .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlKind.ATOMIC).assign()
-    .create();
+                .newControl("A", 0).assign() // straightforward access
+                // two other ways (more verbose):
+                .newControl(StringTypedName.of("C"), FiniteOrdinal.ofInteger(1)).assign()
+                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlKind.ATOMIC).assign()
+                .create();
 
 // create two bigraphs
 PureBigraph bigraph1 = pureBuilder(signature)
-    .createRoot()
-    .addChild("A").addChild("C")
-    .createBigraph();
+        .createRoot()
+        .addChild("A").addChild("C")
+        .createBigraph();
 
 PureBigraph bigraph2 = pureBuilder(signature)
-    // "User" is the control, "alice" is an outer name     
-    .createRoot().addChild("User", "alice").addSite()
-    .createBigraph();
+        // "User" is the control, "alice" is an outer name     
+        .createRoot().addChild("User", "alice").addSite()
+        .createBigraph();
 
 // compose two bigraphs
 BigraphComposite composite = ops(bigraph2).compose(bigraph1);
@@ -103,7 +103,7 @@ The following one shows, how to create nodes, and at the same time connecting th
 PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
 builder.createRoot().connectByEdge(
     "Job",
-    "Job",
+            "Job",
     signature.getControlByName("Job")
 );
 ```
@@ -128,10 +128,10 @@ builder.closeInnerName(tmp_link);
 ```java
 PureBigraph bigraph = ...;
 // Writes a bigraph to the filesystem
-BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream("./meta-model.ecore"));
-BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, new FileOutputStream("./instance-model.xmi"));
+        BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream("./meta-model.ecore"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, new FileOutputStream("./instance-model.xmi"));
 // prints bigraph on the console
-BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
+        BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, System.out);
 ```
 
 See the reference and documentation for a more comprehensive overview.
@@ -154,30 +154,30 @@ composite.juxtapose(F).parallelProduct(H);
 
 ```xml
 <dependencies>
-    <!-- the core module -->
-    <dependency>
-      <groupId>org.bigraphs.framework</groupId>
-      <artifactId>bigraph-core</artifactId>
-      <version>${version}</version>
-    </dependency>
-    <!-- the rewriting module -->
-    <dependency>
-      <groupId>org.bigraphs.framework</groupId>
-      <artifactId>bigraph-simulation</artifactId>
-      <version>${version}</version>
-    </dependency>
-    <!-- the visualization module -->
-    <dependency>
-      <groupId>org.bigraphs.framework</groupId>
-      <artifactId>bigraph-visualization</artifactId>
-      <version>${version}</version>
-    </dependency>
-    <!-- the converter module -->
-    <dependency>
-      <groupId>org.bigraphs.framework</groupId>
-      <artifactId>bigraph-converter</artifactId>
-      <version>${version}</version>
-    </dependency>
+  <!-- the core module -->
+  <dependency>
+    <groupId>org.bigraphs.framework</groupId>
+    <artifactId>bigraph-core</artifactId>
+    <version>${version}</version>
+  </dependency>
+  <!-- the rewriting module -->
+  <dependency>
+    <groupId>org.bigraphs.framework</groupId>
+    <artifactId>bigraph-simulation</artifactId>
+    <version>${version}</version>
+  </dependency>
+  <!-- the visualization module -->
+  <dependency>
+    <groupId>org.bigraphs.framework</groupId>
+    <artifactId>bigraph-visualization</artifactId>
+    <version>${version}</version>
+  </dependency>
+  <!-- the converter module -->
+  <dependency>
+    <groupId>org.bigraphs.framework</groupId>
+    <artifactId>bigraph-converter</artifactId>
+    <version>${version}</version>
+  </dependency>
 </dependencies>
 ```
 
@@ -187,11 +187,11 @@ SNAPSHOT releases are deployed [here](https://s01.oss.sonatype.org/content/repos
 To resolve them, the following remote repository must be configured in your `pom.xml`:
 ```xml
 <repository>
-    <snapshots>
-        <enabled>true</enabled>
-    </snapshots>
-    <id>ossrh</id>
-    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+  <snapshots>
+    <enabled>true</enabled>
+  </snapshots>
+  <id>ossrh</id>
+  <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 </repository>
 ```
 
