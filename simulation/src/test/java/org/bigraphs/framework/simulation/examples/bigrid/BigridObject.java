@@ -3,7 +3,6 @@ package org.bigraphs.framework.simulation.examples.bigrid;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphComposite;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
-import org.bigraphs.framework.core.alg.generators.BigridGenerator;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.elementary.Placings;
@@ -27,11 +26,11 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 public class BigridObject {
     String basePath = "/home/dominik/git/BigraphFramework/simulation/src/test/resources/dump/bigrid/circular/";
 
-    BigridGenerator generator;
+    BigridGeneratorOld generator;
     DefaultDynamicSignature signature;
     PureBigraph bigraph;
     PureBigraph groundBigraph;
-    BigridGenerator.DiscreteIons discreteIons;
+    BigridGeneratorOld.DiscreteIons discreteIons;
     int numOfCols = 3, numOfRows = 3;
 
     public BigridObject(DefaultDynamicSignature signature) throws Exception {
@@ -41,10 +40,10 @@ public class BigridObject {
     public BigridObject(DefaultDynamicSignature signature, int numOfCols, int numOfRows) throws Exception {
         this.numOfCols = numOfCols;
         this.numOfRows = numOfRows;
-        this.generator = new BigridGenerator(signature);
+        this.generator = new BigridGeneratorOld(signature);
         bigraph = generator.generate(numOfRows, numOfCols);
         this.signature = bigraph.getSignature();
-        discreteIons = new BigridGenerator.DiscreteIons(this.signature);
+        discreteIons = new BigridGeneratorOld.DiscreteIons(this.signature);
 
         Bigraph tmp = pureBuilder(getSignature()).createRoot()
                 .addSite().createBigraph();
@@ -176,7 +175,7 @@ public class BigridObject {
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
-    public List<ReactionRule<PureBigraph>> constructRule(BigridGenerator.DiscreteIons.NodeType from, BigridGenerator.DiscreteIons.NodeType to) throws Exception {
+    public List<ReactionRule<PureBigraph>> constructRule(BigridGeneratorOld.DiscreteIons.NodeType from, BigridGeneratorOld.DiscreteIons.NodeType to) throws Exception {
         List<PureBigraph> rSet = metaRule(from, to);
         if (rSet.size() > 1) {
             List<ReactionRule<PureBigraph>> reactionRules = new ArrayList<>();
@@ -231,12 +230,12 @@ public class BigridObject {
         }
     }
 
-    public BigridGenerator getGenerator() {
+    public BigridGeneratorOld getGenerator() {
         return generator;
     }
 
-    public List<PureBigraph> metaRule(BigridGenerator.DiscreteIons.NodeType nt1, BigridGenerator.DiscreteIons.NodeType nt2) throws Exception {
-        if (nt1.equals(nt2) && nt1.equals(BigridGenerator.DiscreteIons.NodeType.CENTER)) {
+    public List<PureBigraph> metaRule(BigridGeneratorOld.DiscreteIons.NodeType nt1, BigridGeneratorOld.DiscreteIons.NodeType nt2) throws Exception {
+        if (nt1.equals(nt2) && nt1.equals(BigridGeneratorOld.DiscreteIons.NodeType.CENTER)) {
             return metaRuleCenter();
         } else {
             PureBigraph bnt1 = discreteIons.createByType(nt1);
@@ -258,7 +257,7 @@ public class BigridObject {
     }
 
     public List<PureBigraph> metaRuleCenter() throws Exception {
-        BigridGenerator.DiscreteIons.NodeType nt = BigridGenerator.DiscreteIons.NodeType.CENTER;
+        BigridGeneratorOld.DiscreteIons.NodeType nt = BigridGeneratorOld.DiscreteIons.NodeType.CENTER;
         PureBigraph bnt1 = discreteIons.createByType(nt);
         PureBigraph bnt2 = discreteIons.createByType(nt);
 
@@ -321,9 +320,9 @@ public class BigridObject {
         return bigraphs;
     }
 
-    private Pair<Optional<Bigraph>, Optional<Bigraph>> createSuitableWirings(BigridGenerator.DiscreteIons.NodeType nt1,
+    private Pair<Optional<Bigraph>, Optional<Bigraph>> createSuitableWirings(BigridGeneratorOld.DiscreteIons.NodeType nt1,
                                                                              PureBigraph bNt1,
-                                                                             BigridGenerator.DiscreteIons.NodeType nt2,
+                                                                             BigridGeneratorOld.DiscreteIons.NodeType nt2,
                                                                              PureBigraph bNt2) {
 
         try {

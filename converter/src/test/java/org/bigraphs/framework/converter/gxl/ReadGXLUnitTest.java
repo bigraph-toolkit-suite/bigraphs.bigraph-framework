@@ -33,7 +33,7 @@ public class ReadGXLUnitTest {
         // set the URL where the default implementation 1 is located
         GXLConverterAPI.setImplementationURL(null);
         // set the package name of the default implementation 1
-        GXLConverterAPI.setPackageName("de.tudresden.inf.st.bigraphs.converter.gcf.DefaultImpl1");
+        GXLConverterAPI.setPackageName("org.bigraphs.framework.converter.gcf.DefaultImpl1");
         // IMPORTANT : 1st create the GCF.GXLConnector...
         GXLConverterAPI.createConnector(GXLConverterAPI.CONNECTOR);
         // ...and then the GCF.GXLDocumentHandler !!!

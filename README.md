@@ -1,50 +1,59 @@
-<img src="./etc/bigraph-framework-logo.png" style="zoom:67%;" />
+<img src="etc/assets/bigraph-framework-logo.png" style="zoom:67%;" />
 
 # Bigraph Framework
 
-| Branch  | Latest Versions                                  | Status       |
-|---------|--------------------------------------------------|--------------|
-| Main    | 1.1.0 / 1.0.0 / 0.9.6                            | Releases     |
-| Develop | 2.0.0-SNAPSHOT / 1.1.0-SNAPSHOT / 1.0.0-SNAPSHOT | Experimental |
+| Branch  | Latest Versions       | Status       |
+|---------|-----------------------|--------------|
+| Main    | 2.0.0 / 1.1.0 / 1.0.0 | Releases     |
+| Develop | 3.0.0-SNAPSHOT        | Experimental |
+
+- User Manual: https://bigraphs.org/products/bigraph-framework/docs/
+
+- JavaDoc: https://bigraphs.org/products/bigraph-framework/apidocs/
 
 ----
 
-A framework for the creation and simulation of bigraphs to expedite the experimental evaluation of the bigraph theory in
+**What is Bigraph Framework?**
+
+Bigraph Framework is a framework
+written in Java for the creation and simulation of bigraphs
+to expedite the experimental evaluation of the bigraph theory in
 real-world applications.
 
 The goal of this framework is to facilitate the implementation of context-aware and agent-based systems, and reactive systems in general.
 It provides means for model-driven software development based on the bigraph theory.
-The high-level API eases the programming of bigraphical systems for real-world application.
+The high-level Java API eases the programming of bigraphical systems for real-world application.
 
 **Features**
 
-- Dynamic creation of bigraphs at design time and runtime based on an [EMOF-based metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
-- Read and write the meta and instance model of a bigraph from and to the file system
+- Modelling and Storage
+  - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
+  - Read and write instance models and metamodels of a bigraph from and to the file system
 - Visualization
   - Graphical export via GraphViz/DOT
   - PNG, JPG, ...
   - Interactive visualization UI via GraphStream
   - Visualization of Compiler Graphs (VCG) format via yComp
-- Bigraphical Reactive System support: Simulate the evolution of bigraphs by reaction rules
+- Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules 
   - Bigraph matching and rewriting via jLibBig
-  - Synthesisation of a labeled transition system (LTS)
+  - Generation of a labeled transition system (LTS)
   - Simulation and Model Checking (BFS, Random)
   - Predicate checking, logical connectors, LTL
-  - Specify order of reaction rules
+  - Specify order of reaction rules via priorities
   - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
   - Tracking rules (a rule can be assigned a tracking map)
-- Model transformation / Conversions
-  - Export to common graph formats, e.g., DOT, GraphML, GXL, VCG
-  - Export to formats of other bigraph tools: BigMC, BigraphER, and BigRed
+- Model Transformations
+  - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
+  - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
   - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
   - Add arbitrary attributes to nodes
-  - Attributes are preserved when doing rewriting
+  - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 **Requirements**
-- Java 17
+- Java >=17
   - (!) _not_ the headless version of the JDK (!)
-- Graphviz
+- Graphviz for the visualization module
   - Ubuntu 20.04/22.04: `sudo apt install graphviz`
 
 ## Getting Started
@@ -221,9 +230,7 @@ Depending on your project setup, you may need to include the following libraries
 
 The example above shows how to use log4j2 in your project as the underlying logging framework.
 
-## Details
-
-### Modules
+## Module Details
 
 A brief description of each module's purpose is given below.
 
@@ -233,12 +240,12 @@ Provides builders, factories and interfaces to create concrete bigraphs and elem
 
 Concrete Bigraphs and their metamodel (with the signature only) can be written/loaded to/from the file system.
 
-#### bigraph-simulation
+### bigraph-simulation
 
 Simulate bigraphs by creating bigraphical reactive systems, reaction rules and agents.
 Check a system according to some specification by defining various types of predicates.
 
-#### bigraph-visualization
+### bigraph-visualization
 
 Provides simple means to export bigraphs and transition systems as graphic files.
 
@@ -249,22 +256,12 @@ Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as
 In order to use the functionality of the visualization module, the following tools must be installed on the machine:
 - Graphviz: `apt install -y graphviz`
 
-#### bigraph-converter
+### bigraph-converter
 
 Provides several ways to convert bigraphs into other representations.
 For example, bigraphs to GraphML format, BigraphER's specification language or BigMC's term language.
 
-<!-- ### Reaction Graph / Transition System -->
-
-<!-- TODO: some details about the algorithm -->
-
-<!-- ### Bigraph Matching -->
-
-<!-- TODO: outline algorithm -->
-
-### Bigraph Metamodel
-
-**User-Friendly API**
+### A User-Friendly API for the Bigraph Ecore Metamodel
 
 - Internally, bigraphs are described by a metamodel based on Ecore.
   The project can be found in this [GitHub repository](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel).
@@ -286,17 +283,15 @@ For example, bigraphs to GraphML format, BigraphER's specification language or B
   The Bigraph Framework adds specific behavior superimposed upon this meta
   model. Meaning, the implementation-specific details are kept out from the metamodel.
 
-## Build Configuration
+## Development: Build Configuration
 
 It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper) or the regular `mvn` command.
-In this case, **JDK 17** is needed.
+In this case, **JDK >=17** is needed.
 
-> **Note:** The required version of Maven is 3.8.3 and Java JDK 17.
+> **Note:** The required version of Maven is 3.8.3 and Java JDK >=17.
 
 The recommendation here is to build it with the regular `mvn` command.
 You will need [Maven v3.8.3 or above](https://maven.apache.org/install.html).
-
-> **Tip:** A script called `install-maven.sh` can be found in the `./etc/ci/` folder to automatically install Maven 3.9.5.
 
 ### Building the Framework from Source
 
@@ -328,19 +323,22 @@ Therefore, see [Maven configuration](#maven-configuration) on how to include the
 
 ### Building the Documentation: User Manual
 
-Building the documentation builds also the project without running tests.
-
 See [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details.
 
-After running the build command as described above, the generated user manual will be available
-at `documentation/v2-docusaurus/` by calling `npm run start`:
+Building the documentation builds also the project without running tests.
+After running the commands as described below from the root of this project, the generated user manual will be available
+at `documentation/v2-docusaurus/`:
 
 ```shell
+mvn clean package -DskipTests
 cd ./documentation/v2-docusaurus/
 npm run start
 ```
 
-The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system (see [Development-and-Deployment.md](etc/Development-and-Deployment.md) for further instructions).
+Then, open the browser at `http://localhost:3000/products/bigraph-framework/`.
+
+The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system
+(see [Development-and-Deployment.md](etc/Development-and-Deployment.md)).
 
 ### Further Development and Deployment Instructions
 
@@ -356,7 +354,7 @@ mvn clean deploy -DskipTests -P release,ossrh
 **Bigraph Framework** is Open Source software released under the Apache 2.0 license.
 
 ```text
-   Copyright 2023-present Dominik Grzelak
+   Copyright 2021-present Dominik Grzelak
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

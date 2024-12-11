@@ -5,7 +5,7 @@
 
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>1.1.0</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
@@ -25,55 +25,18 @@
         <license>
             <name>The Apache License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <comments>Applies to Bigraph Framework</comments>
+            <comments>License of Bigraph Framework.</comments>
         </license>
         <license>
             <name>GNU Lesser General Public License, version 2.1</name>
             <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
             <comments>
-                jLibBig is a Java library for bigraphs and bigraphical reactive systems and used by the simulation
-                module of Bigraph Framework.
+                License of jLibBig.
+                jLibBig is a modified Java library for bigraphs and bigraphical reactive systems
+                and used by the simulation module of Bigraph Framework.
             </comments>
         </license>
     </licenses>
-
-
-
-    <properties>
-        <project.type>multi</project.type>
-        <java.version>17</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.compiler.release>${java.version}</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <skip.security.check>true</skip.security.check>
-        <!-- For documentation -->
-        <doclint>none</doclint>
-        <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs
-        </project.usermanual.outputDirectory>
-        <!-- Versions -->
-        <bigraph.metamodel.version>1.6.1-SNAPSHOT</bigraph.metamodel.version>
-        <emf.common.version>2.23.0</emf.common.version>
-        <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
-        <emf.ecore.version>2.25.0</emf.ecore.version>
-        <emf.codegen.version>2.22.0</emf.codegen.version>
-        <!-- Should match with the version in Spring Data CDO -->
-        <emf.cdo.version>4.20.0-SNAPSHOT</emf.cdo.version><!--4.20.0.v20221124-1637-->
-        <!-- Should match with the version in Spring Data CDO -->
-        <emf.cdo.common.version>4.20.0-SNAPSHOT</emf.cdo.common.version><!--4.20.0.v20221106-0628-->
-        <!-- Should match with the version in Spring Data CDO -->
-        <eclipse.core.runtime.version>3.26.100</eclipse.core.runtime.version>
-        <eclipse.collections.version>11.1.0</eclipse.collections.version>
-        <guava.version>31.1-jre</guava.version>
-        <jgrapht.version>1.5.1</jgrapht.version>
-        <junit.version>5.4.0</junit.version>
-        <log4j.version>1.7.30</log4j.version>
-        <!--        <graphviz.version>0.17.1</graphviz.version>-->
-        <graphviz.version>0.18.1</graphviz.version>
-        <graphstream.version>2.0</graphstream.version>
-        <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
-    </properties>
 
     <developers>
         <developer>
@@ -125,24 +88,58 @@
         </repository>
     </repositories>
 
+    <properties>
+        <project.type>multi</project.type>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <skip.security.check>true</skip.security.check>
+        <!-- For documentation -->
+        <doclint>none</doclint>
+        <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs</project.usermanual.outputDirectory>
+        <!-- Versions -->
+        <bigraph.metamodel.version>2.0.0</bigraph.metamodel.version>
+        <emf.ecore.version>2.38.0</emf.ecore.version>
+        <emf.ecore.xmi.version>2.38.0</emf.ecore.xmi.version>
+        <emf.common.version>2.40.0</emf.common.version>
+        <emf.codegen.version>2.22.0</emf.codegen.version>
+        <!-- Should match with the version in Spring Data CDO + Bigraph Ecore Metamodel -->
+        <emf.cdo.version>4.20.0-SNAPSHOT</emf.cdo.version><!--4.20.0.v20221124-1637-->
+        <!-- Should match with the version in Spring Data CDO + Bigraph Ecore Metamodel -->
+        <emf.cdo.common.version>4.20.0-SNAPSHOT</emf.cdo.common.version><!--4.20.0.v20221106-0628-->
+        <!-- Should match with the version in Spring Data CDO -->
+        <eclipse.core.runtime.version>3.26.100</eclipse.core.runtime.version>
+        <eclipse.collections.version>11.1.0</eclipse.collections.version>
+        <guava.version>31.1-jre</guava.version>
+        <jgrapht.version>1.5.1</jgrapht.version>
+        <junit.version>5.6.2</junit.version>
+        <log4j.version>1.7.30</log4j.version>
+        <graphviz.version>0.18.1</graphviz.version>
+        <graphstream.version>2.0</graphstream.version>
+        <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
+    </properties>
+
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.eclipse.tycho</groupId>
                     <artifactId>tycho-maven-plugin</artifactId>
-                    <version>1.7.0</version>
+                    <version>4.0.8</version>
                     <extensions>true</extensions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
@@ -151,22 +148,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.1.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.13</version>
+                    <version>1.7.0</version>
                     <extensions>true</extensions>
                     <configuration>
                         <serverId>ossrh</serverId>
@@ -181,36 +178,27 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.8.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.3.0</version>
-                    <!--                    <configuration>-->
-                    <!--                        <archive>-->
-                    <!--                            <addMavenDescriptor>true</addMavenDescriptor>-->
-                    <!--                            <manifest>-->
-                    <!--                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>-->
-                    <!--                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
-                    <!--                            </manifest>-->
-                    <!--                        </archive>-->
-                    <!--                    </configuration>-->
+                    <version>3.4.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.7.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -220,12 +208,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.1.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.6.0</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
@@ -239,30 +227,30 @@
                         </execution>
                     </executions>
                 </plugin>
-<!--                <plugin>-->
-<!--                    <groupId>org.owasp</groupId>-->
-<!--                    <artifactId>dependency-check-maven</artifactId>-->
-<!--                    <version>8.4.2</version>-->
-<!--                    <configuration>-->
-<!--                        <excludes>-->
-<!--                            <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>-->
-<!--                            <exclude>org.apache.bcel:bcel</exclude>-->
-<!--                            &lt;!&ndash;                            <exclude>org.eclipse.emf:org.eclipse.emf.codegen</exclude>&ndash;&gt;-->
-<!--                            &lt;!&ndash;                            <exclude>com.google.guava:guava</exclude>&ndash;&gt;-->
-<!--                        </excludes>-->
-<!--                        &lt;!&ndash; fail the build for CVSS greater than or equal to 8 &ndash;&gt;-->
-<!--                        <failBuildOnCVSS>10</failBuildOnCVSS>-->
-<!--                        <skipProvidedScope>true</skipProvidedScope>-->
-<!--                        <skipRuntimeScope>true</skipRuntimeScope>-->
-<!--                    </configuration>-->
-<!--                    <executions>-->
-<!--                        <execution>-->
-<!--                            <goals>-->
-<!--                                <goal>check</goal>-->
-<!--                            </goals>-->
-<!--                        </execution>-->
-<!--                    </executions>-->
-<!--                </plugin>-->
+                <!--                <plugin>-->
+                <!--                    <groupId>org.owasp</groupId>-->
+                <!--                    <artifactId>dependency-check-maven</artifactId>-->
+                <!--                    <version>8.4.2</version>-->
+                <!--                    <configuration>-->
+                <!--                        <excludes>-->
+                <!--                            <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>-->
+                <!--                            <exclude>org.apache.bcel:bcel</exclude>-->
+                <!--                            &lt;!&ndash;                            <exclude>org.eclipse.emf:org.eclipse.emf.codegen</exclude>&ndash;&gt;-->
+                <!--                            &lt;!&ndash;                            <exclude>com.google.guava:guava</exclude>&ndash;&gt;-->
+                <!--                        </excludes>-->
+                <!--                        &lt;!&ndash; fail the build for CVSS greater than or equal to 8 &ndash;&gt;-->
+                <!--                        <failBuildOnCVSS>10</failBuildOnCVSS>-->
+                <!--                        <skipProvidedScope>true</skipProvidedScope>-->
+                <!--                        <skipRuntimeScope>true</skipRuntimeScope>-->
+                <!--                    </configuration>-->
+                <!--                    <executions>-->
+                <!--                        <execution>-->
+                <!--                            <goals>-->
+                <!--                                <goal>check</goal>-->
+                <!--                            </goals>-->
+                <!--                        </execution>-->
+                <!--                    </executions>-->
+                <!--                </plugin>-->
             </plugins>
         </pluginManagement>
         <plugins>
@@ -295,10 +283,9 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <!--                            <additionalJOptions>&#45;&#45;allow-script-in-comments</additionalJOptions>-->
                             <!-- all, none, html-->
                             <doclint>${doclint}</doclint>
-                            <!--                            <excludePackageNames>org.springframework.*</excludePackageNames>-->
+                            <!-- <excludePackageNames>org.springframework.*</excludePackageNames>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -391,6 +378,21 @@
                             <groupId>org.eclipse.emf.compare</groupId>
                             <artifactId>org.eclipse.emf.compare</artifactId>
                             <version>3.5.3.201911051515</version>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-libs-bighuggies-bisimulation</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/etc/libs/bighuggies-bisimulation-1.0-SNAPSHOT.jar</file>
+                            <groupId>bighuggies</groupId>
+                            <artifactId>bisimulation</artifactId>
+                            <version>1.0-SNAPSHOT</version>
                             <generatePom>true</generatePom>
                             <packaging>jar</packaging>
                         </configuration>
@@ -594,6 +596,11 @@
                 <version>${jgrapht.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.jgrapht</groupId>
+                <artifactId>jgrapht-io</artifactId>
+                <version>${jgrapht.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>guru.nidi</groupId>
                 <artifactId>graphviz-java-all-j2v8</artifactId>
                 <version>${graphviz.version}</version>
@@ -633,6 +640,12 @@
                 <groupId>it.uniud.mads.jlibbig</groupId>
                 <artifactId>jlibbig</artifactId>
                 <version>0.0.4</version>
+            </dependency>
+            <!-- This dependency is installed in the local Maven repository from the ./etc/libs/ folder -->
+            <dependency>
+                <groupId>bighuggies</groupId>
+                <artifactId>bisimulation</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
             <!-- Logging -->
             <dependency>
@@ -686,9 +699,8 @@
 
     <profiles>
         <!-- ************************************************************ -->
-        <!-- Profile for building a fat jar (containing every dependency) -->
+        <!-- Profile for Building a Fat Jar (containing every dependency) -->
         <!-- ************************************************************ -->
-
         <profile>
             <id>fatJar</id>
             <activation>
@@ -800,8 +812,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.usermanual.outputDirectory}
-                                    </outputDirectory>
+                                    <outputDirectory>${project.usermanual.outputDirectory}</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${basedir}/../target/site/apidocs</directory>

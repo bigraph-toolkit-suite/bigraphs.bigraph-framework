@@ -6,7 +6,7 @@ sidebar_position: 5
 
 ## Converting a Bigraph to GraphML
 
-The _GraphML_ file format allows to represent arbitrary graphs in a XML-based structure.
+The _GraphML_ file format allows representing arbitrary graphs in an XML-based structure.
 More about _GraphML_ can be found on the official website [http://graphml.graphdrawing.org/](http://graphml.graphdrawing.org/).
 An easy start into the file format provides the [GraphML Primer](http://graphml.graphdrawing.org/primer/graphml-primer.html).
 
@@ -107,7 +107,7 @@ The encoded bigraph in _GraphML_ is shown below.
 </graphml>
 ```
 
-### To OutputStream
+### As OutputStream
 
 ```java
 PureBigraph pureBigraph = ...;
@@ -117,8 +117,9 @@ graphMLPrettyPrinter.toOutputStream(pureBigraph, System.out);
 
 ## Validation
 
-The syntax of GraphML is defined by the _GraphML Schema_.
-The XML schema of _GraphML_ is provided with _Bigraph Framework_ and supports syntax validation of the encoded bigraph.
+The GraphML Schema defines the syntax of _GraphML_.
+The XML schema of _GraphML_ is provided with **Bigraph Framework**
+and supports syntax validation of the encoded bigraph.
 
 An example is shown in the listing below.
 

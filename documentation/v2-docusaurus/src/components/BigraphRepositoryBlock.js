@@ -58,7 +58,7 @@ export default function BigraphRepositoryBlock() {
                     <div className={clsx('col col--2 text--center')}>
                         <img src={require('../../static/img/icon-remote-repository.png').default}/>
                         <p>
-                            Repository Setup for SNAPSHOT Releases Only
+                            (Repository Setup) <br/> Only for SNAPSHOT Releases
                         </p>
                     </div>
                     <div className={clsx('col col--5')}>

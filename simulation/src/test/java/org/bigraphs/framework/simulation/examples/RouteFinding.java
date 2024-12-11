@@ -96,17 +96,20 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
+                .doMeasureTime(true)
+                .setReactionGraphWithCycles(false)
                 .and(transitionOpts()
                         .setMaximumTransitions(150)
                         .setMaximumTime(60)
                         .allowReducibleClasses(false)
                         .create()
                 )
-                .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+//                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.XMI))
+//                        .disableAllFormats()
                         .create()
                 )
         ;
@@ -125,6 +128,26 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         modelChecker.execute();
         assertTrue(Files.exists(completePath));
         assertTrue(carArrivedAtTarget);
+
+//        List<BMatchResult<PureBigraph>> rr11 = modelChecker.getReactionGraph().getTransitionMap().get("r0");
+//        PureBigraphParametricMatch pureMatch = (PureBigraphParametricMatch) rr11.get(0).getMatch();
+//
+//        if(pureMatch.wasRewritten()) {
+//            PureBigraph param = pureMatch.getParam();
+//            PureBigraph ctx = pureMatch.getContext();
+//            PureBigraph rdxImg = pureMatch.getRedexImage();
+//            BigraphGraphvizExporter.toPNG(param, true, new File("paramRewritten.png"));
+//            BigraphGraphvizExporter.toPNG(ctx, true, new File("ctxRewritten.png"));
+//            BigraphGraphvizExporter.toPNG(rdxImg, true, new File("rdxImgRewritten.png"));
+//        }
+//
+//        it.uniud.mads.jlibbig.core.std.Bigraph param = (pureMatch).getJLibMatchResult().getParam().clone();
+//        System.out.println(param);
+//        BigraphGraphvizExporter.toPNG(new JLibBigBigraphDecoder().decode(param), true, new File("decoded.png"));
+//        Bigraph context = (pureMatch).getJLibMatchResult().getContext();
+//        BigraphGraphvizExporter.toPNG(new JLibBigBigraphDecoder().decode(context), true, new File("context-decoded.png"));
+//        Bigraph redexImage = (pureMatch).getJLibMatchResult().getRedexImage();
+//        BigraphGraphvizExporter.toPNG(new JLibBigBigraphDecoder().decode(redexImage), true, new File("redexImage-decoded.png"));
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {

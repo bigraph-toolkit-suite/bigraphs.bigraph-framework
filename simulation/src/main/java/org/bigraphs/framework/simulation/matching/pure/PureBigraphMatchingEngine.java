@@ -59,8 +59,6 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
     @Override
     public List<PureBigraphParametricMatch> getMatches() {
-//        redexAdapter.clearCache();
-//        agentAdapter.clearCache();
         return matches;
     }
 
@@ -91,13 +89,13 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             neededParam[j] = true;
             prms[i] = j;
         }
-//        jLibMatchIterator = agentMatcher.match(jLibAgent, jLibRedex, neededParam);
-        jLibMatchIterator = agentMatcher.match(jLibAgent, jLibRedex);
+        jLibMatchIterator = agentMatcher.match(jLibAgent, jLibRedex, neededParam);
+//        jLibMatchIterator = agentMatcher.match(jLibAgent, jLibRedex);
 
         hasMatched = true;
 
 //        logger.debug("Number of hits (matches): {}", totalHits.get());
-        logger.debug("Were all matches found?: {}", hasMatched());
+        logger.debug("Matches found?: {}", hasMatched());
     }
 
     /**

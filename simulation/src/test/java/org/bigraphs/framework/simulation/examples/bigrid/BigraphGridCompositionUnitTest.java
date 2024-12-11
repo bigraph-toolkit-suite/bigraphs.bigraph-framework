@@ -4,7 +4,6 @@ import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.EcoreBigraph;
 import org.bigraphs.framework.core.ElementaryBigraph;
-import org.bigraphs.framework.core.alg.generators.BigridGenerator;
 import org.bigraphs.framework.core.datatypes.NamedType;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
@@ -291,7 +290,7 @@ public class BigraphGridCompositionUnitTest {
 
     @Test
     public void test_BigridGenerator_01() throws IncompatibleInterfaceException, InvalidConnectionException, TypeNotExistsException, IncompatibleSignatureException, IOException {
-        BigridGenerator generator = new BigridGenerator(null);
+        BigridGeneratorOld generator = new BigridGeneratorOld(null);
         PureBigraph generate = generator.generate(3, 3);
 
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) generate, System.out);

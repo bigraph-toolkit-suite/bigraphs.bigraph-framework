@@ -10,18 +10,21 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 /**
+ * Specific implementation of {@link AbstractAgentMatchSupplier}.
+ * <p>
+ * When deciding which paths to go in the model checking procedure, this supplier retrieves
+ * any agent-match from the given set of possibly available agent-matches.
+ *
  * @author Dominik Grzelak
  */
-public final class RandomAgentMatchSupplier<B extends Bigraph<? extends Signature<?>>> implements Supplier<B> {
+public final class RandomAgentMatchSupplier<B extends Bigraph<? extends Signature<?>>> extends AbstractAgentMatchSupplier<B> {
 
     private final Random randomSelection;
-    private final int size;
-    private ImmutableList<B> agents;
+
 
     protected RandomAgentMatchSupplier(Collection<B> availableAgents) {
+        super(availableAgents);
         randomSelection = new Random();
-        agents = Lists.immutable.withAll(availableAgents);
-        size = (agents.size() - 1 == 0) ? 1 : agents.size();
     }
 
     @Override

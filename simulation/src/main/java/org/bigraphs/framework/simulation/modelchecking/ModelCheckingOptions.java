@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,12 +21,13 @@ import java.util.concurrent.TimeUnit;
 public class ModelCheckingOptions {
     private final static int DEFAULT_MAX_TRANSITIONS = Integer.MAX_VALUE;
 
+    private Map<Options, Opts> optsMap = new ConcurrentHashMap<>();
     private ExportOptions exportOpts;
     private TransitionOptions transitionOpts;
-    private Map<Options, Opts> optsMap = new ConcurrentHashMap<>();
-    private boolean measureTime = false;
 
+    private boolean measureTime = false;
     private boolean parallelRuleMatching = false;
+    private boolean reactionGraphWithCycles = true;
 
     public enum Options {
         TRANSITION(TransitionOptions.class), EXPORT(ExportOptions.class);
@@ -76,9 +78,22 @@ public class ModelCheckingOptions {
     }
 
     /**
+     * Instruct the simulation to measure the time for individual steps of the current used simulation algorithm.
+     * Defaults to {@code false}.
+     * Useful for debugging purposes.
+     *
+     * @param measureTime flag to enable or disable time measurement
+     * @return the current options instance
+     */
+    public ModelCheckingOptions doMeasureTime(boolean measureTime) {
+        this.measureTime = measureTime;
+        return this;
+    }
+
+    /**
      * Instruct the simulation either to perform rule matching in parallel or sequentially (default).
      *
-     * @param flag flag to enable or disable parallel rule matchings
+     * @param flag flag to enable or disable parallel rule matching
      */
     public void setParallelRuleMatching(boolean flag) {
         this.parallelRuleMatching = flag;
@@ -90,7 +105,7 @@ public class ModelCheckingOptions {
      * @param flag flag to enable or disable parallel rule matchings
      * @return the current options instance
      */
-    public ModelCheckingOptions doParallelRuleMatching(boolean flag) {
+    public ModelCheckingOptions withParallelRuleMatching(boolean flag) {
         this.parallelRuleMatching = flag;
         return this;
     }
@@ -100,15 +115,31 @@ public class ModelCheckingOptions {
     }
 
     /**
-     * Instruct the simulation to measure the time for individual steps of the current used simulation algorithm.
-     * Defaults to {@code false}.
-     * Useful for debugging purposes.
-     *
-     * @param measureTime flag to enable or disable time measurement
-     * @return the current options instance
+     * Indicates, whether the reaction graph should permit the depiction of cycles.
+     * If {@code false}, the reaction graph will visually represent a Directed Acyclic Graph (DAG).
+     * Otherwise, they are drawn if the BRS simulation produces cycles.
+     * <p>
+     * <strong>Note:</strong>
+     * This configuration does not imply that cycles are absent during simulation.
+     * Rather, cycles are simply not displayed in the reaction graph.
      */
-    public ModelCheckingOptions doMeasureTime(boolean measureTime) {
-        this.measureTime = measureTime;
+    public boolean isReactionGraphWithCycles() {
+        return reactionGraphWithCycles;
+    }
+
+    /**
+     * Configure whether the reaction graph should permit the depiction of cycles.
+     * If the parameter is set to {@code false}, the reaction graph will be a Directed Acyclic Graph (DAG).
+     * <p>
+     * <strong>Note:</strong>
+     * This configuration does not imply that cycles are absent during simulation.
+     * Rather, cycles are simply not displayed in the reaction graph.
+     *
+     * @param reactionGraphWithCycles if set to {@code false} the reaction graph will visually represent a Directed Acyclic Graph (DAG)
+     *                                even if the BRS simulation produces cycles.
+     */
+    public ModelCheckingOptions setReactionGraphWithCycles(boolean reactionGraphWithCycles) {
+        this.reactionGraphWithCycles = reactionGraphWithCycles;
         return this;
     }
 
@@ -276,21 +307,51 @@ public class ModelCheckingOptions {
      * @author Dominik Grzelak
      */
     public static final class ExportOptions implements Opts {
+        public enum Format {
+            PNG, XMI;
+        }
+
         private File outputStatesFolder;
         private File reactionGraphFile;
         @Deprecated
         private File rewriteResultFolder;
         private Boolean printCanonicalStateLabel;
+        private List<Format> formatsEnabled;
 
         ExportOptions() {
-            this(new File("./states/"), new File("./transition_graph.png"), new File("./results/"), false);
+            this(
+                    new File("./states/"),
+                    new File("./transition_graph.png"),
+                    new File("./results/"),
+                    false,
+                    Format.XMI, Format.PNG
+            );
         }
 
-        ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel) {
+        ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel, Format... formatsEnabled) {
+            this(
+                    outputStatesFolder,
+                    reactionGraphFile,
+                    rewriteResultFolder,
+                    printCanonicalStateLabel,
+                    formatsEnabled == null || formatsEnabled.length == 0 ? List.of() : List.of(formatsEnabled)
+            );
+        }
+
+        ExportOptions(File outputStatesFolder, File reactionGraphFile, File rewriteResultFolder, Boolean printCanonicalStateLabel, List<Format> formatsEnabled) {
             this.outputStatesFolder = outputStatesFolder;
             this.reactionGraphFile = reactionGraphFile;
             this.rewriteResultFolder = rewriteResultFolder;
             this.printCanonicalStateLabel = printCanonicalStateLabel;
+            this.formatsEnabled = formatsEnabled;
+        }
+
+        boolean isPNGEnabled() {
+            return formatsEnabled != null && formatsEnabled.contains(Format.PNG);
+        }
+
+        boolean isXMIEnabled() {
+            return formatsEnabled != null && formatsEnabled.contains(Format.XMI);
         }
 
         public File getOutputStatesFolder() {
@@ -326,6 +387,14 @@ public class ModelCheckingOptions {
 
         void setPrintCanonicalStateLabel(Boolean printCanonicalStateLabel) {
             this.printCanonicalStateLabel = printCanonicalStateLabel;
+        }
+
+        public List<Format> getFormatsEnabled() {
+            return formatsEnabled;
+        }
+
+        public void setFormatsEnabled(List<Format> formatsEnabled) {
+            this.formatsEnabled = formatsEnabled;
         }
 
         /**
@@ -368,13 +437,15 @@ public class ModelCheckingOptions {
             return exportOpts().setOutputStatesFolder(this.outputStatesFolder)
                     .setPrintCanonicalStateLabel(this.printCanonicalStateLabel)
                     .setReactionGraphFile(this.reactionGraphFile)
-                    .setRewriteResultFolder(this.rewriteResultFolder);
+                    .setRewriteResultFolder(this.rewriteResultFolder)
+                    .setFormatsEnabled(this.formatsEnabled)
+                    ;
         }
 
         public static class Builder {
             private File outputStatesFolder = null;
             private File reactionGraphFile = null;
-
+            private List<Format> formatsEnabled = List.of();
             @Deprecated
             private File rewriteResultFolder = null;
             private Boolean printCanonicalStateLabel = false;
@@ -395,6 +466,16 @@ public class ModelCheckingOptions {
                 return this;
             }
 
+            public Builder setFormatsEnabled(List<Format> formatsEnabled) {
+                this.formatsEnabled = formatsEnabled;
+                return this;
+            }
+
+            public Builder disableAllFormats() {
+                this.formatsEnabled = List.of();
+                return this;
+            }
+
             /**
              * Flag that can be used to determine whether the labels of the states in the reaction graph should contain
              * the canonical form of a bigraph or not, meaning, only a constant identifier is printed suffixed with an
@@ -412,7 +493,7 @@ public class ModelCheckingOptions {
             }
 
             public ExportOptions create() {
-                return new ExportOptions(outputStatesFolder, reactionGraphFile, rewriteResultFolder, printCanonicalStateLabel);
+                return new ExportOptions(outputStatesFolder, reactionGraphFile, rewriteResultFolder, printCanonicalStateLabel, formatsEnabled);
             }
         }
     }

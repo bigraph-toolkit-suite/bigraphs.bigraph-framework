@@ -11,7 +11,7 @@ import org.bigraphs.framework.core.Signature;
  * @param <B> type of the bigraph
  * @author Dominik Grzelak
  */
-public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
+public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> extends HasLabel, HasPriority {
 
     /**
      * Return the redex of the reaction rule
@@ -35,7 +35,7 @@ public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
     default boolean isRedexSimple() {
         return
 //                getRedex().isEpimorphic() &&
-                getRedex().getEdges().size() == 0 && // every link is open
+                getRedex().getEdges().isEmpty() && // every link is open
                         getRedex().isGuarding() && //no site has a root as parent (+ no idle inner names)
                         getRedex().isMonomorphic(); // inner-injective
     }
@@ -61,7 +61,7 @@ public interface ReactionRule<B extends Bigraph<? extends Signature<?>>> {
      * @return {@code true}, if the rule is a parametric reaction rule.
      */
     default boolean isParametricRule() {
-        return getRedex().getSites().size() > 0;
+        return !getRedex().getSites().isEmpty();
     }
 
     /**

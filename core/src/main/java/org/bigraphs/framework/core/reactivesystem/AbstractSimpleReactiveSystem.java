@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.exceptions.*;
-import org.bigraphs.framework.core.exceptions.*;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.AbstractEcoreSignature;
 import org.bigraphs.framework.core.Bigraph;
@@ -18,9 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
-
-//TODO: add tactics/order/priorities for RR execution (here?): yes here we program our application.
-//then we can see how this rule-style interactions with different simulation-styles and can select the best simulation workflow
 
 /**
  * Abstract class of a "nice and simple" bigraphical reactive system (BRS).
@@ -114,7 +110,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
         MutableMap<String, Map<String, Object>> S = Maps.mutable.empty();
         // Iterate through all nodes and store in a map S: nodeId |-> Attributes
         sourceBigraph.getNodes().forEach(n -> {
-            if(!n.getAttributes().isEmpty()) {
+            if (!n.getAttributes().isEmpty()) {
                 S.put(n.getName(), n.getAttributes());
             }
         });
@@ -147,7 +143,13 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
 
     public synchronized void addPredicate(ReactiveSystemPredicate<B> predicate) {
         if (!predicateMap.containsValue(predicate)) {
-            predicateMap.put(predSupplier.get(), predicate);
+            if (predicate.isDefined()) {
+                String lbl = ((HasLabel) predicate).getLabel();
+                lbl = predicateMap.containsKey(lbl) ? (lbl + rSupplier.get()) : lbl;
+                predicateMap.put(lbl, predicate);
+            } else {
+                predicateMap.put(predSupplier.get(), predicate);
+            }
         } else {
             logger.debug("Predicate {} was not added because it is already contained in the reactive system", predicate);
         }
@@ -156,10 +158,10 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     @SuppressWarnings("unused")
     public synchronized boolean addReactionRule(ReactionRule<B> reactionRule) throws InvalidReactionRuleException {
         assertParametricRedexIsSimple(reactionRule);
-//        assertNoIdleOuterName(reactionRule); // redex is captured by "simple" constraint above
+        // assertNoIdleOuterName(reactionRule); // redex is captured by "simple" constraint above
         if (!reactionRules.containsValue(reactionRule)) {
-            if (reactionRule instanceof HasLabel && ((HasLabel) reactionRule).isDefined()) {
-                String lbl = ((HasLabel) reactionRule).getLabel();
+            if (reactionRule.isDefined()) {
+                String lbl = reactionRule.getLabel();
                 lbl = reactionRules.containsKey(lbl) ? (lbl + rSupplier.get()) : lbl;
                 reactionRules.put(lbl, reactionRule);
             } else {

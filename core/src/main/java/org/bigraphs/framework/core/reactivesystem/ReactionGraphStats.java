@@ -3,10 +3,12 @@ package org.bigraphs.framework.core.reactivesystem;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
 
+import java.io.Serializable;
+
 /**
  * @author Dominik Grzelak
  */
-public class ReactionGraphStats<B extends Bigraph<? extends Signature<?>>> {
+public class ReactionGraphStats<B extends Bigraph<? extends Signature<?>>> implements Serializable {
 
     ReactionGraph<B> reactionGraph;
     int numberOfTransitions = -1;

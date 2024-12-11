@@ -19,14 +19,14 @@ import java.util.Collections;
  */
 public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
 
-    private final PureBigraph context;
-    private final PureBigraph redex;
-    private final PureBigraph redexImage;
+    private PureBigraph context;
+    private PureBigraph redex;
+    private PureBigraph redexImage;
     private final Collection<PureBigraph> parameters;
-    private final Bigraph<DefaultDynamicSignature> redexIdentity;
-    private final Bigraph<DefaultDynamicSignature> contextIdentity;
+    private Bigraph<DefaultDynamicSignature> redexIdentity;
+    private Bigraph<DefaultDynamicSignature> contextIdentity;
     private PureBigraph paramWiring;
-
+    private PureBigraph params;
     private final it.uniud.mads.jlibbig.core.std.Match jLibMatchResult;
 
     public PureBigraphParametricMatch(it.uniud.mads.jlibbig.core.std.Match jLibMatchResult,
@@ -36,6 +36,8 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
                                       Bigraph<DefaultDynamicSignature> redexIdentity,
                                       PureBigraph paramWiring,
                                       Collection<PureBigraph> parameters) {
+        // Everything is null exceptjLibMatchResult and redex because we have jLibBig bigraph objects
+        // Until the bigraph is rewritten with the match result, they will be null.
         this.jLibMatchResult = jLibMatchResult;
         this.contextIdentity = null;
         this.redexIdentity = redexIdentity;
@@ -44,9 +46,10 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
         this.redexImage = redexImage;
         this.paramWiring = paramWiring;
         this.parameters = parameters;
+        this.params = null;
     }
 
-
+    @Deprecated
     public PureBigraphParametricMatch(PureBigraph context,
                                       PureBigraph redex,
                                       PureBigraph redexImage,
@@ -72,8 +75,27 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     }
 
     @Override
+    public PureBigraph getParam() {
+        return params;
+    }
+
+
+    public void setParam(PureBigraph param) {
+        params = param;
+    }
+
+    @Override
+    public boolean wasRewritten() {
+        return context != null && params != null && redexImage != null;
+    }
+
+    @Override
     public PureBigraph getContext() {
         return context;
+    }
+
+    public void setContext(PureBigraph context) {
+        this.context = context;
     }
 
     /**
@@ -95,6 +117,10 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     @Override
     public PureBigraph getRedexImage() {
         return redexImage;
+    }
+
+    public void setRedexImage(PureBigraph redexImage) {
+        this.redexImage = redexImage;
     }
 
     @Override

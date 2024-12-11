@@ -1,7 +1,7 @@
 ---
 id: verification-intro
 title: Verification
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 In the area of software engineering, formal verification is an interesting subject.
@@ -17,8 +17,12 @@ In fact, many bugs cannot be detected by traditional means such as unit tests.
 One type of verification technique is the so-called **model checking**, which
 is implemented in Bigraph Framework.
 
-<!-- For model checking, we the following dependencies are used: -->
-<!-- - tweety, JDD, JavaDD -->
+The algorithm employed here is based on the directed model checking explained in
+
+
+[//]: # (<!-- For model checking, we the following dependencies are used: -->)
+
+[//]: # (<!-- - tweety, JDD, JavaDD -->)
 
 ## Creating a Model Checker
 
@@ -44,10 +48,25 @@ modelChecker.execute();
 
 Some remarks:
 - The `execute()` method may throw a `BigraphSimulationException`
-- Simulation types are covered [here](simulation-intro#simulation-types).
-- Model checking options are explained [here](simulation-intro#additional-model-checking-options).
+- Simulation types are covered [here](#simulation-types).
+- Model checking options are explained [here](#additional-model-checking-options).
 
-## Listeners
+### Reachability Checking
+
+The model checking procedure implemented in Bigraph Framework is especially suited for so-called _reachability checking_.
+
+[//]: # (Explain informally)
+
+[//]: # ()
+[//]: # (:::info Mathematical)
+
+[//]: # ()
+[//]: # (:::)
+
+[//]: # (Algorithm from:)
+[//]: # (- \[2\], \[3\])
+
+## Event Listeners
 
 One may listen to specific events that are thrown during the simulation. This gives the user the possibility to interact
 with the simulation and fire additional actions or to log these events and evaluate them later, additionally to the
@@ -93,7 +112,9 @@ As long as the transition system is being built from a BRS specification,
 the provided predicates of the user are checked simultaneously for each
 new computed state in the course of a BRS simulation.
 
-> **Note:** A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker instance.
+:::note
+A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker instance.
+:::
 
 These predicates come in two forms: as safety properties or as liveness
 properties. The former represents a state in the system that should not
@@ -105,8 +126,110 @@ a result (liveness).
 Some further safety properties are: partial correctness, absence of deadlocks,
 and mutual exclusion (see [\[1\]](#ref1)).
 
-> **Note:** Fairness properties are important for reactive systems. Safety is easier to check then liveness.
+:::tip
+Fairness properties are important for reactive systems.
+Safety is easier to check than liveness.
+:::
+
+## Simulation types
+
+The frameworks builds the reaction graph in the course of the simulation.
+Only the canonical form of an agent is stored in the graph to reduce the
+number of admissable states in order to minimize the state-space explosion problem.
+
+### Breadth-first simulation
+
+The algorithm described in [\[1\]](#ref1) is implemented.
+
+The respective reaction graph of the above example is shown below after
+the BFS simulation finished.
+
+![imgs](../assets/simulation/home-example-reaction-graph.png)
+
+This form of simulation provides no guarantee that the simulation will end at some point.
+
+### Random simulation
+
+This type of simulation starts to apply a set of given reaction rules
+on an initial agent. After the reaction graph is expanded, the simulation
+randomly selects a new state and repeats the process.
+In other words, it follows only on path at random until now further rules can be applied.
+This form of simulation provides no guarantee that the simulation will end at some point or that the simulation will eventually reach a desired state.
+
+|Random Run #1 | Random Run #2 |
+|---|---|
+|![imgs](../assets/simulation/transition_graph_random.png)|![imgs](../assets/simulation/transition_graph_random2.png)|
+
+Regarding the first random run of our example (left-hand figure above), rules (r0) and (r4) were applied on the agent. The algorithm
+was selecting the second agent (the one where (r4) points to), however, also
+stops here, since no further rules could be applied.
+
+If the agent were chosen (where (r0) points to), rules (r1), (r2) and (r3) could be applied.
+This case is illustrated in the right-hand figure above.
+
+## Additional Model Checking Options
+
+Model checking options may be provided to the model checker.
+Therefore, the class `ModelCheckingOptions` needs to be created. An
+example is shown below.
+
+```java
+ModelCheckingOptions opts = ModelCheckingOptions.create();
+opts
+        .and(transitionOpts()
+                .setMaximumTransitions(100)
+                .setMaximumTime(60)
+                .allowReducibleClasses(true)
+                .rewriteOpenLinks(false)
+                .create()
+        )
+        .and(ModelCheckingOptions.exportOpts()
+                .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph.png").toFile())
+                .setPrintCanonicalStateLabel(false)
+                .setOutputStatesFolder(Paths.get(TARGET_DUMP_PATH, "states/").toFile())
+                .create()
+        )
+;
+```
+
+The individual options are divided into several categories which can be accessed by
+their respective builder classes.
+Currently, the following categories are available:
+
+- `ModelCheckingOptions.TransitionOptions`
+- `ModelCheckingOptions.ExportOptions`
+
+They are explained in the following.
+
+### Transition options
+
+#### Stopping Criteria
+Notice that `ModelCheckingOptions.TransitionOptions` let us specify some stopping criteria by
+acquiring its builder by calling `ModelCheckingOptions.TransitionOptions.transitionOpts()`:
+
+- Maximal Number of transitions to allow
+- Time
+- ...
+
+The following methods are available through the `ModelCheckingOptions.transitionOpts()` builder instance to adjust the [canonical string encoding algorithm of bigraphs](https://link.springer.com/article/10.1007/s42979-021-00552-5), which is used for cycle checking of the transition system:
+- `TransitionOptions.Builder#allowReducibleClasses(bool)`
+- `TransitionOptions.Builder#rewriteOpenLinks(bool)`
+
+The default values are good for most of the cases.
+
+### Export options
+
+The `ModelCheckingOptions.ExportOptions` class allows specifying a file path where the reaction graph (i.e., transition system)
+and the individual states shall be written to.
+If these options are left empty then the graphs are not exported.
+Also one can decide if the state labels of the reaction graph are simple identifiers _a<sub>1</sub>_, _a<sub>2</sub>_, _a<sub>3</sub>_, ... or [canonical string encodings of bigraphs](https://link.springer.com/article/10.1007/s42979-021-00552-5) in its graphic output.
 
 ## References
 
 - \[1\] <a id="ref1" href="https://dl.acm.org/citation.cfm?doid=357172.357178">S. Owicki and L. Lamport, "Proving Liveness Properties of Concurrent Programs," ACM Trans. Program. Lang. Syst., vol. 4, no. 3, pp. 455–495, Jul. 1982.</a>
+
+- \[2\] <a id="ref1" href="https://pure.itu.dk/portal/files/39500908/thesis_GianDavidPerrone.pdf">G. Perrone, “Domain-Specific Modelling Languages in Bigraphs,” IT University of Copenhagen, 2013.</a>
+
+- \[3\] Clarke, E. M. ; Henzinger, T. A. ; Veith, H. ; Bloem, R. (Hrsg.): Handbook of Model Checking : Springer International Publishing, 2018 — ISBN 978-3-319-10574-1
+
+

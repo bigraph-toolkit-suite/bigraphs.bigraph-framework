@@ -1,12 +1,13 @@
 package org.bigraphs.framework.core.utils;
 
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
+import org.bigraphs.framework.core.exceptions.SignatureNotConsistentException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -15,9 +16,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.ops;
@@ -178,16 +178,85 @@ public class BigraphUtil {
 
     /**
      * This method merges the two given signatures {@code left} and {@code right}.
-     * A completely new instance will be created with a new underlying Ecore signature meta-model.
+     * A completely new instance will be created with a new underlying Ecore signature metamodel.
      * <p>
      * If either one of the given signatures is {@code null}, the other one is simply returned.
+     * <p>
+     * Merging signatures does not require the two signatures to be consistent.
+     * If both do not contain the same control labels, then merge is just like composition.
+     * <p>
+     * For same control labels, the left signature overrides the right one.
      *
      * @param left  a signature
      * @param right another signature to merge with {@code left}
      * @return a merged signature, or just {@code left} or {@code right}, if the other one is {@code null}
-     * @throws RuntimeException if the underlying meta-model is invalid that is created in the merging process.
+     * @throws RuntimeException if the underlying metamodel is invalid, that is created in the merging process.
      */
     public static DefaultDynamicSignature mergeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+        return mergeSignatures(left, right, 0);
+    }
+
+    /**
+     * This method merges the two given signatures {@code left} and {@code right}.
+     * A completely new instance will be created with a new underlying Ecore signature metamodel.
+     * <p>
+     * If either one of the given signatures is {@code null}, the other one is simply returned.
+     * <p>
+     * Merging signatures does not require the two signatures to be consistent.
+     * If both do not contain the same control labels, then merge is just like composition.
+     * <p>
+     * For same control labels,
+     * the argument {@code leftOrRight} specifies whether the left signature overrides the right one:
+     * 0 means the left signature has precedence, and 1 means the right signature has precedence.
+     *
+     * @param left        the first signature
+     * @param right       the second signature to merge with the first one
+     * @param leftOrRight whether to use the left or right signature if same controls found in both
+     * @return the new merge signature
+     */
+    public static DefaultDynamicSignature mergeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right, int leftOrRight) {
+        if (Objects.nonNull(left) && Objects.nonNull(right)) {
+            Set<String> setLeft = left.getControls().stream().map(x -> x.getNamedType().stringValue()).collect(Collectors.toSet());
+            Set<String> setRight = right.getControls().stream().map(x -> x.getNamedType().stringValue()).collect(Collectors.toSet());
+            Set<String> intersectionSet = new HashSet<>(setLeft);
+            intersectionSet.retainAll(setRight);
+            DynamicSignatureBuilder sb = pureSignatureBuilder();
+            Stream.concat(left.getControls().stream(), right.getControls().stream())
+                    .filter(x -> !intersectionSet.contains(x.getNamedType().stringValue()))
+                    .forEach(c -> {
+                        sb.newControl(c.getNamedType(), c.getArity())
+                                .status(c.getControlKind()).assign();
+                    });
+            // Special treatment for common control labels
+            Stream<String> leftStream = left.getControls().stream().map(x -> x.getNamedType().stringValue());
+            Stream<String> rightStream = right.getControls().stream().map(x -> x.getNamedType().stringValue());
+            Stream<Map.Entry<String, String>> zippedLabels = zip(leftStream, rightStream);
+            zippedLabels.forEach(pair -> {
+                DefaultDynamicControl c = leftOrRight == 0 ? left.getControlByName(pair.getKey()) : right.getControlByName(pair.getKey());
+                sb.newControl(c.getNamedType(), c.getArity())
+                        .status(c.getControlKind()).assign();
+            });
+            return sb.create();
+        }
+        return Objects.isNull(right) ? left : right;
+    }
+
+    /**
+     * This method composes the two given signatures {@code left} and {@code right}.
+     * A completely new instance will be created with a new underlying Ecore signature metamodel.
+     * <p>
+     * If either one of the given signatures is {@code null}, the other one is simply returned.
+     * <p>
+     * Signatures are required to be consistent, i.e., both signatures have either different control labels, or
+     * if they contain the same label, they must agree on the arity and status.
+     *
+     * @param left  a signature
+     * @param right another signature to compose with {@code left}
+     * @return a composed signature, or just {@code left} or {@code right}, if the other one is {@code null}
+     * @throws RuntimeException if the signatures are not consistent
+     */
+    public static DefaultDynamicSignature composeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+        assertSignaturesAreConsistent(left, right);
         if (Objects.nonNull(left) && Objects.nonNull(right)) {
             DynamicSignatureBuilder sb = pureSignatureBuilder();
             Stream.concat(left.getControls().stream(), right.getControls().stream()).forEach(c -> {
@@ -198,6 +267,45 @@ public class BigraphUtil {
         }
         return Objects.isNull(right) ? left : right;
     }
+
+    public static Optional<DefaultDynamicSignature> composeSignatures(List<DefaultDynamicSignature> signatures) {
+        return signatures.stream().reduce(BigraphUtil::composeSignatures);
+    }
+
+    public static Optional<DefaultDynamicSignature> leftMergeSignatures(List<DefaultDynamicSignature> signatures) {
+        return signatures.stream().reduce(BigraphUtil::mergeSignatures);
+    }
+
+    /**
+     * Throws a runtime exception if both signatures are not consistent
+     *
+     * @param left  the first signature
+     * @param right the second signature
+     */
+    private static void assertSignaturesAreConsistent(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+        Set<String> setLeft = left.getControls().stream().map(x -> x.getNamedType().stringValue()).collect(Collectors.toSet());
+        Set<String> setRight = right.getControls().stream().map(x -> x.getNamedType().stringValue()).collect(Collectors.toSet());
+        Set<String> unionSet = new HashSet<>(setLeft);
+        unionSet.addAll(setRight);
+        if (unionSet.size() != (setLeft.size() + setRight.size())) {
+            throw new SignatureNotConsistentException();
+        }
+    }
+
+
+    public static <T, U> Stream<Map.Entry<T, U>> zip(Stream<T> stream1, Stream<U> stream2) {
+        Iterator<T> iterator1 = stream1.iterator();
+        Iterator<U> iterator2 = stream2.iterator();
+
+        Stream.Builder<Map.Entry<T, U>> builder = Stream.builder();
+
+        while (iterator1.hasNext() && iterator2.hasNext()) {
+            builder.add(new AbstractMap.SimpleEntry<>(iterator1.next(), iterator2.next()));
+        }
+
+        return builder.build();
+    }
+
 
     /**
      * Basic checking method for simple elementary bigraphs such as a merge or closure.

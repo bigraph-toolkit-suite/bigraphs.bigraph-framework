@@ -22,8 +22,9 @@ XMI provides an XML representation for Ecore constructs.
 Both operations are provided by the inner classes `Load` and `Store` of `org.bigraphs.framework.core.BigraphFileModelManagement`
 to easily distinguish and use them.
 
-> **Note:** For a more sophisticated persistence solution, we refer the reader to [Eclipse Connected Data Objects (CDO) Model Repository](https://projects.eclipse.org/projects/modeling.emf.cdo)
-> and the corresponding implementation [Spring Data CDO](https://github.com/bigraph-toolkit-suite/spring-data-cdo) for working with the [Spring framework](https://spring.io/).
+:::info Distributed Bigraph Database
+For a more sophisticated persistence solution, we refer the reader to [Eclipse Connected Data Objects (CDO) Model Repository](https://projects.eclipse.org/projects/modeling.emf.cdo) and the corresponding implementation [Spring Data CDO](https://github.com/bigraph-toolkit-suite/spring-data-cdo) when working with [Spring framework](https://spring.io/) in Java.
+:::
 
 ## Output format
 
@@ -83,12 +84,12 @@ EMetaModelData.builder().setName("sample")
 
 located in the package `de.tudresden.inf.st.bigraphs.core.datatypes` of the `bigraph-core` module.
 
-[//]  # (Its purpose should be self-explanatory from the above example &#40;see also below&#41;.)
-
 Some BigraphFactory methods accept the metadata object.
 
-> **Note:** Changing the metadata of a metamodel introduces problems concerning model validation.
-> When modified metamodels are imported again, validation may fail.
+:::note
+Changing the metadata of a metamodel introduces problems concerning model validation.
+When modified metamodels are imported again, validation may fail.
+:::
 
 ## Bigraphical Instance Model
 
@@ -137,6 +138,7 @@ List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(
 );
 ```
 
-> **Note:** If the metadata of the metamodel was changed, this may produce errors and validation may fail.
-
+:::note
+If the metadata of the metamodel was changed, this may produce errors and validation may fail.
+:::
 

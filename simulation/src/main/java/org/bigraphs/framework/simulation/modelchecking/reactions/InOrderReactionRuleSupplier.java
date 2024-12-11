@@ -7,9 +7,13 @@ import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import java.util.Collection;
 
 /**
+ * Specific implementation of the {@link AbstractReactionRuleSupplier}.
+ * <p>
+ * A given set of reaction rule is returned in the order as they are provided.
+ *
  * @author Dominik Grzelak
  */
-public final class InOrderReactionRuleSupplier<B extends Bigraph<? extends Signature<?>>> extends ReactionRuleSupplier<B> {
+public final class InOrderReactionRuleSupplier<B extends Bigraph<? extends Signature<?>>> extends AbstractReactionRuleSupplier<B> {
     private int currentCounter = 0;
 
     InOrderReactionRuleSupplier(Collection<ReactionRule<B>> availableRules) {

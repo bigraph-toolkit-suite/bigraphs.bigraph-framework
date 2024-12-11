@@ -8,34 +8,35 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
+import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 /**
- * A data structure to build up a reaction graph, similar to a labeled transition system.
+ * This data structure represents a "reaction graph", analogous to a labeled transition system.
+ * It extends the abstract base class {@link AbstractTransitionSystem}.
+ * Its states are bigraphs, and its transition relations are reaction rules of the same bigraph class type.
  * <p>
- * This is not to be compared with bigraphical LTS - the reaction graph is not minimal according to the context of a transition.
- * Here the arrows are reaction rules, and the nodes are states (i.e., bigraphs, represented by their unique label).
+ * A reaction graph is not to be confused with the notion of minimal LTSs in bigraphs.
+ * This reaction graph has no minimal context labels as transitions; it has reactions as labels.
+ * <p>
+ * The canonical string encoding of a bigraph is also stored here.
  *
+ * @param <B> the type of the bigraph of the states and transition relations of the transition system
  * @author Dominik Grzelak
  */
-public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
+public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B, BMatchResult<B>> implements Serializable {
 
-    private final Map<String, B> stateMap = new ConcurrentHashMap<>();
-    private final Map<String, B> transitionMap = new ConcurrentHashMap<>();
-    private Graph<LabeledNode, LabeledEdge> graph;
+    //TODO better: instead of keeping to copies (ATS also maintains graph), just transform the native one to JGraphT's graph
+    protected Graph<LabeledNode, LabeledEdge> graph; // this structure is also for rendering the graph via JGraphT
+
     private Map<LabeledNode, Set<ReactiveSystemPredicate<B>>> predicateMatches;
     private ReactionGraphStats<B> graphStats;
-    private boolean canonicalNodeLabel = false;
 
     public ReactionGraph() {
         reset();
     }
 
-    private Supplier<String> aSup = null;
-
-    private LabeledNode createNode(String label) {
+    protected LabeledNode createNode(String label) {
         if (canonicalNodeLabel) {
             return new CanonicalLabeledNode(label, label);
         } else {
@@ -43,13 +44,17 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
         }
     }
 
-    public void addEdge(B source, String sourceLbl, B target, String targetLbl, B reaction, String reactionLbl) {
+    protected CollapsedLabeledNode collapseNodes(String newLabel, LabeledNode ...labeledNodes) {
+        return new CollapsedLabeledNode(newLabel, newLabel, labeledNodes);
+    }
+
+    public void addEdge(B source, String sourceLbl, B target, String targetLbl, BMatchResult<B> reaction, String reactionLbl) {
         LabeledNode sourceNode;
         if (stateMap.get(sourceLbl) != null) {
             sourceNode = graph.vertexSet().stream().filter(x -> x.canonicalForm.equals(sourceLbl)).findFirst().get();
         } else {
             sourceNode = createNode(sourceLbl);
-            stateMap.put(sourceLbl, source);
+            addState(sourceLbl, source);
             graph.addVertex(sourceNode);
         }
         LabeledNode targetNode;
@@ -57,7 +62,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
             targetNode = graph.vertexSet().stream().filter(x -> x.canonicalForm.equals(targetLbl)).findFirst().get();
         } else {
             targetNode = createNode(targetLbl);
-            stateMap.put(targetLbl, target);
+            addState(targetLbl, target);
             graph.addVertex(targetNode);
         }
         Set<LabeledEdge> allEdges = graph.getAllEdges(sourceNode, targetNode);
@@ -65,8 +70,11 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
         if (first.isEmpty()) {
             final LabeledEdge edge = new LabeledEdge(reactionLbl);
             boolean b = graph.addEdge(sourceNode, targetNode, edge);
-            if (b)
-                transitionMap.put(reactionLbl, reaction);
+            if (b) {
+                addTransition(source, target, reactionLbl, reaction);
+            } else {
+                transitionMap.get(reactionLbl).add(reaction);
+            }
         }
     }
 
@@ -85,14 +93,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
     }
 
     public void reset() {
-        aSup = new Supplier<String>() {
-            private int id = 0;
-
-            @Override
-            public String get() {
-                return "a_" + id++;
-            }
-        };
+        aSup = createSupplier();
         graph = buildEmptySimpleDirectedGraph();
         graphStats = new ReactionGraphStats<>(this);
         predicateMatches = Maps.mutable.empty();
@@ -106,18 +107,6 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
     }
 
     /**
-     * Check if a bigraph is present in the graph as a state. The bigraph is identified by its label.
-     * <p>
-     * The label of a bigraph must be unique.
-     *
-     * @param label The unique label of a bigraph to find in the reaction graph.
-     * @return {@code true}, if the bigraph is contained in the graph, otherwise {@code false}
-     */
-    public boolean containsBigraph(String label) {
-        return stateMap.containsKey(label);
-    }
-
-    /**
      * Get the data structure of the reaction graph
      *
      * @return the reaction graph
@@ -126,27 +115,6 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
         return graph;
     }
 
-    /**
-     * Get the actual bigraph by querying the string label of a state.
-     * <p>
-     * Note that the label could either be an arbitrary string (user-defined) or the canonical form of the bigraph.
-     *
-     * @return a map where state labels are mapped to bigraphs
-     */
-    public Map<String, B> getStateMap() {
-        return stateMap;
-    }
-
-    /**
-     * Get the actual redex of a rule by querying the string label of a transition.
-     * <p>
-     * Note that the label could either be an arbitrary string (user-defined) or the canonical form of the bigraph (redex).
-     *
-     * @return a map where transition labels are mapped to bigraphs (redexes)
-     */
-    public Map<String, B> getTransitionMap() {
-        return transitionMap;
-    }
 
     /**
      * Get an object containing some informative statistics of the reaction graph
@@ -170,9 +138,9 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
                 .buildGraph();
     }
 
-    public static abstract class LabeledNode {
-        private String label;
-        private String canonicalForm;
+    public static abstract class LabeledNode implements Serializable {
+        protected String label;
+        protected String canonicalForm;
 
         public LabeledNode(String label, String canonicalForm) {
             this.label = label;
@@ -189,6 +157,11 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
 
         public void changeLabel(String newLabel) {
             this.label = newLabel;
+        }
+
+        @Override
+        public String toString() {
+            return getLabel();
         }
     }
 
@@ -214,6 +187,26 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
         @Override
         public int hashCode() {
             return Objects.hash(getCanonicalForm());
+        }
+    }
+
+    public static class CollapsedLabeledNode extends LabeledNode {
+        List<LabeledNode> collapsedNodes;
+        public CollapsedLabeledNode(String label, String canonicalForm, List<LabeledNode> collapsedNodes) {
+            super(label, canonicalForm);
+            this.collapsedNodes = new ArrayList<>(collapsedNodes);
+        }
+
+        public CollapsedLabeledNode(String label, String canonicalForm, LabeledNode ...collapsedNodes) {
+            this(label, canonicalForm, Arrays.asList(collapsedNodes));
+        }
+
+        public List<LabeledNode> getCollapsedNodes() {
+            return collapsedNodes;
+        }
+
+        public void setCollapsedNodes(List<LabeledNode> collapsedNodes) {
+            this.collapsedNodes = collapsedNodes;
         }
     }
 
@@ -243,7 +236,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
     }
 
     public static class LabeledEdge extends DefaultEdge {
-        private String label;
+        protected String label;
 
         /**
          * Constructs a labeled edge
@@ -264,9 +257,36 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> {
         }
 
         @Override
+        public Object getSource() {
+            return super.getSource();
+        }
+
+        @Override
+        public Object getTarget() {
+            return super.getTarget();
+        }
+
+        @Override
         public String toString() {
 //            return "(" + getSource() + " : " + getTarget() + " : " + label + ")";
             return "(" + label + ")";
         }
     }
+
+    public static class CollapsedLabeledEdge extends LabeledEdge {
+        List<LabeledEdge> collapsedEdges;
+        public CollapsedLabeledEdge(String label, List<LabeledEdge> collapsedEdges) {
+            super(label);
+            this.collapsedEdges = new ArrayList<>(collapsedEdges);
+        }
+
+        public List<LabeledEdge> getCollapsedEdges() {
+            return collapsedEdges;
+        }
+
+        public void setCollapsedEdges(List<LabeledEdge> collapsedEdges) {
+            this.collapsedEdges = collapsedEdges;
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 ---
 id: complex-modeling
 title: Creating Complex Bigraphs
+sidebar_position: 1
 ---
 
 In this section we are going to explain how to construct more complex bigraphs

@@ -11,7 +11,7 @@ import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.modelchecking.predicates.PredicateChecker;
 import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
-import org.bigraphs.framework.simulation.modelchecking.reactions.ReactionRuleSupplier;
+import org.bigraphs.framework.simulation.modelchecking.reactions.AbstractReactionRuleSupplier;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.slf4j.Logger;
@@ -25,9 +25,9 @@ import java.util.stream.Stream;
 
 /**
  * The algorithm implemented here to synthesize the "reaction graph" is adopted from [1].
- * It is a breadth-first simulation which also checks some given predicates.
- * <p>
- * Can be used to conduct reachability analysis.
+ * It is a breadth-first simulation, which also checks some given predicates.
+ * It also detects cycles.
+ * This algorithm can be used to conduct reachability analysis.
  *
  * @author Dominik Grzelak
  * @see <a href="https://pure.itu.dk/portal/files/39500908/thesis_GianDavidPerrone.pdf">[1] G. Perrone, “Domain-Specific Modelling Languages in Bigraphs,” IT University of Copenhagen, 2013.</a>
@@ -35,8 +35,9 @@ import java.util.stream.Stream;
 public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
     private final Logger logger = LoggerFactory.getLogger(BreadthFirstStrategy.class);
 
-    private PredicateChecker<B> predicateChecker;
-    //    private BigraphCanonicalForm canonicalForm;
+    protected PredicateChecker<B> predicateChecker;
+    protected JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+    protected JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
 
     public BreadthFirstStrategy(BigraphModelChecker<B> modelChecker) {
         super(modelChecker);
@@ -53,13 +54,15 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             modelChecker.getReactionGraph().setCanonicalNodeLabel(opts.getPrintCanonicalStateLabel());
         }
         ModelCheckingOptions.TransitionOptions transitionOptions = options.get(ModelCheckingOptions.Options.TRANSITION);
+        boolean reactionGraphWithCycles = options.isReactionGraphWithCycles();
         logger.debug("Maximum transitions={}", transitionOptions.getMaximumTransitions());
+        logger.debug("reactionGraphWithCycles={}", reactionGraphWithCycles);
         modelChecker.getReactionGraph().reset();
         final Queue<B> workingQueue = new ConcurrentLinkedDeque<>();
 
         B initialAgent = modelChecker.getReactiveSystem().getAgent();
-        it.uniud.mads.jlibbig.core.std.Bigraph encoded = new JLibBigBigraphEncoder().encode((PureBigraph) initialAgent);
-        initialAgent = (B) new JLibBigBigraphDecoder().decode(encoded);
+        it.uniud.mads.jlibbig.core.std.Bigraph encoded = encoder.encode((PureBigraph) initialAgent);
+        initialAgent = (B) decoder.decode(encoded);
         String rootBfcs = modelChecker.acquireCanonicalForm().bfcs(initialAgent);
         workingQueue.add(initialAgent);
         AtomicInteger iterationCounter = new AtomicInteger(0);
@@ -71,10 +74,11 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
             final B theAgent = workingQueue.remove();
             final String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(theAgent);
             // "For each reaction rule, find all matches m1 ...mn in w"
-            ReactionRuleSupplier<B> inOrder = ReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
+            AbstractReactionRuleSupplier<B> inOrder = AbstractReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
             Stream<ReactionRule<B>> rrStream = Stream.generate(inOrder);
             if (options.isParallelRuleMatching()) {
                 rrStream = rrStream.parallel();
+                assert rrStream.isParallel();
             }
             rrStream
                     .limit(modelChecker.getReactiveSystem().getReactionRules().size())
@@ -85,14 +89,14 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                             //TODO check if conditional rule and call checkCondition()
                             increaseOccurrenceCounter();
                             B reaction = null;
-                            if (theAgent.getSites().size() == 0 || eachMatch.getParameters().size() == 0) {
+                            if (theAgent.getSites().isEmpty() || eachMatch.getParameters().isEmpty()) {
                                 reaction = getReactiveSystem().buildGroundReaction(theAgent, eachMatch, eachRule);
                             } else {
                                 reaction = getReactiveSystem().buildParametricReaction(theAgent, eachMatch, eachRule);
                             }
 
                             Optional.ofNullable(reaction).map(x -> {
-                                return reactionResults.add(createMatchResult(eachRule, eachMatch, x, getOccurrenceCount()));
+                                return reactionResults.add(createMatchResult(eachRule, eachMatch, x, bfcfOfW, getOccurrenceCount()));
                             }).orElseGet(() -> {
                                 getListener().onReactionIsNull();
                                 return false; // return value not used
@@ -100,29 +104,26 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         }
                         return reactionResults.stream();
                     })
-//                    .collect(Collectors.toList());
-//            for (MatchResult<B> matchResult : reactionResults) {
                     // iterate through all occurrences
                     .forEachOrdered(matchResult -> {
                         String bfcf = modelChecker.acquireCanonicalForm().bfcs(matchResult.getBigraph());
                         String reactionLbl = modelChecker.getReactiveSystem().getReactionRulesMap().inverse().get(matchResult.getReactionRule());
                         if (!modelChecker.getReactionGraph().containsBigraph(bfcf)) {
-                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
+                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult, reactionLbl);
                             workingQueue.add(matchResult.getBigraph());
                             getListener().onUpdateReactionRuleApplies(theAgent, matchResult.getReactionRule(), matchResult.getMatch());
                             modelChecker.exportState(matchResult.getBigraph(), bfcf, String.valueOf(matchResult.getOccurrenceCount()));
                             iterationCounter.incrementAndGet();
                         } else {
-                            modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult.getMatch().getRedex(), reactionLbl);
+                            if (reactionGraphWithCycles)
+                                modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult, reactionLbl);
                         }
-//                modelChecker.exportGraph(modelChecker.getReactionGraph(), new File("graph.png"));
-                    });
+                    })
+            ;
 
             // Predicate evaluation for the current state
             if (!predicateChecker.getPredicates().isEmpty()) {
                 // "Check each property p ∈ P against w."
-                //TODO evaluate in "reaction graph spec" what should happen here: violation or stop criteria?
-                // this is connected to the predicates (changes its "intent", what they are used for)
                 if (predicateChecker.checkAll(theAgent)) {
                     String label = "";
                     Optional<ReactionGraph.LabeledNode> tmp = modelChecker.reactionGraph.getLabeledNodeByCanonicalForm(bfcfOfW);
@@ -141,9 +142,9 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                         });
                     });
                 } else { // not all predicates evaluated to true, so we have to check each return value individually
-                    predicateChecker.getChecked().entrySet().forEach(eachPredicate -> {
+                    predicateChecker.getChecked().forEach((key, value) -> {
                         // Predicate matching failed: compute counter-example trace from w back to the root
-                        if (!eachPredicate.getValue()) {
+                        if (!value) {
                             try {
                                 GraphPath<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> pathBetween = DijkstraShortestPath.findPathBetween(modelChecker.getReactionGraph().getGraph(),
                                         modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW).get(),
@@ -151,29 +152,28 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
                                 );
                                 logger.debug("Counter-example trace for predicate violation: start state={}, end state={}", pathBetween.getStartVertex(), pathBetween.getEndVertex());
                                 // inform attached listeners
-                                getListener().onPredicateViolated(theAgent, eachPredicate.getKey(), pathBetween);
+                                getListener().onPredicateViolated(theAgent, key, pathBetween);
                             } catch (Exception e) {
                                 getListener().onError(e);
                             }
                         } else { // Predicate matching success
                             // inform attached listeners
-                            getListener().onPredicateMatched(theAgent, eachPredicate.getKey());
-                            if (eachPredicate.getKey() instanceof SubBigraphMatchPredicate) {
+                            getListener().onPredicateMatched(theAgent, key);
+                            if (key instanceof SubBigraphMatchPredicate) {
                                 getListener().onSubPredicateMatched(
                                         theAgent,
-                                        eachPredicate.getKey(),
-                                        (B) ((SubBigraphMatchPredicate) eachPredicate.getKey()).getContextBigraphResult(),
-                                        (B) ((SubBigraphMatchPredicate) eachPredicate.getKey()).getSubBigraphResult(),
-                                        (B) ((SubBigraphMatchPredicate) eachPredicate.getKey()).getSubRedexResult(),
-                                        (B) ((SubBigraphMatchPredicate) eachPredicate.getKey()).getSubBigraphParamResult()
+                                        key,
+                                        (B) ((SubBigraphMatchPredicate) key).getContextBigraphResult(),
+                                        (B) ((SubBigraphMatchPredicate) key).getSubBigraphResult(),
+                                        (B) ((SubBigraphMatchPredicate) key).getSubRedexResult(),
+                                        (B) ((SubBigraphMatchPredicate) key).getSubBigraphParamResult()
                                 );
                             }
                             // add info that predicate matched at the current state
                             // this info is later used in class mxReactionGraph for visualization purposes
                             modelChecker.getReactionGraph().getLabeledNodeByCanonicalForm(bfcfOfW).ifPresent(labeledNode -> {
-                                modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, eachPredicate.getKey());
+                                modelChecker.getReactionGraph().addPredicateMatchToNode(labeledNode, key);
                             });
-
                         }
                     });
 
