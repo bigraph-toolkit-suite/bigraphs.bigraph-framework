@@ -26,14 +26,9 @@ public class BigraphDecomposer<B extends Bigraph<? extends Signature<?>>> {
 
     public static final BigraphDecompositionStrategy.DecompositionStrategy DEFAULT_DECOMPOSITION_STRATEGY = UnionFind_PureBigraphs;
 
-    public static <B extends Bigraph<? extends Signature<?>>> BigraphDecomposer<B> create() {
-        return (BigraphDecomposer<B>) create(DEFAULT_DECOMPOSITION_STRATEGY, PureBigraphDecomposerImpl.class);
-//        return (BigraphDecomposer<B>) create(DEFAULT_DECOMPOSITION_STRATEGY);
-    }
-
     // Naive "multi-dispatch": based on the decomposition strategy and bigraph type, the corresponding subclass
     // will be instantiated. Otherwise, an exception is thrown.
-    public static <B extends Bigraph<? extends Signature<?>>, T extends BigraphDecomposer<B>> T create(BigraphDecompositionStrategy.DecompositionStrategy strategy, Class<T> tClass) {
+    public static <B extends Bigraph<? extends Signature<?>>, T extends BigraphDecomposer<B>> T create(BigraphDecompositionStrategy.DecompositionStrategy strategy) {
         try {
             switch (strategy) {
                 case UnionFind_PureBigraphs -> {
@@ -46,10 +41,6 @@ public class BigraphDecomposer<B extends Bigraph<? extends Signature<?>>> {
                  InvocationTargetException e) {
             throw new RuntimeException("Failed to create BigraphDecomposer instance: " + strategy);
         }
-    }
-
-    public static <B extends Bigraph<? extends Signature<?>>, T extends BigraphDecomposer<B>> T create(BigraphDecompositionStrategy.DecompositionStrategy strategy) {
-        return create(strategy, null);
     }
 
     protected BigraphDecompositionStrategy<B> decompositionStrategy;

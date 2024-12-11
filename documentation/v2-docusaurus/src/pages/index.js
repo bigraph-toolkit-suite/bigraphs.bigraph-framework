@@ -14,19 +14,20 @@ function TryItOut() {
         <div id={`try`}
              className="text--center padding-horiz--md"
              style={{paddingTop: '2em', backgroundColor: '#efefef', paddingBottom: '1.8em', marginBottom: '2em'}}>
-            <h2>Download & Use Bigraph Framework for Java</h2>
+            <h2>Download & Use Bigraph Framework</h2>
             <ul style={{listStyleType: "none"}}>
                 <li>The framework is available via the <a
                     href={`https://repo.maven.apache.org/maven2/`}>Central Repository</a> as dependency
                 </li>
                 <li>Source code is available at <a href={`https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework`}>GitHub</a></li>
             </ul>
-            <i>Project Skeletons that get you started (ZIP archive):</i>
+            <strong>Starter Project Skeletons</strong>
             <ul style={{listStyleType: "none"}}>
-                <li><a
+                <li>(ZIP Archive) <a
                     href={`https://www.bigraphs.org/products/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip`}>Maven-based
-                    Project Skeleton for using Bigraph Framework</a></li>
-                <li>(See <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>here</a> for the latest version on GitHub)</li>
+                    Project Skeleton</a></li>
+                <li>(GitHub) <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>Maven-based
+                    Project Skeleton</a></li>
             </ul>
             {/*<p>*/}
             {/*    Latest Version: {bigraphFrameworkVersion}*/}

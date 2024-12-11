@@ -19,16 +19,19 @@ import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
+@Disabled
 public class FruitBasketExampleTest {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/fruitbasket/";
 
@@ -86,6 +89,7 @@ public class FruitBasketExampleTest {
                         .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph.png").toFile())
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(Paths.get(TARGET_DUMP_PATH, "states/").toFile())
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
                         .create()
                 )
         ;

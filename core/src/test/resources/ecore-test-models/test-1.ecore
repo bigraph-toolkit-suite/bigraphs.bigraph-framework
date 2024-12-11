@@ -17,7 +17,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
         eType="ecore:EClass F.ecore#//EStringToEJavaObjectMap" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BSite" eSuperTypes="F.ecore#//BPlace F.ecore#//IndexableType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BSite" eSuperTypes="F.ecore#//BPlace F.ecore#//IndexableType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bBigraph" lowerBound="1"
+        eType="ecore:EClass F.ecore#//BBigraph" eOpposite="F.ecore#//BBigraph/bSites"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BPoint" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="bLink" eType="ecore:EClass F.ecore#//BLink"
         eOpposite="F.ecore#//BLink/bPoints"/>
@@ -57,6 +60,8 @@
         eType="ecore:EClass F.ecore#//BInnerName" containment="true" eOpposite="F.ecore#//BInnerName/bBigraph"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bOuterNames" upperBound="-1"
         eType="ecore:EClass F.ecore#//BOuterName" containment="true" eOpposite="F.ecore#//BOuterName/bBigraph"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bSites" upperBound="-1"
+        eType="ecore:EClass F.ecore#//BSite" containment="true" eOpposite="F.ecore#//BSite/bBigraph"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EStringToEJavaObjectMap" instanceClassName="java.util.Map$Entry">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"

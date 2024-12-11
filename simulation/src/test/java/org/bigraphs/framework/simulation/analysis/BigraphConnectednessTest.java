@@ -54,7 +54,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
         PureBigraph bigraph = createFruitAgent();
         eb(bigraph, TARGET_DUMP_PATH + "fruitAgent");
 
-        PureBigraphDecomposerImpl decomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY, PureBigraphDecomposerImpl.class);
+        PureBigraphDecomposerImpl decomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
         decomposer.decompose(bigraph);
         System.out.println("Count: " + decomposer.getUnionFindDataStructure().getCount());
         System.out.println("Partitions: " + decomposer.getPartitions());
@@ -79,11 +79,11 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
                 .generate(numOfTrees, numOfNodes, p);
         eb(generate, TARGET_DUMP_PATH + "random-graph-1");
 
-        BigraphDecomposer<PureBigraph> pureBigraphBigraphDecomposer = BigraphDecomposer.create();
+        BigraphDecomposer<PureBigraph> pureBigraphBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
         pureBigraphBigraphDecomposer.decompose(generate);
 
         BigraphDecomposer<Bigraph<? extends Signature<?>>> bigraphBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
-        PureBigraphDecomposerImpl pureBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY, PureBigraphDecomposerImpl.class);
+        PureBigraphDecomposerImpl pureBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
         pureBigraphDecomposer.decompose(generate);
         System.out.println("Count: " + pureBigraphDecomposer.getUnionFindDataStructure().getCount());
         System.out.println("Partitions: " + pureBigraphDecomposer.getPartitions());

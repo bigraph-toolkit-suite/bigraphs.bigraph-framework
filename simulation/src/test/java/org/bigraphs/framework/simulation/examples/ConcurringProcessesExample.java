@@ -163,19 +163,19 @@ public class ConcurringProcessesExample {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .doMeasureTime(true)
-                .setReactionGraphWithCycles(false)
+                .setReactionGraphWithCycles(true)
                 .and(transitionOpts()
-                                .setMaximumTransitions(10)
-                                .setMaximumTime(30)
+                                .setMaximumTransitions(20)
+                                .setMaximumTime(60)
                                 .allowReducibleClasses(true) // use symmetries to make the transition graph smaller?
 //                        .allowReducibleClasses(false) // for simulation but not used
                                 .create()
                 )
                 .and(ModelCheckingOptions.exportOpts()
                                 .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
-                                .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                                 .setPrintCanonicalStateLabel(true)
-//                                .setPrintCanonicalStateLabel(false)
+                                .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                                .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
                                 .create()
                 )
         ;

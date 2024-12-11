@@ -129,7 +129,7 @@ public class ModelCheckingOptions {
 
     /**
      * Configure whether the reaction graph should permit the depiction of cycles.
-     * If disabled, the reaction graph will visually represent a Directed Acyclic Graph (DAG).
+     * If the parameter is set to {@code false}, the reaction graph will be a Directed Acyclic Graph (DAG).
      * <p>
      * <strong>Note:</strong>
      * This configuration does not imply that cycles are absent during simulation.

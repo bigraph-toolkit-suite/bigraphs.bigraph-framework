@@ -9,16 +9,46 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-A Complete Guide to the Bigraph Framework.
+<center>
+    <p>
+This manual provides a complete guide to the Bigraph Framework. <br/>
+<i>Last Updated: 2024-12-11</i>
+    </p>
+</center>
 
-- Stable: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>1.1.0</span> (main branch)
-    - Previous Stable Versions: 1.0.0, 0.9.7, 0.9.6
-- Latest Version: <span class="badge badge-secondary" style={{backgroundColor: '#7952b3'}}>2.0.0-SNAPSHOT</span> (develop branch)
 
+- **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.0.0</span> (main branch)
+    - Previous Stable Versions: 1.1.0, 1.0.0
+- Latest Experimental Version: <span class="badge badge-secondary" style={{backgroundColor: '#7952b3'}}>3.0.0-SNAPSHOT</span> (develop branch)
+
+<details style={{ background: 'transparent' }}>
+    <summary><strong>Version Compatibility</strong></summary>
+
+This table specifies the metamodel standards supported by the Bigraph Framework.
+<table border="0">
+        <tr>
+            <th>Bigraph Framework</th>
+            <th>Bigraph Ecore Metamodel</th>
+        </tr>
+        <tr>
+            <td>1.0.0</td>
+            <td>1.6.0</td>
+        </tr>
+        <tr>
+            <td>1.1.0</td>
+            <td>1.6.1</td>
+        </tr>
+        <tr>
+            <td>2.0.0</td>
+            <td>2.0.0, 1.6.1</td>
+        </tr>
+</table>
+
+</details>
 
 :::info Notice
-The API is subject to change. Use at your own risk.
-This documentation reflects always the latest version.
+The API is subject to change.
+This documentation reflects the latest experimental version.
 :::
 
 :::caution Caution
@@ -26,38 +56,41 @@ Since version 1.0.0 of Bigraph Framework: The new groupID and base package name 
 `de.tudresden.inf.st.bigraphs.*`.
 :::
 
-## What is Bigraph Framework
+## What is Bigraph Framework?
 
-**Bigraph Framework** is a Java software framework for the creation and simulation of bigraphs and bigraphical reactive systems
+**Bigraph Framework** is a software framework
+written in Java for the creation and simulation of bigraphs and bigraphical reactive systems
 to expedite the experimental evaluation of the bigraph theory in real-world applications.
 
 The goal of this framework is to facilitate the implementation of reactive systems, including context-aware, agent-based systems or cyber-physical systems.
 The high level API eases the programming of bigraphical systems for various applications.
 The framework is developed around a [metamodel-first approach](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel), when working with bigraphical structures.
 
-### Overview of the Features
+### Features
 
-- Dynamic creation of bigraphs at design time and runtime based on an [EMOF-based metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
-- Read and write the meta and instance model of a bigraph from and to the file system
+- Modelling and Storage
+    - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
+    - Read and write instance models and metamodels of a bigraph from and to the file system
 - Visualization
-    - Graphical export via GraphViz/DOT, VCG
+    - Graphical export via GraphViz/DOT
     - PNG, JPG, ...
     - Interactive visualization UI via GraphStream
+    - Visualization of Compiler Graphs (VCG) format via yComp
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
     - Bigraph matching and rewriting via jLibBig
-    - Synthesisation of a labeled transition system (LTS)
+    - Generation of a labeled transition system (LTS)
     - Simulation and Model Checking (BFS, Random)
     - Predicate checking, logical connectors, LTL
     - Specify order of reaction rules via priorities
     - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
     - Tracking rules (a rule can be assigned a tracking map)
-- Model Transformations
-    - Export to common graph formats, e.g., DOT, GraphML, GXL
+    - Model Transformations
+    - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
     - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
     - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
     - Add arbitrary attributes to nodes
-    - Attributes are preserved when rewriting (this requires tracking maps)
+    - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 ### What are Bigraphs?
 
@@ -67,16 +100,16 @@ It is grounded on category theory and regarded as a unifying framework for many 
 the Calculus of Communicating Systems (CCS) and π-calculus.
 The theory provides an algebra and a graph rewriting mechanism to describe, study and analyze the dynamic behavior of reactive systems.
 
-## Requirements
+## Development Requirements
 
-- Java 17
+- Java >=17
 - Maven or Gradle
     - Minimum version of Maven: 3.8.3
 
 
 ## Use / Install / Dependency Settings
 
-Bigraph Framework and its parts are online available as Maven dependencies.
+Bigraph Framework is online available as Maven dependency.
 
 Artifacts are deployed to the _Central Repository_.
 
