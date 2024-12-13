@@ -4,21 +4,25 @@ title: Verification
 sidebar_position: 5
 ---
 
-In the area of software engineering, formal verification is an interesting subject.
-*Verification* is a formal approach to prove the correctness of programs by means of mathematical models and techniques.
+In software engineering,
+*formal verification* is a technique
+for ensuring the correctness of programs using mathematical models and methods.
+Unlike traditional testing approaches,
+formal verification provides rigorous guarantees about a program's behavior
+by proving specific properties against a formal specification.
 
-In this process, a *program is checked against* a set of
-correctness properties, also called the *specification*.
-A program is said to be *correct*, if the specification conforms to the implementation.
+In this process,
+a program (formulated as bigraphical reactive system) is checked against a set of correctness properties.
+A program is considered correct if its implementation conforms to the given specification.
+This method is particularly valuable for developing safe and reliable software,
+as it can identify errors that might be missed by conventional techniques like unit testing.
 
-By proving specific properties of some software, this type of testing assists in developing safe and reliably software.
-In fact, many bugs cannot be detected by traditional means such as unit tests.
+One widely used formal verification method is called *model checking*,
+which systematically explores all possible states of a system to verify whether certain properties hold.
+This approach is integrated into the simulation module of **Bigraph Framework**.
 
-One type of verification technique is the so-called **model checking**, which
-is implemented in Bigraph Framework.
-
-The algorithm employed here is based on the directed model checking explained in
-
+Specifically, a directed model-checking technique is employed.
+Refer to [\[1\]](#ref1), [\[2\]](#ref2), [\[3\]](#ref3).
 
 [//]: # (<!-- For model checking, we the following dependencies are used: -->)
 
@@ -31,105 +35,34 @@ The algorithm employed here is based on the directed model checking explained in
 This code example shows how to create a model checker object for pure bigraphs:
 
 ```java
+// Create a pure reactive system container
 PureReactiveSystem reactiveSystem = new PureReactiveSystem();
-// Add an agent and reaction rules
 
+// Add an agent (the initial state) and reaction rules (logic)
 /* code omitted */
 
-// create model checking options
+// Create model checking options
 ModelCheckingOptions opts = ModelCheckingOptions.create();
 
 // Create the pure bigraph model checker
-PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-            BigraphModelChecker.SimulationType.BREADTH_FIRST,
-            opts);
+PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
+        reactiveSystem,
+        BigraphModelChecker.SimulationStrategy.Type.BFS,
+        opts
+);
 modelChecker.execute();
 ```
 
 Some remarks:
 - The `execute()` method may throw a `BigraphSimulationException`
 - Simulation types are covered [here](#simulation-types).
-- Model checking options are explained [here](#additional-model-checking-options).
+- Model checking options are explained [here](#model-checking-options).
 
 ### Reachability Checking
 
 The model checking procedure implemented in Bigraph Framework is especially suited for so-called _reachability checking_.
 
-[//]: # (Explain informally)
-
-[//]: # ()
-[//]: # (:::info Mathematical)
-
-[//]: # ()
-[//]: # (:::)
-
-[//]: # (Algorithm from:)
-[//]: # (- \[2\], \[3\])
-
-## Event Listeners
-
-One may listen to specific events that are thrown during the simulation. This gives the user the possibility to interact
-with the simulation and fire additional actions or to log these events and evaluate them later, additionally to the
-final built reaction graph.
-
-Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added
-to a model checker instance. It provides methods to listen when a reaction rule is applied or when the verification process finished, for instance.
-
-For example, see [here](simulation-predicates#listen-to-predicate-evaluation) on how to listen for predicate evaluation results.
-
-
-
-
-
-## Asynchronous Execution
-
-To perform the model checking asynchronously, call the `BigraphModelChecker#executeAsync()`:
-
-```java
-Future<ReactionGraph<PureBigraph>> reactionGraphFuture = modelChecker.executeAsync();
-ReactionGraph<PureBigraph> pureBigraphReactionGraph = reactionGraphFuture.get();
-```
-
-The `executeAsync()` method does not block the execution and returns a `Future` object to fetch the result later.
-It contains the complete reaction graph of the simulated BRS.
-
-One can then export the transition system by calling  `modelChecker.exportReactionGraph(pureBigraphReactionGraph)`.
-
-## Provide a custom executor service
-
-The `java.util.concurrent.ExecutorService` is used to submit tasks of the model checker.
-
-Bigraph framework offers to provide a custom `ExecutorService` by implementing the interface
-`org.bigraphs.framework.core.providers.ExecutorServicePoolProvider`, found in the `bigraph-core` dependency.
-The class `BigraphModelChecker` uses the `java.util.ServiceLoader` (see [https://docs.oracle.com/javase/tutorial/ext/basics/spi.html#the-serviceloader-class](https://docs.oracle.com/javase/tutorial/ext/basics/spi.html#the-serviceloader-class)
-to search for an implementation.
-
-A default _executor service provider_ is provided within the `bigraph-rewriting` dependency which creates a fixed thread pool.
-
-## Safety and Liveness Properties
-
-As long as the transition system is being built from a BRS specification,
-the provided predicates of the user are checked simultaneously for each
-new computed state in the course of a BRS simulation.
-
-:::note
-A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker instance.
-:::
-
-These predicates come in two forms: as safety properties or as liveness
-properties. The former represents a state in the system that should not
-occur, whereas the later denote a system state that eventually occurs.
-By this we can test if a program never reaches a "bad state" (safety),
-or correctly terminates (reaching a desirable state), possibly producing
-a result (liveness).
-
-Some further safety properties are: partial correctness, absence of deadlocks,
-and mutual exclusion (see [\[1\]](#ref1)).
-
-:::tip
-Fairness properties are important for reactive systems.
-Safety is easier to check than liveness.
-:::
+This topic is covered in [Bigraphical Predicates](simulation-predicates).
 
 ## Simulation types
 
@@ -137,7 +70,7 @@ The frameworks builds the reaction graph in the course of the simulation.
 Only the canonical form of an agent is stored in the graph to reduce the
 number of admissable states in order to minimize the state-space explosion problem.
 
-### Breadth-first simulation
+### Breadth-first Simulation
 
 The algorithm described in [\[1\]](#ref1) is implemented.
 
@@ -148,7 +81,7 @@ the BFS simulation finished.
 
 This form of simulation provides no guarantee that the simulation will end at some point.
 
-### Random simulation
+### Random Simulation
 
 This type of simulation starts to apply a set of given reaction rules
 on an initial agent. After the reaction graph is expanded, the simulation
@@ -167,7 +100,7 @@ stops here, since no further rules could be applied.
 If the agent were chosen (where (r0) points to), rules (r1), (r2) and (r3) could be applied.
 This case is illustrated in the right-hand figure above.
 
-## Additional Model Checking Options
+## Model Checking Options
 
 Model checking options may be provided to the model checker.
 Therefore, the class `ModelCheckingOptions` needs to be created. An
@@ -176,17 +109,25 @@ example is shown below.
 ```java
 ModelCheckingOptions opts = ModelCheckingOptions.create();
 opts
+        .doMeasureTime(true) // for debugging
+        .setReactionGraphWithCycles(true)
         .and(transitionOpts()
-                .setMaximumTransitions(100)
-                .setMaximumTime(60)
-                .allowReducibleClasses(true)
-                .rewriteOpenLinks(false)
+                .setMaximumTransitions(100) // maximum transition count
+                .setMaximumTime(100) // in seconds
+                .allowReducibleClasses(true) // default: true
+                .rewriteOpenLinks(false) // default: false
                 .create()
         )
         .and(ModelCheckingOptions.exportOpts()
-                .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph.png").toFile())
+                .setReactionGraphFile(Paths.get("transition_graph.png").toFile())
                 .setPrintCanonicalStateLabel(false)
-                .setOutputStatesFolder(Paths.get(TARGET_DUMP_PATH, "states/").toFile())
+                .setOutputStatesFolder(Paths.get("states/").toFile())
+                .setFormatsEnabled( // output formats of states
+                        List.of(
+                                ModelCheckingOptions.ExportOptions.Format.PNG,
+                                ModelCheckingOptions.ExportOptions.Format.XMI
+                        )
+                )
                 .create()
         )
 ;
@@ -201,7 +142,7 @@ Currently, the following categories are available:
 
 They are explained in the following.
 
-### Transition options
+### Transition-related Options
 
 #### Stopping Criteria
 Notice that `ModelCheckingOptions.TransitionOptions` let us specify some stopping criteria by
@@ -217,19 +158,62 @@ The following methods are available through the `ModelCheckingOptions.transition
 
 The default values are good for most of the cases.
 
-### Export options
+### Output-related options
 
 The `ModelCheckingOptions.ExportOptions` class allows specifying a file path where the reaction graph (i.e., transition system)
 and the individual states shall be written to.
 If these options are left empty then the graphs are not exported.
-Also one can decide if the state labels of the reaction graph are simple identifiers _a<sub>1</sub>_, _a<sub>2</sub>_, _a<sub>3</sub>_, ... or [canonical string encodings of bigraphs](https://link.springer.com/article/10.1007/s42979-021-00552-5) in its graphic output.
+Also, one can decide if the state labels of the reaction graph are simple identifiers _a<sub>1</sub>_, _a<sub>2</sub>_, _a<sub>3</sub>_, ... or [canonical string encodings of bigraphs](https://link.springer.com/article/10.1007/s42979-021-00552-5).
+Note that these canonical labels can be quite long for large states.
+
+## Event Listeners
+
+One may listen to specific events that are thrown during the simulation. This gives the user the possibility to interact
+with the simulation and fire additional actions or to log these events and evaluate them later, additionally to the
+final built reaction graph.
+
+Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added
+to a model checker instance. It provides methods to listen when a reaction rule is applied or when the verification process finished, for instance.
+
+For example, see [here](simulation-predicates#listen-to-predicate-evaluation) on how to listen for predicate evaluation results.
+
+
+## Asynchronous Execution
+
+To perform the model checking asynchronously, call the `BigraphModelChecker#executeAsync()`:
+
+```java
+Future<ReactionGraph<PureBigraph>> reactionGraphFuture = modelChecker.executeAsync();
+ReactionGraph<PureBigraph> pureBigraphReactionGraph = reactionGraphFuture.get();
+```
+
+The `executeAsync()` method does not block the execution and returns a `Future` object to fetch the result later.
+It contains the complete reaction graph of the simulated BRS.
+
+One can then export the transition system by calling  `modelChecker.exportReactionGraph(pureBigraphReactionGraph)`.
+
+### Custom Executor Service
+
+The `java.util.concurrent.ExecutorService` is used to submit tasks of the model checker.
+
+Bigraph framework offers to provide a custom `ExecutorService` by implementing the interface
+`org.bigraphs.framework.core.providers.ExecutorServicePoolProvider`, found in the `bigraph-core` dependency.
+The class `BigraphModelChecker` uses the `java.util.ServiceLoader` (see [https://docs.oracle.com/javase/tutorial/ext/basics/spi.html#the-serviceloader-class](https://docs.oracle.com/javase/tutorial/ext/basics/spi.html#the-serviceloader-class)
+to search for an implementation.
+
+A default _executor service provider_ is provided within the `bigraph-simulation` module,
+which creates a fixed thread pool.
+
+Therefore,
+refer to [`org.bigraphs.framework.simulation.modelchecking.FixedThreadPoolExecutorProvider`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/simulation/modelchecking/FixedThreadPoolExecutorProvider.html).
+
 
 ## References
 
 - \[1\] <a id="ref1" href="https://dl.acm.org/citation.cfm?doid=357172.357178">S. Owicki and L. Lamport, "Proving Liveness Properties of Concurrent Programs," ACM Trans. Program. Lang. Syst., vol. 4, no. 3, pp. 455–495, Jul. 1982.</a>
 
-- \[2\] <a id="ref1" href="https://pure.itu.dk/portal/files/39500908/thesis_GianDavidPerrone.pdf">G. Perrone, “Domain-Specific Modelling Languages in Bigraphs,” IT University of Copenhagen, 2013.</a>
+- \[2\] <a id="ref2" href="https://pure.itu.dk/portal/files/39500908/thesis_GianDavidPerrone.pdf">G. Perrone, “Domain-Specific Modelling Languages in Bigraphs,” IT University of Copenhagen, 2013.</a>
 
-- \[3\] Clarke, E. M. ; Henzinger, T. A. ; Veith, H. ; Bloem, R. (Hrsg.): Handbook of Model Checking : Springer International Publishing, 2018 — ISBN 978-3-319-10574-1
+- \[3\] <a id="ref3"></a>Clarke, E. M. ; Henzinger, T. A. ; Veith, H. ; Bloem, R. (Hrsg.): Handbook of Model Checking : Springer International Publishing, 2018 — ISBN 978-3-319-10574-1
 
 
