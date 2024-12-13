@@ -53,7 +53,7 @@ function HomepageHeader() {
                     <Link
                         className="button button--secondary button--lg"
                         style={{"margin-top": "1em"}}
-                        to="/docs/">View the User Manual
+                        to="/docs/">View User Manual
                     </Link>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ function FeatureCalloutTitle() {
             style={{paddingTop: '2em'}}>
             <h2>Features</h2>
             <div>
-                This framework provides 4 central building blocks. Some of their features are:
+                This framework provides 4 central building blocks.
             </div>
         </div>
     );
