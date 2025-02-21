@@ -83,7 +83,7 @@ The framework is developed around a [metamodel-first approach](https://github.co
     - Specify order of reaction rules via priorities
     - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
     - Tracking rules (a rule can be assigned a tracking map)
-    - Model Transformations
+- Model Importer/Exporter
     - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
     - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
     - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
@@ -102,8 +102,7 @@ The theory provides an algebra and a graph rewriting mechanism to describe, stud
 ## Development Requirements
 
 - Java >=17
-- Maven or Gradle
-    - Minimum version of Maven: 3.8.3
+- Maven v3.8.3 or Gradle
 
 
 ## Use / Install / Dependency Settings
@@ -194,40 +193,42 @@ Bigraph Framework employs SLF4J as a facade for the log4j logging framework.
 Depending on your project setup, you may need to include the following libraries in your `pom.xml`:
 
 ```xml
-<!-- For any Maven project in general -->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-    <version>2.0.9</version>
-</dependency>
-<!-- Use a no-operation (NOP) logger implementation -->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-nop</artifactId>
-    <version>2.0.7</version>
-</dependency>
-<!-- or, for example, the reload4j implementation (fork of log4j) -->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-reload4j</artifactId>
-    <version>2.0.9</version>
-</dependency>
+<dependencies>
+    <!-- For any Maven project in general -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.9</version>
+    </dependency>
+    <!-- Use a no-operation (NOP) logger implementation -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-nop</artifactId>
+        <version>2.0.7</version>
+    </dependency>
+    <!-- or, for example, the reload4j implementation (fork of log4j) -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-reload4j</artifactId>
+        <version>2.0.9</version>
+    </dependency>
 
-<!-- When used within a Spring project -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter</artifactId>
-    <exclusions>
-        <exclusion>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-log4j2</artifactId>
-</dependency>
+    <!-- When used within a Spring project -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <exclusions>
+            <exclusion>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-log4j2</artifactId>
+    </dependency>
+</dependencies>
 ```
 
 Not including these dependencies will result in warnings.

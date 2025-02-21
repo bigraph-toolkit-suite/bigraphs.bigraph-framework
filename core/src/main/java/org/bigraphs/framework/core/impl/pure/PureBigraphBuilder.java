@@ -619,7 +619,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             }
         }
 
-        //TODO
+
         public final Hierarchy connectByEdge(final Hierarchy... hierarchies) {
             throw new RuntimeException("not implemented yet");
         }
@@ -642,9 +642,6 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             }
 
             PureBigraphBuilder.this.connectByEdge(nodes.toArray(new BigraphEntity.NodeEntity[nodes.size()]));
-//            nodes.forEach(x -> child.add(x));
-//            child.addAll(nodes.get(0));
-//            child.addAll((Collection<? extends BigraphEntity<Control<?, ?>>>) nodes); // now its safe, after above
             nodes.forEach(this::addChildToParent);
             return this;
         }
@@ -1313,7 +1310,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     }
 
     /**
-     * Creates an edge of EClass {@link de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BEdge} and adds it to the
+     * Creates an edge of EClass {@link org.bigraphs.model.bigraphBaseModel.BEdge} and adds it to the
      * list of available edges {@code availableEdges}.
      *
      * @return the freshly created edge
