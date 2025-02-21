@@ -11,10 +11,10 @@ The framework could not have been developed without the following superb bigraph
 
 ## License
 
-**Bigraph Framework** is Open Source software released under the Apache 2.0 license.
+**Bigraph Framework** is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.txt).
 
 ```text
-   Copyright 2023-present Dominik Grzelak
+   Copyright 2025 Dominik Grzelak
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
