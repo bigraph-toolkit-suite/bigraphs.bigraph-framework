@@ -1,12 +1,9 @@
 package org.bigraphs.framework.simulation.analysis;
 
 import org.apache.commons.io.FileUtils;
-import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.ControlStatus;
-import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
 import org.bigraphs.framework.core.alg.generators.RandomBigraphGeneratorSupport;
-import org.bigraphs.framework.core.analysis.BigraphAnalysis;
 import org.bigraphs.framework.core.analysis.BigraphDecomposer;
 import org.bigraphs.framework.core.analysis.PureBigraphDecomposerImpl;
 import org.bigraphs.framework.core.analysis.PureLinkGraphConnectedComponents;
@@ -82,7 +79,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
         BigraphDecomposer<PureBigraph> pureBigraphBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
         pureBigraphBigraphDecomposer.decompose(generate);
 
-        BigraphDecomposer<Bigraph<? extends Signature<?>>> bigraphBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
+//        BigraphDecomposer<Bigraph<? extends Signature<?>>> bigraphBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
         PureBigraphDecomposerImpl pureBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
         pureBigraphDecomposer.decompose(generate);
         System.out.println("Count: " + pureBigraphDecomposer.getUnionFindDataStructure().getCount());
