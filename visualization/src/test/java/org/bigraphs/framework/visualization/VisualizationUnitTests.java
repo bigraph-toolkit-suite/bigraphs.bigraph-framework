@@ -1,6 +1,7 @@
 package org.bigraphs.framework.visualization;
 
 import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
@@ -15,9 +16,6 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
-import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
-import org.bigraphs.framework.visualization.DefaultLabelSupplier;
-import org.bigraphs.framework.visualization.GraphicalFeatureSupplier;
 import org.bigraphs.framework.visualization.supplier.GraphvizColorSupplier;
 import org.bigraphs.framework.visualization.supplier.GraphvizShapeSupplier;
 import guru.nidi.graphviz.attribute.*;
@@ -48,6 +46,14 @@ public class VisualizationUnitTests {
     static void setUp() {
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
+    }
+
+    @Test
+    void random_bigraph() throws IOException {
+        DemoBigraphProvider provider = new DemoBigraphProvider();
+        PureBigraphGenerator pureBigraphGenerator = pureRandomBuilder(provider.createAlphabetSignature());
+        PureBigraph randomBigraph = pureBigraphGenerator.generate(10, 100, 0.5f);
+        BigraphGraphvizExporter.toPNG(randomBigraph, false, new File(TARGET_DUMP_PATH + "random_output.png"));
     }
 
     @Test
