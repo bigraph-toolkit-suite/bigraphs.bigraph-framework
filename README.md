@@ -4,7 +4,7 @@
 
 | Branch  | Latest Versions       | Status       |
 |---------|-----------------------|--------------|
-| Main    | 2.0.1 / 1.1.0 / 1.0.0 | Releases     |
+| Main    | 2.0.2 / 2.0.1 / 1.1.0 | Releases     |
 | Develop | 3.0.0-SNAPSHOT        | Experimental |
 
 - User Manual: https://bigraphs.org/products/bigraph-framework/docs/
