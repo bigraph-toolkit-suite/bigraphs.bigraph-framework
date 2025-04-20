@@ -4,25 +4,25 @@ import clsx from "clsx";
 import BigraphMarkdownBlock from "./BigraphMarkdownBlock"
 
 const mavenDepCode = `
-<!-- the core module -->
+<!-- core module -->
 <dependency>
   <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-core</artifactId>
   <version>VERSION</version>
 </dependency>
-<!-- the simulation module (matching and rewriting) -->
+<!-- simulation module -->
 <dependency>
   <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-simulation</artifactId>
   <version>VERSION</version>
 </dependency>
-<!-- the visualization module -->
+<!-- visualization module -->
 <dependency>
   <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-visualization</artifactId>
   <version>VERSION</version>
 </dependency>
-<!-- the converter module -->
+<!-- converter module -->
 <dependency>
   <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-converter</artifactId>

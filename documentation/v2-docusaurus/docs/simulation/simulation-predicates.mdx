@@ -16,6 +16,31 @@ Any sub-class of `AbstractSimpleReactiveSystem<B extends Bigraph<? extends Signa
 AbstractSimpleReactiveSystem#addPredicate(ReactiveSystemPredicates<B> predicate)
 ```
 
+## Safety and Liveness Properties
+
+As long as the transition system is being built from a BRS specification,
+the provided predicates of the user are checked simultaneously for each
+new computed state in the course of a BRS simulation.
+
+:::note
+A user can listen to these events. Therefore, the interface `ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>>` must be implemented and added to the model checker instance.
+:::
+
+These predicates come in two forms: as safety properties or as liveness
+properties. The former represents a state in the system that should not
+occur, whereas the later denote a system state that eventually occurs.
+By this we can test if a program never reaches a "bad state" (safety),
+or correctly terminates (reaching a desirable state), possibly producing
+a result (liveness).
+
+Some further safety properties are: partial correctness, absence of deadlocks,
+and mutual exclusion (see [\[1\]](#ref1)).
+
+:::tip
+Fairness properties are important for reactive systems.
+Safety is easier to check than liveness.
+:::
+
 ## Listening to Predicate Evaluation
 
 If predicates are added to a reactive system instance, one can add additional logic when these predicates gets evaluated.
@@ -49,18 +74,9 @@ It has the following arguments:
 - `ReactiveSystemPredicates<B> predicate`: the predicate
 - `GraphPath<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> counterExampleTrace`: the trace representing a counterexample
 
-
-
-
 ## Types of predicates
 
 ### `AndPredicate<B extends Bigraph<? extends Signature<?>>>`
 ### `BigraphIsoPredicate<B extends Bigraph<? extends Signature<?>>>`
 ### `OrPredicate<B extends Bigraph<? extends Signature<?>>>`
 ### `SubBigraphMatchPredicate<B extends Bigraph<? extends Signature<?>>>`
-
-
-
-
-
-

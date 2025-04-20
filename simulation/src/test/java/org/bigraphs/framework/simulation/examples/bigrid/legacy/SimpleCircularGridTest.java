@@ -1,4 +1,4 @@
-package org.bigraphs.framework.simulation.examples.bigrid;
+package org.bigraphs.framework.simulation.examples.bigrid.legacy;
 
 import org.bigraphs.framework.converter.bigrapher.BigrapherTransformator;
 import org.bigraphs.framework.core.Bigraph;
@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bigraphs.framework.simulation.examples.bigrid.BigridGeneratorOld.DiscreteIons.NodeType.*;
+import static org.bigraphs.framework.simulation.examples.bigrid.legacy.BigridGeneratorOld.DiscreteIons.NodeType.*;
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;

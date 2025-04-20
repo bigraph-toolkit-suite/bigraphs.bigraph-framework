@@ -1,4 +1,4 @@
-package org.bigraphs.framework.simulation.examples.bigrid;
+package org.bigraphs.framework.simulation.examples.bigrid.legacy;
 
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphComposite;

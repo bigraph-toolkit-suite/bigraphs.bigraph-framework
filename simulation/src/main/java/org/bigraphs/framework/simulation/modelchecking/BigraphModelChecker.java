@@ -16,7 +16,6 @@ import org.bigraphs.framework.simulation.exceptions.BigraphSimulationException;
 import org.bigraphs.framework.simulation.exceptions.InvalidSimulationStrategy;
 import org.bigraphs.framework.simulation.exceptions.ModelCheckerExecutorServiceNotProvided;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
-import org.bigraphs.framework.simulation.modelchecking.predicates.PredicateChecker;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.bigraphs.framework.visualization.ReactionGraphExporter;
 import org.jgrapht.GraphPath;
@@ -33,9 +32,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-
-//TODO: implement some static rule analysers: https://github.com/bigmc/bigmc/blob/master/src/analyser.cpp
-// as discussed in Perrone's thesis
 
 /**
  * A bigraph model checker that allows to simulate a BRS by reaction rules. A reactive system, the strategy and
@@ -56,9 +52,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     protected SimulationStrategy.Type simulationStrategyType;
     protected BigraphModelChecker.ReactiveSystemListener<B> reactiveSystemListener;
     protected BigraphCanonicalForm canonicalForm = BigraphCanonicalForm.createInstance(true);
-    protected PredicateChecker<B> predicateChecker = null;
     protected ModelCheckingOptions options;
-//    protected AbstractBigraphMatcher<B> matcher;
 
     final ReactiveSystem<B> reactiveSystem;
     ReactionGraph<B> reactionGraph;
@@ -69,7 +63,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     public static class SimulationStrategy {
 
         public enum Type {
-            BFS, RANDOM, SIMULATION;//TODO deprecated
+            BFS, RANDOM;
         }
 
         public static <B extends Bigraph<? extends Signature<?>>> Class<? extends ModelCheckingStrategy> getSimulationStrategyClass(Type type) {
@@ -78,8 +72,6 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                     return BreadthFirstStrategy.class;
                 case RANDOM: //This is like simulation
                     return RandomAgentModelCheckingStrategy.class;
-                case SIMULATION: // TODO deprecated
-                    return BreadthFirstSimulationStrategy.class;
                 default:
                     return BreadthFirstStrategy.class;
             }
@@ -185,11 +177,6 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         doWork();
         prepareOutput();
     }
-
-    //TODO: tasks for parallel jobs
-    // https://stackify.com/java-thread-pools/
-    // https://www.baeldung.com/java-executor-service-tutorial
-    // https://github.com/pivovarit/parallel-collectors
 
     /**
      * Asynchronously start the simulation based on the provided reactive system and options.
