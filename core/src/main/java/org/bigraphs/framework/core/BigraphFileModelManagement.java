@@ -49,6 +49,8 @@ import static org.bigraphs.framework.core.BigraphMetaModelConstants.SIGNATURE_BA
  */
 public class BigraphFileModelManagement {
 
+    public static boolean VALIDATE = true;
+
     private final static String DEFAULT_ENCODING = "UTF-8";
 
     public enum Format {
@@ -331,13 +333,15 @@ public class BigraphFileModelManagement {
     //    }
 
     public static void validateModel(EObject eObject) {
-        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(eObject);
-        if (diagnostic.getSeverity() != Diagnostic.OK) {
-            System.out.println("ERROR in: " + diagnostic.getMessage());
-            for (Diagnostic child : diagnostic.getChildren()) {
-                System.out.println(child.getMessage());
+        if (VALIDATE) {
+            Diagnostic diagnostic = Diagnostician.INSTANCE.validate(eObject);
+            if (diagnostic.getSeverity() != Diagnostic.OK) {
+                System.out.println("ERROR in: " + diagnostic.getMessage());
+                for (Diagnostic child : diagnostic.getChildren()) {
+                    System.out.println(child.getMessage());
+                }
+                throw new RuntimeException("Invalid model loaded.");
             }
-            throw new RuntimeException("Invalid model loaded.");
         }
     }
 
