@@ -11,10 +11,14 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.bigraphs.framework.core.utils.BigraphUtil.getUniqueIdOfBigraphEntity;
 
@@ -25,6 +29,7 @@ public class SwingGraphStreamer {
     boolean withRoots = false;
     Graph graph;
     Viewer viewer;
+    boolean darkMode = false;
 
     int delayForElements = -1;
 
@@ -48,6 +53,11 @@ public class SwingGraphStreamer {
         this.withRoots = withRoots;
     }
 
+    public SwingGraphStreamer(PureBigraph bigraph, boolean withSites, boolean withRoots, boolean darkMode) {
+        this(bigraph, withSites, withRoots);
+        this.darkMode = darkMode;
+    }
+
     /**
      * Sets some system properties so that the UI can be shown.
      * Otherwise, an exception might be thrown: "No UI package detected! Please use System.setProperty("org.graphstream.ui") for the selected package."
@@ -60,7 +70,20 @@ public class SwingGraphStreamer {
     public void initGraph(String graphId) {
         if (graph == null) {
             graph = new SingleGraph(graphId);
-            graph.setAttribute("ui.stylesheet", "node.link { text-size: 12px; fill-color: green; } node.innername { text-size: 12px; fill-color: green; } node.control { text-size: 12px; fill-color: red; } node.root {fill-color: blue; text-size: 12px;} node.site {fill-color: gray; text-size: 12px;} edge.hyperedge { fill-color: green; stroke-width: 3px; }");
+
+            if (darkMode) {
+                InputStream styleStream = SwingGraphStreamer.class.getResourceAsStream("/graphStreamStyleDark.css");
+                if (styleStream != null) {
+                    String style = new BufferedReader(new InputStreamReader(styleStream))
+                            .lines()
+                            .collect(Collectors.joining("\n"));
+                    graph.setAttribute("ui.stylesheet", style);
+                }
+            }
+
+            if (!darkMode || graph.getAttribute("ui.stylesheet") == null) {
+                graph.setAttribute("ui.stylesheet", "node.link { text-size: 12px; fill-color: green; } node.innername { text-size: 12px; fill-color: green; } node.control { text-size: 12px; fill-color: red; } node.root {fill-color: blue; text-size: 12px;} node.site {fill-color: gray; text-size: 12px;} edge.hyperedge { fill-color: green; stroke-width: 3px; }");
+            }
         }
     }
 
@@ -69,8 +92,6 @@ public class SwingGraphStreamer {
             viewer = graph.display();
             viewer.getDefaultView().getCamera().setAutoFitView(true);
             viewer.getDefaultView().getCamera().setViewPercent(1.2);
-            //        viewer.disableAutoLayout();
-//        viewer.enableXYZfeedback(true);
         }
     }
 
@@ -110,11 +131,11 @@ public class SwingGraphStreamer {
         return viewer;
     }
 
-    // TODO use swingworker instead of sleep(): https://stackoverflow.com/questions/35811548/thread-sleep-freezes-jframe-gui-containing-graphstream-graph
     public CompletableFuture<Boolean> renderAsync(int delayPerElement) {
         return renderAsync("default", delayPerElement);
     }
 
+    // TODO use swingworker instead of sleep(): https://stackoverflow.com/questions/35811548/thread-sleep-freezes-jframe-gui-containing-graphstream-graph
     public CompletableFuture<Boolean> renderAsync(String graphId, int delayPerElement) {
         this.delayForElements = delayPerElement;
         initGraph(graphId);

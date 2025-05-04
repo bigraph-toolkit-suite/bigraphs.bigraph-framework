@@ -1,0 +1,38 @@
+graph {
+    padding: 60px;
+    fill-color: black;
+}
+node {
+    size: 10px;
+    fill-color: white;
+    text-color: white;
+    text-style: bold;
+    text-size: 14px;
+    text-alignment: above;
+}
+node.root {
+    fill-color: #1f77b4;
+}
+node.link {
+    fill-color: #2ca02c;
+}
+node.innername {
+    fill-color: #2ca02c;
+}
+node.control {
+    fill-color: #d62728;
+}
+node.site {
+    fill-color: #7f7f7f;
+}
+edge {
+    size: 2px;
+    fill-color: #aaaaaa;
+    shape: cubic-curve;
+    arrow-shape: arrow;
+    arrow-size: 6px, 4px;
+}
+edge.hyperedge {
+    fill-color: #2ca02c;
+    size: 3px;
+}
