@@ -2,8 +2,6 @@ package org.bigraphs.framework.visualization;
 
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
@@ -37,10 +35,8 @@ import java.util.List;
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static guru.nidi.graphviz.model.Factory.*;
 
-public class VisualizationUnitTests {
+public class PNGVisualizationUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/graphviz/";
-
-//    private PureBigraphFactory factory = BigraphFactory.pure();
 
     @BeforeAll
     static void setUp() {
@@ -269,12 +265,12 @@ public class VisualizationUnitTests {
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
+                .addControl("Printer",2)
+                .addControl("User", 1)
+                .addControl("Room", 1)
+                .addControl("Spool", 1)
+                .addControl("Computer", 1)
+                .addControl("Job", 0);
 
         return (S) defaultBuilder.create();
     }
