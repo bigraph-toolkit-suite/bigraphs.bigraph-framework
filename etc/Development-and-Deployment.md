@@ -74,6 +74,9 @@ To view and edit the manual execute the following commands.
 First, `cd` into the `documentation/v2-docusaurus/` folder:
 
 ```shell
+nvm install 16
+nvm use 16
+npm --prefix ./documentation/v2-docusaurus/ install
 cd ./documentation/v2-docusaurus/
 npx docusaurus start #or: npm run start
 ```
