@@ -9,7 +9,6 @@ import org.bigraphs.framework.core.reactivesystem.*;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.modelchecking.predicates.PredicateChecker;
 import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
-import org.bigraphs.framework.simulation.modelchecking.reactions.AbstractReactionRuleSupplier;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.slf4j.Logger;
@@ -107,10 +106,15 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
             String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(theAgent);
             Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
 
-            AbstractReactionRuleSupplier<B> inOrder = AbstractReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
-            Stream<ReactionRule<B>> rrStream = Stream.generate(inOrder);
+//            AbstractReactionRuleSupplier<B> inOrder = AbstractReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
+            Stream<ReactionRule<B>> rrStream; // = Stream.generate(inOrder);
+
+            // Sort by priority
+            List<ReactionRule<B>> sortedRules = new ArrayList<>(modelChecker.getReactiveSystem().getReactionRules());
+            sortedRules.sort(Comparator.comparingLong(HasPriority::getPriority));
+            rrStream = sortedRules.stream();
+
             if (options.isParallelRuleMatching()) rrStream = rrStream.parallel();
-            //TODO: add priority order
 
             rrStream
                     .limit(modelChecker.getReactiveSystem().getReactionRules().size())

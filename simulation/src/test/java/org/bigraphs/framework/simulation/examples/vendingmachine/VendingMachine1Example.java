@@ -605,6 +605,7 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
         PureBigraph redex = builder.createBigraph();
         PureBigraph reactum = builder2.createBigraph();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ((ParametricReactionRule)rr).withPriority(0);
         return rr;
     }
 
