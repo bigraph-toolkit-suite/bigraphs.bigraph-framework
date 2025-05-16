@@ -10,12 +10,8 @@ import org.bigraphs.framework.simulation.modelchecking.reactions.RandomAgentMatc
 import org.bigraphs.framework.simulation.modelchecking.reactions.AbstractReactionRuleSupplier;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.list.MutableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -24,7 +20,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * @author Dominik Grzelak
  */
 public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
-    private Logger logger = LoggerFactory.getLogger(RandomAgentModelCheckingStrategy.class);
 
     public RandomAgentModelCheckingStrategy(BigraphModelChecker<B> modelChecker) {
         super(modelChecker);
@@ -59,7 +54,7 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
                         MatchIterable<BigraphMatch<B>> match = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, eachRule));
                         Iterator<BigraphMatch<B>> iterator = match.iterator();
                         while (iterator.hasNext()) {
-                            increaseOccurrenceCounter();
+                            occurrenceCounter++;
                             BigraphMatch<B> next = iterator.next();
                             B reaction = null;
                             if (next.getParameters().size() == 0) {
@@ -95,5 +90,22 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
 
         logger.debug("Total Transitions: {}", transitionCnt);
         logger.debug("Total Occurrences: {}", getOccurrenceCount());
+    }
+
+    // UNUSED METHODS since the method #synthesizeTransitionSystem() is overridden
+
+    @Override
+    protected Collection<B> createWorklist() {
+        return List.of();
+    }
+
+    @Override
+    protected B removeNext(Collection<B> worklist) {
+        return null;
+    }
+
+    @Override
+    protected void addToWorklist(Collection<B> worklist, B bigraph) {
+
     }
 }

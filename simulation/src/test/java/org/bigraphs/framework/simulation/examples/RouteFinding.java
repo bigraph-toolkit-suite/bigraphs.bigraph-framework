@@ -127,7 +127,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
 //                opts);
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
-                BigraphModelChecker.SimulationStrategy.Type.DFS,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts);
         modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
