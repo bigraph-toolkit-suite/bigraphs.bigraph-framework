@@ -1,11 +1,14 @@
 package org.bigraphs.framework.simulation.modelchecking;
 
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.reactivesystem.BMatchResult;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
+import org.bigraphs.framework.simulation.modelchecking.predicates.PredicateChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +19,10 @@ import org.slf4j.LoggerFactory;
  * @author Dominik Grzelak
  */
 public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends Signature<?>>> implements ModelCheckingStrategy<B> {
-    private Logger logger = LoggerFactory.getLogger(ModelCheckingStrategySupport.class);
-
+    protected Logger logger = LoggerFactory.getLogger(ModelCheckingStrategySupport.class);
+    protected PredicateChecker<B> predicateChecker;
+    protected JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+    protected JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
     protected int occurrenceCounter = 0;
 
     protected BigraphModelChecker<B> modelChecker;

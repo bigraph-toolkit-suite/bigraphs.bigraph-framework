@@ -61,8 +61,8 @@ public class AddExample extends BaseExampleTestSupport {
     }
 
     @Test
-    void simulate_counting_example() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, IncompatibleInterfaceException {
-        int a = 2, b = 3;
+    void simulate() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, IncompatibleInterfaceException {
+        int a = 3, b = 3;
         AddExpr reactiveSystem = new AddExpr(a, b);
         eb(reactiveSystem.agent_a, "agent");
         eb(reactiveSystem.reactionRule_1.getRedex(), "r1-redex");

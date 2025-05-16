@@ -351,7 +351,7 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
-                BigraphModelChecker.SimulationStrategy.Type.BFS,
+                BigraphModelChecker.SimulationStrategy.Type.DFS,
                 opts());
         modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();

@@ -33,11 +33,6 @@ import java.util.stream.Stream;
  * @see <a href="https://pure.itu.dk/portal/files/39500908/thesis_GianDavidPerrone.pdf">[1] G. Perrone, “Domain-Specific Modelling Languages in Bigraphs,” IT University of Copenhagen, 2013.</a>
  */
 public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
-    private final Logger logger = LoggerFactory.getLogger(BreadthFirstStrategy.class);
-
-    protected PredicateChecker<B> predicateChecker;
-    protected JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-    protected JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
 
     public BreadthFirstStrategy(BigraphModelChecker<B> modelChecker) {
         super(modelChecker);

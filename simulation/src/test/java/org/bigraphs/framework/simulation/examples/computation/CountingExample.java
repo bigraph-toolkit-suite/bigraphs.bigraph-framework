@@ -45,7 +45,7 @@ public class CountingExample {
 
     @BeforeAll
     static void setUp() throws IOException {
-        System.setProperty("it.uniud.mads.jlibbig.debug", "false");
+//        System.setProperty("it.uniud.mads.jlibbig.debug", "false");
         File dump = new File(TARGET_DUMP_PATH);
         dump.mkdirs();
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
@@ -53,7 +53,7 @@ public class CountingExample {
     }
 
     @Test
-    void simulate_counting_example() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
+    void simulate() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         // Create reaction rulesname
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
@@ -103,9 +103,10 @@ public class CountingExample {
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                                 .setReactionGraphFile(new File(completePath.toUri()))
-//                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
 //                        .setPrintCanonicalStateLabel(true)
                                 .setPrintCanonicalStateLabel(false)
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                                 .create()
                 )
         ;

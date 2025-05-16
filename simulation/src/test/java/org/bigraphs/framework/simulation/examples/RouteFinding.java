@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
@@ -44,6 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/cars/framework/";
     boolean carArrivedAtTarget = false;
+    long startTime = System.currentTimeMillis();
+    long finishTime = System.currentTimeMillis();
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -57,6 +60,8 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
     public void onAllPredicateMatched(PureBigraph currentAgent, String label) {
         System.out.println("Car arrived at the target");
         System.out.println(label);
+        finishTime = System.currentTimeMillis();
+        System.out.println("Time elapsed: " + (finishTime - startTime) + " ms");
         carArrivedAtTarget = true;
     }
 
@@ -122,7 +127,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
 //                opts);
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
-                BigraphModelChecker.SimulationStrategy.Type.BFS,
+                BigraphModelChecker.SimulationStrategy.Type.DFS,
                 opts);
         modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();

@@ -18,9 +18,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-//TODO make variant of BreadthFirstStrategy
-// also allow configuring BreadthFirstStrategy which hashing to use for iso check
-
 /**
  * Random state-space traversal without cycle-checking and predicate evaluation.
  *
