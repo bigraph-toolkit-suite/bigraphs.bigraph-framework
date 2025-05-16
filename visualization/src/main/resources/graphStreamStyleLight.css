@@ -1,0 +1,29 @@
+node.link {
+    text-size: 12px;
+    fill-color: green;
+}
+
+node.innername {
+    text-size: 12px;
+    fill-color: green;
+}
+
+node.control {
+    text-size: 12px;
+    fill-color: red;
+}
+
+node.root {
+    fill-color: blue;
+    text-size: 12px;
+}
+
+node.site {
+    fill-color: gray;
+    text-size: 12px;
+}
+
+edge.hyperedge {
+    fill-color: green;
+    stroke-width: 3px;
+}
