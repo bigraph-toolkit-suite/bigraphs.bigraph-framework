@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * Abstract base class for all reaction rule suppliers.
- * A supplier is a argument-less function that returns something.
+ * Abstract base class for stream-based reaction rule suppliers.
+ * A supplier is an argument-less function that returns something, in this case, a reaction rule.
  * <p>
  * This class is used in the model checking procedure as a generic interface.
  *

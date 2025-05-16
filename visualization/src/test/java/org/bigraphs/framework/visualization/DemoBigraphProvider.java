@@ -1,8 +1,6 @@
 package org.bigraphs.framework.visualization;
 
 import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
@@ -38,12 +36,12 @@ public class DemoBigraphProvider {
     private DefaultDynamicSignature createRandomSignature() {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
-                .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
+                .addControl("Printer", 2)
+                .addControl("User", 1)
+                .addControl("Room", 1)
+                .addControl("Spool", 1)
+                .addControl("Computer", 1)
+                .addControl("Job", 0);
 
         return signatureBuilder.create();
     }
@@ -51,19 +49,19 @@ public class DemoBigraphProvider {
     public DefaultDynamicSignature createAlphabetSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("E")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("F")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("G")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("H")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("I")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("J")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("K")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("Q")).arity(FiniteOrdinal.ofInteger(5)).assign()
-                .newControl().identifier(StringTypedName.of("R")).arity(FiniteOrdinal.ofInteger(5)).assign()
+                .addControl("A", 5)
+                .addControl("B", 5)
+                .addControl("C", 5)
+                .addControl("D", 5)
+                .addControl("E", 5)
+                .addControl("F", 5)
+                .addControl("G", 5)
+                .addControl("H", 5)
+                .addControl("I", 5)
+                .addControl("J", 5)
+                .addControl("K", 5)
+                .addControl("Q", 5)
+                .addControl("R", 5)
         ;
 
         return defaultBuilder.create();

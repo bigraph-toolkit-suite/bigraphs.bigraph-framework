@@ -12,13 +12,13 @@ import TabItem from '@theme/TabItem';
 <center>
     <p>
         This manual provides a complete guide to the Bigraph Framework. <br/>
-        <i>Last Updated: 2025-04-20</i>
+        <i>Last Updated: 2025-05-16</i>
     </p>
 </center>
 
 
-- **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.0.2</span> (main branch)
-  - Previous Stable Versions: 2.0.1, 1.1.0
+- **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.1.0</span> (main branch)
+- Previous Stable Versions: 2.0.2, 2.0.1
 - Latest Experimental Version: <span class="badge badge-secondary" style={{backgroundColor: '#7952b3'}}>3.0.0-SNAPSHOT</span> (develop branch)
 
 <details style={{ background: 'transparent' }}>
@@ -39,7 +39,7 @@ import TabItem from '@theme/TabItem';
             <td>1.6.1</td>
         </tr>
         <tr>
-            <td>2.0.1-2.0.2</td>
+            <td>2.0.1, 2.0.2, 2.1.0</td>
             <td>2.0.1, 1.6.1</td>
         </tr>
     </table>
@@ -68,28 +68,28 @@ The framework is developed around a [metamodel-first approach](https://github.co
 ### Features
 
 - Modelling and Storage
-  - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
-  - Read and write instance models and metamodels of a bigraph from and to the file system
+    - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
+    - Read and write instance models and metamodels of a bigraph from and to the file system
 - Visualization
-  - Graphical export via GraphViz/DOT
-  - PNG, JPG, ...
-  - Interactive visualization UI via GraphStream
-  - Visualization of Compiler Graphs (VCG) format via yComp
+    - Graphical export via GraphViz/DOT
+    - PNG, JPG, ...
+    - Interactive visualization UI via GraphStream
+    - Visualization of Compiler Graphs (VCG) format via yComp
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
-  - Bigraph matching and rewriting via jLibBig
-  - Generation of a labeled transition system (LTS)
-  - Simulation and Model Checking (BFS, Random)
-  - Predicate checking, logical connectors, LTL
-  - Specify order of reaction rules via priorities
-  - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
-  - Tracking rules (a rule can be assigned a tracking map)
+    - Bigraph matching and rewriting via jLibBig
+    - Generation of a labeled transition system (LTS)
+    - Simulation and Model Checking (BFS, Random)
+    - Predicate checking, logical connectors, LTL
+    - Specify order of reaction rules via priorities
+    - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
+    - Tracking rules (a rule can be assigned a tracking map)
 - Model Importer/Exporter
-  - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
-  - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
-  - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
+    - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
+    - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
+    - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
-  - Add arbitrary attributes to nodes
-  - Attributes are preserved when doing rewriting (this requires tracking maps)
+    - Add arbitrary attributes to nodes
+    - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 ### What are Bigraphs?
 
@@ -135,26 +135,26 @@ import * as myConstClass from "../src/components/BigraphDependencyBlock";
 import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
 
 <Tabs>
-    <TabItem value="maven" label="Maven" default>
-        Add this inside the <code>dependencies</code> section of your project's <code>*.pom</code> file.
-        Replace VERSION with the latest version.
-        <br/>
-        <br/>
-        <pre>
+  <TabItem value="maven" label="Maven" default>
+    Add this inside the <code>dependencies</code> section of your project's <code>*.pom</code> file.
+    Replace VERSION with the latest version.
+      <br/>
+      <br/>
+    <pre>
     {myConstClass.MAVEN_DEP_CODE}
     </pre>
-    </TabItem>
-    <TabItem value="gradle" label="Gradle">
-        Append this in your <code>build.gradle</code> file.
-        Replace VERSION with the latest version.
-        <br/>
-        <br/>
-        <pre>{myConstClass.GRADLE_DEP_CODE}</pre>
-    </TabItem>
-    <TabItem value="manually" label="Manually">
-        Manual setup is not recommended.
-        Refer to the <a href={"https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md"}>README.md</a> in Bigraph Framework's code repository on how to build the framework from source.
-    </TabItem>
+  </TabItem>
+  <TabItem value="gradle" label="Gradle">
+    Append this in your <code>build.gradle</code> file.
+    Replace VERSION with the latest version.
+      <br/>
+      <br/>
+    <pre>{myConstClass.GRADLE_DEP_CODE}</pre>
+  </TabItem>
+  <TabItem value="manually" label="Manually">
+    Manual setup is not recommended.
+    Refer to the <a href={"https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md"}>README.md</a> in Bigraph Framework's code repository on how to build the framework from source.
+  </TabItem>
 </Tabs>
 
 ### Repository Setup for SNAPSHOT Releases
@@ -165,25 +165,17 @@ However, if you want SNAPSHOT releases, the following custom repository must be 
 The configuration for Maven and Gradle is provided below.
 
 <Tabs>
-    <TabItem value="maven" label="Maven" default>
-        The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> of a Maven-based Java project:
-        <pre>
+  <TabItem value="maven" label="Maven" default>
+    The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> of a Maven-based Java project:
+    <pre>
     {myConstClass2.MAVEN_REP_CODE}
     </pre>
-        <br/>
-
-        [//]: # (Another option is to modify the <code>settings.xml</code>, usually found in <code>~/.m2/</code>.)
-
-        [//]: # (<pre>)
-
-[//]: # ({myConstClass2.MAVEN_REP_CODE2})
-
-[//]: # (</pre>)
-    </TabItem>
-    <TabItem value="gradle" label="Gradle">
-        For Gradle, add this to the project's build gradle file:
-        <pre>{myConstClass2.GRADLE_REP_CODE}</pre>
-    </TabItem>
+    <br/>
+  </TabItem>
+  <TabItem value="gradle" label="Gradle">
+    For Gradle, add this to the project's build gradle file:
+    <pre>{myConstClass2.GRADLE_REP_CODE}</pre>
+  </TabItem>
 </Tabs>
 
 ### Logging Configuration

@@ -7,16 +7,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * The algorithm implemented here to synthesize the "reaction graph" is adopted from [1].
- * It is a breadth-first simulation, which also checks some given predicates.
+ * This algorithm implements a depth-first model checking algorithm.
  * It also detects cycles.
  * This algorithm can be used to conduct reachability analysis.
  *
  * @author Dominik Grzelak
- * @see <a href="https://pure.itu.dk/portal/files/39500908/thesis_GianDavidPerrone.pdf">[1] G. Perrone, “Domain-Specific Modelling Languages in Bigraphs,” IT University of Copenhagen, 2013.</a>
  */
-public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
-    public BreadthFirstStrategy(BigraphModelChecker<B> modelChecker) {
+public class DepthFirstStrategy<B extends Bigraph<? extends Signature<?>>> extends ModelCheckingStrategySupport<B> {
+    public DepthFirstStrategy(BigraphModelChecker<B> modelChecker) {
         super(modelChecker);
     }
 
@@ -27,7 +25,7 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
 
     @Override
     protected B removeNext(Collection<B> worklist) {
-        return ((Deque<B>) worklist).removeFirst(); // FIFO
+        return ((Deque<B>) worklist).removeLast(); // LIFO
     }
 
     @Override
@@ -35,4 +33,5 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
         ((Deque<B>) worklist).addLast(bigraph);
     }
 }
+
 

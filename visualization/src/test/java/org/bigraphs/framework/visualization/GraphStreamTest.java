@@ -1,10 +1,8 @@
 package org.bigraphs.framework.visualization;
 
 import com.google.common.graph.Traverser;
-import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.utils.emf.EMFUtils;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -13,9 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.bigraphs.framework.core.utils.BigraphUtil.getUniqueIdOfBigraphEntity;
 
@@ -33,7 +35,12 @@ public class GraphStreamTest implements BigraphUnitTestSupport {
     public void test_graphStream_randomBigraph() throws InterruptedException {
 
         Graph graph = new SingleGraph("Random Bigraph 1");
-        graph.setAttribute("ui.stylesheet", "node.control { fill-color: red; } node.root {fill-color: blue;} node.site {fill-color: gray;}");
+//        graph.setAttribute("ui.stylesheet", "node.control { fill-color: red; } node.root {fill-color: blue;} node.site {fill-color: gray;}");
+        InputStream styleStream = GraphStreamTest.class.getResourceAsStream("/graphStreamStyleDark.css");
+        String style = new BufferedReader(new InputStreamReader(styleStream))
+                .lines()
+                .collect(Collectors.joining("\n"));
+        graph.setAttribute("ui.stylesheet", style);
         Viewer viewer = graph.display();
 //        viewer.disableAutoLayout();
 
