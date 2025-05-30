@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 <center>
     <p>
         This manual provides a complete guide to the Bigraph Framework. <br/>
-        <i>Last Updated: 2025-05-16</i>
+        <i>Last Updated: 2025-05-30</i>
     </p>
 </center>
 
@@ -69,28 +69,28 @@ The framework is developed around a [metamodel-first approach](https://github.co
 ### Features
 
 - Modelling and Storage
-- Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
-- Read and write instance models and metamodels of a bigraph from and to the file system
+    - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
+    - Read and write instance models and metamodels of a bigraph from and to the file system
 - Visualization
-- Graphical export via GraphViz/DOT
-- PNG, JPG, ...
-- Interactive visualization UI via GraphStream
-- Visualization of Compiler Graphs (VCG) format via yComp
+    - Graphical export via GraphViz/DOT
+    - PNG, JPG, ...
+    - Interactive visualization UI via GraphStream
+    - Visualization of Compiler Graphs (VCG) format via yComp
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
-- Bigraph matching and rewriting via jLibBig
-- Generation of a labeled transition system (LTS)
-- Simulation and Model Checking (BFS, Random)
-- Predicate checking, logical connectors, LTL
-- Specify order of reaction rules via priorities
-- Conditional rules (not yet integrated in model checking procedure but available for custom usage)
-- Tracking rules (a rule can be assigned a tracking map)
+    - Bigraph matching and rewriting via jLibBig
+    - Generation of a labeled transition system (LTS)
+    - Simulation and Model Checking (BFS, Random)
+    - Predicate checking, logical connectors, LTL
+    - Specify order of reaction rules via priorities
+    - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
+    - Tracking rules (a rule can be assigned a tracking map)
 - Model Importer/Exporter
-- Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
-- Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
-- Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
+    - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
+    - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
+    - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
-- Add arbitrary attributes to nodes
-- Attributes are preserved when doing rewriting (this requires tracking maps)
+    - Add arbitrary attributes to nodes
+    - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 ### What are Bigraphs?
 
@@ -100,7 +100,7 @@ It is grounded on category theory and regarded as a unifying framework for many 
 the Calculus of Communicating Systems (CCS) and π-calculus.
 The theory provides an algebra and a graph rewriting mechanism to describe, study and analyze the dynamic behavior of reactive systems.
 
-## Development Requirements
+## Usage and Development Requirements
 
 - Java >=17
 - Maven v3.8.3 or Gradle
