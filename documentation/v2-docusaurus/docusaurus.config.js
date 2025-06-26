@@ -114,7 +114,7 @@ const config = {
                     },
                 ],
                 // copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
-                copyright: `Copyright © ${new Date().getFullYear()} Bigraph Toolkit Suite Contributors (Main developer: Dominik Grzelak) <br/> Unless otherwise specified, the textual content and visual elements featured on this website are subject to the Creative Commons license CC BY-SA 4.0. <br/> Bigraph Framework is licensed under the&nbsp;<a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.`,
+                copyright: `Copyright © 2021-${new Date().getFullYear()} Bigraph Toolkit Suite Developers <br/> Unless otherwise specified, the textual content and visual elements featured on this website are subject to the Creative Commons license CC BY-SA 4.0. <br/> Bigraph Framework is licensed under the&nbsp;<a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.`,
             },
             prism: {
                 // theme: lightCodeTheme,
