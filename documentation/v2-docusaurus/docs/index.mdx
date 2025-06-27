@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 <center>
     <p>
         This manual provides a complete guide to the Bigraph Framework. <br/>
-        <i>Last Updated: 2025-05-16</i>
+        <i>Last Updated: 2025-05-30</i>
     </p>
 </center>
 
@@ -24,8 +24,9 @@ import TabItem from '@theme/TabItem';
 <details style={{ background: 'transparent' }}>
     <summary><strong>Version Compatibility</strong></summary>
 
-    This table specifies the metamodel standards supported by the Bigraph Framework.
-    <table border="0">
+This table specifies the metamodel standards supported by the Bigraph Framework.
+
+<table border="0">
         <tr>
             <th>Bigraph Framework</th>
             <th>Bigraph Ecore Metamodel</th>
@@ -42,7 +43,7 @@ import TabItem from '@theme/TabItem';
             <td>2.0.1, 2.0.2, 2.1.0</td>
             <td>2.0.1, 1.6.1</td>
         </tr>
-    </table>
+</table>
 
 </details>
 
@@ -99,7 +100,7 @@ It is grounded on category theory and regarded as a unifying framework for many 
 the Calculus of Communicating Systems (CCS) and π-calculus.
 The theory provides an algebra and a graph rewriting mechanism to describe, study and analyze the dynamic behavior of reactive systems.
 
-## Development Requirements
+## Usage and Development Requirements
 
 - Java >=17
 - Maven v3.8.3 or Gradle
@@ -135,26 +136,26 @@ import * as myConstClass from "../src/components/BigraphDependencyBlock";
 import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
 
 <Tabs>
-  <TabItem value="maven" label="Maven" default>
-    Add this inside the <code>dependencies</code> section of your project's <code>*.pom</code> file.
-    Replace VERSION with the latest version.
-      <br/>
-      <br/>
-    <pre>
+    <TabItem value="maven" label="Maven" default>
+        Add this inside the <code>dependencies</code> section of your project's <code>*.pom</code> file.
+        Replace VERSION with the latest version.
+        <br/>
+        <br/>
+        <pre>
     {myConstClass.MAVEN_DEP_CODE}
     </pre>
-  </TabItem>
-  <TabItem value="gradle" label="Gradle">
-    Append this in your <code>build.gradle</code> file.
-    Replace VERSION with the latest version.
-      <br/>
-      <br/>
-    <pre>{myConstClass.GRADLE_DEP_CODE}</pre>
-  </TabItem>
-  <TabItem value="manually" label="Manually">
-    Manual setup is not recommended.
-    Refer to the <a href={"https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md"}>README.md</a> in Bigraph Framework's code repository on how to build the framework from source.
-  </TabItem>
+    </TabItem>
+    <TabItem value="gradle" label="Gradle">
+        Append this in your <code>build.gradle</code> file.
+        Replace VERSION with the latest version.
+        <br/>
+        <br/>
+        <pre>{myConstClass.GRADLE_DEP_CODE}</pre>
+    </TabItem>
+    <TabItem value="manually" label="Manually">
+        Manual setup is not recommended.
+        Refer to the <a href={"https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md"}>README.md</a> in Bigraph Framework's code repository on how to build the framework from source.
+    </TabItem>
 </Tabs>
 
 ### Repository Setup for SNAPSHOT Releases
@@ -165,17 +166,14 @@ However, if you want SNAPSHOT releases, the following custom repository must be 
 The configuration for Maven and Gradle is provided below.
 
 <Tabs>
-  <TabItem value="maven" label="Maven" default>
-    The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> of a Maven-based Java project:
-    <pre>
-    {myConstClass2.MAVEN_REP_CODE}
-    </pre>
-    <br/>
-  </TabItem>
-  <TabItem value="gradle" label="Gradle">
-    For Gradle, add this to the project's build gradle file:
-    <pre>{myConstClass2.GRADLE_REP_CODE}</pre>
-  </TabItem>
+    <TabItem value="maven" label="Maven" default>
+        The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> of a Maven-based Java project:
+        <pre>{myConstClass2.MAVEN_REP_CODE}</pre>
+    </TabItem>
+    <TabItem value="gradle" label="Gradle">
+        For Gradle, add this to the project's build gradle file:
+        <pre>{myConstClass2.GRADLE_REP_CODE}</pre>
+    </TabItem>
 </Tabs>
 
 ### Logging Configuration

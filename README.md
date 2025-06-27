@@ -354,7 +354,7 @@ mvn clean deploy -DskipTests -P release,ossrh
 **Bigraph Framework** is Open Source software released under the Apache 2.0 license.
 
 ```text
-   Copyright 2021-present Dominik Grzelak
+   Copyright 2021-present Bigraph Toolkit Suite Developers.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
