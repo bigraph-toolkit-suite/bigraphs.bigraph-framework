@@ -181,19 +181,30 @@ composite.juxtapose(F).parallelProduct(H);
 </dependencies>
 ```
 
-### Remote Repository for Snapshot Releases
+[//]: # (### Remote Repository for Snapshot Releases)
 
-SNAPSHOT releases are deployed [here](https://s01.oss.sonatype.org/content/repositories/snapshots).
-To resolve them, the following remote repository must be configured in your `pom.xml`:
-```xml
-<repository>
-  <snapshots>
-    <enabled>true</enabled>
-  </snapshots>
-  <id>ossrh</id>
-  <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-</repository>
-```
+[//]: # ()
+[//]: # (SNAPSHOT releases are deployed [here]&#40;https://s01.oss.sonatype.org/content/repositories/snapshots&#41;.)
+
+[//]: # (To resolve them, the following remote repository must be configured in your `pom.xml`:)
+
+[//]: # (```xml)
+
+[//]: # (<repository>)
+
+[//]: # (  <snapshots>)
+
+[//]: # (    <enabled>true</enabled>)
+
+[//]: # (  </snapshots>)
+
+[//]: # (  <id>ossrh</id>)
+
+[//]: # (  <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>)
+
+[//]: # (</repository>)
+
+[//]: # (```)
 
 > See also <a href="#Building-the-Framework-from-Source">Building from Source</a> if you want to build the source by yourself and host them in your Maven local repository.
 
@@ -332,6 +343,7 @@ at `documentation/v2-docusaurus/`:
 ```shell
 mvn clean package -DskipTests
 cd ./documentation/v2-docusaurus/
+nvm use 16
 npm run start
 ```
 
@@ -346,7 +358,7 @@ See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deplo
 
 To deploy Bigraph Framework to the [Central Repository](https://repo.maven.apache.org/maven2/):
 ```bash
-mvn clean deploy -DskipTests -P release,ossrh
+mvn clean deploy -DskipTests -P release,central
 ```
 
 ## License

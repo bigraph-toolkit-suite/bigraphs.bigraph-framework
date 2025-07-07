@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 <center>
     <p>
         This manual provides a complete guide to the Bigraph Framework. <br/>
-        <i>Last Updated: 2025-05-30</i>
+        <i>Last Updated: 2025-07-07</i>
     </p>
 </center>
 
@@ -142,8 +142,8 @@ import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
         <br/>
         <br/>
         <pre>
-    {myConstClass.MAVEN_DEP_CODE}
-    </pre>
+        {myConstClass.MAVEN_DEP_CODE}
+        </pre>
     </TabItem>
     <TabItem value="gradle" label="Gradle">
         Append this in your <code>build.gradle</code> file.
@@ -158,23 +158,36 @@ import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
     </TabItem>
 </Tabs>
 
-### Repository Setup for SNAPSHOT Releases
+[//]: # (### Repository Setup for SNAPSHOT Releases)
 
-No additional configuration is necessary to resolve the dependencies above!
+[//]: # ()
+[//]: # (No additional configuration is necessary to resolve the dependencies above!)
 
-However, if you want SNAPSHOT releases, the following custom repository must be added as well.
-The configuration for Maven and Gradle is provided below.
+[//]: # ()
+[//]: # (However, if you want SNAPSHOT releases, the following custom repository must be added as well.)
 
-<Tabs>
-    <TabItem value="maven" label="Maven" default>
-        The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> of a Maven-based Java project:
-        <pre>{myConstClass2.MAVEN_REP_CODE}</pre>
-    </TabItem>
-    <TabItem value="gradle" label="Gradle">
-        For Gradle, add this to the project's build gradle file:
-        <pre>{myConstClass2.GRADLE_REP_CODE}</pre>
-    </TabItem>
-</Tabs>
+[//]: # (The configuration for Maven and Gradle is provided below.)
+
+[//]: # ()
+[//]: # (<Tabs>)
+
+[//]: # (    <TabItem value="maven" label="Maven" default>)
+
+[//]: # (        The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> of a Maven-based Java project:)
+
+[//]: # (        <pre>{myConstClass2.MAVEN_REP_CODE}</pre>)
+
+[//]: # (    </TabItem>)
+
+[//]: # (    <TabItem value="gradle" label="Gradle">)
+
+[//]: # (        For Gradle, add this to the project's build gradle file:)
+
+[//]: # (        <pre>{myConstClass2.GRADLE_REP_CODE}</pre>)
+
+[//]: # (    </TabItem>)
+
+[//]: # (</Tabs>)
 
 ### Logging Configuration
 

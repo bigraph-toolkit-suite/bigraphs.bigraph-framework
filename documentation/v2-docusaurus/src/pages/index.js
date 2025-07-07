@@ -88,7 +88,7 @@ export default function Home() {
                 <HomepageFeatures/>
                 <TryItOut/>
                 <BigraphDependencyBlock/>
-                <BigraphRepositoryBlock/>
+                {/*<BigraphRepositoryBlock/>*/}
             </main>
         </Layout>
     );

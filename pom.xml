@@ -11,7 +11,7 @@
     <description>
         A rich framework for creating bigraphs and the simulation and model checking of bigraphical reactive systems.
     </description>
-    <url>http://www.bigraphs.org/</url>
+    <url>https://www.bigraphs.org/</url>
 
     <modules>
         <module>core</module>
@@ -62,23 +62,12 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <id>central</id>
+            <url>https://central.sonatype.com</url>
         </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
     </distributionManagement>
 
     <repositories>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
         <repository>
             <id>eclipse-releases-maven</id>
             <url>https://repo.eclipse.org/content/groups/releases/</url>
@@ -99,7 +88,8 @@
         <skip.security.check>true</skip.security.check>
         <!-- For documentation -->
         <doclint>none</doclint>
-        <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs</project.usermanual.outputDirectory>
+        <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs
+        </project.usermanual.outputDirectory>
         <!-- Versions -->
         <bigraph.metamodel.version>2.0.1</bigraph.metamodel.version>
         <emf.ecore.version>2.38.0</emf.ecore.version>
@@ -161,18 +151,16 @@
                     <version>3.1.3</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.7.0</version>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.8.0</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <serverId>ossrh</serverId>
-                        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                        <!-- With the property autoReleaseAfterClose set to false you can manually inspect the staging
-                        repository in the Nexus Repository Manager and trigger a release of the staging repository
-                        later with mvn nexus-staging:release If you find something went wrong you can drop the staging
-                        repository with mvn nexus-staging:drop -->
-                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        <publishingServerId>central</publishingServerId>
+                        <!--                        <autoPublish>true</autoPublish>-->
+                        <!--                        <waitUntil>published</waitUntil>-->
+                        <autoPublish>false</autoPublish>
+                        <waitUntil>validated</waitUntil>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -409,6 +397,10 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
         </dependency>
     </dependencies>
 
@@ -661,7 +653,12 @@
                 <scope>provided</scope> <!-- will not be exported -->
                 <optional>true</optional>
             </dependency>
-
+            <!-- Deployment -->
+            <dependency>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+            </dependency>
             <!-- Test -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -867,8 +864,8 @@
                         <artifactId>maven-deploy-plugin</artifactId>
                     </plugin>
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
