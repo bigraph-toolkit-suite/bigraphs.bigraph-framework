@@ -5,7 +5,7 @@
 
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>2.1.0</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
