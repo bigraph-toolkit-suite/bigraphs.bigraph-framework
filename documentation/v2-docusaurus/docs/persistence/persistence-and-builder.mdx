@@ -1,75 +1,122 @@
 ---
 id: persistence-2
-title: Usage with Bigraph Builder
-sidebar_position: 2
+title: Introductory Example
+sidebar_position: 1
 ---
 
-:::note
-This site is currently under construction.
+The framework itself provides simple means for storing and loading bigraphical metamodels and instance models using the
+capabilities of [Eclipse EMF](https://www.eclipse.org/modeling/emf/).
+
+Therefore, the utility class `org.bigraphs.framework.core.BigraphFileModelManagement` within the `bigraph-core`
+module comprises methods for persisting bigraphical models to the filesystem.
+Basically, `BigraphFileModelManagement` is a simple file-based model
+management utility class that serializes (deserializes) to (from) XMI and Ecore:
+- Serializes/Exports Ecore-based bigraph and signature model objects (`EObject` and `EPackage`) to `*.xmi` and `*.ecore`, respectively.
+- Deserializes/Imports Ecore files (`*.xmi` and `*.ecore`) to Ecore-based bigraph and signature model objects (`EObject` and `EPackage`)
+
+Both operations are provided by the inner classes `Load` and `Store` of `org.bigraphs.framework.core.BigraphFileModelManagement`
+to easily distinguish and use them.
+
+:::info XML Metadata Interchange
+XMI provides an XML representation for Ecore constructs.
 :::
 
-## `BigraphUtil`
+:::info Distributed Bigraph Database
+For a more sophisticated persistence solution, we refer the reader to [Eclipse Connected Data Objects (CDO) Model Repository](https://projects.eclipse.org/projects/modeling.emf.cdo) and the corresponding implementation [Spring Data CDO](https://github.com/bigraph-toolkit-suite/spring-data-cdo) when working with [Spring framework](https://spring.io/) in Java.
+:::
 
-The helper class `BigraphUtil` provides the following static method to conveniently convert a loaded bigraph metamodel and instance model
-to a `PureBigraph` instance:
+## Complete Example
 
+This example shows how to store a bigraph and its signature to the filesystem, and how to load them again.
+
+First, we create a signature and a bigraph for testing:
 ```java
-BigraphUtil#toBigraph(EPackage metaModel, EObject instanceModel, DefaultDynamicSignature signature): PureBigraph;
+import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+
+public DefaultDynamicSignature sig() {
+    // (1) Create Sample Signature
+    return pureSignatureBuilder()
+                .addControl("A", 0)
+                .addControl("B", 1)
+                .addControl("C", 2)
+                .create();
+}
 ```
 
-This method internally just calls `PureBigraphBuilder.create(signature.getInstanceModel(), metaModel, instanceModel).createBigraph()`
-as described in the following.
-Both models can be loaded as described on the [previous page](../persistence/persistence-intro).
-
-## Loading Bigraph Metamodels via the Builder
-
-The user must supply the signature and the filename or instance of the metamodel to instantiate a builder class.
-Therefore, the `PureBigraphBuilder` provides the following static methods:
-
 ```java
-// Create a builder using only the meta-model
-public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFileName)
-public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EMetaModelData metaModelData)
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
 
-// In combination with the instance model
-public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, String metaModelFilePath, String instanceModelFilePath) throws BigraphMetaModelLoadingFailedException
-public static <S extends Signature> PureBigraphBuilder<S> create(@NonNull S signature, EPackage metaModel, EObject instanceModel)
+// (2) Create Sample Bigraph
+public PureBigraph big() {
+    return pureBuilder(sig()).createRoot()
+                .addChild("A")
+                .addChild("B")
+                .addChild("C")
+                .createBigraph();
+}
 ```
 
-Then, the builder may produce a bigraph by using its available methods as normal.
-
-It is still necessary to supply the signature information as a separate object.
-The reason is that not all information
-is recorded in the metamodel of the bigraph concerning the signature.
-Some properties that are missing include the arity
-of the control, or whether it is _active_, _passive_ or _atomic_; to mention a few.
-
-### `PureBigraphBuilder#create(Signature, EMetaModelData)`
-
-Create a builder with a given metamodel instance.
-
-### `PureBigraphBuilder#create(Signature, String)`
-
-Create a builder with a given metamodel file located on the filesystem.
-
-## Loading Bigraph Instance Models via the Builder
-
-Bigraphs are per-se immutable data structures in Bigraph Framework.
-One can use the builder to instantiate bigraphs.
-Therefore, a bigraph builder is prepared:
+### Storing and Loading a Signature
 
 ```java
-Signature<DefaultDynamicControl> signature = ...;
-PureBigraphBuilder builder = PureBigraphBuilder.create(signature, "meta-model.xmi", "instance-model.ecore");
+public void save_and_load_signature_model() throws IOException {
+    // (0) Create Sample Signature
+    DefaultDynamicSignature sigOriginal = sig();
+
+    // (1) Store Signature on Filesystem
+    // Console output
+    BigraphFileModelManagement.Store.exportAsInstanceModel(sigOriginal, System.out);
+    // File output
+    BigraphFileModelManagement.Store.exportAsInstanceModel(sigOriginal, new FileOutputStream("sigModel.xmi"));
+    BigraphFileModelManagement.Store.exportAsMetaModel(sigOriginal, new FileOutputStream("sigMetaModel.ecore"));
+
+    // (2) Load Signature From Filesystem
+    List<EObject> eObjectsSig = BigraphFileModelManagement.Load.signatureInstanceModel(
+            "sigMetaModel.ecore",
+            "sigModel.xmi"
+    );
+    DefaultDynamicSignature sigLoaded = createOrGetSignature(eObjectsSig.get(0));
+
+    // (3) Compare
+    System.out.println(sigOriginal);
+    System.out.println(sigLoaded);
+}
 ```
 
-Then, the builder can be used as normal. One can, however, do not alter the pre-defined structure, but adding new
-elements is still possible.
+### Storing and Loading a Bigraph
 
-### `PureBigraphBuilder#create(Signature, String, String)`
+```java
+public void save_and_load_bigraph_model() throws IOException {
+    // (0) Create Sample Bigraph
+    PureBigraph bigOriginal = big();
 
-Provide a signature, and the filename of the metamodel and instance model to create a builder instance.
+    // (1) Store Bigraph MetaModel on Filesystem
+    BigraphFileModelManagement.Store.exportAsMetaModel(bigOriginal, new FileOutputStream("bigraphMetaModel.ecore"));
 
-### `PureBigraphBuilder#create(Signature, EPackage, EObject)`
+    // (2) Store the concrete Bigraph Instance Model on Filesystem
+    BigraphFileModelManagement.Store.exportAsInstanceModel(bigOriginal, new FileOutputStream("model.xmi"));
 
-Provide a signature and the loaded metamodel and instance model to create a builder instance.
+    // (3) Load the Bigraph MetaModel from the file system
+    EPackage ePackage = BigraphFileModelManagement.Load.bigraphMetaModel("bigraphMetaModel.ecore", false);
+
+    // (3) Or, re-create it like this, since the signature is loaded:
+    // EPackage ePackage = createOrGetBigraphMetaModel(sig());
+
+    // (4) Initialize the EMF EPackage registry with the bigraphMetaModel
+    EPackage.Registry.INSTANCE.put(ePackage.getNsURI(), ePackage);
+
+    // (5) Load the instance model (do not provide the bigraphMetaModel)
+    List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(
+            "model.xmi"
+    );
+
+    // (6) Bigraph instance model loaded
+    PureBigraph bigraphLoaded = BigraphUtil.toBigraph(ePackage, eObjects.get(0), sig());
+
+    // (7) Compare the original and the loaded bigraphLoaded
+    bigOriginal.getNodes().forEach(System.out::println);
+    bigraphLoaded.getNodes().forEach(System.out::println);
+}
+```
+
+

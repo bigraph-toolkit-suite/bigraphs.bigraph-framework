@@ -1,38 +1,31 @@
 ---
 id: persistence-intro
-title: Persisting Bigraphs
-sidebar_position: 1
+title: How Bigraphs Are Loaded and Stored
+sidebar_position: 2
 ---
 
 import CodeBlock from '@theme/CodeBlock';
 import storing_a_metamodel_to_the_filesystem_0 from '!!raw-loader!../assets/persistence/storing_a_metamodel_to_the_filesystem-0.java';
 
-The framework itself provides simple means for storing and loading bigraphical metamodels and instance models using the
-capabilities of [Eclipse EMF](https://www.eclipse.org/modeling/emf/).
 
-Therefore, the utility class `org.bigraphs.framework.core.BigraphFileModelManagement` within the `bigraph-core`
-module comprises methods for persisting bigraphical models to the filesystem.
-Basically, `BigraphFileModelManagement` is a simple file-based model
-management utility class that serializes (deserializes) to (from) XMI and Ecore:
-- Serializes/Exports Ecore-based bigraph model objects (`EObject` and `EPackage`) to `*.xmi` and `*.ecore`, respectively.
-- Deserializes/Imports Ecore files (`*.xmi` and `*.ecore`) to Ecore-based bigraph model objects (`EObject` and `EPackage`)
+This page provides a more detailed technical account on the persistence of bigraphical metamodels and their instance models,
+as implemented in this framework.
 
-XMI provides an XML representation for Ecore constructs.
-
-Both operations are provided by the inner classes `Load` and `Store` of `org.bigraphs.framework.core.BigraphFileModelManagement`
-to easily distinguish and use them.
-
-:::info Distributed Bigraph Database
-For a more sophisticated persistence solution, we refer the reader to [Eclipse Connected Data Objects (CDO) Model Repository](https://projects.eclipse.org/projects/modeling.emf.cdo) and the corresponding implementation [Spring Data CDO](https://github.com/bigraph-toolkit-suite/spring-data-cdo) when working with [Spring framework](https://spring.io/) in Java.
-:::
-
-## Output format
+## Metamodeling Concept
 
 For the metamodel the file extension `*.ecore` is used and for the instance model `*.xmi`.
 
 The instance model includes a direct reference to its metamodel which can be used for validation.
-This information can also be changed (or manually edited afterwards).
-This is described in [Storing an instance model to the filesystem](#storing-an-instance-model-to-the-filesystem)
+
+![model-metamodel conformsTo relationship](../assets/persistence/model-metamodel.png)
+
+Since every bigraph is defined over a **signature**,
+the same concept applies for the metamodel and instance model of a signature.
+
+<img width="480"
+     src="https://raw.githubusercontent.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel/55f9b4a6e2fc89322caf595a35b5e4f27cf5a773/etc/metamodel-workflow.png" />
+
+Refer to [Bigraph Ecore Metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel?tab=readme-ov-file#how-to-use-the-specification), to learn more technical details about the metamodel of the bigraphs framework.
 
 ## Bigraphical Metamodel
 
