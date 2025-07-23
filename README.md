@@ -296,13 +296,18 @@ For example, bigraphs to GraphML format, BigraphER's specification language or B
 
 ## Development: Build Configuration
 
-It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://github.com/takari/maven-wrapper) or the regular `mvn` command.
-In this case, **JDK >=17** is needed.
+It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://maven.apache.org/tools/wrapper/) or the regular `mvn` command.
 
-> **Note:** The required version of Maven is 3.8.3 and Java JDK >=17.
+> **Note:** The required version of Maven is >= 3.8.3 and Java JDK >=17.
 
 The recommendation here is to build it with the regular `mvn` command.
-You will need [Maven v3.8.3 or above](https://maven.apache.org/install.html).
+
+On Debian systems you can install it by issuing the following command:
+```shell
+$ sudo apt install maven
+```
+
+See [Installation](https://maven.apache.org/install.html) for other options.
 
 ### Building the Framework from Source
 
@@ -310,10 +315,12 @@ You will need [Maven v3.8.3 or above](https://maven.apache.org/install.html).
 
 The following command has to be run once:
 ```shell
-mvn initialize
+$ mvn initialize
 ```
 It installs some dependencies located in the `./etc/libs/` folder of this project in your local Maven repository, which is usually located at `~/.m2/`.
 These are required for the development.
+
+> When using IntelliJ IDEA, make sure to "Sync All Maven Projects" again to resolve any project errors that may appear due to missing dependencies on first startup.
 
 **Build/Install**
 
@@ -366,7 +373,7 @@ mvn clean deploy -DskipTests -P release,central
 **Bigraph Framework** is Open Source software released under the Apache 2.0 license.
 
 ```text
-   Copyright 2021-present Bigraph Toolkit Suite Developers.
+Copyright 2021-present Bigraph Toolkit Suite Developers.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
