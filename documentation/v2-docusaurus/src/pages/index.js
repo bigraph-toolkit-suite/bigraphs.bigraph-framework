@@ -17,17 +17,15 @@ function TryItOut() {
             <h2>Download & Use Bigraph Framework</h2>
             <ul style={{listStyleType: "none"}}>
                 <li>The framework is available via the <a
-                    href={`https://repo.maven.apache.org/maven2/`}>Central Repository</a> as dependency
+                    href={`https://central.sonatype.com/`}>Maven Central Repository</a>.
                 </li>
-                <li>Source code is available at <a href={`https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework`}>GitHub</a></li>
+                <li>Source code is available at <a href={`https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework`}>GitHub</a>.</li>
             </ul>
-            <strong>Starter Project Skeletons</strong>
+            <strong>Demo projects</strong>
             <ul style={{listStyleType: "none"}}>
                 <li>(ZIP Archive) <a
-                    href={`https://www.bigraphs.org/products/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip`}>Maven-based
-                    Project Skeleton</a></li>
-                <li>(GitHub) <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>Maven-based
-                    Project Skeleton</a></li>
+                    href={`https://www.bigraphs.org/products/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip`}>Project Template (Maven/Gradle)</a></li>
+                <li>(GitHub) <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>Project Template (Maven/Gradle)</a></li>
             </ul>
             {/*<p>*/}
             {/*    Latest Version: {bigraphFrameworkVersion}*/}
