@@ -318,9 +318,9 @@ $ mvn clean install -DskipTests -PfatJar
 
 After the command successfully finishes, you can now use _Bigraph Framework_ in other Java projects.
 All modules of _Bigraph Framework_ have been installed in the local Maven repository.
-Therefore, see [Maven configuration](#maven-configuration) on how to include the individual _Bigraph Framework_ dependencies.
+Therefore, see [Maven configuration](#maven) on how to include the individual _Bigraph Framework_ dependencies.
 
-> **Note:** All parts of Bigraph Framework are also deployed to the [Central Repository](https://repo.maven.apache.org/maven2/).
+> **Note:** All parts of Bigraph Framework are also deployed to the [Maven Central Repository](https://central.sonatype.com/).
 
 ### Building the Documentation: User Manual
 
@@ -331,10 +331,10 @@ After running the commands as described below from the root of this project, the
 at `documentation/v2-docusaurus/`:
 
 ```shell
-mvn clean package -DskipTests
-cd ./documentation/v2-docusaurus/
-nvm use 16
-npm run start
+$ mvn clean package -DskipTests
+$ cd ./documentation/v2-docusaurus/
+$ nvm use 16
+$ npm run start
 ```
 
 Then, open the browser at `http://localhost:3000/products/bigraph-framework/`.
@@ -348,7 +348,7 @@ See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deplo
 
 To deploy Bigraph Framework to the [Maven Central Repository](https://central.sonatype.com/):
 ```bash
-mvn clean deploy -DskipTests -P release,central
+$ mvn clean deploy -DskipTests -P release,central
 ```
 
 ## License
