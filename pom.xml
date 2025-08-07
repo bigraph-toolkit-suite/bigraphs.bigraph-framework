@@ -458,19 +458,10 @@
                 <artifactId>org.eclipse.emf.common</artifactId>
                 <version>${emf.common.version}</version>
             </dependency>
-            <!-- These are now packaged in Bigraph Ecore Metamodel -->
-            <!--            <dependency>-->
-            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
-            <!--                <artifactId>org.eclipse.emf.cdo</artifactId>-->
-            <!--                <version>${emf.cdo.version}</version>-->
-            <!--            </dependency>-->
-            <!--            <dependency>-->
-            <!--                <groupId>org.eclipse.emf.cdo</groupId>-->
-            <!--                <artifactId>org.eclipse.emf.cdo.common</artifactId>-->
-            <!--                <version>${emf.cdo.common.version}</version>-->
-            <!--            </dependency>-->
-            <!-- These are now packaged in Bigraph Ecore Metamodel -->
-            <!-- EMF Compare must be installed via `mvn initialize`. This dependency is also shaded into bigraph-core -->
+            <!--
+                EMF Compare must be installed via `mvn initialize`.
+                This dependency is also shaded into `bigraph-core`.
+            -->
             <dependency>
                 <groupId>org.eclipse.emf.compare</groupId>
                 <artifactId>org.eclipse.emf.compare</artifactId>
@@ -509,11 +500,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>org.eclipse.platform</groupId>-->
-            <!--                <artifactId>org.eclipse.equinox.common</artifactId>-->
-            <!--                <version>3.15.0</version>-->
-            <!--            </dependency>-->
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.runtime</artifactId>
@@ -678,18 +664,6 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>org.openjdk.jmh</groupId>-->
-            <!--                <artifactId>jmh-core</artifactId>-->
-            <!--                <version>1.19</version>-->
-            <!--                <scope>test</scope>-->
-            <!--            </dependency>-->
-            <!--            <dependency>-->
-            <!--                <groupId>org.openjdk.jmh</groupId>-->
-            <!--                <artifactId>jmh-generator-annprocess</artifactId>-->
-            <!--                <version>1.19</version>-->
-            <!--                <scope>test</scope>-->
-            <!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 

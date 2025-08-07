@@ -2,10 +2,7 @@
 
 # Bigraph Framework
 
-| Branch  | Latest Versions       | Status       |
-|---------|-----------------------|--------------|
-| Main    | 2.1.0 / 2.0.2 / 2.0.1 | Releases     |
-| Develop | 3.0.0-SNAPSHOT        | Experimental |
+> Latest Version: **2.1.0**
 
 - User Manual: https://bigraphs.org/products/bigraph-framework/docs/
 
@@ -35,7 +32,7 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
   - Interactive visualization UI via GraphStream
   - Visualization of Compiler Graphs (VCG) format via yComp
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
-  - Bigraph matching and rewriting via jLibBig
+  - Bigraph matching and rewriting powered by [jLibBig](https://bigraphs.github.io/jlibbig/)
   - Generation of a labeled transition system (LTS)
   - Simulation and Model Checking (BFS, Random)
   - Predicate checking, logical connectors, LTL
@@ -44,15 +41,15 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
   - Tracking rules (a rule can be assigned a tracking map)
 - Model Transformations
   - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
-  - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
+  - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, [jLibBig](https://bigraphs.github.io/jlibbig/), ...
   - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
   - Add arbitrary attributes to nodes
   - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 **Requirements**
-- Java >=17
-  - (!) _not_ the headless version of the JDK (!)
+- Java >=17 (JDK)
+- Maven / Gradle
 - Graphviz for the visualization module
   - Ubuntu 20.04/22.04: `sudo apt install graphviz`
 
@@ -150,7 +147,11 @@ composite.juxtapose(F);
 composite.juxtapose(F).parallelProduct(H);
 ```
 
-## Maven Configuration
+## Project Configuration
+
+> See also <a href="#Building-the-Framework-from-Source">Building from Source</a> if you want to build the source by yourself and host them in your Maven local repository.
+
+### Maven
 
 ```xml
 <dependencies>
@@ -158,57 +159,39 @@ composite.juxtapose(F).parallelProduct(H);
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-core</artifactId>
-    <version>${version}</version>
+    <version>2.1.0</version>
   </dependency>
   <!-- the rewriting module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-simulation</artifactId>
-    <version>${version}</version>
+    <version>2.1.0</version>
   </dependency>
   <!-- the visualization module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-visualization</artifactId>
-    <version>${version}</version>
+    <version>2.1.0</version>
   </dependency>
   <!-- the converter module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-converter</artifactId>
-    <version>${version}</version>
+    <version>2.1.0</version>
   </dependency>
 </dependencies>
 ```
 
-[//]: # (### Remote Repository for Snapshot Releases)
+### Gradle
 
-[//]: # ()
-[//]: # (SNAPSHOT releases are deployed [here]&#40;https://s01.oss.sonatype.org/content/repositories/snapshots&#41;.)
+```groovy
+compile "org.bigraphs.framework:bigraph-core:2.1.0"
+compile "org.bigraphs.framework:bigraph-simulation:2.1.0"
+compile "org.bigraphs.framework:bigraph-visualization:2.1.0"
+compile "org.bigraphs.framework:bigraph-converter:2.1.0"
+```
 
-[//]: # (To resolve them, the following remote repository must be configured in your `pom.xml`:)
-
-[//]: # (```xml)
-
-[//]: # (<repository>)
-
-[//]: # (  <snapshots>)
-
-[//]: # (    <enabled>true</enabled>)
-
-[//]: # (  </snapshots>)
-
-[//]: # (  <id>ossrh</id>)
-
-[//]: # (  <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>)
-
-[//]: # (</repository>)
-
-[//]: # (```)
-
-> See also <a href="#Building-the-Framework-from-Source">Building from Source</a> if you want to build the source by yourself and host them in your Maven local repository.
-
-#### Logging
+### Logging
 
 This framework employs SLF4J as a facade for the log4j logging framework.
 
@@ -245,22 +228,20 @@ The example above shows how to use log4j2 in your project as the underlying logg
 
 A brief description of each module's purpose is given below.
 
-#### bigraph-core
+### bigraph-core
 
-Provides builders, factories and interfaces to create concrete bigraphs and elementary bigraphs.
-
-Concrete Bigraphs and their metamodel (with the signature only) can be written/loaded to/from the file system.
+- Provides builders, factories and interfaces to create concrete bigraphs and elementary bigraphs.
+- Concrete Bigraphs and their metamodel (with the signature only) can be written/loaded to/from the file system.
 
 ### bigraph-simulation
 
-Simulate bigraphs by creating bigraphical reactive systems, reaction rules and agents.
-Check a system according to some specification by defining various types of predicates.
+- Simulate bigraphs by creating bigraphical reactive systems, reaction rules and agents.
+- Check a system according to some specification by defining various types of predicates.
 
 ### bigraph-visualization
 
-Provides simple means to export bigraphs and transition systems as graphic files.
-
-Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`.
+- Provides simple means to export bigraphs and transition systems as graphic files.
+- Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`.
 
 **Requirements**
 
@@ -269,10 +250,10 @@ In order to use the functionality of the visualization module, the following too
 
 ### bigraph-converter
 
-Provides several ways to convert bigraphs into other representations.
-For example, bigraphs to GraphML format, BigraphER's specification language or BigMC's term language.
+- Provides several ways to convert bigraphs into other representations.
+- For example, bigraphs to GraphML format, BigraphER's specification language or BigMC's term language.
 
-### A User-Friendly API for the Bigraph Ecore Metamodel
+### A User-Friendly API for the Bigraph Ecore Metamodel (BEM)
 
 - Internally, bigraphs are described by a metamodel based on Ecore.
   The project can be found in this [GitHub repository](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel).
@@ -294,7 +275,9 @@ For example, bigraphs to GraphML format, BigraphER's specification language or B
   The Bigraph Framework adds specific behavior superimposed upon this meta
   model. Meaning, the implementation-specific details are kept out from the metamodel.
 
-## Development: Build Configuration
+## Development
+
+### Build Configuration
 
 It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://maven.apache.org/tools/wrapper/) or the regular `mvn` command.
 
@@ -363,7 +346,7 @@ The manual is generated using [docusaurus](https://docusaurus.io/), which must b
 
 See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development and deployment of _Bigraph Framework_.
 
-To deploy Bigraph Framework to the [Central Repository](https://repo.maven.apache.org/maven2/):
+To deploy Bigraph Framework to the [Maven Central Repository](https://central.sonatype.com/):
 ```bash
 mvn clean deploy -DskipTests -P release,central
 ```
