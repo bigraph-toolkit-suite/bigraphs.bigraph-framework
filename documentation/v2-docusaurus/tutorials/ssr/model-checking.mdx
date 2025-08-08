@@ -1,0 +1,42 @@
+---
+id: ssr-model-checking
+title: Simulation & Debugging
+sidebar_position: 6
+---
+
+Run a BFS exploration and export the reaction graph + states.
+
+```java
+ModelCheckingOptions opts = ModelCheckingOptions.create()
+  .and(transitionOpts()
+      .setMaximumTransitions(1_000_000)
+      .setMaximumTime(-1)
+      .allowReducibleClasses(true)
+      .create()
+  )
+  .and(ModelCheckingOptions.exportOpts()
+      .setReactionGraphFile(Paths.get("src/test/resources/dump/selfsortingrobots", "reaction_graph.png").toFile())
+      .setPrintCanonicalStateLabel(false)
+      .setFormatsEnabled(List.of(
+          ModelCheckingOptions.ExportOptions.Format.XMI,
+          ModelCheckingOptions.ExportOptions.Format.PNG
+      ))
+      .setOutputStatesFolder(new File("src/test/resources/dump/selfsortingrobots/states/"))
+      .create()
+  );
+
+PureBigraphModelChecker mc = new PureBigraphModelChecker(
+  rs,
+  BigraphModelChecker.SimulationStrategy.Type.BFS,
+  opts
+);
+mc.execute();
+```
+
+You can analyze the result:
+
+```java
+ReactionGraph<PureBigraph> rg = mc.getReactionGraph();
+System.out.println("States: " + rg.getGraphStats().getStateCount());
+System.out.println("Transitions: " + rg.getGraphStats().getTransitionCount());
+```

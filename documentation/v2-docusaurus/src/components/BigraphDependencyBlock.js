@@ -8,33 +8,33 @@ const mavenDepCode = `
 <dependency>
   <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-core</artifactId>
-  <version>VERSION</version>
+  <version>2.1.0</version>
 </dependency>
 <!-- Simulation Module -->
 <dependency>
   <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-simulation</artifactId>
-  <version>VERSION</version>
+  <version>2.1.0</version>
 </dependency>
 <!-- Visualization Module -->
 <dependency>
   <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-visualization</artifactId>
-  <version>VERSION</version>
+  <version>2.1.0</version>
 </dependency>
 <!-- Converter Module -->
 <dependency>
   <groupId>org.bigraphs.framework</groupId>
   <artifactId>bigraph-converter</artifactId>
-  <version>VERSION</version>
+  <version>2.1.0</version>
 </dependency>
 `;
 
 const gradleDepCode = `
-compile "org.bigraphs.framework:bigraph-core:VERSION"
-compile "org.bigraphs.framework:bigraph-simulation:VERSION"
-compile "org.bigraphs.framework:bigraph-visualization:VERSION"
-compile "org.bigraphs.framework:bigraph-converter:VERSION"
+compile "org.bigraphs.framework:bigraph-core:2.1.0"
+compile "org.bigraphs.framework:bigraph-simulation:2.1.0"
+compile "org.bigraphs.framework:bigraph-visualization:2.1.0"
+compile "org.bigraphs.framework:bigraph-converter:2.1.0"
 `;
 
 export const GRADLE_DEP_CODE = gradleDepCode;

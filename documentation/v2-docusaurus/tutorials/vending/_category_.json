@@ -1,0 +1,9 @@
+{
+  "label": "Vending Machine",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "title": "Vending Machine Tutorial",
+    "description": "Model and check a vending machine as a reactive system."
+  }
+}

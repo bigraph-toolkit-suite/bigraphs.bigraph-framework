@@ -38,6 +38,19 @@ const config = {
         ],
     ],
 
+    plugins: [
+        [
+            '@docusaurus/plugin-content-docs',
+            {
+                id: 'tutorials',                    // <-- new docs instance
+                path: 'tutorials',                  // folder in repo
+                routeBasePath: 'tutorials',         // URLs start with /tutorials
+                sidebarPath: require.resolve('./sidebars.tutorials.js'),
+                // editUrl: 'https://github.com/your-org/your-repo/edit/main/', // optional
+            },
+        ],
+    ],
+
     themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
         ({
@@ -53,6 +66,14 @@ const config = {
                         docId: 'index',
                         position: 'left',
                         label: 'User Manual',
+                    },
+                    // themeConfig.navbar.items
+                    {
+                        type: 'doc',
+                        docsPluginId: 'tutorials',
+                        docId: 'index',      // first page in the tutorials set (we’ll create it next)
+                        position: 'left',
+                        label: 'Tutorials',
                     },
                     {
                         to: 'https://www.bigraphs.org/products/bigraph-framework/apidocs/',
@@ -76,6 +97,7 @@ const config = {
                                 label: 'User Manual',
                                 to: '/docs/',
                             },
+                            { label: 'Tutorials', to: '/tutorials/' },
                             {
                                 label: 'JavaDoc API',
                                 to: 'https://www.bigraphs.org/products/bigraph-framework/apidocs/',

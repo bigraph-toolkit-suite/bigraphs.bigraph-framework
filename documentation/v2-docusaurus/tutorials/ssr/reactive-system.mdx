@@ -1,0 +1,37 @@
+---
+id: ssr-reactive-system
+title: Reactive System
+sidebar_position: 5
+---
+
+Collect agent and rules into a `PureReactiveSystem`.
+
+```java
+int roboCountTotal = 3;
+
+PureReactiveSystem rs = new PureReactiveSystem();
+PureBigraph agent = createAgent(roboCountTotal, "2x" + roboCountTotal + "_unidirectional");
+rs.setAgent(agent);
+
+// Add start-sync rules for all i > j
+for (int i = 0; i < roboCountTotal; i++) {
+  for (int j = 0; j < i; j++) {
+    rs.addReactionRule(startSync(i, j));
+  }
+}
+
+// Add Movement initialization and stepping
+rs.addReactionRule(initMovePattern());
+rs.addReactionRule(moveRobotWaypoint());
+
+// Add end-sync rules for all i < j
+for (int i = 0; i < roboCountTotal; i++) {
+  for (int j = i + 1; j < roboCountTotal; j++) {
+    rs.addReactionRule(endSync(i, j));
+  }
+}
+
+assert rs.isSimple();
+```
+
+This gives you all pairwise sync/release rules necessary for 3 robots plus the movement rules.

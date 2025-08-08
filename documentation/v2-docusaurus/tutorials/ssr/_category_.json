@@ -1,0 +1,9 @@
+{
+  "label": "Self-Sorting Robots",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "title": "Self-Sorting Robots (SSR)",
+    "description": "Model and simulate a grid-based swarm of robots that self-organize by exchanging places according to their IDs and positions, using the Bigraph Framework."
+  }
+}
