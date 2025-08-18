@@ -1,14 +1,14 @@
 <img src="etc/assets/bigraph-framework-logo.png" style="zoom:67%;" />
 
-# Bigraph Framework
-
 > Latest Version: **2.1.1**
 
 - User Manual: https://bigraphs.org/products/bigraph-framework/docs/
 
 - JavaDoc: https://bigraphs.org/products/bigraph-framework/apidocs/
 
-----
+---
+
+# Bigraph Framework
 
 **What is Bigraph Framework?**
 
@@ -64,15 +64,19 @@ The lean bigraph API allows fast bigraph creation and composition.
 To following usage assumes the import statement `import static org.bigraphs.framework.core.factory.BigraphFactory.*`.
 
 ```java
-// create the signature
+// Create the signature
 DefaultDynamicSignature signature = pureSignatureBuilder()
-                .newControl("A", 0).assign() // straightforward access
-                // two other ways (more verbose):
-                .newControl(StringTypedName.of("C"), FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).kind(ControlKind.ATOMIC).assign()
+                // Straightforward:
+                .addControl("A", 0)
+                .addControl("C", 1)
+                // More verbose:
+                .newControl()
+                  .identifier(StringTypedName.of("User"))
+                  .arity(FiniteOrdinal.ofInteger(1))
+                  .status(ControlStatus.ATOMIC).assign()
                 .create();
 
-// create two bigraphs
+// Create two bigraphs
 PureBigraph bigraph1 = pureBuilder(signature)
         .createRoot()
         .addChild("A").addChild("C")
@@ -159,25 +163,25 @@ composite.juxtapose(F).parallelProduct(H);
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-core</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
   </dependency>
   <!-- the rewriting module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-simulation</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
   </dependency>
   <!-- the visualization module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-visualization</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
   </dependency>
   <!-- the converter module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-converter</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
   </dependency>
 </dependencies>
 ```
@@ -185,10 +189,10 @@ composite.juxtapose(F).parallelProduct(H);
 ### Gradle
 
 ```groovy
-compile "org.bigraphs.framework:bigraph-core:2.1.0"
-compile "org.bigraphs.framework:bigraph-simulation:2.1.0"
-compile "org.bigraphs.framework:bigraph-visualization:2.1.0"
-compile "org.bigraphs.framework:bigraph-converter:2.1.0"
+compile "org.bigraphs.framework:bigraph-core:2.1.1"
+compile "org.bigraphs.framework:bigraph-simulation:2.1.1"
+compile "org.bigraphs.framework:bigraph-visualization:2.1.1"
+compile "org.bigraphs.framework:bigraph-converter:2.1.1"
 ```
 
 ### Logging
