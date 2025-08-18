@@ -49,7 +49,7 @@ import static org.bigraphs.framework.core.BigraphMetaModelConstants.SIGNATURE_BA
  */
 public class BigraphFileModelManagement {
 
-    public static boolean VALIDATE = true;
+    public static boolean VALIDATE = false;
 
     private final static String DEFAULT_ENCODING = "UTF-8";
 
