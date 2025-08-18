@@ -2,7 +2,7 @@
 
 # Bigraph Framework
 
-> Latest Version: **2.1.0**
+> Latest Version: **2.1.1**
 
 - User Manual: https://bigraphs.org/products/bigraph-framework/docs/
 
