@@ -4,14 +4,19 @@ title: Reaction Rules
 sidebar_position: 4
 ---
 
-We’ll use four rule families regardless of the number of robots:
+:::info
+These functions are taken from the [SSR unit test](https://github.com/bigraph-toolkit-suite/bigraphs.grgen-bigraphs/blob/main/src/test/java/org/bigraphs/grgen/converter/usecase/selfsortingrobots/SelfSortingRobots.java): they build the LHS/RHS bigraphs including interfaces and tracking maps.
+:::
+
+We’ll use four rule families (i.e., meta-rules or rule templates) regardless of the number of robots:
 
 ## 1. Start synchronization — `startSync(i, j)`
 
 Matches adjacent robots with `i > j`, installs a shared lock (`SLckRef`) so they can coordinate.
 
 ```java
-// Example: sync robot 1 with robot 0 (since 1 > 0)
+// Example: robot 1 (left) synchronizes with robot 0 (right).
+// ID is bound to space.
 ReactionRule<PureBigraph> r1 = startSync(1, 0);
 ```
 
@@ -28,12 +33,11 @@ The lock (`SLckRef`) is like a handshake:
 <details>
 <summary><strong>Understanding <code>startSync(1, 0)</code></strong></summary>
 
-### Purpose
-
-The `startSync(i, j)` reaction rule models the **initiation of synchronisation** between two neighbouring robots.
+The `startSync(i, j)` reaction rule models the **initiation of synchronisation** between two _neighbouring robots_.
 It is only applicable if the **left-hand robot’s ID `i` is greater than the right-hand robot’s ID `j`** (`i > j`).
+This feature is encoded _spatially_.
 This constraint enforces the sorting logic — the "larger" robot should move past the "smaller" one.
-Since the robots moving on a grid, the physical constraints are encoded explicitly.
+Since the robots moving on a grid, the physical constraints is native and encoded explicitly.
 
 ---
 
@@ -113,8 +117,6 @@ The `SLckRef` link is removed, effectively breaking the private communication ch
 <details>
 <summary><strong>Understanding <code>endSync(0, 1)</code></strong></summary>
 
-### Purpose
-
 The `endSync(i, j)` rule models the termination of synchronisation between two neighbouring robots.
 It only applies if the left-hand robot’s ID i is smaller than the right-hand robot’s ID j (i < j).
 This complements the startSync rule — after cooperation or an exchange, the link is removed.
@@ -158,7 +160,3 @@ On the **right-hand side**:
 - The only change is the removal of the shared lock, making them available for future synchronisations with other robots.
 
 </details>
-
-
-
-> These functions are taken from the [SSR unit test](https://github.com/bigraph-toolkit-suite/bigraphs.grgen-bigraphs/blob/main/src/test/java/org/bigraphs/grgen/converter/usecase/selfsortingrobots/SelfSortingRobots.java): they build the LHS/RHS bigraphs including interfaces and tracking maps.

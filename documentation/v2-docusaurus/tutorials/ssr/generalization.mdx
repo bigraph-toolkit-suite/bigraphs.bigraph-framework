@@ -26,9 +26,9 @@ The following transition systems were automatically generated using **BiGGer** a
 ### Observations
 
 - The growth of the state space is **combinatorial** — adding just one more robot drastically increases the number of states and transitions.
-- Execution time increases accordingly, even with optimized model-checking and parallel matching enabled.
-- The structure of the graph often reveals *sorting “phases”* and possible *deadlocks or cycles* if rules are misconfigured.
-
+- Execution time increases accordingly, even with optimized model-checking through GrGen.NET.
+- Such a structure of the graph (i.e., transition system) reveals *sorting “phases”* and could be used to detect possible *deadlocks or cycles* if rules are misconfigured.
+    - Question: Does behavior possess a compositional structure?
 ### Takeaway
 
 Scaling SSR beyond small values of N is an excellent stress test for:
@@ -36,4 +36,6 @@ Scaling SSR beyond small values of N is an excellent stress test for:
 - **Rule design correctness**
 - **Visualization tooling** for large graphs
 
-It also shows the power of a **single, parameterized bigraph specification** to model a wide range of system sizes without rewriting the rules.
+It also demonstrates the power of a **single, parameterized bigraph specification**,
+which can model systems of varying sizes without requiring substantial changes to the rules.
+
