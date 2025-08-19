@@ -89,11 +89,11 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
     @Test
     void getting_started_guide() throws InvalidConnectionException, IncompatibleSignatureException, IncompatibleInterfaceException {
         // (1) start
-        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
+        DynamicSignatureBuilder sigBuilder = pureSignatureBuilder();
 
-        DefaultDynamicSignature signature = signatureBuilder
-                .newControl().identifier("User").arity(1).status(ControlStatus.ATOMIC).assign()
-                .newControl(StringTypedName.of("Computer"), FiniteOrdinal.ofInteger(2)).assign()
+        DefaultDynamicSignature signature = sigBuilder
+                .addControl("User", 1, ControlStatus.ATOMIC)
+                .addControl("Computer", 2)
                 .create();
         // (1) end
 
