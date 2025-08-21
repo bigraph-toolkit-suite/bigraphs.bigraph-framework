@@ -13,9 +13,20 @@ In this section, we explore what happens when we increase the number of robots �
 
 The following transition systems were automatically generated using **BiGGer** and **GrGen.NET**, modeling the state space of multiple robots performing a physical bubble-sort along the grid.
 
-| **N = 3 Robots**                                                             | **N = 4 Robots**                                                                    | **N = 5 Robots**                                                                        |
-|------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
-| ![SSR3](../assets/ssr/lts-ssr3.png) <br/> Nodes: 78 <br/> Edges: 96 <br/> Time: 0.70 s | ![SSR4](../assets/ssr/lts-ssr4.png) <br/> Nodes: 1,263 <br/> Edges: 2,767 <br/> Time: 10.02 s | ![SSR5](../assets/ssr/lts-ssr5.png) <br/> Nodes: ≈ 9,192 <br/> Edges: 22,047 <br/> Time: 105.56 s |
+[//]: # (| **N = 3 Robots**                                                                       | **N = 4 Robots**                                                                              | **N = 5 Robots**                                                                                  | **N = 6 Robots**  |)
+
+[//]: # (|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|:--|)
+
+[//]: # (| ![SSR3]&#40;../assets/ssr/lts-ssr3.png&#41; <br/> Nodes: 78 <br/> Edges: 96 <br/> Time: 0.70 s | ![SSR4]&#40;../assets/ssr/lts-ssr4.png&#41; <br/> Nodes: 1,263 <br/> Edges: 2,767 <br/> Time: 10.02 s | ![SSR5]&#40;../assets/ssr/lts-ssr5.png&#41; <br/> Nodes: ≈ 9,192 <br/> Edges: 22,047 <br/> Time: 105.56 s | ![SSR6]&#40;../assets/ssr/lts-ssr6.png&#41; <br/> Nodes: ≈ 9,192 <br/> Edges: 22,047 <br/> Time: 105.56 s  |)
+
+| **N = 3 Robots**                                                                       | **N = 4 Robots**                                                                              |
+|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| ![SSR3](../assets/ssr/lts-ssr3.png) <br/> Nodes: 78 <br/> Edges: 96 <br/> Time: 0.70 s | ![SSR4](../assets/ssr/lts-ssr4.png) <br/> Nodes: 1,263 <br/> Edges: 2,767 <br/> Time: 10.02 s |
+
+| **N = 5 Robots**                                                                                  | **N = 6 Robots**                                                                                 |
+|---------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| ![SSR5](../assets/ssr/lts-ssr5.png) <br/> Nodes: ≈ 9,192 <br/> Edges: 22,047 <br/> Time: 105.56 s | ![SSR6](../assets/ssr/lts-ssr6.png) <br/> Nodes: ≈ 314,226 <br/> Edges: 1,003,215 <br/> Time: 19459.07 s |
+
 
 **Interpretation:**
 - Each **dot** is a reachable system state.
@@ -35,7 +46,4 @@ Scaling SSR beyond small values of N is an excellent stress test for:
 - **Model checker performance**
 - **Rule design correctness**
 - **Visualization tooling** for large graphs
-
-It also demonstrates the power of a **single, parameterized bigraph specification**,
-which can model systems of varying sizes without requiring substantial changes to the rules.
 
