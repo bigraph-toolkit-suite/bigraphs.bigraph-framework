@@ -107,13 +107,9 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         Bigraph<S> g = BigraphUtil.copyIfSame(getBigraphDelegate(), f);
         assertSignaturesAreSame(g, f);
 
-        // get all outer names of 'f' and make identity graph from them
+        // Get all outer names of 'f' and make identity graph of them
         Linkings<DefaultDynamicSignature> linkings = pureLinkings((DefaultDynamicSignature) getSignature());
         Set<StringTypedName> collect = f.getOuterNames().stream()
-//                .filter(o -> {
-//                    Optional<BigraphEntity.InnerName> first = g.getInnerNames().stream().filter(x -> x.getName().equals(o.getName())).findFirst();
-//                    return !first.isPresent(); // || g.getLinkOfPoint(first.get()) == null; //collect2.contains(o.getName())
-//                })
                 .map(o -> StringTypedName.of(o.getName()))
                 .collect(Collectors.toSet());
         ElementaryBigraph<DefaultDynamicSignature> identity = collect.size() != 0 ?
@@ -121,32 +117,6 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                 linkings.identity_e();                                 // empty identity
 //        // (!) Order is important here, otherwise the root indexes may be swapped. First g, then the identity
         BigraphComposite<S> sBigraphComposite = ops(g).parallelProduct((Bigraph<S>) identity);
-
-//        Set<StringTypedName> differences = new HashSet<>();
-//        Bigraph<DefaultDynamicSignature> renamingForF = linkings.identity_e();
-//        if (collect.size() == 0) {
-////            differences = g.getInnerNames().stream()
-////                    .map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
-////            differences.removeAll(collect);
-////            renamingForF = differences.size() != 0 ?
-////                    linkings.identity(differences.toArray(new NamedType[0])) : // as array
-////                    linkings.identity_e();
-////        } else {
-//            differences = g.getInnerNames().stream()
-//                    .filter(o -> {
-//                        Optional<BigraphEntity.OuterName> first = f.getOuterNames().stream().filter(x -> x.getName().equals(o.getName())).findFirst();
-//                        return !first.isPresent() || f.getPointsFromLink(first.get()).size() == 0; //collect2.contains(o.getName())
-//                    })
-//                    .map(x -> StringTypedName.of(x.getName())).collect(Collectors.toSet());
-//            PureBigraphBuilder<? extends Signature<?>> b = pureBuilder(getSignature());
-//            for (StringTypedName each : differences) {
-//                b.createOuterName(each.getValue());
-//            }
-//            renamingForF = differences.size() != 0 ?
-//                    b.createBigraph() :
-//                    linkings.identity_e();
-//        }
-//        Bigraph fBigraphComposite = ops(f).parallelProduct((Bigraph) renamingForF).getOuterBigraph();
         return sBigraphComposite.compose(f);
     }
 
