@@ -48,7 +48,7 @@ public class FruitBasketBisimTest {
     }
 
     @Test
-    void simu() throws Exception {
+    void bisimulation() throws Exception {
 
         PureReactiveSystem rs1 = new PureReactiveSystem();
         rs1.setAgent(FruitBasketExampleTest.createAgent());
@@ -67,7 +67,7 @@ public class FruitBasketBisimTest {
         rs2.addReactionRule(FruitBasketExampleTest.createRR3());
         rs2.addReactionRule(FruitBasketExampleTest.createRR4());
 //        rs2.addReactionRule(FruitBasketExampleTest.createRR5_noop());
-        rs2.addReactionRule(FruitBasketExampleTest.createRR6_noop());
+//        rs2.addReactionRule(FruitBasketExampleTest.createRR6_noop());
         assert rs2.isSimple();
 
         ReactionGraph<PureBigraph> transitionSystem1 = simulate(rs1);
@@ -78,7 +78,7 @@ public class FruitBasketBisimTest {
         mixin.attachToObject(transitionSystem1);
         boolean equivalentTo = mixin.isEquivalentTo(transitionSystem2);
         System.out.println(equivalentTo);
-
+//        assert equivalentTo;
     }
 
     public ReactionGraph<PureBigraph> simulate(PureReactiveSystem rs) throws ReactiveSystemException, BigraphSimulationException {
@@ -92,7 +92,7 @@ public class FruitBasketBisimTest {
                         .create()
                 )
                 .and(ModelCheckingOptions.exportOpts()
-                        .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph_"+rs.toString()+".png").toFile())
+                        .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph_" + rs.toString() + ".png").toFile())
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(Paths.get(TARGET_DUMP_PATH, "states/").toFile())
                         .create()

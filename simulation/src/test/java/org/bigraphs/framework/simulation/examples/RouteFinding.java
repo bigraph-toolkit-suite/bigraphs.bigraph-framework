@@ -113,7 +113,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-//                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.XMI))
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.XMI, ModelCheckingOptions.ExportOptions.Format.PNG))
 //                        .disableAllFormats()
                         .create()
                 )

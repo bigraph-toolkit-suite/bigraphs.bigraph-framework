@@ -94,23 +94,6 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
                 );
     }
 
-//    /**
-//     * Return the bigraph meta-model, which contains the signature of the current bigraph.
-//     * <p>
-//     * It is an meta-model, which extends the base bigraph meta meta-model.
-//     *
-//     * @return
-//     * @see de.tudresden.inf.st.bigraphs.models.bigraphBaseModel.BigraphBaseModelPackage
-//     */
-//    EPackage getModelPackage();
-//
-//    /**
-//     * Return the bigraph instance model (Ecore)
-//     *
-//     * @return the bigraph instance model
-//     */
-//    EObject getModel();
-
     /**
      * Retrieves the meta model data from the bigraph's {@link EPackage}.
      *

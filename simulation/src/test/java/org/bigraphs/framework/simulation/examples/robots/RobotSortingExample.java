@@ -1,5 +1,6 @@
 package org.bigraphs.framework.simulation.examples.robots;
 
+import org.bigraphs.framework.converter.dot.DOTReactionGraphExporter;
 import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
@@ -19,9 +20,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
@@ -82,6 +85,11 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
                 opts());
         modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
+
+        DOTReactionGraphExporter exporter = new DOTReactionGraphExporter();
+        String dotFile = exporter.toString(modelChecker.getReactionGraph());
+        System.out.println(dotFile);
+        exporter.toOutputStream(modelChecker.getReactionGraph(), new FileOutputStream(TARGET_DUMP_PATH + "reaction_graph.dot"));
     }
 
     private ModelCheckingOptions opts() {
@@ -100,6 +108,7 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
                 )
         ;
