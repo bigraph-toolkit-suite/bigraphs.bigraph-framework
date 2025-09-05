@@ -3,7 +3,7 @@ package org.bigraphs.framework.converter.bigred;
 import org.bigraphs.framework.converter.PureReactiveSystemStub;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
@@ -37,7 +37,7 @@ public class PrintingBigraphExampleTest {
     void read_signatures_test() throws IOException {
         DefaultSignatureXMLLoader sxl = new DefaultSignatureXMLLoader();
         sxl.readXml(getFile("signatures/printing.bigraph-signature"));
-        DefaultDynamicSignature signature = sxl.importObject();
+        DynamicSignature signature = sxl.importObject();
         assertEquals(5, signature.getControls().size());
         List<String> requiredControlLabels = Arrays.asList("Job", "Spool", "Printer", "User", "Room");
         assertTrue(

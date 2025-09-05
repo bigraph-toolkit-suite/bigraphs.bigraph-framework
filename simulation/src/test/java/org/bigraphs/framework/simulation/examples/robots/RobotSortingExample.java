@@ -3,7 +3,7 @@ package org.bigraphs.framework.simulation.examples.robots;
 import org.bigraphs.framework.converter.dot.DOTReactionGraphExporter;
 import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -115,174 +115,174 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
         return opts;
     }
 
-    private DefaultDynamicSignature sig() {
+    private DynamicSignature sig() {
         DynamicSignatureBuilder sb = pureSignatureBuilder();
-        DefaultDynamicSignature sig = sb
-                .addControl("Robot", 0)
-                .addControl("Gripper", 1)
-                .addControl("Table", 0)
-                .addControl("Item", 0)
-                .addControl("Bin", 0)
-                .addControl("ref", 0)
-                .addControl("Lock", 1, ControlStatus.ATOMIC)
+        DynamicSignature sig = sb
+                .add("Robot", 0)
+                .add("Gripper", 1)
+                .add("Table", 0)
+                .add("Item", 0)
+                .add("Bin", 0)
+                .add("ref", 0)
+                .add("Lock", 1, ControlStatus.ATOMIC)
                 .create();
         return sig;
     }
 
     private PureBigraph agent() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
         builder
-                .createRoot()
-                .addChild("Robot").down()
-                .addChild("Gripper", "canGrab").down().addChild("ref").up().up()
-                .addChild("Robot").down()
-                .addChild("Gripper", "canGrab2").down().addChild("ref").up().up()
-                .addChild("Table").down()
-                /**/.addChild("Item").down().addChild("ref").up()
-                /**/.addChild("Item").down().addChild("ref").up()
-                /**/.addChild("Item").down().addChild("ref").up()
-                /**/.addChild("Bin").down()
-                /*    */.addChild("ref").up();
+                .root()
+                .child("Robot").down()
+                .child("Gripper", "canGrab").down().child("ref").up().up()
+                .child("Robot").down()
+                .child("Gripper", "canGrab2").down().child("ref").up().up()
+                .child("Table").down()
+                /**/.child("Item").down().child("ref").up()
+                /**/.child("Item").down().child("ref").up()
+                /**/.child("Item").down().child("ref").up()
+                /**/.child("Bin").down()
+                /*    */.child("ref").up();
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
     private ReactionRule<PureBigraph> reserve() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> bRed = pureBuilder(sig());
-        PureBigraphBuilder<DefaultDynamicSignature> bRec = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRed = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRec = pureBuilder(sig());
 
-        bRed.createRoot().addChild("Gripper", "canGrab").down().addChild("ref");
-        bRed.createRoot().addChild("Table").down().addSite().addChild("Item").down().addChild("ref");
+        bRed.root().child("Gripper", "canGrab").down().child("ref");
+        bRed.root().child("Table").down().site().child("Item").down().child("ref");
 
 //        bRec.createOuterName("grabMe");
-        bRec.createRoot().addChild("Gripper", "canGrab").down()
-                /**/.addChild("ref").down()
-                /*    */.addChild("Lock", "canGrab").up();
-        bRec.createRoot().addChild("Table").down().addSite()
-                .addChild("Item").down()
-                /**/.addChild("ref").down().
-                /*    */addChild("Lock", "canGrab");
+        bRec.root().child("Gripper", "canGrab").down()
+                /**/.child("ref").down()
+                /*    */.child("Lock", "canGrab").up();
+        bRec.root().child("Table").down().site()
+                .child("Item").down()
+                /**/.child("ref").down().
+                /*    */child("Lock", "canGrab");
 
-        PureBigraph redex = bRed.createBigraph();
-        PureBigraph reactum = bRec.createBigraph();
+        PureBigraph redex = bRed.create();
+        PureBigraph reactum = bRec.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     private ReactionRule<PureBigraph> pick() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> bRed = pureBuilder(sig());
-        PureBigraphBuilder<DefaultDynamicSignature> bRec = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRed = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRec = pureBuilder(sig());
 
-        bRed.createRoot().addChild("Gripper", "canGrab").down()
-                .addChild("ref").down()
-                .addChild("Lock", "canGrab").top();
-        bRed.createRoot()
-                .addChild("Table").down()
-                .addSite()
-                .addChild("Item").down()
-                /**/.addChild("ref").down()
-                /*    */.addChild("Lock", "canGrab");
+        bRed.root().child("Gripper", "canGrab").down()
+                .child("ref").down()
+                .child("Lock", "canGrab").top();
+        bRed.root()
+                .child("Table").down()
+                .site()
+                .child("Item").down()
+                /**/.child("ref").down()
+                /*    */.child("Lock", "canGrab");
 
-        bRec.createRoot().addChild("Gripper", "canGrab").down()
-                .addChild("ref").down()
-                .addChild("Lock", "canGrab").up()
-                .addChild("Item").down()
-                /**/.addChild("ref").down().addChild("Lock", "canGrab").top();
-        bRec.createRoot()
-                .addChild("Table").down()
-                .addSite();
+        bRec.root().child("Gripper", "canGrab").down()
+                .child("ref").down()
+                .child("Lock", "canGrab").up()
+                .child("Item").down()
+                /**/.child("ref").down().child("Lock", "canGrab").top();
+        bRec.root()
+                .child("Table").down()
+                .site();
 
-        PureBigraph redex = bRed.createBigraph();
-        PureBigraph reactum = bRec.createBigraph();
+        PureBigraph redex = bRed.create();
+        PureBigraph reactum = bRec.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     private ReactionRule<PureBigraph> reserveBin() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> bRed = pureBuilder(sig());
-        PureBigraphBuilder<DefaultDynamicSignature> bRec = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRed = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRec = pureBuilder(sig());
 
-        bRed.createRoot()
-                .addChild("Gripper", "canGrab").down()
-                .addChild("ref").down().addChild("Lock", "canGrab").up()
-                .addChild("Item").down().addChild("ref").down().addChild("Lock", "canGrab").up();
-        bRed.createRoot().addChild("Bin").down()
-                .addSite()
-                .addChild("ref")
+        bRed.root()
+                .child("Gripper", "canGrab").down()
+                .child("ref").down().child("Lock", "canGrab").up()
+                .child("Item").down().child("ref").down().child("Lock", "canGrab").up();
+        bRed.root().child("Bin").down()
+                .site()
+                .child("ref")
         ;
 
-        bRec.createRoot()
-                .addChild("Gripper", "canGrab").down()
-                .addChild("ref").down().addChild("Lock", "canGrab").up()
-                .addChild("Item").down().addChild("ref").down().addChild("Lock", "canGrab").up();
-        bRec.createRoot().addChild("Bin").down()
-                .addSite()
-                .addChild("ref").down().addChild("Lock", "canGrab")
+        bRec.root()
+                .child("Gripper", "canGrab").down()
+                .child("ref").down().child("Lock", "canGrab").up()
+                .child("Item").down().child("ref").down().child("Lock", "canGrab").up();
+        bRec.root().child("Bin").down()
+                .site()
+                .child("ref").down().child("Lock", "canGrab")
         ;
 
-        PureBigraph redex = bRed.createBigraph();
-        PureBigraph reactum = bRec.createBigraph();
+        PureBigraph redex = bRed.create();
+        PureBigraph reactum = bRec.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     private ReactionRule<PureBigraph> placeItemInBin() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> bRed = pureBuilder(sig());
-        PureBigraphBuilder<DefaultDynamicSignature> bRec = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRed = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRec = pureBuilder(sig());
 
-        bRed.createRoot()
-                .addChild("Gripper", "canGrab").down()
-                .addChild("ref").down().addChild("Lock", "canGrab").up()
-                .addChild("Item").down().addChild("ref").down()
-                .addChild("Lock", "canGrab").up();
-        bRed.createRoot().addChild("Bin").down()
-                .addSite()
-                .addChild("ref").down().addChild("Lock", "canGrab")
+        bRed.root()
+                .child("Gripper", "canGrab").down()
+                .child("ref").down().child("Lock", "canGrab").up()
+                .child("Item").down().child("ref").down()
+                .child("Lock", "canGrab").up();
+        bRed.root().child("Bin").down()
+                .site()
+                .child("ref").down().child("Lock", "canGrab")
         ;
 
-        bRec.createRoot()
-                .addChild("Gripper", "canGrab").down()
-                .addChild("ref").down().addChild("Lock", "canGrab").up();
-        bRec.createRoot().addChild("Bin").down()
-                .addSite()
-                .addChild("ref").down().addChild("Lock", "canGrab").up()
-                .addChild("Item").down().addChild("ref").down().addChild("Lock", "canGrab").up()
+        bRec.root()
+                .child("Gripper", "canGrab").down()
+                .child("ref").down().child("Lock", "canGrab").up();
+        bRec.root().child("Bin").down()
+                .site()
+                .child("ref").down().child("Lock", "canGrab").up()
+                .child("Item").down().child("ref").down().child("Lock", "canGrab").up()
         ;
 
-        PureBigraph redex = bRed.createBigraph();
-        PureBigraph reactum = bRec.createBigraph();
+        PureBigraph redex = bRed.create();
+        PureBigraph reactum = bRec.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     private ReactionRule<PureBigraph> releaseBinLock() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> bRed = pureBuilder(sig());
-        PureBigraphBuilder<DefaultDynamicSignature> bRec = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRed = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRec = pureBuilder(sig());
 
-        bRed.createRoot()
-                .addChild("Gripper", "canGrab").down()
-                .addChild("ref").down().addChild("Lock", "canGrab").top()
+        bRed.root()
+                .child("Gripper", "canGrab").down()
+                .child("ref").down().child("Lock", "canGrab").top()
         ;
-        bRed.createRoot()
-                .addChild("Bin").down()
-                .addSite()
-                .addChild("ref").down().addChild("Lock", "canGrab").up()
-                .addChild("Item").down()
-                .addChild("ref").down().addChild("Lock", "canGrab").up()
-        ;
-
-
-        bRec.createRoot()
-                .addChild("Gripper", "canGrab").down().addChild("ref")
-        ;
-        bRec.createRoot().addChild("Bin").down()
-                .addSite()
-                .addChild("ref")
-                .addChild("Item").down().addChild("ref").up()
+        bRed.root()
+                .child("Bin").down()
+                .site()
+                .child("ref").down().child("Lock", "canGrab").up()
+                .child("Item").down()
+                .child("ref").down().child("Lock", "canGrab").up()
         ;
 
-        PureBigraph redex = bRed.createBigraph();
-        PureBigraph reactum = bRec.createBigraph();
+
+        bRec.root()
+                .child("Gripper", "canGrab").down().child("ref")
+        ;
+        bRec.root().child("Bin").down()
+                .site()
+                .child("ref")
+                .child("Item").down().child("ref").up()
+        ;
+
+        PureBigraph redex = bRed.create();
+        PureBigraph reactum = bRec.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }

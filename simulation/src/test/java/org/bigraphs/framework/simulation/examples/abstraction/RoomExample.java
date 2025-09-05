@@ -7,7 +7,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
@@ -151,8 +151,8 @@ public class RoomExample extends BaseExampleTestSupport {
         List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(metaModel,
                 path);
 
-        PureBigraphBuilder<DefaultDynamicSignature> b = PureBigraphBuilder.create(sig(), metaModel, eObjects.get(0));
-        PureBigraph bigraph = b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), metaModel, eObjects.get(0));
+        PureBigraph bigraph = b.create();
         return bigraph;
     }
 
@@ -179,119 +179,119 @@ public class RoomExample extends BaseExampleTestSupport {
 
     // With open links only
     public PureBigraph agent1() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
-        BigraphEntity.OuterName tmpDoor1 = builder.createOuterName("Door1");
-        BigraphEntity.OuterName tmpDoor2 = builder.createOuterName("Door2");
-        builder.createRoot()
-                .addChild("Room", tmpDoor1)
-                .down().addChild("MPC", "u0").addChild("User", "u0")
-                .addChild("Spool").linkToOuter("lan1").top()
+        BigraphEntity.OuterName tmpDoor1 = builder.createOuter("Door1");
+        BigraphEntity.OuterName tmpDoor2 = builder.createOuter("Door2");
+        builder.root()
+                .child("Room", tmpDoor1)
+                .down().child("MPC", "u0").child("User", "u0")
+                .child("Spool").linkOuter("lan1").top()
                 //
-                .addChild("Door", tmpDoor1).linkToOuter(tmpDoor2).down().addChild("Unlocked").top()
+                .child("Door", tmpDoor1).linkOuter(tmpDoor2).down().child("Unlocked").top()
                 //
-                .addChild("Room", tmpDoor2).down()
-                .addChild("Printer", "lan1").linkToOuter("lan2")
-                .addChild("PC", "u1").linkToOuter("lan2")
-                .addChild("PC", "u2").linkToOuter("lan2")
-                .addChild("PC", "u3").linkToOuter("lan2")
-                .addChild("User").linkToOuter("u1")
-                .addChild("User").linkToOuter("u2")
-                .addChild("User").linkToOuter("u3")
+                .child("Room", tmpDoor2).down()
+                .child("Printer", "lan1").linkOuter("lan2")
+                .child("PC", "u1").linkOuter("lan2")
+                .child("PC", "u2").linkOuter("lan2")
+                .child("PC", "u3").linkOuter("lan2")
+                .child("User").linkOuter("u1")
+                .child("User").linkOuter("u2")
+                .child("User").linkOuter("u3")
         ;
 
-        builder.closeAllInnerNames();
+        builder.closeInner();
 
-        PureBigraph b = builder.createBigraph();
+        PureBigraph b = builder.create();
         return b;
     }
 
     // With closed links only
     public PureBigraph agent0() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
-        BigraphEntity.InnerName tmpSpPr = builder.createInnerName("tmpSpPr");
-        BigraphEntity.InnerName tmpPrPc = builder.createInnerName("tmpPrPc");
-        BigraphEntity.InnerName tmpDoor1 = builder.createInnerName("Door1");
-        BigraphEntity.InnerName tmpDoor2 = builder.createInnerName("Door2");
-        builder.createRoot()
-                .addChild("Room").linkToInner(tmpDoor1)
-                .down().connectByEdge("MPC", "User").addChild("Spool").linkToInner(tmpSpPr).top()
-                .addChild("Door").linkToInner(tmpDoor1).linkToInner(tmpDoor2).down().addChild("Unlocked").top()
-                .addChild("Room").linkToInner(tmpDoor2).down()
-                .addChild("Printer").linkToInner(tmpSpPr).linkToInner(tmpPrPc)
-                .connectByEdge("User", "PC").linkToInner(tmpPrPc)
-                .connectByEdge("User", "PC").linkToInner(tmpPrPc)
-                .connectByEdge("User", "PC").linkToInner(tmpPrPc)
+        BigraphEntity.InnerName tmpSpPr = builder.createInner("tmpSpPr");
+        BigraphEntity.InnerName tmpPrPc = builder.createInner("tmpPrPc");
+        BigraphEntity.InnerName tmpDoor1 = builder.createInner("Door1");
+        BigraphEntity.InnerName tmpDoor2 = builder.createInner("Door2");
+        builder.root()
+                .child("Room").linkInner(tmpDoor1)
+                .down().connectByEdge("MPC", "User").child("Spool").linkInner(tmpSpPr).top()
+                .child("Door").linkInner(tmpDoor1).linkInner(tmpDoor2).down().child("Unlocked").top()
+                .child("Room").linkInner(tmpDoor2).down()
+                .child("Printer").linkInner(tmpSpPr).linkInner(tmpPrPc)
+                .connectByEdge("User", "PC").linkInner(tmpPrPc)
+                .connectByEdge("User", "PC").linkInner(tmpPrPc)
+                .connectByEdge("User", "PC").linkInner(tmpPrPc)
 
 //                .addChild("PC").linkToInner(tmpPrPc)
 //                .addChild("PC").linkToInner(tmpPrPc)
         ;
 
-        PureBigraph b = builder.createBigraph();
+        PureBigraph b = builder.create();
         return b;
     }
 
     // Abstraction rule 1
     public ParametricReactionRule<PureBigraph> alphaUserGroup() throws InvalidReactionRuleException, InvalidConnectionException, LinkTypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> bRedex = pureBuilder(sig());
-        PureBigraphBuilder<DefaultDynamicSignature> bReactum = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig());
 
-        bRedex.createRoot().addChild("Room", "door")
+        bRedex.root().child("Room", "door")
                 .down()
-                .addSite()
-                .addChild("User", "y1").down().addSite().up()
-                .addChild("User", "y2").down().addSite().up()
-                .addChild("User", "y3").down().addSite().up()
+                .site()
+                .child("User", "y1").down().site().up()
+                .child("User", "y2").down().site().up()
+                .child("User", "y3").down().site().up()
         ;
 
 
-        bReactum.createOuterName("y2");
-        bReactum.createOuterName("y3");
-        bReactum.createRoot().addChild("Room", "door")
+        bReactum.createOuter("y2");
+        bReactum.createOuter("y3");
+        bReactum.root().child("Room", "door")
                 .down()
-                .addSite()
-                .addChild("UserGroup", "y1")
+                .site()
+                .child("UserGroup", "y1")
         ;
-        bReactum.closeAllInnerNames();
+        bReactum.closeInner();
 
-        PureBigraph redex = bRedex.createBigraph();
-        PureBigraph reactum = bReactum.createBigraph();
+        PureBigraph redex = bRedex.create();
+        PureBigraph reactum = bReactum.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum, InstantiationMap.create(1));
         return rr;
     }
 
     public ParametricReactionRule<PureBigraph> alphaPCGroup() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> bRedex = pureBuilder(sig());
-        PureBigraphBuilder<DefaultDynamicSignature> bReactum = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig());
 
-        bRedex.createRoot().addChild("Room", "door")
+        bRedex.root().child("Room", "door")
                 .down()
-                .addSite()
-                .addChild("PC", "y1").linkToOuter("l2").down().addSite().up()
-                .addChild("PC", "y2").linkToOuter("l2").down().addSite().up()
-                .addChild("PC", "y3").linkToOuter("l2").down().addSite().up()
+                .site()
+                .child("PC", "y1").linkOuter("l2").down().site().up()
+                .child("PC", "y2").linkOuter("l2").down().site().up()
+                .child("PC", "y3").linkOuter("l2").down().site().up()
         ;
 
 
-        bReactum.createOuterName("y2");
+        bReactum.createOuter("y2");
 //        bReactum.createOuterName("l2");
-        bReactum.createOuterName("y3");
-        bReactum.createRoot().addChild("Room", "door")
+        bReactum.createOuter("y3");
+        bReactum.root().child("Room", "door")
                 .down()
-                .addSite()
-                .addChild("PCGroup", "y1").linkToOuter("l2")
+                .site()
+                .child("PCGroup", "y1").linkOuter("l2")
         ;
-        bReactum.closeAllInnerNames();
+        bReactum.closeInner();
 
-        PureBigraph redex = bRedex.createBigraph();
-        PureBigraph reactum = bReactum.createBigraph();
+        PureBigraph redex = bRedex.create();
+        PureBigraph reactum = bReactum.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum, InstantiationMap.create(1));
         return rr;
     }
 
-    public static DefaultDynamicSignature sig() {
-        DefaultDynamicSignature signature = pureSignatureBuilder()
+    public static DynamicSignature sig() {
+        DynamicSignature signature = pureSignatureBuilder()
                 .newControl("Room", 1).assign()
                 .newControl("Door", 2).assign()
                 .newControl("Unlocked", 0).status(ControlStatus.ATOMIC).assign()

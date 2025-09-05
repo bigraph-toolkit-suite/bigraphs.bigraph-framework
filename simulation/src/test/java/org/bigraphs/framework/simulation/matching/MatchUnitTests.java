@@ -8,7 +8,7 @@ import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -272,295 +272,295 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
 
     //        big s0 = /a Building . (Room.(Printer{a,b}.1));
     public PureBigraph createAgent_idle_edge_test() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b = builder.createOuterName("b");
-        builder.createRoot()
-                .addChild("Building").down().addChild("Room")
-                .down().addChild("Printer").linkToOuter(a)
-                .linkToOuter(b)
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b = builder.createOuter("b");
+        builder.root()
+                .child("Building").down().child("Room")
+                .down().child("Printer").linkOuter(a)
+                .linkOuter(b)
         ;
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public PureBigraph createRedex_idle_edge_test(boolean closeName) throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b = builder.createOuterName("b");
-        builder.createRoot()
-                .addChild("Room").down()
-                .addChild("Printer").linkToOuter(a)
-                .linkToOuter(b)
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b = builder.createOuter("b");
+        builder.root()
+                .child("Room").down()
+                .child("Printer").linkOuter(a)
+                .linkOuter(b)
         ;
         if (closeName)
-            builder.closeOuterName(a, true);
-        return builder.createBigraph();
+            builder.closeOuter(a, true);
+        return builder.create();
     }
 
     public PureBigraph createAgent_model_test_7() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createSignatureABC();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createSignatureABC();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy a = builder.hierarchy(signature.getControlByName("A"));
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy b = builder.hierarchy(signature.getControlByName("B"));
+        PureBigraphBuilder<DynamicSignature>.Hierarchy a = builder.hierarchy(signature.getControlByName("A"));
+        PureBigraphBuilder<DynamicSignature>.Hierarchy b = builder.hierarchy(signature.getControlByName("B"));
 
-        a.addChild("B")
-                .addChild("C")
-                .down().addChild("D").addChild("E");
-        b.addChild("F").addChild("G").down().addChild("H").addChild("I");
+        a.child("B")
+                .child("C")
+                .down().child("D").child("E");
+        b.child("F").child("G").down().child("H").child("I");
 
-        builder.createRoot()
-                .addChild(a.top())
-                .addChild(b.top())
+        builder.root()
+                .child(a.top())
+                .child(b.top())
         ;
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public PureBigraph createRedex_7() {
-        DefaultDynamicSignature signature = createSignatureABC();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot().addChild("G").down().addChild("H").addChild("I");
+        DynamicSignature signature = createSignatureABC();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        builder.root().child("G").down().child("H").child("I");
 
 //        builder.createRoot().addChild("C").withNewHierarchy().addChild("A").withNewHierarchy().addChild("D").addChild("E");
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public Bigraph createAgent_model_test_5() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Computer"))
+        builder.root()
+                .child(signature.getControlByName("Computer"))
                 .down()
-                .addChild(signature.getControlByName("Room"))
-                .addChild(signature.getControlByName("Job"));
-        return builder.createBigraph();
+                .child(signature.getControlByName("Room"))
+                .child(signature.getControlByName("Job"));
+        return builder.create();
     }
 
     public Bigraph createRedex_model_test_5() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room"))
+        builder.root()
+                .child(signature.getControlByName("Room"))
                 .down()
-                .addChild(signature.getControlByName("Computer"))
-                .addChild(signature.getControlByName("Job"));
-        return builder.createBigraph();
+                .child(signature.getControlByName("Computer"))
+                .child(signature.getControlByName("Job"));
+        return builder.create();
     }
 
     public Bigraph createAgent_model_test_4() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.InnerName innerLink = builder.createInnerName("inner_link");
-        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.InnerName innerLink = builder.createInner("inner_link");
+        BigraphEntity.OuterName network = builder.createOuter("network");
 //        BigraphEntity.OuterName network1 = builder.createOuterName("network1");
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b = builder.createOuterName("b");
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b = builder.createOuter("b");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
-        room.addChild(signature.getControlByName("Computer")).linkToOuter(network).down()
-                .addChild(signature.getControlByName("A"))
-                .addChild(signature.getControlByName("A")).linkToOuter(b)
-                .addChild(signature.getControlByName("A")).linkToOuter(b);
+        PureBigraphBuilder<DynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
+        room.child(signature.getControlByName("Computer")).linkOuter(network).down()
+                .child(signature.getControlByName("A"))
+                .child(signature.getControlByName("A")).linkOuter(b)
+                .child(signature.getControlByName("A")).linkOuter(b);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room2 = builder.hierarchy(signature.getControlByName("Room"));
-        room2.addChild(signature.getControlByName("Computer")).linkToOuter(network).down()
-                .addChild(signature.getControlByName("A")).linkToOuter(a)
-                .addChild(signature.getControlByName("B")).linkToInner(innerLink)
-                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("A")).linkToInner(innerLink);
+        PureBigraphBuilder<DynamicSignature>.Hierarchy room2 = builder.hierarchy(signature.getControlByName("Room"));
+        room2.child(signature.getControlByName("Computer")).linkOuter(network).down()
+                .child(signature.getControlByName("A")).linkOuter(a)
+                .child(signature.getControlByName("B")).linkInner(innerLink)
+                .down().child(signature.getControlByName("Job")).child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("A")).linkInner(innerLink);
 
-        builder.createRoot().addChild(room).addChild(room2);
-        builder.closeAllInnerNames();
+        builder.root().child(room).child(room2);
+        builder.closeInner();
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public Bigraph createRedex_model_test_4() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
-        room.addChild(signature.getControlByName("Computer")).linkToOuter(network).down()
-                .addSite();
+        PureBigraphBuilder<DynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
+        room.child(signature.getControlByName("Computer")).linkOuter(network).down()
+                .site();
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room2 = builder.hierarchy(signature.getControlByName("Room"));
-        room2.addChild(signature.getControlByName("Computer")).linkToOuter(network).down()
-                .addSite();
+        PureBigraphBuilder<DynamicSignature>.Hierarchy room2 = builder.hierarchy(signature.getControlByName("Room"));
+        room2.child(signature.getControlByName("Computer")).linkOuter(network).down()
+                .site();
 
-        builder.createRoot().addChild(room).addChild(room2);
-        return builder.createBigraph();
+        builder.root().child(room).child(room2);
+        return builder.create();
     }
 
 
     public Bigraph createAgent_model_test_3() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.InnerName roomLink = builder.createInnerName("door");
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
-        BigraphEntity.OuterName bob = builder.createOuterName("bob");
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b = builder.createOuterName("b");
+        BigraphEntity.InnerName roomLink = builder.createInner("door");
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        BigraphEntity.OuterName jeff = builder.createOuter("jeff");
+        BigraphEntity.OuterName bob = builder.createOuter("bob");
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b = builder.createOuter("b");
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .down().addChild(signature.getControlByName("User")).linkToOuter(bob)
-                .addChild(signature.getControlByName("Computer")).linkToOuter(network)
-                .down().addChild(signature.getControlByName("Job")).down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("User")).linkToOuter(a)
-                .down().addChild(signature.getControlByName("User")).linkToOuter(b)
+        builder.root()
+                .child(signature.getControlByName("Room")).linkInner(roomLink)
+                .down().child(signature.getControlByName("User")).linkOuter(bob)
+                .child(signature.getControlByName("Computer")).linkOuter(network)
+                .down().child(signature.getControlByName("Job")).down().child(signature.getControlByName("Job")).child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("User")).linkOuter(a)
+                .down().child(signature.getControlByName("User")).linkOuter(b)
                 .up()
                 .up()
                 .up()
 
-                .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
-                .down().addChild(signature.getControlByName("User")).linkToOuter(jeff)
+                .child(signature.getControlByName("Room")).linkInner(roomLink)
+                .down().child(signature.getControlByName("User")).linkOuter(jeff)
                 .up()
         ;
 
-        builder.closeAllInnerNames();
+        builder.closeInner();
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
 
     }
 
     public Bigraph createRedex_model_test_3() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName network = builder.createOuter("network");
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(network)
-                .down().addSite().addChild(signature.getControlByName("Job")).down().addSite();
-        return builder.createBigraph();
+        builder.root()
+                .child(signature.getControlByName("Computer")).linkOuter(network)
+                .down().site().child(signature.getControlByName("Job")).down().site();
+        return builder.create();
     }
 
     public Bigraph createAgent_model_test_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.InnerName e1 = builder.createInnerName("e1");
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName jeff1 = builder.createOuter("jeff1");
+        BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
+        BigraphEntity.InnerName e1 = builder.createInner("e1");
 
 //        big s1 = /e1
 //                ((Room{e1} . (Computer{b1}.(Job.1) | User{jeff1}.1 ))
 //|
 //        (Room{e1} . (Computer{b1}.(Job.1 | User{jeff2}.1))));
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room")).linkToInner(e1)
+        builder.root()
+                .child(signature.getControlByName("Room")).linkInner(e1)
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff1)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("User")).linkOuter(jeff1)
                 .up()
 
-                .addChild(signature.getControlByName("Room")).linkToInner(e1)
+                .child(signature.getControlByName("Room")).linkInner(e1)
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().child(signature.getControlByName("Job")).child(signature.getControlByName("User")).linkOuter(jeff2)
                 .up().up();
 
-        builder.closeAllInnerNames();
+        builder.closeInner();
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public Bigraph createRedex_model_test_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName jeff1 = builder.createOuter("jeff1");
+        BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
 
         //(Computer{b1}.(Job.1) | User{jeff2}.1) || Computer{b1}.(Job.1 | User{jeff2}.1);
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff1);
+        builder.root()
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("User")).linkOuter(jeff1);
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2);
+        builder.root()
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().child(signature.getControlByName("Job")).child(signature.getControlByName("User")).linkOuter(jeff2);
 
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
 
     }
 
     public static Bigraph createRedex_model_test_0() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b = builder.createOuterName("b");
-        BigraphEntity.OuterName c = builder.createOuterName("c");
-        BigraphEntity.OuterName d = builder.createOuterName("d");
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b = builder.createOuter("b");
+        BigraphEntity.OuterName c = builder.createOuter("c");
+        BigraphEntity.OuterName d = builder.createOuter("d");
         builder.
-                createRoot()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(a)
+                root()
+                .child(signature.getControlByName("Computer")).linkOuter(a)
                 .down()
-                .addChild(signature.getControlByName("User")).linkToOuter(d)
-                .addChild(signature.getControlByName("Job"))
+                .child(signature.getControlByName("User")).linkOuter(d)
+                .child(signature.getControlByName("Job"))
 //                .goBack()
         ;
-        builder.createRoot()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(c)
+        builder.root()
+                .child(signature.getControlByName("Computer")).linkOuter(c)
                 .down()
-                .addChild(signature.getControlByName("User")).linkToOuter(b)
-                .addChild(signature.getControlByName("Job"))
+                .child(signature.getControlByName("User")).linkOuter(b)
+                .child(signature.getControlByName("Job"))
 //                .goBack()
         ;
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public static Bigraph createAgent_model_test_0() throws TypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
+        BigraphEntity.InnerName roomLink = builder.createInner("tmp1_room");
 //        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
+        BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
+        builder.root()
+                .child(signature.getControlByName("Room")).linkInner(roomLink)
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
                 .down()
-                .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .child(signature.getControlByName("Job"))
+                .child(signature.getControlByName("User")).linkOuter(jeff2)
                 .up()
                 .up()
 
-                .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
+                .child(signature.getControlByName("Room")).linkInner(roomLink)
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
                 .down()
-                .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .child(signature.getControlByName("Job"))
+                .child(signature.getControlByName("User")).linkOuter(jeff2)
                 .up()
                 .up()
 
 //                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
         ;
-        builder.closeInnerName(roomLink);
-        builder.closeAllInnerNames();
+        builder.closeInner(roomLink);
+        builder.closeInner();
         builder.makeGround();
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
 
     }
@@ -574,25 +574,25 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
      * @throws InvalidConnectionException
      */
     public Bigraph createRedex_model_test_2a() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName jeff = builder.createOuterName("jeff1");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName jeff = builder.createOuter("jeff1");
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
 
 
         // (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1));
         builder.
-                createRoot()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addSite().up()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(jeff)
-                .addChild(signature.getControlByName("Job"))
+                root()
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().site().up()
+                .child(signature.getControlByName("Computer")).linkOuter(jeff)
+                .child(signature.getControlByName("Job"))
         ;
 //        builder.createRoot()
 //                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
 //                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
 //        ;
-        return builder.createBigraph();
+        return builder.create();
     }
 
     /**
@@ -604,40 +604,40 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
      * @throws InvalidConnectionException
      */
     public Bigraph createRedex_model_test_2b() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.OuterName c = builder.createOuterName("c");
-        BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
+        BigraphEntity.OuterName c = builder.createOuter("c");
+        BigraphEntity.OuterName jeff1 = builder.createOuter("jeff1");
 
 
         // (Computer{b1}.(id(1)) | Computer{jeff1}.1 | Job.1) || (User{jeff1}.(Job.1 | Job.1));
         builder.
-                createRoot()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addSite().up()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(c)
-                .addChild(signature.getControlByName("Job"))
+                root()
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().site().up()
+                .child(signature.getControlByName("Computer")).linkOuter(c)
+                .child(signature.getControlByName("Job"))
         ;
-        builder.createRoot()
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff1)
-                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).up()
+        builder.root()
+                .child(signature.getControlByName("User")).linkOuter(jeff1)
+                .down().child(signature.getControlByName("Job")).child(signature.getControlByName("Job")).up()
         ;
-        return builder.createBigraph();
+        return builder.create();
     }
 
 
     public Bigraph createAgent_model_test_2() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.InnerName door = builder.createInnerName("door");
-        BigraphEntity.OuterName e1 = builder.createOuterName("eroom");
-        BigraphEntity.OuterName e0 = builder.createOuterName("espool");
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b = builder.createOuterName("b");
-        BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
+        BigraphEntity.InnerName door = builder.createInner("door");
+        BigraphEntity.OuterName e1 = builder.createOuter("eroom");
+        BigraphEntity.OuterName e0 = builder.createOuter("espool");
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b = builder.createOuter("b");
+        BigraphEntity.OuterName jeff1 = builder.createOuter("jeff1");
+        BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
 
 //        big s1 = /door (
 //                (Room{door} . (Computer{a}.1 | Computer{a}.(Job.1 | Job.(Job.1) | Job.1) | Computer{a}.1 | Computer{jeff}.1 | Job.1 ))
@@ -645,38 +645,38 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
 //                | (Room{e1} . (User{jeff}.(Job.1 | Job.1) | Job.1 | Job.1))
 //                );
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room")).linkToInner(door)
+        builder.root()
+                .child(signature.getControlByName("Room")).linkInner(door)
                 .down()
-                .addChild(signature.getControlByName("Computer")) //.connectNodeToOuterName(a)
-                .addChild(signature.getControlByName("Computer")).linkToOuter(a)
+                .child(signature.getControlByName("Computer")) //.connectNodeToOuterName(a)
+                .child(signature.getControlByName("Computer")).linkOuter(a)
                 .down()
-                .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("Job")).down().addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(a)
-                .addChild(signature.getControlByName("Computer")).linkToOuter(jeff1)
-                .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("User"))
+                .child(signature.getControlByName("Job"))
+                .child(signature.getControlByName("Job")).down().child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("Computer")).linkOuter(a)
+                .child(signature.getControlByName("Computer")).linkOuter(jeff1)
+                .child(signature.getControlByName("Job"))
+                .child(signature.getControlByName("User"))
                 .up()
 
-                .addChild(signature.getControlByName("Spool")).linkToOuter(e0)
+                .child(signature.getControlByName("Spool")).linkOuter(e0)
 
-                .addChild(signature.getControlByName("Room")).linkToOuter(e1)
+                .child(signature.getControlByName("Room")).linkOuter(e1)
                 .down()
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
-                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("Job"))
+                .child(signature.getControlByName("User")).linkOuter(jeff2)
+                .down().child(signature.getControlByName("Job")).child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("Job"))
+                .child(signature.getControlByName("Job"))
 
         ;
 
 //        builder.closeInnerName(roomLink);
 //        builder.closeInnerName(printerSpoolLink);
-        builder.closeAllInnerNames();
+        builder.closeInner();
         builder.makeGround();
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
@@ -735,50 +735,50 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
      * big start = Age . (numberLeft | numberRight);
      */
     public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
-        DefaultDynamicSignature signature = createExampleSignature2();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature2();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy leftNode =
+        PureBigraphBuilder<DynamicSignature>.Hierarchy leftNode =
                 builder.hierarchy(signature.getControlByName("Left"))
-                        .addChild("Z");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rightNode =
+                        .child("Z");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy rightNode =
                 builder.hierarchy(signature.getControlByName("Right"))
-                        .addChild("S");
+                        .child("S");
 //        for (int i = 0; i < left - 1; i++) {
 //            leftNode = leftNode.withNewHierarchy().addChild("S");
 //        }
 //        leftNode = leftNode.withNewHierarchy().addChild("Z").top();
         for (int i = 0; i < right - 1; i++) {
-            rightNode = rightNode.down().addChild("S");
+            rightNode = rightNode.down().child("S");
         }
 //        rightNode = rightNode.withNewHierarchy().addChild("Z").top();
         rightNode = rightNode.top();
 
-        builder.createRoot()
-                .addChild("Age")
+        builder.root()
+                .child("Age")
                 .down()
-                .addChild(leftNode)
-                .addChild(rightNode)
+                .child(leftNode)
+                .child(rightNode)
         ;
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_3() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature2();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature2();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Left").down().addSite()
+        builder.root()
+                .child("Left").down().site()
                 .top()
-                .addChild("Right").down().addChild("Z")
+                .child("Right").down().child("Z")
         ;
-        builder2.createRoot()
-                .addChild("False").down().addSite()
+        builder2.root()
+                .child("False").down().site()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }

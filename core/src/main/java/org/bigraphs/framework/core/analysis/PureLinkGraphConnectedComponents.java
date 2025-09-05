@@ -5,8 +5,8 @@ import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.MutableBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,7 +65,7 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
             List<BigraphEntity<?>> vertices = linkGraph.getPointsFromLink(eachEdge);
             Set<BigraphEntity<?>> ports = vertices.stream()
                     .filter(BigraphEntityType::isPort).collect(Collectors.toSet());
-            Set<BigraphEntity.NodeEntity<DefaultDynamicControl>> portsToNodes = ports.stream()
+            Set<BigraphEntity.NodeEntity<DynamicControl>> portsToNodes = ports.stream()
                     .map(x -> linkGraph.getNodeOfPort((BigraphEntity.Port) x)).collect(Collectors.toSet());
             vertices.removeAll(ports); // inner names will remain in the list
             vertices.addAll(portsToNodes); // we just swap ports with their nodes
@@ -154,7 +154,7 @@ public class PureLinkGraphConnectedComponents implements BigraphDecompositionStr
             HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
             HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
             HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
-            MutableBuilder<DefaultDynamicSignature> builder = MutableBuilder.newMutableBuilder(this.originalBigraph.getSignature(), this.originalBigraph.getMetaModel());
+            MutableBuilder<DynamicSignature> builder = MutableBuilder.newMutableBuilder(this.originalBigraph.getSignature(), this.originalBigraph.getMetaModel());
             List<BigraphEntity<?>> nodes = eachPartition.getValue();
 
             // Build the tree

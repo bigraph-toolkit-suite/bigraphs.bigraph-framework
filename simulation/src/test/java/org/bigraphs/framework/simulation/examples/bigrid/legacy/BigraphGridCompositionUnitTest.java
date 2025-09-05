@@ -11,7 +11,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
 import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -38,15 +38,15 @@ public class BigraphGridCompositionUnitTest {
     void test_01() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
         PureBigraph topLeft = topLeft();
         PureBigraph topEdge = topEdge();
-        ElementaryBigraph<DefaultDynamicSignature> tl_te = TL_TE_Wiring();
+        ElementaryBigraph<DynamicSignature> tl_te = TL_TE_Wiring();
 
         BigraphFileModelManagement.Store.exportAsInstanceModel(topLeft, System.out);
         BigraphFileModelManagement.Store.exportAsInstanceModel(topEdge, System.out);
         BigraphFileModelManagement.Store.exportAsInstanceModel(tl_te, System.out);
 
-        Bigraph<DefaultDynamicSignature> _tc = ops(topLeft).parallelProduct(tl_te).getOuterBigraph();
+        Bigraph<DynamicSignature> _tc = ops(topLeft).parallelProduct(tl_te).getOuterBigraph();
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) _tc, System.out);
-        Bigraph<DefaultDynamicSignature> _tl_te = ops(_tc).parallelProduct(topEdge).getOuterBigraph();
+        Bigraph<DynamicSignature> _tl_te = ops(_tc).parallelProduct(topEdge).getOuterBigraph();
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) _tl_te, System.out);
     }
 
@@ -54,18 +54,18 @@ public class BigraphGridCompositionUnitTest {
     void test_02() throws Exception {
         PureBigraph topLeft = topLeft();
         PureBigraph topEdge = topEdge();
-        ElementaryBigraph<DefaultDynamicSignature> tl_te_w = TL_TE_Wiring();
-        ElementaryBigraph<DefaultDynamicSignature> merge1 = merge1();
-        ElementaryBigraph<DefaultDynamicSignature> merge2 = merge2();
-        ElementaryBigraph<DefaultDynamicSignature> renaming_tc = renaming("east", "south");
+        ElementaryBigraph<DynamicSignature> tl_te_w = TL_TE_Wiring();
+        ElementaryBigraph<DynamicSignature> merge1 = merge1();
+        ElementaryBigraph<DynamicSignature> merge2 = merge2();
+        ElementaryBigraph<DynamicSignature> renaming_tc = renaming("east", "south");
 
         // With intermediate steps
-        Bigraph<DefaultDynamicSignature> _tc = ops(topLeft).parallelProduct(tl_te_w).getOuterBigraph();
-        Bigraph<DefaultDynamicSignature> m2_id = ops(merge2).juxtapose(renaming_tc).getOuterBigraph();
+        Bigraph<DynamicSignature> _tc = ops(topLeft).parallelProduct(tl_te_w).getOuterBigraph();
+        Bigraph<DynamicSignature> m2_id = ops(merge2).juxtapose(renaming_tc).getOuterBigraph();
 //        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) m2_id, System.out);
-        Bigraph<DefaultDynamicSignature> _tc2 = ops(_tc).juxtapose(merge1).getOuterBigraph();
+        Bigraph<DynamicSignature> _tc2 = ops(_tc).juxtapose(merge1).getOuterBigraph();
 //        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) _tc2, System.out);
-        Bigraph<DefaultDynamicSignature> ob = ops(m2_id).compose(_tc2).getOuterBigraph();
+        Bigraph<DynamicSignature> ob = ops(m2_id).compose(_tc2).getOuterBigraph();
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) ob, System.out);
 
 //        // In one line:
@@ -77,7 +77,7 @@ public class BigraphGridCompositionUnitTest {
 //        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) connected, System.out);
     }
 
-    public Optional<Bigraph> createNorthSouthConnector(Bigraph<?> rowBigraph, Linkings<DefaultDynamicSignature> linkings) {
+    public Optional<Bigraph> createNorthSouthConnector(Bigraph<?> rowBigraph, Linkings<DynamicSignature> linkings) {
         AtomicInteger cnt = new AtomicInteger(0);
         return rowBigraph.getOuterNames().stream()
                 .map(o -> {
@@ -103,7 +103,7 @@ public class BigraphGridCompositionUnitTest {
                 });
     }
 
-    public Optional<Bigraph> createClosure(String name, int length, Bigraph<?> b, Linkings<DefaultDynamicSignature> linkings) throws IncompatibleSignatureException, IncompatibleInterfaceException {
+    public Optional<Bigraph> createClosure(String name, int length, Bigraph<?> b, Linkings<DynamicSignature> linkings) throws IncompatibleSignatureException, IncompatibleInterfaceException {
         Set<NamedType<?>> names = IntStream.rangeClosed(0, length)
                 .mapToObj(i -> (NamedType<?>) StringTypedName.of(name + i))
                 .collect(Collectors.toSet());
@@ -115,7 +115,7 @@ public class BigraphGridCompositionUnitTest {
     }
 
 
-    public Optional<Bigraph> createRenaming(Map<String, String> renamings, PureBigraph previous, Linkings<DefaultDynamicSignature> linkings) {
+    public Optional<Bigraph> createRenaming(Map<String, String> renamings, PureBigraph previous, Linkings<DynamicSignature> linkings) {
         return previous.getOuterNames().stream()
                 .map(x -> {
                     if (renamings.containsKey(x.getName())) {
@@ -138,8 +138,8 @@ public class BigraphGridCompositionUnitTest {
     void test_03() throws Exception {
         int n = 3;
         int i = 0;
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings(signature());
-        Placings<DefaultDynamicSignature> placings = purePlacings(signature());
+        Linkings<DynamicSignature> linkings = pureLinkings(signature());
+        Placings<DynamicSignature> placings = purePlacings(signature());
         PureBigraph previous = topLeft();
 
         Optional<Bigraph> reduce = createRenaming(
@@ -162,11 +162,11 @@ public class BigraphGridCompositionUnitTest {
             );
 
             BigraphGraphvizExporter.toPNG(nextWiring.get(), true, new File(BASEPATH + "wiring_" + j + ".png"));
-            Bigraph<DefaultDynamicSignature> nextWithWiring = ops(nextWiring.get()).compose(next).getOuterBigraph();
+            Bigraph<DynamicSignature> nextWithWiring = ops(nextWiring.get()).compose(next).getOuterBigraph();
             BigraphGraphvizExporter.toPNG(nextWithWiring, true, new File(BASEPATH + "nextWithWiring_" + i + "-" + j + ".png"));
 
-            Bigraph<DefaultDynamicSignature> previousWithRegion = ops(previous).juxtapose(placings.identity1()).getOuterBigraph();
-            Bigraph<DefaultDynamicSignature> outerBigraph = ops(previousWithRegion).nesting(nextWithWiring).getOuterBigraph();
+            Bigraph<DynamicSignature> previousWithRegion = ops(previous).juxtapose(placings.identity1()).getOuterBigraph();
+            Bigraph<DynamicSignature> outerBigraph = ops(previousWithRegion).nesting(nextWithWiring).getOuterBigraph();
             BigraphGraphvizExporter.toPNG(outerBigraph, true, new File(BASEPATH + "d_" + i + "-" + j + ".png"));
             System.out.println("\tFinished i,j = " + i + ", " + j);
             previous = (PureBigraph) outerBigraph;
@@ -184,8 +184,8 @@ public class BigraphGridCompositionUnitTest {
     void test_04() throws Exception {
         int n = 3;
         int i = 1;
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings(signature());
-        Placings<DefaultDynamicSignature> placings = purePlacings(signature());
+        Linkings<DynamicSignature> linkings = pureLinkings(signature());
+        Placings<DynamicSignature> placings = purePlacings(signature());
         PureBigraph previous = leftEdge();
 
         Optional<Bigraph> reduce = createRenaming(
@@ -217,11 +217,11 @@ public class BigraphGridCompositionUnitTest {
             );
 
             BigraphGraphvizExporter.toPNG(nextWiring.get(), true, new File(BASEPATH + "nextWiring_" + i + "-" + j + ".png"));
-            Bigraph<DefaultDynamicSignature> nextWithWiring = ops(nextWiring.get()).compose(next).getOuterBigraph();
+            Bigraph<DynamicSignature> nextWithWiring = ops(nextWiring.get()).compose(next).getOuterBigraph();
             BigraphGraphvizExporter.toPNG(nextWithWiring, true, new File(BASEPATH + "nextWithWiring_" + i + "-" + j + ".png"));
 
-            Bigraph<DefaultDynamicSignature> previousWithRegion = ops(previous).juxtapose(placings.identity1()).getOuterBigraph();
-            Bigraph<DefaultDynamicSignature> d_ij = ops(previousWithRegion).nesting(nextWithWiring).getOuterBigraph();
+            Bigraph<DynamicSignature> previousWithRegion = ops(previous).juxtapose(placings.identity1()).getOuterBigraph();
+            Bigraph<DynamicSignature> d_ij = ops(previousWithRegion).nesting(nextWithWiring).getOuterBigraph();
 //            BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) d_ij, System.out);
             BigraphGraphvizExporter.toPNG(d_ij, true, new File(BASEPATH + "d_" + i + "-" + j + ".png"));
             System.out.println("\tFinished i,j = " + i + ", " + j);
@@ -240,8 +240,8 @@ public class BigraphGridCompositionUnitTest {
     void test_05() throws Exception {
         int n = 3;
         int i = 2;
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings(signature());
-        Placings<DefaultDynamicSignature> placings = purePlacings(signature());
+        Linkings<DynamicSignature> linkings = pureLinkings(signature());
+        Placings<DynamicSignature> placings = purePlacings(signature());
         PureBigraph previous = bottomLeft();
 
         Optional<Bigraph> reduce = createRenaming(
@@ -270,11 +270,11 @@ public class BigraphGridCompositionUnitTest {
             );
 
             BigraphGraphvizExporter.toPNG(nextWiring.get(), true, new File(BASEPATH + "nextWiring_" + i + "-" + j + ".png"));
-            Bigraph<DefaultDynamicSignature> nextWithWiring = ops(nextWiring.get()).compose(next).getOuterBigraph();
+            Bigraph<DynamicSignature> nextWithWiring = ops(nextWiring.get()).compose(next).getOuterBigraph();
             BigraphGraphvizExporter.toPNG(nextWithWiring, true, new File(BASEPATH + "nextWithWiring_" + i + "-" + j + ".png"));
 
-            Bigraph<DefaultDynamicSignature> previousWithRegion = ops(previous).juxtapose(placings.identity1()).getOuterBigraph();
-            Bigraph<DefaultDynamicSignature> d_ij = ops(previousWithRegion).nesting(nextWithWiring).getOuterBigraph();
+            Bigraph<DynamicSignature> previousWithRegion = ops(previous).juxtapose(placings.identity1()).getOuterBigraph();
+            Bigraph<DynamicSignature> d_ij = ops(previousWithRegion).nesting(nextWithWiring).getOuterBigraph();
             BigraphGraphvizExporter.toPNG(d_ij, true, new File(BASEPATH + "d_" + i + "-" + j + ".png"));
             System.out.println("\tFinished i,j = " + i + ", " + j);
             previous = (PureBigraph) d_ij;
@@ -311,176 +311,176 @@ public class BigraphGridCompositionUnitTest {
     }
 
 
-    public ElementaryBigraph<DefaultDynamicSignature> merge1() {
+    public ElementaryBigraph<DynamicSignature> merge1() {
         return purePlacings(signature())
                 .merge(1);
     }
 
-    public ElementaryBigraph<DefaultDynamicSignature> merge2() {
+    public ElementaryBigraph<DynamicSignature> merge2() {
         return purePlacings(signature())
                 .merge(2);
     }
 
-    public ElementaryBigraph<DefaultDynamicSignature> TL_TE_Wiring() {
+    public ElementaryBigraph<DynamicSignature> TL_TE_Wiring() {
 
         return pureLinkings(signature())
                 .substitution("east", "west");
     }
 
-    public ElementaryBigraph<DefaultDynamicSignature> renaming(String... names) {
+    public ElementaryBigraph<DynamicSignature> renaming(String... names) {
         return pureLinkings(signature())
                 .identity(Arrays.stream(names).map(StringTypedName::of).toArray(StringTypedName[]::new));
     }
 
     public PureBigraph bottomLeft() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.OuterName north = b.createOuterName("north");
-        BigraphEntity.OuterName east = b.createOuterName("east");
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        BigraphEntity.InnerName tmp2 = b.createInnerName("tmp2");
-        b.createRoot()
-                .addChild("BottomLeftCorner")
-                .linkToOuter(north)
-                .linkToOuter(east)
-                .linkToInner(tmp)
-                .linkToInner(tmp2);
-        b.closeInnerName(tmp); // leaves the edge intact
-        b.closeInnerName(tmp2); // leaves the edge intact
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.OuterName north = b.createOuter("north");
+        BigraphEntity.OuterName east = b.createOuter("east");
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        BigraphEntity.InnerName tmp2 = b.createInner("tmp2");
+        b.root()
+                .child("BottomLeftCorner")
+                .linkOuter(north)
+                .linkOuter(east)
+                .linkInner(tmp)
+                .linkInner(tmp2);
+        b.closeInner(tmp); // leaves the edge intact
+        b.closeInner(tmp2); // leaves the edge intact
+        return b.create();
     }
 
     public PureBigraph bottomEdge() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.OuterName north = b.createOuterName("north");
-        BigraphEntity.OuterName east = b.createOuterName("east");
-        BigraphEntity.OuterName west = b.createOuterName("west");
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        b.createRoot()
-                .addChild("BottomEdge")
-                .linkToOuter(north)
-                .linkToOuter(east)
-                .linkToInner(tmp)
-                .linkToOuter(west);
-        b.closeInnerName(tmp); // leaves the edge intact
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.OuterName north = b.createOuter("north");
+        BigraphEntity.OuterName east = b.createOuter("east");
+        BigraphEntity.OuterName west = b.createOuter("west");
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        b.root()
+                .child("BottomEdge")
+                .linkOuter(north)
+                .linkOuter(east)
+                .linkInner(tmp)
+                .linkOuter(west);
+        b.closeInner(tmp); // leaves the edge intact
+        return b.create();
     }
 
     public PureBigraph bottomRight() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.OuterName north = b.createOuterName("north");
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        BigraphEntity.InnerName tmp2 = b.createInnerName("tmp2");
-        BigraphEntity.OuterName west = b.createOuterName("west");
-        b.createRoot()
-                .addChild("BottomRightCorner")
-                .linkToOuter(north)
-                .linkToInner(tmp)
-                .linkToInner(tmp2)
-                .linkToOuter(west);
-        b.closeInnerName(tmp); // leaves the edge intact
-        b.closeInnerName(tmp2); // leaves the edge intact
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.OuterName north = b.createOuter("north");
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        BigraphEntity.InnerName tmp2 = b.createInner("tmp2");
+        BigraphEntity.OuterName west = b.createOuter("west");
+        b.root()
+                .child("BottomRightCorner")
+                .linkOuter(north)
+                .linkInner(tmp)
+                .linkInner(tmp2)
+                .linkOuter(west);
+        b.closeInner(tmp); // leaves the edge intact
+        b.closeInner(tmp2); // leaves the edge intact
+        return b.create();
     }
 
     public PureBigraph topLeft() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        BigraphEntity.InnerName tmp2 = b.createInnerName("tmp2");
-        BigraphEntity.OuterName east = b.createOuterName("east");
-        BigraphEntity.OuterName south = b.createOuterName("south");
-        b.createRoot()
-                .addChild("TopLeftCorner")
-                .linkToInner(tmp)
-                .linkToOuter(east)
-                .linkToOuter(south)
-                .linkToInner(tmp2);
-        b.closeInnerName(tmp); // leaves the edge intact
-        b.closeInnerName(tmp2); // leaves the edge intact
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        BigraphEntity.InnerName tmp2 = b.createInner("tmp2");
+        BigraphEntity.OuterName east = b.createOuter("east");
+        BigraphEntity.OuterName south = b.createOuter("south");
+        b.root()
+                .child("TopLeftCorner")
+                .linkInner(tmp)
+                .linkOuter(east)
+                .linkOuter(south)
+                .linkInner(tmp2);
+        b.closeInner(tmp); // leaves the edge intact
+        b.closeInner(tmp2); // leaves the edge intact
+        return b.create();
     }
 
     public PureBigraph topRight() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        BigraphEntity.InnerName tmp2 = b.createInnerName("tmp2");
-        BigraphEntity.OuterName west = b.createOuterName("west");
-        BigraphEntity.OuterName south = b.createOuterName("south");
-        b.createRoot()
-                .addChild("TopRightCorner")
-                .linkToInner(tmp)
-                .linkToInner(tmp2)
-                .linkToOuter(south)
-                .linkToOuter(west)
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        BigraphEntity.InnerName tmp2 = b.createInner("tmp2");
+        BigraphEntity.OuterName west = b.createOuter("west");
+        BigraphEntity.OuterName south = b.createOuter("south");
+        b.root()
+                .child("TopRightCorner")
+                .linkInner(tmp)
+                .linkInner(tmp2)
+                .linkOuter(south)
+                .linkOuter(west)
         ;
-        b.closeInnerName(tmp); // leaves the edge intact
-        b.closeInnerName(tmp2); // leaves the edge intact
-        return b.createBigraph();
+        b.closeInner(tmp); // leaves the edge intact
+        b.closeInner(tmp2); // leaves the edge intact
+        return b.create();
     }
 
     public PureBigraph leftEdge() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.OuterName north = b.createOuterName("north");
-        BigraphEntity.OuterName east = b.createOuterName("east");
-        BigraphEntity.OuterName south = b.createOuterName("south");
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        b.createRoot()
-                .addChild("LeftEdge")
-                .linkToOuter(north)
-                .linkToOuter(east)
-                .linkToOuter(south)
-                .linkToInner(tmp);
-        b.closeInnerName(tmp); // leaves the edge intact
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.OuterName north = b.createOuter("north");
+        BigraphEntity.OuterName east = b.createOuter("east");
+        BigraphEntity.OuterName south = b.createOuter("south");
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        b.root()
+                .child("LeftEdge")
+                .linkOuter(north)
+                .linkOuter(east)
+                .linkOuter(south)
+                .linkInner(tmp);
+        b.closeInner(tmp); // leaves the edge intact
+        return b.create();
     }
 
     public PureBigraph rightEdge() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.OuterName north = b.createOuterName("north");
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        BigraphEntity.OuterName south = b.createOuterName("south");
-        BigraphEntity.OuterName west = b.createOuterName("west");
-        b.createRoot()
-                .addChild("RightEdge")
-                .linkToOuter(north)
-                .linkToInner(tmp)
-                .linkToOuter(south)
-                .linkToOuter(west);
-        b.closeInnerName(tmp); // leaves the edge intact
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.OuterName north = b.createOuter("north");
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        BigraphEntity.OuterName south = b.createOuter("south");
+        BigraphEntity.OuterName west = b.createOuter("west");
+        b.root()
+                .child("RightEdge")
+                .linkOuter(north)
+                .linkInner(tmp)
+                .linkOuter(south)
+                .linkOuter(west);
+        b.closeInner(tmp); // leaves the edge intact
+        return b.create();
     }
 
     public PureBigraph center() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.OuterName north = b.createOuterName("north");
-        BigraphEntity.OuterName east = b.createOuterName("east");
-        BigraphEntity.OuterName south = b.createOuterName("south");
-        BigraphEntity.OuterName west = b.createOuterName("west");
-        b.createRoot()
-                .addChild("Center")
-                .linkToOuter(north)
-                .linkToOuter(east)
-                .linkToOuter(south)
-                .linkToOuter(west);
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.OuterName north = b.createOuter("north");
+        BigraphEntity.OuterName east = b.createOuter("east");
+        BigraphEntity.OuterName south = b.createOuter("south");
+        BigraphEntity.OuterName west = b.createOuter("west");
+        b.root()
+                .child("Center")
+                .linkOuter(north)
+                .linkOuter(east)
+                .linkOuter(south)
+                .linkOuter(west);
+        return b.create();
     }
 
     public PureBigraph topEdge() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(signature());
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        BigraphEntity.OuterName east = b.createOuterName("east");
-        BigraphEntity.OuterName south = b.createOuterName("south");
-        BigraphEntity.OuterName west = b.createOuterName("west");
-        b.createRoot()
-                .addChild("TopEdge")
-                .linkToInner(tmp)
-                .linkToOuter(east)
-                .linkToOuter(south)
-                .linkToOuter(west);
-        b.closeInnerName(tmp); // leaves the edge intact
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(signature());
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        BigraphEntity.OuterName east = b.createOuter("east");
+        BigraphEntity.OuterName south = b.createOuter("south");
+        BigraphEntity.OuterName west = b.createOuter("west");
+        b.root()
+                .child("TopEdge")
+                .linkInner(tmp)
+                .linkOuter(east)
+                .linkOuter(south)
+                .linkOuter(west);
+        b.closeInner(tmp); // leaves the edge intact
+        return b.create();
     }
 
-    public DefaultDynamicSignature signature() {
+    public DynamicSignature signature() {
         return pureSignatureBuilder()
                 .newControl("TopLeftCorner", 4).assign()
                 .newControl("TopEdge", 4).assign()

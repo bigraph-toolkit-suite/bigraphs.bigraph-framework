@@ -12,7 +12,7 @@ import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -61,44 +61,44 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
 
     @Test
     void multiple_roots() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
-        DefaultDynamicSignature sig = createAlphabeticSignature();
+        DynamicSignature sig = createAlphabeticSignature();
         BigraphCanonicalForm instance = BigraphCanonicalForm.createInstance();
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(sig);
-        BigraphEntity.InnerName tmp = b.createInnerName("tmp");
-        b.createRoot()
-                .addChild("A")
-                .addChild("B").down().addChild("C").linkToInner(tmp).top();
-        b.createRoot().addChild("B").down().addChild("D").linkToInner(tmp).up().addChild("A").top();
-        b.closeInnerName(tmp);
-        PureBigraph bigraphA = b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(sig);
+        BigraphEntity.InnerName tmp = b.createInner("tmp");
+        b.root()
+                .child("A")
+                .child("B").down().child("C").linkInner(tmp).top();
+        b.root().child("B").down().child("D").linkInner(tmp).up().child("A").top();
+        b.closeInner(tmp);
+        PureBigraph bigraphA = b.create();
 //        BigraphFileModelManagement.exportAsInstanceModel(bigraphA, System.out);
         String bfcsA = instance.bfcs(bigraphA);
         System.out.println(bfcsA);
 
         // same bigraph as above, but only roots swapped (technically)
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(sig);
-        BigraphEntity.InnerName tmp2 = b2.createInnerName("tmp");
-        b2.createRoot().addChild("B").down().addChild("D").linkToInner(tmp2).up().addChild("A").top();
-        b2.createRoot().addChild("A").addChild("B").down().addChild("C").linkToInner(tmp2).top();
-        b2.closeInnerName(tmp2);
-        PureBigraph bigraph2 = b2.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(sig);
+        BigraphEntity.InnerName tmp2 = b2.createInner("tmp");
+        b2.root().child("B").down().child("D").linkInner(tmp2).up().child("A").top();
+        b2.root().child("A").child("B").down().child("C").linkInner(tmp2).top();
+        b2.closeInner(tmp2);
+        PureBigraph bigraph2 = b2.create();
 //        BigraphFileModelManagement.exportAsInstanceModel(bigraph2, System.out);
 
         String bfcs2 = instance.bfcs(bigraph2);
         System.out.println(bfcs2);
 
-        PureBigraphBuilder<DefaultDynamicSignature> b3 = pureBuilder(sig);
-        b3.createRoot().addChild("G").down().addSite().up().addChild("H").down().addSite();
-        PureBigraph big3 = b3.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b3 = pureBuilder(sig);
+        b3.root().child("G").down().site().up().child("H").down().site();
+        PureBigraph big3 = b3.create();
 //        BigraphFileModelManagement.exportAsInstanceModel(big3, System.out);
         String bfcs = instance.bfcs(big3);
         System.out.println(bfcs);
 
-        Bigraph<DefaultDynamicSignature> outerBigraph = ops(big3).compose(bigraphA).getOuterBigraph();
+        Bigraph<DynamicSignature> outerBigraph = ops(big3).compose(bigraphA).getOuterBigraph();
         String outerBigraphSE = instance.bfcs(outerBigraph);
         System.out.println(outerBigraphSE);
 
-        Bigraph<DefaultDynamicSignature> outerBigraph2 = ops(big3).compose(bigraph2).getOuterBigraph();
+        Bigraph<DynamicSignature> outerBigraph2 = ops(big3).compose(bigraph2).getOuterBigraph();
         String outerBigraphSE2 = instance.bfcs(outerBigraph2);
         System.out.println(outerBigraphSE2);
 //        Placings<DefaultDynamicSignature> placings = factory.createPlacings(sig);
@@ -124,13 +124,13 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         String metaModelFile = TARGET_DUMP_PATH + "../../bigraphs/cars/meta-model.ecore";
         String instanceModelFile_9 = TARGET_DUMP_PATH + "../../bigraphs/cars/a_9.xmi";
         String instanceModelFile_17 = TARGET_DUMP_PATH + "../../bigraphs/cars/a_17.xmi";
-        DefaultDynamicSignature carMapSignature = RouteFinding.createSignature();
+        DynamicSignature carMapSignature = RouteFinding.createSignature();
 
-        PureBigraphBuilder<DefaultDynamicSignature> builder_9 = PureBigraphBuilder.create(carMapSignature, metaModelFile, instanceModelFile_9);
-        PureBigraphBuilder<DefaultDynamicSignature> builder_17 = PureBigraphBuilder.create(carMapSignature, metaModelFile, instanceModelFile_17);
+        PureBigraphBuilder<DynamicSignature> builder_9 = PureBigraphBuilder.create(carMapSignature, metaModelFile, instanceModelFile_9);
+        PureBigraphBuilder<DynamicSignature> builder_17 = PureBigraphBuilder.create(carMapSignature, metaModelFile, instanceModelFile_17);
 
-        PureBigraph bigraph_9 = builder_9.createBigraph();
-        PureBigraph bigraph_17 = builder_17.createBigraph();
+        PureBigraph bigraph_9 = builder_9.create();
+        PureBigraph bigraph_17 = builder_17.create();
 //                BigraphGraphvizExporter.toPNG(bigraph_9,
 //                true,
 //                new File(TARGET_DUMP_PATH + "../../bigraphs/cars/b9.png")
@@ -163,18 +163,18 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
     }
 
     PureBigraph createAgentProcess() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignatureProcess());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignatureProcess());
 
-        builder.createRoot()
-                .addChild("Process", "access2")
-                .addChild("Process", "access1")
-                .addChild("Resource").down().addChild("Token").up()
+        builder.root()
+                .child("Process", "access2")
+                .child("Process", "access1")
+                .child("Resource").down().child("Token").up()
         ;
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
-    private DefaultDynamicSignature createSignatureProcess() {
+    private DynamicSignature createSignatureProcess() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Process")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -217,83 +217,83 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
     }
 
     public PureBigraph createSubbigraph_b() throws InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createAlphabeticSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-        BigraphEntity.InnerName e0 = b1.createInnerName("e0");
+        DynamicSignature signature = createAlphabeticSignature();
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+        BigraphEntity.InnerName e0 = b1.createInner("e0");
 //        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
 
-        b1.createRoot().addChild("B")
+        b1.root().child("B")
                 .down()
-                .addChild("D", "y1").linkToInner(e0)
-                .addChild("F", "y1").down().addChild("H").addChild("G").down().addSite().up().up()
-                .addChild("E", "y1").linkToInner(e0)
+                .child("D", "y1").linkInner(e0)
+                .child("F", "y1").down().child("H").child("G").down().site().up().up()
+                .child("E", "y1").linkInner(e0)
         ;
-        b1.closeAllInnerNames();
-        return b1.createBigraph();
+        b1.closeInner();
+        return b1.create();
     }
 
     public PureBigraph createBigraph_a() throws InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createAlphabeticSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-        BigraphEntity.InnerName b = b1.createInnerName("b");
-        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
-        BigraphEntity.OuterName y2 = b1.createOuterName("y2");
+        DynamicSignature signature = createAlphabeticSignature();
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+        BigraphEntity.InnerName b = b1.createInner("b");
+        BigraphEntity.OuterName y1 = b1.createOuter("y1");
+        BigraphEntity.OuterName y2 = b1.createOuter("y2");
 
-        PureBigraphBuilder.Hierarchy left = b1.hierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).down().addChild("G").addChild("H").down().addSite().top();
-        PureBigraphBuilder.Hierarchy middle = b1.hierarchy("B").addChild("A").addChild("B").down().addSite().top();
-        PureBigraphBuilder.Hierarchy right = b1.hierarchy("C").connectByEdge("D", "E").addChild("F").linkToOuter(y2).top();
-        b1.connectInnerToOuterName(b, y2);
-        b1.createRoot().addChild("Q").down().addChild(left.top()).addChild(middle.top()).addChild(right.top());
-        return b1.createBigraph();
+        PureBigraphBuilder.Hierarchy left = b1.hierarchy("A").connectByEdge("D", "E").child("F").linkOuter(y1).down().child("G").child("H").down().site().top();
+        PureBigraphBuilder.Hierarchy middle = b1.hierarchy("B").child("A").child("B").down().site().top();
+        PureBigraphBuilder.Hierarchy right = b1.hierarchy("C").connectByEdge("D", "E").child("F").linkOuter(y2).top();
+        b1.linkInnerToOuter(b, y2);
+        b1.root().child("Q").down().child(left.top()).child(middle.top()).child(right.top());
+        return b1.create();
     }
 
     public PureBigraph createBigraph_b() throws InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createAlphabeticSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
+        DynamicSignature signature = createAlphabeticSignature();
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+        BigraphEntity.OuterName y1 = b1.createOuter("y1");
 
-        PureBigraphBuilder.Hierarchy left = b1.hierarchy("A").connectByEdge("D", "E").addChild("F").linkToOuter(y1).down().addChild("H").addChild("G").down().addSite().top();
-        PureBigraphBuilder.Hierarchy middle = b1.hierarchy("C").addChild("A").addChild("B").top();
-        PureBigraphBuilder.Hierarchy right = b1.hierarchy("B").connectByEdge("D", "E").addChild("F").linkToOuter(y1).top();
+        PureBigraphBuilder.Hierarchy left = b1.hierarchy("A").connectByEdge("D", "E").child("F").linkOuter(y1).down().child("H").child("G").down().site().top();
+        PureBigraphBuilder.Hierarchy middle = b1.hierarchy("C").child("A").child("B").top();
+        PureBigraphBuilder.Hierarchy right = b1.hierarchy("B").connectByEdge("D", "E").child("F").linkOuter(y1).top();
 
-        b1.createRoot().addChild("Q").down().addChild(left).addChild(middle).addChild(right);
-        PureBigraph bigraph = b1.createBigraph();
+        b1.root().child("Q").down().child(left).child(middle).child(right);
+        PureBigraph bigraph = b1.create();
         return bigraph;
     }
 
     public PureBigraph createBigraph_c() throws InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createAlphabeticSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
+        DynamicSignature signature = createAlphabeticSignature();
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
 
-        BigraphEntity.InnerName e0 = b1.createInnerName("e0");
-        BigraphEntity.InnerName e1 = b1.createInnerName("e1");
-        BigraphEntity.InnerName e2 = b1.createInnerName("e2");
-        BigraphEntity.InnerName e3 = b1.createInnerName("e3");
+        BigraphEntity.InnerName e0 = b1.createInner("e0");
+        BigraphEntity.InnerName e1 = b1.createInner("e1");
+        BigraphEntity.InnerName e2 = b1.createInner("e2");
+        BigraphEntity.InnerName e3 = b1.createInner("e3");
 
-        b1.createRoot()
-                .addChild("B").down()
-                .addChild("D").linkToInner(e0).down().addChild("G").up().addChild("F").linkToInner(e0).linkToInner(e1).down().addChild("H").up().addChild("E").linkToInner(e1).up()
-                .addChild("B").down()
-                .addChild("D").linkToInner(e2).down().addChild("G").up().addChild("E").linkToInner(e2).linkToInner(e3).addChild("F").linkToInner(e3).down().addChild("H").up().up()
+        b1.root()
+                .child("B").down()
+                .child("D").linkInner(e0).down().child("G").up().child("F").linkInner(e0).linkInner(e1).down().child("H").up().child("E").linkInner(e1).up()
+                .child("B").down()
+                .child("D").linkInner(e2).down().child("G").up().child("E").linkInner(e2).linkInner(e3).child("F").linkInner(e3).down().child("H").up().up()
         ;
-        b1.closeInnerNames(e0, e1, e2, e3);
-        return b1.createBigraph();
+        b1.closeInner(e0, e1, e2, e3);
+        return b1.create();
     }
 
 
     public PureBigraph createBigraph_d() throws InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createAlphabeticSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-        BigraphEntity.InnerName e0 = b1.createInnerName("e0");
-        BigraphEntity.InnerName e1 = b1.createInnerName("e1");
-        BigraphEntity.InnerName e2 = b1.createInnerName("e2");
-        BigraphEntity.InnerName e3 = b1.createInnerName("e3");
-        b1.createRoot()
-                .addChild("B").down().addChild("D").linkToInner(e0).linkToInner(e1).down().addChild("G").up().addChild("E").linkToInner(e1).addChild("F").linkToInner(e0).down().addChild("H").up().up()
-                .addChild("B").down().addChild("D").linkToInner(e2).down().addChild("G").up().addChild("E").linkToInner(e2).linkToInner(e3).addChild("F").linkToInner(e3).down().addChild("H").up().up()
+        DynamicSignature signature = createAlphabeticSignature();
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+        BigraphEntity.InnerName e0 = b1.createInner("e0");
+        BigraphEntity.InnerName e1 = b1.createInner("e1");
+        BigraphEntity.InnerName e2 = b1.createInner("e2");
+        BigraphEntity.InnerName e3 = b1.createInner("e3");
+        b1.root()
+                .child("B").down().child("D").linkInner(e0).linkInner(e1).down().child("G").up().child("E").linkInner(e1).child("F").linkInner(e0).down().child("H").up().up()
+                .child("B").down().child("D").linkInner(e2).down().child("G").up().child("E").linkInner(e2).linkInner(e3).child("F").linkInner(e3).down().child("H").up().up()
         ;
-        b1.closeInnerNames(e0, e1, e2, e3);
-        return b1.createBigraph();
+        b1.closeInner(e0, e1, e2, e3);
+        return b1.create();
     }
 
     @Test
@@ -318,7 +318,7 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
     @Test
     @DisplayName("Using the Bigraph BFCS computation within the 'BigraphIsoPredicate'")
     void using_iso_predicate_test() {
-        DefaultDynamicSignature randomSignature = createRandomSignature(26, 1f);
+        DynamicSignature randomSignature = createRandomSignature(26, 1f);
         PureBigraph g0 = new PureBigraphGenerator(randomSignature).generate(1, 30, 1f);
 
         BigraphIsoPredicate<PureBigraph> pureBigraphBigraphIsoPredicate = BigraphIsoPredicate.create(g0);
@@ -351,20 +351,20 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         }
 
         private PureBigraph createBasicPlaceGraph() {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-            builder.createRoot()
-                    .addChild(signature.getControlByName("A"))
+            builder.root()
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B")).down()
-                    .addChild("E").down().addChild("A").up().up()
-                    .addChild(signature.getControlByName("C")).down()
-                    .addChild("F").down().addChild("B").addChild("D").up().addChild("A").up()
-                    .addChild(signature.getControlByName("D")).down()
-                    .addChild("F").down().addChild("C")
+                    .child(signature.getControlByName("B")).down()
+                    .child("E").down().child("A").up().up()
+                    .child(signature.getControlByName("C")).down()
+                    .child("F").down().child("B").child("D").up().child("A").up()
+                    .child(signature.getControlByName("D")).down()
+                    .child("F").down().child("C")
             ;
-            return builder.createBigraph();
+            return builder.create();
         }
 
         @Test
@@ -433,113 +433,113 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
          * @see <a href="https://www.ke.tu-darmstadt.de/lehre/archiv/ws0809/ml-sem/slides/Biesinger_Markus.pdf">https://www.ke.tu-darmstadt.de/lehre/archiv/ws0809/ml-sem/slides/Biesinger_Markus.pdf</a>
          */
         public Bigraph createBiesingerSampleBigraph() throws ControlIsAtomicException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-            builder.createRoot()
-                    .addChild(signature.getControlByName("A"))
+            builder.root()
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("E"))
+                    .child(signature.getControlByName("E"))
                     .down()
-                    .addChild(signature.getControlByName("E")).up().up()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("E")).up().up()
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("D"))
+                    .child(signature.getControlByName("D"))
                     .down()
-                    .addChild(signature.getControlByName("G"))
-                    .addChild(signature.getControlByName("F"))
+                    .child(signature.getControlByName("G"))
+                    .child(signature.getControlByName("F"))
                     .up()
-                    .addChild(signature.getControlByName("C"));
-            return builder.createBigraph();
+                    .child(signature.getControlByName("C"));
+            return builder.create();
         }
 
         public Bigraph createNonMatchingBiesingerSampleBigraph() throws ControlIsAtomicException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-            builder.createRoot()
-                    .addChild(signature.getControlByName("A"))
+            builder.root()
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("E"))
+                    .child(signature.getControlByName("E"))
                     .down()
-                    .addChild(signature.getControlByName("E")).up().up()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("E")).up().up()
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("C"))
                     .down()
-                    .addChild(signature.getControlByName("G"))
-                    .addChild(signature.getControlByName("F"))
+                    .child(signature.getControlByName("G"))
+                    .child(signature.getControlByName("F"))
                     .up()
-                    .addChild(signature.getControlByName("D"));
-            return builder.createBigraph();
+                    .child(signature.getControlByName("D"));
+            return builder.create();
         }
 
         public Bigraph createSampleBigraphA1() throws ControlIsAtomicException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-            builder.createRoot()
-                    .addChild(signature.getControlByName("A"))
+            builder.root()
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B"))
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("C"))
                     .down()
-                    .addChild(signature.getControlByName("H"))
-                    .addChild(signature.getControlByName("G"))
+                    .child(signature.getControlByName("H"))
+                    .child(signature.getControlByName("G"))
                     .up()
-                    .addChild(signature.getControlByName("D"))
+                    .child(signature.getControlByName("D"))
                     .up()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("E"))
-                    .addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("E"))
+                    .child(signature.getControlByName("C"))
                     .down()
-                    .addChild(signature.getControlByName("H"))
-                    .addChild(signature.getControlByName("F"))
+                    .child(signature.getControlByName("H"))
+                    .child(signature.getControlByName("F"))
                     .up()
                     .up()
                     .up()
             ;
 
-            return builder.createBigraph();
+            return builder.create();
         }
 
         public Bigraph createSampleBigraphA2() throws ControlIsAtomicException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-            builder.createRoot()
-                    .addChild(signature.getControlByName("A"))
+            builder.root()
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("C"))
                     .down()
-                    .addChild(signature.getControlByName("F"))
-                    .addChild(signature.getControlByName("H"))
+                    .child(signature.getControlByName("F"))
+                    .child(signature.getControlByName("H"))
                     .up()
-                    .addChild(signature.getControlByName("E"))
+                    .child(signature.getControlByName("E"))
                     .up()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("C"))
                     .down()
-                    .addChild(signature.getControlByName("G"))
-                    .addChild(signature.getControlByName("H"))
+                    .child(signature.getControlByName("G"))
+                    .child(signature.getControlByName("H"))
                     .up()
-                    .addChild(signature.getControlByName("D"))
+                    .child(signature.getControlByName("D"))
                     .up()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B"))
                     .up()
             ;
 
-            return builder.createBigraph();
+            return builder.create();
         }
 
         /**
@@ -547,41 +547,41 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
          * build procedure (i.e., node indexes).
          */
         public List<Bigraph> createSampleGraphs() {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-            PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(signature);
-            PureBigraphBuilder<DefaultDynamicSignature> b3 = pureBuilder(signature);
-            PureBigraphBuilder<DefaultDynamicSignature> b4 = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+            PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(signature);
+            PureBigraphBuilder<DynamicSignature> b3 = pureBuilder(signature);
+            PureBigraphBuilder<DynamicSignature> b4 = pureBuilder(signature);
 
-            b1.createRoot()
-                    .addChild(signature.getControlByName("A"))
+            b1.root()
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B")).down()
-                    .addChild(signature.getControlByName("C")).up()
-                    .addChild(signature.getControlByName("B"))
+                    .child(signature.getControlByName("B")).down()
+                    .child(signature.getControlByName("C")).up()
+                    .child(signature.getControlByName("B"))
                     .down()
-                    .addChild(signature.getControlByName("D")).addChild(signature.getControlByName("C"));
+                    .child(signature.getControlByName("D")).child(signature.getControlByName("C"));
 
-            b2.createRoot().addChild(signature.getControlByName("A")).down()
-                    .addChild(signature.getControlByName("B")).down().addChild(signature.getControlByName("C"))
+            b2.root().child(signature.getControlByName("A")).down()
+                    .child(signature.getControlByName("B")).down().child(signature.getControlByName("C"))
                     .up()
-                    .addChild(signature.getControlByName("B")).down()
-                    .addChild(signature.getControlByName("C")).addChild(signature.getControlByName("D"));
+                    .child(signature.getControlByName("B")).down()
+                    .child(signature.getControlByName("C")).child(signature.getControlByName("D"));
 
-            b3.createRoot().addChild(signature.getControlByName("A")).down()
-                    .addChild(signature.getControlByName("B")).down()
-                    .addChild(signature.getControlByName("D")).addChild(signature.getControlByName("C"))
+            b3.root().child(signature.getControlByName("A")).down()
+                    .child(signature.getControlByName("B")).down()
+                    .child(signature.getControlByName("D")).child(signature.getControlByName("C"))
                     .up()
-                    .addChild(signature.getControlByName("B")).down().addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("B")).down().child(signature.getControlByName("C"))
             ;
-            b4.createRoot().addChild(signature.getControlByName("A")).down()
-                    .addChild(signature.getControlByName("B")).down()
-                    .addChild(signature.getControlByName("C")).addChild(signature.getControlByName("D"))
+            b4.root().child(signature.getControlByName("A")).down()
+                    .child(signature.getControlByName("B")).down()
+                    .child(signature.getControlByName("C")).child(signature.getControlByName("D"))
                     .up()
-                    .addChild(signature.getControlByName("B")).down().addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("B")).down().child(signature.getControlByName("C"))
             ;
 
-            return Lists.newArrayList(b1.createBigraph(), b2.createBigraph(), b3.createBigraph(), b4.createBigraph());
+            return Lists.newArrayList(b1.create(), b2.create(), b3.create(), b4.create());
         }
 
         @Test
@@ -607,26 +607,26 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         }
 
         private PureBigraph createA() throws Exception {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-            b1.createRoot().addChild("A").down()
-                    .addChild("B").down().addChild("E").down().addChild("G").up().addChild("D").addChild("F").down().addChild("H").up().up()
-                    .addChild("B").down().addChild("D").down().addChild("G").up().addChild("E").addChild("F").down().addChild("H").up().up()
-                    .addChild("B").down().addChild("R").addChild("Q").top()
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+            b1.root().child("A").down()
+                    .child("B").down().child("E").down().child("G").up().child("D").child("F").down().child("H").up().up()
+                    .child("B").down().child("D").down().child("G").up().child("E").child("F").down().child("H").up().up()
+                    .child("B").down().child("R").child("Q").top()
             ;
-            return b1.createBigraph();
+            return b1.create();
         }
 
         private PureBigraph createB() throws Exception {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
 
-            b1.createRoot().addChild("A").down()
-                    .addChild("B").down().addChild("D").down().addChild("G").up().addChild("E").addChild("F").down().addChild("H").up().up()
-                    .addChild("B").down().addChild("D").down().addChild("G").up().addChild("E").addChild("F").down().addChild("H").up().up()
-                    .addChild("B").down().addChild("R").addChild("Q").top()
+            b1.root().child("A").down()
+                    .child("B").down().child("D").down().child("G").up().child("E").child("F").down().child("H").up().up()
+                    .child("B").down().child("D").down().child("G").up().child("E").child("F").down().child("H").up().up()
+                    .child("B").down().child("R").child("Q").top()
             ;
-            return b1.createBigraph();
+            return b1.create();
         }
     }
 
@@ -674,128 +674,128 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         }
 
         public Bigraph createSampleBigraphB1() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-            BigraphEntity.InnerName inner = builder.createInnerName("inner");
-            builder.createRoot()
-                    .addChild(signature.getControlByName("A"))
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+            BigraphEntity.InnerName inner = builder.createInner("inner");
+            builder.root()
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B")).linkToInner(inner)
-                    .addChild(signature.getControlByName("C")).linkToInner(inner)
+                    .child(signature.getControlByName("B")).linkInner(inner)
+                    .child(signature.getControlByName("C")).linkInner(inner)
                     .up()
-                    .addChild(signature.getControlByName("A"))
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B"))
-                    .addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("B"))
+                    .child(signature.getControlByName("C"))
                     .up()
             ;
-            return builder.closeAllInnerNames().createBigraph();
+            return builder.closeInner().create();
         }
 
         public Bigraph createSampleBigraphB2() throws ControlIsAtomicException, InvalidConnectionException, LinkTypeNotExistsException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-            BigraphEntity.InnerName inner = builder.createInnerName("inner");
-            builder.createRoot()
-                    .addChild(signature.getControlByName("A"))
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+            BigraphEntity.InnerName inner = builder.createInner("inner");
+            builder.root()
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("B"))
-                    .addChild(signature.getControlByName("C"))
+                    .child(signature.getControlByName("B"))
+                    .child(signature.getControlByName("C"))
                     .up()
-                    .addChild(signature.getControlByName("A"))
+                    .child(signature.getControlByName("A"))
                     .down()
-                    .addChild(signature.getControlByName("C")).linkToInner(inner)
-                    .addChild(signature.getControlByName("B")).linkToInner(inner)
+                    .child(signature.getControlByName("C")).linkInner(inner)
+                    .child(signature.getControlByName("B")).linkInner(inner)
                     .up()
             ;
-            return builder.closeAllInnerNames().createBigraph();
+            return builder.closeInner().create();
         }
 
         public Bigraph createSampleBigraph_with_Links() throws InvalidConnectionException, TypeNotExistsException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
 
-            BigraphEntity.InnerName edge = b1.createInnerName("edge");
-            BigraphEntity.InnerName edge2 = b1.createInnerName("edge2");
-            BigraphEntity.OuterName o1 = b1.createOuterName("o1");
-            BigraphEntity.InnerName x1 = b1.createInnerName("x1");
+            BigraphEntity.InnerName edge = b1.createInner("edge");
+            BigraphEntity.InnerName edge2 = b1.createInner("edge2");
+            BigraphEntity.OuterName o1 = b1.createOuter("o1");
+            BigraphEntity.InnerName x1 = b1.createInner("x1");
 
-            b1.createRoot().addChild("R")
+            b1.root().child("R")
                     .down()
-                    .addChild("J").linkToInner(edge2)
-                    .addChild("A").linkToInner(edge2).linkToOuter(o1)
-                    .addChild("A")
-                    .addSite()
-                    .addChild("J").linkToInner(x1)
+                    .child("J").linkInner(edge2)
+                    .child("A").linkInner(edge2).linkOuter(o1)
+                    .child("A")
+                    .site()
+                    .child("J").linkInner(x1)
                     .up()
-                    .addChild("R")
+                    .child("R")
                     .down()
-                    .addChild("A").linkToInner(edge)
-                    .addChild("J").linkToInner(edge2)
+                    .child("A").linkInner(edge)
+                    .child("J").linkInner(edge2)
 //                .addChild("C")
             ;
-            b1.closeInnerName(edge);
-            b1.closeInnerName(edge2);
-            return b1.createBigraph();
+            b1.closeInner(edge);
+            b1.closeInner(edge2);
+            return b1.create();
         }
 
         public Bigraph createSampleBigraph_with_Links_v2() throws InvalidConnectionException, TypeNotExistsException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
 
-            BigraphEntity.InnerName edge = b1.createInnerName("e1");
-            BigraphEntity.InnerName edge2 = b1.createInnerName("e2");
-            BigraphEntity.OuterName o1 = b1.createOuterName("o1");
-            BigraphEntity.InnerName x1 = b1.createInnerName("x1");
+            BigraphEntity.InnerName edge = b1.createInner("e1");
+            BigraphEntity.InnerName edge2 = b1.createInner("e2");
+            BigraphEntity.OuterName o1 = b1.createOuter("o1");
+            BigraphEntity.InnerName x1 = b1.createInner("x1");
 
-            b1.createRoot()
-                    .addChild("R")
+            b1.root()
+                    .child("R")
                     .down()
-                    .addChild("A").linkToInner(edge)
-                    .addChild("J").linkToInner(edge2)
+                    .child("A").linkInner(edge)
+                    .child("J").linkInner(edge2)
                     .top()
-                    .addChild("R")
+                    .child("R")
                     .down()
-                    .addChild("A")
-                    .addChild("A").linkToInner(edge2).linkToOuter(o1)
-                    .addChild("J").linkToInner(edge2)
-                    .addChild("J").linkToInner(x1)
-                    .addSite()
+                    .child("A")
+                    .child("A").linkInner(edge2).linkOuter(o1)
+                    .child("J").linkInner(edge2)
+                    .child("J").linkInner(x1)
+                    .site()
             ;
-            b1.closeInnerName(edge);
-            b1.closeInnerName(edge2);
-            return b1.createBigraph();
+            b1.closeInner(edge);
+            b1.closeInner(edge2);
+            return b1.create();
         }
 
 
         // for the paper some example bigraphs
         @Test
         void name() throws InvalidConnectionException, LinkTypeNotExistsException {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-            PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(signature);
-            BigraphEntity.InnerName x1 = b1.createInnerName("x1");
-            BigraphEntity.InnerName x2 = b1.createInnerName("x2");
-            BigraphEntity.InnerName x3 = b1.createInnerName("x3");
-            BigraphEntity.InnerName x4 = b1.createInnerName("x4");
-            BigraphEntity.InnerName x11 = b2.createInnerName("x1");
-            BigraphEntity.InnerName x21 = b2.createInnerName("x2");
-            BigraphEntity.InnerName x31 = b2.createInnerName("x3");
-            BigraphEntity.InnerName x41 = b2.createInnerName("x4");
-            b1.createRoot()
-                    .addChild("B").down().addChild("F").linkToInner(x1).linkToInner(x2).addChild("D").linkToInner(x1).addChild("E").linkToInner(x2).up()
-                    .addChild("B").down().addChild("D").linkToInner(x3).addChild("E").linkToInner(x3).linkToInner(x4).addChild("F").linkToInner(x4).up()
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+            PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(signature);
+            BigraphEntity.InnerName x1 = b1.createInner("x1");
+            BigraphEntity.InnerName x2 = b1.createInner("x2");
+            BigraphEntity.InnerName x3 = b1.createInner("x3");
+            BigraphEntity.InnerName x4 = b1.createInner("x4");
+            BigraphEntity.InnerName x11 = b2.createInner("x1");
+            BigraphEntity.InnerName x21 = b2.createInner("x2");
+            BigraphEntity.InnerName x31 = b2.createInner("x3");
+            BigraphEntity.InnerName x41 = b2.createInner("x4");
+            b1.root()
+                    .child("B").down().child("F").linkInner(x1).linkInner(x2).child("D").linkInner(x1).child("E").linkInner(x2).up()
+                    .child("B").down().child("D").linkInner(x3).child("E").linkInner(x3).linkInner(x4).child("F").linkInner(x4).up()
             ;
-            b1.closeInnerNames(x1, x2, x3, x4);
+            b1.closeInner(x1, x2, x3, x4);
 
-            b2.createRoot()
-                    .addChild("B").down().addChild("F").linkToInner(x11).addChild("D").linkToInner(x11).linkToInner(x21).addChild("E").linkToInner(x21).up()
-                    .addChild("B").down().addChild("D").linkToInner(x31).addChild("E").linkToInner(x31).linkToInner(x41).addChild("F").linkToInner(x41).up()
+            b2.root()
+                    .child("B").down().child("F").linkInner(x11).child("D").linkInner(x11).linkInner(x21).child("E").linkInner(x21).up()
+                    .child("B").down().child("D").linkInner(x31).child("E").linkInner(x31).linkInner(x41).child("F").linkInner(x41).up()
             ;
-            b2.closeInnerNames(x11, x21, x31, x41);
+            b2.closeInner(x11, x21, x31, x41);
 
-            PureBigraph bigraph = b1.createBigraph();
-            PureBigraph bigraph1 = b2.createBigraph();
+            PureBigraph bigraph = b1.create();
+            PureBigraph bigraph1 = b2.create();
 
             String bfcs = BigraphCanonicalForm.createInstance().bfcs(bigraph);
             String bfcs1 = BigraphCanonicalForm.createInstance().bfcs(bigraph1);
@@ -806,45 +806,45 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         }
 
         public PureBigraph createFirstLG() throws Exception {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-            BigraphEntity.InnerName x1 = b1.createInnerName("x1");
-            BigraphEntity.InnerName x2 = b1.createInnerName("x2");
-            BigraphEntity.InnerName e0 = b1.createInnerName("e0");
-            BigraphEntity.InnerName e1 = b1.createInnerName("e1");
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+            BigraphEntity.InnerName x1 = b1.createInner("x1");
+            BigraphEntity.InnerName x2 = b1.createInner("x2");
+            BigraphEntity.InnerName e0 = b1.createInner("e0");
+            BigraphEntity.InnerName e1 = b1.createInner("e1");
 //        BigraphEntity.InnerName e2 = b1.createInnerName("e2");
-            BigraphEntity.OuterName y1 = b1.createOuterName("y1");
-            BigraphEntity.OuterName y2 = b1.createOuterName("y2");
+            BigraphEntity.OuterName y1 = b1.createOuter("y1");
+            BigraphEntity.OuterName y2 = b1.createOuter("y2");
 
-            b1.createRoot().addChild("A").down()
-                    .addChild("B").down().addChild("D").linkToInner(e0).linkToOuter(y1).addChild("E").linkToInner(e0).linkToOuter(y1).addChild("F").linkToOuter(y1).down().addChild("G").addChild("H").up().up()
-                    .addChild("B").down().addChild("D").linkToInner(e1).down().addChild("G").up().addChild("E").linkToInner(e1).addChild("F").linkToOuter(y1).down().addChild("H").up().up()
-                    .addChild("B").down().addChild("R").linkToInner(x1).addChild("Q").linkToInner(x1).top()
+            b1.root().child("A").down()
+                    .child("B").down().child("D").linkInner(e0).linkOuter(y1).child("E").linkInner(e0).linkOuter(y1).child("F").linkOuter(y1).down().child("G").child("H").up().up()
+                    .child("B").down().child("D").linkInner(e1).down().child("G").up().child("E").linkInner(e1).child("F").linkOuter(y1).down().child("H").up().up()
+                    .child("B").down().child("R").linkInner(x1).child("Q").linkInner(x1).top()
             ;
-            b1.closeInnerNames(e0, e1);
-            b1.connectInnerToOuterName(x2, y2);
-            return b1.createBigraph();
+            b1.closeInner(e0, e1);
+            b1.linkInnerToOuter(x2, y2);
+            return b1.create();
         }
 
         public PureBigraph createSecondLG() throws Exception {
-            DefaultDynamicSignature signature = createAlphabeticSignature();
-            PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(signature);
-            BigraphEntity.InnerName x1 = b1.createInnerName("x1");
-            BigraphEntity.InnerName x2 = b1.createInnerName("x2");
+            DynamicSignature signature = createAlphabeticSignature();
+            PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
+            BigraphEntity.InnerName x1 = b1.createInner("x1");
+            BigraphEntity.InnerName x2 = b1.createInner("x2");
 //        BigraphEntity.InnerName e0 = b1.createInnerName("e0");
-            BigraphEntity.InnerName e1 = b1.createInnerName("e1");
+            BigraphEntity.InnerName e1 = b1.createInner("e1");
 //        BigraphEntity.InnerName e2 = b1.createInnerName("e2");
-            BigraphEntity.OuterName y1 = b1.createOuterName("y1");
-            BigraphEntity.OuterName y2 = b1.createOuterName("y2");
+            BigraphEntity.OuterName y1 = b1.createOuter("y1");
+            BigraphEntity.OuterName y2 = b1.createOuter("y2");
 
-            b1.createRoot().addChild("A").down()
-                    .addChild("B").down().addChild("D").linkToInner(x1).linkToOuter(y1).addChild("E").linkToInner(x1).linkToOuter(y1).addChild("F").linkToOuter(y1).down().addChild("G").addChild("H").up().up()
-                    .addChild("B").down().addChild("D").linkToInner(e1).down().addChild("G").up().addChild("E").linkToInner(e1).addChild("F").linkToOuter(y1).down().addChild("H").up().up()
-                    .addChild("B").down().addChild("R").addChild("Q").top()
+            b1.root().child("A").down()
+                    .child("B").down().child("D").linkInner(x1).linkOuter(y1).child("E").linkInner(x1).linkOuter(y1).child("F").linkOuter(y1).down().child("G").child("H").up().up()
+                    .child("B").down().child("D").linkInner(e1).down().child("G").up().child("E").linkInner(e1).child("F").linkOuter(y1).down().child("H").up().up()
+                    .child("B").down().child("R").child("Q").top()
             ;
-            b1.closeInnerNames(e1);
-            b1.connectInnerToOuterName(x2, y2);
-            return b1.createBigraph();
+            b1.closeInner(e1);
+            b1.linkInnerToOuter(x2, y2);
+            return b1.create();
         }
     }
 

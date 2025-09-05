@@ -3,8 +3,8 @@ package org.bigraphs.framework.simulation.examples.bigrid.legacy;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphComposite;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -27,17 +27,17 @@ public class BigridObject {
     String basePath = "/home/dominik/git/BigraphFramework/simulation/src/test/resources/dump/bigrid/circular/";
 
     BigridGeneratorOld generator;
-    DefaultDynamicSignature signature;
+    DynamicSignature signature;
     PureBigraph bigraph;
     PureBigraph groundBigraph;
     BigridGeneratorOld.DiscreteIons discreteIons;
     int numOfCols = 3, numOfRows = 3;
 
-    public BigridObject(DefaultDynamicSignature signature) throws Exception {
+    public BigridObject(DynamicSignature signature) throws Exception {
         this(signature, 3, 3);
     }
 
-    public BigridObject(DefaultDynamicSignature signature, int numOfCols, int numOfRows) throws Exception {
+    public BigridObject(DynamicSignature signature, int numOfCols, int numOfRows) throws Exception {
         this.numOfCols = numOfCols;
         this.numOfRows = numOfRows;
         this.generator = new BigridGeneratorOld(signature);
@@ -45,8 +45,8 @@ public class BigridObject {
         this.signature = bigraph.getSignature();
         discreteIons = new BigridGeneratorOld.DiscreteIons(this.signature);
 
-        Bigraph tmp = pureBuilder(getSignature()).createRoot()
-                .addSite().createBigraph();
+        Bigraph tmp = pureBuilder(getSignature()).root()
+                .site().create();
         Bigraph d1 = tmp;
         for (int i = 1, n = numOfCols * numOfRows; i < n; i++) {
             d1 = (Bigraph) ops(d1).parallelProduct(tmp);
@@ -86,31 +86,31 @@ public class BigridObject {
     // - Roles act as intermediates between objects: they mae the relationships explicit and making the complex
     // interactions between objects easier to grasp
 
-    public Bigraph prepareItemAtNode(int indexRoot, DefaultDynamicControl control) throws Exception {
+    public Bigraph prepareItemAtNode(int indexRoot, DynamicControl control) throws Exception {
         return this.prepareItemAtNode(indexRoot, control, null, false);
     }
 
-    public Bigraph prepareItemAtNode(int indexRoot, DefaultDynamicControl control, String linkName, boolean addSite) throws Exception {
+    public Bigraph prepareItemAtNode(int indexRoot, DynamicControl control, String linkName, boolean addSite) throws Exception {
         if (!getSignature().getControls().contains(control))
             throw new RuntimeException("Control does not exist in the given signature.");
         if (indexRoot >= getBigraph().getRoots().size())
             throw new RuntimeException("Index must be between [0, " + getBigraph().getRoots().size() + "]");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy h = linkName != null ?
-                (PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy) pureBuilder(getSignature()).createRoot()
-                        .addChild(control, linkName) :
-                pureBuilder(getSignature()).createRoot().addChild(control);
+        PureBigraphBuilder<DynamicSignature>.Hierarchy h = linkName != null ?
+                (PureBigraphBuilder<DynamicSignature>.Hierarchy) pureBuilder(getSignature()).root()
+                        .child(control, linkName) :
+                pureBuilder(getSignature()).root().child(control);
         PureBigraph tmp = addSite ?
                 h.down()
-                        .addSite().createBigraph() :
-                h.createBigraph();
+                        .site().create() :
+                h.create();
 
         //        %-----------------
         List<Bigraph> discreteParameterList = new LinkedList<>();
         discreteParameterList.add(tmp); //first entry reserved for node in question
 //        eb(tmp, "tmp");
         // Fill the rest
-        Placings<DefaultDynamicSignature>.Identity1 id1 = purePlacings(getSignature()).identity1();
+        Placings<DynamicSignature>.Identity1 id1 = purePlacings(getSignature()).identity1();
         for (int i = 1; i < numOfCols * numOfRows; i++) {
             discreteParameterList.add(id1);
         }
@@ -153,7 +153,7 @@ public class BigridObject {
 //            eb(agentParams, "agentParams");
         }
 
-        BigraphComposite<DefaultDynamicSignature> compose =
+        BigraphComposite<DynamicSignature> compose =
                 ops(generator.getPlacings().merge(originalBigraph.getRoots().size())).compose(
                         originalBigraph
                 );
@@ -169,9 +169,9 @@ public class BigridObject {
      * A predicate that indicates that an entity has reached its target
      */
     public ReactiveSystemPredicate<PureBigraph> targetReached() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(getSignature());
-        PureBigraph bigraph = b.createRoot().addChild("target", "reference")
-                .addChild("source", "reference").down().addSite().createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(getSignature());
+        PureBigraph bigraph = b.root().child("target", "reference")
+                .child("source", "reference").down().site().create();
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
@@ -181,18 +181,18 @@ public class BigridObject {
             List<ReactionRule<PureBigraph>> reactionRules = new ArrayList<>();
             for (int i = 0; i < rSet.size(); i++) {
                 PureBigraph pureBigraph = rSet.get(i);
-                PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(pureBigraph.getSignature());
-                builder.createRoot()
-                        .addChild("occupiedBy").down()
-                        .addSite()
-                        .addChild("blocked").down().addChild("T").up()
-                        .addChild("source", "reference").down().addSite()
+                PureBigraphBuilder<DynamicSignature> builder = pureBuilder(pureBigraph.getSignature());
+                builder.root()
+                        .child("occupiedBy").down()
+                        .site()
+                        .child("blocked").down().child("T").up()
+                        .child("source", "reference").down().site()
                 ;
-                PureBigraph redex = builder.createRoot()
-                        .addChild("occupiedBy").down()
-                        .addChild("blocked").down().addChild("F").up()
-                        .addSite()
-                        .createBigraph();
+                PureBigraph redex = builder.root()
+                        .child("occupiedBy").down()
+                        .child("blocked").down().child("F").up()
+                        .site()
+                        .create();
                 PureBigraph reactum = ops(getGenerator().getPlacings().symmetry11()).nesting(redex).getOuterBigraph();
                 redex = ops(pureBigraph).nesting(redex).getOuterBigraph();
                 reactum = ops(pureBigraph).nesting(reactum).getOuterBigraph();
@@ -204,18 +204,18 @@ public class BigridObject {
             return reactionRules;
         } else if (rSet.size() == 1) {
             PureBigraph pureBigraph = rSet.get(0);
-            PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(pureBigraph.getSignature());
-            builder.createRoot()
-                    .addChild("occupiedBy").down()
-                    .addSite()
-                    .addChild("blocked").down().addChild("T").up()
-                    .addChild("source", "reference").down().addSite()
+            PureBigraphBuilder<DynamicSignature> builder = pureBuilder(pureBigraph.getSignature());
+            builder.root()
+                    .child("occupiedBy").down()
+                    .site()
+                    .child("blocked").down().child("T").up()
+                    .child("source", "reference").down().site()
             ;
-            PureBigraph redex = builder.createRoot()
-                    .addChild("occupiedBy").down()
-                    .addChild("blocked").down().addChild("F").up()
-                    .addSite()
-                    .createBigraph();
+            PureBigraph redex = builder.root()
+                    .child("occupiedBy").down()
+                    .child("blocked").down().child("F").up()
+                    .site()
+                    .create();
 //        PureBigraph redex = builder.createBigraph();
 
             PureBigraph reactum = ops(getGenerator().getPlacings().symmetry11()).nesting(redex).getOuterBigraph();
@@ -613,7 +613,7 @@ public class BigridObject {
         return bigraph;
     }
 
-    public DefaultDynamicSignature getSignature() {
+    public DynamicSignature getSignature() {
         return signature;
     }
 
@@ -641,21 +641,21 @@ public class BigridObject {
         if (indexRoot >= getBigraph().getRoots().size())
             throw new RuntimeException("Index must be between [0, " + getBigraph().getRoots().size() + "]");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy h = pureBuilder(getSignature()).createRoot()
-                .addChild("occupiedBy").down().addChild("blocked").down().addChild(TF_Blocked).up().up(); //.down().addSite();
+        PureBigraphBuilder<DynamicSignature>.Hierarchy h = pureBuilder(getSignature()).root()
+                .child("occupiedBy").down().child("blocked").down().child(TF_Blocked).up().up(); //.down().addSite();
         h = linkName != null ?
                 h.down()
-                        .addChild(sourceOrTarget, linkName).down() :
-                h.down().addChild(sourceOrTarget).down();
+                        .child(sourceOrTarget, linkName).down() :
+                h.down().child(sourceOrTarget).down();
         PureBigraph tmp = addSite ?
                 h//.down()
-                        .addSite().createBigraph() :
-                h.createBigraph();
+                        .site().create() :
+                h.create();
 
         List<Bigraph> discreteParameterList = new LinkedList<>();
         discreteParameterList.add(tmp); //first entry reserved for node in question
         // Fill the rest
-        Placings<DefaultDynamicSignature>.Identity1 id1 = purePlacings(getSignature()).identity1();
+        Placings<DynamicSignature>.Identity1 id1 = purePlacings(getSignature()).identity1();
         for (int i = 1; i < numOfCols * numOfRows; i++) {
             discreteParameterList.add(id1);
         }
@@ -676,17 +676,17 @@ public class BigridObject {
         if (indexRoot >= getBigraph().getRoots().size())
             throw new RuntimeException("Index must be between [0, " + getBigraph().getRoots().size() + "]");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy h = pureBuilder(getSignature()).createRoot()
-                .addChild("occupiedBy").down().addChild("blocked").down().addChild(TF_Blocked).up().up(); //.down().addSite();
+        PureBigraphBuilder<DynamicSignature>.Hierarchy h = pureBuilder(getSignature()).root()
+                .child("occupiedBy").down().child("blocked").down().child(TF_Blocked).up().up(); //.down().addSite();
         PureBigraph tmp = addSite ?
                 h
-                        .addSite().createBigraph() :
-                h.createBigraph();
+                        .site().create() :
+                h.create();
 
         List<Bigraph> discreteParameterList = new LinkedList<>();
         discreteParameterList.add(tmp); //first entry reserved for node in question
         // Fill the rest
-        Placings<DefaultDynamicSignature>.Identity1 id1 = purePlacings(getSignature()).identity1();
+        Placings<DynamicSignature>.Identity1 id1 = purePlacings(getSignature()).identity1();
         for (int i = 1; i < numOfCols * numOfRows; i++) {
             discreteParameterList.add(id1);
         }

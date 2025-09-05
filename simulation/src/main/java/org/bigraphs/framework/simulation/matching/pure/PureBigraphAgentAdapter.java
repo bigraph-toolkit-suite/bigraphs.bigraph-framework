@@ -1,7 +1,7 @@
 package org.bigraphs.framework.simulation.matching.pure;
 
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.simulation.matching.AbstractDynamicMatchAdapter;
@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<DefaultDynamicSignature, PureBigraph> {
+public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<DynamicSignature, PureBigraph> {
 
     MutableMap<BigraphEntity<?>, LinkedList<ControlLinkPair>> linkOfNodesMap = Maps.mutable.empty();
 
@@ -25,7 +25,7 @@ public class PureBigraphAgentAdapter extends AbstractDynamicMatchAdapter<Default
     }
 
     @Override
-    public DefaultDynamicSignature getSignature() {
+    public DynamicSignature getSignature() {
         return super.getSignature();
     }
 

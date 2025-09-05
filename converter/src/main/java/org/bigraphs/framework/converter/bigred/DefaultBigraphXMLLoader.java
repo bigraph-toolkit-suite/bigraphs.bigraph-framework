@@ -3,8 +3,8 @@ package org.bigraphs.framework.converter.bigred;
 import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.Control;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.MutableBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,8 +26,8 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
     private DefaultSignatureXMLLoader sxl = new DefaultSignatureXMLLoader();
     private Path pathToSignature;
     protected int portIndexCounter = 0;
-    protected DefaultDynamicSignature signature = null;
-    protected MutableBuilder<DefaultDynamicSignature> builder;
+    protected DynamicSignature signature = null;
+    protected MutableBuilder<DynamicSignature> builder;
 
     public DefaultBigraphXMLLoader() {
         super();
@@ -38,7 +38,7 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
      *
      * @param signature the signature
      */
-    public DefaultBigraphXMLLoader(DefaultDynamicSignature signature) {
+    public DefaultBigraphXMLLoader(DynamicSignature signature) {
         super();
         this.signature = signature;
     }
@@ -77,7 +77,7 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
             parentStack.clear();
     }
 
-    public DefaultDynamicSignature getSignature() {
+    public DynamicSignature getSignature() {
         return signature;
     }
 
@@ -190,7 +190,7 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
     protected void processStartNode(StartElement startElement) {
         portIndexCounter = 0;
         Iterator<Attribute> attributes = startElement.getAttributes();
-        DefaultDynamicControl controlByName = null;
+        DynamicControl controlByName = null;
         String label = "";
         while (attributes.hasNext()) {
             Attribute attribute = attributes.next();

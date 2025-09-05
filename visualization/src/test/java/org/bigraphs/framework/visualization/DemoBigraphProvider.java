@@ -2,7 +2,7 @@ package org.bigraphs.framework.visualization;
 
 import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
@@ -21,7 +21,7 @@ public class DemoBigraphProvider {
         return new PureBigraphGenerator(createRandomSignature()).generate(1, n, s, 1.f);
     }
 
-    public PureBigraph getRandomBigraphSingleRoot(int n, int s, DefaultDynamicSignature signature) {
+    public PureBigraph getRandomBigraphSingleRoot(int n, int s, DynamicSignature signature) {
         return new PureBigraphGenerator(signature).generate(1, n, s, 1.f);
     }
 
@@ -33,35 +33,35 @@ public class DemoBigraphProvider {
         return new PureBigraphGenerator(createRandomSignature()).generate(1, n, s, 1.f, 0.f, 1.f);
     }
 
-    private DefaultDynamicSignature createRandomSignature() {
+    private DynamicSignature createRandomSignature() {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
-                .addControl("Printer", 2)
-                .addControl("User", 1)
-                .addControl("Room", 1)
-                .addControl("Spool", 1)
-                .addControl("Computer", 1)
-                .addControl("Job", 0);
+                .add("Printer", 2)
+                .add("User", 1)
+                .add("Room", 1)
+                .add("Spool", 1)
+                .add("Computer", 1)
+                .add("Job", 0);
 
         return signatureBuilder.create();
     }
 
-    public DefaultDynamicSignature createAlphabetSignature() {
+    public DynamicSignature createAlphabetSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .addControl("A", 5)
-                .addControl("B", 5)
-                .addControl("C", 5)
-                .addControl("D", 5)
-                .addControl("E", 5)
-                .addControl("F", 5)
-                .addControl("G", 5)
-                .addControl("H", 5)
-                .addControl("I", 5)
-                .addControl("J", 5)
-                .addControl("K", 5)
-                .addControl("Q", 5)
-                .addControl("R", 5)
+                .add("A", 5)
+                .add("B", 5)
+                .add("C", 5)
+                .add("D", 5)
+                .add("E", 5)
+                .add("F", 5)
+                .add("G", 5)
+                .add("H", 5)
+                .add("I", 5)
+                .add("J", 5)
+                .add("K", 5)
+                .add("Q", 5)
+                .add("R", 5)
         ;
 
         return defaultBuilder.create();

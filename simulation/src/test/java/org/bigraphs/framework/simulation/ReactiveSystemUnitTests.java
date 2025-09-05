@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -230,60 +230,60 @@ public class ReactiveSystemUnitTests {
     }
 
     public static Bigraph createAgent_model_test_0() throws TypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.OuterName network = builder.createOuterName("network");
+        BigraphEntity.OuterName network = builder.createOuter("network");
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room"))
+        builder.root()
+                .child(signature.getControlByName("Room"))
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(network)
+                .child(signature.getControlByName("Computer")).linkOuter(network)
         ;
 
-        builder.closeAllInnerNames();
+        builder.closeInner();
         builder.makeGround();
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public static Bigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network)
+                .child("Computer").linkOuter(network)
         ;
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public static Bigraph createAgent_A2() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createExampleSignatureABB();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot()
-                .addChild("A")
-                .addChild("B")
-                .addChild("B")
+        DynamicSignature signature = createExampleSignatureABB();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        builder.root()
+                .child("A")
+                .child("B")
+                .child("B")
         ;
 //        builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public static Bigraph createAgent_A_Final() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network)
+                .child("Computer").linkOuter(network)
                 .down()
-                .addChild("Job").addChild("Job")
+                .child("Job").child("Job")
         ;
-        return builder.createBigraph();
+        return builder.create();
     }
 
     /**
@@ -293,83 +293,83 @@ public class ReactiveSystemUnitTests {
      * react r1 = rleft --> rright;
      */
     public static ReactionRule<PureBigraph> createReactionRule() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room"))
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        builder.root()
+                .child(signature.getControlByName("Room"))
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(network)
+                .child(signature.getControlByName("Computer")).linkOuter(network)
         ;
 
-        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
-        builder2.createRoot()
-                .addChild(signature.getControlByName("Room"))
+        BigraphEntity.OuterName network2 = builder2.createOuter("network");
+        builder2.root()
+                .child(signature.getControlByName("Room"))
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(network2)
+                .child(signature.getControlByName("Computer")).linkOuter(network2)
                 .down()
-                .addChild(signature.getControlByName("Job"))
+                .child(signature.getControlByName("Job"))
         ;
 
 //        builder.closeAllInnerNames();
 //        builder.makeGround();
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_A_SelfApply() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        BigraphEntity.OuterName network2 = builder2.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network)
+                .child("Computer").linkOuter(network)
         ;
-        builder2.createRoot()
-                .addChild("Room")
+        builder2.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network2)
+                .child("Computer").linkOuter(network2)
         ;
 //        builder.closeAllInnerNames();
         builder.makeGround();
         builder2.makeGround();
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_AddJob2() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        BigraphEntity.OuterName network2 = builder2.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network)
+                .child("Computer").linkOuter(network)
         ;
-        builder2.createRoot()
-                .addChild("Room")
+        builder2.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network2)
+                .child("Computer").linkOuter(network2)
                 .down()
-                .addChild("Job").addChild("Job")
+                .child("Job").child("Job")
         ;
 
 //        builder.closeAllInnerNames();
         builder.makeGround();
         builder2.makeGround();
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
@@ -378,134 +378,134 @@ public class ReactiveSystemUnitTests {
      * a | b | b -> a | b
      */
     public static ReactionRule<PureBigraph> createReactionRuleForA2() throws ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignatureABB();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignatureABB();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot().addChild("A").addChild("B").addChild("B");
-        builder2.createRoot().addChild("A").addChild("B");
+        builder.root().child("A").child("B").child("B");
+        builder2.root().child("A").child("B");
 
 //        builder.makeGround();
 //        builder2.makeGround();
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_AddJob() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        BigraphEntity.OuterName network2 = builder2.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network)
+                .child("Computer").linkOuter(network)
         ;
-        builder2.createRoot()
-                .addChild("Room")
+        builder2.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network2)
+                .child("Computer").linkOuter(network2)
                 .down()
-                .addChild("Job")
+                .child("Job")
         ;
 
 //        builder.closeAllInnerNames();
         builder.makeGround();
         builder2.makeGround();
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_AddOneJob() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        BigraphEntity.OuterName network2 = builder2.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network)
+                .child("Computer").linkOuter(network)
                 .down()
-                .addChild("Job")
+                .child("Job")
         ;
-        builder2.createRoot()
-                .addChild("Room")
+        builder2.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network2)
+                .child("Computer").linkOuter(network2)
                 .down()
-                .addChild("Job").addChild("Job")
+                .child("Job").child("Job")
         ;
 
 //        builder.closeAllInnerNames();
         builder.makeGround();
         builder2.makeGround();
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_AddTwoJobs() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        BigraphEntity.OuterName network2 = builder2.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network)
+                .child("Computer").linkOuter(network)
                 .down()
-                .addChild("Job")
+                .child("Job")
         ;
-        builder2.createRoot()
-                .addChild("Room")
+        builder2.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network2)
+                .child("Computer").linkOuter(network2)
                 .down()
-                .addChild("Job").addChild("Job").addChild("Job")
+                .child("Job").child("Job").child("Job")
         ;
 
 //        builder.closeAllInnerNames();
         builder.makeGround();
         builder2.makeGround();
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_AddThreeJobs() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        BigraphEntity.OuterName network2 = builder2.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        BigraphEntity.OuterName network2 = builder2.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network)
+                .child("Computer").linkOuter(network)
                 .down()
-                .addChild("Job")
+                .child("Job")
         ;
-        builder2.createRoot()
-                .addChild("Room")
+        builder2.root()
+                .child("Room")
                 .down()
-                .addChild("Computer").linkToOuter(network2)
+                .child("Computer").linkOuter(network2)
                 .down()
-                .addChild("Job").addChild("Job").addChild("Job").addChild("Job")
+                .child("Job").child("Job").child("Job").child("Job")
         ;
 
 //        builder.closeAllInnerNames();
         builder.makeGround();
         builder2.makeGround();
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }

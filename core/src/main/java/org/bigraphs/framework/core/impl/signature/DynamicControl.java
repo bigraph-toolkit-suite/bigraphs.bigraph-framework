@@ -15,7 +15,7 @@ import java.util.Objects;
  *
  * @author Dominik Grzelak
  */
-public class DefaultDynamicControl extends AbstractControl<StringTypedName, FiniteOrdinal<Integer>> {
+public class DynamicControl extends AbstractControl<StringTypedName, FiniteOrdinal<Integer>> {
 
     private final ControlStatus statusOfControl;
 
@@ -27,11 +27,11 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
      * @param name  the label of the control
      * @param arity the arity of the control
      */
-    protected DefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity) {
+    protected DynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity) {
         this(name, arity, ControlStatus.ACTIVE);
     }
 
-    private DefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity, ControlStatus statusOfControl) {
+    private DynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity, ControlStatus statusOfControl) {
         super(name, arity);
         if ((statusOfControl) == null) {
             statusOfControl = ControlStatus.ACTIVE;
@@ -39,9 +39,9 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
         this.statusOfControl = statusOfControl;
     }
 
-    public static DefaultDynamicControl createDefaultDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity,
-                                                                    ControlStatus kindOfControl) {
-        return new DefaultDynamicControl(name, arity, kindOfControl);
+    public static DynamicControl createDynamicControl(StringTypedName name, FiniteOrdinal<Integer> arity,
+                                                      ControlStatus kindOfControl) {
+        return new DynamicControl(name, arity, kindOfControl);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class DefaultDynamicControl extends AbstractControl<StringTypedName, Fini
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DefaultDynamicControl that)) return false;
+        if (!(o instanceof DynamicControl that)) return false;
         if (!super.equals(o)) return false;
         return statusOfControl == that.statusOfControl;
     }

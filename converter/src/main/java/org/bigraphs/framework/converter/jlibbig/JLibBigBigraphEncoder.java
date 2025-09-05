@@ -6,8 +6,8 @@ import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import it.uniud.mads.jlibbig.core.attachedProperties.PropertyTarget;
 import it.uniud.mads.jlibbig.core.attachedProperties.SimpleProperty;
 import it.uniud.mads.jlibbig.core.std.*;
@@ -25,18 +25,18 @@ import java.util.stream.StreamSupport;
 
 public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads.jlibbig.core.std.Bigraph, PureBigraph> {
 
-    private Map<String, it.uniud.mads.jlibbig.core.std.OuterName> jLibBigOuterNames = new LinkedHashMap<>();
-    private Map<String, it.uniud.mads.jlibbig.core.std.InnerName> jLibBigInnerNames = new LinkedHashMap<>();
-    private Map<String, it.uniud.mads.jlibbig.core.std.Edge> jLibBigEdges = new LinkedHashMap<>();
-    private Map<Integer, it.uniud.mads.jlibbig.core.std.Root> jLibBigRegions = new LinkedHashMap<>(); //PlaceEntity
-    private Map<String, it.uniud.mads.jlibbig.core.std.Node> jLibBigNodes = new LinkedHashMap<>(); // PlaceEntity
-    private Map<Integer, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
+    private final Map<String, it.uniud.mads.jlibbig.core.std.OuterName> jLibBigOuterNames = new LinkedHashMap<>();
+    private final Map<String, it.uniud.mads.jlibbig.core.std.InnerName> jLibBigInnerNames = new LinkedHashMap<>();
+    private final Map<String, it.uniud.mads.jlibbig.core.std.Edge> jLibBigEdges = new LinkedHashMap<>();
+    private final Map<Integer, it.uniud.mads.jlibbig.core.std.Root> jLibBigRegions = new LinkedHashMap<>(); //PlaceEntity
+    private final Map<String, it.uniud.mads.jlibbig.core.std.Node> jLibBigNodes = new LinkedHashMap<>(); // PlaceEntity
+    private final Map<Integer, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
     private it.uniud.mads.jlibbig.core.std.Signature jLibBigSignature;
     private BigraphBuilder builder;
     private Signature signature;
 
-    private MutableBiMap<PlaceEntity, BigraphEntity> jlib2bbigraphNodes = BiMaps.mutable.empty();
-    private MutableBiMap<Handle, BigraphEntity.Link> jlib2bbigraphLinks = BiMaps.mutable.empty();
+    private final MutableBiMap<PlaceEntity, BigraphEntity> jlib2bbigraphNodes = BiMaps.mutable.empty();
+    private final MutableBiMap<Handle, BigraphEntity.Link> jlib2bbigraphLinks = BiMaps.mutable.empty();
 
     @Override
     public synchronized Bigraph encode(PureBigraph bigraph) {
@@ -77,7 +77,7 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
                 // so we grab just the first edge that was created in jLibBig and reuse for all other points
                 // That is why we have to check in both case if an edge was used for connecting these points
                 if (BigraphEntityType.isPort(p)) {
-                    BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
+                    BigraphEntity.NodeEntity<DynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
 //                    System.out.format("Node %s is connected to link %s\n", nodeOfPort.getName(), l.getName());
                     // Get the port index of our bigraph node
                     int portIndex = ((BigraphEntity.Port) p).getIndex(); //bigraph.getPorts(nodeOfPort).indexOf(p);
@@ -87,7 +87,7 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
                     if (BigraphEntityType.isEdge(l)) {
                         if (jlib2bbigraphLinks.inverse().get(l) == null) {
                             EditableEdge handle = (EditableEdge) ((Node) correspondingJNode).getPorts().get(portIndex).getEditable().getHandle();
-                            handle.setName(((BigraphEntity.Edge) l).getName());
+                            handle.setName(l.getName());
                             jlib2bbigraphLinks.put(handle, l);
                         }
                         jLink.set(jlib2bbigraphLinks.inverse().get(l));
@@ -102,7 +102,7 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
                     if (BigraphEntityType.isEdge(l)) {
                         if (jlib2bbigraphLinks.inverse().get(l) == null) {
                             EditableEdge handle = (EditableEdge) correspondingJInnerName.getHandle();
-                            handle.setName(((BigraphEntity.Edge) l).getName());
+                            handle.setName(l.getName());
                             jlib2bbigraphLinks.put(handle, l);
                         }
                         jLink.set(jlib2bbigraphLinks.inverse().get(l));
@@ -122,33 +122,20 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
             return children.stream().sorted(
                     Comparator.comparing(lhs -> {
                         if (BigraphEntityType.isSite(lhs)) {
-                            return String.valueOf("c" + ((BigraphEntity.SiteEntity) lhs).getIndex());
+                            return "c" + ((BigraphEntity.SiteEntity) lhs).getIndex();
                         } else if (BigraphEntityType.isRoot(lhs)) {
-                            return String.valueOf("a" + ((BigraphEntity.RootEntity) lhs).getIndex());
+                            return "a" + ((BigraphEntity.RootEntity) lhs).getIndex();
                         } else {
                             return "b" + ((BigraphEntity.NodeEntity) lhs).getName();
                         }
                     })
             ).collect(Collectors.toList());
-//            return children;
         });
         // We define our simple total ordering because of the site index "ordering" imposed by our BBigraph
         // That ensures that the site indices will be re-created in the same order
         Iterable<BigraphEntity<?>> bigraphEntities = traverser.depthFirstPreOrder((List) bigraph.getRoots());
         StreamSupport.stream(bigraphEntities.spliterator(), false)
-//                .sorted(
-//                        Comparator.comparing(lhs -> {
-//                            if (BigraphEntityType.isSite(lhs)) {
-//                                return String.valueOf("c" + ((BigraphEntity.SiteEntity) lhs).getIndex());
-//                            } else if (BigraphEntityType.isRoot(lhs)) {
-//                                return String.valueOf("a" + ((BigraphEntity.RootEntity) lhs).getIndex());
-//                            } else {
-//                                return "b" + ((BigraphEntity.NodeEntity) lhs).getName();
-//                            }
-//                        })
-//                )
                 .forEach(x -> {
-//                    System.out.println(x);
                     switch (x.getType()) {
                         case ROOT:
                             Root root = builder.addRoot(((BigraphEntity.RootEntity) x).getIndex());
@@ -204,13 +191,8 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
                                 jlib2bbigraphNodes.putIfAbsent(node, x);
                                 jLibBigNodes.put(node.getEditable().getName(), node);
                             } else if (BigraphEntityType.isSite(x)) {
-                                //TODO add site at specific index!
-//                                jlib2bbigraphNodes.putIfAbsent(site, x);
                                 Site site = jLibBigSites.get(((BigraphEntity.SiteEntity) x).getIndex());
                                 site.getEditable().setParent(((Parent) jParent).getEditable());//only rewrite parent
-//                                Site site = builder.addSite((Parent) jParent);
-//                                jlib2bbigraphNodes.putIfAbsent(site, x);
-//                                jLibBigSites.put(site.getEditable().getName(), site);
                             }
                             break;
                     }
@@ -231,9 +213,9 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
         });
     }
 
-    public static it.uniud.mads.jlibbig.core.std.Signature parseSignature(DefaultDynamicSignature sig) {
+    public static it.uniud.mads.jlibbig.core.std.Signature parseSignature(DynamicSignature sig) {
         MutableList<Control> ctrlList = Lists.mutable.empty();
-        for (DefaultDynamicControl eachControl : sig.getControls()) {
+        for (DynamicControl eachControl : sig.getControls()) {
             ctrlList.add(createControl(
                             eachControl.getNamedType().stringValue(),
                             eachControl.getArity().getValue(),

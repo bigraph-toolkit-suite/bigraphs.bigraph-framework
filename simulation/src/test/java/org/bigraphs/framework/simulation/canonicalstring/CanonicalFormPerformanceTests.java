@@ -5,7 +5,7 @@ import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.alg.generators.RandomBigraphGeneratorSupport;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ public class CanonicalFormPerformanceTests {
     @Test
     @DisplayName("Time complexity measurement based on random bigraphs: n=[1000,10000], assortative mixing")
     void time_complexity_test() throws IOException {
-        DefaultDynamicSignature randomSignature = createRandomSignature(5, 1f, 5);
+        DynamicSignature randomSignature = createRandomSignature(5, 1f, 5);
         RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE;
 
         String p = "/home/dominik/Documents/PhD/Papers/Concept/Canonical-Bigraphs/analysis/data/A2time-" + linkStrategy + ".data";
@@ -41,7 +41,7 @@ public class CanonicalFormPerformanceTests {
     @Test
     @DisplayName("Time complexity measurement based on random bigraphs: n=[1000,10000], disassortative mixing")
     void time_complexity_test2() throws IOException {
-        DefaultDynamicSignature randomSignature = createRandomSignature(5, 1f, 5);
+        DynamicSignature randomSignature = createRandomSignature(5, 1f, 5);
         RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_DISASSORTATIVE;
 
         // export an example of the graph we are going to create
@@ -58,7 +58,7 @@ public class CanonicalFormPerformanceTests {
 
 
     public void measureTimeComplexity(
-            float[] params, String filePath, DefaultDynamicSignature randomSignature, RandomBigraphGeneratorSupport.LinkStrategy linkStrategy, String suffix
+            float[] params, String filePath, DynamicSignature randomSignature, RandomBigraphGeneratorSupport.LinkStrategy linkStrategy, String suffix
     ) throws IOException {
         if (suffix == null) suffix = "";
         String values = CanonicalFormPaperBenchmarks.measureTimeComplexity(params, randomSignature, linkStrategy, suffix);

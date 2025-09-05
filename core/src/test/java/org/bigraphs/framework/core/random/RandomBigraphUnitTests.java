@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.MutableBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -47,43 +47,43 @@ public class RandomBigraphUnitTests {
 
     @Test
     void name() {
-        DefaultDynamicSignature exampleSignature = createExampleSignature();
+        DynamicSignature exampleSignature = createExampleSignature();
         PureBigraph generated = new PureBigraphGenerator(exampleSignature).generate(1, 10, 1.f);
     }
 
     @Test
     void ecoremodel_composition() throws InvalidConnectionException, TypeNotExistsException, IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
-        DefaultDynamicSignature exampleSignature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(exampleSignature);
+        DynamicSignature exampleSignature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(exampleSignature);
         PureBigraphGenerator pureBigraphGenerator = pureRandomBuilder(exampleSignature);
         PureBigraph randomBigraph = pureBigraphGenerator.generate(1, 10, 0f);
 
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        BigraphEntity.InnerName login = builder.createInnerName("login");
-        builder.createRoot()
-                .addChild("User").linkToOuter(network)
-                .addChild("User").linkToInner(login).down().addSite();
-        PureBigraph left = builder.createBigraph();
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        BigraphEntity.InnerName login = builder.createInner("login");
+        builder.root()
+                .child("User").linkOuter(network)
+                .child("User").linkInner(login).down().site();
+        PureBigraph left = builder.create();
         //TODO: add to docu: spawnNewOne() - important for ecore operations
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(exampleSignature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(exampleSignature);
 //        PureBigraphBuilder<DefaultDynamicSignature> builder2 = builder.spawnNewOne();
-        BigraphEntity.OuterName login2 = builder2.createOuterName("login");
-        BigraphEntity.InnerName login2User = builder2.createInnerName("nextLogin");
-        BigraphEntity.InnerName abc = builder2.createInnerName("abc");
-        BigraphEntity.OuterName xyz = builder2.createOuterName("network");//xyz
-        builder2.createRoot()
-                .addChild("User").linkToOuter(login2)
-                .addChild("User").linkToInner(login2User);
-        builder2.connectInnerToOuterName(abc, xyz);
+        BigraphEntity.OuterName login2 = builder2.createOuter("login");
+        BigraphEntity.InnerName login2User = builder2.createInner("nextLogin");
+        BigraphEntity.InnerName abc = builder2.createInner("abc");
+        BigraphEntity.OuterName xyz = builder2.createOuter("network");//xyz
+        builder2.root()
+                .child("User").linkOuter(login2)
+                .child("User").linkInner(login2User);
+        builder2.linkInnerToOuter(abc, xyz);
 
-        PureBigraph right = builder2.createBigraph();
+        PureBigraph right = builder2.create();
 
 
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) left, new FileOutputStream("src/test/resources/dump/exported-models/random_left_03_before.xmi"));
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) right, new FileOutputStream("src/test/resources/dump/exported-models/random_right_03_before.xmi"));
-        PureBigraphComposite<DefaultDynamicSignature> comp = new PureBigraphComposite<>(left);
+        PureBigraphComposite<DynamicSignature> comp = new PureBigraphComposite<>(left);
         Assertions.assertThrows(IncompatibleInterfaceException.class, () -> {
-            BigraphComposite<DefaultDynamicSignature> result = comp.compose(right);
+            BigraphComposite<DynamicSignature> result = comp.compose(right);
         });
 //        BigraphComposite<DefaultDynamicSignature> result = comp.parallelProductV2(right);
 //        BigraphComposite<DefaultDynamicSignature> result = comp.parallelProduct(right);
@@ -98,14 +98,14 @@ public class RandomBigraphUnitTests {
 
     @Test
     void performance() throws IOException, CloneNotSupportedException, IncompatibleSignatureException, IncompatibleInterfaceException {
-        DefaultDynamicSignature exampleSignature = createExampleSignature();
+        DynamicSignature exampleSignature = createExampleSignature();
         List<Double> resultsTime = new ArrayList<Double>();
         List<Double> resultsTimeCloneOp = new ArrayList<Double>();
 
         for (int i = 1000; i < 10000; i += 1000) {
 //        for (int i = 10; i < 11; i += 1) {
             PureBigraph generated = new PureBigraphGenerator(exampleSignature).generate(1, i, 0.5f, 0f, 1f);
-            MutableBuilder<DefaultDynamicSignature> mutableBuilder = new MutableBuilder<>(exampleSignature, generated.getMetaModel(), generated.getInstanceModel());
+            MutableBuilder<DynamicSignature> mutableBuilder = new MutableBuilder<>(exampleSignature, generated.getMetaModel(), generated.getInstanceModel());
             Integer o = (Integer) mutableBuilder.availableNodes().keySet()
                     .stream()
                     .map(x -> Integer.parseInt(((String) x).replace("v", "")))
@@ -118,19 +118,19 @@ public class RandomBigraphUnitTests {
             BigraphEntity newSite = mutableBuilder.createNewSite(0);
             mutableBuilder.setParentOfNode(newSite, nodeEntity); // this notifies the EContentAdapter
             mutableBuilder.availableSites().put(0, (BigraphEntity.SiteEntity) newSite);
-            PureBigraph bigraph = mutableBuilder.createBigraph();
+            PureBigraph bigraph = mutableBuilder.create();
             Assertions.assertNotNull(bigraph);
             long tclone1 = System.nanoTime();
             EcoreBigraph.Stub clone = new EcoreBigraph.Stub(bigraph).clone();
-            PureBigraph cloned = PureBigraphBuilder.create(exampleSignature, clone.getMetaModel(), clone.getInstanceModel()).createBigraph();
+            PureBigraph cloned = PureBigraphBuilder.create(exampleSignature, clone.getMetaModel(), clone.getInstanceModel()).create();
             long tclone2 = System.nanoTime();
             double secsClone = (tclone2 - tclone1) * 1.f / 1e+6;
             resultsTimeCloneOp.add(secsClone);
             Assertions.assertNotNull(cloned);
-            PureBigraphComposite<DefaultDynamicSignature> comp = new PureBigraphComposite<>(bigraph);
+            PureBigraphComposite<DynamicSignature> comp = new PureBigraphComposite<>(bigraph);
 //            BigraphFileModelManagement.exportAsInstanceModel(comp.getOuterBigraph(), new FileOutputStream(TARGET_TEST_PATH + "random_left_01.xmi"));
             long l = System.nanoTime();
-            BigraphComposite<DefaultDynamicSignature> result = comp.compose(cloned);
+            BigraphComposite<DynamicSignature> result = comp.compose(cloned);
 //            BigraphComposite<DefaultDynamicSignature> result = comp.compose(cloned);
             long l2 = System.nanoTime();
 //            double secs = (l2 - l) * 1.f / 1e+9;

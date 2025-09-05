@@ -5,7 +5,7 @@ import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.datatypes.EMetaModelData;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.documentation.BaseDocumentationGeneratorSupport;
@@ -36,7 +36,7 @@ public class PersistingBigraphs extends BaseDocumentationGeneratorSupport {
     @Test
     void storing_a_metamodel_to_the_filesystem() throws IOException {
         // (1) start
-        DefaultDynamicSignature signature = pureSignatureBuilder()
+        DynamicSignature signature = pureSignatureBuilder()
                 .newControl("Building", 2).assign()
                 .newControl("Laptop", 1).assign()
                 .newControl("Printer", 2).assign()
@@ -44,11 +44,11 @@ public class PersistingBigraphs extends BaseDocumentationGeneratorSupport {
 
         // this will register the bigraph metamodel so that every bigraph created are over the "same" signature
         createOrGetBigraphMetaModel(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = pureBuilder(
+        PureBigraphBuilder<DynamicSignature> bigraphBuilder = pureBuilder(
                 signature
         );
         // do something with the bigraph builder ...
-        PureBigraph bigraph = bigraphBuilder.createBigraph();
+        PureBigraph bigraph = bigraphBuilder.create();
 
         // Export the metamodel
         BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream("meta-model.ecore"));
@@ -56,7 +56,7 @@ public class PersistingBigraphs extends BaseDocumentationGeneratorSupport {
     }
 
     public void code_sample_one() throws IOException {
-        DefaultDynamicSignature signature = pureSignatureBuilder()
+        DynamicSignature signature = pureSignatureBuilder()
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(2)).assign()
                 .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
@@ -67,11 +67,11 @@ public class PersistingBigraphs extends BaseDocumentationGeneratorSupport {
                 .setNsPrefix("example")
                 .setNsUri("http://example.org")
                 .create());
-        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = pureBuilder(
+        PureBigraphBuilder<DynamicSignature> bigraphBuilder = pureBuilder(
                 signature
         );
         // do something with the bigraph builder ...
-        PureBigraph bigraph = bigraphBuilder.createBigraph();
+        PureBigraph bigraph = bigraphBuilder.create();
 
         // Export the metamodel
         BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream(new File("meta-model.ecore")));

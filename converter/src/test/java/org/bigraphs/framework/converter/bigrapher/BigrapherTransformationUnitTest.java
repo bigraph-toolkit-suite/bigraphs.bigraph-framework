@@ -10,7 +10,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -58,58 +58,58 @@ public class BigrapherTransformationUnitTest {
     }
 
     public PureBigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b = builder.createOuterName("b");
-        BigraphEntity.InnerName e1 = builder.createInnerName("e1");
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName jeff1 = builder.createOuter("jeff1");
+        BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b = builder.createOuter("b");
+        BigraphEntity.InnerName e1 = builder.createInner("e1");
 
-        builder.createRoot()
-                .addChild("Printer").linkToOuter(a).linkToOuter(b)
-                .addChild(signature.getControlByName("Room")).linkToInner(e1)
+        builder.root()
+                .child("Printer").linkOuter(a).linkOuter(b)
+                .child(signature.getControlByName("Room")).linkInner(e1)
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff1)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("User")).linkOuter(jeff1)
                 .up()
 
-                .addChild(signature.getControlByName("Room")).linkToInner(e1)
+                .child(signature.getControlByName("Room")).linkInner(e1)
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().child(signature.getControlByName("Job")).child(signature.getControlByName("User")).linkOuter(jeff2)
                 .up().up();
 
-        builder.closeAllInnerNames();
+        builder.closeInner();
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public ReactionRule<PureBigraph> createReactionRule_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName jeff1 = builder.createOuterName("jeff1");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b = builder.createOuterName("b");
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName jeff1 = builder.createOuter("jeff1");
+        BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b = builder.createOuter("b");
 
         //(Computer{b1}.(Job.1) | User{jeff2}.1) || Computer{b1}.(Job.1 | User{jeff2}.1);
 
-        builder.createRoot()
-                .addChild("Printer").linkToOuter(a).linkToOuter(b)
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addChild(signature.getControlByName("Job")).up()
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff1);
+        builder.root()
+                .child("Printer").linkOuter(a).linkOuter(b)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().child(signature.getControlByName("Job")).up()
+                .child(signature.getControlByName("User")).linkOuter(jeff1);
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("User")).linkToOuter(jeff2);
+        builder.root()
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().child(signature.getControlByName("Job")).child(signature.getControlByName("User")).linkOuter(jeff2);
 
 //        builder.makeGround();
-        PureBigraph redex = builder.createBigraph();
+        PureBigraph redex = builder.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, redex);
         return rr;
     }

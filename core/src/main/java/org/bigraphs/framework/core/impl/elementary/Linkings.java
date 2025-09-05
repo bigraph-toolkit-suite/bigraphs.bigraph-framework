@@ -7,7 +7,7 @@ import org.bigraphs.framework.core.datatypes.EMetaModelData;
 import org.bigraphs.framework.core.datatypes.NamedType;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.MutableBuilder;
 import org.bigraphs.framework.core.SignatureBuilder;
 import org.eclipse.collections.api.list.MutableList;
@@ -38,9 +38,9 @@ public class Linkings<S extends AbstractEcoreSignature<? extends Control<?, ?>>>
         return new Closure(name);
     }
 
-    public Linkings<DefaultDynamicSignature>.Closure closure(String name) {
+    public Linkings<DynamicSignature>.Closure closure(String name) {
         mutableBuilder.reset();
-        return (Linkings<DefaultDynamicSignature>.Closure) new Closure(StringTypedName.of(name));
+        return (Linkings<DynamicSignature>.Closure) new Closure(StringTypedName.of(name));
     }
 
     public Linkings<S>.Closure closure(Set<NamedType<?>> names) {

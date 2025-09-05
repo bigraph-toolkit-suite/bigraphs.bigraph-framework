@@ -7,8 +7,8 @@ import org.bigraphs.framework.core.exceptions.SignatureNotConsistentException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.reactivesystem.InstantiationMap;
@@ -34,7 +34,7 @@ public class BigraphUtil {
         if (g.equals(f)) {
             try {
                 EcoreBigraph.Stub clone = new EcoreBigraph.Stub((EcoreBigraph) f).clone();
-                g = (Bigraph<S>) PureBigraphBuilder.create(g.getSignature(), clone.getMetaModel(), clone.getInstanceModel()).createBigraph();
+                g = (Bigraph<S>) PureBigraphBuilder.create(g.getSignature(), clone.getMetaModel(), clone.getInstanceModel()).create();
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException("Could not clone bigraph");
             }
@@ -45,7 +45,7 @@ public class BigraphUtil {
     public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> Bigraph<S> copy(Bigraph<S> f) {
         try {
             EcoreBigraph.Stub clone = new EcoreBigraph.Stub((EcoreBigraph) f).clone();
-            return (Bigraph<S>) PureBigraphBuilder.create(f.getSignature(), clone.getMetaModel(), clone.getInstanceModel()).createBigraph();
+            return (Bigraph<S>) PureBigraphBuilder.create(f.getSignature(), clone.getMetaModel(), clone.getInstanceModel()).create();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Could not clone bigraph");
         }
@@ -54,15 +54,15 @@ public class BigraphUtil {
     public static EcoreBigraph copy(EcoreBigraph bigraph) throws CloneNotSupportedException {
         EcoreBigraph.Stub clone = new EcoreBigraph.Stub(bigraph).clone();
         return PureBigraphBuilder.create((AbstractEcoreSignature) bigraph.getSignature(), clone.getMetaModel(), clone.getInstanceModel())
-                .createBigraph();
+                .create();
     }
 
-    public static PureBigraph toBigraph(EcoreBigraph.Stub<DefaultDynamicSignature> stub, DefaultDynamicSignature signature) {
-        return PureBigraphBuilder.create(signature.getInstanceModel(), stub.getMetaModel(), stub.getInstanceModel()).createBigraph();
+    public static PureBigraph toBigraph(EcoreBigraph.Stub<DynamicSignature> stub, DynamicSignature signature) {
+        return PureBigraphBuilder.create(signature.getInstanceModel(), stub.getMetaModel(), stub.getInstanceModel()).create();
     }
 
-    public static PureBigraph toBigraph(EPackage metaModel, EObject instanceModel, DefaultDynamicSignature signature) {
-        return PureBigraphBuilder.create(signature.getInstanceModel(), metaModel, instanceModel).createBigraph();
+    public static PureBigraph toBigraph(EPackage metaModel, EObject instanceModel, DynamicSignature signature) {
+        return PureBigraphBuilder.create(signature.getInstanceModel(), metaModel, instanceModel).create();
     }
 
     public static void setParentOfNode(final BigraphEntity<?> node, final BigraphEntity<?> parent) {
@@ -192,7 +192,7 @@ public class BigraphUtil {
      * @return a merged signature, or just {@code left} or {@code right}, if the other one is {@code null}
      * @throws RuntimeException if the underlying metamodel is invalid, that is created in the merging process.
      */
-    public static DefaultDynamicSignature mergeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+    public static DynamicSignature mergeSignatures(DynamicSignature left, DynamicSignature right) {
         return mergeSignatures(left, right, 0);
     }
 
@@ -214,7 +214,7 @@ public class BigraphUtil {
      * @param leftOrRight whether to use the left or right signature if same controls found in both
      * @return the new merge signature
      */
-    public static DefaultDynamicSignature mergeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right, int leftOrRight) {
+    public static DynamicSignature mergeSignatures(DynamicSignature left, DynamicSignature right, int leftOrRight) {
         if (Objects.nonNull(left) && Objects.nonNull(right)) {
             Set<String> setLeft = left.getControls().stream().map(x -> x.getNamedType().stringValue()).collect(Collectors.toSet());
             Set<String> setRight = right.getControls().stream().map(x -> x.getNamedType().stringValue()).collect(Collectors.toSet());
@@ -232,7 +232,7 @@ public class BigraphUtil {
             Stream<String> rightStream = right.getControls().stream().map(x -> x.getNamedType().stringValue());
             Stream<Map.Entry<String, String>> zippedLabels = zip(leftStream, rightStream);
             zippedLabels.forEach(pair -> {
-                DefaultDynamicControl c = leftOrRight == 0 ? left.getControlByName(pair.getKey()) : right.getControlByName(pair.getKey());
+                DynamicControl c = leftOrRight == 0 ? left.getControlByName(pair.getKey()) : right.getControlByName(pair.getKey());
                 sb.newControl(c.getNamedType(), c.getArity())
                         .status(c.getControlKind()).assign();
             });
@@ -255,7 +255,7 @@ public class BigraphUtil {
      * @return a composed signature, or just {@code left} or {@code right}, if the other one is {@code null}
      * @throws RuntimeException if the signatures are not consistent
      */
-    public static DefaultDynamicSignature composeSignatures(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+    public static DynamicSignature composeSignatures(DynamicSignature left, DynamicSignature right) {
         assertSignaturesAreConsistent(left, right);
         if (Objects.nonNull(left) && Objects.nonNull(right)) {
             DynamicSignatureBuilder sb = pureSignatureBuilder();
@@ -268,11 +268,11 @@ public class BigraphUtil {
         return Objects.isNull(right) ? left : right;
     }
 
-    public static Optional<DefaultDynamicSignature> composeSignatures(List<DefaultDynamicSignature> signatures) {
+    public static Optional<DynamicSignature> composeSignatures(List<DynamicSignature> signatures) {
         return signatures.stream().reduce(BigraphUtil::composeSignatures);
     }
 
-    public static Optional<DefaultDynamicSignature> leftMergeSignatures(List<DefaultDynamicSignature> signatures) {
+    public static Optional<DynamicSignature> leftMergeSignatures(List<DynamicSignature> signatures) {
         return signatures.stream().reduce(BigraphUtil::mergeSignatures);
     }
 
@@ -282,7 +282,7 @@ public class BigraphUtil {
      * @param left  the first signature
      * @param right the second signature
      */
-    private static void assertSignaturesAreConsistent(DefaultDynamicSignature left, DefaultDynamicSignature right) {
+    private static void assertSignaturesAreConsistent(DynamicSignature left, DynamicSignature right) {
         Set<String> setLeft = left.getControls().stream().map(x -> x.getNamedType().stringValue()).collect(Collectors.toSet());
         Set<String> setRight = right.getControls().stream().map(x -> x.getNamedType().stringValue()).collect(Collectors.toSet());
         Set<String> unionSet = new HashSet<>(setLeft);

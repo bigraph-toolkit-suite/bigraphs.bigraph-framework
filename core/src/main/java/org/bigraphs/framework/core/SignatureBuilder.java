@@ -58,7 +58,7 @@ public abstract class SignatureBuilder<NT extends NamedType<?>,
         return builder.identifier(type).arity(arity);
     }
 
-    public B addControl(Control<NT, FO> control) {
+    public B add(Control<NT, FO> control) {
         controls.add(control);
         return self();
     }

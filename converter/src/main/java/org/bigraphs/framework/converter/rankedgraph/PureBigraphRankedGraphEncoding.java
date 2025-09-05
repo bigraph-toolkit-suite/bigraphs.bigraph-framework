@@ -6,7 +6,7 @@ import org.bigraphs.framework.core.AbstractRankedGraph;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 
 import java.util.*;
@@ -129,7 +129,7 @@ public class PureBigraphRankedGraphEncoding extends AbstractRankedGraph<PureBigr
             }
             pointsFromLink.forEach(p -> {
                 if (BigraphEntityType.isPort(p)) {
-                    BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
+                    BigraphEntity.NodeEntity<DynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
 //                    System.out.format("Node %s is connected to link %s\n", nodeOfPort.getName(), l.getName());
                     String nodeId = placeGraphIdMap.get(nodeOfPort);
                     LabeledNode byId = getById(nodeId).get();

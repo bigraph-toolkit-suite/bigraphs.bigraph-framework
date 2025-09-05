@@ -7,7 +7,7 @@ import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -46,76 +46,76 @@ public class MultiOccurrenceExample {
     }
 
     PureBigraph createAgent() {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        builder.createRoot()
-                .addChild("Room")
-                .addChild("Room")
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        builder.root()
+                .child("Room")
+                .child("Room")
         ;
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJA() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(createSignature());
 
-        builder.createRoot()
-                .addChild("Room"); //.withNewHierarchy().addSite().top()
+        builder.root()
+                .child("Room"); //.withNewHierarchy().addSite().top()
         ;
-        builder2.createRoot()
-                .addChild("Room").down().addChild("JobA").top()
+        builder2.root()
+                .child("Room").down().child("JobA").top()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJB() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(createSignature());
 
-        builder.createRoot()
-                .addChild("Room"); //.withNewHierarchy().addSite().top()
+        builder.root()
+                .child("Room"); //.withNewHierarchy().addSite().top()
         ;
-        builder2.createRoot()
-                .addChild("Room").down().addChild("JobB").top()
+        builder2.root()
+                .child("Room").down().child("JobB").top()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJAC() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(createSignature());
 
-        builder.createRoot()
-                .addChild("Room").down().addChild("JobA").top()
+        builder.root()
+                .child("Room").down().child("JobA").top()
         ;
-        builder2.createRoot()
-                .addChild("Room").down().addChild("JobC").top()
+        builder2.root()
+                .child("Room").down().child("JobC").top()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     public ReactionRule<PureBigraph> createReactionRuleJBD() throws ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(createSignature());
 
-        builder.createRoot()
-                .addChild("Room").down().addChild("JobB").top()
+        builder.root()
+                .child("Room").down().child("JobB").top()
         ;
-        builder2.createRoot()
-                .addChild("Room").down().addChild("JobD").top()
+        builder2.root()
+                .child("Room").down().child("JobD").top()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
 
-    private static DefaultDynamicSignature createSignature() {
+    private static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(1)).assign()

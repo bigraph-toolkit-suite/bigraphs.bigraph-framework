@@ -3,13 +3,12 @@ package org.bigraphs.framework.documentation.basic;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import org.bigraphs.framework.core.BigraphComposite;
 import org.bigraphs.framework.core.ControlStatus;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.factory.BigraphFactory;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
 import org.bigraphs.framework.core.impl.elementary.Placings;
@@ -91,30 +90,30 @@ public class GettingStartedGuide extends BaseDocumentationGeneratorSupport {
         // (1) start
         DynamicSignatureBuilder sigBuilder = pureSignatureBuilder();
 
-        DefaultDynamicSignature signature = sigBuilder
-                .addControl("User", 1, ControlStatus.ATOMIC)
-                .addControl("Computer", 2)
+        DynamicSignature signature = sigBuilder
+                .add("User", 1, ControlStatus.ATOMIC)
+                .add("Computer", 2)
                 .create();
         // (1) end
 
         // (2) start
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot()
-                .addChild("User", "login").addChild("Computer", "login");
-        PureBigraph bigraph = builder.createRoot()
-                .addChild("User", "login").addChild("Computer", "login")
-                .createBigraph();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        builder.root()
+                .child("User", "login").child("Computer", "login");
+        PureBigraph bigraph = builder.root()
+                .child("User", "login").child("Computer", "login")
+                .create();
         // (2) end
 
         // (3) start
-        Placings<DefaultDynamicSignature> placings = purePlacings(signature);
-        Placings<DefaultDynamicSignature>.Merge merge = placings.merge(2);
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings(signature);
-        Linkings<DefaultDynamicSignature>.Identity login = linkings.identity(StringTypedName.of("login"));
+        Placings<DynamicSignature> placings = purePlacings(signature);
+        Placings<DynamicSignature>.Merge merge = placings.merge(2);
+        Linkings<DynamicSignature> linkings = pureLinkings(signature);
+        Linkings<DynamicSignature>.Identity login = linkings.identity("login");
         // (3) end
 
         // (4) start
-        BigraphComposite<DefaultDynamicSignature> composed = BigraphFactory.ops(merge).parallelProduct(login).compose(bigraph);
+        BigraphComposite<DynamicSignature> composed = ops(merge).parallelProduct(login).compose(bigraph);
         assert composed.getOuterBigraph().getRoots().size() == 1;
         assert composed.getOuterBigraph().getOuterNames().size() == 1;
         assert composed.getOuterBigraph().getChildrenOf(new ArrayList<>(composed.getOuterBigraph().getRoots()).get(0)).size() == 4;

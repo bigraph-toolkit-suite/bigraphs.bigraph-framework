@@ -1,7 +1,6 @@
 package org.bigraphs.framework.core;
 
-import org.bigraphs.framework.core.EcoreBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.eclipse.emf.compare.match.*;
@@ -22,16 +21,16 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 public class CompareTest {
 
     public static void main(String[] args) throws IOException {
-        DefaultDynamicSignature signature = pureSignatureBuilder().newControl("A", 1).assign()
+        DynamicSignature signature = pureSignatureBuilder().newControl("A", 1).assign()
                 .newControl("B", 2).assign()
                 .create();
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy hierarchy = pureBuilder(signature)
-                .createRoot().addChild("A").addChild("B");
-        PureBigraph bigraph = hierarchy.createBigraph();
+        PureBigraphBuilder<DynamicSignature>.Hierarchy hierarchy = pureBuilder(signature)
+                .root().child("A").child("B");
+        PureBigraph bigraph = hierarchy.create();
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy hierarchy2 = pureBuilder(signature)
-                .createRoot().addChild("A").addChild("A");
-        PureBigraph bigraph2 = hierarchy2.createBigraph();
+        PureBigraphBuilder<DynamicSignature>.Hierarchy hierarchy2 = pureBuilder(signature)
+                .root().child("A").child("A");
+        PureBigraph bigraph2 = hierarchy2.create();
 
 
 //        EObject copy = EcoreUtil.copy(bigraph.getModel());

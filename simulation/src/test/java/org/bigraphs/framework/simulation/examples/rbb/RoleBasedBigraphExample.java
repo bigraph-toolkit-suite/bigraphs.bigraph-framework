@@ -8,7 +8,7 @@ import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -114,25 +114,25 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
     }
 
     private static PureBigraph finalizeAgent(PureBigraph bigraph) throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        Placings<DefaultDynamicSignature>.Merge merge = purePlacings(createSignature()).merge(2);
+        Placings<DynamicSignature>.Merge merge = purePlacings(createSignature()).merge(2);
         return ops(merge).compose(bigraph).getOuterBigraph();
     }
 
     private static PureBigraph createAgent() throws InvalidConnectionException, LinkTypeNotExistsException {
-        DefaultDynamicSignature signature = createSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy root1 = builder.createRoot();
+        PureBigraphBuilder<DynamicSignature>.Hierarchy root1 = builder.root();
         root1
-                .addChild("AccountUnbound").down().addChild("Balance").down().addChild("i0").top()
-                .addChild("AccountUnbound").down().addChild("Balance").down().addChild("i0").top()
+                .child("AccountUnbound").down().child("Balance").down().child("i0").top()
+                .child("AccountUnbound").down().child("Balance").down().child("i0").top()
         ;
 //        builder.closeInnerName(tmp);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy root2 = builder.createRoot();
-        root2.addChild("Transaction").down().addChild("Source", "RoleSource").addChild("Target", "RoleTarget");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy root2 = builder.root();
+        root2.child("Transaction").down().child("Source", "RoleSource").child("Target", "RoleTarget");
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
 
 
         PureBigraph decoded = makeIdleEdges(bigraph);
@@ -140,111 +140,111 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
     }
 
     private ReactionRule<PureBigraph> bindSourceRole(boolean withFix) throws Exception {
-        DefaultDynamicSignature signature = createSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(signature);
+        DynamicSignature signature = createSignature();
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(signature);
 
-        builderRedex.createRoot()
-                .addChild("AccountUnbound").down().addSite().top()
+        builderRedex.root()
+                .child("AccountUnbound").down().site().top()
         ;
-        builderRedex.createRoot()
-                .addChild("Source", "RoleSource")
+        builderRedex.root()
+                .child("Source", "RoleSource")
         ;
 
-        builderReactum.createRoot()
-                .addChild("AccountBound", "RoleSource").down().addSite().top()
+        builderReactum.root()
+                .child("AccountBound", "RoleSource").down().site().top()
         ;
         if (!withFix) {
-            builderReactum.createRoot()
-                    .addChild("Source", "RoleSource")
+            builderReactum.root()
+                    .child("Source", "RoleSource")
             ;
         } else {
-            builderReactum.createRoot()
-                    .addChild("Source", "RoleSource").down().addChild("i1")
+            builderReactum.root()
+                    .child("Source", "RoleSource").down().child("i1")
             ;
         }
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(makeIdleEdges(redex), makeIdleEdges(reactum));
         return rr;
     }
 
     private ReactionRule<PureBigraph> bindTargetRole(boolean withFix) throws Exception {
-        DefaultDynamicSignature signature = createSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(signature);
+        DynamicSignature signature = createSignature();
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(signature);
 
-        builderRedex.createRoot()
-                .addChild("AccountUnbound").down().addSite().top()
+        builderRedex.root()
+                .child("AccountUnbound").down().site().top()
         ;
-        builderRedex.createRoot()
-                .addChild("Target", "RoleTarget")
+        builderRedex.root()
+                .child("Target", "RoleTarget")
         ;
 
-        builderReactum.createRoot()
-                .addChild("AccountBound", "RoleTarget").down().addSite().top()
+        builderReactum.root()
+                .child("AccountBound", "RoleTarget").down().site().top()
         ;
         if (!withFix) {
-            builderReactum.createRoot()
-                    .addChild("Target", "RoleTarget")
+            builderReactum.root()
+                    .child("Target", "RoleTarget")
             ;
         } else {
-            builderReactum.createRoot()
-                    .addChild("Target", "RoleTarget").down().addChild("i1")
+            builderReactum.root()
+                    .child("Target", "RoleTarget").down().child("i1")
             ;
         }
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(makeIdleEdges(redex), makeIdleEdges(reactum));
         return rr;
     }
 
     private ReactionRule<PureBigraph> transaction() throws Exception {
-        DefaultDynamicSignature signature = createSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(signature);
+        DynamicSignature signature = createSignature();
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(signature);
 
-        builderRedex.createRoot()
-                .addChild("AccountBound", "RoleSource").down().addChild("Balance").down().addSite().top()
-                .addChild("AccountBound", "RoleTarget").down().addChild("Balance").down().addSite().top()
+        builderRedex.root()
+                .child("AccountBound", "RoleSource").down().child("Balance").down().site().top()
+                .child("AccountBound", "RoleTarget").down().child("Balance").down().site().top()
         ;
-        builderRedex.createRoot()
-                .addChild("Source", "RoleSource")
-                .addChild("Target", "RoleTarget")
-        ;
-
-        builderReactum.createRoot()
-                .addChild("AccountBound", "RoleSource").down().addChild("Balance").down().addSite().top()
-                .addChild("AccountBound", "RoleTarget").down().addChild("Balance").down().addSite().top()
-        ;
-        builderReactum.createRoot()
-                .addChild("Source", "RoleSource")
-                .addChild("Target", "RoleTarget")
+        builderRedex.root()
+                .child("Source", "RoleSource")
+                .child("Target", "RoleTarget")
         ;
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        builderReactum.root()
+                .child("AccountBound", "RoleSource").down().child("Balance").down().site().top()
+                .child("AccountBound", "RoleTarget").down().child("Balance").down().site().top()
+        ;
+        builderReactum.root()
+                .child("Source", "RoleSource")
+                .child("Target", "RoleTarget")
+        ;
+
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     private List<ReactionRule<PureBigraph>> increaseDecrease_Balance() throws Exception {
-        DefaultDynamicSignature signature = createSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(signature);
+        DynamicSignature signature = createSignature();
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(signature);
 
-        builderRedex.createRoot()
+        builderRedex.root()
 //                .addChild("AccountUnbound")
-                .addChild("Balance").down().addChild("i0").top();
+                .child("Balance").down().child("i0").top();
 
-        builderReactum.createRoot()
+        builderReactum.root()
 //                .addChild("AccountUnbound")
-                .addChild("Balance").down().addChild("i1").top();
+                .child("Balance").down().child("i1").top();
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         ReactionRule<PureBigraph> rrInverse = new ParametricReactionRule<>(reactum, redex);
         return Arrays.asList(rr, rrInverse);
@@ -273,7 +273,7 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
     }
 
 
-    private static DefaultDynamicSignature createSignature() {
+    private static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("AccountUnbound")).arity(FiniteOrdinal.ofInteger(1)).assign()

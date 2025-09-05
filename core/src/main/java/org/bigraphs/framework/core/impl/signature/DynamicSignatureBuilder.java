@@ -32,13 +32,13 @@ public class DynamicSignatureBuilder
         return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity));
     }
 
-    public DynamicSignatureBuilder addControl(String name, int arity) {
+    public DynamicSignatureBuilder add(String name, int arity) {
         DynamicControlBuilder builder = createControlBuilder();
         builder.withControlListBuilder(this);
         return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity)).assign();
     }
 
-    public DynamicSignatureBuilder addControl(String name, int arity, ControlStatus status) {
+    public DynamicSignatureBuilder add(String name, int arity, ControlStatus status) {
         DynamicControlBuilder builder = createControlBuilder();
         builder.withControlListBuilder(this);
         return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity)).status(status).assign();
@@ -52,35 +52,35 @@ public class DynamicSignatureBuilder
      * @return a signature with the given controls
      */
     @Override
-    public DefaultDynamicSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
-        DefaultDynamicSignature sig = new DefaultDynamicSignature((Set<DefaultDynamicControl>) controls);
+    public DynamicSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
+        DynamicSignature sig = new DynamicSignature((Set<DynamicControl>) controls);
         BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
         return sig;
     }
 
     @Override
-    public DefaultDynamicSignature createEmpty() {
-        return (DefaultDynamicSignature) super.createEmpty();
+    public DynamicSignature createEmpty() {
+        return (DynamicSignature) super.createEmpty();
     }
 
     /**
      * Creates an empty signature without controls.
      *
-     * @return an empty signature of type {@link DefaultDynamicSignature}
+     * @return an empty signature of type {@link DynamicSignature}
      */
     @Override
-    protected DefaultDynamicSignature createEmptyStub() {
-        return new DefaultDynamicSignature(Collections.EMPTY_SET);
+    protected DynamicSignature createEmptyStub() {
+        return new DynamicSignature(Collections.EMPTY_SET);
     }
 
     @Override
-    public DefaultDynamicSignature create() {
-        return (DefaultDynamicSignature) super.create();
+    public DynamicSignature create() {
+        return (DynamicSignature) super.create();
     }
 
     @Override
-    public DefaultDynamicSignature create(EMetaModelData metaModelData) {
-        return (DefaultDynamicSignature) super.create(metaModelData);
+    public DynamicSignature create(EMetaModelData metaModelData) {
+        return (DynamicSignature) super.create(metaModelData);
     }
 
     //    @Override

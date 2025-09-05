@@ -1,20 +1,12 @@
 package org.bigraphs.framework.core;
 
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.model.bigraphBaseModel.*;
-import org.eclipse.emf.common.util.Diagnostic;
-import org.eclipse.emf.ecore.util.Diagnostician;
-import org.eclipse.ocl.OCLInput;
-import org.eclipse.ocl.ParserException;
-import org.eclipse.ocl.ecore.Constraint;
-import org.eclipse.ocl.ecore.OCL;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -28,14 +20,14 @@ public class NodeAttributeUnitTest {
 
     @Test
     void attribute_read_write_test() throws IOException {
-        DefaultDynamicSignature sig = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(sig);
-        PureBigraph bigraph = b.createRoot()
-                .addChild("A")
-                .addChild("B")
-                .addChild("C")
-                .createBigraph();
-        BigraphEntity.NodeEntity<DefaultDynamicControl> v2 = bigraph.getNodes().stream()
+        DynamicSignature sig = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(sig);
+        PureBigraph bigraph = b.root()
+                .child("A")
+                .child("B")
+                .child("C")
+                .create();
+        BigraphEntity.NodeEntity<DynamicControl> v2 = bigraph.getNodes().stream()
                 .filter(x -> x.getName().equals("v2")).findAny().get();
         Map<String, Object> attributes = v2.getAttributes();
         attributes.put("data", 1309);
@@ -73,12 +65,12 @@ public class NodeAttributeUnitTest {
         System.out.println(bBigraph2.getBRoots().size());
     }
 
-    private static DefaultDynamicSignature createExampleSignature() {
+    private static DynamicSignature createExampleSignature() {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
-                .addControl("A", 0)
-                .addControl("B", 0)
-                .addControl("C", 0)
+                .add("A", 0)
+                .add("B", 0)
+                .add("C", 0)
 
         ;
         return signatureBuilder.create();

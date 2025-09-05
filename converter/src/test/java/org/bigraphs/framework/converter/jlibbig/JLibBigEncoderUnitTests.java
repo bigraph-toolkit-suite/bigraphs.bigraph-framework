@@ -5,12 +5,11 @@ import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import it.uniud.mads.jlibbig.core.std.Bigraph;
-import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
 import org.junit.jupiter.api.Test;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
@@ -52,14 +51,14 @@ public class JLibBigEncoderUnitTests {
      * A simple bigraph without sites, no links
      */
     private PureBigraph big_00() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Building")
-                .down().addChild("Room").down().addChild("Room").down().addChild("User").up().up()
-                .addChild("Room").down().addChild("User");
-        PureBigraph bigraph = builder.createBigraph();
+        builder.root()
+                .child("Building")
+                .down().child("Room").down().child("Room").down().child("User").up().up()
+                .child("Room").down().child("User");
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
@@ -67,14 +66,14 @@ public class JLibBigEncoderUnitTests {
      * A simple bigraph with 2 sites, no links
      */
     private PureBigraph big_01() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Building")
-                .down().addChild("Room").down().addChild("Room").down().addSite().addChild("User").addSite().up().up()
-                .addChild("Room").down().addChild("User").addSite();
-        PureBigraph bigraph = builder.createBigraph();
+        builder.root()
+                .child("Building")
+                .down().child("Room").down().child("Room").down().site().child("User").site().up().up()
+                .child("Room").down().child("User").site();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
@@ -83,17 +82,17 @@ public class JLibBigEncoderUnitTests {
      * User nodes are connected via inner name
      */
     private PureBigraph big_02() throws InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName door = builder.createOuterName("door");
-        BigraphEntity.InnerName network = builder.createInnerName("network");
-        builder.createRoot()
-                .addChild("Building")
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName door = builder.createOuter("door");
+        BigraphEntity.InnerName network = builder.createInner("network");
+        builder.root()
+                .child("Building")
                 .down()
-                .addChild("Printer")
-                .addChild("Room").linkToOuter(door).down().addChild("Room").down().addSite().addChild("User").linkToInner(network).addSite().up().up()
-                .addChild("Room").linkToOuter(door).down().addChild("User").linkToInner(network).addSite();
-        PureBigraph bigraph = builder.createBigraph();
+                .child("Printer")
+                .child("Room").linkOuter(door).down().child("Room").down().site().child("User").linkInner(network).site().up().up()
+                .child("Room").linkOuter(door).down().child("User").linkInner(network).site();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
@@ -102,42 +101,42 @@ public class JLibBigEncoderUnitTests {
      * User nodes are connected via an edge
      */
     private PureBigraph big_03() throws InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName door = builder.createOuterName("door");
-        BigraphEntity.InnerName tmp = builder.createInnerName("network");
-        builder.createRoot()
-                .addChild("Building")
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName door = builder.createOuter("door");
+        BigraphEntity.InnerName tmp = builder.createInner("network");
+        builder.root()
+                .child("Building")
                 .down()
-                .addChild("Printer")
-                .addChild("Room").linkToOuter(door).down().addChild("Room").down().addSite().addChild("User").linkToInner(tmp).addSite().up().up()
-                .addChild("Room").linkToOuter(door).down().addChild("User").linkToInner(tmp).addSite();
-        builder.closeInnerName(tmp);
-        PureBigraph bigraph = builder.createBigraph();
+                .child("Printer")
+                .child("Room").linkOuter(door).down().child("Room").down().site().child("User").linkInner(tmp).site().up().up()
+                .child("Room").linkOuter(door).down().child("User").linkInner(tmp).site();
+        builder.closeInner(tmp);
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     //mit 1 root und 2 Rooms, no links
     private PureBigraph redex_01() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot().addChild("Room").down().addSite()
-                .up().addChild("Room").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        builder.root().child("Room").down().site()
+                .up().child("Room").down().site();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     //mit 2 roots, 2 rooms, no links
     private PureBigraph redex_02() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot().addChild("Room").down().addSite();
-        builder.createRoot().addChild("Room").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        builder.root().child("Room").down().site();
+        builder.root().child("Room").down().site();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
-    private static DefaultDynamicSignature signature00() {
+    private static DynamicSignature signature00() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()

@@ -5,7 +5,7 @@ import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.utils.BigraphUtil;
 import org.eclipse.collections.api.list.MutableList;
@@ -151,12 +151,12 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                         // special case for sites: re-assign label: consider it as a "normal" node with index as label
                         if (u.getType() == BigraphEntityType.SITE) {
                             String newLabel = String.valueOf(((BigraphEntity.SiteEntity) u).getIndex());
-                            DefaultDynamicControl defaultDynamicControl =
-                                    DefaultDynamicControl.createDefaultDynamicControl(StringTypedName.of(newLabel),
+                            DynamicControl dynamicControl =
+                                    DynamicControl.createDynamicControl(StringTypedName.of(newLabel),
                                             FiniteOrdinal.ofInteger(0), ControlStatus.ATOMIC);
                             BigraphEntity<?> parent = bigraph.getParent(u);
                             //rewrite parent
-                            u = BigraphEntity.createNode(u.getInstance(), defaultDynamicControl);
+                            u = BigraphEntity.createNode(u.getInstance(), dynamicControl);
                             BigraphUtil.setParentOfNode(u, parent);
                         }
                         //single-step bottom-up approach
@@ -592,7 +592,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     });
 
     final Comparator<BigraphEntity<?>> comparePortCount = Comparator.comparing(entry -> {
-        return bigraph.getPortCount((BigraphEntity.NodeEntity<DefaultDynamicControl>) entry);
+        return bigraph.getPortCount((BigraphEntity.NodeEntity<DynamicControl>) entry);
     });
 
     final Comparator<BigraphEntity<?>> compareLinkNames = Comparator.comparing(entry -> {

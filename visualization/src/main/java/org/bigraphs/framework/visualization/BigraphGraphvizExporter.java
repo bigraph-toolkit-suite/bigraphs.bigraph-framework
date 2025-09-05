@@ -8,7 +8,7 @@ import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.framework.visualization.auxiliary.GraphvizProcess;
 import org.bigraphs.framework.visualization.supplier.GraphvizColorSupplier;
 import org.bigraphs.framework.visualization.supplier.GraphvizShapeSupplier;
@@ -98,7 +98,6 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
                                                    boolean asTreeStructure) throws IOException {
 //        Graphviz.useEngine(new GraphvizJdkEngine());
         final MutableGraph theGraph = mutGraph("Bigraph").setDirected(false)
-//                .graphAttrs().add(RankDir.BOTTOM_TO_TOP);
                 .graphAttrs().add(Rank.dir(BOTTOM_TO_TOP));
 
         if (!asTreeStructure) {
@@ -114,10 +113,6 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
         //RANK NODES
         // collect node heights first
         Map<BigraphEntity, Integer> levelMap = new LinkedHashMap<>();
-//        for (BigraphEntity each : bigraph.getAllPlaces()) {
-//            int levelUtil = getNodeHeight(bigraph, each, 0);
-//            levelMap.put(each, levelUtil);
-//        }
 
         // create the data structure first for creating the node hierarchy
         final Map<String, Set<GraphVizLink>> graphMap = new LinkedHashMap<>();
@@ -125,7 +120,7 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
             graphMap.put(labelSupplier.with(s).get(), new HashSet<>());
 //            int levelUtil = bigraph.getLevelOf(s); //getNodeHeight(bigraph, s, 0);
             levelMap.put(s, bigraph.getLevelOf(s));
-        });//TODO: move down with putIFAbsent
+        });
         // connects children to parent
         Consumer<BigraphEntity> nestingConsumer = t -> {
             BigraphEntity parent = bigraph.getParent(t);
@@ -138,12 +133,6 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
 
 
 //        //RANK NODES
-//        // collect node heights first
-//        Map<BigraphEntity, Integer> levelMap = new HashMap<>();
-//        for (BigraphEntity each : bigraph.getAllPlaces()) {
-//            int levelUtil = getNodeHeight(bigraph, each, 0);
-//            levelMap.put(each, levelUtil);
-//        }
         Map<Integer, List<BigraphEntity>> collect = levelMap.entrySet().stream()
                 .collect(
                         Collectors.groupingBy(
@@ -234,7 +223,7 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
             for (BigraphEntity<?> point : pointsFromLink) {
                 switch (point.getType()) {
                     case PORT:
-                        BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);
+                        BigraphEntity.NodeEntity<DynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);
                         Optional<MutableNode> first = theGraph.nodes().stream().filter(x -> x.name().toString().equals(labelSupplier.with(nodeOfPort).get()))
                                 .findFirst();
                         if (first.isPresent()) {
@@ -257,7 +246,6 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
         }
 
 
-        //TODO: directly connect nodes together if ports == 1
         for (BigraphEntity.Edge eachEdge : edges) {
             // edges for graphviz are created as "hidden nodes"
             //find the nodes that are connected to it
@@ -266,12 +254,11 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
                 continue;
             }
             final Node hiddenEdgeNode = node(labelSupplier.with(eachEdge).get()).with(Shape.POINT, Color.GREEN);
-//            if (pointsFromLink.size() != 0) {
             //if inner name: create new node
             for (BigraphEntity<?> point : pointsFromLink) {
                 switch (point.getType()) {
                     case PORT:
-                        BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);
+                        BigraphEntity.NodeEntity<DynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) point);
                         Node grNode = node(labelSupplier.with(nodeOfPort).get())
 //                                .link(Link.to(hiddenEdgeNode).with(Style.FILLED, colorSupplier.with(eachEdge).get()));
                                 .link(Link.to(hiddenEdgeNode).with(Style.SOLID, colorSupplier.with(eachEdge).get()));
@@ -320,8 +307,6 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
                 .with(shapeSupplier.with(site).get(),
 //                        Style.FILLED.and(Style.DOTTED),
                         Style.FILLED,
-//                        Style.
-//                        Style.DOTTED,
 //                        Style.DOTTED,
                         Color.GRAY69.fill(),
                         Color.WHITE.font());
@@ -355,7 +340,6 @@ public class BigraphGraphvizExporter implements BigraphGraphicsExporter<Bigraph<
             } else { //create a new hierarchy graph
                 MutableGraph cluster = mutGraph(labelSupplier.with(each).get()).setCluster(true)
                         .setDirected(true)
-//                        .graphAttrs().add(Label.of(labelSupplier.with(each).get()), Style.SOLID);
                         .graphAttrs().add(Label.of(labelSupplier.with(each).get()));
                 cluster.add(node(labelSupplier.with(each).get()).with(Style.INVIS));
                 MutableGraph mutableGraph = makeHierarchyCluster(bigraph, each, cluster);

@@ -2,7 +2,7 @@ package org.bigraphs.framework.converter.bigred;
 
 import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,7 +39,7 @@ public class DefaultSignatureXMLLoader implements BigRedXmlLoader {
         super();
     }
 
-    public DefaultDynamicSignature importObject() {
+    public DynamicSignature importObject() {
         return b.create();
     }
 

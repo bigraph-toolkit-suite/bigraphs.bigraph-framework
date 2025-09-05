@@ -33,7 +33,7 @@ public abstract class ControlBuilder<NT extends NamedType<?>, V extends FiniteOr
     }
 
     public SignatureBuilder<NT, V, B, ?> assign() {
-        this.builder.addControl(this.build());
+        this.builder.add(this.build());
         return this.builder;
     }
 

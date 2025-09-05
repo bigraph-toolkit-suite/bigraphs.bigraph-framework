@@ -1,12 +1,11 @@
 package org.bigraphs.framework.core.factory;
 
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.EMetaModelData;
 import org.bigraphs.framework.core.datatypes.NamedType;
 import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
@@ -54,11 +53,11 @@ public abstract class AbstractBigraphFactory<S extends AbstractEcoreSignature<? 
     public abstract BigraphBuilder<S> createBigraphBuilder(Signature<?> signature);
 
     //TODO something for purerandombuilder, we have to create a RandomBigraphGenerator interface
-    public PureBigraphGenerator createRandomBuilder(DefaultDynamicSignature signature) {
+    public PureBigraphGenerator createRandomBuilder(DynamicSignature signature) {
         return new PureBigraphGenerator(signature);
     }
 
-    public PureBigraphGenerator createRandomBuilder(DefaultDynamicSignature signature, EPackage metaModel) {
+    public PureBigraphGenerator createRandomBuilder(DynamicSignature signature, EPackage metaModel) {
         return new PureBigraphGenerator(signature, metaModel);
     }
 

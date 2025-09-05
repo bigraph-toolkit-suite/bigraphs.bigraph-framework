@@ -28,7 +28,7 @@ can be downloaded [here](../assets/my-meta-model.ecore) to follow along the expl
 To recreate the running example above, we first need a pure bigraph builder
 instance by initializing it with the meta model (see above):
 ```java
-DefaultDynamicSignature signature = BigraphFactory.pureSignatureBuilder()
+DynamicSignature signature = BigraphFactory.pureSignatureBuilder()
         .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
         .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
         .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -36,7 +36,7 @@ DefaultDynamicSignature signature = BigraphFactory.pureSignatureBuilder()
         .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign()
         .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(1)).assign()
         .create();
-PureBigraphBuilder<DefaultDynamicSignature> builder =
+PureBigraphBuilder<DynamicSignature> builder =
         BigraphFactory.pureBuilder(signature, "./my-meta-model.ecore");
 ```
 
@@ -58,44 +58,44 @@ Then, we use the builder to create some individual structures.
 (It is arbitrarily with which substructure we begin with)
 We start with the right building:
 ```java
-PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy buildingRight =
+PureBigraphBuilder<DynamicSignature>.Hierarchy buildingRight =
         builder.hierarchy("Building")
-        .addChild("Room").down()
-            .addChild("Laptop").addChild("Laptop").addChild("Laptop").addChild("Laptop");
+        .child("Room").down()
+            .child("Laptop").child("Laptop").child("Laptop").child("Laptop");
 ```
 
 For the left building, we want to create two substructures for both of the rooms:
 ```java
-PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy roomLeft = builder.hierarchy("Room");
-PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy roomRight = builder.hierarchy("Room");
+PureBigraphBuilder<DynamicSignature>.Hierarchy roomLeft = builder.hierarchy("Room");
+PureBigraphBuilder<DynamicSignature>.Hierarchy roomRight = builder.hierarchy("Room");
 ```
 It allows us to fill the rooms separately at any time:
 ```java
 // for the left room
-BigraphEntity.InnerName login = builder.createInnerName("login");
-roomLeft.addChild("User").linkToInner(login)
-    .addChild("Laptop", "network").linkToInner(login).down().addChild("Job");
-builder.closeInnerName(login);
+BigraphEntity.InnerName login = builder.createInner("login");
+roomLeft.child("User").linkInner(login)
+    .child("Laptop", "network").linkInner(login).down().child("Job");
+builder.closeInner(login);
 
 // for the right room
-roomRight.addChild("Printer", "network");
+roomRight.child("Printer", "network");
 ```
 
 Interesting part is that we use an inner name to connect the _laptop_ and
 the _user_ but close it later to transform it to an edge. In this case, when
-the laptop was created, we connected it already to an outer name (`addChild("Laptop", "network")`).
+the laptop was created, we connected it already to an outer name (`child("Laptop", "network")`).
 
 Finally, we combine all substructures to form one:
 ```java
-builder.createRoot().addChild("Building").down().connectByEdge(roomLeft.top(), roomRight.top());
-builder.createRoot().addChild(buildingRight.top());
-PureBigraph bigraph = builder.createBigraph();
+builder.root().child("Building").down().connectByEdge(roomLeft.top(), roomRight.top());
+builder.root().child(buildingRight.top());
+PureBigraph bigraph = builder.create();
 ```
 We use the `connectByEdge()` method to conveniently add nodes or hierarchies under
 the latest created node at the same time connecting them with an edge.
 Important is the usage of `top()` each time a hierarchy is added.
 This moves the pointer to the root of the current substructure which is vital
-for the operation of the following `addChild()` method. It can be also thought
+for the operation of the following `child()` method. It can be also thought
 of "finalizing" a hierarchy.
 
 ## Using Elementary Bigraphs

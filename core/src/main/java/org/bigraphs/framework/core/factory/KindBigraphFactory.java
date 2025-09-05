@@ -12,7 +12,7 @@ import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.core.impl.pure.KindBigraph;
 import org.bigraphs.framework.core.impl.pure.KindBigraphBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraphComposite;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.framework.core.impl.signature.KindSignature;
 import org.bigraphs.framework.core.impl.signature.KindSignatureBuilder;
 import org.eclipse.emf.ecore.EObject;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class KindBigraphFactory extends AbstractBigraphFactory<KindSignature> {
 
     KindBigraphFactory() {
-        super.signatureImplType = new TypeToken<DefaultDynamicControl>() {
+        super.signatureImplType = new TypeToken<DynamicControl>() {
         }.getType();
         super.bigraphClassType = KindBigraph.class;
     }

@@ -8,17 +8,17 @@ SSR uses a combined signature of the grid **and** robots.
 
 ```java
 // Robot controls
-public DefaultDynamicSignature createRobotSignature() {
+public DynamicSignature createRobotSignature() {
     DynamicSignatureBuilder b = pureSignatureBuilder();
-    b.addControl("WayPoint", 1)
-     .addControl("OccupiedBy", 0)
-     .addControl("Robot", 1)
-     .addControl("ID", 0)
-     .addControl("N0", 0).addControl("N1", 0).addControl("N2", 0)
-     .addControl("N3", 0).addControl("N4", 0).addControl("N5", 0)
-     .addControl("Bat", 0).addControl("Pow", 0)
-     .addControl("SLck", 0).addControl("SLckRef", 1)
-     .addControl("Mvmt", 0).addControl("Token", 0);
+    b.add("WayPoint", 1)
+     .add("OccupiedBy", 0)
+     .add("Robot", 1)
+     .add("ID", 0)
+     .add("N0", 0).add("N1", 0).add("N2", 0)
+     .add("N3", 0).add("N4", 0).add("N5", 0)
+     .add("Bat", 0).add("Pow", 0)
+     .add("SLck", 0).add("SLckRef", 1)
+     .add("Mvmt", 0).add("Token", 0);
     return b.create();
 }
 ```
@@ -26,14 +26,14 @@ public DefaultDynamicSignature createRobotSignature() {
 The full signature merges the grid Ecore/XMI with the robot controls:
 
 ```java
-public DefaultDynamicSignature getCombinedSystemSignature() throws IOException {
+public DynamicSignature getCombinedSystemSignature() throws IOException {
     List<EObject> sigEObjects = BigraphFileModelManagement.Load
         .signatureInstanceModel(
             "src/test/resources/models/selfsortingrobots/mm_sig_loc.ecore",
             "src/test/resources/models/selfsortingrobots/sig_loc.xmi"
         );
     AbstractEcoreSignature<?> locSig = createOrGetSignature(sigEObjects.get(0));
-    return BigraphUtil.mergeSignatures((DefaultDynamicSignature) locSig, createRobotSignature());
+    return BigraphUtil.mergeSignatures((DynamicSignature) locSig, createRobotSignature());
 }
 
 ```

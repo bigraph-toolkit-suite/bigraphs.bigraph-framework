@@ -3,7 +3,7 @@ package org.bigraphs.framework.core.alg.generators;
 import org.bigraphs.framework.core.AbstractEcoreSignature;
 import org.bigraphs.framework.core.Control;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.MutableBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  */
 public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
     private final Logger logger = LoggerFactory.getLogger(PureBigraphGenerator.class);
-    DefaultDynamicSignature signature;
+    DynamicSignature signature;
     private HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
     private HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
     private HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
@@ -41,11 +41,11 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
     private int cntE = 0, cntO = 0;
     private Set<BigraphEntity> nodesWithPositiveArity;
 
-    public PureBigraphGenerator(DefaultDynamicSignature signature) {
+    public PureBigraphGenerator(DynamicSignature signature) {
         this(signature, null);
     }
 
-    public PureBigraphGenerator(DefaultDynamicSignature signature, EPackage metaModel) {
+    public PureBigraphGenerator(DynamicSignature signature, EPackage metaModel) {
         this.signature = signature;
         this.builder = Objects.nonNull(metaModel) ?
                 MutableBuilder.newMutableBuilder(signature, metaModel) :

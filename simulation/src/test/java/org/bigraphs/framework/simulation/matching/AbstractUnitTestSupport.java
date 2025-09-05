@@ -2,10 +2,10 @@ package org.bigraphs.framework.simulation.matching;
 
 import com.google.common.base.Stopwatch;
 import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 
@@ -32,7 +32,7 @@ public class AbstractUnitTestSupport {
         PureBigraph context = (PureBigraph) next.getContext();
         PureBigraph redex = (PureBigraph) next.getRedex();
         Bigraph contextIdentity = next.getContextIdentity();
-        Bigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
+        Bigraph<DynamicSignature> identityForParams = next.getRedexIdentity();
         if (contextIdentity != null) {
             PureBigraph contextComposed = (PureBigraph) ops(context).parallelProduct(contextIdentity).getOuterBigraph();
 //            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",

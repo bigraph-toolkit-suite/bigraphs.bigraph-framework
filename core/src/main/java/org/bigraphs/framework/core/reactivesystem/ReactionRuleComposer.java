@@ -4,7 +4,7 @@ import org.bigraphs.framework.core.BigraphComposite;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -48,8 +48,8 @@ public class ReactionRuleComposer<R extends ReactionRule<?>> {
         PureBigraph reactumLHS = left.getReactum();
         PureBigraph reactumRHS = right.getReactum();
         // Create product between redexes, and reactums
-        BigraphComposite<DefaultDynamicSignature> productRedex = ops(redexLHS).parallelProduct(redexRHS);
-        BigraphComposite<DefaultDynamicSignature> productReactum = ops(reactumLHS).parallelProduct(reactumRHS);
+        BigraphComposite<DynamicSignature> productRedex = ops(redexLHS).parallelProduct(redexRHS);
+        BigraphComposite<DynamicSignature> productReactum = ops(reactumLHS).parallelProduct(reactumRHS);
 
         // Rewrite tracking map
         TrackingMap tMap = new TrackingMap();

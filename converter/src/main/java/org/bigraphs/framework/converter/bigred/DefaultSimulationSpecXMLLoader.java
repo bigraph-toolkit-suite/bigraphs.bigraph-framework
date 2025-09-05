@@ -1,7 +1,7 @@
 package org.bigraphs.framework.converter.bigred;
 
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem;
 import org.bigraphs.framework.core.reactivesystem.ReactiveSystem;
@@ -31,7 +31,7 @@ public class DefaultSimulationSpecXMLLoader implements BigRedXmlLoader {
     private DefaultReactionRuleXMLLoader rxl;
     private DefaultBigraphXMLLoader bxl;
     protected String xmlFile;
-    protected DefaultDynamicSignature signature = null;
+    protected DynamicSignature signature = null;
     private AbstractSimpleReactiveSystem<PureBigraph> reactiveSystem;
 
     public DefaultSimulationSpecXMLLoader(AbstractSimpleReactiveSystem<PureBigraph> reactiveSystem) {

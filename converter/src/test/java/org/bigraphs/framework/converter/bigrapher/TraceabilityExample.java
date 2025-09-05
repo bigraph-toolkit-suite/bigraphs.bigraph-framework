@@ -5,7 +5,7 @@ import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -70,41 +70,41 @@ public class TraceabilityExample {
     }
 
     PureBigraph createAgent() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        builder.createRoot()
-                .addChild("Room").down().addChild("Computer", "link").up()
-                .addChild("Person")
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        builder.root()
+                .child("Room").down().child("Computer", "link").up()
+                .child("Person")
         ;
-        return builder.createBigraph();
+        return builder.create();
     }
 
     ReactionRule<PureBigraph> moveRoom() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
 
-        builderRedex.createRoot().addChild("Room").down().addSite().up().addChild("Person");
+        builderRedex.root().child("Room").down().site().up().child("Person");
 
-        builderReactum.createRoot().addChild("Room").down().addSite().addChild("Person");
+        builderReactum.root().child("Room").down().site().child("Person");
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     ReactionRule<PureBigraph> connectToComputer() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
 
-        builderRedex.createRoot().addChild("Room").down().addChild("Computer", "link").addChild("Person");
+        builderRedex.root().child("Room").down().child("Computer", "link").child("Person");
 
-        builderReactum.createRoot().addChild("Room").down().addChild("Computer", "link").addChild("Person", "link");
+        builderReactum.root().child("Room").down().child("Computer", "link").child("Person", "link");
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
-    private DefaultDynamicSignature createSignature() {
+    private DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(1)).assign()

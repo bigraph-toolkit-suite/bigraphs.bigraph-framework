@@ -26,13 +26,13 @@ To actually save the attributes, the map has to be supplied to the node again vi
 
 ```java
 DefaultDynamicSignature sig = createExampleSignature();
-PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(sig);
-PureBigraph bigraph = b.createRoot()
-    .addChild("A")
-    .addChild("B")
-    .addChild("C")
-    .createBigraph(); 
-BigraphEntity.NodeEntity<DefaultDynamicControl> v2 = bigraph.getNodes().stream()
+PureBigraphBuilder<DynamicSignature> b = pureBuilder(sig);
+PureBigraph bigraph = b.root()
+    .child("A")
+    .child("B")
+    .child("C")
+    .create(); 
+BigraphEntity.NodeEntity<DynamicControl> v2 = bigraph.getNodes().stream()
     .filter(x -> x.getName().equals("v2")).findAny().get();
 Map<String, Object> attributes = v2.getAttributes();
 attributes.put("data", 1309);
@@ -104,17 +104,17 @@ The same attribute is then read again to check that it is preserved.
 
 ```java
 // Create a signature and the initial state bigraph
-DefaultDynamicSignature sig = pureSignatureBuilder()
-        .addControl("Place", 0)
-        .addControl("Token", 0)
+DynamicSignature sig = pureSignatureBuilder()
+        .add("Place", 0)
+        .add("Token", 0)
         .create();
-PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(sig);
-PureBigraph bigraph = b.createRoot()
-        .addChild("Place").down().addChild("Token").up()
-        .addChild("Place")
-        .createBigraph();
+PureBigraphBuilder<DynamicSignature> b = pureBuilder(sig);
+PureBigraph bigraph = b.root()
+        .child("Place").down().child("Token").up()
+        .child("Place")
+        .create();
 // Get the node
-BigraphEntity.NodeEntity<DefaultDynamicControl> v1 = bigraph.getNodes().stream()
+BigraphEntity.NodeEntity<DynamicControl> v1 = bigraph.getNodes().stream()
         .filter(x -> x.getName().equals("v1")).findAny().get();
 // Assign the attribute
 Map<String, Object> attributes = v1.getAttributes();
@@ -122,13 +122,13 @@ attributes.put("ip", "192.168.0.1");
 v1.setAttributes(attributes);
 System.out.println(attributes);
 
-PureBigraphBuilder<DefaultDynamicSignature> bRedex = pureBuilder(sig);
-PureBigraphBuilder<DefaultDynamicSignature> bReactum = pureBuilder(sig);
-bRedex.createRoot().addChild("Place").down().addChild("Token").up()
-        .addChild("Place");
-bReactum.createRoot().addChild("Place")
-        .addChild("Place").down().addChild("Token").up();
-ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bRedex.createBigraph(), bReactum.createBigraph())
+PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig);
+PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig);
+bRedex.root().child("Place").down().child("Token").up()
+        .child("Place");
+bReactum.root().child("Place")
+        .child("Place").down().child("Token").up();
+ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bRedex.create(), bReactum.create())
         .withLabel("swapRule");
 // Important for tracing nodes through reactions, thus, to correctly preserve attributes
 TrackingMap eta = new TrackingMap();

@@ -12,7 +12,7 @@ import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.visualization.supplier.GraphvizColorSupplier;
 import org.bigraphs.framework.visualization.supplier.GraphvizShapeSupplier;
@@ -54,17 +54,17 @@ public class PNGVisualizationUnitTests {
 
     @Test
     void thesis_example() throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
-        DefaultDynamicSignature sig = pureSignatureBuilder()
-                .addControl("K", 1, ControlStatus.ATOMIC)
-                .addControl("L", 1, ControlStatus.ATOMIC)
+        DynamicSignature sig = pureSignatureBuilder()
+                .add("K", 1, ControlStatus.ATOMIC)
+                .add("L", 1, ControlStatus.ATOMIC)
                 .create();
         pureBuilder(sig)
-                .createRoot()
-                .addChild("K");
-        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
-        DiscreteIon<DefaultDynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
-        Linkings<DefaultDynamicSignature>.Closure x = pureLinkings(sig).closure("x");
-        BigraphComposite<DefaultDynamicSignature> G = ops(x).compose(ops(K_x).merge(L_x));
+                .root()
+                .child("K");
+        DiscreteIon<DynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
+        DiscreteIon<DynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
+        Linkings<DynamicSignature>.Closure x = pureLinkings(sig).closure("x");
+        BigraphComposite<DynamicSignature> G = ops(x).compose(ops(K_x).merge(L_x));
 //        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) G.getOuterBigraph(), System.out);
         BigraphGraphvizExporter.toPNG(G.getOuterBigraph(), true, new File(TARGET_DUMP_PATH + "thesis-tree-variant.png"));
         BigraphGraphvizExporter.toPNG(G.getOuterBigraph(), false, new File(TARGET_DUMP_PATH + "thesis-container-variant.png"));
@@ -148,129 +148,129 @@ public class PNGVisualizationUnitTests {
     }
 
     private PureBigraph createSimpleBigraphHierarchy() {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot().addChild(signature.getControlByName("Room"))
+        builder.root().child(signature.getControlByName("Room"))
                 .down()
-                .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer"))
+                .child(signature.getControlByName("User")).child(signature.getControlByName("Computer"))
                 .down()
-                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+                .child(signature.getControlByName("Job")).child(signature.getControlByName("Job"))
                 .up()
                 .up()
         ;
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public PureBigraph bigraphWithTwoRoots() throws InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        builder.createRoot().addChild(signature.getControlByName("Room"))
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        builder.root().child(signature.getControlByName("Room"))
                 .down()
-                .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer")).linkToOuter(network)
+                .child(signature.getControlByName("User")).child(signature.getControlByName("Computer")).linkOuter(network)
                 .down()
-                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+                .child(signature.getControlByName("Job")).child(signature.getControlByName("Job"))
         ;
 
-        builder.createRoot().addChild(signature.getControlByName("Room"))
+        builder.root().child(signature.getControlByName("Room"))
                 .down()
-                .addChild(signature.getControlByName("User")).addChild(signature.getControlByName("Computer")).linkToOuter(network)
+                .child(signature.getControlByName("User")).child(signature.getControlByName("Computer")).linkOuter(network)
                 .down()
-                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+                .child(signature.getControlByName("Job")).child(signature.getControlByName("Job"))
         ;
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public PureBigraph createBigraph_A() throws
             TypeNotExistsException, InvalidConnectionException, IOException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
-        BigraphEntity.OuterName a = builder.createOuterName("a");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.OuterName b2 = builder.createOuterName("b2");
-        BigraphEntity.InnerName jeff = builder.createInnerName("jeff_inner");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
+        BigraphEntity.InnerName roomLink = builder.createInner("tmp1_room");
+        BigraphEntity.OuterName a = builder.createOuter("a");
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
+        BigraphEntity.OuterName b2 = builder.createOuter("b2");
+        BigraphEntity.InnerName jeff = builder.createInner("jeff_inner");
+        BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
+        builder.root()
+                .child(signature.getControlByName("Room")).linkInner(roomLink)
                 .down()
-                .addSite()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
+                .site()
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
                 .down()
-                .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .child(signature.getControlByName("Job"))
+                .child(signature.getControlByName("User")).linkOuter(jeff2)
                 .up()
                 .up()
 
-                .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
+                .child(signature.getControlByName("Room")).linkInner(roomLink)
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
                 .down()
-                .addSite()
-                .addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .site()
+                .child(signature.getControlByName("Job"))
+                .child(signature.getControlByName("User")).linkOuter(jeff2)
                 .up()
                 .up()
         ;
-        builder.connectInnerToOuterName(jeff, b2);
+        builder.linkInnerToOuter(jeff, b2);
 //        builder.closeAllInnerNames();
 //        builder.makeGround();
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     public PureBigraph createBigraph_b() throws
             TypeNotExistsException, InvalidConnectionException, IOException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
-        BigraphEntity.InnerName spoolLink = builder.createInnerName("tmp_spoolLink");
-        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
-        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
+        BigraphEntity.InnerName roomLink = builder.createInner("tmp1_room");
+        BigraphEntity.InnerName spoolLink = builder.createInner("tmp_spoolLink");
+        BigraphEntity.OuterName b1 = builder.createOuter("b1");
+        BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
+        builder.root()
+                .child(signature.getControlByName("Room")).linkInner(roomLink)
                 .down()
-                .addChild(signature.getControlByName("Printer")).linkToInner(spoolLink).linkToOuter(b1)
+                .child(signature.getControlByName("Printer")).linkInner(spoolLink).linkOuter(b1)
                 .down()
-                .addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job"))
+                .child(signature.getControlByName("Job")).child(signature.getControlByName("Job")).child(signature.getControlByName("Job"))
                 .up()
                 .up()
 
-                .addChild(signature.getControlByName("Room")).linkToInner(roomLink)
+                .child(signature.getControlByName("Room")).linkInner(roomLink)
                 .down()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .down().addSite().addChild(signature.getControlByName("Spool")).linkToInner(spoolLink)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .down().site().child(signature.getControlByName("Spool")).linkInner(spoolLink)
                 .up()
-                .addChild(signature.getControlByName("Computer")).linkToOuter(b1)
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff2)
+                .child(signature.getControlByName("Computer")).linkOuter(b1)
+                .child(signature.getControlByName("User")).linkOuter(jeff2)
                 .up()
         ;
-        builder.closeInnerName(roomLink);
-        builder.closeInnerName(spoolLink);
+        builder.closeInner(roomLink);
+        builder.closeInner(spoolLink);
 //        builder.closeAllInnerNames();
 //        builder.makeGround();
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .addControl("Printer",2)
-                .addControl("User", 1)
-                .addControl("Room", 1)
-                .addControl("Spool", 1)
-                .addControl("Computer", 1)
-                .addControl("Job", 0);
+                .add("Printer",2)
+                .add("User", 1)
+                .add("Room", 1)
+                .add("Spool", 1)
+                .add("Computer", 1)
+                .add("Job", 0);
 
         return (S) defaultBuilder.create();
     }

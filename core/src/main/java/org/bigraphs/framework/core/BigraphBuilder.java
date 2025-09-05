@@ -23,19 +23,19 @@ public interface BigraphBuilder<S extends Signature<?>> {
      *
      * @return a hierarchical tree structure
      */
-    NodeHierarchy createRoot();
+    NodeHierarchy root();
 
     NodeHierarchy hierarchy(Control control);
 
     NodeHierarchy hierarchy(String controlIdentifier);
 
-    <B extends Bigraph<S>> B createBigraph();
+    <B extends Bigraph<S>> B create();
 
     void makeGround();
 
-    BigraphBuilder<S> closeAllInnerNames();
+    BigraphBuilder<S> closeInner();
 
-    BigraphBuilder<S> closeAllOuterNames();
+    BigraphBuilder<S> closeOuter();
 
     /**
      * Spawns a fresh bigraph builder but with exactly the same instance of the extended bigraph metamodel and signature
@@ -43,7 +43,7 @@ public interface BigraphBuilder<S extends Signature<?>> {
      *
      * @return a fresn bigraph builder with the same bigraph metamodel and signature metamodel
      */
-    BigraphBuilder<S> spawnNewOne();
+    BigraphBuilder<S> spawn();
 
     /**
      * A {@link NodeHierarchy} contains a collection of nodes in a tree structure and
@@ -56,9 +56,9 @@ public interface BigraphBuilder<S extends Signature<?>> {
      */
     interface NodeHierarchy<S extends Signature<? extends Control<?, ?>>> {
 
-        NodeHierarchy addChild(Control control);
+        NodeHierarchy child(Control control);
 
-        NodeHierarchy addChild(String controlName);
+        NodeHierarchy child(String controlName);
 
         /**
          * Creates a child node for the current node hierarchy with the given control label and
@@ -69,14 +69,14 @@ public interface BigraphBuilder<S extends Signature<?>> {
          * @param outerName   the outer name to connect the newly created node
          * @return the same node hierarchy instance
          */
-        NodeHierarchy addChild(String controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException;
+        NodeHierarchy child(String controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException;
 
-        default NodeHierarchy<S> addChild(Control controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException {
-            return addChild(controlName.getNamedType().stringValue(), outerName);
+        default NodeHierarchy<S> child(Control controlName, String outerName) throws InvalidConnectionException, LinkTypeNotExistsException {
+            return child(controlName.getNamedType().stringValue(), outerName);
         }
 
 
-        NodeHierarchy addChild(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException;
+        NodeHierarchy child(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException;
 
         /**
          * Adds a site to the current parent.
@@ -86,7 +86,7 @@ public interface BigraphBuilder<S extends Signature<?>> {
          * @return adds a site to the current parent
          * @see ControlIsAtomicException
          */
-        NodeHierarchy addSite();
+        NodeHierarchy site();
 
         /**
          * Creates a new hierarchy builder where the last created node is the parent of this new hierarchy.
@@ -111,7 +111,7 @@ public interface BigraphBuilder<S extends Signature<?>> {
          */
         NodeHierarchy top();
 
-        <B extends Bigraph<S>> B createBigraph();
+        <B extends Bigraph<S>> B create();
 
     }
 

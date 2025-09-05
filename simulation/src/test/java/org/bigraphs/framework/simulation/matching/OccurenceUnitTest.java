@@ -1,11 +1,11 @@
 package org.bigraphs.framework.simulation.matching;
 
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -43,22 +43,22 @@ public class OccurenceUnitTest extends AbstractUnitTestSupport {
     }
 
     private PureBigraph agent_00() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Building")
-                .down().addChild("Room").down().addChild("Room").down().addChild("User").up().up()
-                .addChild("Room").down().addChild("User");
-        PureBigraph bigraph = builder.createBigraph();
+        builder.root()
+                .child("Building")
+                .down().child("Room").down().child("Room").down().child("User").up().up()
+                .child("Room").down().child("User");
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     private PureBigraph redex_00() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot().addChild("Room").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        builder.root().child("Room").down().site();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
@@ -84,11 +84,11 @@ public class OccurenceUnitTest extends AbstractUnitTestSupport {
 
     //mit 1 root und 2 Rooms
     private PureBigraph redex_01() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot().addChild("Room").down().addSite()
-                .up().addChild("Room").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        builder.root().child("Room").down().site()
+                .up().child("Room").down().site();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
@@ -115,11 +115,11 @@ public class OccurenceUnitTest extends AbstractUnitTestSupport {
 
     //mit 2 roots
     private PureBigraph redex_02() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        builder.createRoot().addChild("Room").down().addSite();
-        builder.createRoot().addChild("Room").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        builder.root().child("Room").down().site();
+        builder.root().child("Room").down().site();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
@@ -147,7 +147,7 @@ public class OccurenceUnitTest extends AbstractUnitTestSupport {
 //    }
 
 
-    private static DefaultDynamicSignature signature00() {
+    private static DynamicSignature signature00() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()

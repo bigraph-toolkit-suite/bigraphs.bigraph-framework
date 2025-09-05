@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
@@ -30,39 +30,39 @@ public class ReactionRuleCreationUnitTest {
 
     @Test
     void name() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException {
-        DefaultDynamicSignature signature = pureSignatureBuilder()
-                .addControl("Room", 0)
-                .addControl("Computer", 1)
-                .addControl("Job", 0)
+        DynamicSignature signature = pureSignatureBuilder()
+                .add("Room", 0)
+                .add("Computer", 1)
+                .add("Job", 0)
                 .create()
                 ;
         // Redex builder
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         // Reactum builder
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
         // Connect computer over the same channel link
-        BigraphEntity.OuterName network = builder.createOuterName("network");
-        builder.createRoot()
-                .addChild("Room")
+        BigraphEntity.OuterName network = builder.createOuter("network");
+        builder.root()
+                .child("Room")
                 .down()
-                .addSite()
-                .addChild("Computer").linkToOuter(network)
+                .site()
+                .child("Computer").linkOuter(network)
                 .down()
-                .addChild("Job")
+                .child("Job")
         ;
-        builder2.createRoot()
-                .addChild("Room")
+        builder2.root()
+                .child("Room")
                 .down()
-                .addSite()
-                .addChild("Computer").linkToOuter("network") // or just specify the string
+                .site()
+                .child("Computer").linkOuter("network") // or just specify the string
                 .down()
-                .addChild("Job").addChild("Job")
+                .child("Job").child("Job")
         ;
 
         // builder.makeGround(); // useful for instances of type GroundReactionRule
         // builder2.makeGround(); // useful for instances of type GroundReactionRule
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         BigraphGraphvizExporter.toPNG(rr.getRedex(), true, new File("redex.png"));
         BigraphGraphvizExporter.toPNG(rr.getReactum(), true, new File("reactum.png"));
@@ -73,15 +73,15 @@ public class ReactionRuleCreationUnitTest {
     void create_rule_01() throws InvalidReactionRuleException, IOException {
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
 
-        builderRedex.createRoot().addChild("Room").down().addSite().addChild("Person").down().addSite().up().up().addChild("Person");
+        builderRedex.root().child("Room").down().site().child("Person").down().site().up().up().child("Person");
 
-        builderReactum.createRoot().addChild("Room").down().addSite().addChild("Person");
+        builderReactum.root().child("Room").down().site().child("Person");
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         BigraphFileModelManagement.Store.exportAsInstanceModel(redex, System.out);
         BigraphFileModelManagement.Store.exportAsInstanceModel(reactum, System.out);
         ParametricReactionRule<PureBigraph> pureBigraphParametricReactionRule = new ParametricReactionRule<>(redex, reactum);
@@ -90,7 +90,7 @@ public class ReactionRuleCreationUnitTest {
     }
 
 
-    private DefaultDynamicSignature createSignature() {
+    private DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(2)).assign()

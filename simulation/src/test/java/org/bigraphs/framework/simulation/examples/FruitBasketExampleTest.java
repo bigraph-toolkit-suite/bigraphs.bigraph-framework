@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.*;
 import org.bigraphs.framework.simulation.exceptions.BigraphSimulationException;
@@ -45,7 +45,7 @@ public class FruitBasketExampleTest {
 
     @Test
     void simulate() throws InvalidConnectionException, IOException, InvalidReactionRuleException, ReactiveSystemException, BigraphSimulationException {
-        DefaultDynamicSignature sig = createSignature();
+        DynamicSignature sig = createSignature();
         PureBigraph agent = createAgent();
         JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
         JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
@@ -122,157 +122,157 @@ public class FruitBasketExampleTest {
 
     }
 
-    public static DefaultDynamicSignature createSignature() {
+    public static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .addControl("User", 1, ControlStatus.ATOMIC)
-                .addControl("Basket", 1)
-                .addControl("Fruit", 1, ControlStatus.ATOMIC)
-                .addControl("Table", 0)
+                .add("User", 1, ControlStatus.ATOMIC)
+                .add("Basket", 1)
+                .add("Fruit", 1, ControlStatus.ATOMIC)
+                .add("Table", 0)
         ;
         return defaultBuilder.create();
     }
 
     public static PureBigraph createAgent() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(createSignature());
 
-        return b.createRoot()
-                .addChild("User")
-                .addChild("Table").down()
-                .addChild("Basket")
-                .addChild("Fruit", "f")
-                .addChild("Fruit", "f")
-                .addChild("Fruit", "f")
-                .createBigraph();
+        return b.root()
+                .child("User")
+                .child("Table").down()
+                .child("Basket")
+                .child("Fruit", "f")
+                .child("Fruit", "f")
+                .child("Fruit", "f")
+                .create();
 
     }
 
     public static PureBigraph createAgent2() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(createSignature());
 
-        return b.createRoot()
-                .addChild("User")
-                .addChild("Table").down()
-                .addChild("Basket")
-                .addChild("Fruit", "f")
-                .addChild("Fruit", "f")
-                .addChild("Fruit", "f")
-                .addChild("Fruit", "f")
-                .addChild("Fruit", "f")
-                .createBigraph();
+        return b.root()
+                .child("User")
+                .child("Table").down()
+                .child("Basket")
+                .child("Fruit", "f")
+                .child("Fruit", "f")
+                .child("Fruit", "f")
+                .child("Fruit", "f")
+                .child("Fruit", "f")
+                .create();
 
     }
 
     public static ParametricReactionRule<PureBigraph> createRR1() throws InvalidReactionRuleException, InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-        b1.createRoot()
-                .addChild("User")
-                .addChild("Table").down()
-                .addChild("Fruit", "f").addSite()
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+        b1.root()
+                .child("User")
+                .child("Table").down()
+                .child("Fruit", "f").site()
         ;
-        b2.createRoot()
-                .addChild("User", "f")
-                .addChild("Table").down()
-                .addChild("Fruit", "f").addSite()
+        b2.root()
+                .child("User", "f")
+                .child("Table").down()
+                .child("Fruit", "f").site()
         ;
-        PureBigraph redex = b1.createBigraph();
-        PureBigraph reactum = b2.createBigraph();
+        PureBigraph redex = b1.create();
+        PureBigraph reactum = b2.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr1");
         return rr;
     }
 
     public static ParametricReactionRule<PureBigraph> createRR2() throws InvalidReactionRuleException, InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-        b1.createRoot()
-                .addChild("User", "f")
-                .addChild("Table").down()
-                .addChild("Fruit", "f").addSite()
-                .addChild("Basket").down().addSite()
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+        b1.root()
+                .child("User", "f")
+                .child("Table").down()
+                .child("Fruit", "f").site()
+                .child("Basket").down().site()
         ;
-        b2.createRoot()
-                .addChild("User", "f")
-                .addChild("Table").down()
-                .addChild("Fruit", "f").addSite()
-                .addChild("Basket", "f").down().addSite()
+        b2.root()
+                .child("User", "f")
+                .child("Table").down()
+                .child("Fruit", "f").site()
+                .child("Basket", "f").down().site()
         ;
-        PureBigraph redex = b1.createBigraph();
-        PureBigraph reactum = b2.createBigraph();
+        PureBigraph redex = b1.create();
+        PureBigraph reactum = b2.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr2");
         return rr;
     }
 
     public static ParametricReactionRule<PureBigraph> createRR3() throws InvalidReactionRuleException, InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-        b1.createRoot()
-                .addChild("User", "f")
-                .addChild("Table").down()
-                .addChild("Fruit", "f").addSite()
-                .addChild("Basket", "f").down().addSite()
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+        b1.root()
+                .child("User", "f")
+                .child("Table").down()
+                .child("Fruit", "f").site()
+                .child("Basket", "f").down().site()
         ;
-        b2.createRoot()
-                .addChild("User", "f")
-                .addChild("Table").down()
-                .addSite()
-                .addChild("Basket", "f").down().addChild("Fruit", "f").addSite()
+        b2.root()
+                .child("User", "f")
+                .child("Table").down()
+                .site()
+                .child("Basket", "f").down().child("Fruit", "f").site()
         ;
-        PureBigraph redex = b1.createBigraph();
-        PureBigraph reactum = b2.createBigraph();
+        PureBigraph redex = b1.create();
+        PureBigraph reactum = b2.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr3");
         return rr;
     }
 
     public static ParametricReactionRule<PureBigraph> createRR4() throws InvalidReactionRuleException, InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-        b1.createRoot()
-                .addChild("User", "f")
-                .addChild("Table").down().addSite()
-                .addChild("Basket", "f").down().addChild("Fruit", "f").addSite()
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+        b1.root()
+                .child("User", "f")
+                .child("Table").down().site()
+                .child("Basket", "f").down().child("Fruit", "f").site()
         ;
-        b2.createOuterName("f");
-        b2.createRoot()
-                .addChild("User")
-                .addChild("Table").down().addSite()
-                .addChild("Basket").down().addChild("Fruit").addSite()
+        b2.createOuter("f");
+        b2.root()
+                .child("User")
+                .child("Table").down().site()
+                .child("Basket").down().child("Fruit").site()
         ;
-        PureBigraph redex = b1.createBigraph();
-        PureBigraph reactum = b2.createBigraph();
+        PureBigraph redex = b1.create();
+        PureBigraph reactum = b2.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr4");
         return rr;
     }
 
     //every state a self-loop
     public static ParametricReactionRule<PureBigraph> createRR5_noop() throws InvalidReactionRuleException, InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-        b1.createRoot()
-                .addChild("User", "f")
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+        b1.root()
+                .child("User", "f")
         ;
-        b2.createRoot()
-                .addChild("User", "f")
+        b2.root()
+                .child("User", "f")
         ;
-        PureBigraph redex = b1.createBigraph();
-        PureBigraph reactum = b2.createBigraph();
+        PureBigraph redex = b1.create();
+        PureBigraph reactum = b2.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr5");
         return rr;
     }
 
     public static ParametricReactionRule<PureBigraph> createRR6_noop() throws InvalidReactionRuleException, InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-        b1.createRoot()
-                .addChild("Table").down().addSite()
-                .addChild("Basket", "f").down().addChild("Fruit", "f").addSite()
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+        b1.root()
+                .child("Table").down().site()
+                .child("Basket", "f").down().child("Fruit", "f").site()
         ;
-        b2.createRoot()
-                .addChild("Table").down().addSite()
-                .addChild("Basket", "f").down().addChild("Fruit", "f").addSite()
+        b2.root()
+                .child("Table").down().site()
+                .child("Basket", "f").down().child("Fruit", "f").site()
         ;
-        PureBigraph redex = b1.createBigraph();
-        PureBigraph reactum = b2.createBigraph();
+        PureBigraph redex = b1.create();
+        PureBigraph reactum = b2.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr6");
         return rr;
     }

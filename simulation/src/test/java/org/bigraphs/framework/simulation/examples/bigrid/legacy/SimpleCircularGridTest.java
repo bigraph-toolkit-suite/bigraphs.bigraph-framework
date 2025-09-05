@@ -4,7 +4,7 @@ import org.bigraphs.framework.converter.bigrapher.BigrapherTransformator;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
@@ -40,7 +40,7 @@ public class SimpleCircularGridTest implements BigraphUnitTestSupport {
 
     @Test
     void test_01() throws Exception {
-        DefaultDynamicSignature sig = signature();
+        DynamicSignature sig = signature();
 
         int numOfCols = 4;
         int numOfRows = 4;
@@ -162,7 +162,7 @@ public class SimpleCircularGridTest implements BigraphUnitTestSupport {
         return opts;
     }
 
-    public DefaultDynamicSignature signature() {
+    public DynamicSignature signature() {
         return pureSignatureBuilder()
                 .newControl("bot", 1).status(ControlStatus.ACTIVE).assign()
                 .newControl("blocked", 0).status(ControlStatus.ACTIVE).assign()

@@ -8,8 +8,8 @@ import org.bigraphs.framework.core.Control;
 import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -40,7 +40,7 @@ public class RandomBigraphStatisticalMeasurements {
 
     @Test
     void basic() throws IOException {
-        DefaultDynamicSignature exampleSignature = createExampleSignature();
+        DynamicSignature exampleSignature = createExampleSignature();
         PureBigraph generated = new PureBigraphGenerator(exampleSignature).generate(1, 20, 1.0f);
 
         BigraphFileModelManagement.Store.exportAsInstanceModel(generated, new FileOutputStream(new File("src/test/resources/dump/exported-models/randomly-generated.xmi")));
@@ -71,7 +71,7 @@ public class RandomBigraphStatisticalMeasurements {
 
 //                int n = 1000;
                 List<double[]> collectedStats = IntStream.range(0, nTimes).boxed().map(i -> {
-                    DefaultDynamicSignature exampleSignature = createRandomSignature(26, p);
+                    DynamicSignature exampleSignature = createRandomSignature(26, p);
 //                    Collections.shuffle(exampleSignature.getControls());
                     PureBigraphGenerator generator = new PureBigraphGenerator(exampleSignature);
                     generator.generate(1, n + 1, p);
@@ -123,7 +123,7 @@ public class RandomBigraphStatisticalMeasurements {
             for (Integer n : nSize) {
 
                 List<Integer> collect = IntStream.range(0, nTimes).boxed().map(i -> {
-                    DefaultDynamicSignature exampleSignature = createRandomSignature(26, 1.0f);
+                    DynamicSignature exampleSignature = createRandomSignature(26, 1.0f);
 //                    Collections.shuffle(exampleSignature.getControls());
                     PureBigraphGenerator generator = new PureBigraphGenerator(exampleSignature);
                     PureBigraph generate = generator.generate(t, n + 1, 1.0f);
@@ -168,7 +168,7 @@ public class RandomBigraphStatisticalMeasurements {
 
                 List<Integer> collect = IntStream.range(0, nTimes).boxed()
                         .map(i -> {
-                            DefaultDynamicSignature exampleSignature = createRandomSignaturePortVariation(40, 1.0f);
+                            DynamicSignature exampleSignature = createRandomSignaturePortVariation(40, 1.0f);
 //                    Collections.shuffle(exampleSignature.getControls());
                             PureBigraphGenerator generator = new PureBigraphGenerator(exampleSignature);
                             generator.setLinkStrategy(RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE);
@@ -292,7 +292,7 @@ public class RandomBigraphStatisticalMeasurements {
         return (S) signatureBuilder.create();
     }
 
-    private DefaultDynamicSignature createRandomSignature(int n, float probOfPositiveArity) {
+    private DynamicSignature createRandomSignature(int n, float probOfPositiveArity) {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
@@ -305,13 +305,13 @@ public class RandomBigraphStatisticalMeasurements {
         for (int i = floorNum; i < n; i++) {
             signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
         }
-        DefaultDynamicSignature s = signatureBuilder.create();
-        ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
+        DynamicSignature s = signatureBuilder.create();
+        ArrayList<DynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
         return signatureBuilder.createWith(new LinkedHashSet<>(cs));
     }
 
-    private DefaultDynamicSignature createRandomSignaturePortVariation(int n, float probOfPositiveArity) {
+    private DynamicSignature createRandomSignaturePortVariation(int n, float probOfPositiveArity) {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
 //        char[] chars = IntStream.rangeClosed('A', 'Z')
@@ -335,8 +335,8 @@ public class RandomBigraphStatisticalMeasurements {
                     .newControl().identifier(StringTypedName.of(String.valueOf(s)))
                     .arity(FiniteOrdinal.ofInteger(0)).assign();
         }
-        DefaultDynamicSignature s = signatureBuilder.create();
-        ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
+        DynamicSignature s = signatureBuilder.create();
+        ArrayList<DynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
         return signatureBuilder.createWith(new LinkedHashSet<>(cs));
     }

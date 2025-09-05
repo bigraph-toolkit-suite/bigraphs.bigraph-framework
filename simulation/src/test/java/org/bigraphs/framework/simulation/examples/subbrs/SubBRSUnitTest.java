@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionGraph;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
@@ -110,7 +110,7 @@ public class SubBRSUnitTest extends BaseExampleTestSupport {
                     if (result != null) {
                         result = liftSigOfAgent(createSignatureMain(), result);
                         eb(result, "resultSubBRS");
-                        Bigraph<DefaultDynamicSignature> newAgent = ops(context).compose(redex).compose(result).getOuterBigraph();
+                        Bigraph<DynamicSignature> newAgent = ops(context).compose(redex).compose(result).getOuterBigraph();
                         eb(newAgent, "newAgent");
 
                         MainBRS m2 = new MainBRS((PureBigraph) newAgent);
@@ -192,8 +192,8 @@ public class SubBRSUnitTest extends BaseExampleTestSupport {
     }
 
     // TODO bigraphUtil
-    public static PureBigraph liftSigOfAgent(DefaultDynamicSignature sig, PureBigraph agent) throws Exception {
-        EcoreBigraph.Stub<DefaultDynamicSignature> stub = new EcoreBigraph.Stub<>(agent);
+    public static PureBigraph liftSigOfAgent(DynamicSignature sig, PureBigraph agent) throws Exception {
+        EcoreBigraph.Stub<DynamicSignature> stub = new EcoreBigraph.Stub<>(agent);
         EPackage bMetaModel = createOrGetBigraphMetaModel(sig);
 
         List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(
@@ -206,7 +206,7 @@ public class SubBRSUnitTest extends BaseExampleTestSupport {
                         bMetaModel,
                         eObjects.get(0)
                 )
-                .createBigraph();
+                .create();
         return bigraph;
     }
 
@@ -233,146 +233,146 @@ public class SubBRSUnitTest extends BaseExampleTestSupport {
 
 
     public PureBigraph createMainModel() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignatureMain());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignatureMain());
 
-        builder.createRoot()
-                .addChild("Store")
+        builder.root()
+                .child("Store")
                 .down()
-                .addChild("Item").down().addChild("Waiting").addSite()
+                .child("Item").down().child("Waiting").site()
 //                .addChild("Item").down().addSite()
 //                .addChild("Item").down().addSite()
-                .top().addChild("Queue")
+                .top().child("Queue")
         ;
-        PureBigraph raw = builder.createBigraph();
-        Bigraph<DefaultDynamicSignature> composed = ops(raw).compose(createAddCompAgent(1, 1)).getOuterBigraph();
+        PureBigraph raw = builder.create();
+        Bigraph<DynamicSignature> composed = ops(raw).compose(createAddCompAgent(1, 1)).getOuterBigraph();
         return (PureBigraph) composed;
     }
 
     public PureBigraph createSubModel() {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignatureSub());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignatureSub());
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public static PureBigraph createAddCompAgent(final int left, final int right) throws Exception {
-        DefaultDynamicSignature signature = createSignatureMain();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createSignatureMain();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy leftNode =
+        PureBigraphBuilder<DynamicSignature>.Hierarchy leftNode =
                 builder.hierarchy(signature.getControlByName("Left"))
-                        .addChild("S");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rightNode =
+                        .child("S");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy rightNode =
                 builder.hierarchy(signature.getControlByName("Right"))
-                        .addChild("S");
+                        .child("S");
 
         for (int i = 0; i < left - 1; i++) {
-            leftNode = leftNode.down().addChild("S");
+            leftNode = leftNode.down().child("S");
         }
-        leftNode = leftNode.down().addChild("Z").top();
+        leftNode = leftNode.down().child("Z").top();
         for (int i = 0; i < right - 1; i++) {
-            rightNode = rightNode.down().addChild("S");
+            rightNode = rightNode.down().child("S");
         }
-        rightNode = rightNode.down().addChild("Z").top();
+        rightNode = rightNode.down().child("Z").top();
 
-        builder.createRoot()
-                .addChild("Plus")
+        builder.root()
+                .child("Plus")
                 .down()
-                .addChild(leftNode)
-                .addChild(rightNode)
+                .child(leftNode)
+                .child(rightNode)
         ;
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public static ReactionRule<PureBigraph> mainR1() throws Exception {
-        DefaultDynamicSignature signature = createSignatureMain();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createSignatureMain();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Store").down()
-                .addChild("Item").down().addChild("Waiting").addSite().up()
-                .addSite();
+        builder.root()
+                .child("Store").down()
+                .child("Item").down().child("Waiting").site().up()
+                .site();
 
-        builder2.createRoot()
-                .addChild("Store")
+        builder2.root()
+                .child("Store")
                 .down()
-                .addChild("Item").down().addChild("Ready").addSite().up()
-                .addSite();
+                .child("Item").down().child("Ready").site().up()
+                .site();
 
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum); //instantiationMap
         return rr;
     }
 
     public static SubBigraphMatchPredicate<PureBigraph> createPredicate() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignatureMain());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignatureMain());
 
-        builder.createRoot()
-                .addChild("Item").down()
-                .addChild("Ready")
-                .addSite()
+        builder.root()
+                .child("Item").down()
+                .child("Ready")
+                .site()
         ;
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
     public static SubBigraphMatchPredicate<PureBigraph> createPredicateEmpty() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignatureMain());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignatureMain());
 
-        builder.createRoot().addChild("Item").down().addChild("Waiting").addSite();
+        builder.root().child("Item").down().child("Waiting").site();
 //        builder.createRoot().addChild("Queue").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
     public static ReactionRule<PureBigraph> mainR2() throws Exception {
-        DefaultDynamicSignature signature = createSignatureMain();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createSignatureMain();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Store")
+        builder.root()
+                .child("Store")
                 .down()
-                .addChild("Item").down()
-                .addChild("Ready").addChild("Result").down().addSite().up().up()
-                .addSite();
+                .child("Item").down()
+                .child("Ready").child("Result").down().site().up().up()
+                .site();
 
-        builder2.createRoot()
-                .addChild("Store")
+        builder2.root()
+                .child("Store")
                 .down()
-                .addChild("Item").down()
-                .addChild("Finished").addChild("Result").down().addSite().up().up()
-                .addSite();
+                .child("Item").down()
+                .child("Finished").child("Result").down().site().up().up()
+                .site();
 
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum); //instantiationMap
         return rr;
     }
 
     public static ReactionRule<PureBigraph> mainR3() throws Exception {
-        DefaultDynamicSignature signature = createSignatureMain();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createSignatureMain();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Store")
+        builder.root()
+                .child("Store")
                 .down()
-                .addChild("Item").down()
-                .addChild("Finished").addChild("Result").down().addSite().up().up()
-                .addSite().top()
+                .child("Item").down()
+                .child("Finished").child("Result").down().site().up().up()
+                .site().top()
         ;
-        builder.createRoot().addChild("Queue").down().addSite();
+        builder.root().child("Queue").down().site();
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy item = builder2.hierarchy("Item").addSite();
-        builder2.createRoot()
-                .addChild("Store").down().addSite().top();
-        builder2.createRoot().addChild("Queue").down().addChild(item).addSite();
+        PureBigraphBuilder<DynamicSignature>.Hierarchy item = builder2.hierarchy("Item").site();
+        builder2.root()
+                .child("Store").down().site().top();
+        builder2.root().child("Queue").down().child(item).site();
 
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum); //instantiationMap
         return rr;
     }
@@ -381,80 +381,80 @@ public class SubBRSUnitTest extends BaseExampleTestSupport {
      * react r1 = Left.S | Right.S -> Left | Right;
      */
     public static ReactionRule<PureBigraph> subR1() throws Exception {
-        DefaultDynamicSignature signature = createSignatureMain();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createSignatureMain();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Left").down().addChild("S").down().addSite()
+        builder.root()
+                .child("Left").down().child("S").down().site()
                 .top()
-                .addChild("Right").down().addSite()
+                .child("Right").down().site()
         ;
-        builder2.createRoot()
-                .addChild("Left").down().addSite()
+        builder2.root()
+                .child("Left").down().site()
                 .top()
-                .addChild("Right").down().addChild("S").down().addSite()
+                .child("Right").down().child("S").down().site()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum); //instantiationMap
         return rr;
     }
 
     public static ReactionRule<PureBigraph> subR2() throws Exception {
-        DefaultDynamicSignature signature = createSignatureSub();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createSignatureSub();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Left").down().addChild("Z")
+        builder.root()
+                .child("Left").down().child("Z")
                 .top()
-                .addChild("Right").down().addChild("S").down().addSite()
+                .child("Right").down().child("S").down().site()
         ;
-        builder2.createRoot()
-                .addChild("S").down().addSite()
+        builder2.root()
+                .child("S").down().site()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     public static ReactionRule<PureBigraph> subR3() throws Exception {
-        DefaultDynamicSignature signature = createSignatureMain();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createSignatureMain();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Plus")
-                .down().addChild("S").down().addSite()
+        builder.root()
+                .child("Plus")
+                .down().child("S").down().site()
                 .top()
         ;
-        builder2.createRoot()
-                .addChild("Result")
-                .down().addChild("S").down().addSite()
+        builder2.root()
+                .child("Result")
+                .down().child("S").down().site()
                 .top()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
-    public static DefaultDynamicSignature createSignatureMain() {
-        DefaultDynamicSignature sigM = pureSignatureBuilder()
-                .addControl("Item", 0)
-                .addControl("Queue", 0)
-                .addControl("Store", 0)
-                .addControl("Waiting", 0, ControlStatus.PASSIVE)
-                .addControl("Ready", 0, ControlStatus.PASSIVE)
-                .addControl("Finished", 0, ControlStatus.PASSIVE)
+    public static DynamicSignature createSignatureMain() {
+        DynamicSignature sigM = pureSignatureBuilder()
+                .add("Item", 0)
+                .add("Queue", 0)
+                .add("Store", 0)
+                .add("Waiting", 0, ControlStatus.PASSIVE)
+                .add("Ready", 0, ControlStatus.PASSIVE)
+                .add("Finished", 0, ControlStatus.PASSIVE)
                 .create();
 
 
-        DefaultDynamicSignature merged = BigraphUtil.mergeSignatures(sigM, createSignatureSub());
+        DynamicSignature merged = BigraphUtil.mergeSignatures(sigM, createSignatureSub());
         return merged;
     }
 
-    public static DefaultDynamicSignature createSignatureSub() {
+    public static DynamicSignature createSignatureSub() {
         return pureSignatureBuilder()
                 .newControl().identifier(StringTypedName.of("Plus")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("Sum")).arity(FiniteOrdinal.ofInteger(0)).assign()

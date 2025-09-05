@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.exceptions.*;
 import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.factory.BigraphFactory;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -143,56 +143,56 @@ public class AddExample extends BaseExampleTestSupport {
      * big start = Plus . (numberLeft | numberRight);
      */
     public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy leftNode =
+        PureBigraphBuilder<DynamicSignature>.Hierarchy leftNode =
                 builder.hierarchy(signature.getControlByName("Left"))
-                        .addChild("S");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rightNode =
+                        .child("S");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy rightNode =
                 builder.hierarchy(signature.getControlByName("Right"))
-                        .addChild("S");
+                        .child("S");
 
         for (int i = 0; i < left - 1; i++) {
-            leftNode = leftNode.down().addChild("S");
+            leftNode = leftNode.down().child("S");
         }
-        leftNode = leftNode.down().addChild("Z").top();
+        leftNode = leftNode.down().child("Z").top();
         for (int i = 0; i < right - 1; i++) {
-            rightNode = rightNode.down().addChild("S");
+            rightNode = rightNode.down().child("S");
         }
-        rightNode = rightNode.down().addChild("Z").top();
+        rightNode = rightNode.down().child("Z").top();
 
-        builder.createRoot()
-                .addChild("Plus")
+        builder.root()
+                .child("Plus")
                 .down()
-                .addChild(leftNode)
-                .addChild(rightNode)
+                .child(leftNode)
+                .child(rightNode)
 //                .addChild(s.top())
         ;
         builder.makeGround();
-        return builder.createBigraph();
+        return builder.create();
     }
 
     /**
      * react r1 = Left.S | Right.S -> Left | Right;
      */
     public static ReactionRule<PureBigraph> createReactionRule_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Left").down().addChild("S").down().addSite()
+        builder.root()
+                .child("Left").down().child("S").down().site()
                 .top()
-                .addChild("Right").down().addSite()
+                .child("Right").down().site()
         ;
-        builder2.createRoot()
-                .addChild("Left").down().addSite()
+        builder2.root()
+                .child("Left").down().site()
                 .top()
-                .addChild("Right").down().addChild("S").down().addSite()
+                .child("Right").down().child("S").down().site()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
 //        InstantiationMap instantiationMap = InstantiationMap.create(2);
 //        instantiationMap.map(0, 0);
 //        instantiationMap.map(1, 0);
@@ -201,20 +201,20 @@ public class AddExample extends BaseExampleTestSupport {
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_2() throws ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Left").down().addChild("Z")
+        builder.root()
+                .child("Left").down().child("Z")
                 .top()
-                .addChild("Right").down().addChild("S").down().addSite()
+                .child("Right").down().child("S").down().site()
         ;
-        builder2.createRoot()
-                .addChild("S").down().addSite()
+        builder2.root()
+                .child("S").down().site()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
@@ -222,7 +222,7 @@ public class AddExample extends BaseExampleTestSupport {
         PureBigraph context = (PureBigraph) next.getContext();
         PureBigraph redex = (PureBigraph) next.getRedex();
         Bigraph contextIdentity = next.getContextIdentity();
-        ElementaryBigraph<DefaultDynamicSignature> identityForParams = next.getRedexIdentity();
+        ElementaryBigraph<DynamicSignature> identityForParams = next.getRedexIdentity();
         PureBigraph contextComposed = (PureBigraph) BigraphFactory.ops(context).parallelProduct(contextIdentity).getOuterBigraph();
 //            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
 //                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
@@ -282,7 +282,7 @@ public class AddExample extends BaseExampleTestSupport {
 
     }
 
-    private static DefaultDynamicSignature createExampleSignature() {
+    private static DynamicSignature createExampleSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Plus")).arity(FiniteOrdinal.ofInteger(0)).assign()

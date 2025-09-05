@@ -44,7 +44,7 @@ Signature composition is commutative and associative iff signatures are _consist
 <br/>
 <br/>
 
-Signature composition can be performed via the method [org.bigraphs.framework.core.utils.BigraphUtil#composeSignatures](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/utils/BigraphUtil.html#composeSignatures(org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature,org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature)).
+Signature composition can be performed via the method [org.bigraphs.framework.core.utils.BigraphUtil#composeSignatures](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/utils/BigraphUtil.html#composeSignatures(org.bigraphs.framework.core.impl.signature.DynamicSignature,org.bigraphs.framework.core.impl.signature.DynamicSignature)).
 
 :::note
 If signatures are not consistent, the exception `SignatureNotConsistentException` will be thrown.
@@ -53,20 +53,20 @@ If signatures are not consistent, the exception `SignatureNotConsistentException
 **Example**
 
 ```java
-DefaultDynamicSignature sig1 = pureSignatureBuilder()
-        .addControl("A", 1)
-        .addControl("B", 1)
-        .addControl("C", 1)
-        .addControl("D", 1)
+DynamicSignature sig1 = pureSignatureBuilder()
+        .add("A", 1)
+        .add("B", 1)
+        .add("C", 1)
+        .add("D", 1)
         .create();
 
-DefaultDynamicSignature sig3 = pureSignatureBuilder()
-        .addControl("E", 2)
-        .addControl("F", 3)
-        .addControl("G", 4)
+DynamicSignature sig3 = pureSignatureBuilder()
+        .add("E", 2)
+        .add("F", 3)
+        .add("G", 4)
         .create();
 
-DefaultDynamicSignature sigComp_1_3 = BigraphUtil.composeSignatures(sig1, sig3);
+DynamicSignature sigComp_1_3 = BigraphUtil.composeSignatures(sig1, sig3);
 assert sigComp_1_3.getControls().size() == 7;
 ```
 
@@ -106,25 +106,25 @@ operator [\[2\]](#ref2).
 <br/>
 <br/>
 
-Merging signatures can be performed via the method [org.bigraphs.framework.core.utils.BigraphUtil#mergeSignatures](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/utils/BigraphUtil.html#mergeSignatures(org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature,org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature))
+Merging signatures can be performed via the method [org.bigraphs.framework.core.utils.BigraphUtil#mergeSignatures](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/utils/BigraphUtil.html#mergeSignatures(org.bigraphs.framework.core.impl.signature.DynamicSignature,org.bigraphs.framework.core.impl.signature.DynamicSignature))
 
 **Example**
 
 ```java
-DefaultDynamicSignature sig1 = pureSignatureBuilder()
-        .addControl("A", 1)
-        .addControl("B", 1)
-        .addControl("C", 1)
-        .addControl("D", 1)
+DynamicSignature sig1 = pureSignatureBuilder()
+        .add("A", 1)
+        .add("B", 1)
+        .add("C", 1)
+        .add("D", 1)
         .create();
-DefaultDynamicSignature sig2 = pureSignatureBuilder()
-        .addControl("A", 2)
-        .addControl("B", 2)
-        .addControl("C", 2)
-        .addControl("D", 2)
+DynamicSignature sig2 = pureSignatureBuilder()
+        .add("A", 2)
+        .add("B", 2)
+        .add("C", 2)
+        .add("D", 2)
         .create();
 // The last argument specifies the left-side merging (0), or the right-side merging (1)
-DefaultDynamicSignature sigMerge_1_2 = BigraphUtil.mergeSignatures(sig1, sig2, 0);
+DynamicSignature sigMerge_1_2 = BigraphUtil.mergeSignatures(sig1, sig2, 0);
 assert sigMerge_1_2.getControls().size() == 4;
 ```
 

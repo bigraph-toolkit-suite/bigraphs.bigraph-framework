@@ -3,7 +3,7 @@ package org.bigraphs.framework.simulation;
 import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
@@ -50,10 +50,10 @@ public class PredicateListenerUnitTests {
 
     @Test
     void test_listeners() throws InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createExampleSignature());
 
-        PureBigraph agent = builder.createRoot()
-                .addChild("Room").addChild("User").addChild("Computer").createBigraph();
+        PureBigraph agent = builder.root()
+                .child("Room").child("User").child("Computer").create();
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.setAgent(agent);
@@ -117,18 +117,18 @@ public class PredicateListenerUnitTests {
     }
 
     private ReactionRule<PureBigraph> createRR3() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> redexB = pureBuilder(createExampleSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> reactumB = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DynamicSignature> redexB = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DynamicSignature> reactumB = pureBuilder(createExampleSignature());
 
-        PureBigraph redex = redexB.createRoot().addChild("User").down().addChild("Token").addChild("Token").createBigraph();
-        PureBigraph reactum = reactumB.createRoot().addChild("User").down().addChild("Token").addChild("Token").addChild("Token").createBigraph();
+        PureBigraph redex = redexB.root().child("User").down().child("Token").child("Token").create();
+        PureBigraph reactum = reactumB.root().child("User").down().child("Token").child("Token").child("Token").create();
 
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     ReactiveSystemPredicate<PureBigraph> createPredicateIso() {
-        PureBigraph big = pureBuilder(createExampleSignature()).createRoot()
-                .addChild("Room").addChild("User").down().addChild("Token").addChild("Token").up().addChild("Computer").createBigraph();
+        PureBigraph big = pureBuilder(createExampleSignature()).root()
+                .child("Room").child("User").down().child("Token").child("Token").up().child("Computer").create();
         return BigraphIsoPredicate.create(big);
     }
 
@@ -138,27 +138,27 @@ public class PredicateListenerUnitTests {
     }
 
     ParametricReactionRule<PureBigraph> createRR1() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> redexB = pureBuilder(createExampleSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> reactumB = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DynamicSignature> redexB = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DynamicSignature> reactumB = pureBuilder(createExampleSignature());
 
-        PureBigraph redex = redexB.createRoot().addChild("User").createBigraph();
-        PureBigraph reactum = reactumB.createRoot().addChild("User").down().addChild("Token").createBigraph();
+        PureBigraph redex = redexB.root().child("User").create();
+        PureBigraph reactum = reactumB.root().child("User").down().child("Token").create();
 
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     ParametricReactionRule<PureBigraph> createRR2() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> redexB = pureBuilder(createExampleSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> reactumB = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DynamicSignature> redexB = pureBuilder(createExampleSignature());
+        PureBigraphBuilder<DynamicSignature> reactumB = pureBuilder(createExampleSignature());
 
-        PureBigraph redex = redexB.createRoot().addChild("User").down().addChild("Token").createBigraph();
-        PureBigraph reactum = reactumB.createRoot().addChild("User").down().addChild("Token").addChild("Token").createBigraph();
+        PureBigraph redex = redexB.root().child("User").down().child("Token").create();
+        PureBigraph reactum = reactumB.root().child("User").down().child("Token").child("Token").create();
 
         return new ParametricReactionRule<>(redex, reactum);
     }
 
-    private DefaultDynamicSignature createExampleSignature() {
-        DefaultDynamicSignature signature = pureSignatureBuilder()
+    private DynamicSignature createExampleSignature() {
+        DynamicSignature signature = pureSignatureBuilder()
                 .newControl("User", 1).assign()
                 .newControl("Job", 1).assign()
                 .newControl("Token", 1).assign()

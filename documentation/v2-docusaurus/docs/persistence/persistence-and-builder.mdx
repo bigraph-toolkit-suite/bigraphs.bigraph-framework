@@ -31,14 +31,14 @@ This example shows how to store a bigraph and its signature to the filesystem, a
 
 First, we create a signature and a bigraph for testing:
 ```java
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 
-public DefaultDynamicSignature sig() {
+public DynamicSignature sig() {
     // (1) Create Sample Signature
     return pureSignatureBuilder()
-                .addControl("A", 0)
-                .addControl("B", 1)
-                .addControl("C", 2)
+                .add("A", 0)
+                .add("B", 1)
+                .add("C", 2)
                 .create();
 }
 ```
@@ -48,11 +48,11 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 
 // (2) Create Sample Bigraph
 public PureBigraph big() {
-    return pureBuilder(sig()).createRoot()
-                .addChild("A")
-                .addChild("B")
-                .addChild("C")
-                .createBigraph();
+    return pureBuilder(sig()).root()
+                .child("A")
+                .child("B")
+                .child("C")
+                .create();
 }
 ```
 
@@ -61,7 +61,7 @@ public PureBigraph big() {
 ```java
 public void save_and_load_signature_model() throws IOException {
     // (0) Create Sample Signature
-    DefaultDynamicSignature sigOriginal = sig();
+    DynamicSignature sigOriginal = sig();
 
     // (1) Store Signature on Filesystem
     // Console output
@@ -75,7 +75,7 @@ public void save_and_load_signature_model() throws IOException {
             "sigMetaModel.ecore",
             "sigModel.xmi"
     );
-    DefaultDynamicSignature sigLoaded = createOrGetSignature(eObjectsSig.get(0));
+    DynamicSignature sigLoaded = createOrGetSignature(eObjectsSig.get(0));
 
     // (3) Compare
     System.out.println(sigOriginal);

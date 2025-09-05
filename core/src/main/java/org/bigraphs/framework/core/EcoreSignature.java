@@ -1,6 +1,6 @@
 package org.bigraphs.framework.core;
 
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.KindSignature;
 import org.eclipse.collections.api.map.ImmutableMap;
 import org.eclipse.collections.impl.factory.Maps;
@@ -46,7 +46,7 @@ public interface EcoreSignature extends EcoreBigraphExt {
      * If an instance model is invalid, a runtime exception will be thrown.
      */
     final ImmutableMap<Class<? extends EcoreSignature>, Consumer<EObject>> VALIDATORS = Maps.immutable.of(
-            DefaultDynamicSignature.class, EcoreSignature::validateBSignature,
+            DynamicSignature.class, EcoreSignature::validateBSignature,
             KindSignature.class, EcoreSignature::validateBKindSignature
     );
 

@@ -1,7 +1,7 @@
 
 void getting_started_guide() throws InvalidConnectionException, IncompatibleSignatureException, IncompatibleInterfaceException { 
 	// ...
-	PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-	builder.createRoot().addChild("User", "login").addChild("Computer", "login");
-	PureBigraph bigraph = builder.createRoot().addChild("User", "login").addChild("Computer", "login").createBigraph();
+	PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+	builder.root().child("User", "login").child("Computer", "login");
+	PureBigraph bigraph = builder.root().child("User", "login").child("Computer", "login").create();
 }

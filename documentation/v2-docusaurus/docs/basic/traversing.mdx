@@ -1,6 +1,6 @@
 ---
 id: traversing
-title: Analyzing and Traversing Bigraphs
+title: Structure Analysis
 sidebar_position: 3
 ---
 
@@ -153,13 +153,13 @@ BigraphEntity.OuterName y1 = builder.createOuterName("y1");
 BigraphEntity.OuterName y2 = builder.createOuterName("y2");
 BigraphEntity.OuterName y3 = builder.createOuterName("y3");
 BigraphEntity.InnerName x1 = builder.createInnerName("x1");
-builder.createRoot()
-        .connectByEdge("D", "D", "D").linkToOuter(y1)
-        .addChild("D").linkToOuter(y1).down()
-        .addChild("D").linkToOuter(y2).addChild("D").linkToOuter(y3)
-        .addChild("User").linkToOuter(y1).up()
-        .addChild("D").linkToInner(x1);
-PureBigraph bigraph1 = builder.createBigraph();
+builder.root()
+        .connectByEdge("D", "D", "D").linkOuter(y1)
+        .child("D").linkOuter(y1).down()
+        .child("D").linkOuter(y2).child("D").linkOuter(y3)
+        .child("User").linkOuter(y1).up()
+        .child("D").linkInner(x1);
+PureBigraph bigraph1 = builder.create();
 
 bigraph1.getAllLinks().forEach(l -> {
     List<BigraphEntity> pointsFromLink = bigraph1.getPointsFromLink(l);

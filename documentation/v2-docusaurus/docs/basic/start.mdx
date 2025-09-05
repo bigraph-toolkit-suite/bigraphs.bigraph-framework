@@ -71,7 +71,7 @@ The example demonstrates how to add two nodes (**User** and **Computer**) under 
 The resulting bigraph is illustrated below.
 
 :::info
-Note that the method `addChild` will throw an `InvalidConnectionException`
+Note that the method `child()` will throw an `InvalidConnectionException`
 if the node cannot be connected to the outer name (because of its arity specified by the
 signature).
 :::
@@ -165,8 +165,8 @@ In addition, the bigraph builder supports the creation of **hierarchies**, which
 
 **Example:**
 ```java
-PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy h1 = pureBuilder(sig).hierarchy("A");
-pureBuilder(sig).createRoot().addChild(h1);
+PureBigraphBuilder<DynamicSignature>.Hierarchy h1 = pureBuilder(sig).hierarchy("A");
+pureBuilder(sig).root().child(h1);
 ```
 Hierarchies can be created and extended independently, and then added as child nodes at any point in the bigraph.
 Links between nodes across different hierarchies should be established via inner or outer names.

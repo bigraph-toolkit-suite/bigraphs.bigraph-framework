@@ -47,9 +47,9 @@ public class KindSignatureBuilder extends
         return builder.identifier(StringTypedName.of(name)).arity(FiniteOrdinal.ofInteger(arity)).assign();
     }
 
-    private Optional<DefaultDynamicControl> getControl(String nameOfCtrl) {
+    private Optional<DynamicControl> getControl(String nameOfCtrl) {
         return getControls().stream().filter(x -> x.getNamedType().stringValue().equals(nameOfCtrl))
-                .map(x -> (DefaultDynamicControl) x)
+                .map(x -> (DynamicControl) x)
                 .findFirst();
     }
 
@@ -68,12 +68,12 @@ public class KindSignatureBuilder extends
      * @return the same instance of the kind signature builder
      */
     public KindSignatureBuilder addActiveKindSort(String control, Collection<String> containingControls) throws ControlNotExistsException {
-        Optional<DefaultDynamicControl> ctrl = getControl(control);
+        Optional<DynamicControl> ctrl = getControl(control);
         if (!ctrl.isPresent()) throw new ControlNotExistsException(control);
         initMapIfRequired();
-        List<DefaultDynamicControl> collect = getControls().stream()
+        List<DynamicControl> collect = getControls().stream()
                 .filter(x -> containingControls.contains(x.getNamedType().stringValue()))
-                .map(x -> (DefaultDynamicControl) x)
+                .map(x -> (DynamicControl) x)
                 .collect(Collectors.toList());
         kindSortsMap.put(control, KindSort.create(ctrl.get(), Lists.mutable.ofAll(collect)));
         return self();
@@ -90,7 +90,7 @@ public class KindSignatureBuilder extends
      * @return
      */
     public KindSignatureBuilder addPassiveKindSort(String control) throws ControlNotExistsException {
-        Optional<DefaultDynamicControl> ctrl = getControl(control);
+        Optional<DynamicControl> ctrl = getControl(control);
         if (!ctrl.isPresent()) throw new ControlNotExistsException(control);
         initMapIfRequired();
         kindSortsMap.put(control, KindSort.create(ctrl.get(), Lists.mutable.empty()));
@@ -121,21 +121,21 @@ public class KindSignatureBuilder extends
 
     @Override
     public KindSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls) {
-        KindSignature sig = new KindSignature((Set<DefaultDynamicControl>) controls);
+        KindSignature sig = new KindSignature((Set<DynamicControl>) controls);
         BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
         return sig;
     }
 
     public KindSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls,
                                     Collection<KindSort> kindSorts) {
-        KindSignature sig = new KindSignature((Set<DefaultDynamicControl>) controls, kindSorts);
+        KindSignature sig = new KindSignature((Set<DynamicControl>) controls, kindSorts);
         BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig);
         return sig;
     }
 
     public KindSignature createWith(Iterable<? extends Control<StringTypedName, FiniteOrdinal<Integer>>> controls,
                                     Collection<KindSort> kindSorts, EMetaModelData metaModelData) {
-        KindSignature sig = new KindSignature((Set<DefaultDynamicControl>) controls, kindSorts);
+        KindSignature sig = new KindSignature((Set<DynamicControl>) controls, kindSorts);
         BigraphFactory.createOrGetSignatureMetaModel((AbstractEcoreSignature<?>) sig, metaModelData);
         return sig;
     }

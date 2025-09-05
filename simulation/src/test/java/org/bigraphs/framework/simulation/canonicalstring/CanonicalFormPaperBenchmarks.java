@@ -7,7 +7,7 @@ import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
 import org.bigraphs.framework.core.alg.generators.RandomBigraphGeneratorSupport;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
@@ -45,7 +45,7 @@ public class CanonicalFormPaperBenchmarks {
         StringBuilder results = new StringBuilder();
         for (int a = 1; a < maxArity; a++) {
             suffix = "ar" + a;
-            DefaultDynamicSignature signature = createRandomSignatureFixedArity(6, 1f, a);
+            DynamicSignature signature = createRandomSignatureFixedArity(6, 1f, a);
 //            RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE;
             RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.NONE;
             String s = measureTimeComplexity(new float[]{1000f, 10000f, 100f, p}, signature, linkStrategy, suffix);
@@ -85,7 +85,7 @@ public class CanonicalFormPaperBenchmarks {
             for (int a = 0; a < aritySizes.length; a++) {
 
                 suffix = "" + aritySizes[a];
-                DefaultDynamicSignature signature = createRandomSignatureFixedArity(1, 1f, aritySizes[a]);
+                DynamicSignature signature = createRandomSignatureFixedArity(1, 1f, aritySizes[a]);
                 PureBigraph generate = new PureBigraphGenerator(signature)
                         .setLinkStrategy(linkStrategy)
                         .generate(1, numOfNodes, probs[p]);
@@ -108,7 +108,7 @@ public class CanonicalFormPaperBenchmarks {
     }
 
     public static String measureTimeComplexity(
-            float[] params, DefaultDynamicSignature randomSignature, RandomBigraphGeneratorSupport.LinkStrategy linkStrategy, String suffix
+            float[] params, DynamicSignature randomSignature, RandomBigraphGeneratorSupport.LinkStrategy linkStrategy, String suffix
     ) {
         Objects.requireNonNull(params, "Parameters must not be null");
         if (params.length != 4) {

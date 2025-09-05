@@ -5,7 +5,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -63,32 +63,32 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
 //                .newControl("dat", 1).assign()
                 .newControl("dev", 1).assign();
 
-        DefaultDynamicSignature defaultDynamicSignature = assign.create();
+        DynamicSignature dynamicSignature = assign.create();
 
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(defaultDynamicSignature);
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(dynamicSignature);
 
         //loc(loc(loc(loc(dev1) | loc(dev2 | dev3))) | loc() | loc(dev 4))
-        BigraphEntity.OuterName z = builder.createOuterName("z");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy first = builder.hierarchy("loc").linkToOuter(z)
-                .addChild("loc", "a")
+        BigraphEntity.OuterName z = builder.createOuter("z");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy first = builder.hierarchy("loc").linkOuter(z)
+                .child("loc", "a")
                 .down()
-                .addChild("loc", "b").down().addChild("dev", "1").up()
-                .addChild("loc", "c").down().addChild("dev", "2").addChild("dev", "3").up();
+                .child("loc", "b").down().child("dev", "1").up()
+                .child("loc", "c").down().child("dev", "2").child("dev", "3").up();
 
-        builder.createRoot()
-                .addChild("in").down().addChild("f").up()
-                .addChild("out")
-                .addChild("loc", "top")
+        builder.root()
+                .child("in").down().child("f").up()
+                .child("out")
+                .child("loc", "top")
                 .down()
-                .addChild(first.top())
-                .addChild("loc", "d")
-                .addChild("loc", "e").down().addChild("dev", "4").up();
-        PureBigraph agent = builder.createBigraph();
+                .child(first.top())
+                .child("loc", "d")
+                .child("loc", "e").down().child("dev", "4").up();
+        PureBigraph agent = builder.create();
 
 
-        ParametricReactionRule<PureBigraph> rr0 = createReactionRule0(defaultDynamicSignature);
-        ParametricReactionRule<PureBigraph> rr1 = initialization_Rule(defaultDynamicSignature);
-        ParametricReactionRule<PureBigraph> rrCollectDev = collectDevices_Rule(defaultDynamicSignature);
+        ParametricReactionRule<PureBigraph> rr0 = createReactionRule0(dynamicSignature);
+        ParametricReactionRule<PureBigraph> rr1 = initialization_Rule(dynamicSignature);
+        ParametricReactionRule<PureBigraph> rrCollectDev = collectDevices_Rule(dynamicSignature);
 //        BigraphFileModelManagement.exportAsInstanceModel(bigraph, System.out);
 
         eb(agent, "plato_tree");
@@ -128,44 +128,44 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
 
     }
 
-    private static ParametricReactionRule<PureBigraph> createReactionRule0(DefaultDynamicSignature signature) throws InvalidConnectionException, IOException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(signature);
+    private static ParametricReactionRule<PureBigraph> createReactionRule0(DynamicSignature signature) throws InvalidConnectionException, IOException, InvalidReactionRuleException {
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(signature);
 
-        builderRedex.createRoot()
-                .addChild("loc", "top").down().addSite()
+        builderRedex.root()
+                .child("loc", "top").down().site()
 //                .addSite()
         ;
-        PureBigraph redex = builderRedex.createBigraph();
+        PureBigraph redex = builderRedex.create();
         BigraphFileModelManagement.Store.exportAsInstanceModel(redex, System.out);
 
-        builderReactum.createRoot()
+        builderReactum.root()
 //                .addSite()
-                .addChild("loc", "top").down().addSite().top()
-                .addChild("in").down().addChild("f").top()
-                .addChild("out");
-        PureBigraph reactum = builderReactum.createBigraph();
+                .child("loc", "top").down().site().top()
+                .child("in").down().child("f").top()
+                .child("out");
+        PureBigraph reactum = builderReactum.create();
         BigraphFileModelManagement.Store.exportAsInstanceModel(reactum, System.out);
         ParametricReactionRule<PureBigraph> pureBigraphParametricReactionRule = new ParametricReactionRule<>(redex, reactum);
         return pureBigraphParametricReactionRule;
     }
 
 
-    private static ParametricReactionRule<PureBigraph> initialization_Rule(DefaultDynamicSignature signature) throws InvalidConnectionException, IOException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(signature);
+    private static ParametricReactionRule<PureBigraph> initialization_Rule(DynamicSignature signature) throws InvalidConnectionException, IOException, InvalidReactionRuleException {
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(signature);
 
-        builderRedex.createRoot()
-                .addChild("in").down().addChild("f").top()
-                .addChild("loc", "top").down().addSite().addChild("loc", "x").down().addSite().top()
-                .addChild("out");
-        PureBigraph redex = builderRedex.createBigraph();
+        builderRedex.root()
+                .child("in").down().child("f").top()
+                .child("loc", "top").down().site().child("loc", "x").down().site().top()
+                .child("out");
+        PureBigraph redex = builderRedex.create();
 
-        builderReactum.createRoot()
-                .addChild("in").down().addChild("g").top()
-                .addChild("loc", "top").down().addSite().addChild("loc", "x").down().addChild("f").addChild("s").addSite().top()
-                .addChild("out");
-        PureBigraph reactum = builderReactum.createBigraph();
+        builderReactum.root()
+                .child("in").down().child("g").top()
+                .child("loc", "top").down().site().child("loc", "x").down().child("f").child("s").site().top()
+                .child("out");
+        PureBigraph reactum = builderReactum.create();
 
         ParametricReactionRule<PureBigraph> pureBigraphParametricReactionRule = new ParametricReactionRule<>(redex, reactum);
         return pureBigraphParametricReactionRule;
@@ -174,25 +174,25 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
     /**
      * Collects devices under a location, and adds them under 's', further adding a "reference" f' under 'out'
      */
-    private static ParametricReactionRule<PureBigraph> collectDevices_Rule(DefaultDynamicSignature signature) throws InvalidConnectionException, IOException, InvalidReactionRuleException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(signature);
+    private static ParametricReactionRule<PureBigraph> collectDevices_Rule(DynamicSignature signature) throws InvalidConnectionException, IOException, InvalidReactionRuleException, TypeNotExistsException {
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(signature);
 
-        builderRedex.createRoot()
-                .addChild("loc", "x").down()
-                .addChild("f").addSite().addChild("dev", "y").addChild("s").down().addSite().top()
-                .addChild("out").down().addSite().top();
-        PureBigraph redex = builderRedex.createBigraph();
+        builderRedex.root()
+                .child("loc", "x").down()
+                .child("f").site().child("dev", "y").child("s").down().site().top()
+                .child("out").down().site().top();
+        PureBigraph redex = builderRedex.create();
 
 
-        BigraphEntity.OuterName y1 = builderReactum.createOuterName("y1");
-        builderReactum.createRoot()
-                .addChild("loc", "x").down()
-                .addChild("f").addSite().addChild("s").down().addSite().addChild("dev", y1).top()
-                .addChild("out").down().addSite().addChild("f'", "y").top();
+        BigraphEntity.OuterName y1 = builderReactum.createOuter("y1");
+        builderReactum.root()
+                .child("loc", "x").down()
+                .child("f").site().child("s").down().site().child("dev", y1).top()
+                .child("out").down().site().child("f'", "y").top();
 
-        builderReactum.closeOuterName(y1);
-        PureBigraph reactum = builderReactum.createBigraph();
+        builderReactum.closeOuter(y1);
+        PureBigraph reactum = builderReactum.create();
 
         ParametricReactionRule<PureBigraph> pureBigraphParametricReactionRule = new ParametricReactionRule<>(redex, reactum);
         return pureBigraphParametricReactionRule;

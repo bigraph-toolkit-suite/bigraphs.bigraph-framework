@@ -1,11 +1,9 @@
 package org.bigraphs.framework.converter.bigred;
 
 import org.bigraphs.framework.core.BigraphFileModelManagement;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
-import org.bigraphs.framework.converter.bigred.DefaultBigraphXMLLoader;
-import org.bigraphs.framework.converter.bigred.DefaultSignatureXMLLoader;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
@@ -30,7 +28,7 @@ public class BasicBigRedXmlParseTests {
         URL resource = getClass().getResource("/bigred/misc-examples/signatures/sampleA.bigraph-signature");
         DefaultSignatureXMLLoader loader = new DefaultSignatureXMLLoader();
         loader.readXml(resource.getPath());
-        DefaultDynamicSignature signature2 = loader.importObject();
+        DynamicSignature signature2 = loader.importObject();
         MutableMap<String, Integer> with = Maps.mutable.with("Person", 3, "Computer", 0, "User", 1, "Room", 2);
         signature2.getControls().forEach(x -> {
             assertNotNull(with.get(x.getNamedType().stringValue()));
@@ -43,7 +41,7 @@ public class BasicBigRedXmlParseTests {
         URL resource = getClass().getResource("/bigred/misc-examples/signatures/sampleB.bigraph-signature");
         DefaultSignatureXMLLoader loader = new DefaultSignatureXMLLoader();
         loader.readXml(resource.getPath());
-        DefaultDynamicSignature signature2 = loader.importObject();
+        DynamicSignature signature2 = loader.importObject();
         MutableMap<String, Integer> with = Maps.mutable.with("Control3", 0, "Control1", 2, "Control2", 0, "Control4", 0);
         signature2.getControls().forEach(x -> {
             assertNotNull(with.get(x.getNamedType().stringValue()));

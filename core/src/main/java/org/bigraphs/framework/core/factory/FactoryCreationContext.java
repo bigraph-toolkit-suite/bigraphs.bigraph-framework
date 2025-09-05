@@ -1,12 +1,11 @@
 package org.bigraphs.framework.core.factory;
 
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.NamedType;
 import org.bigraphs.framework.core.impl.pure.KindBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
 import org.bigraphs.framework.core.impl.elementary.Placings;
@@ -97,7 +96,7 @@ public final class FactoryCreationContext {
         if (bigraphClass.isAssignableFrom(ElementaryBigraph.class) ||
                 (Objects.nonNull(bigraphClass.getSuperclass()) && isAssignable(bigraphClass))) {
             Class<?> typeArg = TypeResolver.resolveRawArgument(ElementaryBigraph.class, bigraphClass);
-            if (typeArg.isAssignableFrom(DefaultDynamicSignature.class)) {
+            if (typeArg.isAssignableFrom(DynamicSignature.class)) {
                 return (T) new PureBigraphFactory();
             }
         }
@@ -260,11 +259,11 @@ public final class FactoryCreationContext {
     }
 
     private PureBigraphGenerator newRandomBigraphBuilder(Signature<?> signature) {
-        return this.factory.createRandomBuilder((DefaultDynamicSignature) signature);
+        return this.factory.createRandomBuilder((DynamicSignature) signature);
     }
 
     private PureBigraphGenerator newRandomBigraphBuilder(Signature<?> signature, EPackage metaModel) {
-        return this.factory.createRandomBuilder((DefaultDynamicSignature) signature, metaModel);
+        return this.factory.createRandomBuilder((DynamicSignature) signature, metaModel);
     }
 
     private Placings newPlacingsBuilder(Signature<?> signature) {

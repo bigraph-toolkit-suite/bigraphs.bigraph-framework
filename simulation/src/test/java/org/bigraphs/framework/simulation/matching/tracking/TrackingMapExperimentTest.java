@@ -6,8 +6,8 @@ import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
@@ -118,16 +118,16 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
 
     // switches true to false
     private ParametricReactionRule<PureBigraph> switchRule1() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> bL = pureBuilder(createTrueFalseSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> bR = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(createTrueFalseSignature());
 
-        bL.createRoot()
-                .addChild("True").down().addChild("Set").top()
-                .addChild("False").down().addChild("Empty").top()
+        bL.root()
+                .child("True").down().child("Set").top()
+                .child("False").down().child("Empty").top()
         ;
-        bR.createRoot()
-                .addChild("False").down().addChild("Set").top()
-                .addChild("True").down().addChild("Empty").top()
+        bR.root()
+                .child("False").down().child("Set").top()
+                .child("True").down().child("Empty").top()
         ;
         TrackingMap map = new TrackingMap(); // reactum -> redex
         // (!) Note: other mapping also possible, different meanings then
@@ -136,49 +136,49 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
         map.put("v1", "v1");
         map.put("v2", "v0");
         map.put("v3", "v3");
-        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bL.createBigraph(), bR.createBigraph(), true);
+        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bL.create(), bR.create(), true);
         rr.withTrackingMap(map);
         return rr;
     }
 
     // switches false to true
     private ParametricReactionRule<PureBigraph> switchRule2() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> bL = pureBuilder(createTrueFalseSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> bR = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(createTrueFalseSignature());
 
-        bL.createRoot()
-                .addChild("False").down().addChild("Set").top()
-                .addChild("True").down().addChild("Empty").top()
+        bL.root()
+                .child("False").down().child("Set").top()
+                .child("True").down().child("Empty").top()
         ;
-        bR.createRoot()
-                .addChild("True").down().addChild("Set").top()
-                .addChild("False").down().addChild("Empty").top()
+        bR.root()
+                .child("True").down().child("Set").top()
+                .child("False").down().child("Empty").top()
         ;
         TrackingMap map = new TrackingMap(); // reactum -> redex
         map.put("v0", "v2");
         map.put("v1", "v1");
         map.put("v2", "v0");
         map.put("v3", "v3");
-        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bL.createBigraph(), bR.createBigraph(), true);
+        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bL.create(), bR.create(), true);
         rr.withTrackingMap(map);
         return rr;
     }
 
     // a new node is added, previously unknown to the agent
     private ParametricReactionRule<PureBigraph> addSetUnderEmpty() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> bL = pureBuilder(createTrueFalseSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> bR = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(createTrueFalseSignature());
 
-        bL.createRoot()
-                .addChild("Box").down().addSite().top()
+        bL.root()
+                .child("Box").down().site().top()
         ;
-        bR.createRoot()
-                .addChild("Box").down().addSite().addChild("Set").top()
+        bR.root()
+                .child("Box").down().site().child("Set").top()
         ;
         TrackingMap map = new TrackingMap(); // reactum -> redex
         map.put("v0", "v0");
         map.put("v1", "");
-        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bL.createBigraph(), bR.createBigraph(), true);
+        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bL.create(), bR.create(), true);
         rr.withTrackingMap(map);
         return rr;
     }
@@ -187,16 +187,16 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
     // agent that can switch between two internal states by placing a token either in the one or the other container node
     // The True or False control is activated, but not both
     private PureBigraph agent() {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createTrueFalseSignature());
-        b.createRoot()
-                .addChild("True")
-                .down().addChild("Empty").top()
-                .addChild("False").down().addChild("Set").top()
-                .addChild("Box").down()
-                .addChild("Set").addChild("Set").addChild("Set").top()
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(createTrueFalseSignature());
+        b.root()
+                .child("True")
+                .down().child("Empty").top()
+                .child("False").down().child("Set").top()
+                .child("Box").down()
+                .child("Set").child("Set").child("Set").top()
         ;
-        PureBigraph big = b.createBigraph();
-        BigraphEntity.NodeEntity<DefaultDynamicControl> theNode = big.getNodes().get(0);
+        PureBigraph big = b.create();
+        BigraphEntity.NodeEntity<DynamicControl> theNode = big.getNodes().get(0);
         Map<String, Object> attributes = theNode.getAttributes();
         attributes.put("myKey", "myValue");
         theNode.setAttributes(attributes);
@@ -204,19 +204,19 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
         return big;
     }
 
-    private DefaultDynamicSignature createTrueFalseSignature() {
+    private DynamicSignature createTrueFalseSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .addControl("True", 0)
-                .addControl("False", 0)
-                .addControl("Set", 0)
-                .addControl("Empty", 0)
-                .addControl("Box", 0)
+                .add("True", 0)
+                .add("False", 0)
+                .add("Set", 0)
+                .add("Empty", 0)
+                .add("Box", 0)
         ;
         return defaultBuilder.create();
     }
 
-    private DefaultDynamicSignature createAlphabetSignature() {
+    private DynamicSignature createAlphabetSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(5)).assign()

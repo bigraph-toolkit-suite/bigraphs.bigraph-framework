@@ -1,7 +1,6 @@
 package org.bigraphs.framework.core.impl.elementary;
 
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.NamedType;
 import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
@@ -30,20 +29,20 @@ public class DiscreteIon<S extends AbstractEcoreSignature<? extends Control<? ex
                 (PureBigraphBuilder<S>) factory.createBigraphBuilder(signature);
 
         try {
-            PureBigraphBuilder<S>.Hierarchy hierarchy = builder.createRoot().addChild(signature.getControlByName(name.stringValue()));
+            PureBigraphBuilder<S>.Hierarchy hierarchy = builder.root().child(signature.getControlByName(name.stringValue()));
             outerNames.forEach(x -> {
                 try {
-                    hierarchy.linkToOuter(builder.createOuterName(x.stringValue()));
+                    hierarchy.linkOuter(builder.createOuter(x.stringValue()));
                 } catch (TypeNotExistsException | InvalidConnectionException e) {
                     throw new RuntimeException(e);
                 }
             });
             if (signature.getControlByName(name.stringValue()).getControlKind() != ControlStatus.ATOMIC)
-                hierarchy.down().addSite();
+                hierarchy.down().site();
         } catch (ControlIsAtomicException e) {
             throw new RuntimeException("Control shouldn't be atomic!");
         }
-        bigraphDelegate = (Bigraph<S>) builder.createBigraph();
+        bigraphDelegate = (Bigraph<S>) builder.create();
     }
 
     public DiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, S signature, AbstractBigraphFactory<S> factory) {

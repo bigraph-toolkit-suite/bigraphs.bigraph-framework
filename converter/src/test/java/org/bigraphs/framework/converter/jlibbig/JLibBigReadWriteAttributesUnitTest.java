@@ -4,11 +4,9 @@ import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import it.uniud.mads.jlibbig.core.std.Bigraph;
-import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
-import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -31,14 +29,14 @@ public class JLibBigReadWriteAttributesUnitTest {
     }
 
     private PureBigraph big_00() {
-        DefaultDynamicSignature signature = signature00();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = signature00();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("Building")
-                .down().addChild("Room").down().addChild("Room").down().addChild("User").up().up()
-                .addChild("Room").down().addChild("User");
-        PureBigraph bigraph = builder.createBigraph();
+        builder.root()
+                .child("Building")
+                .down().child("Room").down().child("Room").down().child("User").up().up()
+                .child("Room").down().child("User");
+        PureBigraph bigraph = builder.create();
         bigraph.getNodes().forEach(x -> {
             Map<String, Object> attributes = x.getAttributes();
             attributes.put("_id", x.getName());
@@ -48,7 +46,7 @@ public class JLibBigReadWriteAttributesUnitTest {
         return bigraph;
     }
 
-    private static DefaultDynamicSignature signature00() {
+    private static DynamicSignature signature00() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()

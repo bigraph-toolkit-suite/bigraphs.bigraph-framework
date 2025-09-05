@@ -5,7 +5,7 @@ import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
@@ -49,23 +49,23 @@ public class TemporalOperatorUnitTest extends AbstractUnitTestSupport {
     }
 
     private PureBigraph createPredicate() {
-        return pureBuilder(createSignature()).createRoot()
-                .addChild("Container").down()
-                .addChild("Item").addChild("Item").addChild("Item").createBigraph();
+        return pureBuilder(createSignature()).root()
+                .child("Container").down()
+                .child("Item").child("Item").child("Item").create();
     }
 
     private ReactionRule<PureBigraph> addItemRR() throws InvalidReactionRuleException {
         PureBigraph redex = pureBuilder(createSignature())
-                .createRoot().addChild("Container").down().addSite().createBigraph();
+                .root().child("Container").down().site().create();
         PureBigraph reactum = pureBuilder(createSignature())
-                .createRoot().addChild("Container").down().addChild("Item").addSite().createBigraph();
+                .root().child("Container").down().child("Item").site().create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     private PureBigraph createAgent() {
         return pureBuilder(createSignature())
-                .createRoot()
-                .addChild("Container").createBigraph();
+                .root()
+                .child("Container").create();
     }
 
     public static class SomewhereModalityImpl implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
@@ -89,7 +89,7 @@ public class TemporalOperatorUnitTest extends AbstractUnitTestSupport {
         }
     }
 
-    private static DefaultDynamicSignature createSignature() {
+    private static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Container")).arity(FiniteOrdinal.ofInteger(0)).assign()

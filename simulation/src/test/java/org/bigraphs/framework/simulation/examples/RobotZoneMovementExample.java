@@ -6,7 +6,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
@@ -183,53 +183,53 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
     }
 
     private PureBigraph agent() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy zone1 = b.hierarchy("Zone1");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy zone2 = b.hierarchy("Zone2");
-        zone1.addChild("Robot", "rId").down().addChild("Gripper", "canGrip");
-        zone2.addChild("Zone3").addChild("Object", "isFree").down().addChild("Ownership", "belongsTo");
-        b.createRoot()
-                .addChild(zone1).top().addChild(zone2).top();
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature>.Hierarchy zone1 = b.hierarchy("Zone1");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy zone2 = b.hierarchy("Zone2");
+        zone1.child("Robot", "rId").down().child("Gripper", "canGrip");
+        zone2.child("Zone3").child("Object", "isFree").down().child("Ownership", "belongsTo");
+        b.root()
+                .child(zone1).top().child(zone2).top();
+        return b.create();
     }
 
     public ReactionRule<PureBigraph> createReactionRule_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
 
-        b1.createRoot().addChild("Zone1").down().addChild("Robot", "rId").down().addSite();
-        b1.createRoot().addChild("Zone2").down().addChild("Zone3").addChild("Object", "isFree").down().addChild("Ownership", "belongsTo");
+        b1.root().child("Zone1").down().child("Robot", "rId").down().site();
+        b1.root().child("Zone2").down().child("Zone3").child("Object", "isFree").down().child("Ownership", "belongsTo");
 
-        b2.createRoot().addChild("Zone1");
-        b2.createRoot().addChild("Zone2").down().addChild("Zone3").down().addChild("Robot", "rId").down().addSite().up().up()
-                .addChild("Object", "isFree").down().addChild("Ownership", "belongsTo");
+        b2.root().child("Zone1");
+        b2.root().child("Zone2").down().child("Zone3").down().child("Robot", "rId").down().site().up().up()
+                .child("Object", "isFree").down().child("Ownership", "belongsTo");
 
-        PureBigraph redex = b1.createBigraph();
-        PureBigraph reactum = b2.createBigraph();
+        PureBigraph redex = b1.create();
+        PureBigraph reactum = b2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     public ReactionRule<PureBigraph> createReactionRule_2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
 
-        b1.createRoot().addChild("Zone1");
-        b1.createRoot().addChild("Zone2").down().addChild("Zone3").down().addChild("Robot", "rId").down().addSite().up().up()
-                .addChild("Object", "isFree").down().addChild("Ownership", "belongsTo");
+        b1.root().child("Zone1");
+        b1.root().child("Zone2").down().child("Zone3").down().child("Robot", "rId").down().site().up().up()
+                .child("Object", "isFree").down().child("Ownership", "belongsTo");
 
-        b2.createRoot().addChild("Zone1").down().addChild("Robot", "rId").down().addSite();
-        b2.createRoot().addChild("Zone2").down().addChild("Zone3").addChild("Object", "isFree").down().addChild("Ownership", "belongsTo");
+        b2.root().child("Zone1").down().child("Robot", "rId").down().site();
+        b2.root().child("Zone2").down().child("Zone3").child("Object", "isFree").down().child("Ownership", "belongsTo");
 
 
 
-        PureBigraph redex = b1.createBigraph();
-        PureBigraph reactum = b2.createBigraph();
+        PureBigraph redex = b1.create();
+        PureBigraph reactum = b2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
-    private DefaultDynamicSignature createSignature() {
+    private DynamicSignature createSignature() {
         return pureSignatureBuilder()
                 .newControl("Robot", 1).assign()
                 .newControl("Gripper", 1).assign()

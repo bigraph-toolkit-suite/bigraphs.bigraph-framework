@@ -38,9 +38,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
 
     protected abstract Map<String, EReference> getAvailableEReferences();
 
-    public abstract void closeInnerName(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException;
-
-    //TODO return ValidationResult
+    public abstract void closeInner(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException;
 
     /**
      * Executes various metamodel validators.
@@ -96,14 +94,14 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
     }
 
     protected void assertSortingIsEnsuredForControl(String controlName) {
-        //TODO: use in all addChild methods in subclass
+        //TODO: use in all child() methods in subclass
     }
 
     protected void assertSortingIsEnsuredForControl(Control controlName) {
         this.assertSortingIsEnsuredForControl(controlName.getNamedType().stringValue());
     }
 
-    protected boolean isOuterName(EObject eObject) {
+    protected boolean isOuter(EObject eObject) {
         return Objects.nonNull(eObject) && eObject.eClass().equals(getAvailableEClasses().get(BigraphMetaModelConstants.CLASS_OUTERNAME));
     }
 
@@ -218,11 +216,11 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
             return sites;
         }
 
-        public Set<BigraphEntity.InnerName> getInnerNames() {
+        public Set<BigraphEntity.InnerName> getInner() {
             return innerNames;
         }
 
-        public Set<BigraphEntity.OuterName> getOuterNames() {
+        public Set<BigraphEntity.OuterName> getOuter() {
             return outerNames;
         }
 

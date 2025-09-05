@@ -10,8 +10,8 @@ import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceEx
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
@@ -42,7 +42,7 @@ public class BigraphOperationPerformanceTest {
 
     @Test
     void binaryOperatorTest_placeGraphsOnly() throws IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
-        DefaultDynamicSignature sig = createRandomSignature(1, 0);
+        DynamicSignature sig = createRandomSignature(1, 0);
         ConfigSlot cs = ConfigSlot.create(10, 20, 10, 0, 0, 0);
         int numOfRuns = 100;
         PureBigraphGenerator generator = pureRandomBuilder(sig);
@@ -59,21 +59,21 @@ public class BigraphOperationPerformanceTest {
                 PureBigraph generate = generator.generate(cs.t, cs.n, cs.s, 0);
 //                BigraphFileModelManagement.Store.exportAsInstanceModel(generate, System.out);
                 long start1 = System.nanoTime();
-                BigraphComposite<DefaultDynamicSignature> compose1 = ops(generate).compose(generate);
+                BigraphComposite<DynamicSignature> compose1 = ops(generate).compose(generate);
                 long end1 = System.nanoTime();
                 long diff1 = (end1 - start1) / 1000000;
                 sb.append(cs.n).append(SEP).append(cs.t).append(SEP).append(cs.s).append(SEP)
                         .append(diff1).append(SEP).append("composition").append(NL);
 
                 long start2 = System.nanoTime();
-                BigraphComposite<DefaultDynamicSignature> compose2 = ops(generate).parallelProduct(generate);
+                BigraphComposite<DynamicSignature> compose2 = ops(generate).parallelProduct(generate);
                 long end2 = System.nanoTime();
                 long diff2 = (end2 - start2) / 1000000;
                 sb.append(cs.n).append(SEP).append(cs.t).append(SEP).append(cs.s).append(SEP)
                         .append(diff2).append(SEP).append("parallel").append(NL);
 
                 long start3 = System.nanoTime();
-                BigraphComposite<DefaultDynamicSignature> compose3 = ops(generate).merge(generate);
+                BigraphComposite<DynamicSignature> compose3 = ops(generate).merge(generate);
                 long end3 = System.nanoTime();
                 long diff3 = (end3 - start3) / 1000000;
                 sb.append(cs.n).append(SEP).append(cs.t).append(SEP).append(cs.s).append(SEP)
@@ -86,12 +86,12 @@ public class BigraphOperationPerformanceTest {
 
     @Test
     void binaryOperatorTest_bigraphsWithLinks() throws IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
-        DefaultDynamicSignature sig = createSingletonSignature("A", 100);
+        DynamicSignature sig = createSingletonSignature("A", 100);
         ConfigSlot cs = ConfigSlot.create(250, 500, 250, 0, 0, 0);
         int numOfRuns = 100;
         PureBigraphGenerator generator = pureRandomBuilder(sig);
         generator.generate(cs.t, cs.n, cs.s, 0);//pre-alloc
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings(sig);
+        Linkings<DynamicSignature> linkings = pureLinkings(sig);
         StringBuilder sb = new StringBuilder("p,pl,pe,time,op").append(NL);
         for (float p = 0.1f; p <= 1.0f; p += 0.1f) {
             cs.p = cs.p_e = cs.p_l = p;
@@ -101,26 +101,26 @@ public class BigraphOperationPerformanceTest {
 //                BigraphFileModelManagement.Store.exportAsInstanceModel(generate, System.out);
                 long start1 = System.nanoTime();
                 if (generate.getOuterNames().size() > 0) {
-                    Linkings<DefaultDynamicSignature>.Identity id = suitableLinking(linkings, generate.getOuterNames());
+                    Linkings<DynamicSignature>.Identity id = suitableLinking(linkings, generate.getOuterNames());
 //                    BigraphFileModelManagement.Store.exportAsInstanceModel(id, System.out);
                     generate = ops(generate).parallelProduct(id).getOuterBigraph();
 //                    BigraphFileModelManagement.Store.exportAsInstanceModel(generate, System.out);
                 }
                 long end1 = System.nanoTime();
-                BigraphComposite<DefaultDynamicSignature> compose1 = ops(generate).compose(generate);
+                BigraphComposite<DynamicSignature> compose1 = ops(generate).compose(generate);
                 long diff1 = (end1 - start1) / 1000000;
                 sb.append(cs.p).append(SEP).append(cs.p_l).append(SEP).append(cs.p_e).append(SEP)
                         .append(diff1).append(SEP).append("composition").append(NL);
 
                 long start2 = System.nanoTime();
-                BigraphComposite<DefaultDynamicSignature> compose2 = ops(generate).parallelProduct(generate);
+                BigraphComposite<DynamicSignature> compose2 = ops(generate).parallelProduct(generate);
                 long end2 = System.nanoTime();
                 long diff2 = (end2 - start2) / 1000000;
                 sb.append(cs.p).append(SEP).append(cs.p_l).append(SEP).append(cs.p_e).append(SEP)
                         .append(diff2).append(SEP).append("parallel").append(NL);
 //
                 long start3 = System.nanoTime();
-                BigraphComposite<DefaultDynamicSignature> compose3 = ops(generate).merge(generate);
+                BigraphComposite<DynamicSignature> compose3 = ops(generate).merge(generate);
                 long end3 = System.nanoTime();
                 long diff3 = (end3 - start3) / 1000000;
                 sb.append(cs.p).append(SEP).append(cs.p_l).append(SEP).append(cs.p_e).append(SEP)
@@ -134,19 +134,19 @@ public class BigraphOperationPerformanceTest {
 
     @Test
     void naryOperatorTest_bigraphsWithLinks() throws IOException, IncompatibleSignatureException, IncompatibleInterfaceException {
-        DefaultDynamicSignature sig = createSingletonSignature("A", 100);
+        DynamicSignature sig = createSingletonSignature("A", 100);
         ConfigSlot cs = ConfigSlot.create(100, 200, 100, 0.5f, 0.5f, 0.5f);
         int numOfRuns = 50;
         PureBigraphGenerator generator = pureRandomBuilder(sig);
         generator.generate(cs.t, cs.n, cs.s, 0);//pre-alloc
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings(sig);
+        Linkings<DynamicSignature> linkings = pureLinkings(sig);
         StringBuilder sb = new StringBuilder("steps,time,op").append(NL);
         for (int ops = 1; ops <= 10; ops++) {
             System.out.println("Creating bigraphs with c= " + cs);
             for (int r = 0; r < numOfRuns; r++) {
                 PureBigraph generate = generator.generate(cs.t, cs.n, cs.s, cs.p, cs.p_l, cs.p_e);
 //                BigraphFileModelManagement.Store.exportAsInstanceModel(generate, System.out);
-                Linkings<DefaultDynamicSignature>.Identity id = suitableLinking(linkings, generate.getOuterNames());
+                Linkings<DynamicSignature>.Identity id = suitableLinking(linkings, generate.getOuterNames());
                 generate = ops(generate).parallelProduct(id).getOuterBigraph();
                 PureBigraph finalGenerate = generate;
                 long start1 = System.nanoTime();
@@ -204,10 +204,10 @@ public class BigraphOperationPerformanceTest {
         FileUtils.writeStringToFile(new File("time-complexity-bigraph-operations-consecutive.csv"), sb.toString(), Charset.defaultCharset());
     }
 
-    public static Linkings<DefaultDynamicSignature>.Identity suitableLinking(Linkings<DefaultDynamicSignature> linkings,
-                                                                             List<BigraphEntity.OuterName> outerNames) {
+    public static Linkings<DynamicSignature>.Identity suitableLinking(Linkings<DynamicSignature> linkings,
+                                                                      List<BigraphEntity.OuterName> outerNames) {
 
-        Linkings<DefaultDynamicSignature>.Identity identity = linkings.identity(outerNames.stream().map(x -> StringTypedName.of(x.getName())).toArray(StringTypedName[]::new));
+        Linkings<DynamicSignature>.Identity identity = linkings.identity(outerNames.stream().map(x -> StringTypedName.of(x.getName())).toArray(StringTypedName[]::new));
         return identity;
     }
 
@@ -217,7 +217,7 @@ public class BigraphOperationPerformanceTest {
 //        int n = 10;
 //        float p = 0;
         StringBuilder sb = new StringBuilder("");
-        DefaultDynamicSignature sig = createRandomSignature(1, 0);
+        DynamicSignature sig = createRandomSignature(1, 0);
         PureBigraphGenerator generator = new PureBigraphGenerator(sig);
         List<ConfigSlot> configurations = Arrays.asList(
                 ConfigSlot.create(10, 20, 10, 0, 0, 0),
@@ -282,7 +282,7 @@ public class BigraphOperationPerformanceTest {
         }
     }
 
-    private DefaultDynamicSignature createRandomSignature(int n, float probOfPositiveArity) {
+    private DynamicSignature createRandomSignature(int n, float probOfPositiveArity) {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
@@ -295,15 +295,15 @@ public class BigraphOperationPerformanceTest {
         for (int i = floorNum; i < n; i++) {
             signatureBuilder = (DynamicSignatureBuilder) signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
         }
-        DefaultDynamicSignature s = signatureBuilder.create();
-        ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
+        DynamicSignature s = signatureBuilder.create();
+        ArrayList<DynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
         return signatureBuilder.createWith(new LinkedHashSet<>(cs));
     }
 
-    private DefaultDynamicSignature createSingletonSignature(String control, int arity) {
+    private DynamicSignature createSingletonSignature(String control, int arity) {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
-        signatureBuilder.addControl(control, arity, ControlStatus.ACTIVE);
+        signatureBuilder.add(control, arity, ControlStatus.ACTIVE);
         return signatureBuilder.create();
     }
 

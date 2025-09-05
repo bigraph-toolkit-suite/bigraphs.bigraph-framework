@@ -141,7 +141,7 @@ public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?
     }
 
     public void connectInnerToOuter(BigraphEntity.InnerName innerName, BigraphEntity.OuterName outerName) {
-        super.connectInnerToOuterName0(innerName, outerName);
+        super.linkInnerToOuter0(innerName, outerName);
     }
 
     public void connectToLinkUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity theLink, int customPortIndex) {

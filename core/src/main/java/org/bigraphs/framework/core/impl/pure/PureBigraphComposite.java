@@ -1,13 +1,12 @@
 package org.bigraphs.framework.core.impl.pure;
 
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.NamedType;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
@@ -108,11 +107,11 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         assertSignaturesAreSame(g, f);
 
         // Get all outer names of 'f' and make identity graph of them
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings((DefaultDynamicSignature) getSignature());
+        Linkings<DynamicSignature> linkings = pureLinkings((DynamicSignature) getSignature());
         Set<StringTypedName> collect = f.getOuterNames().stream()
                 .map(o -> StringTypedName.of(o.getName()))
                 .collect(Collectors.toSet());
-        ElementaryBigraph<DefaultDynamicSignature> identity = collect.size() != 0 ?
+        ElementaryBigraph<DynamicSignature> identity = collect.size() != 0 ?
                 linkings.identity(collect.toArray(new NamedType[0])) : // as array
                 linkings.identity_e();                                 // empty identity
 //        // (!) Order is important here, otherwise the root indexes may be swapped. First g, then the identity
@@ -450,7 +449,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             }
         }
 
-        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getMetaModel(), ((PureBigraph) copy).getInstanceModel()).createBigraph();
+        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getMetaModel(), ((PureBigraph) copy).getInstanceModel()).create();
         return new PureBigraphComposite<>((Bigraph<S>) bigraph);
     }
 
@@ -534,7 +533,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         left.eAdapters().clear();
         right.eAdapters().clear();
 
-        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getMetaModel(), ((PureBigraph) copy).getInstanceModel()).createBigraph();
+        PureBigraph bigraph = PureBigraphBuilder.create(g.getSignature(), ((PureBigraph) copy).getMetaModel(), ((PureBigraph) copy).getInstanceModel()).create();
         return new PureBigraphComposite<>((Bigraph<S>) bigraph);
     }
 
@@ -543,17 +542,17 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         Bigraph<S> g = BigraphUtil.copyIfSame(getBigraphDelegate(), f);
         assertSignaturesAreSame(g, f);
 
-        BigraphComposite<DefaultDynamicSignature> bigraphComposite = ops((Bigraph<DefaultDynamicSignature>) g).parallelProduct((Bigraph<DefaultDynamicSignature>) f);
+        BigraphComposite<DynamicSignature> bigraphComposite = ops((Bigraph<DynamicSignature>) g).parallelProduct((Bigraph<DynamicSignature>) f);
         if (isLinking(f)) {
             if (g.getRoots().size() > 0) {
                 return (BigraphComposite<S>) bigraphComposite;
             }
-            Placings<DefaultDynamicSignature>.Barren barren = purePlacings((DefaultDynamicSignature) getSignature()).barren();
+            Placings<DynamicSignature>.Barren barren = purePlacings((DynamicSignature) getSignature()).barren();
             return (BigraphComposite<S>) ops(barren).parallelProduct(bigraphComposite);
 
         } else {
-            Placings<DefaultDynamicSignature>.Merge merge = purePlacings((DefaultDynamicSignature) getSignature()).merge(bigraphComposite.getOuterBigraph().getRoots().size());
-            BigraphComposite<DefaultDynamicSignature> compose = ops(merge).nesting(bigraphComposite);
+            Placings<DynamicSignature>.Merge merge = purePlacings((DynamicSignature) getSignature()).merge(bigraphComposite.getOuterBigraph().getRoots().size());
+            BigraphComposite<DynamicSignature> compose = ops(merge).nesting(bigraphComposite);
             return (BigraphComposite<S>) compose;
         }
     }
@@ -761,7 +760,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
 
         leftOuter.eAdapters().clear();
         rightInner.eAdapters().clear();
-        PureBigraph bigraph = PureBigraphBuilder.create(copyOuter.getSignature(), ((PureBigraph) copyOuter).getMetaModel(), ((PureBigraph) copyOuter).getInstanceModel()).createBigraph();
+        PureBigraph bigraph = PureBigraphBuilder.create(copyOuter.getSignature(), ((PureBigraph) copyOuter).getMetaModel(), ((PureBigraph) copyOuter).getInstanceModel()).create();
         return new PureBigraphComposite<>((Bigraph<S>) bigraph);
     }
 
@@ -782,10 +781,10 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         if (inner instanceof DiscreteIon || outer instanceof DiscreteIon) {
             DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
             inner.getSignature().getControls().forEach(x -> {
-                signatureBuilder.addControl((Control) x);
+                signatureBuilder.add((Control) x);
             });
             outer.getSignature().getControls().forEach(x -> {
-                signatureBuilder.addControl((Control) x);
+                signatureBuilder.add((Control) x);
             });
             if (outer instanceof EcoreBigraph) {
                 builder = (MutableBuilder<S>) MutableBuilder.newMutableBuilder(signatureBuilder.create(), ((EcoreBigraph) outer).getEMetaModelData());

@@ -7,7 +7,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.reactivesystem.InstantiationMap;
@@ -24,7 +24,7 @@ public class RoomExample {
 
     @Test
     public void test() throws InvalidConnectionException, InvalidReactionRuleException, IncompatibleInterfaceException, IOException, TypeNotExistsException {
-        DefaultDynamicSignature signature = pureSignatureBuilder()
+        DynamicSignature signature = pureSignatureBuilder()
                 .newControl("Room", 1).assign()
                 .newControl("Door", 1).assign()
                 .newControl("Attributes", 0).assign()
@@ -36,44 +36,44 @@ public class RoomExample {
                 .setNsPrefix("bigraph").setNsUri("at.ac.tuwien.ict.bigraphs").create();
 
         createOrGetBigraphMetaModel(signature, metamodelData);
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
         PureBigraph roomPlan = builder
-                .createRoot()
-                .addChild("Room", "room1").down()
-                .addChild("Agent", "alice").addChild("Door", "door1").up()
-                .addChild("Room", "room2").down()
-                .addChild("Door", "door1").addChild("Door", "door2").up()
-                .addChild("Room", "room3").down()
-                .addChild("Door", "door2").addChild("Door", "door3").up()
-                .addChild("Room", "room4").down()
-                .addChild("Door", "door3").addChild("Attributes").down()
-                .addChild("Dangerous").up()
+                .root()
+                .child("Room", "room1").down()
+                .child("Agent", "alice").child("Door", "door1").up()
+                .child("Room", "room2").down()
+                .child("Door", "door1").child("Door", "door2").up()
+                .child("Room", "room3").down()
+                .child("Door", "door2").child("Door", "door3").up()
+                .child("Room", "room4").down()
+                .child("Door", "door3").child("Attributes").down()
+                .child("Dangerous").up()
                 .up()
-                .createBigraph();
+                .create();
 
         PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
         reactiveSystem.setAgent(roomPlan);
 
 
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = builder.spawnNewOne();
+        PureBigraphBuilder<DynamicSignature> builder2 = builder.spawn();
 
-        PureBigraph redex = builder2.createRoot()
-                .addChild("Room", "r1").down()
-                .addChild("Agent", "name").addChild("Door", "x").addSite().up()
-                .addChild("Room", "r2").down()
-                .addChild("Door", "x").addSite().up()
-                .createBigraph();
+        PureBigraph redex = builder2.root()
+                .child("Room", "r1").down()
+                .child("Agent", "name").child("Door", "x").site().up()
+                .child("Room", "r2").down()
+                .child("Door", "x").site().up()
+                .create();
 
 
-        builder2 = builder.spawnNewOne();
+        builder2 = builder.spawn();
 
-        PureBigraph reactum = builder2.createRoot()
-                .addChild("Room", "r1").down()
-                .addChild("Door", "x").addSite().up()
-                .addChild("Room", "r2").down()
-                .addChild("Agent", "name").addChild("Door", "x").addSite().up()
-                .createBigraph();
+        PureBigraph reactum = builder2.root()
+                .child("Room", "r1").down()
+                .child("Door", "x").site().up()
+                .child("Room", "r2").down()
+                .child("Agent", "name").child("Door", "x").site().up()
+                .create();
 
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
 
@@ -89,7 +89,7 @@ public class RoomExample {
     // bigrapher full -v -s ./states -t trans.svg -f svg,json -M 20 model2.big
     @Test
     void test_02() throws InvalidReactionRuleException, InvalidConnectionException {
-        DefaultDynamicSignature signature = pureSignatureBuilder()
+        DynamicSignature signature = pureSignatureBuilder()
                 .newControl("Room", 1).assign()
                 .newControl("Door", 1).assign()
                 .newControl("Attributes", 0).assign()
@@ -97,46 +97,46 @@ public class RoomExample {
                 .newControl("Dangerous", 0).status(ControlStatus.ATOMIC).assign()
                 .create();
 
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
 
         PureBigraph roomPlan = builder
-                .createRoot()
-                .addChild("Room", "room1").down()
-                .addChild("Agent", "alice").addChild("Door", "door1").up()
-                .addChild("Room", "room2").down()
-                .addChild("Door", "door1").addChild("Door", "door2").up()
-                .addChild("Room", "room3").down()
-                .addChild("Door", "door2").addChild("Door", "door3").up()
-                .addChild("Room", "room4").down()
-                .addChild("Door", "door3").addChild("Attributes").down()
-                .addChild("Dangerous").up()
+                .root()
+                .child("Room", "room1").down()
+                .child("Agent", "alice").child("Door", "door1").up()
+                .child("Room", "room2").down()
+                .child("Door", "door1").child("Door", "door2").up()
+                .child("Room", "room3").down()
+                .child("Door", "door2").child("Door", "door3").up()
+                .child("Room", "room4").down()
+                .child("Door", "door3").child("Attributes").down()
+                .child("Dangerous").up()
                 .up()
-                .createBigraph();
+                .create();
 
 
         PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
         reactiveSystem.setAgent(roomPlan);
 
 
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = builder.spawnNewOne();
+        PureBigraphBuilder<DynamicSignature> builder2 = builder.spawn();
 
-        PureBigraph redex = builder2.createRoot()
-                .addChild("Room", "r1").down()
-                .addChild("Agent", "name").addChild("Door", "x").addSite().up()
-                .addChild("Room", "r2").down()
-                .addChild("Door", "x").addSite().up()
-                .createBigraph();
+        PureBigraph redex = builder2.root()
+                .child("Room", "r1").down()
+                .child("Agent", "name").child("Door", "x").site().up()
+                .child("Room", "r2").down()
+                .child("Door", "x").site().up()
+                .create();
 
 
-        builder2 = builder.spawnNewOne();
+        builder2 = builder.spawn();
 
-        PureBigraph reactum = builder2.createRoot()
-                .addChild("Room", "r1").down()
-                .addChild("Door", "x").addSite().up()
-                .addChild("Room", "r2").down()
-                .addChild("Agent", "name").addChild("Door", "x").addSite().up()
-                .createBigraph();
+        PureBigraph reactum = builder2.root()
+                .child("Room", "r1").down()
+                .child("Door", "x").site().up()
+                .child("Room", "r2").down()
+                .child("Agent", "name").child("Door", "x").site().up()
+                .create();
 
 		InstantiationMap instMap = InstantiationMap.create(reactum.getSites().size())
 				.map(0, 0)

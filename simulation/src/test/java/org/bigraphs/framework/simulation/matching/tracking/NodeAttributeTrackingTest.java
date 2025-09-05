@@ -4,8 +4,8 @@ import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.TrackingMap;
@@ -24,17 +24,17 @@ public class NodeAttributeTrackingTest {
 
     @Test
     void name() throws InvalidReactionRuleException {
-        DefaultDynamicSignature sig = pureSignatureBuilder()
-                .addControl("Place", 0)
-                .addControl("Token", 0)
+        DynamicSignature sig = pureSignatureBuilder()
+                .add("Place", 0)
+                .add("Token", 0)
                 .create();
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(sig);
-        PureBigraph bigraph = b.createRoot()
-                .addChild("Place").down().addChild("Token").up()
-                .addChild("Place")
-                .createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(sig);
+        PureBigraph bigraph = b.root()
+                .child("Place").down().child("Token").up()
+                .child("Place")
+                .create();
 // Get the node
-        BigraphEntity.NodeEntity<DefaultDynamicControl> v1 = bigraph.getNodes().stream()
+        BigraphEntity.NodeEntity<DynamicControl> v1 = bigraph.getNodes().stream()
                 .filter(x -> x.getName().equals("v1")).findAny().get();
 // Assign the attribute
         Map<String, Object> attributes = v1.getAttributes();
@@ -42,13 +42,13 @@ public class NodeAttributeTrackingTest {
         v1.setAttributes(attributes);
         System.out.println(attributes);
 
-        PureBigraphBuilder<DefaultDynamicSignature> bRedex = pureBuilder(sig);
-        PureBigraphBuilder<DefaultDynamicSignature> bReactum = pureBuilder(sig);
-        bRedex.createRoot().addChild("Place").down().addChild("Token").up()
-                .addChild("Place");
-        bReactum.createRoot().addChild("Place")
-                .addChild("Place").down().addChild("Token").up();
-        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bRedex.createBigraph(), bReactum.createBigraph())
+        PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig);
+        PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig);
+        bRedex.root().child("Place").down().child("Token").up()
+                .child("Place");
+        bReactum.root().child("Place")
+                .child("Place").down().child("Token").up();
+        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bRedex.create(), bReactum.create())
                 .withLabel("swapRule");
 // Important for tracing nodes through reactions, thus, to correctly preserve attributes
         TrackingMap eta = new TrackingMap();

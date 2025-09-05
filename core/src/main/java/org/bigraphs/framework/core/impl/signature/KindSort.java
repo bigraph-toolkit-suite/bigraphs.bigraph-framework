@@ -12,23 +12,23 @@ import java.util.Objects;
  * @see KindSignature
  */
 public class KindSort {
-    private DefaultDynamicControl control;
-    private MutableList<DefaultDynamicControl> kindsOfControl = Lists.mutable.empty();
+    private DynamicControl control;
+    private MutableList<DynamicControl> kindsOfControl = Lists.mutable.empty();
 
-    public static KindSort create(DefaultDynamicControl control, MutableList<DefaultDynamicControl> kindsOfControl) {
+    public static KindSort create(DynamicControl control, MutableList<DynamicControl> kindsOfControl) {
         return new KindSort(control, kindsOfControl);
     }
 
-    private KindSort(DefaultDynamicControl control, MutableList<DefaultDynamicControl> kindsOfControl) {
+    private KindSort(DynamicControl control, MutableList<DynamicControl> kindsOfControl) {
         this.control = control;
         this.kindsOfControl = kindsOfControl;
     }
 
-    public DefaultDynamicControl getControl() {
+    public DynamicControl getControl() {
         return control;
     }
 
-    public MutableList<DefaultDynamicControl> getKindsOfControl() {
+    public MutableList<DynamicControl> getKindsOfControl() {
         return kindsOfControl;
     }
 

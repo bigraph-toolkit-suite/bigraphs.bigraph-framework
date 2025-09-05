@@ -6,7 +6,7 @@ import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -17,7 +17,6 @@ import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
-import it.uniud.mads.jlibbig.core.std.Bigraph;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -62,8 +61,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(metaModel,
                 path);
 
-        PureBigraphBuilder<DefaultDynamicSignature> b = PureBigraphBuilder.create(createSignature(), metaModel, eObjects.get(0));
-        PureBigraph bigraph = b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(createSignature(), metaModel, eObjects.get(0));
+        PureBigraph bigraph = b.create();
         return bigraph;
     }
 
@@ -171,111 +170,111 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     }
 
     PureBigraph createAgent() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
 
-        BigraphEntity.InnerName tmpA1 = builder.createInnerName("tmpA1");
-        BigraphEntity.InnerName tmpA2 = builder.createInnerName("tmpA2");
+        BigraphEntity.InnerName tmpA1 = builder.createInner("tmpA1");
+        BigraphEntity.InnerName tmpA2 = builder.createInner("tmpA2");
 //        BigraphEntity.InnerName tmpA3 = builder.createInnerName("tmpA3");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol1 = builder.hierarchy("append");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy appendcontrol1 = builder.hierarchy("append");
         appendcontrol1
 //                .linkToOuter(caller1)
-                .linkToInner(tmpA1).addChild("val").down().addChild("i5").top();
+                .linkInner(tmpA1).child("val").down().child("i5").top();
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol2 = builder.hierarchy("append");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy appendcontrol2 = builder.hierarchy("append");
         appendcontrol2
 //                .linkToOuter(caller2)
-                .linkToInner(tmpA2).addChild("val").down().addChild("i4").top();
+                .linkInner(tmpA2).child("val").down().child("i4").top();
 
 //        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol3 = builder.hierarchy("append");
 //        appendcontrol3
 ////                .linkToOuter(caller3)
 //                .linkToInner(tmpA3).addChild("val").down().addChild("i6").top();
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy rootCell = builder.hierarchy("Root")
+        PureBigraphBuilder<DynamicSignature>.Hierarchy rootCell = builder.hierarchy("Root")
 //                .linkToOuter(caller1).linkToOuter(caller2)
                 ;
         rootCell
-                .addChild("list").down().addChild("Node")
-                .down().addChild("this").down()
-                .addChild("thisRef").linkToInner(tmpA1)
-                .addChild("thisRef").linkToInner(tmpA2)
+                .child("list").down().child("Node")
+                .down().child("this").down()
+                .child("thisRef").linkInner(tmpA1)
+                .child("thisRef").linkInner(tmpA2)
 //                .addChild("thisRef").linkToInner(tmpA3)
                 .up()
-                .addChild("val").down().addChild("i1").up()
-                .addChild("next").down().addChild("Node").down().addChild("this")
+                .child("val").down().child("i1").up()
+                .child("next").down().child("Node").down().child("this")
 //                .down().addChild("thisRef").addChild("thisRef").up()
-                .addChild("val").down().addChild("i2").up()
-                .addChild("next").down().addChild("Node").down().addChild("this")
+                .child("val").down().child("i2").up()
+                .child("next").down().child("Node").down().child("this")
 //                .down().addChild("thisRef").addChild("thisRef").up()
-                .addChild("val").down().addChild("i3").up()
+                .child("val").down().child("i3").up()
                 .top();
 
-        builder.createRoot()
-                .addChild(rootCell)
-                .addChild(appendcontrol1)
-                .addChild(appendcontrol2)
+        builder.root()
+                .child(rootCell)
+                .child(appendcontrol1)
+                .child(appendcontrol2)
 //                .addChild(appendcontrol3)
         ;
-        builder.closeAllInnerNames();
-        PureBigraph bigraph = builder.createBigraph();
+        builder.closeInner();
+        PureBigraph bigraph = builder.create();
 //        BigraphFileModelManagement.exportAsInstanceModel(bigraph, System.out);
         eb(bigraph, "agent");
         return bigraph;
     }
 
     ReactionRule<PureBigraph> nextRR() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
 
-        BigraphEntity.InnerName tmp0 = builderRedex.createInnerName("tmp");
+        BigraphEntity.InnerName tmp0 = builderRedex.createInner("tmp");
 //        BigraphEntity.OuterName anyRef = builderRedex.createOuterName("anyRef");
 //        BigraphEntity.OuterName openRef = builderRedex.createOuterName("openRef");
-        builderRedex.createRoot()
-                .addChild("this")
-                .down().addSite().addChild("thisRef").linkToInner(tmp0).up()
+        builderRedex.root()
+                .child("this")
+                .down().site().child("thisRef").linkInner(tmp0).up()
 //                .addSite()
 //                .addChild("val").down().addSite().top()
-                .addChild("next").down().addChild("Node").down().addSite().addChild("this").down()
+                .child("next").down().child("Node").down().site().child("this").down()
 //                .addChild("thisRef")
-                .addSite().up()
+                .site().up()
                 .top()
         ;
         //
-        builderRedex.createRoot()
+        builderRedex.root()
 //                .addChild("appendcontrol", "caller").linkToInner(tmp0).down()
-                .addChild("append").linkToInner(tmp0).down()
-                .addChild("val").down().addSite().top()
+                .child("append").linkInner(tmp0).down()
+                .child("val").down().site().top()
         ;
-        builderRedex.closeAllInnerNames();
+        builderRedex.closeInner();
 
 //        BigraphEntity.OuterName anyRef2 = builderReactum.createOuterName("anyRef");
 //        BigraphEntity.OuterName openRef2 = builderReactum.createOuterName("openRef");
-        BigraphEntity.InnerName tmp21 = builderReactum.createInnerName("tmp1");
-        BigraphEntity.InnerName tmp22 = builderReactum.createInnerName("tmp2");
-        builderReactum.createRoot()
-                .addChild("this").down().addSite().addChild("thisRef").linkToInner(tmp22).up()
+        BigraphEntity.InnerName tmp21 = builderReactum.createInner("tmp1");
+        BigraphEntity.InnerName tmp22 = builderReactum.createInner("tmp2");
+        builderReactum.root()
+                .child("this").down().site().child("thisRef").linkInner(tmp22).up()
 //                .addChild("val").down().addSite().top()
 //                .addSite()
-                .addChild("next").down().addChild("Node").down().addSite()
-                .addChild("this").down().addChild("thisRef").linkToInner(tmp21)
-                .addSite()
+                .child("next").down().child("Node").down().site()
+                .child("this").down().child("thisRef").linkInner(tmp21)
+                .site()
                 .top()
         ;
         //
-        builderReactum.createRoot()
+        builderReactum.root()
 //                .addChild("append", "caller").linkToInner(tmp22)
 //                .down().addChild("appendcontrol", "caller").linkToInner(tmp21)
-                .addChild("append").linkToInner(tmp22)
-                .down().addChild("append").linkToInner(tmp21)
+                .child("append").linkInner(tmp22)
+                .down().child("append").linkInner(tmp21)
                 .down()
-                .addChild("val").down().addSite().up()
+                .child("val").down().site().up()
 
         ;
-        builderReactum.closeAllInnerNames();
+        builderReactum.closeInner();
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         eb(redex, "next_1");
         eb(reactum, "next_2");
 
@@ -292,44 +291,44 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     // create a new cell with the value
     // Only append a new value when last cell is reached, ie, without a next control
     ReactionRule<PureBigraph> appendRR() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
 
 //        BigraphEntity.OuterName thisRefAny = builderRedex.createOuterName("thisRefAny");
 //        BigraphEntity.OuterName thisRefA1 = builderRedex.createOuterName("thisRefA1");
-        BigraphEntity.InnerName tmp = builderRedex.createInnerName("tmp");
-        builderRedex.createRoot()
-                .addChild("Node")
+        BigraphEntity.InnerName tmp = builderRedex.createInner("tmp");
+        builderRedex.root()
+                .child("Node")
                 .down()
-                .addChild("this").down().addChild("thisRef").linkToInner(tmp).addSite().up()
-                .addChild("val").down().addSite().top()
+                .child("this").down().child("thisRef").linkInner(tmp).site().up()
+                .child("val").down().site().top()
         ;
         //
-        builderRedex.createRoot()
+        builderRedex.root()
 //                .addChild("appendcontrol", "caller").linkToInner(tmp).down()
-                .addChild("append").linkToInner(tmp).down()
-                .addChild("val").down().addSite().up()
+                .child("append").linkInner(tmp).down()
+                .child("val").down().site().up()
 
         ;
-        builderRedex.closeAllInnerNames();
+        builderRedex.closeInner();
 
 //        BigraphEntity.OuterName thisRefRAny = builderReactum.createOuterName("thisRefAny");
 //        BigraphEntity.OuterName thisRefRA1 = builderReactum.createOuterName("thisRefA1");
 //        BigraphEntity.InnerName tmp1 = builderReactum.createInnerName("tmp");
-        builderReactum.createRoot()
-                .addChild("Node")
+        builderReactum.root()
+                .child("Node")
                 .down()
-                .addChild("this").down().addSite().up() //.addChild("thisRef")
-                .addChild("val").down().addSite().up()
-                .addChild("next").down().addChild("Node").down().addChild("this").addChild("val").down().addSite().top();
+                .child("this").down().site().up() //.addChild("thisRef")
+                .child("val").down().site().up()
+                .child("next").down().child("Node").down().child("this").child("val").down().site().top();
         //
-        builderReactum.createRoot()
+        builderReactum.root()
 //                .addChild("void", "caller")
-                .addChild("void")
+                .child("void")
         ;
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
         eb(redex, "append_1");
         eb(reactum, "append_2");
 
@@ -349,34 +348,34 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     }
 
     ReactionRule<PureBigraph> returnRR() throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
 
-        BigraphEntity.InnerName tmp1 = builderRedex.createInnerName("tmp");
-        builderRedex.createRoot()
-                .addChild("thisRef").linkToInner(tmp1)
+        BigraphEntity.InnerName tmp1 = builderRedex.createInner("tmp");
+        builderRedex.root()
+                .child("thisRef").linkInner(tmp1)
         ;
         //
-        builderRedex.createRoot()
+        builderRedex.root()
 //                .addChild("append", "caller").linkToInner(tmp1).down().addChild("void", "caller")
-                .addChild("append").linkToInner(tmp1).down().addChild("void")
+                .child("append").linkInner(tmp1).down().child("void")
 
         ;
-        builderRedex.closeAllInnerNames();
+        builderRedex.closeInner();
 
 
-        builderReactum.createRoot()
+        builderReactum.root()
 //                .addChild("thisRef")
         ;
         //
-        builderReactum.createRoot()
+        builderReactum.root()
 //                .addChild("void", "caller")
-                .addChild("void")
+                .child("void")
         ;
-        builderReactum.closeAllInnerNames();
+        builderReactum.closeInner();
 
-        PureBigraph redex = builderRedex.createBigraph();
-        PureBigraph reactum = builderReactum.createBigraph();
+        PureBigraph redex = builderRedex.create();
+        PureBigraph reactum = builderReactum.create();
 
 
         eb(redex, "return_1");
@@ -391,11 +390,11 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         return rr;
     }
 
-    private DefaultDynamicSignature createSignature() {
+    private DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
 //                .addControl("appendcontrol", 1)
-                .addControl("append", 1)
+                .add("append", 1)
                 .newControl().identifier(StringTypedName.of("Root")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
                 .newControl().identifier(StringTypedName.of("list")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("this")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have

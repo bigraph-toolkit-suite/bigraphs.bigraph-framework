@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.factory.BigraphFactory;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -49,12 +49,12 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
                 EMetaModelData.builder().setName("myMetaModel").setNsPrefix("example").setNsUri("http://example.org").create()
         );
 
-        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = pureBuilder(
+        PureBigraphBuilder<DynamicSignature> bigraphBuilder = pureBuilder(
                 // it does not matter if we re-create the signature object because we registered it already
                 createExampleSignature()
         );
 
-        PureBigraph bigraph = bigraphBuilder.createBigraph();
+        PureBigraph bigraph = bigraphBuilder.create();
         BigraphFileModelManagement.Store.exportAsMetaModel(
                 bigraph,
                 new FileOutputStream(TARGET_TEST_PATH + "my-meta-model.ecore")
@@ -63,7 +63,7 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
 
     @Test
     void building_and_combining_hierarchies() throws InvalidConnectionException, TypeNotExistsException, IOException {
-        DefaultDynamicSignature signature = //createExampleSignature();
+        DynamicSignature signature = //createExampleSignature();
                 BigraphFactory.pureSignatureBuilder()
                         .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
                         .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -73,33 +73,33 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
                         .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(1)).assign()
                         .create();
 
-        PureBigraphBuilder<DefaultDynamicSignature> builder =
+        PureBigraphBuilder<DynamicSignature> builder =
                 BigraphFactory.pureBuilder(signature, TARGET_TEST_PATH + "my-meta-model.ecore");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy buildingRight =
+        PureBigraphBuilder<DynamicSignature>.Hierarchy buildingRight =
                 builder.hierarchy("Building")
-                        .addChild("Room").down()
-                        .addChild("Laptop").addChild("Laptop").addChild("Laptop").addChild("Laptop");
+                        .child("Room").down()
+                        .child("Laptop").child("Laptop").child("Laptop").child("Laptop");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy roomLeft = builder.hierarchy("Room");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy roomRight = builder.hierarchy("Room");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy roomLeft = builder.hierarchy("Room");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy roomRight = builder.hierarchy("Room");
 
-        BigraphEntity.InnerName login = builder.createInnerName("login");
-        roomLeft.addChild("User").linkToInner(login)
-                .addChild("Laptop", "network").linkToInner(login).down().addChild("Job");
-        builder.closeInnerName(login);
+        BigraphEntity.InnerName login = builder.createInner("login");
+        roomLeft.child("User").linkInner(login)
+                .child("Laptop", "network").linkInner(login).down().child("Job");
+        builder.closeInner(login);
 
-        roomRight.addChild("Printer", "network");
+        roomRight.child("Printer", "network");
 
-        builder.createRoot().addChild("Building").down().addChild(roomLeft.top()).addChild(roomRight.top());
-        builder.createRoot().addChild(buildingRight.top());
+        builder.root().child("Building").down().child(roomLeft.top()).child(roomRight.top());
+        builder.root().child(buildingRight.top());
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
 //        System.out.println(bigraph.getRoots().size());
 //        BigraphFileModelManagement.exportAsInstanceModel(bigraph, new FileOutputStream(new File("test.xmi")));
     }
 
-    private DefaultDynamicSignature createExampleSignature() {
+    private DynamicSignature createExampleSignature() {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
                 .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(2)).assign()

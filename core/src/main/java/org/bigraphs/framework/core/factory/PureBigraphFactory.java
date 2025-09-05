@@ -7,8 +7,8 @@ import org.bigraphs.framework.core.datatypes.EMetaModelData;
 import org.bigraphs.framework.core.datatypes.NamedType;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 /**
  * @author Dominik Grzelak
  */
-public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSignature> {
+public class PureBigraphFactory extends AbstractBigraphFactory<DynamicSignature> {
 
     PureBigraphFactory() {
-        super.signatureImplType = new TypeToken<DefaultDynamicControl>() {
+        super.signatureImplType = new TypeToken<DynamicControl>() {
         }.getType();
         super.bigraphClassType = PureBigraph.class;
     }
@@ -45,52 +45,52 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
 //    }
 
     @Override
-    public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature) {
-        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature));
+    public PureBigraphBuilder<DynamicSignature> createBigraphBuilder(Signature<?> signature) {
+        return PureBigraphBuilder.create(DynamicSignature.class.cast(signature));
     }
 
     @Override
-    public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, EMetaModelData metaModelData) {
-        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelData);
+    public PureBigraphBuilder<DynamicSignature> createBigraphBuilder(Signature<?> signature, EMetaModelData metaModelData) {
+        return PureBigraphBuilder.create(DynamicSignature.class.cast(signature), metaModelData);
     }
 
     @Override
-    public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, String metaModelFileName) {
-        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), metaModelFileName);
+    public PureBigraphBuilder<DynamicSignature> createBigraphBuilder(Signature<?> signature, String metaModelFileName) {
+        return PureBigraphBuilder.create(DynamicSignature.class.cast(signature), metaModelFileName);
     }
 
     @Override
-    public PureBigraphBuilder<DefaultDynamicSignature> createBigraphBuilder(Signature<?> signature, EPackage bigraphMetaModel) {
-        return PureBigraphBuilder.create(DefaultDynamicSignature.class.cast(signature), bigraphMetaModel, (EObject) null);
+    public PureBigraphBuilder<DynamicSignature> createBigraphBuilder(Signature<?> signature, EPackage bigraphMetaModel) {
+        return PureBigraphBuilder.create(DynamicSignature.class.cast(signature), bigraphMetaModel, (EObject) null);
     }
 
     @Override
-    public Placings<DefaultDynamicSignature> createPlacings(DefaultDynamicSignature signature) {
+    public Placings<DynamicSignature> createPlacings(DynamicSignature signature) {
         return new Placings<>(signature);
     }
 
     @Override
-    public Placings<DefaultDynamicSignature> createPlacings(DefaultDynamicSignature signature, EPackage bigraphMetaModel) {
+    public Placings<DynamicSignature> createPlacings(DynamicSignature signature, EPackage bigraphMetaModel) {
         return new Placings<>(signature, bigraphMetaModel);
     }
 
     @Override
-    public Placings<DefaultDynamicSignature> createPlacings(DefaultDynamicSignature signature, EMetaModelData metaModelData) {
+    public Placings<DynamicSignature> createPlacings(DynamicSignature signature, EMetaModelData metaModelData) {
         return new Placings<>(signature, metaModelData);
     }
 
     @Override
-    public Linkings<DefaultDynamicSignature> createLinkings(DefaultDynamicSignature signature) {
+    public Linkings<DynamicSignature> createLinkings(DynamicSignature signature) {
         return new Linkings<>(signature);
     }
 
     @Override
-    public Linkings<DefaultDynamicSignature> createLinkings(DefaultDynamicSignature signature, EPackage bigraphMetaModel) {
+    public Linkings<DynamicSignature> createLinkings(DynamicSignature signature, EPackage bigraphMetaModel) {
         return new Linkings<>(signature, bigraphMetaModel);
     }
 
     @Override
-    public Linkings<DefaultDynamicSignature> createLinkings(DefaultDynamicSignature signature, EMetaModelData metaModelData) {
+    public Linkings<DynamicSignature> createLinkings(DynamicSignature signature, EMetaModelData metaModelData) {
         return new Linkings<>(signature, metaModelData);
     }
 
@@ -104,7 +104,7 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
      * @return a discrete ion
      */
     @Override
-    public DiscreteIon<DefaultDynamicSignature> createDiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, DefaultDynamicSignature signature) {
+    public DiscreteIon<DynamicSignature> createDiscreteIon(NamedType<?> name, Set<NamedType<?>> outerNames, DynamicSignature signature) {
         assert name instanceof StringTypedName;
         return new DiscreteIon<>(
                 name,
@@ -117,9 +117,9 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
     /**
      * Convenient method.
      *
-     * @see PureBigraphFactory#createDiscreteIon(NamedType, Set, DefaultDynamicSignature)
+     * @see PureBigraphFactory#createDiscreteIon(NamedType, Set, DynamicSignature)
      */
-    public DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, DefaultDynamicSignature signature) {
+    public DiscreteIon<DynamicSignature> createDiscreteIon(String name, Set<String> outerNames, DynamicSignature signature) {
         return new DiscreteIon<>(
                 StringTypedName.of(name),
                 outerNames.stream().map(StringTypedName::of).collect(Collectors.toSet()),
@@ -128,7 +128,7 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
         );
     }
 
-    public DiscreteIon<DefaultDynamicSignature> createDiscreteIon(String name, Set<String> outerNames, DefaultDynamicSignature signature, EPackage bigraphMetaModel) {
+    public DiscreteIon<DynamicSignature> createDiscreteIon(String name, Set<String> outerNames, DynamicSignature signature, EPackage bigraphMetaModel) {
         return new DiscreteIon<>(
                 StringTypedName.of(name),
                 outerNames.stream().map(StringTypedName::of).collect(Collectors.toSet()),
@@ -139,7 +139,7 @@ public class PureBigraphFactory extends AbstractBigraphFactory<DefaultDynamicSig
     }
 
     @Override
-    public PureBigraphComposite<DefaultDynamicSignature> asBigraphOperator(Bigraph<DefaultDynamicSignature> outerBigraph) {
+    public PureBigraphComposite<DynamicSignature> asBigraphOperator(Bigraph<DynamicSignature> outerBigraph) {
         return new PureBigraphComposite<>(outerBigraph);
     }
 

@@ -1,6 +1,5 @@
 package org.bigraphs.framework.core;
 
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.EMetaModelData;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
@@ -11,7 +10,7 @@ import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
 import org.bigraphs.framework.core.impl.elementary.Placings;
@@ -47,7 +46,7 @@ public class BigraphFileModelManagementUnitTests {
 
     @Test
     void checkConstraintsAfterExport() throws IOException {
-        DefaultDynamicSignature signature = createExampleSignature();
+        DynamicSignature signature = createExampleSignature();
 //        PureBigraphGenerator gen = pureRandomBuilder(signature);
 //        PureBigraph generate = gen.generate(1, 10, 1f);
 //        BigraphFileModelManagement.exportAsInstanceModel(generate, new FileOutputStream(TARGET_TEST_PATH + "_r1.xmi"));
@@ -63,10 +62,10 @@ public class BigraphFileModelManagementUnitTests {
         String metaFilename = TARGET_TEST_PATH + baseName + ".ecore";
         String instanceFilenameSig = TARGET_TEST_PATH + baseName + "Sig.xmi";
         String metaFilenameSig = TARGET_TEST_PATH + baseName + "Sig.ecore";
-        DefaultDynamicSignature sig = pureSignatureBuilder()
-                .addControl("A", 1)
-                .addControl("B", 2)
-                .addControl("C", 3)
+        DynamicSignature sig = pureSignatureBuilder()
+                .add("A", 1)
+                .add("B", 2)
+                .add("C", 3)
                 .create();
 //        createOrGetSignatureMetaModel(sig, EMetaModelData.builder()
 //                .setName("sigsig")
@@ -74,11 +73,11 @@ public class BigraphFileModelManagementUnitTests {
         System.out.println(sig.getMetaModel().getName());
 
 //        createOrGetBigraphMetaModel(sig, EMetaModelData.builder().setName("bigbig").create());
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
-        builder.createRoot()
-                .addChild("A")
-                .addChild("B")
-                .addChild("C")
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig);
+        builder.root()
+                .child("A")
+                .child("B")
+                .child("C")
         ;
 
         BigraphFileModelManagement.Store.exportAsMetaModel(sig, new FileOutputStream(metaFilenameSig));
@@ -92,10 +91,10 @@ public class BigraphFileModelManagementUnitTests {
         List<EObject> eObjectsSigInstanceLoaded = BigraphFileModelManagement.Load.signatureInstanceModel(metaFilenameSig, instanceFilenameSig);
         assertNotNull(eObjectsSigInstanceLoaded);
         assertEquals(1, eObjectsSigInstanceLoaded.size());
-        DefaultDynamicSignature sigLoaded = createOrGetSignature(eObjectsSigInstanceLoaded.get(0));
+        DynamicSignature sigLoaded = createOrGetSignature(eObjectsSigInstanceLoaded.get(0));
         assertEquals(sigLoaded, sig);
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         System.out.println(bigraph.getMetaModel().getNsURI());
         System.out.println(bigraph.getMetaModel().getNsPrefix());
         BigraphFileModelManagement.Store.exportAsMetaModel(bigraph, new FileOutputStream(metaFilename));
@@ -190,43 +189,43 @@ public class BigraphFileModelManagementUnitTests {
     void compose_output() {
         assertAll(() -> {
 
-            DefaultDynamicSignature signature = createExampleSignature();
+            DynamicSignature signature = createExampleSignature();
             EMetaModelData modelData = EMetaModelData.builder().setName("F").setNsUri("http://www.example.org").setNsPrefix("sample").create();
             createOrGetBigraphMetaModel(signature, modelData);
-            PureBigraphBuilder<DefaultDynamicSignature> builderForF = pureBuilder(signature);
-            PureBigraphBuilder<DefaultDynamicSignature> builderForG = pureBuilder(signature);
+            PureBigraphBuilder<DynamicSignature> builderForF = pureBuilder(signature);
+            PureBigraphBuilder<DynamicSignature> builderForG = pureBuilder(signature);
 //
-            BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
-            BigraphEntity.InnerName jeffG = builderForG.createInnerName("jeff");
-            BigraphEntity.InnerName f1 = builderForF.createInnerName("x_f");
-            BigraphEntity.InnerName f2 = builderForF.createInnerName("y_f");
+            BigraphEntity.OuterName jeff = builderForF.createOuter("jeff");
+            BigraphEntity.InnerName jeffG = builderForG.createInner("jeff");
+            BigraphEntity.InnerName f1 = builderForF.createInner("x_f");
+            BigraphEntity.InnerName f2 = builderForF.createInner("y_f");
 
-            PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
+            PureBigraphBuilder<DynamicSignature>.Hierarchy room =
                     builderForF.hierarchy(signature.getControlByName("Room"));
-            room.addChild(signature.getControlByName("User")).linkToOuter(jeff).addChild(signature.getControlByName("Job"))
-                    .addChild(signature.getControlByName("Printer")).linkToInner(f1).linkToInner(f2)
+            room.child(signature.getControlByName("User")).linkOuter(jeff).child(signature.getControlByName("Job"))
+                    .child(signature.getControlByName("Printer")).linkInner(f1).linkInner(f2)
             ;
-            builderForF.createRoot()
-                    .addChild(room);
+            builderForF.root()
+                    .child(room);
 
-            builderForG.createRoot()
-                    .addChild(signature.getControlByName("Job")).down().addSite().up()
-                    .addChild(signature.getControlByName("User")).linkToInner(jeffG);
+            builderForG.root()
+                    .child(signature.getControlByName("Job")).down().site().up()
+                    .child(signature.getControlByName("User")).linkInner(jeffG);
 
 
-            builderForF.createBigraph();
-            PureBigraph F = builderForF.createBigraph();
-            PureBigraph G = builderForG.createBigraph();
+            builderForF.create();
+            PureBigraph F = builderForF.create();
+            PureBigraph G = builderForG.create();
 
             BigraphFileModelManagement.Store.exportAsInstanceModel(F, new FileOutputStream(TARGET_TEST_PATH + "f.xmi"));
-            BigraphComposite<DefaultDynamicSignature> compositor = ops(G);
-            BigraphComposite<DefaultDynamicSignature> composedBigraph = compositor.compose(F);
+            BigraphComposite<DynamicSignature> compositor = ops(G);
+            BigraphComposite<DynamicSignature> composedBigraph = compositor.compose(F);
             BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) composedBigraph.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "composetest.xmi"));
             BigraphFileModelManagement.Store.exportAsMetaModel((PureBigraph) composedBigraph.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "composetest.ecore"));
 
-            BigraphComposite<DefaultDynamicSignature> juxtapose = compositor.juxtapose(F);
+            BigraphComposite<DynamicSignature> juxtapose = compositor.juxtapose(F);
             BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) juxtapose.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "juxtatest.xmi"));
 
@@ -236,25 +235,25 @@ public class BigraphFileModelManagementUnitTests {
     // change nsURI in to "http:///ecore_file_name.ecore" and nsPrefix into "ecore_file_name" after
     @Test
     void export_sample_model() throws IOException, InvalidConnectionException, TypeNotExistsException {
-        DefaultDynamicSignature signature = createExampleSignature();
+        DynamicSignature signature = createExampleSignature();
         EMetaModelData modelData = EMetaModelData.builder().setName("F").setNsUri("http://www.example.org").setNsPrefix("sample").create();
         createOrGetBigraphMetaModel(signature, modelData);
-        PureBigraphBuilder<DefaultDynamicSignature> builderForF = pureBuilder(signature);
-        BigraphEntity.OuterName jeff = builderForF.createOuterName("jeff");
-        BigraphEntity.InnerName f1 = builderForF.createInnerName("x_f");
-        BigraphEntity.InnerName f2 = builderForF.createInnerName("y_f");
+        PureBigraphBuilder<DynamicSignature> builderForF = pureBuilder(signature);
+        BigraphEntity.OuterName jeff = builderForF.createOuter("jeff");
+        BigraphEntity.InnerName f1 = builderForF.createInner("x_f");
+        BigraphEntity.InnerName f2 = builderForF.createInner("y_f");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room =
+        PureBigraphBuilder<DynamicSignature>.Hierarchy room =
                 builderForF.hierarchy(signature.getControlByName("Room"));
-        room.addChild(signature.getControlByName("User")).linkToOuter(jeff).addChild(signature.getControlByName("Job"))
-                .addChild(signature.getControlByName("Printer")).linkToInner(f1).linkToInner(f2).down().addSite()
+        room.child(signature.getControlByName("User")).linkOuter(jeff).child(signature.getControlByName("Job"))
+                .child(signature.getControlByName("Printer")).linkInner(f1).linkInner(f2).down().site()
                 .up()
-                .addSite()
+                .site()
         ;
-        builderForF.createRoot()
-                .addChild(room);
+        builderForF.root()
+                .child(room);
 
-        PureBigraph F = builderForF.createBigraph();
+        PureBigraph F = builderForF.create();
 
         BigraphFileModelManagement.Store.exportAsInstanceModel(F,
                 new FileOutputStream(TARGET_TEST_EXPORT_PATH + "test-1.xmi"), "test-1.ecore");
@@ -265,37 +264,37 @@ public class BigraphFileModelManagementUnitTests {
     @Test
     void compose_output_elementary_composition() {
         int m = 3;
-        DefaultDynamicSignature signature = createExampleSignature();
+        DynamicSignature signature = createExampleSignature();
 //        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
         createOrGetBigraphMetaModel(signature);
-        Placings<DefaultDynamicSignature> placings = purePlacings(signature);
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings(signature);
-        Placings<DefaultDynamicSignature>.Merge merge_MplusOne = placings.merge(m + 1);
+        Placings<DynamicSignature> placings = purePlacings(signature);
+        Linkings<DynamicSignature> linkings = pureLinkings(signature);
+        Placings<DynamicSignature>.Merge merge_MplusOne = placings.merge(m + 1);
 
-        Placings<DefaultDynamicSignature>.Join aJoin = placings.join();
-        Placings<DefaultDynamicSignature>.Merge merge_1 = placings.merge(1); //id_1 = merge_1
-        Placings<DefaultDynamicSignature>.Merge merge_M = placings.merge(m);
+        Placings<DynamicSignature>.Join aJoin = placings.join();
+        Placings<DynamicSignature>.Merge merge_1 = placings.merge(1); //id_1 = merge_1
+        Placings<DynamicSignature>.Merge merge_M = placings.merge(m);
 
-        BigraphComposite<DefaultDynamicSignature> a = ops(merge_1);
-        BigraphComposite<DefaultDynamicSignature> b = ops(aJoin);
+        BigraphComposite<DynamicSignature> a = ops(merge_1);
+        BigraphComposite<DynamicSignature> b = ops(aJoin);
         try {
-            PureBigraphBuilder<DefaultDynamicSignature> builderForG = pureBuilder(signature);
-            BigraphEntity.InnerName zInner = builderForG.createInnerName("z");
-            builderForG.createRoot().addChild(signature.getControlByName("User")).linkToInner(zInner);
-            PureBigraph simpleBigraph = builderForG.createBigraph();
+            PureBigraphBuilder<DynamicSignature> builderForG = pureBuilder(signature);
+            BigraphEntity.InnerName zInner = builderForG.createInner("z");
+            builderForG.root().child(signature.getControlByName("User")).linkInner(zInner);
+            PureBigraph simpleBigraph = builderForG.create();
             BigraphFileModelManagement.Store.exportAsInstanceModel(
                     simpleBigraph,
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_2a.xmi")
             );
-            Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
-            BigraphComposite<DefaultDynamicSignature> compose = ops(simpleBigraph);
-            BigraphComposite<DefaultDynamicSignature> compose1 = compose.compose(substitution);
+            Linkings<DynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("z"), StringTypedName.of("y"));
+            BigraphComposite<DynamicSignature> compose = ops(simpleBigraph);
+            BigraphComposite<DynamicSignature> compose1 = compose.compose(substitution);
             BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) compose1.getOuterBigraph(),
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_2b.xmi"));
 
-            Linkings<DefaultDynamicSignature>.Substitution a1 = linkings.substitution(StringTypedName.of("a"), StringTypedName.of("b"), StringTypedName.of("c"));
-            Linkings<DefaultDynamicSignature>.Substitution a2 = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("a"));
-            Bigraph<DefaultDynamicSignature> a3 = ops(a2).compose(a1).getOuterBigraph();
+            Linkings<DynamicSignature>.Substitution a1 = linkings.substitution(StringTypedName.of("a"), StringTypedName.of("b"), StringTypedName.of("c"));
+            Linkings<DynamicSignature>.Substitution a2 = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("a"));
+            Bigraph<DynamicSignature> a3 = ops(a2).compose(a1).getOuterBigraph();
             BigraphFileModelManagement.Store.exportAsInstanceModel((PureBigraph) a3,
                     new FileOutputStream(TARGET_TEST_PATH + "compose_test_3.xmi"));
 
@@ -318,30 +317,30 @@ public class BigraphFileModelManagementUnitTests {
     }
 
     public Bigraph createSampleBigraph() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
+        DynamicSignature signature = createExampleSignature();
         EMetaModelData metaModelData = new EMetaModelData.MetaModelDataBuilder()
                 .setName("sampleModel")
                 .setNsPrefix("bigraphSampleModel")
                 .setNsUri("http://sample.bigraph")
                 .create();
         createOrGetBigraphMetaModel(signature, metaModelData);
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        BigraphEntity.InnerName tmp1 = builder.createInnerName("tmp1");
-        BigraphEntity.OuterName jeff = builder.createOuterName("jeff");
+        BigraphEntity.InnerName tmp1 = builder.createInner("tmp1");
+        BigraphEntity.OuterName jeff = builder.createOuter("jeff");
 
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
-        room.linkToInner(tmp1)
-                .addChild(signature.getControlByName("User")).linkToOuter(jeff)
-                .addChild(signature.getControlByName("Job"));
+        PureBigraphBuilder<DynamicSignature>.Hierarchy room = builder.hierarchy(signature.getControlByName("Room"));
+        room.linkInner(tmp1)
+                .child(signature.getControlByName("User")).linkOuter(jeff)
+                .child(signature.getControlByName("Job"));
 
-        builder.createRoot()
-                .addChild(room)
-                .addChild(signature.getControlByName("Room")).linkToInner(tmp1);
+        builder.root()
+                .child(room)
+                .child(signature.getControlByName("Room")).linkInner(tmp1);
 
-        builder.closeInnerName(tmp1);
+        builder.closeInner(tmp1);
 
-        return builder.createBigraph();
+        return builder.create();
     }
 }

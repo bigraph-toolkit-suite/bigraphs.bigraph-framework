@@ -1,7 +1,6 @@
 package org.bigraphs.framework.core.impl.signature;
 
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.utils.emf.EMFUtils;
@@ -21,12 +20,12 @@ import static org.bigraphs.framework.core.BigraphMetaModelConstants.SignaturePac
  * Concrete implementation of a pure (dynamic) signature, where controls can be assigned a {@code status =  (active, passive)},
  * and further place-sorts can be defined for each control.
  * <p>
- * This class generalizes the {@link DefaultDynamicSignature} class somewhat, because (place-sorted) kind signatures
+ * This class generalizes the {@link DynamicSignature} class somewhat, because (place-sorted) kind signatures
  * are a generalisation of pure signatures.
  *
  * @author Dominik Grzelak
  */
-public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl> implements IsPlaceSortable {
+public class KindSignature extends AbstractEcoreSignature<DynamicControl> implements IsPlaceSortable {
 
     protected MutableMap<String, KindSort> kindFunction;
     protected EFactory sigFactory;
@@ -64,12 +63,12 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
             Integer ctrlArity = (Integer) eachControl.eGet(arityAttr);
             EEnumLiteral ctrlStatus = (EEnumLiteral) eachControl.eGet(statusAttr);
 
-            DefaultDynamicControl defaultDynamicControl = DefaultDynamicControl.createDefaultDynamicControl(
+            DynamicControl dynamicControl = DynamicControl.createDynamicControl(
                     StringTypedName.of(ctrlId),
                     FiniteOrdinal.ofInteger(ctrlArity),
                     ControlStatus.fromString(ctrlStatus.getLiteral())
             );
-            controls.add(defaultDynamicControl);
+            controls.add(dynamicControl);
         }
     }
 
@@ -87,7 +86,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
             String ctrlId = eachPlaceSort.eClass().getName();
             String rectifiedCtrlId = ctrlId.substring(0, ctrlId.lastIndexOf(SORT_PREFIX));
             if (EMFUtils.eClassHasSuperType(BigraphMetaModelConstants.SignaturePackage.ECLASS_KINDSORTNONATOMIC, eachPlaceSort.eClass())) {
-                MutableList<DefaultDynamicControl> sorts = Lists.mutable.empty();
+                MutableList<DynamicControl> sorts = Lists.mutable.empty();
                 Map<String, EReference> refsOfSort = EMFUtils.findAllReferences2(eachPlaceSort.eClass());
                 EReference eReference = refsOfSort.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDSORTS);
                 assert eReference != null;
@@ -110,7 +109,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
      *
      * @param controls the controls of the kind signature
      */
-    public KindSignature(Set<DefaultDynamicControl> controls) {
+    public KindSignature(Set<DynamicControl> controls) {
         this(controls, Collections.emptyList());
     }
 
@@ -122,7 +121,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
      * @param controls  the controls
      * @param kindSorts the kind sorts (must not be fully defined for all controls, has a default behaviour as described above)
      */
-    public KindSignature(Set<DefaultDynamicControl> controls, Collection<KindSort> kindSorts) {
+    public KindSignature(Set<DynamicControl> controls, Collection<KindSort> kindSorts) {
         super(controls);
         try {
             // (!) Important, because otherwise we might face a "A frozen model should not be modified" assertion exception:
@@ -135,7 +134,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
 
         MutableMap<String, EClass> bControlClassMap = Maps.mutable.of();
         MutableMap<String, EClass> bControlSortClassMap = Maps.mutable.empty();
-        for (DefaultDynamicControl c : this.controls) {
+        for (DynamicControl c : this.controls) {
             String ctrlId = c.getNamedType().stringValue();
             EClass controlEClass = extendBControlEClass(ctrlId, sigPackage);
             bControlClassMap.put(ctrlId, controlEClass);
@@ -170,7 +169,7 @@ public class KindSignature extends AbstractEcoreSignature<DefaultDynamicControl>
         EReference eReferenceKindSorts = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
         assert eReferenceControls != null;
         MutableMap<String, EObject> kindSortInstanceMap = Maps.mutable.empty();
-        for (DefaultDynamicControl eachCtrl : this.controls) {
+        for (DynamicControl eachCtrl : this.controls) {
             String ctrlId = eachCtrl.getNamedType().stringValue();
             EClass ctrlEClass = bControlClassMap.get(ctrlId);
             EObject concreteControlObject = sigFactory.create(ctrlEClass);

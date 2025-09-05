@@ -6,8 +6,8 @@ import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.MutableBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import it.uniud.mads.jlibbig.core.attachedProperties.Property;
 import it.uniud.mads.jlibbig.core.attachedProperties.PropertyTarget;
@@ -26,8 +26,8 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
     private HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
     private HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
     private HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
-    private MutableBuilder<DefaultDynamicSignature> builder;
-    private DefaultDynamicSignature signature;
+    private MutableBuilder<DynamicSignature> builder;
+    private DynamicSignature signature;
     private it.uniud.mads.jlibbig.core.std.Bigraph jBigraph;
 
     private Map<String, it.uniud.mads.jlibbig.core.std.OuterName> jLibBigOuterNames = new LinkedHashMap<>();
@@ -37,7 +37,7 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
     private Map<String, it.uniud.mads.jlibbig.core.std.Node> jLibBigNodes = new LinkedHashMap<>(); // PlaceEntity
     private Map<Integer, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
 
-    public synchronized PureBigraph decode(it.uniud.mads.jlibbig.core.std.Bigraph bigraph, DefaultDynamicSignature signature) {
+    public synchronized PureBigraph decode(it.uniud.mads.jlibbig.core.std.Bigraph bigraph, DynamicSignature signature) {
         this.jBigraph = bigraph;
         this.signature = signature;
         EPackage ePackage = createOrGetBigraphMetaModel(this.signature);
@@ -59,7 +59,7 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
         performLinkage(bigraph);
 
         // Create bigraph
-        PureBigraphBuilder<DefaultDynamicSignature>.InstanceParameter meta = this.builder.new InstanceParameter(
+        PureBigraphBuilder<DynamicSignature>.InstanceParameter meta = this.builder.new InstanceParameter(
                 this.builder.getMetaModel(),
                 this.signature,
                 this.newRoots,
@@ -199,7 +199,7 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
     private BigraphEntity.NodeEntity createNode(Node n, BigraphEntity parent) {
         String control = n.getControl().getName();
         String nodeId = n.getEditable().getName();
-        DefaultDynamicControl controlByName = signature.getControlByName(control);
+        DynamicControl controlByName = signature.getControlByName(control);
         // Check if node has an ID property - use that instead
         if(n.getProperty("_id") != null) {
             nodeId = String.valueOf(n.getProperty("_id").get());
@@ -228,11 +228,11 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
         return newSite;
     }
 
-    private DefaultDynamicSignature parseSignature(it.uniud.mads.jlibbig.core.std.Signature sig) {
+    private DynamicSignature parseSignature(it.uniud.mads.jlibbig.core.std.Signature sig) {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         for (Iterator<Control> it = sig.iterator(); it.hasNext(); ) {
             Control control = it.next();
-            signatureBuilder.addControl(control.getName(), control.getArity(), control.isActive() ? ControlStatus.ACTIVE : ControlStatus.PASSIVE);
+            signatureBuilder.add(control.getName(), control.getArity(), control.isActive() ? ControlStatus.ACTIVE : ControlStatus.PASSIVE);
         }
         return signatureBuilder.create();
     }

@@ -3,11 +3,11 @@ package org.bigraphs.framework.simulation.matching;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.exceptions.*;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -256,115 +256,115 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     private PureBigraph createQueryLinkGraph() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature2());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature2());
 
-        BigraphEntity.InnerName x1 = builder.createInnerName("x1");
-        BigraphEntity.InnerName x2 = builder.createInnerName("x2");
-        builder.createRoot()
-                .addChild("A").linkToInner(x1)
-                .addChild("C").linkToInner(x1).linkToInner(x2)
-                .addChild("B").linkToInner(x1).linkToInner(x2)
-                .addChild("C").linkToInner(x2)
+        BigraphEntity.InnerName x1 = builder.createInner("x1");
+        BigraphEntity.InnerName x2 = builder.createInner("x2");
+        builder.root()
+                .child("A").linkInner(x1)
+                .child("C").linkInner(x1).linkInner(x2)
+                .child("B").linkInner(x1).linkInner(x2)
+                .child("C").linkInner(x2)
         ;
 
-        builder.closeInnerName(x1);
-        builder.closeInnerName(x2);
-        PureBigraph bigraph = builder.createBigraph();
+        builder.closeInner(x1);
+        builder.closeInner(x2);
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     private PureBigraph createDataLinkGraph() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature2());
-        BigraphEntity.InnerName x1 = builder.createInnerName("x1");
-        BigraphEntity.InnerName x2 = builder.createInnerName("x2");
-        BigraphEntity.InnerName x3 = builder.createInnerName("x3");
-        BigraphEntity.InnerName x4 = builder.createInnerName("x4");
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature2());
+        BigraphEntity.InnerName x1 = builder.createInner("x1");
+        BigraphEntity.InnerName x2 = builder.createInner("x2");
+        BigraphEntity.InnerName x3 = builder.createInner("x3");
+        BigraphEntity.InnerName x4 = builder.createInner("x4");
 
-        builder.createRoot()
-                .addChild("A").linkToInner(x1)
-                .addChild("C").linkToInner(x1).linkToInner(x2)
-                .addChild("B").linkToInner(x1).linkToInner(x2).linkToInner(x3)
-                .addChild("C").linkToInner(x2).linkToInner(x2)
-                .addChild("A").linkToInner(x3)
-                .addChild("C").linkToInner(x3).linkToInner(x4)
-                .addChild("B").linkToInner(x4)
-                .addChild("C").linkToInner(x4)
+        builder.root()
+                .child("A").linkInner(x1)
+                .child("C").linkInner(x1).linkInner(x2)
+                .child("B").linkInner(x1).linkInner(x2).linkInner(x3)
+                .child("C").linkInner(x2).linkInner(x2)
+                .child("A").linkInner(x3)
+                .child("C").linkInner(x3).linkInner(x4)
+                .child("B").linkInner(x4)
+                .child("C").linkInner(x4)
         ;
 
-        builder.closeAllInnerNames();
-        PureBigraph bigraph = builder.createBigraph();
+        builder.closeInner();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     private PureBigraph createAgent() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
 
 //        /e0 (A{y1,y2}.1 | A{y1,e0}.1 | A{y1,e0}.1 | A{y2,e0}.1);
 
-        BigraphEntity.OuterName y1 = builder.createOuterName("y1");
-        BigraphEntity.OuterName y2 = builder.createOuterName("y2");
-        BigraphEntity.InnerName e0 = builder.createInnerName("e0");
-        builder.createRoot()
-                .addChild("A").linkToOuter(y1).linkToOuter(y2)
-                .addChild("A").linkToOuter(y1).linkToInner(e0)
-                .addChild("A").linkToOuter(y1).linkToInner(e0)
-                .addChild("A").linkToOuter(y2).linkToInner(e0)
+        BigraphEntity.OuterName y1 = builder.createOuter("y1");
+        BigraphEntity.OuterName y2 = builder.createOuter("y2");
+        BigraphEntity.InnerName e0 = builder.createInner("e0");
+        builder.root()
+                .child("A").linkOuter(y1).linkOuter(y2)
+                .child("A").linkOuter(y1).linkInner(e0)
+                .child("A").linkOuter(y1).linkInner(e0)
+                .child("A").linkOuter(y2).linkInner(e0)
         ;
-        builder.closeInnerName(e0);
-        PureBigraph bigraph = builder.createBigraph();
+        builder.closeInner(e0);
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     //(A{y1,e0}.1 | A{y2,e0}.1) -> (A{y1,e0}.1 | A{y2,e0}.1);
     public PureBigraph createRedex1() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        BigraphEntity.OuterName y1 = builder.createOuterName("y2");
-        BigraphEntity.OuterName y2 = builder.createOuterName("e0");
-        BigraphEntity.OuterName e0 = builder.createOuterName("y1");
-        builder.createRoot()
-                .addChild("A").linkToOuter(y1).linkToOuter(e0)
-                .addChild("A").linkToOuter(y2).linkToOuter(e0)
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        BigraphEntity.OuterName y1 = builder.createOuter("y2");
+        BigraphEntity.OuterName y2 = builder.createOuter("e0");
+        BigraphEntity.OuterName e0 = builder.createOuter("y1");
+        builder.root()
+                .child("A").linkOuter(y1).linkOuter(e0)
+                .child("A").linkOuter(y2).linkOuter(e0)
         ;
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
     ///e0 (A{y1,e0}.1 | A{y1,e0}.1) -> /e0 (A{y1,e0}.1 | A{y1,e0}.1)
     public PureBigraph createRedex3() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        BigraphEntity.OuterName y1 = builder.createOuterName("y1");
-        BigraphEntity.InnerName e0 = builder.createInnerName("e0");
-        builder.createRoot()
-                .addChild("A").linkToOuter(y1).linkToInner(e0)
-                .addChild("A").linkToOuter(y1).linkToInner(e0)
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        BigraphEntity.OuterName y1 = builder.createOuter("y1");
+        BigraphEntity.InnerName e0 = builder.createInner("e0");
+        builder.root()
+                .child("A").linkOuter(y1).linkInner(e0)
+                .child("A").linkOuter(y1).linkInner(e0)
         ;
-        builder.closeInnerName(e0);
-        return builder.createBigraph();
+        builder.closeInner(e0);
+        return builder.create();
     }
 
     ///e0 (/y1 A{y1,e0}.1 | /y2 A{y2,e0}.1) -> /e0 (/y1 A{y1,e0}.1 | /y2 A{y2,e0}.1);
     public PureBigraph createRedex2() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        builder.createRoot()
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        builder.root()
                 .connectByEdge("A", "A")
         ;
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
 
     // (A{y1,e0}.1 | A{y1,e0}.1)
     public PureBigraph createRedex4() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
 
-        BigraphEntity.OuterName y1 = builder.createOuterName("y1");
-        BigraphEntity.OuterName e0 = builder.createOuterName("e0");
-        builder.createRoot()
-                .addChild("A").linkToOuter(y1).linkToOuter(e0)
-                .addChild("A").linkToOuter(y1).linkToOuter(e0)
+        BigraphEntity.OuterName y1 = builder.createOuter("y1");
+        BigraphEntity.OuterName e0 = builder.createOuter("e0");
+        builder.root()
+                .child("A").linkOuter(y1).linkOuter(e0)
+                .child("A").linkOuter(y1).linkOuter(e0)
         ;
 
-        return builder.createBigraph();
+        return builder.create();
     }
 
     public ReactionRule<PureBigraph> createReactionRule4() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
@@ -382,20 +382,20 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
     }
 
     private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
 
-        BigraphEntity.OuterName from = builder.createOuterName("from");
+        BigraphEntity.OuterName from = builder.createOuter("from");
 
         // links of car and target must be connected via an outer name otherwise the predicate is not matched
-        builder.createRoot()
-                .addChild("Place").linkToOuter(from)
+        builder.root()
+                .child("Place").linkOuter(from)
 //                .down().addSite().connectByEdge("Target", "Car").down().addSite();
-                .down().addSite().addChild("Target", "target").addChild("Car", "target").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
+                .down().site().child("Target", "target").child("Car", "target").down().site();
+        PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
-    public static DefaultDynamicSignature createSignature() {
+    public static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier("A").arity(2).assign()
@@ -403,7 +403,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         return defaultBuilder.create();
     }
 
-    public static DefaultDynamicSignature createSignature2() {
+    public static DynamicSignature createSignature2() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier("A").arity(3).assign()

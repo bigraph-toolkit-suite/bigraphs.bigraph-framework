@@ -1,7 +1,6 @@
 package org.bigraphs.framework.core.impl.signature;
 
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.utils.emf.EMFUtils;
@@ -23,7 +22,7 @@ import static org.bigraphs.framework.core.BigraphMetaModelConstants.SignaturePac
  *
  * @author Dominik Grzelak
  */
-public final class DefaultDynamicSignature extends AbstractEcoreSignature<DefaultDynamicControl> implements IsPlaceSortable {
+public final class DynamicSignature extends AbstractEcoreSignature<DynamicControl> implements IsPlaceSortable {
 
     protected MutableMap<String, KindSort> kindFunction;
     protected EFactory sigFactory;
@@ -37,7 +36,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
      * @see #getInstanceModel()
      * @see #getMetaModel()
      */
-    public DefaultDynamicSignature(EObject bSignature) {
+    public DynamicSignature(EObject bSignature) {
         super(EcoreSignature.validateBSignature(bSignature));
     }
 
@@ -60,12 +59,12 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
             Integer ctrlArity = (Integer) eachControl.eGet(arityAttr);
             EEnumLiteral ctrlStatus = (EEnumLiteral) eachControl.eGet(statusAttr);
 
-            DefaultDynamicControl defaultDynamicControl = DefaultDynamicControl.createDefaultDynamicControl(
+            DynamicControl dynamicControl = DynamicControl.createDynamicControl(
                     StringTypedName.of(ctrlId),
                     FiniteOrdinal.ofInteger(ctrlArity),
                     ControlStatus.fromString(ctrlStatus.getLiteral())
             );
-            controls.add(defaultDynamicControl);
+            controls.add(dynamicControl);
         }
     }
 
@@ -75,7 +74,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
             kindFunction = Maps.mutable.empty();
         }
         Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
-        MutableList<DefaultDynamicControl> sorts = Lists.mutable.withAll(controls);
+        MutableList<DynamicControl> sorts = Lists.mutable.withAll(controls);
         // Re-create kind sort objects
         EReference eReferencePlaceSorts = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
         assert eReferencePlaceSorts != null;
@@ -92,7 +91,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
         }
     }
 
-    public DefaultDynamicSignature(Set<DefaultDynamicControl> controls) {
+    public DynamicSignature(Set<DynamicControl> controls) {
         super(controls);
         try {
             // (!) Important, because otherwise we might face a "A frozen model should not be modified" assertion exception:
@@ -107,7 +106,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
 
         MutableMap<String, EClass> bControlClassMap = Maps.mutable.of();
         MutableMap<String, EClass> bControlSortClassMap = Maps.mutable.empty();
-        for(DefaultDynamicControl c: this.controls) {
+        for(DynamicControl c: this.controls) {
             String ctrlId = c.getNamedType().stringValue();
             EClass controlEClass = extendBControlEClass(ctrlId, sigPackage);
             bControlClassMap.put(ctrlId, controlEClass);
@@ -133,7 +132,7 @@ public final class DefaultDynamicSignature extends AbstractEcoreSignature<Defaul
         EReference eReferenceKindSorts = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
         assert eReferenceControls != null;
         MutableMap<String, EObject> kindSortInstanceMap = Maps.mutable.empty();
-        for(DefaultDynamicControl eachCtrl: this.controls) {
+        for(DynamicControl eachCtrl: this.controls) {
             String ctrlId = eachCtrl.getNamedType().stringValue();
             EClass ctrlEClass = bControlClassMap.get(ctrlId);
             EObject concreteControlObject = sigFactory.create(ctrlEClass);

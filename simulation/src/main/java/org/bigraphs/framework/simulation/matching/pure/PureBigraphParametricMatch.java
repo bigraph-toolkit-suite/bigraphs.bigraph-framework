@@ -1,7 +1,7 @@
 package org.bigraphs.framework.simulation.matching.pure;
 
 import org.bigraphs.framework.core.Bigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem;
@@ -23,8 +23,8 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     private PureBigraph redex;
     private PureBigraph redexImage;
     private final Collection<PureBigraph> parameters;
-    private Bigraph<DefaultDynamicSignature> redexIdentity;
-    private Bigraph<DefaultDynamicSignature> contextIdentity;
+    private Bigraph<DynamicSignature> redexIdentity;
+    private Bigraph<DynamicSignature> contextIdentity;
     private PureBigraph paramWiring;
     private PureBigraph params;
     private final it.uniud.mads.jlibbig.core.std.Match jLibMatchResult;
@@ -33,7 +33,7 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
                                       PureBigraph context,
                                       PureBigraph redex,
                                       PureBigraph redexImage,
-                                      Bigraph<DefaultDynamicSignature> redexIdentity,
+                                      Bigraph<DynamicSignature> redexIdentity,
                                       PureBigraph paramWiring,
                                       Collection<PureBigraph> parameters) {
         // Everything is null exceptjLibMatchResult and redex because we have jLibBig bigraph objects
@@ -54,8 +54,8 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
                                       PureBigraph redex,
                                       PureBigraph redexImage,
                                       Collection<PureBigraph> parameters,
-                                      Bigraph<DefaultDynamicSignature> redexIdentity,
-                                      Bigraph<DefaultDynamicSignature> contextIdentity) {
+                                      Bigraph<DynamicSignature> redexIdentity,
+                                      Bigraph<DynamicSignature> contextIdentity) {
         this.jLibMatchResult = null;
         this.parameters = parameters;
         this.context = context;
@@ -99,13 +99,13 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     }
 
     /**
-     * <b>Note:</b> The return type is of class {@link Bigraph} with a {@link DefaultDynamicSignature}. We cannot cast
+     * <b>Note:</b> The return type is of class {@link Bigraph} with a {@link DynamicSignature}. We cannot cast
      * it to a pure bigraph because it may also be an elementary bigraph (in the form of a pure bigraph type)
      *
      * @return the identity link graph
      */
     @Override
-    public Bigraph<DefaultDynamicSignature> getContextIdentity() {
+    public Bigraph<DynamicSignature> getContextIdentity() {
         return contextIdentity;
     }
 
@@ -124,7 +124,7 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     }
 
     @Override
-    public Bigraph<DefaultDynamicSignature> getRedexIdentity() {
+    public Bigraph<DynamicSignature> getRedexIdentity() {
         return redexIdentity;
     }
 }

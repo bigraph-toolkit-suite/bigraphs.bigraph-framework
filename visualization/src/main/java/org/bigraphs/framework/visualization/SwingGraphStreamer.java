@@ -4,7 +4,7 @@ import com.google.common.graph.Traverser;
 import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -221,7 +221,7 @@ public class SwingGraphStreamer {
                 gsNode.setAttribute("ui.label", l.getName());
                 pointsFromLink.forEach(p -> {
                     if (BigraphEntityType.isPort(p)) {
-                        BigraphEntity.NodeEntity<DefaultDynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
+                        BigraphEntity.NodeEntity<DynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
                         int ix = bigraph.getPorts(nodeOfPort).indexOf(p);
                         System.out.format("Node %s with port at index %d is connected to link %s\n", getUniqueIdOfBigraphEntity(nodeOfPort), ix, l.getName());
                         Edge hyperEdge = graph.addEdge(edgeNameSupplier.get(), getUniqueIdOfBigraphEntity(nodeOfPort), l.getName());

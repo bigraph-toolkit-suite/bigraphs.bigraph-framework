@@ -1,11 +1,10 @@
 package org.bigraphs.framework.core;
 
 import com.google.common.collect.Lists;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
@@ -30,10 +29,10 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     void barren() {
-        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
-        Placings<DefaultDynamicSignature> placings = purePlacings(empty);
+        DynamicSignature empty = pureSignatureBuilder().createEmpty();
+        Placings<DynamicSignature> placings = purePlacings(empty);
 
-        Placings<DefaultDynamicSignature>.Barren b = placings.barren();
+        Placings<DynamicSignature>.Barren b = placings.barren();
         assertNotNull(b.getMetaModel());
         assertNotNull(b.getInstanceModel());
         assertTrue(b.isPrime());
@@ -42,7 +41,7 @@ public class ElementaryBigraphUnitTests {
         assertEquals(0, b.getOuterNames().size());
         assertEquals(0, b.getInnerNames().size());
 
-        Placings<DefaultDynamicSignature>.Barren b2 = placings.barren();
+        Placings<DynamicSignature>.Barren b2 = placings.barren();
         assertNotNull(b2.getMetaModel());
         assertNotNull(b2.getInstanceModel());
         assertNotEquals(b, b2);
@@ -55,11 +54,11 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     void join() {
-        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
-        Placings<DefaultDynamicSignature> placings = purePlacings(empty);
+        DynamicSignature empty = pureSignatureBuilder().createEmpty();
+        Placings<DynamicSignature> placings = purePlacings(empty);
 
-        Placings<DefaultDynamicSignature>.Join join1 = placings.join();
-        Placings<DefaultDynamicSignature>.Join join2 = placings.join();
+        Placings<DynamicSignature>.Join join1 = placings.join();
+        Placings<DynamicSignature>.Join join2 = placings.join();
         assertNotNull(join1.getMetaModel());
         assertNotNull(join1.getInstanceModel());
         assertNotNull(join2.getMetaModel());
@@ -78,10 +77,10 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     void merge() {
-        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
-        Placings<DefaultDynamicSignature> placings = purePlacings(empty);
+        DynamicSignature empty = pureSignatureBuilder().createEmpty();
+        Placings<DynamicSignature> placings = purePlacings(empty);
 
-        Placings<DefaultDynamicSignature>.Merge merge = placings.merge(3);
+        Placings<DynamicSignature>.Merge merge = placings.merge(3);
         assertEquals(1, merge.getRoots().size());
         assertEquals(3, merge.getSites().size());
         assertNotNull(merge.getMetaModel());
@@ -90,12 +89,12 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     void permutations() {
-        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
-        Placings<DefaultDynamicSignature> placings = purePlacings(empty);
+        DynamicSignature empty = pureSignatureBuilder().createEmpty();
+        Placings<DynamicSignature> placings = purePlacings(empty);
 
         int MAX_N = 10;
         for (int i = 1; i < MAX_N; i++) {
-            Placings<DefaultDynamicSignature>.Permutation permutation = placings.permutation(i);
+            Placings<DynamicSignature>.Permutation permutation = placings.permutation(i);
             assertNotNull(permutation.getMetaModel());
             assertNotNull(permutation.getInstanceModel());
             assertEquals(i, permutation.getRoots().size());
@@ -119,7 +118,7 @@ public class ElementaryBigraphUnitTests {
             }
         }
 
-        Placings<DefaultDynamicSignature>.Symmetry symmetry11 = placings.symmetry11();
+        Placings<DynamicSignature>.Symmetry symmetry11 = placings.symmetry11();
         assertNotNull(symmetry11.getMetaModel());
         assertNotNull(symmetry11.getInstanceModel());
         assertEquals(2, symmetry11.getRoots().size());
@@ -136,7 +135,7 @@ public class ElementaryBigraphUnitTests {
 
 
         //identity barren: id_1
-        Placings<DefaultDynamicSignature>.Identity1 identity1 = placings.identity1();
+        Placings<DynamicSignature>.Identity1 identity1 = placings.identity1();
         assertNotNull(identity1.getMetaModel());
         assertNotNull(identity1.getInstanceModel());
         assertEquals(1, identity1.getRoots().size());
@@ -176,9 +175,9 @@ public class ElementaryBigraphUnitTests {
 
             int finalArity = arity;
             assertAll(() -> {
-                DiscreteIon<DefaultDynamicSignature> discreteIon =
-                        pureDiscreteIon((DefaultDynamicSignature) signature, controlName.getValue(), outerNamesAsString);
-                Placings<DefaultDynamicSignature> placings = purePlacings(discreteIon.getSignature());
+                DiscreteIon<DynamicSignature> discreteIon =
+                        pureDiscreteIon((DynamicSignature) signature, controlName.getValue(), outerNamesAsString);
+                Placings<DynamicSignature> placings = purePlacings(discreteIon.getSignature());
                 assertNotNull(discreteIon.getMetaModel());
                 assertNotNull(discreteIon.getInstanceModel());
                 assertTrue(discreteIon.isDiscrete());
@@ -188,7 +187,7 @@ public class ElementaryBigraphUnitTests {
                 assertEquals(1, discreteIon.getNodes().size());
                 assertEquals(1, discreteIon.getRoots().size());
                 System.out.println("Make discrete atom from discrete ion: " + nodeName + "_x * 1");
-                Bigraph<DefaultDynamicSignature> discreteAtom = ops(discreteIon)
+                Bigraph<DynamicSignature> discreteAtom = ops(discreteIon)
                         .compose(placings.barren())
                         .getOuterBigraph();
 
@@ -203,21 +202,21 @@ public class ElementaryBigraphUnitTests {
     @Test
     @DisplayName("Nesting test: build non-discrete molecules from discrete ones")
     void non_discrete_molecules() {
-        DefaultDynamicSignature sig = pureSignatureBuilder().newControl("K", 3).assign().newControl("L", 2).assign().create();
-        Linkings<DefaultDynamicSignature> linkingsFactory = pureLinkings(sig);
+        DynamicSignature sig = pureSignatureBuilder().newControl("K", 3).assign().newControl("L", 2).assign().create();
+        Linkings<DynamicSignature> linkingsFactory = pureLinkings(sig);
 
-        DiscreteIon<DefaultDynamicSignature> K_xyz = pureDiscreteIon(sig, "K", "x", "y", "z");
-        DiscreteIon<DefaultDynamicSignature> L_yz = pureDiscreteIon(sig, "L", "y", "z");
+        DiscreteIon<DynamicSignature> K_xyz = pureDiscreteIon(sig, "K", "x", "y", "z");
+        DiscreteIon<DynamicSignature> L_yz = pureDiscreteIon(sig, "L", "y", "z");
 
-        Linkings<DefaultDynamicSignature>.Identity id_XY = linkingsFactory.identity(StringTypedName.of("y"), StringTypedName.of("z"));
+        Linkings<DynamicSignature>.Identity id_XY = linkingsFactory.identity(StringTypedName.of("y"), StringTypedName.of("z"));
 
         assertAll(() -> {
-            BigraphComposite<DefaultDynamicSignature> a = ops(K_xyz).parallelProduct(id_XY);
+            BigraphComposite<DynamicSignature> a = ops(K_xyz).parallelProduct(id_XY);
 //            BigraphFileModelManagement.exportAsInstanceModel(a.getOuterBigraph(), System.out);
-            Bigraph<DefaultDynamicSignature> b = a.compose(L_yz).getOuterBigraph();
+            Bigraph<DynamicSignature> b = a.compose(L_yz).getOuterBigraph();
             BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) b, System.out);
 
-            Bigraph<DefaultDynamicSignature> c = ops(K_xyz).nesting(L_yz).getOuterBigraph();
+            Bigraph<DynamicSignature> c = ops(K_xyz).nesting(L_yz).getOuterBigraph();
             BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) c, System.out);
 
             assertEquals(3, c.getOuterNames().size());
@@ -246,13 +245,13 @@ public class ElementaryBigraphUnitTests {
     @Test
     void auto_infer_identity_in_composition() {
 //        closure("x") * (a["x"] - barren())
-        DefaultDynamicSignature sig = pureSignatureBuilder().newControl("K", 3).assign().newControl("L", 2).assign().create();
-        Linkings<DefaultDynamicSignature> linkingsFactory = pureLinkings(sig);
-        Placings<DefaultDynamicSignature> placingsFactory = purePlacings(sig);
+        DynamicSignature sig = pureSignatureBuilder().newControl("K", 3).assign().newControl("L", 2).assign().create();
+        Linkings<DynamicSignature> linkingsFactory = pureLinkings(sig);
+        Placings<DynamicSignature> placingsFactory = purePlacings(sig);
 
-        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
-        Placings<DefaultDynamicSignature>.Merge merge = placingsFactory.merge(1);
-        Linkings<DefaultDynamicSignature>.Closure x = linkingsFactory.closure(StringTypedName.of("x"));
+        DiscreteIon<DynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
+        Placings<DynamicSignature>.Merge merge = placingsFactory.merge(1);
+        Linkings<DynamicSignature>.Closure x = linkingsFactory.closure(StringTypedName.of("x"));
 
 //        assertAll(() -> {
 //            Bigraph<DefaultDynamicSignature> r1 = ops(merge).compose(K_x).getOuterBigraph();
@@ -262,7 +261,7 @@ public class ElementaryBigraphUnitTests {
 
 
         assertAll(() -> {
-            Bigraph<DefaultDynamicSignature> r = ops(x).compose(K_x).getOuterBigraph();
+            Bigraph<DynamicSignature> r = ops(x).compose(K_x).getOuterBigraph();
             BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) K_x, System.out);
             BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) r, System.out);
         });
@@ -274,8 +273,8 @@ public class ElementaryBigraphUnitTests {
     void placings_operation() {
         Placings placings = purePlacings(pureSignatureBuilder().createEmpty());
 
-        Placings<DefaultDynamicSignature>.Merge merge_0 = placings.merge(0);
-        Placings<DefaultDynamicSignature>.Barren barren = placings.barren();
+        Placings<DynamicSignature>.Merge merge_0 = placings.merge(0);
+        Placings<DynamicSignature>.Barren barren = placings.barren();
         assertNotNull(merge_0.getMetaModel());
         assertNotNull(merge_0.getInstanceModel());
         assertNotNull(barren.getMetaModel());
@@ -285,19 +284,19 @@ public class ElementaryBigraphUnitTests {
         assertEquals(merge_0.getRoots().size(), barren.getRoots().size());
         assertEquals(merge_0.getSites().size(), barren.getSites().size());
 
-        Placings<DefaultDynamicSignature>.Join join = placings.join();
-        BigraphComposite<DefaultDynamicSignature> joinOp = ops(join);
-        Placings<DefaultDynamicSignature>.Identity1 identity1 = placings.identity1();
-        BigraphComposite<DefaultDynamicSignature> identiy1Op = ops(identity1);
+        Placings<DynamicSignature>.Join join = placings.join();
+        BigraphComposite<DynamicSignature> joinOp = ops(join);
+        Placings<DynamicSignature>.Identity1 identity1 = placings.identity1();
+        BigraphComposite<DynamicSignature> identiy1Op = ops(identity1);
         assertAll(() -> {
             for (int n = 0; n < 5; n++) {
                 System.out.println("merge_(" + (n + 1) + ") = join * (id_1 + merge_(" + n + "))");
-                Placings<DefaultDynamicSignature>.Merge merge_nPlus1 = placings.merge(n + 1);
+                Placings<DynamicSignature>.Merge merge_nPlus1 = placings.merge(n + 1);
 
-                Placings<DefaultDynamicSignature>.Merge merge_n = placings.merge(n);
-                BigraphComposite<DefaultDynamicSignature> juxtaposed = identiy1Op.juxtapose(merge_n);
+                Placings<DynamicSignature>.Merge merge_n = placings.merge(n);
+                BigraphComposite<DynamicSignature> juxtaposed = identiy1Op.juxtapose(merge_n);
 
-                BigraphComposite<DefaultDynamicSignature> result = joinOp.compose(juxtaposed);
+                BigraphComposite<DynamicSignature> result = joinOp.compose(juxtaposed);
 
                 assertNotNull(((EcoreBigraph) result.getOuterBigraph()).getMetaModel());
                 assertNotNull(((PureBigraph) result.getOuterBigraph()).getInstanceModel());
@@ -310,7 +309,7 @@ public class ElementaryBigraphUnitTests {
 
         assertAll(() -> {
             System.out.println("id_1 * 1 = 1");
-            BigraphComposite<DefaultDynamicSignature> isAlsoBarren = identiy1Op.compose(barren);
+            BigraphComposite<DynamicSignature> isAlsoBarren = identiy1Op.compose(barren);
             assertEquals(1, isAlsoBarren.getOuterBigraph().getRoots().size());
             assertEquals(0, isAlsoBarren.getOuterBigraph().getSites().size());
             assertEquals(0, isAlsoBarren.getOuterBigraph().getOuterNames().size());
@@ -320,7 +319,7 @@ public class ElementaryBigraphUnitTests {
             assertNotNull(((PureBigraph) isAlsoBarren.getOuterBigraph()).getInstanceModel());
 
             System.out.println("merge_1 * 1 = 1");
-            BigraphComposite<DefaultDynamicSignature> isAlsoBarren2 = ops(placings.merge(1)).compose(barren);
+            BigraphComposite<DynamicSignature> isAlsoBarren2 = ops(placings.merge(1)).compose(barren);
             assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getMetaModel());
             assertNotNull(((PureBigraph) isAlsoBarren2.getOuterBigraph()).getInstanceModel());
             assertTrue(isAlsoBarren2.getOuterBigraph().isPrime());
@@ -334,13 +333,13 @@ public class ElementaryBigraphUnitTests {
     @Test
     @DisplayName("Testing link axioms: Theorem 3.6")
     void link_axioms() {
-        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
-        Linkings<DefaultDynamicSignature> linkings = pureLinkings(empty);
+        DynamicSignature empty = pureSignatureBuilder().createEmpty();
+        Linkings<DynamicSignature> linkings = pureLinkings(empty);
 
-        Linkings<DefaultDynamicSignature>.Identity identity_x = linkings.identity(StringTypedName.of("x"));
-        Linkings<DefaultDynamicSignature>.IdentityEmpty identity_e = linkings.identity_e();
-        Linkings<DefaultDynamicSignature>.Substitution substitution_x_to_x = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("x"));
-        Linkings<DefaultDynamicSignature>.Closure closure_x = linkings.closure(StringTypedName.of("x"));
+        Linkings<DynamicSignature>.Identity identity_x = linkings.identity(StringTypedName.of("x"));
+        Linkings<DynamicSignature>.IdentityEmpty identity_e = linkings.identity_e();
+        Linkings<DynamicSignature>.Substitution substitution_x_to_x = linkings.substitution(StringTypedName.of("x"), StringTypedName.of("x"));
+        Linkings<DynamicSignature>.Closure closure_x = linkings.closure(StringTypedName.of("x"));
 
         // Test if the Ecore-related meta-model and instance model are set
         assertNotNull(identity_x.getMetaModel());
@@ -352,9 +351,9 @@ public class ElementaryBigraphUnitTests {
         assertNotNull(closure_x.getMetaModel());
         assertNotNull(closure_x.getInstanceModel());
 
-        PureBigraphBuilder<DefaultDynamicSignature> bigraphBuilder = pureBuilder(pureSignatureBuilder().createEmpty());
-        bigraphBuilder.createOuterName("x");
-        PureBigraph bx = bigraphBuilder.createBigraph();
+        PureBigraphBuilder<DynamicSignature> bigraphBuilder = pureBuilder(pureSignatureBuilder().createEmpty());
+        bigraphBuilder.createOuter("x");
+        PureBigraph bx = bigraphBuilder.create();
         assertAll(() -> {
             System.out.println("x/x = id_x");
             assertEquals(substitution_x_to_x.getOuterNames().stream().map(BigraphEntity.OuterName::getName).findFirst(),
@@ -367,7 +366,7 @@ public class ElementaryBigraphUnitTests {
 
         assertAll(() -> {
             System.out.println("/x * x = id_e");
-            Bigraph<DefaultDynamicSignature> composed = ops(closure_x).compose(bx).getOuterBigraph();
+            Bigraph<DynamicSignature> composed = ops(closure_x).compose(bx).getOuterBigraph();
             assertEquals(composed.getOuterNames().stream().map(BigraphEntity.OuterName::getName).findFirst(),
                     identity_e.getOuterNames().stream().map(BigraphEntity.OuterName::getName).findFirst());
             assertEquals(composed.getInnerNames().stream().map(BigraphEntity.InnerName::getName).findFirst(),
@@ -380,8 +379,8 @@ public class ElementaryBigraphUnitTests {
 
         assertAll(() -> {
             System.out.println("/y * y/x = /x");
-            Linkings<DefaultDynamicSignature>.Closure y = linkings.closure(StringTypedName.of("y"));
-            Linkings<DefaultDynamicSignature>.Substitution yx = linkings.substitution(StringTypedName.of("y"), StringTypedName.of("x"));
+            Linkings<DynamicSignature>.Closure y = linkings.closure(StringTypedName.of("y"));
+            Linkings<DynamicSignature>.Substitution yx = linkings.substitution(StringTypedName.of("y"), StringTypedName.of("x"));
             BigraphEntity.OuterName outerName_yx = yx.getOuterNames().stream().findFirst().get();
             BigraphEntity.InnerName innerName_yx = yx.getInnerNames().stream().findFirst().get();
             assertEquals(yx.getOuterNames().size(), 1);
@@ -391,8 +390,8 @@ public class ElementaryBigraphUnitTests {
             assertEquals(yx.getPointsFromLink(outerName_yx).size(), 1);
             assertEquals(yx.getPointsFromLink(outerName_yx).stream().findFirst().get(), innerName_yx);
             assertEquals(y.getInnerNames().stream().findFirst().get().getName(), "y");
-            Bigraph<DefaultDynamicSignature> composed = ops(y).compose(yx).getOuterBigraph();
-            Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
+            Bigraph<DynamicSignature> composed = ops(y).compose(yx).getOuterBigraph();
+            Linkings<DynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
 
             assertNotNull(((PureBigraph) composed).getMetaModel());
             assertNotNull(((PureBigraph) composed).getInstanceModel());
@@ -421,20 +420,20 @@ public class ElementaryBigraphUnitTests {
             Y_and_X.addAll(Arrays.asList(X));
 
             // right-hand side of the equation
-            Linkings<DefaultDynamicSignature>.Substitution z_over_XY = linkings.substitution(z, Y_and_X.toArray(new StringTypedName[Y_and_y.size()]));
+            Linkings<DynamicSignature>.Substitution z_over_XY = linkings.substitution(z, Y_and_X.toArray(new StringTypedName[Y_and_y.size()]));
             assertNotNull(z_over_XY.getMetaModel());
             assertNotNull(z_over_XY.getInstanceModel());
             // parts of the left-hand of the equation
-            Linkings<DefaultDynamicSignature>.Substitution z_over_Yy = linkings.substitution(z, Y_and_y.toArray(new StringTypedName[Y_and_y.size()]));
-            Linkings<DefaultDynamicSignature>.Identity identity_Y = linkings.identity(Y0);
+            Linkings<DynamicSignature>.Substitution z_over_Yy = linkings.substitution(z, Y_and_y.toArray(new StringTypedName[Y_and_y.size()]));
+            Linkings<DynamicSignature>.Identity identity_Y = linkings.identity(Y0);
             assertEquals(identity_Y.getOuterNames().size(), identity_Y.getInnerNames().size());
-            Linkings<DefaultDynamicSignature>.Substitution y_over_X = linkings.substitution(y, X);
+            Linkings<DynamicSignature>.Substitution y_over_X = linkings.substitution(y, X);
             assertEquals(y_over_X.getOuterNames().size(), 1);
             assertEquals(y_over_X.getInnerNames().size(), 3);
             assertEquals(z_over_XY.getOuterNames().size(), 1);
             assertEquals(z_over_XY.getInnerNames().size(), Y_and_X.size());
-            Bigraph<DefaultDynamicSignature> composedRight = ops(identity_Y).juxtapose(y_over_X).getOuterBigraph();
-            Bigraph<DefaultDynamicSignature> result = ops(z_over_Yy).compose(composedRight).getOuterBigraph();
+            Bigraph<DynamicSignature> composedRight = ops(identity_Y).juxtapose(y_over_X).getOuterBigraph();
+            Bigraph<DynamicSignature> result = ops(z_over_Yy).compose(composedRight).getOuterBigraph();
             assertNotNull(((PureBigraph) result).getMetaModel());
             assertNotNull(((PureBigraph) result).getInstanceModel());
             assertEquals(result.getOuterNames().size(), z_over_XY.getOuterNames().size());
@@ -460,10 +459,10 @@ public class ElementaryBigraphUnitTests {
     void place_axioms() {
         Placings placings = purePlacings(pureSignatureBuilder().createEmpty());
 
-        Placings<DefaultDynamicSignature>.Join join = placings.join();
-        Placings<DefaultDynamicSignature>.Barren barren = placings.barren();
-        Placings<DefaultDynamicSignature>.Symmetry symmetry11 = placings.symmetry11();
-        Placings<DefaultDynamicSignature>.Identity1 identity1 = placings.identity1();
+        Placings<DynamicSignature>.Join join = placings.join();
+        Placings<DynamicSignature>.Barren barren = placings.barren();
+        Placings<DynamicSignature>.Symmetry symmetry11 = placings.symmetry11();
+        Placings<DynamicSignature>.Identity1 identity1 = placings.identity1();
         assertNotNull(join.getMetaModel());
         assertNotNull(join.getInstanceModel());
         assertNotNull(symmetry11.getMetaModel());
@@ -471,7 +470,7 @@ public class ElementaryBigraphUnitTests {
 
         assertAll(() -> {
             System.out.println("join * y_(1,1) = join");
-            Bigraph<DefaultDynamicSignature> resultIsJoin = ops(join).compose(symmetry11).getOuterBigraph();
+            Bigraph<DynamicSignature> resultIsJoin = ops(join).compose(symmetry11).getOuterBigraph();
             assertEquals(1, resultIsJoin.getRoots().size());
             assertTrue(resultIsJoin.isPrime());
             assertFalse(resultIsJoin.isGround());
@@ -499,12 +498,12 @@ public class ElementaryBigraphUnitTests {
 
         assertAll(() -> {
             System.out.println("join * (join + id_1) = join * (id_1 + join)");
-            BigraphComposite<DefaultDynamicSignature> b1 = ops(join).juxtapose(identity1);
+            BigraphComposite<DynamicSignature> b1 = ops(join).juxtapose(identity1);
 
-            BigraphComposite<DefaultDynamicSignature> b2 = ops(identity1).juxtapose(join);
+            BigraphComposite<DynamicSignature> b2 = ops(identity1).juxtapose(join);
 
-            Bigraph<DefaultDynamicSignature> outerBigraph1 = ops(join).compose(b1).getOuterBigraph();
-            Bigraph<DefaultDynamicSignature> outerBigraph2 = ops(join).compose(b2).getOuterBigraph();
+            Bigraph<DynamicSignature> outerBigraph1 = ops(join).compose(b1).getOuterBigraph();
+            Bigraph<DynamicSignature> outerBigraph2 = ops(join).compose(b2).getOuterBigraph();
 
             assertEquals(outerBigraph1.isGround(), outerBigraph2.isGround());
             assertEquals(outerBigraph1.getInnerNames().size(), outerBigraph2.getInnerNames().size());
@@ -524,10 +523,10 @@ public class ElementaryBigraphUnitTests {
 
     @Test
     void linkings() {
-        DefaultDynamicSignature empty = pureSignatureBuilder().createEmpty();
+        DynamicSignature empty = pureSignatureBuilder().createEmpty();
         Linkings linkings = pureLinkings(empty);
-        Linkings<DefaultDynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
-        Linkings<DefaultDynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("y"),
+        Linkings<DynamicSignature>.Closure x = linkings.closure(StringTypedName.of("x"));
+        Linkings<DynamicSignature>.Substitution substitution = linkings.substitution(StringTypedName.of("y"),
                 StringTypedName.of("x1"),
                 StringTypedName.of("x2"),
                 StringTypedName.of("x3")

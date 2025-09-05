@@ -2,10 +2,7 @@ package org.bigraphs.framework.core.impl.pure;
 
 import com.google.common.collect.Lists;
 import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.EMetaModelData;
-import org.bigraphs.framework.core.exceptions.*;
-import org.bigraphs.framework.core.exceptions.builder.*;
 import org.bigraphs.framework.core.exceptions.*;
 import org.bigraphs.framework.core.exceptions.builder.*;
 import org.bigraphs.framework.core.impl.BigraphEntity;
@@ -73,7 +70,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     protected final Map<String, BigraphEntity.NodeEntity> availableNodes = new ConcurrentHashMap<>();
 
     @Override
-    public PureBigraphBuilder<S> spawnNewOne() {
+    public PureBigraphBuilder<S> spawn() {
         return PureBigraphBuilder.create(signature, metaModel, (EObject) null);
     }
 
@@ -390,7 +387,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         });
     }
 
-    public Hierarchy createRoot() {
+    public Hierarchy root() {
         BigraphEntity.RootEntity currentRoot = createRootEntity();
         return new Hierarchy(currentRoot);
     }
@@ -457,8 +454,8 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         }
 
         @Override
-        public PureBigraph createBigraph() {
-            return PureBigraphBuilder.this.createBigraph();
+        public PureBigraph create() {
+            return PureBigraphBuilder.this.create();
         }
 
         //CHECK if something was created...
@@ -468,7 +465,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             return withNewHierarchyOn(getLastCreatedNode());
         }
 
-        public Hierarchy addChild(Hierarchy thisOne) throws ControlIsAtomicException {
+        public Hierarchy child(Hierarchy thisOne) throws ControlIsAtomicException {
             assert thisOne.getParent() != null;
             assert BigraphEntityType.isNode(thisOne.getParent());
             assertControlIsNonAtomic(thisOne.getParent());
@@ -484,15 +481,15 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         }
 
         @Override
-        public Hierarchy addChild(String controlName) {
-            return addChild(signature.getControlByName(controlName));
+        public Hierarchy child(String controlName) {
+            return child(signature.getControlByName(controlName));
         }
 
         @Override
-        public Hierarchy addChild(String controlName, String outerName) throws InvalidConnectionException {
-            BigraphEntity.OuterName outerName1 = createOuterName(outerName);
+        public Hierarchy child(String controlName, String outerName) throws InvalidConnectionException {
+            BigraphEntity.OuterName outerName1 = createOuter(outerName);
             try {
-                addChild(signature.getControlByName(controlName)).linkToOuter(outerName1);
+                child(signature.getControlByName(controlName)).linkOuter(outerName1);
             } catch (TypeNotExistsException ignored) {
                 // this exception is never thrown in this case because we created the outer name
             }
@@ -500,14 +497,14 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         }
 
         @Override
-        public Hierarchy addChild(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException {
-            addChild(signature.getControlByName(controlName)).linkToOuter(outerName);
+        public Hierarchy child(String controlName, BigraphEntity.OuterName outerName) throws InvalidConnectionException, TypeNotExistsException {
+            child(signature.getControlByName(controlName)).linkOuter(outerName);
             return this;
         }
 
         //this implies: added to a parent (see lastCreatedNode)
         @Override
-        public Hierarchy addChild(Control control) {
+        public Hierarchy child(Control control) {
             assertControlIsNonAtomic(getParent());
             if (!checkSameSignature(control)) {
                 logger.debug("Control {} couldn't be added because it isn't in the signature", control);
@@ -519,7 +516,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         }
 
         @Override
-        public Hierarchy addSite() {
+        public Hierarchy site() {
             assertControlIsNonAtomic(getParent());
             final int ix = siteIdxSupplier.get();
             EObject eObject = createSiteOfEClass(ix);
@@ -531,7 +528,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         }
 
         public Hierarchy connectInnerNamesToNode(BigraphEntity.InnerName... innerNames) throws InvalidConnectionException, LinkTypeNotExistsException {
-            PureBigraphBuilder.this.connectNodeToInnerNames(getLastCreatedNode(), innerNames);
+            PureBigraphBuilder.this.linkNodeToInner(getLastCreatedNode(), innerNames);
             return this;
         }
 
@@ -551,7 +548,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @throws LinkTypeNotExistsException
          */
         public Hierarchy addInnerNameTo(BigraphEntity.InnerName innerName, BigraphEntity.InnerName toAttach) throws InvalidConnectionException, LinkTypeNotExistsException {
-            PureBigraphBuilder.this.addInnerNameTo(innerName, toAttach);
+            PureBigraphBuilder.this.addInnerTo(innerName, toAttach);
             return this;
         }
 
@@ -668,13 +665,13 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @throws LinkTypeNotExistsException     the given outer name doesn't exist
          * @throws InvalidArityOfControlException link couldn't be established because of the control's arity
          */
-        public Hierarchy linkToOuter(BigraphEntity.OuterName outerName) throws TypeNotExistsException, InvalidConnectionException {
+        public Hierarchy linkOuter(BigraphEntity.OuterName outerName) throws TypeNotExistsException, InvalidConnectionException {
             PureBigraphBuilder.this.connectNodeToOuterName(getLastCreatedNode(), outerName);
             return this;
         }
 
-        public Hierarchy linkToOuter(String outerName) throws TypeNotExistsException, InvalidConnectionException {
-            return linkToOuter(createOuterName(outerName));
+        public Hierarchy linkOuter(String outerName) throws TypeNotExistsException, InvalidConnectionException {
+            return linkOuter(createOuter(outerName));
         }
 
         /**
@@ -685,13 +682,13 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @throws LinkTypeNotExistsException     the given inner name doesn't exist
          * @throws InvalidArityOfControlException link couldn't be established because of the control's arity
          */
-        public Hierarchy linkToInner(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
-            PureBigraphBuilder.this.connectNodeToInnerName(getLastCreatedNode(), innerName);
+        public Hierarchy linkInner(BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+            PureBigraphBuilder.this.linkNodeToInner(getLastCreatedNode(), innerName);
             return this;
         }
 
-        public Hierarchy linkToInner(String innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
-            return linkToInner(createInnerName(innerName));
+        public Hierarchy linkInner(String innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+            return linkInner(createInner(innerName));
         }
 
         /**
@@ -704,10 +701,10 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @throws LinkTypeNotExistsException the given inner name doesn't exist
          * @throws ControlIsAtomicException   if one of the given controls is atomic
          */
-        public void connectNodesToInnerName(BigraphEntity.InnerName innerName, Control... controls) throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
+        public void nodesWithInner(BigraphEntity.InnerName innerName, Control... controls) throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
             if (controls == null || controls.length == 0) return;
             for (Control each : controls) {
-                connectNodeToInnerName(innerName, each);
+                nodeWithInner(innerName, each);
             }
         }
 
@@ -719,9 +716,9 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @throws InvalidConnectionException link couldn't be established because of the control's arity
          * @throws LinkTypeNotExistsException the given inner name doesn't exist
          */
-        public void connectNodeToInnerName(BigraphEntity.InnerName innerName, Control control) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
-            addChild(control);
-            linkToInner(innerName);
+        public void nodeWithInner(BigraphEntity.InnerName innerName, Control control) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
+            child(control);
+            linkInner(innerName);
         }
 
 
@@ -775,7 +772,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param name the name for the outer name
      * @return a new outer name or an existing one with the same name
      */
-    public BigraphEntity.OuterName createOuterName(final String name) {
+    public BigraphEntity.OuterName createOuter(final String name) {
         BigraphEntity.OuterName ecoreOuterName = availableOuterNames.get(name);
         if (ecoreOuterName == null) {
             final EObject outerNameObject = createOuterNameOfEClass(name);
@@ -792,7 +789,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param name the name for the inner name
      * @return a new inner name or an existing one with the same name
      */
-    public BigraphEntity.InnerName createInnerName(String name) {
+    public BigraphEntity.InnerName createInner(String name) {
         BigraphEntity.InnerName ecoreInnerName = availableInnerNames.get(name);
         if (ecoreInnerName == null) {
             final EObject bInnerName = createInnerNameOfEClass(name);
@@ -859,7 +856,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @throws InvalidConnectionException link couldn't be established because of already existing connection of the
      *                                    provided links
      */
-    public PureBigraphBuilder<S> connectInnerToOuterName(BigraphEntity innerName, BigraphEntity outerName) throws InvalidConnectionException {
+    public PureBigraphBuilder<S> linkInnerToOuter(BigraphEntity innerName, BigraphEntity outerName) throws InvalidConnectionException {
         // check if the inner name and outer name are coming from this builder
         if (availableInnerNames.values().stream().anyMatch(x -> x.equals(innerName)) &&
                 availableOuterNames.values().stream().anyMatch(x -> x.equals(outerName))) {
@@ -869,7 +866,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             if (isInnerNameConnectedToOuterName(innerName, outerName)) return this;
             if (isInnerNameConnectedToAnyOuterName(innerName)) throw new InnerNameConnectedToOuterNameException();
 
-            this.connectInnerToOuterName0(innerName, outerName);
+            this.linkInnerToOuter0(innerName, outerName);
         }
         return this;
     }
@@ -880,7 +877,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param innerName the inner name
      * @param outerName the outer name
      */
-    protected void connectInnerToOuterName0(BigraphEntity innerName, BigraphEntity outerName) {
+    protected void linkInnerToOuter0(BigraphEntity innerName, BigraphEntity outerName) {
         EList<EObject> pointsOfOuterName = (EList<EObject>) outerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
         pointsOfOuterName.add(innerName.getInstance());
     }
@@ -894,7 +891,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @throws InvalidArityOfControlException if the control cannot connect anything (e.g., is atomic, or no open ports left)
      * @throws InvalidConnectionException     if the inner name is already connected to an outer name
      */
-    public void connectNodeToInnerName(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+    public void linkNodeToInner(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
         //check if outername exists
         if (availableInnerNames.get(innerName.getName()) == null) {
             throw new InnerNameNotExistsException();
@@ -934,7 +931,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @throws InvalidArityOfControlException if the control cannot connect anything (e.g., is atomic, or no open ports left)
      * @throws InvalidConnectionException     if the inner name is already connected to an outer name
      */
-    public void connectNodeToInnerNames(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.InnerName... innerNames) throws LinkTypeNotExistsException, InvalidConnectionException {
+    public void linkNodeToInner(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.InnerName... innerNames) throws LinkTypeNotExistsException, InvalidConnectionException {
         //check if outername exists
         if (innerNames.length == 0) return;
         checkIfNodeIsConnectable(node1);
@@ -960,7 +957,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param innerName the inner name that will be linked with {@code toAttach} via a new link, or an existing one
      * @param toAttach  the inner name that shall be linked with {@code innerName} via a new link, or an existing one from {@code innerName}
      */
-    public void addInnerNameTo(BigraphEntity.InnerName innerName, BigraphEntity.InnerName toAttach) throws LinkTypeNotExistsException, InvalidConnectionException {
+    public void addInnerTo(BigraphEntity.InnerName innerName, BigraphEntity.InnerName toAttach) throws LinkTypeNotExistsException, InvalidConnectionException {
         assert innerName.getType().equals(BigraphEntityType.INNER_NAME);
         assert toAttach.getType().equals(BigraphEntityType.INNER_NAME);
         if (Objects.isNull(availableInnerNames.get(innerName.getName())) ||
@@ -982,7 +979,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
 
 
     /**
-     * Convenient method of {@link PureBigraphBuilder#connectInnerNames(BigraphEntity.InnerName, BigraphEntity.InnerName, boolean)}
+     * Convenient method of {@link PureBigraphBuilder#linkInner(BigraphEntity.InnerName, BigraphEntity.InnerName, boolean)}
      * which doesn't keep idle edges when inner names are already connected to a node. Meaning, that the last argument
      * defaults to {@code false}.
      *
@@ -991,8 +988,8 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @return the builder
      * @throws InvalidConnectionException if the inner names could not be connected.
      */
-    public PureBigraphBuilder<S> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2) throws InvalidConnectionException {
-        return connectInnerNames(ecoreInnerName1, ecoreInnerName2, false);
+    public PureBigraphBuilder<S> linkInner(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2) throws InvalidConnectionException {
+        return linkInner(ecoreInnerName1, ecoreInnerName2, false);
     }
 
     /**
@@ -1012,10 +1009,10 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @return the builder class
      * @throws InvalidConnectionException if the inner name could not be connected
      */
-    public PureBigraphBuilder<S> connectInnerNames(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2, boolean keepIdleEdges) throws InvalidConnectionException {
+    public PureBigraphBuilder<S> linkInner(BigraphEntity.InnerName ecoreInnerName1, BigraphEntity.InnerName ecoreInnerName2, boolean keepIdleEdges) throws InvalidConnectionException {
         assert ecoreInnerName1.getType().equals(BigraphEntityType.INNER_NAME);
         assert ecoreInnerName2.getType().equals(BigraphEntityType.INNER_NAME);
-        // throw exception if an innername is already connected to an outername
+        // throw exception if an inner name is already connected to an outername
         if (isInnerNameConnectedToAnyOuterName(ecoreInnerName1) || isInnerNameConnectedToAnyOuterName(ecoreInnerName2)) {
             throw new InnerNameConnectedToOuterNameException();
         }
@@ -1041,7 +1038,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      *
      * @param edge the edge who's inner names shall be removed
      */
-    private void disconnectAllInnerNamesFromEdge(EObject edge) {
+    private void disconnectAllInnerFromEdge(EObject edge) {
         if (isEdge(edge)) {
             EList<EObject> bPoints1 = (EList<EObject>) edge.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
             if (Objects.nonNull(bPoints1)) {
@@ -1063,7 +1060,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param edge           the edge who's inner names shall be removed
      * @param objectToRemove the inner name to be removed from the edge
      */
-    private void disconnectInnerNameFromEdge(EObject edge, EObject objectToRemove) {
+    private void disconnectInnerFromEdge(EObject edge, EObject objectToRemove) {
         if (isEdge(edge)) {
             EList<EObject> bPoints1 = (EList<EObject>) edge.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
             if (Objects.nonNull(bPoints1)) {
@@ -1173,7 +1170,6 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             }
         }
         return false;
-
     }
 
     /**
@@ -1185,16 +1181,11 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @throws InvalidArityOfControlException if control is atomic or the current connections exceed the control's arity
      */
     public void checkIfNodeIsConnectable(BigraphEntity.NodeEntity<Control> node) throws InvalidArityOfControlException {
-//        assert node.getType() ==
         EObject instance1 = node.getInstance();
-//        EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         int numberOfConnections = bPorts1.size();
         //check arity of control
         int arityOfControl = (Integer) node.getControl().getArity().getValue();
-//        Integer castedArityOfControl = numberOfConnections.getClass().cast(arityOfControl);
-//        Integer value = (Integer) arity.getValue();
-//        castedArityOfControl = castedArityOfControl == null ? 0 : castedArityOfControl;
         if (arityOfControl == 0)
             throw new InvalidArityOfControlException();
         if (numberOfConnections >= arityOfControl)
@@ -1219,7 +1210,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             // Connect procedure
             // Create ports
             EList<EObject> bPorts = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
-            int index = bPorts.size(); // TODO auf langer sicht andere methode finden, um den nächsten Index zu bekommen
+            int index = bPorts.size();
             EObject portObject = createPortWithIndex(index);
             bPorts.add(portObject);
             portObject.eSet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK), outerName.getInstance());
@@ -1300,8 +1291,6 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         return eObject;
     }
 
-    //BLEIBT - HELPER
-
     protected EObject createEdgeOfEClass0(final String edgeName) {
         assert availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE) != null;
         EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(BigraphMetaModelConstants.CLASS_EDGE));
@@ -1330,7 +1319,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     }
 
     @SuppressWarnings("unchecked")
-    public PureBigraph createBigraph() {
+    public PureBigraph create() {
         if ((bigraph) == null) {
             InstanceParameter meta;
             if (loadedFromFile && Objects.nonNull(loadedInstanceModel)) {
@@ -1370,20 +1359,20 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         }
 
         // Lastly, deal with the inner names
-        closeAllInnerNames();
+        closeInner();
     }
 
 
     /**
      * Closes all inner names and doesn't keep idle edges and idle inner names.
      */
-    public synchronized PureBigraphBuilder<S> closeAllInnerNames() {
+    public synchronized PureBigraphBuilder<S> closeInner() {
         Iterator<Map.Entry<String, BigraphEntity.InnerName>> iterator = availableInnerNames.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, BigraphEntity.InnerName> next = iterator.next();
             try {
                 // The inner name is not yet removed in the following method
-                closeInnerName(next.getValue(), true);
+                closeInner(next.getValue(), true);
                 iterator.remove();
             } catch (LinkTypeNotExistsException ignored) { /* technically, this shouldn't happen*/
                 throw new RuntimeException("This shouldn't happen. Please check the inner names map.");
@@ -1392,10 +1381,10 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         return this;
     }
 
-    public void closeInnerNames(BigraphEntity.InnerName... innerName) throws LinkTypeNotExistsException {
+    public void closeInner(BigraphEntity.InnerName... innerName) throws LinkTypeNotExistsException {
         Arrays.stream(innerName).forEach(x -> {
             try {
-                closeInnerName(x, false);
+                closeInner(x, false);
             } catch (LinkTypeNotExistsException e) {
                 throw new RuntimeException(e);
             }
@@ -1403,32 +1392,32 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     }
 
     /**
-     * Convenient method for {@link #closeInnerName(BigraphEntity.InnerName, boolean)}
+     * Convenient method for {@link #closeInner(BigraphEntity.InnerName, boolean)}
      */
-    public void closeInnerName(String innerName, boolean keepIdleName) throws TypeNotExistsException {
+    public void closeInner(String innerName, boolean keepIdleName) throws TypeNotExistsException {
         if (availableInnerNames.containsKey(innerName)) {
-            this.closeInnerName(availableInnerNames.get(innerName), keepIdleName);
+            this.closeInner(availableInnerNames.get(innerName), keepIdleName);
         }
     }
 
     /**
-     * Convenient method for {@link PureBigraphBuilder#closeInnerName(BigraphEntity.InnerName, boolean)}.
+     * Convenient method for {@link PureBigraphBuilder#closeInner(BigraphEntity.InnerName, boolean)}.
      * The last argument defaults to {@code false}.
      *
      * @param innerName an inner name
      * @throws TypeNotExistsException if the given inner names is not contained in the bigraph.
      */
-    public void closeInnerName(BigraphEntity.InnerName innerName) throws TypeNotExistsException {
-        closeInnerName(innerName, false);
+    public void closeInner(BigraphEntity.InnerName innerName) throws TypeNotExistsException {
+        closeInner(innerName, false);
     }
 
-    public void closeInnerName(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException {
+    public void closeInner(BigraphEntity.InnerName innerName, boolean keepIdleName) throws LinkTypeNotExistsException {
         if (availableInnerNames.get(innerName.getName()) == null ||
                 !availableInnerNames.get(innerName.getName()).equals(innerName))
             throw new InnerNameNotExistsException();
         EObject blink = (EObject) innerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_LINK));
         // is connected to an outer name
-        if (isOuterName(blink)) {
+        if (isOuter(blink)) {
             EList<EObject> pointsOfLink = (EList<EObject>) blink.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
             for (int i = 0, n = pointsOfLink.size(); i < n; i++) {
                 if (pointsOfLink.get(i).equals(innerName.getInstance())) {
@@ -1438,7 +1427,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
             }
         } else { // is connected to an edge
             // remove the inner name from connected edge but leave the edge intact
-            disconnectInnerNameFromEdge(blink, innerName.getInstance());
+            disconnectInnerFromEdge(blink, innerName.getInstance());
         }
 
         if (!keepIdleName)
@@ -1446,14 +1435,14 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     }
 
     /**
-     * Closes all outer names. See {@link PureBigraphBuilder#closeOuterName(BigraphEntity.OuterName)}.
+     * Closes all outer names. See {@link PureBigraphBuilder#closeOuter(BigraphEntity.OuterName)}.
      */
-    public synchronized PureBigraphBuilder<S> closeAllOuterNames() {
+    public synchronized PureBigraphBuilder<S> closeOuter() {
         Iterator<Map.Entry<String, BigraphEntity.OuterName>> iterator = availableOuterNames.entrySet().iterator();
         // don't replace the while loop with the iterator, because the outer name is removed too
         while (iterator.hasNext()) {
             try {
-                closeOuterName(iterator.next().getValue(), false);
+                closeOuter(iterator.next().getValue(), false);
             } catch (TypeNotExistsException ignored) {
             }
         }
@@ -1475,17 +1464,17 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param outerName the outer name to remove
      * @throws TypeNotExistsException if the passed outer name is not contained in the bigraph
      */
-    public void closeOuterName(BigraphEntity.OuterName outerName) throws TypeNotExistsException {
-        this.closeOuterName(outerName, false);
+    public void closeOuter(BigraphEntity.OuterName outerName) throws TypeNotExistsException {
+        this.closeOuter(outerName, false);
     }
 
 
     /**
-     * Convenient method for {@link #closeOuterName(BigraphEntity.OuterName, boolean)}
+     * Convenient method for {@link #closeOuter(BigraphEntity.OuterName, boolean)}
      */
-    public void closeOuterName(String outerName, boolean keepIdleName) throws TypeNotExistsException {
+    public void closeOuter(String outerName, boolean keepIdleName) throws TypeNotExistsException {
         if (availableOuterNames.containsKey(outerName)) {
-            this.closeOuterName(availableOuterNames.get(outerName), keepIdleName);
+            this.closeOuter(availableOuterNames.get(outerName), keepIdleName);
         }
     }
 
@@ -1497,7 +1486,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param keepIdleName {@code true}, if the outer name shall be kept as an idle name; and {@code false} to remove
      * @throws TypeNotExistsException if the passed outer name is not contained in the bigraph
      */
-    public void closeOuterName(BigraphEntity.OuterName outerName, boolean keepIdleName) throws TypeNotExistsException {
+    public void closeOuter(BigraphEntity.OuterName outerName, boolean keepIdleName) throws TypeNotExistsException {
         assertOuterNameExists(outerName);
         EList<EObject> bPoints = (EList<EObject>) outerName.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_POINT));
         for (int i = bPoints.size() - 1; i >= 0; i--) {
@@ -1535,7 +1524,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param metaModelFilePath the filepath to the bigraphical metamodel containing signature information.
      * @throws BigraphMetaModelLoadingFailedException if metamodel could not be loaded
      */
-    public void loadSignatureMetaModel(String metaModelFilePath) {
+    protected void loadSignatureMetaModel(String metaModelFilePath) {
         try {
             metaModel = BigraphFileModelManagement.Load.bigraphMetaModel(metaModelFilePath);
         } catch (Exception e) {

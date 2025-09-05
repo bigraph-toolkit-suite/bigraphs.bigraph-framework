@@ -1,6 +1,8 @@
 <img src="etc/assets/bigraph-framework-logo.png" style="zoom:67%;" />
 
-> Latest Version: **2.1.2**
+> Latest Version: **2.2.0**
+
+[![HiRSE Code Promo Badge](https://img.shields.io/badge/Promo-8db427?style=plastic&label=HiRSE&labelColor=005aa0&link=https%3A%2F%2Fgo.fzj.de%2FCodePromo)](https://rg-rse.pages.jsc.fz-juelich.de/hirse-code-promotion/public/HiRSE_Code_Promo_Slideshow.pdf)
 
 - User Manual: https://bigraphs.org/products/bigraph-framework/docs/
 
@@ -65,10 +67,10 @@ To following usage assumes the import statement `import static org.bigraphs.fram
 
 ```java
 // Create the signature
-DefaultDynamicSignature signature = pureSignatureBuilder()
+DynamicSignature signature = pureSignatureBuilder()
                 // Straightforward:
-                .addControl("A", 0)
-                .addControl("C", 1)
+                .add("A", 0)
+                .add("C", 1)
                 // More verbose:
                 .newControl()
                   .identifier(StringTypedName.of("User"))
@@ -78,14 +80,14 @@ DefaultDynamicSignature signature = pureSignatureBuilder()
 
 // Create two bigraphs
 PureBigraph bigraph1 = pureBuilder(signature)
-        .createRoot()
-        .addChild("A").addChild("C")
-        .createBigraph();
+        .root()
+        .child("A").child("C")
+        .create();
 
 PureBigraph bigraph2 = pureBuilder(signature)
         // "User" is the control, "alice" is an outer name     
-        .createRoot().addChild("User", "alice").addSite()
-        .createBigraph();
+        .root().child("User", "alice").site()
+        .create();
 
 // compose two bigraphs
 BigraphComposite composite = ops(bigraph2).compose(bigraph1);
@@ -101,8 +103,8 @@ complex structures easily.
 The following one shows, how to create nodes, and at the same time connecting them all with an edge:
 
 ```java
-PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-builder.createRoot().connectByEdge(
+PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+builder.root().connectByEdge(
     "Job",
             "Job",
     signature.getControlByName("Job")
@@ -117,8 +119,8 @@ after, close the link to automatically transform it to an edge:
 BigraphEntity.InnerName tmp_link = builder.createInnerName("link");
 
 // Create two nodes within different hierarchies
-builder.createRoot().addChild("Printer").linkToInner(tmp_link);
-builder.createRoot().addChild("Computer").linkToInner(tmp_link);
+builder.root().child("Printer").linkInner(tmp_link);
+builder.root().child("Computer").linkInner(tmp_link);
 
 // Finally, close the inner name. This will leave the edge intact.
 builder.closeInnerName(tmp_link);
@@ -144,9 +146,9 @@ To get the composition and tensor product of two bigraphs:
 PureBigraph G = ...;
 PureBigraph F = ...;
 PureBigraph H = ...;
-BigraphComposite<DefaultDynamicSignature> composite = ops(G);
+BigraphComposite<DynamicSignature> composite = ops(G);
 
-BigraphComposite<DefaultDynamicSignature> result = composite.compose(F);
+BigraphComposite<DynamicSignature> result = composite.compose(F);
 composite.juxtapose(F);
 composite.juxtapose(F).parallelProduct(H);
 ```
@@ -163,25 +165,25 @@ composite.juxtapose(F).parallelProduct(H);
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-core</artifactId>
-    <version>2.1.2</version>
+    <version>2.2.0</version>
   </dependency>
   <!-- the rewriting module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-simulation</artifactId>
-    <version>2.1.2</version>
+    <version>2.2.0</version>
   </dependency>
   <!-- the visualization module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-visualization</artifactId>
-    <version>2.1.2</version>
+    <version>2.2.0</version>
   </dependency>
   <!-- the converter module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-converter</artifactId>
-    <version>2.1.2</version>
+    <version>2.2.0</version>
   </dependency>
 </dependencies>
 ```
@@ -189,10 +191,10 @@ composite.juxtapose(F).parallelProduct(H);
 ### Gradle
 
 ```groovy
-compile "org.bigraphs.framework:bigraph-core:2.1.2"
-compile "org.bigraphs.framework:bigraph-simulation:2.1.2"
-compile "org.bigraphs.framework:bigraph-visualization:2.1.2"
-compile "org.bigraphs.framework:bigraph-converter:2.1.2"
+compile "org.bigraphs.framework:bigraph-core:2.2.0"
+compile "org.bigraphs.framework:bigraph-simulation:2.2.0"
+compile "org.bigraphs.framework:bigraph-visualization:2.2.0"
+compile "org.bigraphs.framework:bigraph-converter:2.2.0"
 ```
 
 ### Logging

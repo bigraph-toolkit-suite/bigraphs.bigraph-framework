@@ -2,7 +2,7 @@ package org.bigraphs.framework.core.analysis;
 
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ public class BigraphConnectivityChecker {
      * @return {@code true} if the bigraph is fully connected, {@code false} otherwise.
      */
     public static boolean isFullyConnected(PureBigraph bigraph) {
-        List<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes = bigraph.getNodes();
+        List<BigraphEntity.NodeEntity<DynamicControl>> nodes = bigraph.getNodes();
         if (nodes.isEmpty()) {
             return true; // An empty bigraph is trivially connected.
         }

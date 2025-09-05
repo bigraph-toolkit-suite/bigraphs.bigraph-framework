@@ -12,12 +12,11 @@ import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.visualization.BigraphRankedGraphExporter;
-import org.bigraphs.framework.converter.rankedgraph.PureBigraphRankedGraphEncoding;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -173,22 +172,22 @@ public class RankedGraphEncodingTests {
 
 
     private PureBigraph createBigraphA() throws InvalidConnectionException, TypeNotExistsException, IOException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder;
-        DefaultDynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder;
+        DynamicSignature signature = createExampleSignature();
         builder = pureBuilder(signature);
 
-        BigraphEntity.InnerName x0 = builder.createInnerName("x0");
-        BigraphEntity.InnerName e0 = builder.createInnerName("e0");
-        BigraphEntity.InnerName e1 = builder.createInnerName("e1");
+        BigraphEntity.InnerName x0 = builder.createInner("x0");
+        BigraphEntity.InnerName e0 = builder.createInner("e0");
+        BigraphEntity.InnerName e1 = builder.createInner("e1");
 
-        builder.createRoot()
-                .addChild("K").linkToInner(e0).down().addChild("K").linkToInner(e0).down().addSite().up().up()
-                .addChild("M").linkToInner(e0).linkToInner(e1);
-        builder.createRoot().addChild("L").linkToInner(e1).linkToInner(x0).down().addSite();
-        builder.closeInnerName(e0);
-        builder.closeInnerName(e1);
+        builder.root()
+                .child("K").linkInner(e0).down().child("K").linkInner(e0).down().site().up().up()
+                .child("M").linkInner(e0).linkInner(e1);
+        builder.root().child("L").linkInner(e1).linkInner(x0).down().site();
+        builder.closeInner(e0);
+        builder.closeInner(e1);
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
 
         BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, new FileOutputStream(TARGET_TEST_PATH + "test_instance-model.xmi"));
 

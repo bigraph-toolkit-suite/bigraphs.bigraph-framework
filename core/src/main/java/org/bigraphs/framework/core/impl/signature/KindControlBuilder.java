@@ -30,7 +30,7 @@ public class KindControlBuilder extends ControlBuilder<StringTypedName, FiniteOr
     }
 
     @Override
-    protected DefaultDynamicControl build() {
-        return DefaultDynamicControl.createDefaultDynamicControl(getType(), getArity(), ControlStatus.ACTIVE);
+    protected DynamicControl build() {
+        return DynamicControl.createDynamicControl(getType(), getArity(), ControlStatus.ACTIVE);
     }
 }

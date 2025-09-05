@@ -8,7 +8,7 @@ import org.bigraphs.framework.core.exceptions.builder.ControlNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.factory.BigraphFactory;
 import org.bigraphs.framework.core.impl.pure.KindBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.KindSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.signature.KindSignatureBuilder;
@@ -43,41 +43,41 @@ public class BigraphSignatureUnitTest {
 
     @Test
     void composeSignatureTest() {
-        DefaultDynamicSignature sig1 = pureSignatureBuilder()
-                .addControl("A", 1)
-                .addControl("B", 1)
-                .addControl("C", 1)
-                .addControl("D", 1)
+        DynamicSignature sig1 = pureSignatureBuilder()
+                .add("A", 1)
+                .add("B", 1)
+                .add("C", 1)
+                .add("D", 1)
                 .create();
 
-        DefaultDynamicSignature sig2 = pureSignatureBuilder()
-                .addControl("A", 2)
-                .addControl("B", 2)
-                .addControl("C", 2)
-                .addControl("D", 2)
+        DynamicSignature sig2 = pureSignatureBuilder()
+                .add("A", 2)
+                .add("B", 2)
+                .add("C", 2)
+                .add("D", 2)
                 .create();
 
         Assertions.assertThrows(SignatureNotConsistentException.class, () -> {
             BigraphUtil.composeSignatures(sig1, sig2);
         });
 
-        DefaultDynamicSignature sig3 = pureSignatureBuilder()
-                .addControl("E", 2)
-                .addControl("F", 3)
-                .addControl("G", 4)
+        DynamicSignature sig3 = pureSignatureBuilder()
+                .add("E", 2)
+                .add("F", 3)
+                .add("G", 4)
                 .create();
 
-        DefaultDynamicSignature sigComp_1_3 = BigraphUtil.composeSignatures(sig1, sig3);
+        DynamicSignature sigComp_1_3 = BigraphUtil.composeSignatures(sig1, sig3);
         assert sigComp_1_3.getControls().size() == 7;
 
-        DefaultDynamicSignature sigMerge_1_2 = BigraphUtil.mergeSignatures(sig1, sig2, 0);
+        DynamicSignature sigMerge_1_2 = BigraphUtil.mergeSignatures(sig1, sig2, 0);
         assert sigMerge_1_2.getControls().size() == 4;
 
         sigMerge_1_2.getControls().forEach(c -> {
             assert c.getArity().getValue() == 1;
         });
 
-        DefaultDynamicSignature sigMerge_1_2_right = BigraphUtil.mergeSignatures(sig1, sig2, 1);
+        DynamicSignature sigMerge_1_2_right = BigraphUtil.mergeSignatures(sig1, sig2, 1);
         assert sigMerge_1_2_right.getControls().size() == 4;
 
         sigMerge_1_2_right.getControls().forEach(c -> {
@@ -88,22 +88,22 @@ public class BigraphSignatureUnitTest {
 
     @Test
     void test_00() throws IncompatibleSignatureException, IncompatibleInterfaceException {
-        DefaultDynamicSignature sig = pureSignatureBuilder()
+        DynamicSignature sig = pureSignatureBuilder()
                 .newControl("K", 1).assign()
                 .newControl("L", 1).assign()
                 .create();
-        DiscreteIon<DefaultDynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
-        DiscreteIon<DefaultDynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
-        Linkings<DefaultDynamicSignature>.Closure x = pureLinkings(sig).closure("x");
-        BigraphComposite<DefaultDynamicSignature> G = ops(K_x).merge(L_x);
+        DiscreteIon<DynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
+        DiscreteIon<DynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
+        Linkings<DynamicSignature>.Closure x = pureLinkings(sig).closure("x");
+        BigraphComposite<DynamicSignature> G = ops(K_x).merge(L_x);
         ops(x).compose(G);
 
-        Bigraph<DefaultDynamicSignature> F = ops(x).compose(G).getOuterBigraph();
+        Bigraph<DynamicSignature> F = ops(x).compose(G).getOuterBigraph();
         EObject instanceModel = F.getSignature().getInstanceModel();
-        PureBigraphBuilder<DefaultDynamicSignature> newBuilder =
+        PureBigraphBuilder<DynamicSignature> newBuilder =
                 pureBuilder(createOrGetSignature(instanceModel));
         // ... code of fluent builder API omitted ...
-        PureBigraph bigraph = newBuilder.createBigraph(); //validation triggered
+        PureBigraph bigraph = newBuilder.create(); //validation triggered
 
         Diagnostic diagnostic = Diagnostician.INSTANCE.validate(bigraph.getInstanceModel());
         if (diagnostic.getSeverity() != Diagnostic.OK) {
@@ -237,9 +237,9 @@ public class BigraphSignatureUnitTest {
     void createPureBuilderFromDynamicSignatureInstanceModel() throws IOException {
         DynamicSignatureBuilder dynamicSigBuilder = pureSignatureBuilder();
 
-        DefaultDynamicSignature signature = dynamicSigBuilder.addControl("Room", 1)
-                .addControl("Person", 2, ControlStatus.ATOMIC)
-                .addControl("Computer", 2)
+        DynamicSignature signature = dynamicSigBuilder.add("Room", 1)
+                .add("Person", 2, ControlStatus.ATOMIC)
+                .add("Computer", 2)
                 .create();
         EPackage modelPackage = signature.getMetaModel();
         EObject model = signature.getInstanceModel();
@@ -255,11 +255,11 @@ public class BigraphSignatureUnitTest {
         assert tmp1.equals(modelPackage);
         assert tmp2.equals(modelPackage);
 
-        PureBigraphBuilder<DefaultDynamicSignature> ksBigraphBuilder = PureBigraphBuilder.<DefaultDynamicSignature>create(model);
+        PureBigraphBuilder<DynamicSignature> ksBigraphBuilder = PureBigraphBuilder.<DynamicSignature>create(model);
         assert ksBigraphBuilder.getMetaModel() != null;
         assert !ksBigraphBuilder.getMetaModel().equals(modelPackage); // because only the factory ensures that the sig-registry is asked
 
-        DefaultDynamicSignature dynSignatureRecreated = new DefaultDynamicSignature(model);
+        DynamicSignature dynSignatureRecreated = new DynamicSignature(model);
         assert dynSignatureRecreated.getControls().equals(signature.getControls());
 
 
@@ -286,7 +286,7 @@ public class BigraphSignatureUnitTest {
         // Create signature with active controls
         DynamicSignatureBuilder defaultBuilder = new DynamicSignatureBuilder();
         defaultBuilder.newControl("Printer", 13).status(ControlStatus.ATOMIC).assign();
-        DefaultDynamicSignature defaultSignature = defaultBuilder.create();
+        DynamicSignature defaultSignature = defaultBuilder.create();
 
         BigraphFileModelManagement.Store.exportAsMetaModel(defaultSignature, System.out);
         BigraphFileModelManagement.Store.exportAsInstanceModel(defaultSignature, System.out);
@@ -325,7 +325,7 @@ public class BigraphSignatureUnitTest {
                 .newControl().arity(FiniteOrdinal.ofInteger(19)).identifier(StringTypedName.of("Spool")).status(ControlStatus.ACTIVE).assign()
                 .newControl("Printer", 23).status(ControlStatus.PASSIVE).assign()
         ;
-        DefaultDynamicSignature dynamicSignature = dynamicBuilder.create();
+        DynamicSignature dynamicSignature = dynamicBuilder.create();
 
 
         BigraphFileModelManagement.Store.exportAsMetaModel(dynamicSignature, System.out);

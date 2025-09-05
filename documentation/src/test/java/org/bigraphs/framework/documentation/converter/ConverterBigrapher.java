@@ -6,7 +6,7 @@ import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -81,65 +81,65 @@ public class ConverterBigrapher extends BaseDocumentationGeneratorSupport {
 
     public void bigrapher_test01() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException {
         // (1) start
-        DefaultDynamicSignature sig = createSignature();
+        DynamicSignature sig = createSignature();
         createOrGetBigraphMetaModel(sig);
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig);
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig);
 
         // Initial state
-        PureBigraph s0 = builder.createRoot()
+        PureBigraph s0 = builder.root()
                 //A{a}.Snd.(M{a, v_a} | Ready.Fun.1);
-                .addChild("A", "a").down().addChild("Snd").down()
-                .addChild("M", "a").linkToOuter("v_a").addChild("Ready").down().addChild("Fun")
+                .child("A", "a").down().child("Snd").down()
+                .child("M", "a").linkOuter("v_a").child("Ready").down().child("Fun")
                 .top()
                 // A{b}.Snd.(M{a, v_b});
-                .addChild("A", "b").down().addChild("Snd").down().addChild("M", "a").linkToOuter("v_b")
+                .child("A", "b").down().child("Snd").down().child("M", "a").linkOuter("v_b")
                 .top()
                 // Mail.1
-                .addChild("Mail")
-                .createBigraph();
+                .child("Mail")
+                .create();
         // (1) end
 
         // (2) start
-        PureBigraph sndRedex = builder.spawnNewOne().createRoot()
+        PureBigraph sndRedex = builder.spawn().root()
                 // A{a0}.Snd.(M{a1, v} | id) | Mail
-                .addChild("A", "a0").down().addChild("Snd").down()
-                .addChild("M", "a1").linkToOuter("v").addSite()
-                .top().addChild("Mail")
-                .createBigraph();
-        PureBigraph sndReactum = builder.spawnNewOne().createRoot()
+                .child("A", "a0").down().child("Snd").down()
+                .child("M", "a1").linkOuter("v").site()
+                .top().child("Mail")
+                .create();
+        PureBigraph sndReactum = builder.spawn().root()
                 // A{a0} | Mail.(M{a1, v} | id);
-                .addChild("A", "a0").addChild("Mail").down()
-                .addChild("M", "a1").linkToOuter("v").addSite()
-                .createBigraph();
+                .child("A", "a0").child("Mail").down()
+                .child("M", "a1").linkOuter("v").site()
+                .create();
         ParametricReactionRule<PureBigraph> snd = new ParametricReactionRule<>(sndRedex, sndReactum).withLabel("snd");
 
-        PureBigraph readyRedex = builder.spawnNewOne().createRoot()
+        PureBigraph readyRedex = builder.spawn().root()
                 // A{a}.Ready | Mail.(M{a, v} | id)
-                .addChild("A", "a").down().addChild("Ready").up()
-                .addChild("Mail").down().addChild("M", "a").linkToOuter("v").addSite()
-                .createBigraph();
-        PureBigraphBuilder<DefaultDynamicSignature> readyBuilder = builder.spawnNewOne();
+                .child("A", "a").down().child("Ready").up()
+                .child("Mail").down().child("M", "a").linkOuter("v").site()
+                .create();
+        PureBigraphBuilder<DynamicSignature> readyBuilder = builder.spawn();
         //A{a} | Mail | {v};
-        readyBuilder.createOuterName("v");
-        PureBigraph readyReactum = readyBuilder.createRoot().addChild("A", "a").addChild("Mail")
-                .createBigraph();
+        readyBuilder.createOuter("v");
+        PureBigraph readyReactum = readyBuilder.root().child("A", "a").child("Mail")
+                .create();
         ParametricReactionRule<PureBigraph> ready = new ParametricReactionRule<>(readyRedex, readyReactum)
                 .withLabel("ready");
 
-        PureBigraph lambdaRedex = builder.spawnNewOne().createRoot().addChild("A", "a").down().addChild("Fun").createBigraph();
-        PureBigraph lambdaReactum = builder.spawnNewOne().createRoot().addChild("A", "a").createBigraph();
+        PureBigraph lambdaRedex = builder.spawn().root().child("A", "a").down().child("Fun").create();
+        PureBigraph lambdaReactum = builder.spawn().root().child("A", "a").create();
         ParametricReactionRule<PureBigraph> lambda = new ParametricReactionRule<>(lambdaRedex, lambdaReactum).withLabel("lambda");
 
-        PureBigraph newRedex = builder.spawnNewOne().createRoot()
+        PureBigraph newRedex = builder.spawn().root()
                 //A{a0}.(New.(A'{a1} | id) | id)
-                .addChild("A", "a0").down()
-                .addChild("New").down()
-                .addChild("A'", "a1").down().addSite().up() // (!) explicitly adding a site here, ohterwise BigraphER encoding will be not correct
-                .addSite().up().addSite().createBigraph();
-        PureBigraph newReactum = builder.spawnNewOne().createRoot()
+                .child("A", "a0").down()
+                .child("New").down()
+                .child("A'", "a1").down().site().up() // (!) explicitly adding a site here, ohterwise BigraphER encoding will be not correct
+                .site().up().site().create();
+        PureBigraph newReactum = builder.spawn().root()
                 // A{a0}.(id | id) | A{a1}.(id | id)
-                .addChild("A", "a0").down().addSite().addSite().up()
-                .addChild("A", "a1").down().addSite().addSite().createBigraph();
+                .child("A", "a0").down().site().site().up()
+                .child("A", "a1").down().site().site().create();
         InstantiationMap instMap = InstantiationMap.create(newReactum.getSites().size())
                 .map(0, 1).map(1, 2).map(2, 0).map(3, 2);
         ParametricReactionRule<PureBigraph> newRR = new ParametricReactionRule<>(newRedex, newReactum, instMap).withLabel("new");
@@ -147,8 +147,8 @@ public class ConverterBigrapher extends BaseDocumentationGeneratorSupport {
 
         // (3) start
         ReactiveSystemPredicate<PureBigraph> phi = SubBigraphMatchPredicate.create(
-                builder.spawnNewOne().createRoot()
-                        .addChild("Mail").down().addChild("M", "a").linkToOuter("v").addSite().top().createBigraph()
+                builder.spawn().root()
+                        .child("Mail").down().child("M", "a").linkOuter("v").site().top().create()
         ).withLabel("phi");
         // (3) end
 
@@ -166,7 +166,7 @@ public class ConverterBigrapher extends BaseDocumentationGeneratorSupport {
         // (4) end
     }
 
-    private static DefaultDynamicSignature createSignature() {
+    private static DynamicSignature createSignature() {
         // (1) start
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder

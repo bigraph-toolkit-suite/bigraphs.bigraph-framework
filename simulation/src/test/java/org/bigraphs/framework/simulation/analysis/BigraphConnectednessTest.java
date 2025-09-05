@@ -13,8 +13,8 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,7 +66,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
 
     @Test
     void linkGraph_bigraphDecomposer_API_test() {
-        DefaultDynamicSignature randomSignature = createRandomSignature(8, 1f, 3);
+        DynamicSignature randomSignature = createRandomSignature(8, 1f, 3);
         RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE;
         int numOfTrees = 1;
         int numOfNodes = 10;
@@ -91,7 +91,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
 
     @Test
     void linkGraph_connectedness_LowLevelAPI_test() {
-        DefaultDynamicSignature randomSignature = createRandomSignature(8, 1f, 3);
+        DynamicSignature randomSignature = createRandomSignature(8, 1f, 3);
         RandomBigraphGeneratorSupport.LinkStrategy linkStrategy = RandomBigraphGeneratorSupport.LinkStrategy.MAXIMAL_DEGREE_ASSORTATIVE;
         int numOfTrees = 1;
         int numOfNodes = 10;
@@ -117,7 +117,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
         System.out.println("partitions: " + partitions);
     }
 
-    private DefaultDynamicSignature createRandomSignature(int n, float probOfPositiveArity, int maxArity) {
+    private DynamicSignature createRandomSignature(int n, float probOfPositiveArity, int maxArity) {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
 
         char[] chars = IntStream.rangeClosed('A', 'Z')
@@ -131,35 +131,35 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
         for (int i = floorNum; i < n; i++) {
             signatureBuilder = signatureBuilder.newControl().identifier(StringTypedName.of(String.valueOf(chars[i]))).arity(FiniteOrdinal.ofInteger(0)).assign();
         }
-        DefaultDynamicSignature s = signatureBuilder.create();
-        ArrayList<DefaultDynamicControl> cs = new ArrayList<>(s.getControls());
+        DynamicSignature s = signatureBuilder.create();
+        ArrayList<DynamicControl> cs = new ArrayList<>(s.getControls());
         Collections.shuffle(cs);
         return signatureBuilder.createWith(new LinkedHashSet<>(cs));
     }
 
-    public static DefaultDynamicSignature createFruitSignature() {
+    public static DynamicSignature createFruitSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .addControl("User", 1, ControlStatus.ATOMIC)
-                .addControl("Basket", 1)
-                .addControl("Fruit", 1, ControlStatus.ATOMIC)
-                .addControl("Table", 0)
-                .addControl("Foo", 0)
+                .add("User", 1, ControlStatus.ATOMIC)
+                .add("Basket", 1)
+                .add("Fruit", 1, ControlStatus.ATOMIC)
+                .add("Table", 0)
+                .add("Foo", 0)
         ;
         return defaultBuilder.create();
     }
 
     public static PureBigraph createFruitAgent() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createFruitSignature());
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(createFruitSignature());
 
-        return b.createRoot()
-                .addChild("User")
-                .addChild("Table").down()
-                .addChild("Fruit", "f")
-                .addChild("Fruit", "f")
-                .addChild("Basket").down().addChild("Fruit", "f").addChild("Foo")
+        return b.root()
+                .child("User")
+                .child("Table").down()
+                .child("Fruit", "f")
+                .child("Fruit", "f")
+                .child("Basket").down().child("Fruit", "f").child("Foo")
                 .top()
-                .createBigraph();
+                .create();
 
     }
 }

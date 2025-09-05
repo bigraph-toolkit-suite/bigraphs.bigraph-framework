@@ -8,11 +8,11 @@ sidebar_position: 4
 
 ### Exporting Signatures
 
-To export a `DefaultDynamicSignature` as BigRed `*.bigraph-signature` file, you may use the `SignatureAdapter` class
+To export a `DynamicSignature` as BigRed `*.bigraph-signature` file, you may use the `SignatureAdapter` class
 in combination with BigRed's `org.bigraph.model.savers.SignatureXMLSaver`:
 
 ```java
-DefaultDynamicSignature signature = ...;
+DynamicSignature signature = ...;
 SignatureAdapter signatureAdapter = new SignatureAdapter(signature);
 
 PrintStream out = new PrintStream(System.out);
@@ -33,7 +33,7 @@ To load a BigRed `*.bigraph-signature` file use the `org.bigraphs.framework.conv
 ```java
 DefaultSignatureXMLLoader sxl = new DefaultSignatureXMLLoader();
 sxl.readXml("path/to/signatures/printing.bigraph-signature"));
-DefaultDynamicSignature signature = sxl.importObject();
+DynamicSignature signature = sxl.importObject();
 ```
 
 ### Loading Agents

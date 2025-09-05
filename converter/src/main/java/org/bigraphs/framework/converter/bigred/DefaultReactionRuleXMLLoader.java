@@ -2,8 +2,8 @@ package org.bigraphs.framework.converter.bigred;
 
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.EcoreBigraph;
 import org.bigraphs.framework.core.impl.pure.MutableBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -22,12 +22,12 @@ import java.util.*;
  */
 public class DefaultReactionRuleXMLLoader implements BigraphXmlLoaderSupport.XmlProcessorCallback, BigRedXmlLoader {
     protected Queue<ChangeAction> actionStack = new ArrayDeque<>();
-    protected MutableBuilder<DefaultDynamicSignature> builder;
+    protected MutableBuilder<DynamicSignature> builder;
     protected final DefaultBigraphXMLLoader bxl;
     protected boolean bigraphParsed = false;
     protected PureBigraph redex;
     protected PureBigraph reactum;
-    protected DefaultDynamicSignature signature = null;
+    protected DynamicSignature signature = null;
 
     private enum ChangeEvent {
         DISCONNECT("disconnect"), CONNECT("connect"),
@@ -80,7 +80,7 @@ public class DefaultReactionRuleXMLLoader implements BigraphXmlLoaderSupport.Xml
      *
      * @param signature the signature
      */
-    public DefaultReactionRuleXMLLoader(DefaultDynamicSignature signature) {
+    public DefaultReactionRuleXMLLoader(DynamicSignature signature) {
 //        this();
         this.signature = signature;
         this.bxl = new DefaultBigraphXMLLoader(this.signature);
@@ -198,7 +198,7 @@ public class DefaultReactionRuleXMLLoader implements BigraphXmlLoaderSupport.Xml
             parent = builder.availableNodes().get(parentName);
         }
         if (type.equalsIgnoreCase("node")) {
-            DefaultDynamicControl control = redex.getSignature().getControlByName(changeAction.params.get("control"));
+            DynamicControl control = redex.getSignature().getControlByName(changeAction.params.get("control"));
             BigraphEntity newNode = builder.createNewNode(control, elementName);
             builder.availableNodes().put(elementName, (BigraphEntity.NodeEntity) newNode);
             if (Objects.nonNull(parent)) {
@@ -336,7 +336,7 @@ public class DefaultReactionRuleXMLLoader implements BigraphXmlLoaderSupport.Xml
         }
     }
 
-    public DefaultDynamicSignature getSignature() {
+    public DynamicSignature getSignature() {
         return signature;
     }
 }

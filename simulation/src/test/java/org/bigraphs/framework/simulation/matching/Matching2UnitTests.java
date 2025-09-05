@@ -6,7 +6,7 @@ import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -14,8 +14,6 @@ import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
-import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
-import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -74,77 +72,77 @@ public class Matching2UnitTests {
 
 
     public Bigraph createAgent_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
 //        BigraphEntity.InnerName roomLink = builder.createInnerName("tmp1_room");
 //        BigraphEntity.OuterName a = builder.createOuterName("a");
 //        BigraphEntity.OuterName b1 = builder.createOuterName("b1");
 //        BigraphEntity.OuterName jeff2 = builder.createOuterName("jeff2");
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("A"))
-                .addChild(signature.getControlByName("B"))
+        builder.root()
+                .child(signature.getControlByName("A"))
+                .child(signature.getControlByName("B"))
                 .down()
-                .addChild(signature.getControlByName("D"))
-                .addChild(signature.getControlByName("E"))
+                .child(signature.getControlByName("D"))
+                .child(signature.getControlByName("E"))
                 .up()
-                .addChild(signature.getControlByName("B"))
+                .child(signature.getControlByName("B"))
                 .down()
-                .addChild(signature.getControlByName("D"))
-                .addChild(signature.getControlByName("E"))
-                .addChild(signature.getControlByName("F"))
-                .addChild(signature.getControlByName("G"))
+                .child(signature.getControlByName("D"))
+                .child(signature.getControlByName("E"))
+                .child(signature.getControlByName("F"))
+                .child(signature.getControlByName("G"))
                 .up()
 
 //                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
         ;
         builder.makeGround();
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
 
     }
 
 
     public Bigraph createRedex_model_test_0() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("A"))
-                .addChild(signature.getControlByName("B"))
+        builder.root()
+                .child(signature.getControlByName("A"))
+                .child(signature.getControlByName("B"))
                 .down()
-                .addChild(signature.getControlByName("D"))
-                .addChild(signature.getControlByName("E"))
-                .addSite()
+                .child(signature.getControlByName("D"))
+                .child(signature.getControlByName("E"))
+                .site()
         ;
 //        builder.makeGround();
 
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     //roots are separated
     public Bigraph createRedex_model_test_0v2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException {
-        DefaultDynamicSignature signature = createExampleSignature();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+        DynamicSignature signature = createExampleSignature();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild(signature.getControlByName("A"));
-        builder.createRoot()
-                .addChild(signature.getControlByName("B"))
+        builder.root()
+                .child(signature.getControlByName("A"));
+        builder.root()
+                .child(signature.getControlByName("B"))
                 .down()
-                .addChild(signature.getControlByName("D"))
-                .addChild(signature.getControlByName("E"))
-                .addSite()
+                .child(signature.getControlByName("D"))
+                .child(signature.getControlByName("E"))
+                .site()
         ;
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
 
-    private DefaultDynamicSignature createExampleSignature() {
+    private DynamicSignature createExampleSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).assign()

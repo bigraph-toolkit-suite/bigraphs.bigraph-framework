@@ -2,9 +2,8 @@ package org.bigraphs.framework.core.impl.pure;
 
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicControl;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
-import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.eclipse.collections.api.factory.Lists;
 import org.eclipse.collections.api.factory.Sets;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
  * This class is an Ecore-based model implementation of a pure bigraph.
  * A {@link PureBigraph} can be obtained by using a {@link PureBigraphBuilder}.
  * <p>
- * The class directly implements the {@link Bigraph} interface with {@link DefaultDynamicSignature} as type for the signature.
+ * The class directly implements the {@link Bigraph} interface with {@link DynamicSignature} as type for the signature.
  * <p>
  * The class represents an immutable data structure providing also some operations (e.g., get parent of node).
  * The elements are stored separately in collections for easier access. The collections cannot be modified afterwards.
@@ -32,20 +31,20 @@ import java.util.stream.Collectors;
  * @author Dominik Grzelak
  * @see BigraphBuilder
  */
-public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigraph<DefaultDynamicSignature> {
+public class PureBigraph implements Bigraph<DynamicSignature>, EcoreBigraph<DynamicSignature> {
     private final EPackage modelPackage;
     private final EObject bigraphInstanceModel;
 
     private final ImmutableSet<BigraphEntity.RootEntity> roots;
-    private final ImmutableList<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodes;
-    private final MutableMap<EObject, BigraphEntity.NodeEntity<DefaultDynamicControl>> nodesMap = Maps.mutable.empty();
-    private final MutableMap<BigraphEntity.NodeEntity<DefaultDynamicControl>, List<BigraphEntity.Port>> portMap = Maps.mutable.empty();
+    private final ImmutableList<BigraphEntity.NodeEntity<DynamicControl>> nodes;
+    private final MutableMap<EObject, BigraphEntity.NodeEntity<DynamicControl>> nodesMap = Maps.mutable.empty();
+    private final MutableMap<BigraphEntity.NodeEntity<DynamicControl>, List<BigraphEntity.Port>> portMap = Maps.mutable.empty();
     private final MutableMap<BigraphEntity.Link, List<BigraphEntity<?>>> pointsOfLinkMap = Maps.mutable.empty();
     private final ImmutableSet<BigraphEntity.SiteEntity> sites;
     private final ImmutableSet<BigraphEntity.InnerName> innerNames;
     private final ImmutableSet<BigraphEntity.OuterName> outerNames;
     private final ImmutableSet<BigraphEntity.Edge> edges;
-    private final DefaultDynamicSignature signature;
+    private final DynamicSignature signature;
 
     public PureBigraph(BigraphBuilderSupport.InstanceParameter details) {
         this.modelPackage = details.getModelPackage();
@@ -54,10 +53,10 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         this.sites = Sets.immutable.ofAll(details.getSites()); //sites;
         this.nodes = Lists.immutable.ofAll(details.getNodes());//new ArrayList<>(Collections.unmodifiableSet(details.getNodes())); //nodes;
         this.nodesMap.putAll(this.nodes.stream().collect(Collectors.toMap(data -> data.getInstance(), data -> data)));
-        this.outerNames = Sets.immutable.ofAll(details.getOuterNames()); //outerNames;
-        this.innerNames = Sets.immutable.ofAll(details.getInnerNames()); //innerNames;
+        this.outerNames = Sets.immutable.ofAll(details.getOuter()); //outerNames;
+        this.innerNames = Sets.immutable.ofAll(details.getInner()); //innerNames;
         this.edges = Sets.immutable.ofAll(details.getEdges()); //edges;
-        this.signature = (DefaultDynamicSignature) details.getSignature(); //signature;
+        this.signature = (DynamicSignature) details.getSignature(); //signature;
     }
 
     public EPackage getMetaModel() {
@@ -70,7 +69,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public DefaultDynamicSignature getSignature() {
+    public DynamicSignature getSignature() {
         return signature;
     }
 
@@ -223,13 +222,13 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
 
     @Override
     @SuppressWarnings("unchecked")
-    public BigraphEntity.NodeEntity<DefaultDynamicControl> getNodeOfPort(BigraphEntity.Port port) {
+    public BigraphEntity.NodeEntity<DynamicControl> getNodeOfPort(BigraphEntity.Port port) {
         if ((port) == null) return null;
         EObject instance = port.getInstance();
         EStructuralFeature nodeRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_NODE);
         if ((nodeRef) == null) return null;
         EObject nodeObject = (EObject) instance.eGet(nodeRef);
-        Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> first =
+        Optional<BigraphEntity.NodeEntity<DynamicControl>> first =
                 Optional.ofNullable(nodesMap.get(nodeObject));
         return first.orElse(null);
     }
@@ -267,7 +266,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         Collections.sort(portsList);
 //        portMap.put((BigraphEntity.NodeEntity<DefaultDynamicControl>) node, portsList.toList());
 //        return portsList.toList();
-        portMap.put((BigraphEntity.NodeEntity<DefaultDynamicControl>) node, portsList);
+        portMap.put((BigraphEntity.NodeEntity<DynamicControl>) node, portsList);
         return portsList;
     }
 
@@ -339,7 +338,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject eachChild : childs) {
                 if (isBNode(eachChild)) {
-                    Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> nodeEntity =
+                    Optional<BigraphEntity.NodeEntity<DynamicControl>> nodeEntity =
                             Optional.ofNullable(nodesMap.get(eachChild));
                     nodeEntity.ifPresent(children::add);
                 } else if (isBSite(eachChild)) {
@@ -353,7 +352,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
     }
 
     @Override
-    public List<BigraphEntity.NodeEntity<DefaultDynamicControl>> getNodes() {
+    public List<BigraphEntity.NodeEntity<DynamicControl>> getNodes() {
         return this.nodes.castToList();
     }
 
@@ -378,7 +377,7 @@ public class PureBigraph implements Bigraph<DefaultDynamicSignature>, EcoreBigra
         if (parent.equals(possibleParent.getInstance())) {
             return true;
         } else if (!parent.equals(possibleParent.getInstance())) {
-            Optional<BigraphEntity.NodeEntity<DefaultDynamicControl>> first = getNodes().stream().filter(x -> x.getInstance().equals(parent)).findFirst();
+            Optional<BigraphEntity.NodeEntity<DynamicControl>> first = getNodes().stream().filter(x -> x.getInstance().equals(parent)).findFirst();
             return isParentOf(first.orElse(null), possibleParent);
         }
         return false;

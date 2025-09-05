@@ -1,31 +1,15 @@
 package org.bigraphs.framework.simulation.reactionrules;
 
 import org.bigraphs.framework.core.Bigraph;
-import org.bigraphs.framework.core.BigraphFileModelManagement;
-import org.bigraphs.framework.core.Control;
-import org.bigraphs.framework.core.Signature;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
-import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
-import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
-import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.*;
 import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
-import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
-import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
-import org.checkerframework.dataflow.qual.Pure;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
@@ -58,21 +42,21 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
     }
 
     private ReactionRule<PureBigraph> createRR_01() throws InvalidReactionRuleException {
-        DefaultDynamicSignature sig = sig();
-        PureBigraphBuilder<DefaultDynamicSignature> bRedex = pureBuilder(sig);
-        PureBigraphBuilder<DefaultDynamicSignature> bReactum = pureBuilder(sig);
+        DynamicSignature sig = sig();
+        PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig);
+        PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig);
 
-        bRedex.createRoot()
-                .addChild("A").down()
-                /**/.addSite().top()
+        bRedex.root()
+                .child("A").down()
+                /**/.site().top()
         ;
-        bReactum.createRoot()
-                .addChild("A").down()
-                /**/.addSite()
-                /**/.addChild("B")
+        bReactum.root()
+                .child("A").down()
+                /**/.site()
+                /**/.child("B")
         ;
-        PureBigraph redex = bRedex.createBigraph();
-        PureBigraph reactum = bReactum.createBigraph();
+        PureBigraph redex = bRedex.create();
+        PureBigraph reactum = bReactum.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         rr.withLabel("R1");
         TrackingMap map = new TrackingMap();
@@ -86,24 +70,24 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
     }
 
     private ReactionRule<PureBigraph> createRR_02() throws InvalidReactionRuleException {
-        DefaultDynamicSignature sig = sig();
-        PureBigraphBuilder<DefaultDynamicSignature> bRedex = pureBuilder(sig);
-        PureBigraphBuilder<DefaultDynamicSignature> bReactum = pureBuilder(sig);
+        DynamicSignature sig = sig();
+        PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig);
+        PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig);
 
-        bRedex.createRoot()
-                .addChild("C").down()
-                /**/.addChild("B").down()
-                /**//**/.addSite().addChild("C")
+        bRedex.root()
+                .child("C").down()
+                /**/.child("B").down()
+                /**//**/.site().child("C")
         ;
 
-        bReactum.createRoot()
-                .addChild("C").down()
-                /**/.addChild("B").down()
-                /**//**/.addSite().addChild("C")
+        bReactum.root()
+                .child("C").down()
+                /**/.child("B").down()
+                /**//**/.site().child("C")
         ;
 
-        PureBigraph redex = bRedex.createBigraph();
-        PureBigraph reactum = bReactum.createBigraph();
+        PureBigraph redex = bRedex.create();
+        PureBigraph reactum = bReactum.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         rr.withLabel("R2");
         TrackingMap map = new TrackingMap();
@@ -117,13 +101,13 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
         return rr;
     }
 
-    private DefaultDynamicSignature sig() {
+    private DynamicSignature sig() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .addControl("A", 1)
-                .addControl("B", 1)
-                .addControl("C", 1)
-                .addControl("D", 1)
+                .add("A", 1)
+                .add("B", 1)
+                .add("C", 1)
+                .add("D", 1)
         ;
         return defaultBuilder.create();
     }

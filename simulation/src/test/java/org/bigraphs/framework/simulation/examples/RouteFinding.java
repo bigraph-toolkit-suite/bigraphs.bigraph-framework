@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -156,65 +156,65 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
 
-        BigraphEntity.OuterName p0 = builder.createOuterName("p0");
-        BigraphEntity.OuterName p1 = builder.createOuterName("p1");
-        BigraphEntity.OuterName p2 = builder.createOuterName("p2");
-        BigraphEntity.OuterName p3 = builder.createOuterName("p3");
-        BigraphEntity.OuterName p4 = builder.createOuterName("p4");
-        BigraphEntity.OuterName p5 = builder.createOuterName("p5");
+        BigraphEntity.OuterName p0 = builder.createOuter("p0");
+        BigraphEntity.OuterName p1 = builder.createOuter("p1");
+        BigraphEntity.OuterName p2 = builder.createOuter("p2");
+        BigraphEntity.OuterName p3 = builder.createOuter("p3");
+        BigraphEntity.OuterName p4 = builder.createOuter("p4");
+        BigraphEntity.OuterName p5 = builder.createOuter("p5");
 //        BigraphEntity.OuterName p6 = builder.createOuterName("p6");
-        BigraphEntity.OuterName p7 = builder.createOuterName("p7");
+        BigraphEntity.OuterName p7 = builder.createOuter("p7");
 //        BigraphEntity.OuterName p8 = builder.createOuterName("p8");
-        BigraphEntity.OuterName target = builder.createOuterName("target");
+        BigraphEntity.OuterName target = builder.createOuter("target");
 //        BigraphEntity.InnerName target = builder.createInnerName("target");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkToOuter(target);
+        PureBigraphBuilder<DynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkOuter(target);
         for (int i = 0; i < fuelLevel; i++) {
-            car = car.addChild("Fuel");
+            car = car.child("Fuel");
         }
-        builder.createRoot()
-                .addChild("Place").linkToOuter(p0).down().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).up()
-                .addChild("Place").linkToOuter(p1).down().addChild("Road").linkToOuter(p2).addChild("Road").linkToOuter(p4).up()
-                .addChild("Place").linkToOuter(p2).down().addChild("Road").linkToOuter(p5).up()
-                .addChild("Place").linkToOuter(p3).down().addChild("Road").linkToOuter(p4).addChild("Road").linkToOuter(p7).up()
-                .addChild("Place").linkToOuter(p4).down().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).up()
+        builder.root()
+                .child("Place").linkOuter(p0).down().child(car).child("Road").linkOuter(p1).child("Road").linkOuter(p3).up()
+                .child("Place").linkOuter(p1).down().child("Road").linkOuter(p2).child("Road").linkOuter(p4).up()
+                .child("Place").linkOuter(p2).down().child("Road").linkOuter(p5).up()
+                .child("Place").linkOuter(p3).down().child("Road").linkOuter(p4).child("Road").linkOuter(p7).up()
+                .child("Place").linkOuter(p4).down().child("Road").linkOuter(p5).child("Road").linkOuter(p1).up()
 //                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
 //                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
-                .addChild("Place").linkToOuter(p7).down().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).up()
+                .child("Place").linkOuter(p7).down().child("Road").linkOuter(p2).child("Target").linkOuter(target).up()
 //                .addChild("Place")
         ;
 //        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);
 //        builder.closeInnerNames(target);
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
     private PureBigraph createMapSimple(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
 
-        BigraphEntity.OuterName p0 = builder.createOuterName("p0");
-        BigraphEntity.OuterName p1 = builder.createOuterName("p1");
+        BigraphEntity.OuterName p0 = builder.createOuter("p0");
+        BigraphEntity.OuterName p1 = builder.createOuter("p1");
 //        BigraphEntity.OuterName p2 = builder.createOuterName("p2");
-        BigraphEntity.OuterName p3 = builder.createOuterName("p3");
-        BigraphEntity.OuterName p4 = builder.createOuterName("p4");
+        BigraphEntity.OuterName p3 = builder.createOuter("p3");
+        BigraphEntity.OuterName p4 = builder.createOuter("p4");
 //        BigraphEntity.OuterName p5 = builder.createOuterName("p5");
 //        BigraphEntity.OuterName p6 = builder.createOuterName("p6");
 //        BigraphEntity.OuterName p7 = builder.createOuterName("p7");
 //        BigraphEntity.OuterName p8 = builder.createOuterName("p8");
-        BigraphEntity.OuterName target = builder.createOuterName("target");
+        BigraphEntity.OuterName target = builder.createOuter("target");
 //        BigraphEntity.InnerName target = builder.createInnerName("target");
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkToOuter(target);
+        PureBigraphBuilder<DynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkOuter(target);
         for (int i = 0; i < fuelLevel; i++) {
-            car = car.addChild("Fuel");
+            car = car.child("Fuel");
         }
-        builder.createRoot()
-                .addChild("Place").linkToOuter(p0).down().addChild(car).addChild("Road").linkToOuter(p1).addChild("Road").linkToOuter(p3).up()
-                .addChild("Place").linkToOuter(p1).down().addChild("Road").addChild("Road").linkToOuter(p4).up()
+        builder.root()
+                .child("Place").linkOuter(p0).down().child(car).child("Road").linkOuter(p1).child("Road").linkOuter(p3).up()
+                .child("Place").linkOuter(p1).down().child("Road").child("Road").linkOuter(p4).up()
 //                .addChild("Place").linkToOuter(p2).withNewHierarchy().addChild("Road").linkToOuter(p5).goBack()
-                .addChild("Place").linkToOuter(p3).down().addChild("Road").linkToOuter(p4).addChild("Road").up()
+                .child("Place").linkOuter(p3).down().child("Road").linkOuter(p4).child("Road").up()
 //                .addChild("Place").linkToOuter(p4).withNewHierarchy().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).goBack()
 //                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
 //                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
@@ -223,7 +223,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         ;
 //        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);
 //        builder.closeInnerNames(target);
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return bigraph;
     }
 
@@ -231,17 +231,17 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
      * react r1 = Left.S | Right.S -> Left | Right;
      */
     public static ReactionRule<PureBigraph> createReactionRule() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(createSignature());
 
-        BigraphEntity.OuterName fromD = builder.createOuterName("fromD");
-        BigraphEntity.OuterName fromS = builder.createOuterName("fromS");
-        BigraphEntity.OuterName target = builder.createOuterName("target");
+        BigraphEntity.OuterName fromD = builder.createOuter("fromD");
+        BigraphEntity.OuterName fromS = builder.createOuter("fromS");
+        BigraphEntity.OuterName target = builder.createOuter("target");
 
         Supplier<PureBigraphBuilder.Hierarchy> car = () -> {
-            PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car1 = null;
+            PureBigraphBuilder<DynamicSignature>.Hierarchy car1 = null;
             try {
-                car1 = builder.hierarchy("Car").linkToOuter(target).addSite().addChild("Fuel");
+                car1 = builder.hierarchy("Car").linkOuter(target).site().child("Fuel");
             } catch (TypeNotExistsException e) {
                 e.printStackTrace();
             } catch (InvalidConnectionException e) {
@@ -250,18 +250,18 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
             return car1;
         };
 
-        builder.createRoot()
-                .addChild("Place").linkToOuter(fromD).down().addSite().top()
-                .addChild("Place").linkToOuter(fromS).down().addChild(car.get()).addSite().addChild("Road").linkToOuter(fromD).top()
+        builder.root()
+                .child("Place").linkOuter(fromD).down().site().top()
+                .child("Place").linkOuter(fromS).down().child(car.get()).site().child("Road").linkOuter(fromD).top()
         ;
 
-        BigraphEntity.OuterName fromD2 = builder2.createOuterName("fromD");
-        BigraphEntity.OuterName fromS2 = builder2.createOuterName("fromS");
-        BigraphEntity.OuterName target2 = builder2.createOuterName("target");
+        BigraphEntity.OuterName fromD2 = builder2.createOuter("fromD");
+        BigraphEntity.OuterName fromS2 = builder2.createOuter("fromS");
+        BigraphEntity.OuterName target2 = builder2.createOuter("target");
         Supplier<PureBigraphBuilder.Hierarchy> car2 = () -> {
-            PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy car1 = null;
+            PureBigraphBuilder<DynamicSignature>.Hierarchy car1 = null;
             try {
-                car1 = builder2.hierarchy("Car").linkToOuter(target2).addSite();
+                car1 = builder2.hierarchy("Car").linkOuter(target2).site();
             } catch (TypeNotExistsException e) {
                 e.printStackTrace();
             } catch (InvalidConnectionException e) {
@@ -270,12 +270,12 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
             return car1;
         };
 
-        builder2.createRoot()
-                .addChild("Place").linkToOuter(fromD2).down().addSite().addChild(car2.get()).top()
-                .addChild("Place").linkToOuter(fromS2).down().addChild("Road").linkToOuter(fromD2).addSite().top()
+        builder2.root()
+                .child("Place").linkOuter(fromD2).down().site().child(car2.get()).top()
+                .child("Place").linkOuter(fromS2).down().child("Road").linkOuter(fromD2).site().top()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         InstantiationMap instantiationMap = InstantiationMap.create(3);
 //        instantiationMap.
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
@@ -283,20 +283,20 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
     }
 
     private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
 
-        BigraphEntity.OuterName from = builder.createOuterName("from");
+        BigraphEntity.OuterName from = builder.createOuter("from");
 
         // links of car and target must be connected via an outer name otherwise the predicate is not matched
-        builder.createRoot()
-                .addChild("Place").linkToOuter(from)
+        builder.root()
+                .child("Place").linkOuter(from)
 //                .down().addSite().connectByEdge("Target", "Car").down().addSite();
-                .down().addSite().addChild("Target", "target").addChild("Car", "target").down().addSite();
-        PureBigraph bigraph = builder.createBigraph();
+                .down().site().child("Target", "target").child("Car", "target").down().site();
+        PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
-    public static DefaultDynamicSignature createSignature() {
+    public static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Car")).arity(FiniteOrdinal.ofInteger(1)).assign()

@@ -3,7 +3,7 @@ package org.bigraphs.framework.converter.bigred;
 import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraph.model.SignatureAdapter;
 import org.bigraph.model.savers.SignatureXMLSaver;
@@ -32,7 +32,7 @@ public class BasicBigRedXmlWriteTests {
     void write_test() {
         assertAll(() -> {
 
-            DefaultDynamicSignature signature = createSignature();
+            DynamicSignature signature = createSignature();
             SignatureAdapter signatureAdapter = new SignatureAdapter(signature);
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -121,7 +121,7 @@ public class BasicBigRedXmlWriteTests {
         });
     }
 
-    private static DefaultDynamicSignature createSignature() {
+    private static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(3)).status(ControlStatus.ATOMIC).assign()

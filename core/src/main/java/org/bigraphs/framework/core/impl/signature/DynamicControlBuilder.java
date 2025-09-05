@@ -38,7 +38,7 @@ public class DynamicControlBuilder extends ControlBuilder<StringTypedName, Finit
     }
 
     @Override
-    protected DefaultDynamicControl build() {
-        return DefaultDynamicControl.createDefaultDynamicControl(getType(), getArity(), this.status);
+    protected DynamicControl build() {
+        return DynamicControl.createDynamicControl(getType(), getArity(), this.status);
     }
 }

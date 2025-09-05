@@ -9,7 +9,7 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -121,9 +121,9 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
             validReaction = ops(redex).compose(param).getOuterBigraph();
             eb(validReaction, "validReaction");
 
-            PureBigraphBuilder<DefaultDynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
+            PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
             b.makeGround();
-            eb(b.createBigraph(), "redex0");
+            eb(b.create(), "redex0");
 
 
             newAgent = reactiveSystem.buildParametricReaction(agent, match, insertCoinRR);
@@ -150,9 +150,9 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
             validReaction2 = ops(redex).compose(param).getOuterBigraph();
             eb(validReaction2, "validReaction2");
 
-            PureBigraphBuilder<DefaultDynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
+            PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
             b.makeGround();
-            eb(b.createBigraph(), "redex3");
+            eb(b.create(), "redex3");
 
         }
 
@@ -391,68 +391,68 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
     }
 
     private SubBigraphMatchPredicate<PureBigraph> teaContainerIsEmpty() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig());
-        builder.createRoot()
-                .addChild("VM").down()
-                .addSite()
-                .addChild("Container")
-                .addChild("Container").down()
-                .addChild("Coffee").addSite()
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
+        builder.root()
+                .child("VM").down()
+                .site()
+                .child("Container")
+                .child("Container").down()
+                .child("Coffee").site()
         ;
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
     private SubBigraphMatchPredicate<PureBigraph> coffeeContainerIsEmpty() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig());
-        builder.createRoot()
-                .addChild("VM").down()
-                .addSite()
-                .addChild("Container")
-                .addChild("Container").down()
-                .addChild("Tea").addSite()
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
+        builder.root()
+                .child("VM").down()
+                .site()
+                .child("Container")
+                .child("Container").down()
+                .child("Tea").site()
         ;
-        PureBigraph bigraph = builder.createBigraph();
+        PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);
     }
 
     private PureBigraph agent(int numOfCoffee, int numOfTea, int numOfCoinsPhd) throws Exception {
-        PureBigraphBuilder<DefaultDynamicSignature> vmB = pureBuilder(sig());
-        PureBigraphBuilder<DefaultDynamicSignature> phdB = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> vmB = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> phdB = pureBuilder(sig());
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy containerCoffee = vmB.hierarchy("Container");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy containerCoffee = vmB.hierarchy("Container");
         for (int i = 0; i < numOfCoffee; i++) {
-            containerCoffee = containerCoffee.addChild("Coffee");
+            containerCoffee = containerCoffee.child("Coffee");
         }
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy containerTea = vmB.hierarchy("Container");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy containerTea = vmB.hierarchy("Container");
         for (int i = 0; i < numOfTea; i++) {
-            containerTea = containerTea.addChild("Tea");
+            containerTea = containerTea.child("Tea");
         }
-        vmB.createRoot()
-                .addChild("VM")
+        vmB.root()
+                .child("VM")
                 .down()
-                .addChild(containerCoffee.top())
-                .addChild(containerTea.top())
-                .addChild("Button1")
-                .addChild("Button2")
-                .addChild("Tresor")
+                .child(containerCoffee.top())
+                .child(containerTea.top())
+                .child("Button1")
+                .child("Button2")
+                .child("Tresor")
         ;
 
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy wallet = vmB.hierarchy("Wallet");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy wallet = vmB.hierarchy("Wallet");
         for (int i = 0; i < numOfCoinsPhd; i++) {
-            wallet = wallet.addChild("Coin");
+            wallet = wallet.child("Coin");
         }
-        phdB.createRoot().addChild("PHD")
+        phdB.root().child("PHD")
                 .down()
-                .addChild(wallet.top());
+                .child(wallet.top());
 
 
-        Placings<DefaultDynamicSignature> placings = purePlacings(sig());
-        Placings<DefaultDynamicSignature>.Merge merge2 = placings.merge(2);
-        PureBigraph vm = vmB.createBigraph();
-        PureBigraph phd = phdB.createBigraph();
-        Bigraph<DefaultDynamicSignature> both = ops(vm).parallelProduct(phd).getOuterBigraph();
-        Bigraph<DefaultDynamicSignature> result = ops(merge2).compose(both).getOuterBigraph();
+        Placings<DynamicSignature> placings = purePlacings(sig());
+        Placings<DynamicSignature>.Merge merge2 = placings.merge(2);
+        PureBigraph vm = vmB.create();
+        PureBigraph phd = phdB.create();
+        Bigraph<DynamicSignature> both = ops(vm).parallelProduct(phd).getOuterBigraph();
+        Bigraph<DynamicSignature> result = ops(merge2).compose(both).getOuterBigraph();
         return (PureBigraph) result;
     }
 
@@ -460,22 +460,22 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
      * Insert is only possible if no button was pressed
      */
     public ReactionRule<PureBigraph> insertCoin() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = sig();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = sig();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("PHD").down().addChild("Wallet").down().addChild("Coin").addSite()
+        builder.root()
+                .child("PHD").down().child("Wallet").down().child("Coin").site()
                 .top()
-                .addChild("VM").down().addSite().addChild("Button1").addChild("Button2");
+                .child("VM").down().site().child("Button1").child("Button2");
         ;
-        builder2.createRoot()
-                .addChild("PHD").down().addChild("Wallet").down().addSite()
+        builder2.root()
+                .child("PHD").down().child("Wallet").down().site()
                 .top()
-                .addChild("VM").down().addSite().addChild("Button1").addChild("Button2").addChild("Coin");
+                .child("VM").down().site().child("Button1").child("Button2").child("Coin");
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("insertCoin");
         return rr;
     }
@@ -487,26 +487,26 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
      * For coffee.
      */
     public ReactionRule<PureBigraph> pushButton1() throws Exception {
-        DefaultDynamicSignature signature = sig();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = sig();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("PHD").down().addSite()
+        builder.root()
+                .child("PHD").down().site()
                 .top()
-                .addChild("VM").down().addChild("Coin").addSite()
-                .addChild("Button2")
-                .addChild("Button1")
+                .child("VM").down().child("Coin").site()
+                .child("Button2")
+                .child("Button1")
         ;
-        builder2.createRoot()
-                .addChild("PHD").down().addSite()
+        builder2.root()
+                .child("PHD").down().site()
                 .top()
-                .addChild("VM").down().addChild("Coin").addSite()
-                .addChild("Button2")
-                .addChild("Button1").down().addChild("Pressed");
+                .child("VM").down().child("Coin").site()
+                .child("Button2")
+                .child("Button1").down().child("Pressed");
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
@@ -516,26 +516,26 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
      * for tea.
      */
     public ReactionRule<PureBigraph> pushButton2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DefaultDynamicSignature signature = sig();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = sig();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("PHD").down().addSite()
+        builder.root()
+                .child("PHD").down().site()
                 .top()
-                .addChild("VM").down().addChild("Coin").addSite()
-                .addChild("Button1")
-                .addChild("Button2");
+                .child("VM").down().child("Coin").site()
+                .child("Button1")
+                .child("Button2");
         ;
-        builder2.createRoot()
-                .addChild("PHD").down().addSite()
+        builder2.root()
+                .child("PHD").down().site()
                 .top()
-                .addChild("VM").down().addChild("Coin").addSite()
-                .addChild("Button1")
-                .addChild("Button2").down().addChild("Pressed")
+                .child("VM").down().child("Coin").site()
+                .child("Button1")
+                .child("Button2").down().child("Pressed")
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
@@ -551,78 +551,78 @@ public class VendingMachine1Example extends BaseExampleTestSupport implements Bi
      * release button
      */
     public ReactionRule<PureBigraph> giveCoffee() throws Exception {
-        DefaultDynamicSignature signature = sig();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = sig();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("PHD").down().addChild("Wallet").down().addSite()
+        builder.root()
+                .child("PHD").down().child("Wallet").down().site()
                 .top()
-                .addChild("VM").down()
-                .addChild("Coin").addSite()
-                .addChild("Container").down().addChild("Coffee").addSite().up()
-                .addChild("Button1").down().addChild("Pressed").up()
-                .addChild("Tresor").down().addSite();
+                .child("VM").down()
+                .child("Coin").site()
+                .child("Container").down().child("Coffee").site().up()
+                .child("Button1").down().child("Pressed").up()
+                .child("Tresor").down().site();
         ;
-        builder2.createRoot()
-                .addChild("PHD").down().addChild("Wallet").down().addChild("Coffee").addSite()
+        builder2.root()
+                .child("PHD").down().child("Wallet").down().child("Coffee").site()
                 .top()
-                .addChild("VM").down()
-                .addSite()
-                .addChild("Container").down().addSite().up()
-                .addChild("Button1")
-                .addChild("Tresor").down().addChild("Coin").addSite()
+                .child("VM").down()
+                .site()
+                .child("Container").down().site().up()
+                .child("Button1")
+                .child("Tresor").down().child("Coin").site()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
     }
 
     public ReactionRule<PureBigraph> giveTea() throws Exception {
-        DefaultDynamicSignature signature = sig();
-        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-        PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+        DynamicSignature signature = sig();
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
-        builder.createRoot()
-                .addChild("PHD").down().addChild("Wallet").down().addSite()
+        builder.root()
+                .child("PHD").down().child("Wallet").down().site()
                 .top()
-                .addChild("VM").down()
-                .addChild("Coin").addSite()
-                .addChild("Container").down().addChild("Tea").addSite().up()
-                .addChild("Button2").down().addChild("Pressed").up()
-                .addChild("Tresor").down().addSite();
+                .child("VM").down()
+                .child("Coin").site()
+                .child("Container").down().child("Tea").site().up()
+                .child("Button2").down().child("Pressed").up()
+                .child("Tresor").down().site();
         ;
-        builder2.createRoot()
-                .addChild("PHD").down().addChild("Wallet").down().addChild("Tea").addSite()
+        builder2.root()
+                .child("PHD").down().child("Wallet").down().child("Tea").site()
                 .top()
-                .addChild("VM").down()
-                .addSite()
-                .addChild("Container").down().addSite().up()
-                .addChild("Button2")
-                .addChild("Tresor").down().addChild("Coin").addSite()
+                .child("VM").down()
+                .site()
+                .child("Container").down().site().up()
+                .child("Button2")
+                .child("Tresor").down().child("Coin").site()
         ;
-        PureBigraph redex = builder.createBigraph();
-        PureBigraph reactum = builder2.createBigraph();
+        PureBigraph redex = builder.create();
+        PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         ((ParametricReactionRule)rr).withPriority(0);
         return rr;
     }
 
-    private DefaultDynamicSignature sig() {
+    private DynamicSignature sig() {
         DynamicSignatureBuilder sb = pureSignatureBuilder();
-        DefaultDynamicSignature sig = sb
-                .addControl("Coin", 0)
-                .addControl("VM", 0)
-                .addControl("Button1", 0)
-                .addControl("Button2", 0)
-                .addControl("Pressed", 0)
-                .addControl("Coffee", 0)
-                .addControl("Container", 0)
-                .addControl("Tea", 0)
-                .addControl("PHD", 0)
-                .addControl("Wallet", 0)
-                .addControl("Tresor", 0)
+        DynamicSignature sig = sb
+                .add("Coin", 0)
+                .add("VM", 0)
+                .add("Button1", 0)
+                .add("Button2", 0)
+                .add("Pressed", 0)
+                .add("Coffee", 0)
+                .add("Container", 0)
+                .add("Tea", 0)
+                .add("PHD", 0)
+                .add("Wallet", 0)
+                .add("Tresor", 0)
                 .create();
         return sig;
     }

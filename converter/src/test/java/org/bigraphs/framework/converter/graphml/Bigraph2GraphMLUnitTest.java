@@ -5,11 +5,10 @@ import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.factory.BigraphFactory;
-import org.bigraphs.framework.core.impl.signature.DefaultDynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.converter.graphml.PureBigraph2GraphMLPrettyPrinter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +33,7 @@ public class Bigraph2GraphMLUnitTest {
 
     @Test
     void bigraph_2_graphml_test_01() {
-        DefaultDynamicSignature signature = createSignature();
+        DynamicSignature signature = createSignature();
         PureBigraph generate = BigraphFactory.pureRandomBuilder(signature).generate(1, 10, 0.5f, 1f, 1f);
 
         PureBigraph2GraphMLPrettyPrinter graphMLPrettyPrinter = new PureBigraph2GraphMLPrettyPrinter();
@@ -79,17 +78,17 @@ public class Bigraph2GraphMLUnitTest {
     }
 
     private PureBigraph robotZoneBigraph() throws InvalidConnectionException {
-        PureBigraphBuilder<DefaultDynamicSignature> b = pureBuilder(createRobotZoneSignature());
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy zone1 = b.hierarchy("Zone1");
-        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy zone2 = b.hierarchy("Zone2");
-        zone1.addChild("Robot", "rId").down().addChild("Gripper", "canGrip");
-        zone2.addChild("Zone3").addChild("Object", "isFree").down().addChild("Ownership", "belongsTo");
-        b.createRoot()
-                .addChild(zone1).top().addChild(zone2).top();
-        return b.createBigraph();
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(createRobotZoneSignature());
+        PureBigraphBuilder<DynamicSignature>.Hierarchy zone1 = b.hierarchy("Zone1");
+        PureBigraphBuilder<DynamicSignature>.Hierarchy zone2 = b.hierarchy("Zone2");
+        zone1.child("Robot", "rId").down().child("Gripper", "canGrip");
+        zone2.child("Zone3").child("Object", "isFree").down().child("Ownership", "belongsTo");
+        b.root()
+                .child(zone1).top().child(zone2).top();
+        return b.create();
     }
 
-    private static DefaultDynamicSignature createSignature() {
+    private static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = BigraphFactory.pureSignatureBuilder();
         defaultBuilder
                 .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(4)).assign()
@@ -101,7 +100,7 @@ public class Bigraph2GraphMLUnitTest {
         return defaultBuilder.create();
     }
 
-    private DefaultDynamicSignature createRobotZoneSignature() {
+    private DynamicSignature createRobotZoneSignature() {
         return pureSignatureBuilder()
                 .newControl("Robot", 1).assign()
                 .newControl("Gripper", 1).assign()

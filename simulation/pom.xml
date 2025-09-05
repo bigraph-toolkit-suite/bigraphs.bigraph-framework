@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.bigraphs.framework</groupId>
         <artifactId>framework-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>2.2.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -180,12 +180,8 @@
         <dependency>
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-proxy</artifactId>
+            <scope>provided</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.bytedeco</groupId>-->
-        <!--            <artifactId>javacpp</artifactId>-->
-        <!--            <version>1.5.2</version>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
