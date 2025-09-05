@@ -379,7 +379,7 @@
                             <file>${project.basedir}/etc/libs/bighuggies-bisimulation-1.0-SNAPSHOT.jar</file>
                             <groupId>bighuggies</groupId>
                             <artifactId>bisimulation</artifactId>
-                            <version>1.0-SNAPSHOT</version>
+                            <version>1.0.0</version>
                             <generatePom>true</generatePom>
                             <packaging>jar</packaging>
                         </configuration>
@@ -622,7 +622,12 @@
             <dependency>
                 <groupId>bighuggies</groupId>
                 <artifactId>bisimulation</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.r2dbc</groupId>
+                <artifactId>r2dbc-proxy</artifactId>
+                <version>1.1.6.RELEASE</version>
             </dependency>
             <!-- Logging -->
             <dependency>
