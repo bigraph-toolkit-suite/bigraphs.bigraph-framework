@@ -1,6 +1,6 @@
 <img src="etc/assets/bigraph-framework-logo.png" style="zoom:67%;" />
 
-> Latest Version: **2.1.1**
+> Latest Version: **2.1.2**
 
 - User Manual: https://bigraphs.org/products/bigraph-framework/docs/
 
@@ -163,25 +163,25 @@ composite.juxtapose(F).parallelProduct(H);
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-core</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
   </dependency>
   <!-- the rewriting module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-simulation</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
   </dependency>
   <!-- the visualization module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-visualization</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
   </dependency>
   <!-- the converter module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-converter</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
   </dependency>
 </dependencies>
 ```
@@ -189,10 +189,10 @@ composite.juxtapose(F).parallelProduct(H);
 ### Gradle
 
 ```groovy
-compile "org.bigraphs.framework:bigraph-core:2.1.1"
-compile "org.bigraphs.framework:bigraph-simulation:2.1.1"
-compile "org.bigraphs.framework:bigraph-visualization:2.1.1"
-compile "org.bigraphs.framework:bigraph-converter:2.1.1"
+compile "org.bigraphs.framework:bigraph-core:2.1.2"
+compile "org.bigraphs.framework:bigraph-simulation:2.1.2"
+compile "org.bigraphs.framework:bigraph-visualization:2.1.2"
+compile "org.bigraphs.framework:bigraph-converter:2.1.2"
 ```
 
 ### Logging
