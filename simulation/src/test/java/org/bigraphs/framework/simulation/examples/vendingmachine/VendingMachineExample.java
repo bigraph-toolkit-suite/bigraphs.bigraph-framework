@@ -62,10 +62,10 @@ import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptio
 import static java.util.stream.Collectors.groupingBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class VendingMachine1Example extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
+public class VendingMachineExample extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/vendingmachine/";
 
-    public VendingMachine1Example() {
+    public VendingMachineExample() {
         super(TARGET_DUMP_PATH, true);
     }
 
