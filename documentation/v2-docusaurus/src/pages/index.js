@@ -21,7 +21,7 @@ function TryItOut() {
                 </li>
                 <li>Source code is available at <a href={`https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework`}>GitHub</a>.</li>
             </ul>
-            <strong>Demo projects</strong>
+            <strong>Quickstart</strong>
             <ul style={{listStyleType: "none"}}>
                 <li>(ZIP Archive) <a
                     href={`https://www.bigraphs.org/products/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip`}>Project Template (Maven/Gradle)</a></li>

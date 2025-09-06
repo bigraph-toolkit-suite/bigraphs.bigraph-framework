@@ -25,7 +25,7 @@ the same concept applies for the metamodel and instance model of a signature.
 <img width="480"
      src="https://raw.githubusercontent.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel/55f9b4a6e2fc89322caf595a35b5e4f27cf5a773/etc/metamodel-workflow.png" />
 
-Refer to [Bigraph Ecore Metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel?tab=readme-ov-file#how-to-use-the-specification), to learn more technical details about the metamodel of the bigraphs framework.
+Refer to [Bigraph Ecore Metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel?tab=readme-ov-file#how-to-use-the-specification), to learn more technical details about the metamodel inside Bigraph Framework.
 
 ## Bigraphical Metamodel
 
@@ -35,14 +35,12 @@ Several overloaded methods exist that support, for example, also input streams.
 
 ### Storing a metamodel to the filesystem
 
-For demonstration, we create a simple signature and afterwards a bigraph
+For demonstration, we create a simple signature and afterward a bigraph
 
 <CodeBlock className="language-java">{storing_a_metamodel_to_the_filesystem_0}</CodeBlock>
 
-As shown above, the metamodel data must be passed to a special method available
-from `org.bigraphs.framework.core.factory.BigraphFactory`. The
-method `exportAsMetaModel(EcoreBigraph, OutputStream)` is used then to output the Ecore representation to the
-filesystem.
+As shown above, the metamodel data must be passed to a special method available from `org.bigraphs.framework.core.factory.BigraphFactory`.
+The method `exportAsMetaModel(EcoreBigraph, OutputStream)` is used then to output the Ecore representation to the filesystem.
 
 ### Loading a metamodel from the filesystem
 
