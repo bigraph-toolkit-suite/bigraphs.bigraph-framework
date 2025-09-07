@@ -78,7 +78,7 @@ public class BigMcTransformationUnitTest {
                 .down()
                 .child(leftNode)
                 .child(rightNode)
-//                .addChild(s.top())
+//                .child(s.top())
         ;
         builder.makeGround();
         return builder.create();
@@ -119,8 +119,8 @@ public class BigMcTransformationUnitTest {
                 .child("Right").down().child("S").down().site()
         ;
         builder2.root()
-//                .addSite()
-//                .addSite()
+//                .site()
+//                .site()
                 .child("True").down().site()
         ;
         PureBigraph redex = builder.create();

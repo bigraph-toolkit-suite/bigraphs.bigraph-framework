@@ -119,11 +119,11 @@ public class RouteFinding {
         builder.root()
                 .child("Place").linkOuter(p0).down().child(car).child("Road").linkOuter(p1).child("Road").linkOuter(p3).up()
                 .child("Place").linkOuter(p1).down().child("Road").child("Road").linkOuter(p4).up()
-//                .addChild("Place").linkToOuter(p2).withNewHierarchy().addChild("Road").linkToOuter(p5).goBack()
+//                .child("Place").linkToOuter(p2).withNewHierarchy().child("Road").linkToOuter(p5).goBack()
                 .child("Place").linkOuter(p3).down().child("Road").linkOuter(p4).child("Road").up()
-//                .addChild("Place").linkToOuter(p4).withNewHierarchy().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).goBack()
-//                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
-//                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
+//                .child("Place").linkToOuter(p4).withNewHierarchy().child("Road").linkToOuter(p5).child("Road").linkToOuter(p1).goBack()
+//                .child("Place").connectNodeToOuterName(p5).withNewHierarchy().child("Road").connectNodeToOuterName(p6).child("Road").connectNodeToOuterName(p7).child("Road").connectNodeToOuterName(p8).goBack()
+//                .child("Place").connectNodeToOuterName(p6).withNewHierarchy().child("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
 //                .addChild("Place").linkToOuter(p7).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).goBack()
 //                .addChild("Place")
         ;
@@ -208,9 +208,9 @@ public class RouteFinding {
 //        BigraphEntity.OuterName from = builder.createOuterName("from");
 //
 //
-//        builder.createRoot()
+//        builder.root()
 //                .addChild("Place").linkToOuter(from)
-//                .down().addSite().connectByEdge("Target", "Car").down().addSite();
+//                .down().site().connectByEdge("Target", "Car").down().site();
 //        PureBigraph bigraph = builder.createBigraph();
 //        return SubBigraphMatchPredicate.create(bigraph);
 //    }

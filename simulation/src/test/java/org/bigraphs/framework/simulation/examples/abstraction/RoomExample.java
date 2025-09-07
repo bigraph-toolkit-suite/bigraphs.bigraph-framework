@@ -224,8 +224,8 @@ public class RoomExample extends BaseExampleTestSupport {
                 .connectByEdge("User", "PC").linkInner(tmpPrPc)
                 .connectByEdge("User", "PC").linkInner(tmpPrPc)
 
-//                .addChild("PC").linkToInner(tmpPrPc)
-//                .addChild("PC").linkToInner(tmpPrPc)
+//                .child("PC").linkToInner(tmpPrPc)
+//                .child("PC").linkToInner(tmpPrPc)
         ;
 
         PureBigraph b = builder.create();

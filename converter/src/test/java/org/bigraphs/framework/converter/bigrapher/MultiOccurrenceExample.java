@@ -59,7 +59,7 @@ public class MultiOccurrenceExample {
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.root()
-                .child("Room"); //.withNewHierarchy().addSite().top()
+                .child("Room"); //.withNewHierarchy().site().top()
         ;
         builder2.root()
                 .child("Room").down().child("JobA").top()
@@ -74,7 +74,7 @@ public class MultiOccurrenceExample {
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(createSignature());
 
         builder.root()
-                .child("Room"); //.withNewHierarchy().addSite().top()
+                .child("Room"); //.withNewHierarchy().site().top()
         ;
         builder2.root()
                 .child("Room").down().child("JobB").top()

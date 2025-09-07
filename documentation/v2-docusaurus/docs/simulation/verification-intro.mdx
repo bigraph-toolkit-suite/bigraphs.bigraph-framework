@@ -35,6 +35,10 @@ Refer to [\[1\]](#ref1), [\[2\]](#ref2), [\[3\]](#ref3).
 This code example shows how to create a model checker object for pure bigraphs:
 
 ```java
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.simulation.matching.pure.*;
+import org.bigraphs.framework.simulation.modelchecking.*;
+
 // Create a pure reactive system container
 PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
@@ -107,6 +111,8 @@ Therefore, the class `ModelCheckingOptions` needs to be created. An
 example is shown below.
 
 ```java
+import org.bigraphs.framework.simulation.modelchecking.*;
+
 ModelCheckingOptions opts = ModelCheckingOptions.create();
 opts
         .doMeasureTime(true) // for debugging
@@ -183,6 +189,9 @@ For example, see [here](simulation-predicates#listen-to-predicate-evaluation) on
 To perform the model checking asynchronously, call the `BigraphModelChecker#executeAsync()`:
 
 ```java
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+
 Future<ReactionGraph<PureBigraph>> reactionGraphFuture = modelChecker.executeAsync();
 ReactionGraph<PureBigraph> pureBigraphReactionGraph = reactionGraphFuture.get();
 ```

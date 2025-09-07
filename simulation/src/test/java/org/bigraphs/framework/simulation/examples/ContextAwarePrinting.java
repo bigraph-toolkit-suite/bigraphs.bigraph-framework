@@ -134,13 +134,13 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
 
         builderRedex.root()
                 .child("loc", "top").down().site()
-//                .addSite()
+//                .site()
         ;
         PureBigraph redex = builderRedex.create();
         BigraphFileModelManagement.Store.exportAsInstanceModel(redex, System.out);
 
         builderReactum.root()
-//                .addSite()
+//                .site()
                 .child("loc", "top").down().site().top()
                 .child("in").down().child("f").top()
                 .child("out");

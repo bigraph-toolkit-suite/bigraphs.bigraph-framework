@@ -239,8 +239,8 @@ public class SubBRSUnitTest extends BaseExampleTestSupport {
                 .child("Store")
                 .down()
                 .child("Item").down().child("Waiting").site()
-//                .addChild("Item").down().addSite()
-//                .addChild("Item").down().addSite()
+//                .child("Item").down().site()
+//                .child("Item").down().site()
                 .top().child("Queue")
         ;
         PureBigraph raw = builder.create();
@@ -322,7 +322,7 @@ public class SubBRSUnitTest extends BaseExampleTestSupport {
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignatureMain());
 
         builder.root().child("Item").down().child("Waiting").site();
-//        builder.createRoot().addChild("Queue").down().addSite();
+//        builder.root().child("Queue").down().site();
         PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);
     }

@@ -26,13 +26,19 @@ That allows us to observe the overall behavior of the system and also take snaps
 ## The Signature
 
 ```java
-public static DefaultDynamicSignature createSignature() {
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
+public static DynamicSignature createSignature() {
     DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
     defaultBuilder
-        .addControl("User", 1, ControlStatus.ATOMIC)
-        .addControl("Basket", 1)
-        .addControl("Fruit", 1, ControlStatus.ATOMIC)
-        .addControl("Table", 0)
+        .add("User", 1, ControlStatus.ATOMIC)
+        .add("Basket", 1)
+        .add("Fruit", 1, ControlStatus.ATOMIC)
+        .add("Table", 0)
     ;
     return defaultBuilder.create();
 }
@@ -54,15 +60,22 @@ See, for example, [Exporting Bigraphs as Images](../visualization/visualization-
 :::
 
 ```java
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.exceptions.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 public static PureBigraph createAgent() throws InvalidConnectionException {
-    return pureBuilder(createSignature()).createRoot()
-        .addChild("User")
-        .addChild("Table").down()
-        .addChild("Basket")
-        .addChild("Fruit", "f")
-        .addChild("Fruit", "f")
-        .addChild("Fruit", "f")
-        .createBigraph();
+    return pureBuilder(createSignature()).root()
+        .child("User")
+        .child("Table").down()
+        .child("Basket")
+        .child("Fruit", "f")
+        .child("Fruit", "f")
+        .child("Fruit", "f")
+        .create();
 }
 ```
 
@@ -89,21 +102,28 @@ The amount of details of a specification is domain-specific and depends on the s
 A "lock" is acquired on any `Fruit` on the `Table` by a "free" `User`:
 
 ```java
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.core.exceptions.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 public static ParametricReactionRule<PureBigraph> createRR1() throws InvalidReactionRuleException, InvalidConnectionException {
-    PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-    PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-    b1.createRoot()
-        .addChild("User")
-        .addChild("Table").down()
-        .addChild("Fruit", "f").addSite()
+    PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+    PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+    b1.root()
+        .child("User")
+        .child("Table").down()
+        .child("Fruit", "f").site()
     ;
-    b2.createRoot()
-        .addChild("User", "f")
-        .addChild("Table").down()
-        .addChild("Fruit", "f").addSite()
+    b2.root()
+        .child("User", "f")
+        .child("Table").down()
+        .child("Fruit", "f").site()
     ;
-    PureBigraph redex = b1.createBigraph();
-    PureBigraph reactum = b2.createBigraph();
+    PureBigraph redex = b1.create();
+    PureBigraph reactum = b2.create();
     ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr1");
     return rr;
 }
@@ -118,23 +138,30 @@ public static ParametricReactionRule<PureBigraph> createRR1() throws InvalidReac
 A "lock" is acquired on the `Basket` if a `User` has already ensured to receive a `Fruit`:
 
 ```java
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.core.exceptions.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 public static ParametricReactionRule<PureBigraph> createRR2() throws InvalidReactionRuleException, InvalidConnectionException {
-    PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-    PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-    b1.createRoot()
-        .addChild("User", "f")
-        .addChild("Table").down()
-        .addChild("Fruit", "f").addSite()
-        .addChild("Basket").down().addSite()
+    PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+    PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+    b1.root()
+        .child("User", "f")
+        .child("Table").down()
+        .child("Fruit", "f").site()
+        .child("Basket").down().site()
     ;
-    b2.createRoot()
-        .addChild("User", "f")
-        .addChild("Table").down()
-        .addChild("Fruit", "f").addSite()
-        .addChild("Basket", "f").down().addSite()
+    b2.root()
+        .child("User", "f")
+        .child("Table").down()
+        .child("Fruit", "f").site()
+        .child("Basket", "f").down().site()
     ;
-    PureBigraph redex = b1.createBigraph();
-    PureBigraph reactum = b2.createBigraph();
+    PureBigraph redex = b1.create();
+    PureBigraph reactum = b2.create();
     ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr2");
     return rr;
 }
@@ -150,23 +177,30 @@ The following rule describes the actual pick and place task of the system.
 A `Fruit` on the `Table` is transferred to the `Basket` of the `Table`:
 
 ```java
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.core.exceptions.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 public static ParametricReactionRule<PureBigraph> createRR3() throws InvalidReactionRuleException, InvalidConnectionException {
-    PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-    PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-    b1.createRoot()
-        .addChild("User", "f")
-        .addChild("Table").down()
-        .addChild("Fruit", "f").addSite()
-        .addChild("Basket", "f").down().addSite()
+    PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+    PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+    b1.root()
+        .child("User", "f")
+        .child("Table").down()
+        .child("Fruit", "f").site()
+        .child("Basket", "f").down().site()
     ;
-    b2.createRoot()
-        .addChild("User", "f")
-        .addChild("Table").down()
-        .addSite()
-        .addChild("Basket", "f").down().addChild("Fruit", "f").addSite()
+    b2.root()
+        .child("User", "f")
+        .child("Table").down()
+        .site()
+        .child("Basket", "f").down().child("Fruit", "f").site()
     ;
-    PureBigraph redex = b1.createBigraph();
-    PureBigraph reactum = b2.createBigraph();
+    PureBigraph redex = b1.create();
+    PureBigraph reactum = b2.create();
     ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr3");
     return rr;
 }
@@ -183,22 +217,29 @@ Specifically, it is not connected anymore to the link named _f_.
 Also, the `User` and `Basket` are now "free" to connect again after the rule was fired.
 
 ```java
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.core.exceptions.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 public static ParametricReactionRule<PureBigraph> createRR4() throws InvalidReactionRuleException, InvalidConnectionException {
-    PureBigraphBuilder<DefaultDynamicSignature> b1 = pureBuilder(createSignature());
-    PureBigraphBuilder<DefaultDynamicSignature> b2 = pureBuilder(createSignature());
-    b1.createRoot()
-        .addChild("User", "f")
-        .addChild("Table").down().addSite()
-        .addChild("Basket", "f").down().addChild("Fruit", "f").addSite()
+    PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(createSignature());
+    PureBigraphBuilder<DynamicSignature> b2 = pureBuilder(createSignature());
+    b1.root()
+        .child("User", "f")
+        .child("Table").down().site()
+        .child("Basket", "f").down().child("Fruit", "f").site()
     ;
-    b2.createOuterName("f");
-    b2.createRoot()
-        .addChild("User")
-        .addChild("Table").down().addSite()
-        .addChild("Basket").down().addChild("Fruit").addSite()
+    b2.createOuter("f");
+    b2.root()
+        .child("User")
+        .child("Table").down().site()
+        .child("Basket").down().child("Fruit").site()
     ;
-    PureBigraph redex = b1.createBigraph();
-    PureBigraph reactum = b2.createBigraph();
+    PureBigraph redex = b1.create();
+    PureBigraph reactum = b2.create();
     ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr4");
     return rr;
 }
@@ -221,6 +262,9 @@ The agent and the rules are collected to form a reactive system:
 ### Declaration
 
 ```java
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.simulation.matching.pure.*;
+
 PureReactiveSystem rs = new PureReactiveSystem();
 rs.setAgent(createAgent());
 rs.addReactionRule(createRR1());
@@ -239,6 +283,8 @@ Refer to [Verification](verification-intro) to get to know more about how to use
 :::
 
 ```java
+import org.bigraphs.framework.simulation.modelchecking.*;
+
 ModelCheckingOptions opts = ModelCheckingOptions.create();
 opts
         .and(transitionOpts()
@@ -247,9 +293,9 @@ opts
             .create()
         )
         .and(ModelCheckingOptions.exportOpts()
-            .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph.png").toFile())
+            .setReactionGraphFile(new File("transition_graph.png"))
             .setPrintCanonicalStateLabel(false)
-            .setOutputStatesFolder(Paths.get(TARGET_DUMP_PATH, "states/").toFile())
+            .setOutputStatesFolder(new File("states/"))
             .create()
         )
 ;
@@ -285,6 +331,9 @@ The transition system is a PNG graphic file and shows all possible states and ac
 #### Reaction Graph Object
 Another way is by using the reaction graph instance of type `ReactionGraph` of the model checker object:
 ```java
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+
 ReactionGraph<PureBigraph> reactionGraph = modelChecker.getReactionGraph();
 ```
 
@@ -298,6 +347,10 @@ Both the `LabeledNode` and `LabeledEdge` class provide getter-methods that retur
 
 By acquiring a bigraph matcher instance, arbitrary rule execution logic can be implemented:
 ```java
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.simulation.matching.*;
+
 ParametricReactionRule<PureBigraph> rr11 = createRR1();
 AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent, rr11);

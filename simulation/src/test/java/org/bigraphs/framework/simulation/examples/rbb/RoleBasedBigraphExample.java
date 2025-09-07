@@ -236,11 +236,11 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
         PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(signature);
 
         builderRedex.root()
-//                .addChild("AccountUnbound")
+//                .child("AccountUnbound")
                 .child("Balance").down().child("i0").top();
 
         builderReactum.root()
-//                .addChild("AccountUnbound")
+//                .child("AccountUnbound")
                 .child("Balance").down().child("i1").top();
 
         PureBigraph redex = builderRedex.create();

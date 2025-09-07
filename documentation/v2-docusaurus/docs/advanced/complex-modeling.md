@@ -28,7 +28,13 @@ can be downloaded [here](../assets/my-meta-model.ecore) to follow along the expl
 To recreate the running example above, we first need a pure bigraph builder
 instance by initializing it with the meta model (see above):
 ```java
-DynamicSignature signature = BigraphFactory.pureSignatureBuilder()
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.datatypes.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
+DynamicSignature signature = pureSignatureBuilder()
         .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
         .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
         .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
@@ -37,7 +43,7 @@ DynamicSignature signature = BigraphFactory.pureSignatureBuilder()
         .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(1)).assign()
         .create();
 PureBigraphBuilder<DynamicSignature> builder =
-        BigraphFactory.pureBuilder(signature, "./my-meta-model.ecore");
+        pureBuilder(signature, "./my-meta-model.ecore");
 ```
 
 ## Building and Combining (Sub-)Hierarchies

@@ -241,8 +241,8 @@ public class BigraphCompositionUnitTests {
 //        PureBigraphBuilder<DefaultDynamicSignature> builder = factory.createBigraphBuilder(signature, bMM1);
 //        PureBigraphBuilder<DefaultDynamicSignature> builder2 = factory.createBigraphBuilder(signature, bMM1);
 //
-//        PureBigraph building = builder.createRoot().addChild("Room").addChild("Room").down().addSite().createBigraph();
-//        PureBigraph user = builder2.createRoot().addChild("User").createBigraph();
+//        PureBigraph building = builder.root().child("Room").child("Room").down().site().createBigraph();
+//        PureBigraph user = builder2.root().child("User").createBigraph();
 //
 //        BigraphComposite<DefaultDynamicSignature> composed = ops(building).compose(user);
 //        BigraphComposite<DefaultDynamicSignature> composed2 = ops(building).juxtapose(user);
@@ -267,7 +267,7 @@ public class BigraphCompositionUnitTests {
         builderReactum.root()
                 .child("Place").linkOuter(fromD2).down().site().child(car2).top()
                 .child("Place", "fromS").down().child("Road").linkOuter(fromD2).site().top()
-//                .addChild("Place").connectNodeToOuterName(fromS2).withNewHierarchy().addChild("Road").connectNodeToOuterName(fromD2).addSite().top()
+//                .child("Place").connectNodeToOuterName(fromS2).withNewHierarchy().child("Road").connectNodeToOuterName(fromD2).site().top()
         ;
         PureBigraph reactum = builderReactum.create();
 

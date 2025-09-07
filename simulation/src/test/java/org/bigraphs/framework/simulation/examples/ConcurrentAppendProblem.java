@@ -189,7 +189,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 //        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol3 = builder.hierarchy("append");
 //        appendcontrol3
 ////                .linkToOuter(caller3)
-//                .linkToInner(tmpA3).addChild("val").down().addChild("i6").top();
+//                .linkToInner(tmpA3).child("val").down().child("i6").top();
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy rootCell = builder.hierarchy("Root")
 //                .linkToOuter(caller1).linkToOuter(caller2)
@@ -199,11 +199,11 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 .down().child("this").down()
                 .child("thisRef").linkInner(tmpA1)
                 .child("thisRef").linkInner(tmpA2)
-//                .addChild("thisRef").linkToInner(tmpA3)
+//                .child("thisRef").linkToInner(tmpA3)
                 .up()
                 .child("val").down().child("i1").up()
                 .child("next").down().child("Node").down().child("this")
-//                .down().addChild("thisRef").addChild("thisRef").up()
+//                .down().child("thisRef").child("thisRef").up()
                 .child("val").down().child("i2").up()
                 .child("next").down().child("Node").down().child("this")
 //                .down().addChild("thisRef").addChild("thisRef").up()
@@ -233,8 +233,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         builderRedex.root()
                 .child("this")
                 .down().site().child("thisRef").linkInner(tmp0).up()
-//                .addSite()
-//                .addChild("val").down().addSite().top()
+//                .site()
+//                .addChild("val").down().site().top()
                 .child("next").down().child("Node").down().site().child("this").down()
 //                .addChild("thisRef")
                 .site().up()
@@ -254,8 +254,8 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         BigraphEntity.InnerName tmp22 = builderReactum.createInner("tmp2");
         builderReactum.root()
                 .child("this").down().site().child("thisRef").linkInner(tmp22).up()
-//                .addChild("val").down().addSite().top()
-//                .addSite()
+//                .addChild("val").down().site().top()
+//                .site()
                 .child("next").down().child("Node").down().site()
                 .child("this").down().child("thisRef").linkInner(tmp21)
                 .site()

@@ -180,8 +180,8 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 .child("Place").linkOuter(p2).down().child("Road").linkOuter(p5).up()
                 .child("Place").linkOuter(p3).down().child("Road").linkOuter(p4).child("Road").linkOuter(p7).up()
                 .child("Place").linkOuter(p4).down().child("Road").linkOuter(p5).child("Road").linkOuter(p1).up()
-//                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
-//                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
+//                .child("Place").connectNodeToOuterName(p5).withNewHierarchy().child("Road").connectNodeToOuterName(p6).child("Road").connectNodeToOuterName(p7).child("Road").connectNodeToOuterName(p8).goBack()
+//                .child("Place").connectNodeToOuterName(p6).withNewHierarchy().child("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
                 .child("Place").linkOuter(p7).down().child("Road").linkOuter(p2).child("Target").linkOuter(target).up()
 //                .addChild("Place")
         ;
@@ -290,7 +290,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         // links of car and target must be connected via an outer name otherwise the predicate is not matched
         builder.root()
                 .child("Place").linkOuter(from)
-//                .down().addSite().connectByEdge("Target", "Car").down().addSite();
+//                .down().site().connectByEdge("Target", "Car").down().site();
                 .down().site().child("Target", "target").child("Car", "target").down().site();
         PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);

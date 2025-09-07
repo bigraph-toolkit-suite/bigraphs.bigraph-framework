@@ -40,39 +40,42 @@ The bigraph theory states that all ground rules can be built from parametric rul
 The following example shows how to create a parametric reaction rule:
 
 ```java
-DefaultDynamicSignature signature = pureSignatureBuilder()
-        .addControl("Room", 0)
-        .addControl("Computer", 1)
-        .addControl("Job", 0)
+import org.bigraphs.framework.core.impl.signature.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
+DynamicSignature signature = pureSignatureBuilder()
+        .add("Room", 0)
+        .add("Computer", 1)
+        .add("Job", 0)
         .create()
         ;
 // Redex builder
-PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 // Reactum builder
-PureBigraphBuilder<DefaultDynamicSignature> builder2 = pureBuilder(signature);
+PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 // Connect computer over the same channel link
-BigraphEntity.OuterName network = builder.createOuterName("network");
-builder.createRoot()
-        .addChild("Room")
+BigraphEntity.OuterName network = builder.createOuter("network");
+builder.root()
+        .child("Room")
         .down()
-        .addSite()
-        .addChild("Computer").linkToOuter(network)
+        .site()
+        .child("Computer").linkOuter(network)
         .down()
-        .addChild("Job")
+        .child("Job")
 ;
-builder2.createRoot()
-        .addChild("Room")
+builder2.root()
+        .child("Room")
         .down()
-        .addSite()
-        .addChild("Computer").linkToOuter("network") // or just specify the string
+        .site()
+        .child("Computer").linkOuter("network") // or just specify the string
         .down()
-        .addChild("Job").addChild("Job")
+        .child("Job").child("Job")
 ;
 
 // builder.makeGround(); // useful for instances of type GroundReactionRule
 // builder2.makeGround(); // useful for instances of type GroundReactionRule
-PureBigraph redex = builder.createBigraph();
-PureBigraph reactum = builder2.createBigraph();
+PureBigraph redex = builder.create();
+PureBigraph reactum = builder2.create();
 ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
 BigraphGraphvizExporter.toPNG(rr.getRedex(), true, new File("redex.png"));
 BigraphGraphvizExporter.toPNG(rr.getReactum(), true, new File("reactum.png"));

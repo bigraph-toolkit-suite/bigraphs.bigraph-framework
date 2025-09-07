@@ -2,7 +2,7 @@
 
 > Latest Version: **2.2.0**
 
-[![HiRSE Code Promo Badge](https://img.shields.io/badge/Promo-8db427?style=plastic&label=HiRSE&labelColor=005aa0&link=https%3A%2F%2Fgo.fzj.de%2FCodePromo)](https://rg-rse.pages.jsc.fz-juelich.de/hirse-code-promotion/public/HiRSE_Code_Promo_Slideshow.pdf)
+[![HiRSE Code Promo Badge](https://img.shields.io/badge/Promo-8db427?style=plastic&label=HiRSE&labelColor=005aa0&link=https%3A%2F%2Fgo.fzj.de%2FCodePromo)](https://go.fzj.de/CodePromo)
 
 - User Manual: https://bigraphs.org/products/bigraph-framework/docs/
 

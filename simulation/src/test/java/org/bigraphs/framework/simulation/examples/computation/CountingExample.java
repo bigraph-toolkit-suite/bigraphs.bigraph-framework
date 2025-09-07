@@ -155,20 +155,20 @@ public class CountingExample {
                 builder.hierarchy(signature.getControlByName("Right"))
                         .child("S");
 //        IntStream.range(0, left).forEach(x -> {
-//            leftNode.withNewHierarchy().addChild("S");
+//            leftNode.withNewHierarchy().child("S");
 //        });
 //        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy s = IntStream.range(0, left)
 //                .boxed()
 //                .map(x -> "S")
 //                .reduce((x) -> {
-//                    return builder.newHierarchy(signature.getControlByName(x)).addChild(x);
+//                    return builder.newHierarchy(signature.getControlByName(x)).child(x);
 //                }).get();
 //        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy s = builder.newHierarchy(signature.getControlByName("S"));
 //        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy s1 = builder.newHierarchy(signature.getControlByName("S"));
 //        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy s2 = builder.newHierarchy(signature.getControlByName("S"));
-//        s = s.addChild(s1);
-//        s = s.withNewHierarchy().addChild(s2);
-//        s = s.addChild(s2);
+//        s = s.child(s1);
+//        s = s.withNewHierarchy().child(s2);
+//        s = s.child(s2);
         for (int i = 0; i < left - 1; i++) {
             leftNode = leftNode.down().child("S");
         }
@@ -183,7 +183,7 @@ public class CountingExample {
                 .down()
                 .child(leftNode)
                 .child(rightNode)
-//                .addChild(s.top())
+//                .child(s.top())
         ;
         builder.makeGround();
         return builder.create();

@@ -389,7 +389,7 @@ public class LinkGraphMatchingTests extends BaseExampleTestSupport implements Bi
         // links of car and target must be connected via an outer name otherwise the predicate is not matched
         builder.root()
                 .child("Place").linkOuter(from)
-//                .down().addSite().connectByEdge("Target", "Car").down().addSite();
+//                .down().site().connectByEdge("Target", "Car").down().site();
                 .down().site().child("Target", "target").child("Car", "target").down().site();
         PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);

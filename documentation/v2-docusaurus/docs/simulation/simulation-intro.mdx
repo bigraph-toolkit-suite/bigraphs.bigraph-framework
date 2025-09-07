@@ -76,11 +76,14 @@ An exception will be thrown if the rules or agent are not in the correct format.
 
 Inheriting a reactive system implementation allows for an object-oriented approach to better organize and manage domain-specific BRSs in an application.
 
-The following examples defines a BRS that can compute the sum of two integers, which are represented in bigraphs in [unary form](https://en.wikipedia.org/wiki/Peano_axioms).
+The following example defines a BRS that can compute the sum of two integers, which are represented in bigraphs in [unary form](https://en.wikipedia.org/wiki/Peano_axioms).
 In this form the symbol _S_ is used to denote successor, and _Z_ to mean zero.
 For example, the number 2 would be writing as _S.S.Z_.
 
 ```java
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.simulation.matching.pure.*;
+
 public class AddExpr extends PureReactiveSystem {
 
     public AddExpr(int a, int b) throws Exception {

@@ -93,12 +93,12 @@ The next listing demonstrates the usage of Guava and a bigraph instance on how t
 This example can be adapted to traverse through a link graph.
 
 ```java
-DefaultDynamicSignature signature = ...;
-PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
+DynamicSignature signature = ...;
+PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 builder
-        .createRoot()
-        .addChild("A").down().addChild("D").up()
-        .addChild("B").down().addChild("D").addChild("D").up()
+        .root()
+        .child("A").down().child("D").up()
+        .child("B").down().child("D").addChild("D").up()
         .addChild("E").down().addChild("D").addChild("D").addChild("D").top()
 ;
 PureBigraph bigraph = builder.createBigraph();

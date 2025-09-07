@@ -662,7 +662,7 @@ public class BigraphCreationUnitTest {
             signatureBuilder
                     .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign();
 //            Signature signature2 = signatureBuilder.createSignature();
-//            builder.createRoot().addChild(signature2.getControlByName("Printer"));
+//            builder.root().child(signature2.getControlByName("Printer"));
 
             BigraphEntity.InnerName x1 = builder.createInner("x1");
             builder.root()

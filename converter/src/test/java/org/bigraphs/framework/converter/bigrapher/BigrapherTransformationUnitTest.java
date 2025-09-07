@@ -121,9 +121,9 @@ public class BigrapherTransformationUnitTest {
 //        BigraphEntity.OuterName door = builder.createOuterName("door");
 //        BigraphEntity.OuterName user = builder.createOuterName("name:jeff");
 //
-//        builder.createRoot()
-//                .addChild("Room").linkToOuter(door)
-//                .down().addSite().addChild("User", user);
+//        builder.root()
+//                .child("Room").linkToOuter(door)
+//                .down().site().child("User", user);
 //        PureBigraph bigraph = builder.createBigraph();
 //        return SubBigraphMatchPredicate.create(bigraph);
 //    }

@@ -24,7 +24,14 @@ Currently, only the parallel product is implemented.
 Three methods are defined that create the signature, and the two rules named A and B.
 The rules are also displayed below for reference.
 ```java
-private DefaultDynamicSignature sig() {
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.core.exceptions.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
+private DynamicSignature sig() {
     DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
     defaultBuilder
             .addControl("A", 1)
@@ -36,21 +43,21 @@ private DefaultDynamicSignature sig() {
 }
 
 private ReactionRule<PureBigraph> createRR_A() throws InvalidReactionRuleException {
-    DefaultDynamicSignature sig = sig();
-    PureBigraphBuilder<DefaultDynamicSignature> bRedex = pureBuilder(sig);
-    PureBigraphBuilder<DefaultDynamicSignature> bReactum = pureBuilder(sig);
+    DynamicSignature sig = sig();
+    PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig);
+    PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig);
 
-    bRedex.createRoot()
-            .addChild("A").down()
-            /**/.addSite().top()
+    bRedex.root()
+            .child("A").down()
+            /**/.site().top()
     ;
-    bReactum.createRoot()
-            .addChild("A").down()
-            /**/.addSite()
-            /**/.addChild("B")
+    bReactum.root()
+            .child("A").down()
+            /**/.site()
+            /**/.child("B")
     ;
-    PureBigraph redex = bRedex.createBigraph();
-    PureBigraph reactum = bReactum.createBigraph();
+    PureBigraph redex = bRedex.create();
+    PureBigraph reactum = bReactum.create();
     ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
     rr.withLabel("RA");
     TrackingMap map = new TrackingMap();
@@ -64,24 +71,24 @@ private ReactionRule<PureBigraph> createRR_A() throws InvalidReactionRuleExcepti
 }
 
 private ReactionRule<PureBigraph> createRR_B() throws InvalidReactionRuleException {
-    DefaultDynamicSignature sig = sig();
-    PureBigraphBuilder<DefaultDynamicSignature> bRedex = pureBuilder(sig);
-    PureBigraphBuilder<DefaultDynamicSignature> bReactum = pureBuilder(sig);
+    DynamicSignature sig = sig();
+    PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig);
+    PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig);
 
-    bRedex.createRoot()
-            .addChild("C").down()
-            /**/.addChild("B").down()
-            /**//**/.addSite().addChild("C")
+    bRedex.root()
+            .child("C").down()
+            /**/.child("B").down()
+            /**//**/.site().child("C")
     ;
 
-    bReactum.createRoot()
-            .addChild("C").down()
-            /**/.addChild("B").down()
-            /**//**/.addSite().addChild("C")
+    bReactum.root()
+            .child("C").down()
+            /**/.child("B").down()
+            /**//**/.site().child("C")
     ;
 
-    PureBigraph redex = bRedex.createBigraph();
-    PureBigraph reactum = bReactum.createBigraph();
+    PureBigraph redex = bRedex.create();
+    PureBigraph reactum = bReactum.create();
     ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
     rr.withLabel("RB");
     TrackingMap map = new TrackingMap();
@@ -108,6 +115,10 @@ Both rules have also an instantiation map and a tracking map assigned.
 
 After having defined the two rules, we can call the `ReactionRuleComposer` class:
 ```java
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+
 ReactionRule<PureBigraph> rrA = createRR_A();
 ReactionRule<PureBigraph> rrB = createRR_B();
 ReactionRuleComposer<ParametricReactionRule<Bigraph<?>>> rComp = new ReactionRuleComposer<>();
@@ -121,6 +132,8 @@ The result is shown below.
 Note that the instantiation map and tracking map has changed as well:
 
 ```java
+import org.bigraphs.framework.core.reactivesystem.*;
+
 System.out.println("Product label = " + product.getLabel());
 assert product.getLabel().equals("RA_PP_RB");
 System.out.println(product.getTrackingMap());

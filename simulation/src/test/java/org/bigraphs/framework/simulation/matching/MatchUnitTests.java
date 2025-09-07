@@ -326,7 +326,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         builder.root().child("G").down().child("H").child("I");
 
-//        builder.createRoot().addChild("C").withNewHierarchy().addChild("A").withNewHierarchy().addChild("D").addChild("E");
+//        builder.root().child("C").withNewHierarchy().child("A").withNewHierarchy().child("D").child("E");
         return builder.create();
     }
 
@@ -554,7 +554,7 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
                 .up()
                 .up()
 
-//                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
+//                .child(signature.getControlByName("Computer")).connectNodeToOuterName(a)
         ;
         builder.closeInner(roomLink);
         builder.closeInner();
@@ -588,9 +588,9 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
                 .child(signature.getControlByName("Computer")).linkOuter(jeff)
                 .child(signature.getControlByName("Job"))
         ;
-//        builder.createRoot()
-//                .addChild(signature.getControlByName("User")).connectNodeToOuterName(jeff)
-//                .withNewHierarchy().addChild(signature.getControlByName("Job")).addChild(signature.getControlByName("Job")).goBack()
+//        builder.root()
+//                .child(signature.getControlByName("User")).connectNodeToOuterName(jeff)
+//                .withNewHierarchy().child(signature.getControlByName("Job")).child(signature.getControlByName("Job")).goBack()
 //        ;
         return builder.create();
     }
@@ -745,9 +745,9 @@ public class MatchUnitTests extends AbstractUnitTestSupport {
                 builder.hierarchy(signature.getControlByName("Right"))
                         .child("S");
 //        for (int i = 0; i < left - 1; i++) {
-//            leftNode = leftNode.withNewHierarchy().addChild("S");
+//            leftNode = leftNode.withNewHierarchy().child("S");
 //        }
-//        leftNode = leftNode.withNewHierarchy().addChild("Z").top();
+//        leftNode = leftNode.withNewHierarchy().child("Z").top();
         for (int i = 0; i < right - 1; i++) {
             rightNode = rightNode.down().child("S");
         }

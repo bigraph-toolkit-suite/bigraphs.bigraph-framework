@@ -95,7 +95,7 @@ public class Matching2UnitTests {
                 .child(signature.getControlByName("G"))
                 .up()
 
-//                .addChild(signature.getControlByName("Computer")).connectNodeToOuterName(a)
+//                .child(signature.getControlByName("Computer")).connectNodeToOuterName(a)
         ;
         builder.makeGround();
 

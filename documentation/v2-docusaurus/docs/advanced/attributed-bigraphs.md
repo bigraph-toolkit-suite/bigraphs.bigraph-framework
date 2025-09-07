@@ -25,7 +25,13 @@ Then, the integer value `1309` is assigned to the key `data`.
 To actually save the attributes, the map has to be supplied to the node again via the `setAttributes()` method.
 
 ```java
-DefaultDynamicSignature sig = createExampleSignature();
+import org.bigraphs.framework.core.impl.*;
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
+DynamicSignature sig = createExampleSignature();
 PureBigraphBuilder<DynamicSignature> b = pureBuilder(sig);
 PureBigraph bigraph = b.root()
     .child("A")
@@ -103,6 +109,15 @@ The node with ID `v1` of type `Token` is assigned an attribute before the reacti
 The same attribute is then read again to check that it is preserved.
 
 ```java
+import org.bigraphs.framework.core.impl.*;
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.reactivesystem.*;
+import org.bigraphs.framework.simulation.matching.*;
+import org.bigraphs.framework.simulation.matching.pure.*;
+
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 // Create a signature and the initial state bigraph
 DynamicSignature sig = pureSignatureBuilder()
         .add("Place", 0)

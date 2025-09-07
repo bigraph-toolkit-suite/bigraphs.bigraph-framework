@@ -642,7 +642,7 @@ public class BigridObject {
             throw new RuntimeException("Index must be between [0, " + getBigraph().getRoots().size() + "]");
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy h = pureBuilder(getSignature()).root()
-                .child("occupiedBy").down().child("blocked").down().child(TF_Blocked).up().up(); //.down().addSite();
+                .child("occupiedBy").down().child("blocked").down().child(TF_Blocked).up().up(); //.down().site();
         h = linkName != null ?
                 h.down()
                         .child(sourceOrTarget, linkName).down() :
@@ -677,7 +677,7 @@ public class BigridObject {
             throw new RuntimeException("Index must be between [0, " + getBigraph().getRoots().size() + "]");
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy h = pureBuilder(getSignature()).root()
-                .child("occupiedBy").down().child("blocked").down().child(TF_Blocked).up().up(); //.down().addSite();
+                .child("occupiedBy").down().child("blocked").down().child(TF_Blocked).up().up(); //.down().site();
         PureBigraph tmp = addSite ?
                 h
                         .site().create() :

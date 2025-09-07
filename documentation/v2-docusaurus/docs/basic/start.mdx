@@ -165,6 +165,10 @@ In addition, the bigraph builder supports the creation of **hierarchies**, which
 
 **Example:**
 ```java
+import org.bigraphs.framework.core.impl.pure.*;
+import org.bigraphs.framework.core.impl.signature.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 PureBigraphBuilder<DynamicSignature>.Hierarchy h1 = pureBuilder(sig).hierarchy("A");
 pureBuilder(sig).root().child(h1);
 ```

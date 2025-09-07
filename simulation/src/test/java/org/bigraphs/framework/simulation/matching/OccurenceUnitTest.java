@@ -128,10 +128,10 @@ public class OccurenceUnitTest extends AbstractUnitTestSupport {
 //        DefaultDynamicSignature signature = signature00();
 //        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
 //
-//        builder.createRoot()
-//                .addChild("Building")
-//                .down().addChild("Room").down().addChild("Room").down().addChild("User").up().up()
-//                .addChild("Room").down().addChild("User");
+//        builder.root()
+//                .child("Building")
+//                .down().child("Room").down().child("Room").down().child("User").up().up()
+//                .child("Room").down().child("User");
 //        PureBigraph bigraph = builder.createBigraph();
 //        return bigraph;
 //    }
@@ -140,8 +140,8 @@ public class OccurenceUnitTest extends AbstractUnitTestSupport {
 //    private PureBigraph redex_03() {
 //        DefaultDynamicSignature signature = signature00();
 //        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-//        builder.createRoot().addChild("Room").down().addChild("User");
-//        builder.createRoot().addChild("Room").down().addSite();
+//        builder.root().child("Room").down().child("User");
+//        builder.root().addChild("Room").down().site();
 //        PureBigraph bigraph = builder.createBigraph();
 //        return bigraph;
 //    }

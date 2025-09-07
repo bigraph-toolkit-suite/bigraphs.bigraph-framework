@@ -167,7 +167,7 @@ public class AddExample extends BaseExampleTestSupport {
                 .down()
                 .child(leftNode)
                 .child(rightNode)
-//                .addChild(s.top())
+//                .child(s.top())
         ;
         builder.makeGround();
         return builder.create();

@@ -732,7 +732,7 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
                     .down()
                     .child("A").linkInner(edge)
                     .child("J").linkInner(edge2)
-//                .addChild("C")
+//                .child("C")
             ;
             b1.closeInner(edge);
             b1.closeInner(edge2);

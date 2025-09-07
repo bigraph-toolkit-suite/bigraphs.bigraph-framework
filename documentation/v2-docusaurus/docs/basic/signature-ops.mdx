@@ -53,6 +53,10 @@ If signatures are not consistent, the exception `SignatureNotConsistentException
 **Example**
 
 ```java
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.utils.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 DynamicSignature sig1 = pureSignatureBuilder()
         .add("A", 1)
         .add("B", 1)
@@ -111,6 +115,10 @@ Merging signatures can be performed via the method [org.bigraphs.framework.core.
 **Example**
 
 ```java
+import org.bigraphs.framework.core.impl.signature.*;
+import org.bigraphs.framework.core.utils.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+
 DynamicSignature sig1 = pureSignatureBuilder()
         .add("A", 1)
         .add("B", 1)
