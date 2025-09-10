@@ -1,6 +1,6 @@
 <img src="etc/assets/bigraph-framework-logo.png" style="zoom:67%;" />
 
-> Latest Version: **2.2.0**
+> Latest Version: **2.2.1**
 
 [![HiRSE Code Promo Badge](https://img.shields.io/badge/Promo-8db427?style=plastic&label=HiRSE&labelColor=005aa0&link=https%3A%2F%2Fgo.fzj.de%2FCodePromo)](https://go.fzj.de/CodePromo)
 
@@ -16,10 +16,10 @@
 
 Bigraph Framework is a framework
 written in Java for the creation and simulation of bigraphs
-to expedite the experimental evaluation of the bigraph theory in
+to foster the experimental evaluation of the bigraph theory in
 real-world applications.
 
-The goal of this framework is to facilitate the implementation of context-aware and agent-based systems, and reactive systems in general.
+The goal of this framework is to facilitate the implementation of context-aware, agent-based systems, and reactive systems in general.
 It provides means for model-driven software development based on the bigraph theory.
 The high-level Java API eases the programming of bigraphical systems for real-world application.
 
@@ -165,25 +165,25 @@ composite.juxtapose(F).parallelProduct(H);
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-core</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
   </dependency>
   <!-- the rewriting module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-simulation</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
   </dependency>
   <!-- the visualization module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-visualization</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
   </dependency>
   <!-- the converter module -->
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-converter</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
   </dependency>
 </dependencies>
 ```
@@ -191,10 +191,10 @@ composite.juxtapose(F).parallelProduct(H);
 ### Gradle
 
 ```groovy
-compile "org.bigraphs.framework:bigraph-core:2.2.0"
-compile "org.bigraphs.framework:bigraph-simulation:2.2.0"
-compile "org.bigraphs.framework:bigraph-visualization:2.2.0"
-compile "org.bigraphs.framework:bigraph-converter:2.2.0"
+compile "org.bigraphs.framework:bigraph-core:2.2.1"
+compile "org.bigraphs.framework:bigraph-simulation:2.2.1"
+compile "org.bigraphs.framework:bigraph-visualization:2.2.1"
+compile "org.bigraphs.framework:bigraph-converter:2.2.1"
 ```
 
 ### Logging
