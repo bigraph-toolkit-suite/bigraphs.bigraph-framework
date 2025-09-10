@@ -77,7 +77,7 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
         for (int i = 0; i < imArray.length; i++) {
             imArray[i] = instantationMap.get(i).getValue();
         }
-        //TODO use agent matcher (ground bigraphs) or matcher
+
         it.uniud.mads.jlibbig.core.std.InstantiationMap eta = new InstantiationMap(
                 reactionRule.getRedex().getSites().size(),
                 imArray

@@ -26,8 +26,9 @@ import java.util.*;
  */
 public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph> {
     private final Logger logger = LoggerFactory.getLogger(PureReactiveSystem.class);
-    JLibBigBigraphDecoder decoder =   new JLibBigBigraphDecoder();
+    JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
     JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+
     private it.uniud.mads.jlibbig.core.std.InstantiationMap constructEta(ReactionRule<PureBigraph> reactionRule) {
         org.bigraphs.framework.core.reactivesystem.InstantiationMap instantationMap = reactionRule.getInstantationMap();
         int[] imArray = new int[instantationMap.getMappings().size()];
@@ -44,15 +45,20 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
     @Override
     public PureBigraph buildGroundReaction(final PureBigraph agent, final BigraphMatch<PureBigraph> match, final ReactionRule<PureBigraph> rule) {
         try {
-            //TODO try to use "AgentRewritingRule" from jLibBig
+            // Test also "AgentRewritingRule" from jLibBig
 
             PureBigraphParametricMatch matchResult = (PureBigraphParametricMatch) match;
             AgentMatch jLibMatchResult = (AgentMatch) matchResult.getJLibMatchResult();
             InstantiationMap eta = constructEta(rule);
 
             // Store params as pure bigraph object
-            PureBigraph decodedParam = decoder.decode(jLibMatchResult.getParam());
-            ((PureBigraphParametricMatch)match).setParam(decodedParam);
+            PureBigraph decodedParam = null;
+            try {
+                if (jLibMatchResult.getParam() != null) {
+                    decodedParam = decoder.decode(jLibMatchResult.getParam());
+                }
+            } catch (NullPointerException ignored) {}
+            ((PureBigraphParametricMatch) match).setParam(decodedParam);
 
             boolean[] cloneParam = new boolean[eta.getPlaceDomain()];
             int prms[] = new int[eta.getPlaceDomain()];
@@ -100,7 +106,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
 
             // Store redexImage as pure bigraph object
             PureBigraph decodedRdxImg = decoder.decode(jLibMatchResult.getRedex());
-            ((PureBigraphParametricMatch)match).setRedexImage(decodedRdxImg);
+            ((PureBigraphParametricMatch) match).setRedexImage(decodedRdxImg);
 
             // Collect the reactum nodes for later when we do the relabeling
             // (they get lost after jLibBig composition)
@@ -114,7 +120,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
 
             // Store context as pure bigraph object
             PureBigraph decodedContext = decoder.decode(jLibMatchResult.getContext());
-            ((PureBigraphParametricMatch)match).setContext(decodedContext);
+            ((PureBigraphParametricMatch) match).setContext(decodedContext);
 
             bb.outerCompose(jLibMatchResult.getContext(), true);
 
