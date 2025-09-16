@@ -5,7 +5,7 @@
 
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
@@ -95,15 +95,17 @@
         <emf.ecore.version>2.38.0</emf.ecore.version>
         <emf.ecore.xmi.version>2.38.0</emf.ecore.xmi.version>
         <emf.common.version>2.40.0</emf.common.version>
-        <emf.codegen.version>2.22.0</emf.codegen.version>
+<!--        <emf.codegen.version>2.22.0</emf.codegen.version>-->
+        <emf.codegen.version>2.27.0</emf.codegen.version>
         <!-- Should match with the version in Spring Data CDO + Bigraph Ecore Metamodel -->
         <emf.cdo.version>4.20.0-SNAPSHOT</emf.cdo.version><!--4.20.0.v20221124-1637-->
         <!-- Should match with the version in Spring Data CDO + Bigraph Ecore Metamodel -->
         <emf.cdo.common.version>4.20.0-SNAPSHOT</emf.cdo.common.version><!--4.20.0.v20221106-0628-->
         <!-- Should match with the version in Spring Data CDO -->
-        <eclipse.core.runtime.version>3.26.100</eclipse.core.runtime.version>
+<!--        <eclipse.core.runtime.version>3.26.100</eclipse.core.runtime.version>-->
+        <eclipse.core.runtime.version>3.34.0</eclipse.core.runtime.version>
         <eclipse.collections.version>11.1.0</eclipse.collections.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>33.4.8-jre</guava.version>
         <jgrapht.version>1.5.1</jgrapht.version>
         <junit.version>5.6.2</junit.version>
         <log4j.version>1.7.30</log4j.version>
@@ -440,7 +442,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
-                <version>2.9.0</version>
+                <version>2.10.0</version>
             </dependency>
             <!-- EMF -->
             <dependency>
@@ -603,6 +605,11 @@
                 <version>20231013</version>
             </dependency>
             <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>3.51.0</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.11</version>
@@ -610,7 +617,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.11.0</version>
+                <version>2.20.0</version>
             </dependency>
             <!-- This dependency is installed in the local Maven repository from the ./etc/libs/ folder -->
             <dependency>

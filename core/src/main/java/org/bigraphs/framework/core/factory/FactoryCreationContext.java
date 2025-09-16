@@ -11,12 +11,12 @@ import org.bigraphs.framework.core.impl.elementary.Linkings;
 import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import net.jodah.typetools.TypeResolver;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.emf.ecore.EPackage;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -41,7 +41,7 @@ public final class FactoryCreationContext {
         this.factory = factory;
     }
 
-    @Nonnull
+    @NonNull
     public AbstractBigraphFactory getFactory() {
         return factory;
     }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.bigraphs.framework</groupId>
         <artifactId>framework-parent</artifactId>
-        <version>2.2.1</version>
+        <version>2.2.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -162,16 +162,7 @@
             <artifactId>org.eclipse.emf.codegen</artifactId>
         </dependency>
         <!-- CDO -->
-        <!-- These are now packaged in Bigraph Ecore Metamodel -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.emf.cdo</groupId>-->
-        <!--            <artifactId>org.eclipse.emf.cdo</artifactId>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.emf.cdo</groupId>-->
-        <!--            <artifactId>org.eclipse.emf.cdo.common</artifactId>-->
-        <!--        </dependency>-->
-        <!-- These are now packaged in Bigraph Ecore Metamodel -->
+        <!-- Packaged in Bigraph Ecore Metamodel Dependency -->
         <!-- Other -->
         <dependency>
             <groupId>org.eclipse.collections</groupId>
@@ -202,6 +193,10 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
         </dependency>
         <!-- Test -->
         <dependency>

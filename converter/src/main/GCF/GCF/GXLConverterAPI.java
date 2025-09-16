@@ -1,6 +1,7 @@
 package GCF;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.net.URL;
 
 /*
