@@ -17,11 +17,11 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.bigraphs.framework.core.factory.BigraphFactory.ops;
-import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 /**
  * A collection of useful bigraph-related operations and queries.
@@ -29,6 +29,25 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBu
  * @author Dominik Grzelak
  */
 public class BigraphUtil {
+
+    public static BinaryOperator<Bigraph<DynamicSignature>> ACCUMULATOR_PARALLEL_PRODUCT = (partial, element) -> {
+        try {
+            return ops(partial).parallelProduct(element).getOuterBigraph();
+        } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
+            return pureLinkings(partial.getSignature()).identity_e();
+        }
+    };
+
+    public static BinaryOperator<Bigraph<DynamicSignature>> ACCUMULATOR_MERGE_PRODUCT = new BinaryOperator<Bigraph<DynamicSignature>>() {
+        @Override
+        public Bigraph<DynamicSignature> apply(Bigraph<DynamicSignature> partial, Bigraph<DynamicSignature> element) {
+            try {
+                return ops(partial).merge(element).getOuterBigraph();
+            } catch (IncompatibleSignatureException | IncompatibleInterfaceException e) {
+                return pureLinkings(partial.getSignature()).identity_e();
+            }
+        }
+    };
 
     public static <S extends AbstractEcoreSignature<? extends Control<?, ?>>> Bigraph<S> copyIfSame(Bigraph<S> g, Bigraph<S> f) {
         if (g.equals(f)) {

@@ -382,6 +382,5 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
      */
     protected void instantiateReactumNode(Node original, Node instance,
                                           Match match) {
-//        System.out.println("");
     }
 }

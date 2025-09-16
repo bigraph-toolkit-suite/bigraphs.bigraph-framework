@@ -1,4 +1,4 @@
-package org.bigraphs.framework.core.utils;
+package org.bigraphs.framework.core.alg.generators;
 
 import java.util.HashMap;
 import java.util.Map;
