@@ -26,28 +26,25 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
 **Features**
 
 - Modelling and Storage
-  - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
-  - Read and write instance models and metamodels of a bigraph from and to the file system
+    - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
+    - Read and write instance models and metamodels of a bigraph from and to the file system
 - Visualization
-  - Graphical export via GraphViz/DOT
-  - PNG, JPG, ...
-  - Interactive visualization UI via GraphStream
-  - Visualization of Compiler Graphs (VCG) format via yComp
+    - Graphical export via GraphViz/DOT, PNG, Visualization of Compiler Graphs (VCG) format via yComp
+    - Interactive visualization via GraphStream
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
-  - Bigraph matching and rewriting powered by [jLibBig](https://bigraphs.github.io/jlibbig/)
-  - Generation of a labeled transition system (LTS)
-  - Simulation and Model Checking (BFS, Random)
-  - Predicate checking, logical connectors, LTL
-  - Specify order of reaction rules via priorities
-  - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
-  - Tracking rules (a rule can be assigned a tracking map)
-- Model Transformations
-  - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
-  - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, [jLibBig](https://bigraphs.github.io/jlibbig/), ...
-  - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
+    - Bigraph matching and rewriting via [jLibBig](https://bigraphs.github.io/jlibbig/)
+    - Generation of a labeled transition system (LTS)
+    - Simulation and Model Checking (BFS, Random)
+    - Predicate checking
+    - Specify order of reaction rules via priorities
+    - Tracking rules (trace node identities across reactions)
+    - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
+- Model Importer/Exporter
+    - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
+    - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
 - Attributed Bigraphs
-  - Add arbitrary attributes to nodes
-  - Attributes are preserved when doing rewriting (this requires tracking maps)
+    - Add arbitrary attributes to nodes
+    - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 **Requirements**
 - Java >=17 (JDK)
