@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
-        A rich framework for creating bigraphs and the simulation and model checking of bigraphical reactive systems.
+        A rich framework for modeling, simulating, and verifying bigraphical reactive systems.
     </description>
     <url>https://www.bigraphs.org/</url>
 
@@ -23,17 +23,18 @@
 
     <licenses>
         <license>
-            <name>The Apache License, Version 2.0</name>
+            <name>Apache License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <comments>License of Bigraph Framework.</comments>
+            <comments>Main license of the Bigraph Framework.</comments>
         </license>
         <license>
             <name>GNU Lesser General Public License, version 2.1</name>
-            <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+            <url>https://opensource.org/licenses/LGPL-2.1</url>
             <comments>
-                License of jLibBig.
-                jLibBig is a modified Java library for bigraphs and bigraphical reactive systems
-                and used by the simulation module of Bigraph Framework.
+                Applies only to the jLibBig components.
+                jLibBig is a Java library for bigraphs and bigraphical reactive systems.
+                A modified version is used within the simulation module of Bigraph Framework
+                and remains under LGPL v2.1.
             </comments>
         </license>
     </licenses>
@@ -102,7 +103,6 @@
         <!-- Should match with the version in Spring Data CDO + Bigraph Ecore Metamodel -->
         <emf.cdo.common.version>4.20.0-SNAPSHOT</emf.cdo.common.version><!--4.20.0.v20221106-0628-->
         <!-- Should match with the version in Spring Data CDO -->
-<!--        <eclipse.core.runtime.version>3.26.100</eclipse.core.runtime.version>-->
         <eclipse.core.runtime.version>3.34.0</eclipse.core.runtime.version>
         <eclipse.collections.version>11.1.0</eclipse.collections.version>
         <guava.version>33.4.8-jre</guava.version>
@@ -434,6 +434,20 @@
                 <version>${project.version}</version>
             </dependency>
             <!-- Misc -->
+            <!-- This dependency is installed in the local Maven repository from the ./etc/libs/ folder -->
+            <!-- Execute mvn initialize first. See Readme. -->
+            <dependency>
+                <groupId>it.uniud.mads.jlibbig</groupId>
+                <artifactId>jlibbig</artifactId>
+                <version>0.0.4</version>
+            </dependency>
+            <!-- This dependency is installed in the local Maven repository from the ./etc/libs/ folder -->
+            <!-- Execute mvn initialize first. See Readme. -->
+            <dependency>
+                <groupId>bighuggies</groupId>
+                <artifactId>bisimulation</artifactId>
+                <version>1.0.0</version>
+            </dependency>
             <dependency>
                 <groupId>org.bigraphs.model</groupId>
                 <artifactId>bigred-core</artifactId>
@@ -619,23 +633,11 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.20.0</version>
             </dependency>
-            <!-- This dependency is installed in the local Maven repository from the ./etc/libs/ folder -->
-            <dependency>
-                <groupId>it.uniud.mads.jlibbig</groupId>
-                <artifactId>jlibbig</artifactId>
-                <version>0.0.4</version>
-            </dependency>
-            <!-- This dependency is installed in the local Maven repository from the ./etc/libs/ folder -->
-            <dependency>
-                <groupId>bighuggies</groupId>
-                <artifactId>bisimulation</artifactId>
-                <version>1.0.0</version>
-            </dependency>
             <dependency>
                 <groupId>io.r2dbc</groupId>
                 <artifactId>r2dbc-proxy</artifactId>
                 <version>1.1.6.RELEASE</version>
-                <scope>provided</scope>
+                <scope>provided</scope> <!-- will not be exported -->
             </dependency>
             <!-- Logging -->
             <dependency>
