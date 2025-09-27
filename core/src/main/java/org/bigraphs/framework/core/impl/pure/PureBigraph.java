@@ -20,13 +20,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * This class is an Ecore-based model implementation of a pure bigraph.
- * A {@link PureBigraph} can be obtained by using a {@link PureBigraphBuilder}.
+ * Ecore-based model implementation of a pure bigraph.
  * <p>
- * The class directly implements the {@link Bigraph} interface with {@link DynamicSignature} as type for the signature.
+ * Instances are created via {@link PureBigraphBuilder} and implement the
+ * {@link Bigraph} interface with {@link DynamicSignature} as the signature type.
  * <p>
- * The class represents an immutable data structure providing also some operations (e.g., get parent of node).
- * The elements are stored separately in collections for easier access. The collections cannot be modified afterwards.
+ * This class is immutable and provides basic operations (e.g., retrieving
+ * a node’s parent).
+ * Elements are stored in separate collections for efficient
+ * access; these collections are not modifiable after creation.
+ * <p>
+ * This class encapsulates both the Ecore-based
+ * metamodel ({@link #getMetaModel()}) and its corresponding instance model ({@link #getInstanceModel()}).
  *
  * @author Dominik Grzelak
  * @see BigraphBuilder
@@ -258,14 +263,11 @@ public class PureBigraph implements Bigraph<DynamicSignature>, EcoreBigraph<Dyna
             BigraphEntity.Port port = BigraphEntity.create(eachPort, BigraphEntity.Port.class);
             EStructuralFeature indexAttr = eachPort.eClass().getEStructuralFeature(BigraphMetaModelConstants.ATTRIBUTE_INDEX);
             if (indexAttr != null) {
-//                port.setIndex(portList.indexOf(eachPort));
                 port.setIndex((int) eachPort.eGet(indexAttr));
                 portsList.add(port);
             }
         }
         Collections.sort(portsList);
-//        portMap.put((BigraphEntity.NodeEntity<DefaultDynamicControl>) node, portsList.toList());
-//        return portsList.toList();
         portMap.put((BigraphEntity.NodeEntity<DynamicControl>) node, portsList);
         return portsList;
     }
@@ -284,7 +286,7 @@ public class PureBigraph implements Bigraph<DynamicSignature>, EcoreBigraph<Dyna
         if (pointsOfLinkMap.containsKey(linkEntity)) {
             return pointsOfLinkMap.get(linkEntity);
         }
-        if (linkEntity == null) // || !isBLink(linkEntity.getInstance()))
+        if (linkEntity == null)
             return Collections.emptyList();
         final EObject eObject = linkEntity.getInstance();
         final EStructuralFeature pointsRef = eObject.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
@@ -319,7 +321,6 @@ public class PureBigraph implements Bigraph<DynamicSignature>, EcoreBigraph<Dyna
         if ((lnkRef) == null) return null;
         EObject linkObject = (EObject) eObject.eGet(lnkRef);
         if ((linkObject) == null) return null;
-//        if (!isBLink(linkObject)) return null; //"owner" problem
         if (isBEdge(linkObject)) {
             Optional<BigraphEntity.Edge> first = getEdges().stream().filter(x -> x.getInstance().equals(linkObject)).findFirst();
             return first.orElse(null);
@@ -333,7 +334,7 @@ public class PureBigraph implements Bigraph<DynamicSignature>, EcoreBigraph<Dyna
     public List<BigraphEntity<?>> getChildrenOf(BigraphEntity<?> node) {
         EObject instance = node.getInstance();
         EStructuralFeature chldRef = instance.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-        Set<BigraphEntity<?>> children = new LinkedHashSet<>(); // MutableSet<BigraphEntity<?>> children = Sets.mutable.empty();
+        Set<BigraphEntity<?>> children = new LinkedHashSet<>();
         if (Objects.nonNull(chldRef)) {
             EList<EObject> childs = (EList<EObject>) instance.eGet(chldRef);
             for (EObject eachChild : childs) {

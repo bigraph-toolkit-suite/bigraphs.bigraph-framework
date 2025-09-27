@@ -18,7 +18,10 @@ import java.util.Set;
 import static org.bigraphs.framework.core.BigraphMetaModelConstants.SignaturePackage.SORT_PREFIX;
 
 /**
- * Concrete implementation of a pure (dynamic) signature, where controls can be assigned a {@code status =  (active, passive, atomic)}.
+ * Concrete implementation of a pure dynamic signature in which controls
+ * can be assigned a {@code status} value: {@code active}, {@code passive},
+ * or {@code atomic}.
+ * This determines the "reactivity" of the node.
  *
  * @author Dominik Grzelak
  */
@@ -42,7 +45,7 @@ public final class DynamicSignature extends AbstractEcoreSignature<DynamicContro
 
     @Override
     protected void recreateControls() {
-        if(kindFunction == null) {
+        if (kindFunction == null) {
             kindFunction = Maps.mutable.empty();
         }
         // Re-create control objects
@@ -70,7 +73,7 @@ public final class DynamicSignature extends AbstractEcoreSignature<DynamicContro
 
     @Override
     protected void recreateSorts() {
-        if(kindFunction == null) {
+        if (kindFunction == null) {
             kindFunction = Maps.mutable.empty();
         }
         Map<String, EReference> allRefs = EMFUtils.findAllReferences2(instanceModel.eClass());
@@ -100,13 +103,13 @@ public final class DynamicSignature extends AbstractEcoreSignature<DynamicContro
             throw new RuntimeException(e);
         }
 
-        if(kindFunction == null) {
+        if (kindFunction == null) {
             kindFunction = Maps.mutable.empty();
         }
 
         MutableMap<String, EClass> bControlClassMap = Maps.mutable.of();
         MutableMap<String, EClass> bControlSortClassMap = Maps.mutable.empty();
-        for(DynamicControl c: this.controls) {
+        for (DynamicControl c : this.controls) {
             String ctrlId = c.getNamedType().stringValue();
             EClass controlEClass = extendBControlEClass(ctrlId, sigPackage);
             bControlClassMap.put(ctrlId, controlEClass);
@@ -132,7 +135,7 @@ public final class DynamicSignature extends AbstractEcoreSignature<DynamicContro
         EReference eReferenceKindSorts = allRefs.get(BigraphMetaModelConstants.SignaturePackage.REFERENCE_BKINDPLACESORTS);
         assert eReferenceControls != null;
         MutableMap<String, EObject> kindSortInstanceMap = Maps.mutable.empty();
-        for(DynamicControl eachCtrl: this.controls) {
+        for (DynamicControl eachCtrl : this.controls) {
             String ctrlId = eachCtrl.getNamedType().stringValue();
             EClass ctrlEClass = bControlClassMap.get(ctrlId);
             EObject concreteControlObject = sigFactory.create(ctrlEClass);
@@ -164,7 +167,7 @@ public final class DynamicSignature extends AbstractEcoreSignature<DynamicContro
                 EList<EObject> bKindSortsList = (EList<EObject>) this.instanceModel.eGet(eReferenceKindSorts);
                 bKindSortsList.add(concreteKindSort);
             }
-        };
+        }
 
         // Update the reference for non-atomic kind sorts, this builds the kind function w.r.t. the Ecore model
         kindSortInstanceMap.forEach((key, value) -> {

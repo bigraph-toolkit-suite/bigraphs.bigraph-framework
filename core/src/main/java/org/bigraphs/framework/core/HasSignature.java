@@ -1,7 +1,9 @@
 package org.bigraphs.framework.core;
 
 /**
- * @param <S> type of the signature
+ * Interface for entities associated with a bigraph signature.
+ *
+ * @param <S> the signature type
  * @author Dominik Grzelak
  */
 public interface HasSignature<S extends Signature<?>> {

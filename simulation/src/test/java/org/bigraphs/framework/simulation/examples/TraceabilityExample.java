@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
@@ -45,7 +46,7 @@ public class TraceabilityExample {
     }
 
     @Test
-    void test() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
+    void simulate() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         PureBigraph agent = createAgent();
         BigraphGraphvizExporter.toPNG(agent,
                 true,
@@ -88,6 +89,7 @@ public class TraceabilityExample {
                 .and(ModelCheckingOptions.exportOpts()
                         .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
                         .setPrintCanonicalStateLabel(true)
                         .create()
                 )

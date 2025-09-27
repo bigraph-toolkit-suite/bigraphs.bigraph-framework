@@ -62,6 +62,13 @@ import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptio
 import static java.util.stream.Collectors.groupingBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Example test case demonstrating the vending machine bigraph model.
+ * <p>
+ * Dumps simulation artifacts to {@code src/test/resources/dump/vendingmachine/}.
+ *
+ * @author Dominik Grzelak
+ */
 public class VendingMachineExample extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/vendingmachine/";
 
@@ -219,7 +226,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
             String parentNow = bfs.get(nodeLabel).get(0).getLeft().eContainer().eClass().getName();
             String parentPrev = bfs.get(nodeLabel).get(1).getRight().eContainer().eClass().getName();
             System.out.println(parentNow + " // " + parentPrev);
-            if(parentNow != parentPrev) {
+            if (parentNow != parentPrev) {
                 StringBuilder sb = new StringBuilder("");
                 sb.append("In a tree structure, a node with label '").append(parentPrev).append("' has one child node with label '").append(nodeLabel).append("'.");
                 sb.append("\r\n");
@@ -227,7 +234,6 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
                 System.out.println(sb.toString());
             }
         }
-
 
 
 //        IComparisonScope scope = new DefaultComparisonScope(resourceSet1, resourceSet2, (Notifier)null); //EMFCompare.createDefaultScope(resourceSet1, resourceSet2);
@@ -482,8 +488,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
 
 
     /**
-     * TODO: idea show how we can easily change the context (button can only be pressed if PHD has an ID card, or if it is in the safety zone etc.
-     * phd must be present; a VM cannot press a button itself
+     * PhD must be present; a VM cannot press a button itself
      * For coffee.
      */
     public ReactionRule<PureBigraph> pushButton1() throws Exception {
@@ -605,7 +610,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
-        ((ParametricReactionRule)rr).withPriority(0);
+        ((ParametricReactionRule) rr).withPriority(0);
         return rr;
     }
 

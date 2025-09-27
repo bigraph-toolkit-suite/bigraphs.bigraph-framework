@@ -17,11 +17,16 @@ import java.util.*;
 import static org.bigraphs.framework.core.BigraphMetaModelConstants.SignaturePackage.SORT_PREFIX;
 
 /**
- * Concrete implementation of a pure (dynamic) signature, where controls can be assigned a {@code status =  (active, passive)},
- * and further place-sorts can be defined for each control.
+ * Concrete implementation of a pure dynamic signature, where controls
+ * can be assigned a {@code status} ({@code active} or {@code passive}),
+ * and each control may additionally define a place sort.
  * <p>
- * This class generalizes the {@link DynamicSignature} class somewhat, because (place-sorted) kind signatures
- * are a generalisation of pure signatures.
+ * This class generalizes {@link DynamicSignature}, as kind signatures
+ * (with place sorts) are a generalization of pure signatures.
+ * <p>
+ * The kind signature encapsulates both the Ecore-based
+ * metamodel and its corresponding instance model. The instance model is
+ * derived from the extended metamodel and created internally.
  *
  * @author Dominik Grzelak
  */

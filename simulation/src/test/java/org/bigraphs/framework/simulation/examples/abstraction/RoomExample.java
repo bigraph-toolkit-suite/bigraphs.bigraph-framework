@@ -59,10 +59,8 @@ public class RoomExample extends BaseExampleTestSupport {
 
     @Test
     void room_001() throws Exception {
-//        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(sig());
-
-//        PureBigraph agent0 = agent0();
-//        eb(agent0, "agent0", true);
+        PureBigraph agent0 = agent0();
+        eb(agent0, "agent0", true);
 
         PureBigraph agent1 = agent1();
         eb(agent1, "agent1", true);
@@ -257,8 +255,9 @@ public class RoomExample extends BaseExampleTestSupport {
 
         PureBigraph redex = bRedex.create();
         PureBigraph reactum = bReactum.create();
-        ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum, InstantiationMap.create(1));
-        return rr;
+        InstantiationMap instMap = InstantiationMap.create(reactum.getSites().size());
+        instMap.map(0, 0);
+        return new ParametricReactionRule<>(redex, reactum, instMap).withLabel("abstractUser");
     }
 
     public ParametricReactionRule<PureBigraph> alphaPCGroup() throws Exception {

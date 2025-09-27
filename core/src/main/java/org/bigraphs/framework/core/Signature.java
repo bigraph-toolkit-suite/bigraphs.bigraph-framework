@@ -6,10 +6,11 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Common interface of a bigraph's signature.
- * This interface is general, and not technology-specific such as {@link EcoreSignature}.
+ * Generic super interface for a bigraph signature.
+ * <p>
+ * Technology-independent counterpart to {@link EcoreSignature}.
  *
- * @param <C> type of the control
+ * @param <C> the control type
  * @author Dominik Grzelak
  */
 public interface Signature<C extends Control<?, ?>> {

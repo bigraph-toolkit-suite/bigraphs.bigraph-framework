@@ -33,10 +33,11 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 /**
  * Composable bigraph implementation of {@link BigraphComposite} for <b>pure bigraphs</b>.
  * <p>
- * Equips the bigraph with some categorical operators to compute the product of two bigraphs.
- * Operators can only be used by bigraphs of the same type and signature, except with elementary ones.
+ * Provides categorical operators to compute products of two bigraphs.
+ * Operators apply only to bigraphs of the same type and signature,
+ * except elementary ones.
  *
- * @param <S> type of the signature.
+ * @param <S> the signature type
  * @author Dominik Grzelak
  */
 public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphCompositeSupport<S> implements EcoreBigraph<S> {
@@ -44,17 +45,19 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
     private MutableBuilder<S> builder;
 
     /**
-     * Constructor creates a composable bigraph from the given bigraph.
-     * The bigraph is then equipped with some categorical operators, such as composition and tensor product, to compute
-     * the product of two bigraphs.
+     * Constructs a composable bigraph from the given {@link Bigraph}.
      * <p>
-     * This "operational wrapper" can only be used with and by instances with the superclass/superinterface of {@link PureBigraph},
-     * {@link ElementaryBigraph}, or this wrapper class itself.
+     * The resulting instance is equipped with categorical operators such as
+     * composition and tensor product, enabling combination of two bigraphs.
      * <p>
-     * The type of the argument is still {@link Bigraph} because {@link PureBigraph}s can be composed with another classes to,
-     * for example, elementary ones. So we don't restrict the type here to not force casting or checking upon the developer.
+     * This operational wrapper may only be applied to instances of
+     * {@link PureBigraph}, {@link ElementaryBigraph}, or this class itself.
+     * <p>
+     * The parameter type remains {@link Bigraph} to allow composition of
+     * {@link PureBigraph}s with other classes (e.g., elementary ones) without
+     * requiring casts or additional checks.
      *
-     * @param bigraph the bigraph which is being equipped with categorical operators
+     * @param bigraph the bigraph to be equipped with categorical operators
      */
     public PureBigraphComposite(Bigraph<S> bigraph) {
         super(bigraph);
@@ -325,9 +328,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         left.eAdapters().add(adapter2);
         ((EList<EObject>) left.eGet(leftEdgesFeature)).addAll((EList<EObject>) right.eGet(rightEdgesFeature));
 
-        // add all outer names
-//        EStructuralFeature leftOuterNamesFeature = left.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
-//        EStructuralFeature rightOuterNamesFeature = right.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
+        // Add all outer names
         List<EObject> collect = ((EList<EObject>) right.eGet(rightOuterNamesFeature)).stream().filter(x -> {
             EAttribute nameAttr = EMFUtils.findAttribute(x.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
             return outernamesOuterIndexLeft.get(x.eGet(nameAttr)) == null;
@@ -354,7 +355,6 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             for (EObject eachOuterName : outernames) {
                 EAttribute nameAttr = EMFUtils.findAttribute(eachOuterName.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                 if (outernamesOuterIndexLeft.containsKey((String) eachOuterName.eGet(nameAttr))) {
-//                    System.out.println("reconnect" + (String) eachOuterName.eGet(nameAttr));
                     final EStructuralFeature pointsRef = eachOuterName.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
                     if (Objects.nonNull(pointsRef)) {
                         final EList<EObject> pointsObjects = (EList<EObject>) eachOuterName.eGet(pointsRef);
@@ -415,17 +415,6 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
             }
         }
 
-
-//        Stream.concat(copy.getSites().stream().sorted(), copyOuter.getSites().stream().sorted()).forEachOrdered(s -> {
-//            EObject site = s.getInstance();
-//            final EStructuralFeature prnt = site.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
-//            if (Objects.nonNull(site.eGet(prnt))) {
-//                EAttribute indexAttr = EMFUtils.findAttribute(site.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
-//                if (Objects.nonNull(indexAttr)) {
-//                    site.eSet(indexAttr, rewriteSiteSupplier.get());
-//                }
-//            }
-//        });
         copy.getSites().stream().sorted().forEachOrdered(s -> {
             EObject site = s.getInstance();
             final EStructuralFeature prnt = site.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
@@ -484,10 +473,10 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                     TreeIterator<Object> allContents = EcoreUtil.getAllContents(eachRoot, true);
                     while (allContents.hasNext()) {
                         EObject next = (EObject) allContents.next();
-                        if (((EcoreBigraph) copyOuter).isNameable(next) && ((EcoreBigraph) copyOuter).isBPlace(next)) {
+                        if (((EcoreBigraph<?>) copyOuter).isNameable(next) && ((EcoreBigraph<?>) copyOuter).isBPlace(next)) {
                             EAttribute nameAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                             next.eSet(nameAttr, rewriteNameSupplier.get());
-                        } else if (((EcoreBigraph) copyOuter).isBSite(next)) {
+                        } else if (((EcoreBigraph<?>) copyOuter).isBSite(next)) {
                             EAttribute indexAttrSite = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
                             next.eSet(indexAttrSite, rewriteSitesNameSupplier.get());
                         }
@@ -544,7 +533,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
 
         BigraphComposite<DynamicSignature> bigraphComposite = ops((Bigraph<DynamicSignature>) g).parallelProduct((Bigraph<DynamicSignature>) f);
         if (isLinking(f)) {
-            if (g.getRoots().size() > 0) {
+            if (!g.getRoots().isEmpty()) {
                 return (BigraphComposite<S>) bigraphComposite;
             }
             Placings<DynamicSignature>.Barren barren = purePlacings((DynamicSignature) getSignature()).barren();
@@ -569,7 +558,6 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
 
         Supplier<String> rewriteNameSupplier = createNameSupplier("v");
         Supplier<String> rewriteEdgeNameSupplier = createNameSupplier("e", g.getEdges().size());
-        Supplier<Integer> rewriteSiteIndexSupplier = createNameSupplier(0); //g.getSites().size());
 
         // if we don't copyOuter, both bigraph get 'destroyed'
         Bigraph<S> copyOuter = BigraphUtil.copy(g);
@@ -578,7 +566,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         int copyInnerRootSize = copyInner.getRoots().size();
         // Auto-infer the identity link graph for composition when there is no ambiguity - this is just a convenience feature
         // when the outer bigraph is an elementary bigraph
-        if (BigraphUtil.isBigraphElementaryPlacing(copyOuter) && copyInner.getOuterNames().size() > 0) {
+        if (BigraphUtil.isBigraphElementaryPlacing(copyOuter) && !copyInner.getOuterNames().isEmpty()) {
             Linkings<S>.Identity identity = pureLinkings(copyOuter.getSignature()).identity(
                     copyInner.getOuterNames().stream().map(x -> StringTypedName.of(x.getName()))
                             .map(NamedType.class::cast).toArray(NamedType<?>[]::new)
@@ -607,7 +595,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         TreeIterator<Object> allContentsInner = EcoreUtil.getAllContents(rightInner, true);
         while (allContentsInner.hasNext()) {
             EObject next = (EObject) allContentsInner.next();
-            if (((EcoreBigraph) copyInner).isBRoot(next)) {
+            if (((EcoreBigraph<?>) copyInner).isBRoot(next)) {
                 EAttribute indexAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
                 Integer index = (Integer) next.eGet(indexAttr);
                 rootsInnerIndex.put(index, next);
@@ -623,14 +611,14 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         TreeIterator<Object> allContents = EcoreUtil.getAllContents(leftOuter, true);
         while (allContents.hasNext()) {
             EObject next = (EObject) allContents.next();
-            if (((EcoreBigraph) copyOuter).isNameable(next)) {
-                if (((EcoreBigraph) copyOuter).isBPlace(next)) {
+            if (((EcoreBigraph<?>) copyOuter).isNameable(next)) {
+                if (((EcoreBigraph<?>) copyOuter).isBPlace(next)) {
                     EAttribute nameAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
                     next.eSet(nameAttr, rewriteNameSupplier.get());
                 }
             }
 
-            if (((EcoreBigraph) copyOuter).isBInnerName(next)) {
+            if (((EcoreBigraph<?>) copyOuter).isBInnerName(next)) {
                 EStructuralFeature innerBLinksRef = next.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
                 EObject theNewLink = (EObject) next.eGet(innerBLinksRef);
                 if ((theNewLink) == null) { // otherwise the innername is a closure
@@ -663,12 +651,12 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                 continue;
             }
 
-            if (((EcoreBigraph) copyOuter).isBSite(next)) {
+            if (((EcoreBigraph<?>) copyOuter).isBSite(next)) {
                 EAttribute indexAttr = EMFUtils.findAttribute(next.eClass(), BigraphMetaModelConstants.ATTRIBUTE_INDEX);
                 Integer index = (Integer) next.eGet(indexAttr);
                 // retrieve corresponding parent from 'inner bigraph'
                 EObject rootOuter = rootsInnerIndex.get(index);
-                renameContentsRecursively((EcoreBigraph) copyInner, rootOuter, rewriteNameSupplier);
+                renameContentsRecursively((EcoreBigraph<?>) copyInner, rootOuter, rewriteNameSupplier);
             }
         }
 
@@ -693,7 +681,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
 
             // finally: remove the site node from the 'outer bigraph'
             EStructuralFeature childRef = parentNodeLeft.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
-            ((EList) parentNodeLeft.eGet(childRef)).remove(nextSite);
+            ((EList<?>) parentNodeLeft.eGet(childRef)).remove(nextSite);
         }
 
 //        leftOuter.eAdapters().add(adapter2); // for simple name rewriting of the 'outer bigraphs' edges
@@ -764,7 +752,7 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
         return new PureBigraphComposite<>((Bigraph<S>) bigraph);
     }
 
-    private void renameContentsRecursively(EcoreBigraph bigraph, EObject node, Supplier<String> nameSupplier) {
+    private void renameContentsRecursively(EcoreBigraph<?> bigraph, EObject node, Supplier<String> nameSupplier) {
         if (bigraph.isNameable(node)) {
             if (bigraph.isBPlace(node)) {
                 EAttribute nameAttr = EMFUtils.findAttribute(node.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
@@ -787,24 +775,22 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
                 signatureBuilder.add((Control) x);
             });
             if (outer instanceof EcoreBigraph) {
-                builder = (MutableBuilder<S>) MutableBuilder.newMutableBuilder(signatureBuilder.create(), ((EcoreBigraph) outer).getEMetaModelData());
+                builder = (MutableBuilder<S>) MutableBuilder.newMutableBuilder(signatureBuilder.create(), ((EcoreBigraph<?>) outer).getEMetaModelData());
             } else {
                 builder = (MutableBuilder<S>) MutableBuilder.newMutableBuilder(signatureBuilder.create());
             }
             return;
         }
         if (isLinking(outer) || isPlacing(outer)) {
-//            builder = PureBigraphBuilder.newMutableBuilder(inner.getSignature(), ((EcoreBigraph) outer).getEMetaModelData());
             if (outer instanceof EcoreBigraph) {
-                builder = MutableBuilder.newMutableBuilder(inner.getSignature(), ((EcoreBigraph) outer).getEMetaModelData());
+                builder = MutableBuilder.newMutableBuilder(inner.getSignature(), ((EcoreBigraph<?>) outer).getEMetaModelData());
             } else {
                 builder = MutableBuilder.newMutableBuilder(inner.getSignature());
             }
             return;
         } else if (isLinking(inner) || isPlacing(inner)) {
-//            builder = PureBigraphBuilder.newMutableBuilder(outer.getSignature(), ((EcoreBigraph) inner).getEMetaModelData());
             if (inner instanceof EcoreBigraph) {
-                builder = MutableBuilder.newMutableBuilder(outer.getSignature(), ((EcoreBigraph) inner).getEMetaModelData());
+                builder = MutableBuilder.newMutableBuilder(outer.getSignature(), ((EcoreBigraph<?>) inner).getEMetaModelData());
             } else {
                 builder = MutableBuilder.newMutableBuilder(outer.getSignature());
             }
@@ -817,11 +803,11 @@ public class PureBigraphComposite<S extends AbstractEcoreSignature<? extends Con
 
     @Override
     public EPackage getMetaModel() {
-        return ((EcoreBigraph) getBigraphDelegate()).getMetaModel();
+        return ((EcoreBigraph<?>) getBigraphDelegate()).getMetaModel();
     }
 
     @Override
     public EObject getInstanceModel() {
-        return ((EcoreBigraph) getBigraphDelegate()).getInstanceModel();
+        return ((EcoreBigraph<?>) getBigraphDelegate()).getInstanceModel();
     }
 }

@@ -12,11 +12,12 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * This class provides a collection of useful methods for implementations of {@link BigraphComposite}
+ * Abstract support class providing utility methods for {@link BigraphComposite} implementations.
  *
  * @author Dominik Grzelak
  */
-public abstract class BigraphCompositeSupport<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphDelegator<S> implements BigraphComposite<S> {
+public abstract class BigraphCompositeSupport<S extends AbstractEcoreSignature<? extends Control<?, ?>>>
+        extends BigraphDelegator<S> implements BigraphComposite<S> {
 
     public BigraphCompositeSupport(Bigraph<S> bigraphDelegate) {
         super(bigraphDelegate);

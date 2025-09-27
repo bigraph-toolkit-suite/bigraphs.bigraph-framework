@@ -24,12 +24,16 @@ import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
 /**
- * A concrete implementation of {@link BigraphBuilder} for <b>pure bigraphs</b>.
+ * Concrete {@link BigraphBuilder} implementation for <b>pure bigraphs</b>.
  * <p>
- * This bigraph builder offers a multi-scale approach for building bigraphs. From top to bottom.
- * Beginning with the outer and inner names. Create places and connect on the fly.
+ * Typical usage begins with {@link #root()} and proceeds by creating
+ * children, hierarchies, and sites.
+ * <p>
+ * For compositions, see {@link PureBigraphComposite}, accessible with {@link org.bigraphs.framework.core.factory.BigraphFactory#ops(Bigraph)}.
  *
  * @author Dominik Grzelak
+ * @see <a href="https://bigraphs.org/software/bigraph-framework/docs/basic/start">
+ * Getting Started: Creating a Bigraph</a>
  */
 public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphBuilderSupport<S> {
     private Logger logger = LoggerFactory.getLogger(PureBigraphBuilder.class);

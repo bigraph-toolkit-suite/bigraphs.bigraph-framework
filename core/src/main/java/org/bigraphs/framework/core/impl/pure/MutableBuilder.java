@@ -17,9 +17,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import java.util.List;
 import java.util.Map;
 
-//TODO: do not inherit from builder directly
-//  make lightweight builder: references are acquired via eclass directly
-
 /**
  * A generic mutable builder intended to be used for all bigraph types
  *

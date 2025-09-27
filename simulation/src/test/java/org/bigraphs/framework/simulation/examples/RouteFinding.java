@@ -15,7 +15,6 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
-import org.bigraphs.framework.core.reactivesystem.InstantiationMap;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
@@ -66,7 +65,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
     }
 
     @Test
-    void simulate_car_example() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
+    void simulate() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
         BigraphGraphvizExporter.toPNG(predicate.getBigraphToMatch(),
                 true,
@@ -75,10 +74,6 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
 
 //        PureBigraph map = createMapSimple(8);
         PureBigraph map = createMap(8);
-//        BigraphFileModelManagement.exportAsMetaModel(map, new FileOutputStream("meta-model.ecore"));
-//        PureBigraphBuilder.create(createSignature(),
-//                "/home/dominik/git/BigraphFramework/rewriting/meta-model.ecore",
-//                "/home/dominik/git/BigraphFramework/rewriting/instance-model_3.xmi");
         BigraphGraphvizExporter.toPNG(map,
                 true,
                 new File(TARGET_DUMP_PATH + "map_car.png")
@@ -96,8 +91,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
         System.out.println(encoder.encode(reactionRule.getRedex()));
         System.out.println(encoder.encode(reactionRule.getReactum()));
-//        BigraphFileModelManagement.exportAsMetaModel(map, new FileOutputStream(TARGET_DUMP_PATH + "meta-model.ecore"));
-//        Path currentRelativePath = Paths.get("");
+
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
@@ -123,8 +117,6 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         reactiveSystem.addReactionRule(reactionRule);
         reactiveSystem.setAgent(map);
         reactiveSystem.addPredicate(predicate);
-//        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem, BigraphModelChecker.SimulationType.RANDOM_STATE,
-//                opts);
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
@@ -133,26 +125,6 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         modelChecker.execute();
         assertTrue(Files.exists(completePath));
         assertTrue(carArrivedAtTarget);
-
-//        List<BMatchResult<PureBigraph>> rr11 = modelChecker.getReactionGraph().getTransitionMap().get("r0");
-//        PureBigraphParametricMatch pureMatch = (PureBigraphParametricMatch) rr11.get(0).getMatch();
-//
-//        if(pureMatch.wasRewritten()) {
-//            PureBigraph param = pureMatch.getParam();
-//            PureBigraph ctx = pureMatch.getContext();
-//            PureBigraph rdxImg = pureMatch.getRedexImage();
-//            BigraphGraphvizExporter.toPNG(param, true, new File("paramRewritten.png"));
-//            BigraphGraphvizExporter.toPNG(ctx, true, new File("ctxRewritten.png"));
-//            BigraphGraphvizExporter.toPNG(rdxImg, true, new File("rdxImgRewritten.png"));
-//        }
-//
-//        it.uniud.mads.jlibbig.core.std.Bigraph param = (pureMatch).getJLibMatchResult().getParam().clone();
-//        System.out.println(param);
-//        BigraphGraphvizExporter.toPNG(new JLibBigBigraphDecoder().decode(param), true, new File("decoded.png"));
-//        Bigraph context = (pureMatch).getJLibMatchResult().getContext();
-//        BigraphGraphvizExporter.toPNG(new JLibBigBigraphDecoder().decode(context), true, new File("context-decoded.png"));
-//        Bigraph redexImage = (pureMatch).getJLibMatchResult().getRedexImage();
-//        BigraphGraphvizExporter.toPNG(new JLibBigBigraphDecoder().decode(redexImage), true, new File("redexImage-decoded.png"));
     }
 
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
@@ -164,11 +136,8 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         BigraphEntity.OuterName p3 = builder.createOuter("p3");
         BigraphEntity.OuterName p4 = builder.createOuter("p4");
         BigraphEntity.OuterName p5 = builder.createOuter("p5");
-//        BigraphEntity.OuterName p6 = builder.createOuterName("p6");
         BigraphEntity.OuterName p7 = builder.createOuter("p7");
-//        BigraphEntity.OuterName p8 = builder.createOuterName("p8");
         BigraphEntity.OuterName target = builder.createOuter("target");
-//        BigraphEntity.InnerName target = builder.createInnerName("target");
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkOuter(target);
         for (int i = 0; i < fuelLevel; i++) {
@@ -180,13 +149,8 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 .child("Place").linkOuter(p2).down().child("Road").linkOuter(p5).up()
                 .child("Place").linkOuter(p3).down().child("Road").linkOuter(p4).child("Road").linkOuter(p7).up()
                 .child("Place").linkOuter(p4).down().child("Road").linkOuter(p5).child("Road").linkOuter(p1).up()
-//                .child("Place").connectNodeToOuterName(p5).withNewHierarchy().child("Road").connectNodeToOuterName(p6).child("Road").connectNodeToOuterName(p7).child("Road").connectNodeToOuterName(p8).goBack()
-//                .child("Place").connectNodeToOuterName(p6).withNewHierarchy().child("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
                 .child("Place").linkOuter(p7).down().child("Road").linkOuter(p2).child("Target").linkOuter(target).up()
-//                .addChild("Place")
         ;
-//        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);
-//        builder.closeInnerNames(target);
         PureBigraph bigraph = builder.create();
         return bigraph;
     }
@@ -196,15 +160,9 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
 
         BigraphEntity.OuterName p0 = builder.createOuter("p0");
         BigraphEntity.OuterName p1 = builder.createOuter("p1");
-//        BigraphEntity.OuterName p2 = builder.createOuterName("p2");
         BigraphEntity.OuterName p3 = builder.createOuter("p3");
         BigraphEntity.OuterName p4 = builder.createOuter("p4");
-//        BigraphEntity.OuterName p5 = builder.createOuterName("p5");
-//        BigraphEntity.OuterName p6 = builder.createOuterName("p6");
-//        BigraphEntity.OuterName p7 = builder.createOuterName("p7");
-//        BigraphEntity.OuterName p8 = builder.createOuterName("p8");
         BigraphEntity.OuterName target = builder.createOuter("target");
-//        BigraphEntity.InnerName target = builder.createInnerName("target");
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy car = builder.hierarchy("Car").linkOuter(target);
         for (int i = 0; i < fuelLevel; i++) {
@@ -213,16 +171,8 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         builder.root()
                 .child("Place").linkOuter(p0).down().child(car).child("Road").linkOuter(p1).child("Road").linkOuter(p3).up()
                 .child("Place").linkOuter(p1).down().child("Road").child("Road").linkOuter(p4).up()
-//                .addChild("Place").linkToOuter(p2).withNewHierarchy().addChild("Road").linkToOuter(p5).goBack()
                 .child("Place").linkOuter(p3).down().child("Road").linkOuter(p4).child("Road").up()
-//                .addChild("Place").linkToOuter(p4).withNewHierarchy().addChild("Road").linkToOuter(p5).addChild("Road").linkToOuter(p1).goBack()
-//                .addChild("Place").connectNodeToOuterName(p5).withNewHierarchy().addChild("Road").connectNodeToOuterName(p6).addChild("Road").connectNodeToOuterName(p7).addChild("Road").connectNodeToOuterName(p8).goBack()
-//                .addChild("Place").connectNodeToOuterName(p6).withNewHierarchy().addChild("Road").connectNodeToOuterName(p8).addChild("Road").connectNodeToOuterName(p5).goBack()
-//                .addChild("Place").linkToOuter(p7).withNewHierarchy().addChild("Road").linkToOuter(p2).addChild("Target").linkToOuter(target).goBack()
-//                .addChild("Place")
         ;
-//        builder.closeInnerNames(p1, p2, p3, p4, p5, p6, p7, p8, target);
-//        builder.closeInnerNames(target);
         PureBigraph bigraph = builder.create();
         return bigraph;
     }
@@ -242,9 +192,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
             PureBigraphBuilder<DynamicSignature>.Hierarchy car1 = null;
             try {
                 car1 = builder.hierarchy("Car").linkOuter(target).site().child("Fuel");
-            } catch (TypeNotExistsException e) {
-                e.printStackTrace();
-            } catch (InvalidConnectionException e) {
+            } catch (TypeNotExistsException | InvalidConnectionException e) {
                 e.printStackTrace();
             }
             return car1;
@@ -262,9 +210,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
             PureBigraphBuilder<DynamicSignature>.Hierarchy car1 = null;
             try {
                 car1 = builder2.hierarchy("Car").linkOuter(target2).site();
-            } catch (TypeNotExistsException e) {
-                e.printStackTrace();
-            } catch (InvalidConnectionException e) {
+            } catch (TypeNotExistsException | InvalidConnectionException e) {
                 e.printStackTrace();
             }
             return car1;
@@ -276,10 +222,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         ;
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
-        InstantiationMap instantiationMap = InstantiationMap.create(3);
-//        instantiationMap.
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
-        return rr;
+        return new ParametricReactionRule<>(redex, reactum);
     }
 
     private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
@@ -290,7 +233,6 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         // links of car and target must be connected via an outer name otherwise the predicate is not matched
         builder.root()
                 .child("Place").linkOuter(from)
-//                .down().site().connectByEdge("Target", "Car").down().site();
                 .down().site().child("Target", "target").child("Car", "target").down().site();
         PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);

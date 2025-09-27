@@ -100,14 +100,6 @@ public class FruitBasketExampleTest {
                 opts);
         modelChecker.execute();
 
-        ReactionGraph<PureBigraph> reactionGraph = modelChecker.getReactionGraph();
-
-//        Set<AbstractTransitionSystem<PureBigraph, BMatchResult<PureBigraph>>.Transition> transitions = reactionGraph.getTransitions(reactionGraph.getStates().iterator().next());
-//        System.out.println(reactionGraph.getLabelByState(transitions.stream().toList().get(0).getSource()));
-//        System.out.println(transitions.stream().toList().get(0).getLabel());
-//        System.out.println(reactionGraph.getLabelByState(transitions.stream().toList().get(0).getTarget()));
-//        System.out.println(reactionGraph);
-
 //        ParametricReactionRule<PureBigraph> rr11 = createRR1();
 //        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
 //        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent, rr11);

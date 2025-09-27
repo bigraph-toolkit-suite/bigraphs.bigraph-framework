@@ -19,13 +19,14 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- * Supporting base class for concrete bigraph builder implementations.
+ * Abstract support class for concrete bigraph builder implementations.
  * <p>
- * Provides some generic methods for building bigraphs.
+ * Provides generic helper methods for constructing bigraphs.
  *
  * @author Dominik Grzelak
  */
-public abstract class BigraphBuilderSupport<S extends Signature<? extends Control<?, ?>>> implements BigraphBuilder<S> {
+public abstract class BigraphBuilderSupport<S extends Signature<? extends Control<?, ?>>>
+        implements BigraphBuilder<S> {
 
     protected static final String DEFAULT_EDGE_PREFIX = "e";
     protected static final String DEFAULT_VERTEX_PREFIX = "v";

@@ -6,10 +6,10 @@ import org.bigraphs.framework.core.datatypes.NamedType;
 import java.util.Objects;
 
 /**
- * Abstract class representing a control of a signature.
+ * Abstract base class for a control within a signature.
  *
- * @param <NT>
- * @param <V>
+ * @param <NT> the named type of the control
+ * @param <V>  the value domain represented as a finite ordinal
  * @author Dominik Grzelak
  */
 public abstract class AbstractControl<NT extends NamedType<?>, V extends FiniteOrdinal<?>> implements Control<NT, V> {

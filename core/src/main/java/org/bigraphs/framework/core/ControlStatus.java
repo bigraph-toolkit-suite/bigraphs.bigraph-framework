@@ -1,11 +1,12 @@
 package org.bigraphs.framework.core;
 
 /**
- * Enum that represents the <i>kind/status</i> of a control.
+ * Enum of control <i>status</i> values.
  *
  * @author Dominik Grzelak
  */
 public enum ControlStatus {
+
     ATOMIC, ACTIVE, PASSIVE;
 
     /**

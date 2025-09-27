@@ -7,9 +7,9 @@ import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 
 /**
- * Common bigraph builder interface.
+ * Generic interface for building bigraphs.
  *
- * @param <S> type of the signature
+ * @param <S> the signature type
  * @author Dominik Grzelak
  */
 public interface BigraphBuilder<S extends Signature<?>> {

@@ -34,9 +34,10 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
 /**
- * The concurrent append problem from the Groove Rensink paper in bigraphs
+ * Implementation of the concurrent append problem in bigraphs, adapted from the GROOVE paper by Rensink.
  *
  * @author Dominik Grzelak
+ * @see <a href="https://doi.org/10.1007/978-3-540-25959-6_40">Rensink, A. (2004). The GROOVE Simulator: A Tool for State Space Generation.</a>
  */
 public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/append/";
@@ -102,15 +103,11 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         reactiveSystem.addReactionRule(append);
         reactiveSystem.addReactionRule(returnRR);
 
-        //TODO
-        //attributes would make the "value check" simpler
-
         ModelCheckingOptions modOpts = setUpSimOpts();
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
                 modOpts);
-//        modelChecker.setReactiveSystemListener(this);
         long start = System.nanoTime();
         modelChecker.execute();
         long diff = System.nanoTime() - start;
@@ -242,7 +239,6 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderRedex.root()
-//                .addChild("appendcontrol", "caller").linkToInner(tmp0).down()
                 .child("append").linkInner(tmp0).down()
                 .child("val").down().site().top()
         ;
@@ -398,7 +394,6 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 .newControl().identifier(StringTypedName.of("Root")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
                 .newControl().identifier(StringTypedName.of("list")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("this")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
-//                .newControl().identifier(StringTypedName.of("thisRefCurrent")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("thisRef")).arity(FiniteOrdinal.ofInteger(1)).assign()
                 .newControl().identifier(StringTypedName.of("Node")).arity(FiniteOrdinal.ofInteger(0)).assign()
                 .newControl().identifier(StringTypedName.of("void")).arity(FiniteOrdinal.ofInteger(0)).assign()

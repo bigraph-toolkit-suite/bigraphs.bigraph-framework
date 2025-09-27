@@ -6,7 +6,9 @@ import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 
 /**
- * Analog implementation to {@link DynamicControlBuilder} for controls of kind signatures.
+ * Counterpart to {@link DynamicControlBuilder} for constructing controls
+ * in kind signatures, i.e. signatures where a place sort can be specified
+ * for each control.
  *
  * @author Dominik Grzelak
  */

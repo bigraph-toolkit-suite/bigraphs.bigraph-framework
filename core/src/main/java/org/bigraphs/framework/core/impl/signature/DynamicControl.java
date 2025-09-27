@@ -8,10 +8,12 @@ import org.bigraphs.framework.core.datatypes.StringTypedName;
 import java.util.Objects;
 
 /**
- * Immutable dynamic control. Status of a control can be specified. If non provided the control will be active.
+ * Immutable dynamic control.
+ * The status of a control can be explicitly specified; if none is provided, the control defaults to active.
  * <p>
- * A node can be atomic or non-atomic which is determined by its control. Atomic nodes are empty. Non-atomic nodes
- * can be active or passive.
+ * Atomicity of a node:
+ * <li>Atomic nodes are always empty.</li>
+ * <li>Non-atomic nodes can be either active or passive.</li>
  *
  * @author Dominik Grzelak
  */
@@ -59,7 +61,7 @@ public class DynamicControl extends AbstractControl<StringTypedName, FiniteOrdin
 
     @Override
     public int hashCode() {
-        if(hashed == -1) {
+        if (hashed == -1) {
             hashed = Objects.hash(super.hashCode(), statusOfControl);
         }
         return hashed;

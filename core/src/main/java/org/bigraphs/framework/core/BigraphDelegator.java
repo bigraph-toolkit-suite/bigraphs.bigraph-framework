@@ -6,9 +6,15 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Delegator class for bigraphs (currently only suitable for pure bigraphs, e.g., no getParents() method available)
+ * Delegator base class for bigraphs.
+ * <p>
+ * Currently supports only pure bigraphs.
+ * <p>
+ * Wraps a {@link Bigraph} instance and forwards all calls to it.
+ * Subclasses can extend or adapt behavior by overriding selected
+ * methods while reusing the delegate for the core implementation.
  *
- * @param <S> type of the signature
+ * @param <S> the signature type
  * @author Dominik Grzelak
  */
 public abstract class BigraphDelegator<S extends Signature<?>> implements Bigraph<S> {
@@ -54,7 +60,7 @@ public abstract class BigraphDelegator<S extends Signature<?>> implements Bigrap
     }
 
     @Override
-    public <C extends Control<?,?>> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
+    public <C extends Control<?, ?>> Collection<BigraphEntity.NodeEntity<C>> getNodes() {
         return bigraphDelegate.getNodes();
     }
 
@@ -104,7 +110,7 @@ public abstract class BigraphDelegator<S extends Signature<?>> implements Bigrap
     }
 
     @Override
-    public <C extends Control<?,?>> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
+    public <C extends Control<?, ?>> BigraphEntity.NodeEntity<C> getNodeOfPort(BigraphEntity.Port port) {
         return bigraphDelegate.getNodeOfPort(port);
     }
 
@@ -134,7 +140,7 @@ public abstract class BigraphDelegator<S extends Signature<?>> implements Bigrap
     }
 
     @Override
-    public <C extends Control<?,?>> int getPortCount(BigraphEntity.NodeEntity<C> node) {
+    public <C extends Control<?, ?>> int getPortCount(BigraphEntity.NodeEntity<C> node) {
         return bigraphDelegate.getPortCount(node);
     }
 

@@ -22,11 +22,12 @@ import java.util.function.Consumer;
  * @see EcoreBigraph
  */
 public interface EcoreSignature extends EcoreBigraphExt {
+
     /**
      * Return the respective signature Ecore-based metamodel.
      *
      * @return the metamodel of the base signature specification
-     * @see de.tudresden.inf.st.bigraphs.models.signatureBaseModel.SignatureBaseModelPackage
+     * @see org.bigraphs.model.signatureBaseModel.SignatureBaseModelPackage
      */
     @Override
     EPackage getMetaModel();

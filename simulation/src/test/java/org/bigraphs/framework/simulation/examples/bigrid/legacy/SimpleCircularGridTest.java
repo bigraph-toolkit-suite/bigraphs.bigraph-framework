@@ -30,6 +30,7 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated
 public class SimpleCircularGridTest implements BigraphUnitTestSupport {
 
     private static String BASEPATH = "src/test/resources/dump/bigrid/circular/";

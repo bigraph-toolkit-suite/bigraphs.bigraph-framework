@@ -9,12 +9,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Abstract base builder class for all types of signatures.
+ * Abstract base class for building instances of signatures.
  *
- * @param <NT> type of the name representation
- * @param <FO> type of the finite ordinal representation
- * @param <C>  type of the control builder
- * @param <B>  type of the signature builder
+ * @param <NT> the name type
+ * @param <FO> the finite ordinal type
+ * @param <C>  the control builder type
+ * @param <B>  the signature builder type
  * @author Dominik Grzelak
  */
 public abstract class SignatureBuilder<NT extends NamedType<?>,
@@ -22,22 +22,11 @@ public abstract class SignatureBuilder<NT extends NamedType<?>,
         C extends ControlBuilder<NT, FO, C>,
         B extends SignatureBuilder<?, ?, ?, ?>> {
 
-    private Set<Control<NT, FO>> controls;
+    private final Set<Control<NT, FO>> controls;
 
     public SignatureBuilder() {
         this.controls = new LinkedHashSet<>();
     }
-
-//    @SuppressWarnings("unchecked")
-//    private Class<C> getGenericTypeClass() {
-//        try {
-//            String className = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0].getTypeName();
-//            Class<?> clazz = Class.forName(className);
-//            return (Class<C>) clazz;
-//        } catch (Exception e) {
-//            throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
-//        }
-//    }
 
     /**
      * Hook method to be implemented by subclasses for creating the corresponding control builder (i.e., only active or dynamic controls).
@@ -108,7 +97,6 @@ public abstract class SignatureBuilder<NT extends NamedType<?>,
      */
     protected abstract Signature<? extends Control<NT, FO>> createEmptyStub();
 
-    //    protected  abstract <S extends Signature> Class<S> getSignatureClass();
     @SuppressWarnings("unchecked")
     protected final B self() {
         return (B) this;
@@ -117,5 +105,4 @@ public abstract class SignatureBuilder<NT extends NamedType<?>,
     public Set<Control<NT, FO>> getControls() {
         return this.controls;
     }
-
 }

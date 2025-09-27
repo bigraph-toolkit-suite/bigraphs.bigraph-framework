@@ -47,7 +47,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
         new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
 
-    private Bigraph createJBigraph() {
+    private Bigraph createJLibBigBigraph() {
         Signature signature = JLibBigBigraphEncoder.parseSignature(createSignature());
         BigraphBuilder b = new BigraphBuilder(signature);
 
@@ -72,7 +72,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
     }
 
     @Test
-    void jtest() throws InvalidConnectionException, LinkTypeNotExistsException, InvalidReactionRuleException, IOException {
+    void jlibbig_rewriting_test() throws InvalidConnectionException, LinkTypeNotExistsException, InvalidReactionRuleException, IOException {
         PureBigraph agent_a = agent();
         ReactionRule<PureBigraph> reactionRule_1 = createReactionRule_1();
         BigraphGraphvizExporter.toPNG(agent_a,
@@ -147,39 +147,28 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
 
     @Override
     public void onUpdateReactionRuleApplies(PureBigraph agent, ReactionRule<PureBigraph> reactionRule, BigraphMatch<PureBigraph> matchResult) {
-//        System.out.println("RR: " + reactionRule.getRedex());
-//        int cnt = 0;
-//        for (PureBigraph each : matchResult.getParameters()) {
-//            try {
-//                BigraphGraphvizExporter.toPNG(each,
-//                        true,
-//                        new File(TARGET_DUMP_PATH + "d" + cnt + ".png")
-//                );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            cnt++;
-//        }
-//        try {
-//            BigraphGraphvizExporter.toPNG(matchResult.getContext(),
-//                    true,
-//                    new File(TARGET_DUMP_PATH + "context.png")
-//            );
-//            BigraphGraphvizExporter.toPNG(matchResult.getContextIdentity(),
-//                    true,
-//                    new File(TARGET_DUMP_PATH + "contextIdentity.png")
-//            );
-//            BigraphGraphvizExporter.toPNG(matchResult.getRedexIdentity(),
-//                    true,
-//                    new File(TARGET_DUMP_PATH + "redexIdentity.png")
-//            );
-//            BigraphGraphvizExporter.toPNG(matchResult.getRedexImage(),
-//                    true,
-//                    new File(TARGET_DUMP_PATH + "redexImage.png")
-//            );
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            System.out.println("RR: " + reactionRule.getLabel());
+            int cnt = 0;
+            for (PureBigraph each : matchResult.getParameters()) {
+
+                BigraphGraphvizExporter.toPNG(each,
+                        true,
+                        new File(TARGET_DUMP_PATH + "d" + cnt + ".png")
+                );
+
+                cnt++;
+            }
+            BigraphGraphvizExporter.toPNG(matchResult.getContext(),
+                    true,
+                    new File(TARGET_DUMP_PATH + "context.png")
+            );
+            BigraphGraphvizExporter.toPNG(matchResult.getRedexImage(),
+                    true,
+                    new File(TARGET_DUMP_PATH + "redexImage.png")
+            );
+        } catch (Exception ignored) {
+        }
     }
 
     private PureBigraph agent() throws InvalidConnectionException {
@@ -206,7 +195,7 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
 
         PureBigraph redex = b1.create();
         PureBigraph reactum = b2.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("move_1");
         return rr;
     }
 
@@ -222,10 +211,9 @@ public class RobotZoneMovementExample implements BigraphModelChecker.ReactiveSys
         b2.root().child("Zone2").down().child("Zone3").child("Object", "isFree").down().child("Ownership", "belongsTo");
 
 
-
         PureBigraph redex = b1.create();
         PureBigraph reactum = b2.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("move_2");
         return rr;
     }
 

@@ -12,17 +12,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Generic bigraph interface of all bigraph entities in this framework.
- * This interface is primarily implemented by pure bigraphs.
+ * Generic bigraph interface for all bigraph entities in this framework.
  * <p>
- * Important direct implementations are:
+ * Primarily implemented by pure bigraphs.
+ * Key direct implementations include:
  * <ul>
- * <li>{@link PureBigraph}</li>
- * <li>{@link BigraphDelegator}</li>
- * <li>{@link ElementaryBigraph}</li>
+ *   <li>{@link PureBigraph}</li>
+ *   <li>{@link BigraphDelegator}</li>
+ *   <li>{@link BigraphComposite}</li>
+ *   <li>{@link ElementaryBigraph}</li>
  * </ul>
  *
- * @param <S> type of the signature
+ * @param <S> the signature type
  * @author Dominik Grzelak
  */
 public interface Bigraph<S extends Signature<?>> extends HasSignature<S> {

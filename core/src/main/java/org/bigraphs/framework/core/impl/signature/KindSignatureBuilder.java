@@ -16,12 +16,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Builder class for kind signatures.
+ * Builder for kind signatures.
  * <p>
- * The builder returns an object of the class {@link KindSignature}, which includes
- * both the Ecore-based kind signature metamodel and its instance model.
- * Both the metamodel for kind signatures and the instance model are created internally.
- * The instance model is based on the extended metamodel.
+ * Typical usage relies on methods such as {@code addControl},
+ * {@code getControl}, or {@code addActiveKindSort}.
  *
  * @author Dominik Grzelak
  */

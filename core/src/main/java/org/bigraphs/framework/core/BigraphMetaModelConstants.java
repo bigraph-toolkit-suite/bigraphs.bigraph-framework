@@ -1,10 +1,13 @@
 package org.bigraphs.framework.core;
 
 /**
- * Some metamodel constants to conveniently refer to for the <i>BigraphBaseMetaModel</i>.
- * This is configured as a dependency here in this project.
+ * Metamodel constants for convenient access to the <i>BigraphBaseMetaModel</i>.
+ * <p>
+ * Must remain aligned with the Bigraph Ecore Metamodel (BEM).
  *
  * @author Dominik Grzelak
+ * @see <a href="https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel">
+ *      Bigraph Ecore Metamodel (BEM)</a>
  */
 public final class BigraphMetaModelConstants {
 

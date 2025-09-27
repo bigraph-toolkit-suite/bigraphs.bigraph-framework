@@ -23,6 +23,7 @@ import java.util.stream.IntStream;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
+@Deprecated
 public class BigridObject {
     String basePath = "/home/dominik/git/BigraphFramework/simulation/src/test/resources/dump/bigrid/circular/";
 

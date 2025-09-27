@@ -6,14 +6,14 @@ import org.bigraphs.framework.core.impl.pure.PureBigraphComposite;
 import org.bigraphs.framework.core.datatypes.EMetaModelData;
 
 /**
- * Common interface for the composition of bigraphs.
+ * Generic interface for composing bigraphs.
  * <p>
- * Current implementations are:
+ * Current implementation:
  * <ul>
- * <li>{@link PureBigraphComposite} for pure bigraphs</li>
+ *   <li>{@link PureBigraphComposite} for pure bigraphs</li>
  * </ul>
  *
- * @param <S> type of the signature
+ * @param <S> the signature type
  * @author Dominik Grzelak
  */
 public interface BigraphComposite<S extends Signature<? extends Control<?, ?>>> {

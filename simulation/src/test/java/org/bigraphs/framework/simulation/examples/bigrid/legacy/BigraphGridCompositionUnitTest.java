@@ -30,6 +30,7 @@ import java.util.stream.IntStream;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
+@Deprecated
 public class BigraphGridCompositionUnitTest {
 
     private static String BASEPATH = "src/test/resources/dump/bigrid/";

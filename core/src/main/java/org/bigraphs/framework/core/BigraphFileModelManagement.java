@@ -35,15 +35,13 @@ import static org.bigraphs.framework.core.BigraphMetaModelConstants.BIGRAPH_BASE
 import static org.bigraphs.framework.core.BigraphMetaModelConstants.SIGNATURE_BASE_MODEL;
 
 /**
- * A simple file-based model management utility class that serializes (deserializes) to (from) XMI and Ecore:
+ * File-based utility for managing Ecore/XMI bigraph models.
  * <ul>
- *     <li>Serializes/Exports Ecore-based bigraph model objects ({@link EObject} and {@link EPackage}) to {@code *.xmi}
- *     and {@code *.ecore}</li>
- *     <li>Deserializes/Imports Ecore files ({@code *.xmi} and {@code *.ecore}) to Ecore-based bigraph model objects
- *     ({@link EObject} and {@link EPackage})</li>
+ *   <li>Serialize {@link EObject}/{@link EPackage} to {@code *.xmi} and {@code *.ecore}.</li>
+ *   <li>Deserialize {@code *.xmi}/{@code *.ecore} into {@link EObject}/{@link EPackage}.</li>
  * </ul>
  * <p>
- * XMI provides an XML representation for Ecore constructs.
+ * XMI is the XML serialization format for Ecore.
  *
  * @author Dominik Grzelak
  */

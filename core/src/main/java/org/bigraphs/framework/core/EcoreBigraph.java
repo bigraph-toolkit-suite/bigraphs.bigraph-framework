@@ -16,16 +16,17 @@ import java.io.OutputStream;
 import java.util.Objects;
 
 /**
- * Common interface with standard methods for all Ecore-based bigraph classes.
- * This interface is technology-specific, and not general as {@link Bigraph}.
+ * Interface defining standard methods for all Ecore-based bigraph classes.
  * <p>
- * It is similar to {@link EcoreSignature}.
+ * Technology-specific (i.e., EMF-compliant) counterpart to {@link Bigraph}, similar to {@link EcoreSignature}.
  *
+ * @param <S> the Ecore-based signature type
  * @author Dominik Grzelak
  * @see Bigraph
  * @see EcoreSignature
  */
-public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSignature<S>, EcoreBigraphExt {
+public interface EcoreBigraph<S extends AbstractEcoreSignature<?>>
+        extends HasSignature<S>, EcoreBigraphExt {
 
     @Override
     S getSignature();
@@ -39,7 +40,6 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
     }
 
     default boolean isBOuterName(EObject eObject) {
-//        return isOfEClass(eObject, BigraphMetaModelConstants.CLASS_OUTERNAME);
         return eObject.eClass().getClassifierID() ==
                 (((EPackageImpl) getMetaModel()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)).getClassifierID() ||
                 eObject.eClass().equals(((EPackageImpl) getMetaModel()).getEClassifierGen(BigraphMetaModelConstants.CLASS_OUTERNAME)) ||
@@ -89,7 +89,6 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
                 (
                         eObject.eClass().getName().equals(((EPackageImpl) getMetaModel()).getEClassifierGen(eClassifier).getName()) ||
                                 eObject.eClass().equals(((EPackageImpl) getMetaModel()).getEClassifierGen(eClassifier)) ||
-//                                eObject.eClass().getEAllSuperTypes().stream().map(ENamedElement::getName).collect(Collectors.toList()).contains(((EPackageImpl) getModelPackage()).getEClassifierGen(eClassifier).getName()) ||
                                 eObject.eClass().getEAllSuperTypes().contains(((EPackageImpl) getMetaModel()).getEClassifierGen(eClassifier))
                 );
     }
@@ -138,6 +137,12 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
             this.instanceModel = instanceModel;
         }
 
+        /**
+         * Return the respective Ecore-based metamodel.
+         *
+         * @return the metamodel
+         * @see org.bigraphs.model.bigraphBaseModel.BigraphBaseModelPackage
+         */
         @Override
         public EPackage getMetaModel() {
             return metaModel;
@@ -149,12 +154,11 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
         }
 
         /**
-         * This methods returns a copy of the actual bigraph.
+         * This method returns a copy of the actual bigraph.
          * <p>
          * Therefore, the bigraph is exported into the memory and loaded again.
          *
          * @return a copy of the current bigraph.
-         * @throws CloneNotSupportedException
          */
         public Stub<S> clone() throws CloneNotSupportedException {
             return new Stub<>(metaModel, EcoreUtil.copy(instanceModel));
@@ -165,7 +169,7 @@ public interface EcoreBigraph<S extends AbstractEcoreSignature<?>> extends HasSi
          *
          * @return the bigraph's Ecore instance model as an input stream.
          * @throws EcoreBigraphFileSystemException if the input stream for the model instance could not be created for
-         *                                         some reasons. See the wrapped Exception to retrieve a more detailed
+         *                                         some reason. See the wrapped Exception to retrieve a more detailed
          *                                         error message.
          */
         public InputStream getInputStreamOfInstanceModel() throws EcoreBigraphFileSystemException {

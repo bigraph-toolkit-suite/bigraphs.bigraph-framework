@@ -51,18 +51,6 @@ public class BigraphEntity<C extends Control> {
         this(instance, null, type);
     }
 
-//    /**
-//     * Copy constructor
-//     *
-//     * @param bigraphEntity
-//     */
-//    @Deprecated
-//    BigraphEntity(BigraphEntity<C> bigraphEntity) {
-//        this.instance = bigraphEntity.getInstance();
-//        this.control = bigraphEntity.getControl();
-//        this.type = bigraphEntity.getType();
-//    }
-
     @NonNull
     public EObject getInstance() {
         return instance;
@@ -214,9 +202,7 @@ public class BigraphEntity<C extends Control> {
 
         public void setAttributes(Map<String, Object> attributes) {
             EStructuralFeature attrFeature = getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES);
-            // create a list of map entries
             List<EObject> collect = attributes.entrySet().stream().map(x -> {
-                // Prepare basic EMap.Entry object
                 EClass entityClass = (EClass) getInstance().eClass().getEPackage().getEClassifier(BigraphMetaModelConstants.CLASS_ESTRING2EJAVAOBJECT_MAP);
                 EObject eMapEntry = getInstance().eClass().getEPackage().getEFactoryInstance().create(entityClass);
                 EAttribute keyAttr = EMFUtils.findAttribute(eMapEntry.eClass(), BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES_KEY);
@@ -231,10 +217,10 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                toString = new StringBuilder(getName())
-                        .append(":").append("NodeEntity").append("{")
-                        .append(getControl().getNamedType().stringValue()).append(":").append(getControl().getArity().getValue())
-                        .append("}").toString();
+                toString = getName() +
+                        ":" + "NodeEntity" + "{" +
+                        getControl().getNamedType().stringValue() + ":" + getControl().getArity().getValue() +
+                        "}";
             }
             return toString;
         }
@@ -270,8 +256,8 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                toString = new StringBuilder("").append(getIndex())
-                        .append(":").append("Site").toString();
+                toString = getIndex() +
+                        ":" + "Site";
             }
             return toString;
         }
@@ -307,7 +293,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                toString = new StringBuilder("Port").append(":").append(getIndex()).toString();
+                toString = "Port:" + getIndex();
             }
             return toString;
         }
@@ -344,7 +330,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if ((toString) == null) {
-                toString = new StringBuilder("").append(getIndex()).append(":").append("Root").toString();
+                toString = getIndex() + ":" + "Root";
             }
             return toString;
         }

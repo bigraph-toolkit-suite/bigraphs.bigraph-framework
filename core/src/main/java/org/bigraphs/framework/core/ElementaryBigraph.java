@@ -12,14 +12,16 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import java.util.*;
 
 /**
- * Interface for the basic building blocks for all Ecore-based bigraphs.
+ * Base class for the elementary building blocks of Ecore-based bigraphs.
  * <p>
- * Elementary bigraphs are used to build larger and more complex bigraphs by composition.
+ * Elementary bigraphs serve as units for constructing larger and more complex bigraphs via composition.
  *
- * @param <S> type of the signature
+ * @param <S> the signature type
  * @author Dominik Grzelak
  */
-public abstract class ElementaryBigraph<S extends AbstractEcoreSignature<? extends Control<?, ?>>> extends BigraphDelegator<S> implements EcoreBigraph<S> {
+public abstract class ElementaryBigraph<S extends AbstractEcoreSignature<? extends Control<?, ?>>>
+        extends BigraphDelegator<S> implements EcoreBigraph<S> {
+
     protected EPackage metaModelPackage;
     protected EObject instanceModel;
 

@@ -6,8 +6,8 @@ import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 
 /**
- * The concrete dynamic control builder used by the {@link DynamicSignatureBuilder}.
- * It allows to specify if a control is active, passive or atomic.
+ * Concrete builder for dynamic controls, used by {@link DynamicSignatureBuilder}.
+ * Provides methods to declare whether a control is active, passive, or atomic.
  *
  * @author Dominik Grzelak
  * @see DynamicSignatureBuilder

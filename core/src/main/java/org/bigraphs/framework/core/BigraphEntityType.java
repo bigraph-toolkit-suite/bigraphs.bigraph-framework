@@ -5,7 +5,7 @@ import org.bigraphs.framework.core.impl.BigraphEntity;
 import java.util.Objects;
 
 /**
- * Enums for all bigraph types.
+ * Enums for all bigraph element types.
  *
  * @author Dominik Grzelak
  */

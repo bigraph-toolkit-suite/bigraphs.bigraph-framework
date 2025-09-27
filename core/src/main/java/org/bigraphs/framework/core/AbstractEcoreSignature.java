@@ -13,9 +13,9 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Abstract class for Ecore-based signatures.
+ * Abstract class for signatures defined via Ecore.
  *
- * @param <C> type of the control
+ * @param <C> type of control
  * @author Dominik Grzelak
  */
 public abstract class AbstractEcoreSignature<C extends Control<? extends NamedType, ? extends FiniteOrdinal>>
@@ -81,7 +81,6 @@ public abstract class AbstractEcoreSignature<C extends Control<? extends NamedTy
             hashed = Objects.hash(controls);
         }
         return hashed;
-//        return Objects.hash(controls);
     }
 
     @Override
