@@ -9,7 +9,7 @@ const config = {
     title: 'Bigraph Framework',
     tagline: 'A framework written in Java for the manipulation and simulation of bigraphical reactive systems',
     url: 'https://www.bigraphs.org',
-    baseUrl: '/products/bigraph-framework/',
+    baseUrl: '/software/bigraph-framework/',
     onBrokenLinks: 'warn',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
@@ -76,7 +76,7 @@ const config = {
                         label: 'Tutorials',
                     },
                     {
-                        to: 'https://www.bigraphs.org/products/bigraph-framework/apidocs/',
+                        to: 'https://www.bigraphs.org/software/bigraph-framework/apidocs/',
                         label: 'JavaDoc API',
                         position: 'left'
                     },
@@ -100,7 +100,7 @@ const config = {
                             { label: 'Tutorials', to: '/tutorials/' },
                             {
                                 label: 'JavaDoc API',
-                                to: 'https://www.bigraphs.org/products/bigraph-framework/apidocs/',
+                                to: 'https://www.bigraphs.org/software/bigraph-framework/apidocs/',
                             },
                         ],
                     },

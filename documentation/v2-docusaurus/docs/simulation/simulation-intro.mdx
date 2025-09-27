@@ -163,20 +163,20 @@ Having explained the essentials of BRSs until here, the _matching_ and _rewritin
 
 **Matching**
 
-- [`org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/AbstractBigraphMatcher.html)
+- [`org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/AbstractBigraphMatcher.html)
     - This abstract class defines a _matcher_ and needs a _host graph_ and _rule_ to perform bigraph matching.
     - A bigraph matcher consists of a bigraph matching engine w.r.t. to the bigraph type.
     - The correct one is automatically created using the factory method `#create(Class)` by supplying the bigraph class type.
-    - Matches are returned via an iterator (the instances of the matches are of type [`BigraphMatch`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/BigraphMatch.html)).
+    - Matches are returned via an iterator (the instances of the matches are of type [`BigraphMatch`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/BigraphMatch.html)).
 
 **Rewriting**
-- [`org.bigraphs.framework.core.reactivesystem.ReactiveSystem`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html)
+- [`org.bigraphs.framework.core.reactivesystem.ReactiveSystem`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html)
     - This interface defines two methods for rewriting after a match was found:
-        - [`ReactiveSystem#buildGroundReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildGroundReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
-        - [`ReactiveSystem#buildParametricReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildParametricReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
+        - [`ReactiveSystem#buildGroundReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildGroundReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
+        - [`ReactiveSystem#buildParametricReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildParametricReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
     - Implementations of this interface:
-        - Core Module: [`org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/AbstractSimpleReactiveSystem.html) is an abstract base class for all reactive systems in Bigraph Framework.
-        - Simulation Module: [`org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/pure/PureReactiveSystem.html) (extends `AbstractSimpleReactiveSystem`) is a concrete implementation of a reactive system for the class of pure bigraphs.
+        - Core Module: [`org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/AbstractSimpleReactiveSystem.html) is an abstract base class for all reactive systems in Bigraph Framework.
+        - Simulation Module: [`org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/pure/PureReactiveSystem.html) (extends `AbstractSimpleReactiveSystem`) is a concrete implementation of a reactive system for the class of pure bigraphs.
 
 
 

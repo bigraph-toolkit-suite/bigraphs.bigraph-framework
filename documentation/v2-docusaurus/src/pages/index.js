@@ -24,7 +24,7 @@ function TryItOut() {
             <strong>Quickstart</strong>
             <ul style={{listStyleType: "none"}}>
                 <li>(ZIP Archive) <a
-                    href={`https://www.bigraphs.org/products/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip`}>Project Template (Maven/Gradle)</a></li>
+                    href={`https://www.bigraphs.org/software/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip`}>Project Template (Maven/Gradle)</a></li>
                 <li>(GitHub) <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>Project Template (Maven/Gradle)</a></li>
             </ul>
             {/*<p>*/}

@@ -4,9 +4,9 @@
 
 [![HiRSE Code Promo Badge](https://img.shields.io/badge/Promo-8db427?style=plastic&label=HiRSE&labelColor=005aa0&link=https%3A%2F%2Fgo.fzj.de%2FCodePromo)](https://go.fzj.de/CodePromo)
 
-- User Manual: https://bigraphs.org/products/bigraph-framework/docs/
+- User Manual: https://bigraphs.org/software/bigraph-framework/docs/
 
-- JavaDoc: https://bigraphs.org/products/bigraph-framework/apidocs/
+- JavaDoc: https://bigraphs.org/software/bigraph-framework/apidocs/
 
 ---
 
@@ -343,7 +343,7 @@ $ nvm use 16
 $ npm run start
 ```
 
-Then, open the browser at `http://localhost:3000/products/bigraph-framework/`.
+Then, open the browser at `http://localhost:3000/software/bigraph-framework/`.
 
 The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system
 (see [Development-and-Deployment.md](etc/Development-and-Deployment.md)).

@@ -12,16 +12,17 @@ import TabItem from '@theme/TabItem';
 <center>
     <p>
         This manual provides a complete guide to the Bigraph Framework. <br/>
-        <i>Last Updated: 2025-09-10</i>
+        <i>Last Updated: 2025-09-27</i>
     </p>
 </center>
 
 
 - **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.2.1</span>
-- Previous Stable Versions: 2.2.0, 2.1.2, 2.1.1
-- Latest Experimental Version: <span class="badge badge-secondary" style={{backgroundColor: '#7952b3'}}>3.0.0-SNAPSHOT</span>
+- Previous Stable Versions: `2.2.0`, `2.1.2`, `2.1.1`
 
-:::info Migration 2.1.2 → 2.2.0
+[//]: # (- Latest Experimental Version: <span class="badge badge-secondary" style={{backgroundColor: '#7952b3'}}>3.0.0-SNAPSHOT</span>)
+
+:::info Migration `2.1.2` → `2.2.0`
 For refactor and upgrade instructions, please see the
 [**GitHub Releases Changelog**](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/releases/tag/v2.2.0).
 :::
@@ -73,22 +74,19 @@ The framework is developed around a [metamodel-first approach](https://github.co
     - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
     - Read and write instance models and metamodels of a bigraph from and to the file system
 - Visualization
-    - Graphical export via GraphViz/DOT
-    - PNG, JPG, ...
-    - Interactive visualization UI via GraphStream
-    - Visualization of Compiler Graphs (VCG) format via yComp
+    - Graphical export via GraphViz/DOT, PNG, Visualization of Compiler Graphs (VCG) format via yComp
+    - Interactive visualization via GraphStream
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
     - Bigraph matching and rewriting via jLibBig
     - Generation of a labeled transition system (LTS)
     - Simulation and Model Checking (BFS, Random)
-    - Predicate checking, logical connectors, LTL
+    - Predicate checking
     - Specify order of reaction rules via priorities
+    - Tracking rules (trace node identities across reactions)
     - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
-    - Tracking rules (a rule can be assigned a tracking map)
 - Model Importer/Exporter
     - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
     - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
-    - Translate bigraphs to other graph classes: Ranked Graphs, multigraphs, ...
 - Attributed Bigraphs
     - Add arbitrary attributes to nodes
     - Attributes are preserved when doing rewriting (this requires tracking maps)
@@ -109,7 +107,7 @@ The theory provides an algebra and a graph rewriting mechanism to describe, stud
 
 ## Use / Install / Dependency Settings
 
-Bigraph Framework is online available as Maven dependency.
+Bigraph Framework is online available as Maven/Gradle dependency.
 
 Artifacts are deployed to the _Central Repository_.
 
@@ -121,7 +119,7 @@ To build the source by yourself, follow the [README.md](https://github.com/bigra
 
 To get started using Bigraph Framework right away, download the Maven-based Project Skeleton
 
-- [Starter Project Template using Bigraph Framework](https://www.bigraphs.org/products/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip)
+- [Starter Project Template using Bigraph Framework](https://www.bigraphs.org/software/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip)
 - See <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>here</a> for the latest version on GitHub
 
 The README contained therein, describes how to compile and start an application.

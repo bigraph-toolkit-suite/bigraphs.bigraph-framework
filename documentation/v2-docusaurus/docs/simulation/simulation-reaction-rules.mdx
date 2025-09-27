@@ -96,7 +96,7 @@ In other cases, one can decided what shall happen with the parameters after the 
 Therefore, the instantiation map ![eta](../assets/simulation/eq/eqn-eta.svg) of a reaction rule provides greater control over what happens to the parameters of the bigraph match.
 
 The instantiation map can be supplied to the constructor of implementations of:
-- [`org.bigraphs.framework.core.reactivesystem.AbstractReactionRule`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/AbstractReactionRule.html)
+- [`org.bigraphs.framework.core.reactivesystem.AbstractReactionRule`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/AbstractReactionRule.html)
 
 It can be created using the factory method:
 - `InstantiationMap.create(int n)`, where `n` is the number of possible elements in the map
@@ -106,7 +106,7 @@ It can be created using the factory method:
 
 Rules provide expressive means to define pre-conditions so that a rule can actually be fired.
 Additionally, the post-conditions, i.e., the result is easily specified using the right-hand side of the rule (i.e., the redex).
-This can be done using the redex only, or via so-called Conditional Rules ([`org.bigraphs.framework.core.reactivesystem.ConditionalParametricRuleDecorator`](https://bigraphs.org/products/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ConditionalParametricRuleDecorator.html)).
+This can be done using the redex only, or via so-called Conditional Rules ([`org.bigraphs.framework.core.reactivesystem.ConditionalParametricRuleDecorator`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ConditionalParametricRuleDecorator.html)).
 
 A conditional rule can also evaluate [attributes](../advanced/attributed-bigraphs) in the course of a reaction, which allows also to include external, global data.
 
