@@ -67,8 +67,8 @@ To view and edit the manual execute the following commands.
 First, `cd` into the `documentation/v2-docusaurus/` folder:
 
 ```shell
-nvm install 16
-nvm use 16
+nvm install 20.18.1
+nvm use 20.18.1
 npm --prefix ./documentation/v2-docusaurus/ install
 cd ./documentation/v2-docusaurus/
 npx docusaurus start #or: npm run start
@@ -95,8 +95,8 @@ Execute from the root of this project the following commands:
 ```shell
 mvn clean install -DskipTests
 mvn package -P distribute -DskipTests                  # creation and aggregation of JavaDocs 
-nvm install 16                                        # install node version 16 if not already installed
-nvm use 16                                            # switch to this node version (needed for docusaurus)
+nvm install 20.18.1                                        # install node version 20.18.1 if not already installed
+nvm use 20.18.1                                            # switch to this node version (needed for docusaurus)
 npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
 mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
 ```

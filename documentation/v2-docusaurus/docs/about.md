@@ -1,11 +1,12 @@
 ---
 id: about
 title: About
+sidebar_position: 8
 ---
 
 **Bigraph Framework** was mainly developed by Dominik Grzelak at the Technische Universität Dresden.
 
-The framework could not have been developed without the following superb bigraph tools:
+The framework could not have been developed without the following bigraph tools:
 - [BigraphER](https://bitbucket.org/uog-bigraph/bigraph-tools/)
 - [jLibBig](https://github.com/bigraphs/jlibbig)
 

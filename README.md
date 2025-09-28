@@ -336,7 +336,7 @@ at `documentation/v2-docusaurus/`:
 ```shell
 $ mvn clean package -DskipTests
 $ cd ./documentation/v2-docusaurus/
-$ nvm use 16
+$ nvm use 20.18.1
 $ npm run start
 ```
 
