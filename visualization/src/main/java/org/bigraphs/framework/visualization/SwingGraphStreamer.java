@@ -22,6 +22,22 @@ import java.util.stream.Collectors;
 
 import static org.bigraphs.framework.core.utils.BigraphUtil.getUniqueIdOfBigraphEntity;
 
+/**
+ * Swing-based GraphStream-based renderer for {@link PureBigraph}s.
+ * <p>
+ * Builds a {@link Graph} and displays it via a GraphStream {@link Viewer} (Swing UI).
+ * Supports optional rendering of roots/sites, dark mode styling.
+ *
+ * <h3>Typical usage</h3>
+ * <ol>
+ *   <li>{@link #prepareSystemEnvironment()} (sets UI system properties for Swing)</li>
+ *   <li>{@link #getGraphViewer()} or {@link #getGraphViewer(String)} to build+display</li>
+ * </ol>
+ *
+ * @author Dominik Grzelak
+ * @see <a href="https://bigraphs.org/software/bigraph-framework/docs/visualization/visualization-interactive">
+ * Visualization (Interactive) - Bigraph Framework Docs</a>
+ */
 public class SwingGraphStreamer {
 
     PureBigraph bigraph;
@@ -135,7 +151,6 @@ public class SwingGraphStreamer {
         return renderAsync("default", delayPerElement);
     }
 
-    // TODO use swingworker instead of sleep(): https://stackoverflow.com/questions/35811548/thread-sleep-freezes-jframe-gui-containing-graphstream-graph
     public CompletableFuture<Boolean> renderAsync(String graphId, int delayPerElement) {
         this.delayForElements = delayPerElement;
         initGraph(graphId);
@@ -147,12 +162,10 @@ public class SwingGraphStreamer {
             return true;
         }, executorService);
 
-        // Execute the actuall drawing by placing elements on the graph
+        // Execute the actual rendering by placing elements on the graph
         // Attach a callback to be executed when the CompletableFuture completes
         futureResult.thenAccept(result -> {
-//            System.out.println("Layouting finished: " + result);
             try {
-//                 Await termination of the ExecutorService
                 executorService.shutdown();
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
@@ -170,14 +183,10 @@ public class SwingGraphStreamer {
             // Draw the place graph
             Traverser<BigraphEntity> traverser = Traverser.forTree(x -> {
                 List<BigraphEntity<?>> children = bigraph.getChildrenOf(x);
-//                System.out.format("%s has %d children\n", x.getType(), children.size());
-//                if (children.size() > 0)
-//                    System.out.println("Level: " + bigraph.getLevelOf(children.get(0)));
                 return children;
             });
             Iterable<BigraphEntity> bigraphEntities = traverser.breadthFirst(bigraph.getRoots());
             bigraphEntities.forEach(x -> {
-//                System.out.println(x);
                 if (BigraphEntityType.isRoot(x) && !withRoots) {
                     return;
                 }
@@ -222,14 +231,11 @@ public class SwingGraphStreamer {
                 pointsFromLink.forEach(p -> {
                     if (BigraphEntityType.isPort(p)) {
                         BigraphEntity.NodeEntity<DynamicControl> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
-                        int ix = bigraph.getPorts(nodeOfPort).indexOf(p);
-                        System.out.format("Node %s with port at index %d is connected to link %s\n", getUniqueIdOfBigraphEntity(nodeOfPort), ix, l.getName());
                         Edge hyperEdge = graph.addEdge(edgeNameSupplier.get(), getUniqueIdOfBigraphEntity(nodeOfPort), l.getName());
                         hyperEdge.setAttribute("ui.class", "hyperedge");
 
                     } else if (BigraphEntityType.isInnerName(p)) {
                         String innerNameID = getUniqueIdOfBigraphEntity(p);
-                        System.out.format("Inner name %s is connected to link %s\n", innerNameID, l.getName());
                         if (graph.nodes().noneMatch(n -> n.getId().equals(innerNameID))) {
                             Node innerNameNode = graph.addNode(innerNameID);
                             innerNameNode.setAttribute("ui.class", "innername");
