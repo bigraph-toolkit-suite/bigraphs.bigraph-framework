@@ -12,8 +12,9 @@
     <artifactId>bigraph-simulation</artifactId>
     <name>Bigraph Framework - Simulation</name>
     <description>
-        Rewriting functionality of the Bigraph Framework for implementing bigraphical reactive systems.
-        A matching algorithms for the subtree isomorphism problem adapted to bigraphs is included.
+        The simulation module provides bigraph matching and rewriting capabilities for implementing
+        bigraphical reactive systems. It includes a model checker and an algorithm for canonical
+        string encoding of bigraphs.
     </description>
 
     <build>
@@ -58,13 +59,13 @@
             </plugin>
             <!-- SKIP -->
             <!-- OWASP -->
-<!--            <plugin>-->
-<!--                <groupId>org.owasp</groupId>-->
-<!--                <artifactId>dependency-check-maven</artifactId>-->
-<!--                <configuration>-->
-<!--                    <skip>${skip.security.check}</skip>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.owasp</groupId>-->
+            <!--                <artifactId>dependency-check-maven</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <skip>${skip.security.check}</skip>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
             <!-- SHADE -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

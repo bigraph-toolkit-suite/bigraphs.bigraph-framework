@@ -373,3 +373,11 @@ Copyright 2021-present Bigraph Toolkit Suite Developers.
    See the License for the specific language governing permissions and
    limitations under the License.
 ```
+
+The simulation module of **Bigraph Framework** includes and shades [jLibBig](https://github.com/bigraphs/jlibbig),
+a Java library for bigraphical reactive systems, which is licensed under the **GNU Lesser General Public License, version 2.1 only (LGPL-2.1-only)**.
+
+In full compliance with LGPL-2.1:
+- The jLibBig code is not obfuscated or renamed.
+- You may replace or modify jLibBig using the standard Maven build process.
+- Modifications are documented in: [`NOTICE-jlibbig.txt`](./etc/libs/jlibbig-0.0.4/NOTICE-jlibbig.txt).

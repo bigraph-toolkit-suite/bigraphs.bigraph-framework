@@ -323,6 +323,25 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-license-and-notice</id>
+                        <phase>prepare-package</phase> <!-- Or process-resources -->
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../</directory> <!-- Source directory (project root) -->
+                                    <includes>
+                                        <include>LICENSE</include>
+                                        <include>NOTICE</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <!-- DEPLOY -->
@@ -725,12 +744,6 @@
                                                 <exclude>profile.list</exclude>
                                             </excludes>
                                         </filter>
-                                        <!--                                        <filter>-->
-                                        <!--                                            <artifact>it.uniud.mads.jlibbig:jlibbig</artifact>-->
-                                        <!--                                            <includes>-->
-                                        <!--                                                <include>*/**</include>-->
-                                        <!--                                            </includes>-->
-                                        <!--                                        </filter>-->
                                     </filters>
                                 </configuration>
                             </execution>

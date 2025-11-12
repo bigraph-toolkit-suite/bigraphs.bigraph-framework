@@ -1,0 +1,6 @@
+Fork: https://github.com/bigraph-toolkit-suite/jlibbig
+
+Changes from original:
+- Added support for tracking rules in the course of bigraph matching
+
+

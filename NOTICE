@@ -1,0 +1,37 @@
+Bigraph Framework
+Copyright 2021–2025 Bigraph Toolkit Developers
+https://www.bigraphs.org/
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at:
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific
+language governing permissions and limitations under the License.
+
+---
+
+This software includes 'jLibBig', a component licensed under the
+GNU Lesser General Public License, version 2.1:
+
+  Component: jLibBig
+  Version:   0.0.4
+  URL:       https://github.com/bigraphs/jlibbig
+  License:   https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+This component has been integrated into the shaded output of
+the `bigraph-simulation` module.
+This integration complies with LGPL-2.1 by preserving license notices,
+providing source access, and enabling replacement of the library
+via Maven build profiles. Modifications have been made
+to the jLibBig source code as described in a separate file.
+
+---
+
+For more details, see:
+  https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework
