@@ -2,7 +2,10 @@
 id: sa-index
 title: Outline
 sidebar_position: 1
+description: Stream ROS2 data into bigraphs, persist models with CDO, and apply conditional rewriting rules.
 ---
+
+![overview-architecture.png](../assets/ros2cdo/overview-architecture.png)
 
 In this tutorial you will:
 
@@ -13,10 +16,10 @@ In this tutorial you will:
 The running example on the following pages models an agent (i.e., a drone) with an energy level that is updated based on a streamed integer value from ROS2 (e.g., `/echo` with `std_msgs/Int16`).
 When the value is "low enough," a rule turns the agent’s energy marker from `HIGH` to `LOW`.
 
-The complete example project can be found here:
+**The complete example project can be found here:**
 [bigraphs-by-examples.streaming-bigraphs](https://github.com/bigraph-toolkit-suite/bigraphs-by-examples.streaming-bigraphs)
 
-Software Stack:
+**Software Stack:**
 - Java 21 + Maven
 - Bigraph Framework
 - [Spring Data CDO](https://github.com/bigraph-toolkit-suite/spring-data-cdo) (w/ in-memory database)
@@ -35,7 +38,7 @@ $ source /opt/ros/humble/setup.bash
 $ ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
 
-Test publisher
+Test publisher:
 
 ```shell
 $ ros2 topic pub /echo std_msgs/Int16 "{data: 123}"
