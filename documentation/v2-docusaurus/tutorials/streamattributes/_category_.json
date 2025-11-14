@@ -1,0 +1,9 @@
+{
+  "label": "Attribute Streams (ROS2 + CDO)",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "title": "Streaming Attributes Tutorial (ROS2 + CDO)",
+    "description": "Streaming ROS2 Data into Bigraph Node Attributes and Rewriting with Conditional Rules."
+  }
+}

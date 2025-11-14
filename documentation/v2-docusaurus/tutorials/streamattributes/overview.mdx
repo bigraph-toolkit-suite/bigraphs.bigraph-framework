@@ -1,0 +1,57 @@
+---
+id: sa-overview
+title: Signature and Bigraphs
+sidebar_position: 2
+---
+
+We start with a dynamic signature and two initial models.
+Namely, a drone part and a variable space part:
+
+```java
+private DynamicSignature sig() {
+    return pureSignatureBuilder()
+            .add("Drone", 0)
+            .add("VarSpace", 0)
+            .add("HIGH", 0)
+            .add("MEDIUM", 0)
+            .add("LOW", 0)
+            .add("EnergyD", 0)
+            .add("EnergyC", 0)
+            .add("Ref", 1)
+            .add("Var", 1)
+            .add("Ni", 0) //represents an integer
+            .create();
+}
+```
+
+One part of the model describes the drone and its energy state, the other part describes a "variable space" holding a small node `Ni` with a runtime attribute key that we will fill from ROS2 messages.
+
+## Variable space
+
+```java
+private PureBigraph varModel()
+        throws InvalidConnectionException, TypeNotExistsException {
+    return pureBuilder(sig())
+            .root().child("VarSpace").down()
+            .child("Var").linkOuter("eref").down().child("Ni")
+            .create();
+}
+```
+
+## Drone
+
+```java
+private PureBigraph droneModel()
+        throws InvalidConnectionException, TypeNotExistsException {
+    return pureBuilder(sig())
+            .root().child("Drone").down()
+            .child("EnergyC").down().child("Ref").linkOuter("eref").up()
+            .child("EnergyD").down().child("HIGH")
+            .create();
+}
+```
+
+The name `eref` is declared as a _shared outer name_.
+It serves as a _provided interface_, allowing separately created bigraph fragments to be composed.
+
+At this point you can already [render](https://bigraphs.org/software/bigraph-framework/docs/visualization/visualization-interactive) or [export](https://bigraphs.org/software/bigraph-framework/docs/persistence/persistence-2) both bigraphs to verify their structure (e.g., as XMI or DOT).

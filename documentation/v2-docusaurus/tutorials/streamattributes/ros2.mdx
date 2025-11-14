@@ -1,0 +1,95 @@
+---
+id: sa-ros
+title: Updating Attributes from ROS2 Messages
+sidebar_position: 4
+---
+
+Now, we are subscribing to a ROS2 Topic in Java.
+
+We use jrosbridge to connect to the rosbridge websocket and subscribe to a topic. The tutorial example uses the functional interface:
+
+```java
+@FunctionalInterface
+public interface RosMessageHandler {
+    void handle(Message message) throws Exception;
+}
+```
+
+A small helper method wraps the subscription:
+
+```java
+public void fetchRosMessages(String host, String topic, String type,
+                             RosMessageHandler handler) {
+    Ros ros = new Ros(host);
+    ros.connect();
+
+    Topic echo = new Topic(ros, topic, type);
+
+    echo.subscribe(message -> {
+        try {
+            handler.handle(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    });
+}
+```
+
+You can test this in isolation:
+
+```java
+void ros_topic_test() throws InterruptedException {
+    fetchRosMessages("localhost", "/echo", "std_msgs/Int16", message -> {
+        System.out.println(message.getMessageType() + ": " + message);
+    });
+
+    Thread.sleep(4000);
+}
+```
+
+## Updating Node Attributes from ROS2 Messages
+
+We now wire ROS2 into the bigraph. Each time a message arrives, we:
+
+- Read the integer `data` field from the JSON message.
+- Reload the _variable space bigraph_ (`/var`) from CDO.
+- Find the `Ni` node.
+- Update its attribute `key` with the new value.
+- Save the updated model back to CDO.
+
+```java
+AtomicBoolean canMatchAgain = new AtomicBoolean(false);
+
+// Subscribe to ROS2 topic
+fetchRosMessages("localhost", "/echo", "std_msgs/Int16", message -> {
+    JsonObject jsonObject = message.toJsonObject();
+    int value = jsonObject.getInt("data");
+
+    // Reload /var from CDO and convert to PureBigraph
+    EObject containerOfType = EMFUtils.getRootContainer(
+            Objects.requireNonNull(
+                    template.find(cdoIdVar, EObject.class, "/var", false)
+            )
+    );
+    PureBigraph bigraphVar = toBigraph(MM, containerOfType, sig());
+
+    // Find Ni node and update attributes
+    BigraphEntity.NodeEntity<DynamicControl> Ni = bigraphVar.getNodes().stream()
+        .filter(x -> x.getControl().getNamedType().stringValue().equals("Ni"))
+        .findFirst()
+        .orElseThrow(() -> new RuntimeException("Node 'Ni' not found"));
+
+    Map<String, Object> attributes = Ni.getAttributes();
+    attributes.put("key", value);
+    System.out.println("New value is = " + attributes.get("key"));
+
+    Ni.setAttributes(attributes);
+
+    // Persist updated var part
+    template.save(bigraphVar.getInstanceModel(), "/var");
+    canMatchAgain.set(true);
+});
+```
+
+At this point, the bigraph acts as a **digital shadow** of the ROS2 stream:
+`Ni.key` always contains the latest integer, which can be access when matching and rewriting the bigraph.

@@ -1,0 +1,48 @@
+---
+id: sa-database
+title: Database
+sidebar_position: 3
+---
+
+We now create the metamodel and persist three variants with Spring Data CDO:
+
+- `/drone` the drone part
+- `/var` the variable space part
+- `/composed` a composed bigraph (drone + var space)
+
+The important point is: we keep track of the CDOIDs so we can re-load and rewrite only parts later.
+
+```java
+private void prepareDatabase() throws Exception {
+    DynamicSignature sig = sig();
+    EPackage MM = createOrGetBigraphMetaModel(sig);
+
+    EPackage.Registry.INSTANCE.put(MM.getNsURI(), MM);
+    CDOPackageRegistry.INSTANCE.put(MM.getNsURI(), MM);
+    template.getCDOPackageRegistry().put(MM.getNsURI(), MM);
+
+    template.removeAll("/drone");
+    template.removeAll("/var");
+    template.removeAll("/composed");
+}
+```
+
+Then insert the three initial models:
+
+```java
+final EPackage MM = createOrGetBigraphMetaModel(sig());
+PureBigraph dronePartInit = droneModel();
+PureBigraph varPartInit   = varModel();
+PureBigraph compositeInit = merge(dronePartInit, varPartInit, true);
+
+// store in CDO under three roots
+dronePartInit = toBigraph(MM, template.insert(dronePartInit.getInstanceModel(), "/drone"), sig());
+varPartInit   = toBigraph(MM, template.insert(varPartInit.getInstanceModel(), "/var"), sig());
+compositeInit = toBigraph(MM, template.insert(compositeInit.getInstanceModel(), "/composed"), sig());
+
+// remember IDs so we can reload and overwrite them
+CDOID cdoIdDrone = CDOUtil.getCDOObject(dronePartInit.getInstanceModel()).cdoID();
+CDOID cdoIdVar   = CDOUtil.getCDOObject(varPartInit.getInstanceModel()).cdoID();
+```
+
+The method `merge()` composes the two bigraphs, closing the shared outer name `eref` if requested.
