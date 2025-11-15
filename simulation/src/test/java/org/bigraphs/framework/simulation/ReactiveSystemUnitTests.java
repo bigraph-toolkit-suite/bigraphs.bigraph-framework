@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dominik Grzelak
  */
 public class ReactiveSystemUnitTests {
-    //    private static PureBigraphFactory factory = pure();
+
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/basic/";
 
     @BeforeAll
@@ -77,7 +77,8 @@ public class ReactiveSystemUnitTests {
                 .and(ModelCheckingOptions.exportOpts()
                         .setPrintCanonicalStateLabel(true)
                         .setReactionGraphFile(new File(completePath.toUri()))
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "statesABB/"))
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
                 )
         ;
@@ -132,6 +133,7 @@ public class ReactiveSystemUnitTests {
                                 .setPrintCanonicalStateLabel(false)
                                 .setReactionGraphFile(new File(completePath.toUri()))
                                 .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                                .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                                 .create()
                 )
         ;
@@ -188,6 +190,7 @@ public class ReactiveSystemUnitTests {
                 .and(ModelCheckingOptions.exportOpts()
                         .setPrintCanonicalStateLabel(true)
                         .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png").toFile())
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
                 )
         ;
@@ -514,10 +517,10 @@ public class ReactiveSystemUnitTests {
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .add("Building", 0)
+                .add("Room", 1)
+                .add("Computer", 1)
+                .add("Job", 0)
         ;
 
         return (S) defaultBuilder.create();
@@ -526,8 +529,8 @@ public class ReactiveSystemUnitTests {
     private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignatureABB() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).status(ControlStatus.ATOMIC).assign()
-                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).status(ControlStatus.ATOMIC).assign()
+                .add("A", 1, ControlStatus.ATOMIC)
+                .add("B", 1, ControlStatus.ATOMIC)
         ;
 
         return (S) defaultBuilder.create();

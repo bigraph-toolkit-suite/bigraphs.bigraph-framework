@@ -197,9 +197,9 @@ public class RankedGraphEncodingTests {
     private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
-                .newControl().identifier(StringTypedName.of("M")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("K")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("L")).arity(FiniteOrdinal.ofInteger(2)).assign()
+                .add("M", 2)
+                .add("K", 1)
+                .add("L", 2)
         ;
 
         return (S) signatureBuilder.create();

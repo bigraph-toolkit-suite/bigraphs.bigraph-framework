@@ -110,7 +110,7 @@ public class BasicBigRedXmlWriteTests {
             bos.close();
 
             // Get the schema file directly from the bigred-core dependency
-            URL resource = org.bigraph.model.Signature.class.getClassLoader().getResource("resources/schema/signature.xsd");
+            URL resource = org.bigraph.model.Signature.class.getClassLoader().getResource("schema/signature.xsd");
             assertNotNull(resource);
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = sf.newSchema(resource);
@@ -124,10 +124,10 @@ public class BasicBigRedXmlWriteTests {
     private static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(3)).status(ControlStatus.ATOMIC).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(2)).status(ControlStatus.PASSIVE).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).status(ControlStatus.ACTIVE).assign()
-                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .add("Person", 3, ControlStatus.ATOMIC)
+                .add("Room", 2, ControlStatus.PASSIVE)
+                .add("User", 1, ControlStatus.ACTIVE)
+                .add("Computer", 0)
         ;
 
         return defaultBuilder.create();

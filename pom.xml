@@ -680,6 +680,12 @@
             </dependency>
             <!-- Test -->
             <dependency>
+                <groupId>org.bigraphs.testing</groupId>
+                <artifactId>bigraphs-testing</artifactId>
+                <version>0.1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${spring.boot.version}</version>

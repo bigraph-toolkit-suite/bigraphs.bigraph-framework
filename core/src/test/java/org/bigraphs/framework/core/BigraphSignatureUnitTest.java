@@ -369,17 +369,17 @@ public class BigraphSignatureUnitTest {
     }
 
 
-    public static <C extends Control<?, ?>> Signature<C> createExampleSignature() {
-        SignatureBuilder<StringTypedName, FiniteOrdinal<Integer>, ?, ?> defaultBuilder = new DynamicSignatureBuilder();
+    public static DynamicSignature createExampleSignature() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
+                .add("Printer", 2)
+                .add("User", 1)
+                .add("Room", 1)
+                .add("Spool", 1)
+                .add("Computer", 1)
+                .add("Job", 0);
 
-        return (Signature<C>) defaultBuilder.create();
+        return defaultBuilder.create();
     }
 
     @Test

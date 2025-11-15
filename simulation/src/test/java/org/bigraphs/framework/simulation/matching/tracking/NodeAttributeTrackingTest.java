@@ -20,6 +20,9 @@ import java.util.Map;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class NodeAttributeTrackingTest {
 
     @Test

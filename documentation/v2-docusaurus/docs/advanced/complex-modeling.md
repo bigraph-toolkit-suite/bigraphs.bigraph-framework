@@ -35,12 +35,12 @@ import org.bigraphs.framework.core.datatypes.*;
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 DynamicSignature signature = pureSignatureBuilder()
-        .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
-        .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-        .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-        .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(2)).assign()
-        .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-        .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(1)).assign()
+        .add("Building", 0)
+        .add("Room", 1)
+        .add("User", 1)
+        .add("Laptop", 2)
+        .add("Printer", 1)
+        .add("Job", 1)
         .create();
 PureBigraphBuilder<DynamicSignature> builder =
         pureBuilder(signature, "./my-meta-model.ecore");

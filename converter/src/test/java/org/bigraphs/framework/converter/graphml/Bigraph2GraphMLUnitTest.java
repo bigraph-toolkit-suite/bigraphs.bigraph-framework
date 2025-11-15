@@ -91,11 +91,11 @@ public class Bigraph2GraphMLUnitTest {
     private static DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = BigraphFactory.pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(4)).assign()
-                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(3)).assign()
-                .newControl().identifier(StringTypedName.of("C")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("D")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("E")).arity(FiniteOrdinal.ofInteger(0)).assign()
+                .add("A", 4)
+                .add("B", 3)
+                .add("C", 2)
+                .add("D", 1)
+                .add("E", 0)
         ;
         return defaultBuilder.create();
     }

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class JGraphTTests {
-    //TODO: add generics
+
     //TODO: write adapter for guava graph class: internally still jgrapht's core
     public static void main(String[] args) {
         System.out.println("JGraphT");

@@ -1,6 +1,5 @@
 package org.bigraphs.framework.simulation.matching.jlibbig;
 
-import org.bigraphs.framework.simulation.matching.AbstractUnitTestSupport;
 import it.uniud.mads.jlibbig.core.std.*;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class JLibBigUnitTest extends AbstractUnitTestSupport {
+/**
+ * @author Dominik Grzelak
+ */
+public class JLibBigUnitTest {
 
     @Test
     void test_01() {
@@ -19,6 +21,7 @@ public class JLibBigUnitTest extends AbstractUnitTestSupport {
 //        OuterName door = builder.addOuterName("a");
 //        InnerName doorLink = builder.addInnerName("a", door);
 //        builder.closeInnerName(doorLink);
+        
         Root root = builder.addRoot();
         Node building = builder.addNode("B", root);
         Node roomLeft = builder.addNode("R", building);
@@ -54,7 +57,6 @@ public class JLibBigUnitTest extends AbstractUnitTestSupport {
             System.out.println(juxtapose.toString());
             System.out.println(redex.toString());
             System.out.println(context.toString());
-            //redexImage juxtaposed redexId = redex
         }
 
         // rewrite ergebnis

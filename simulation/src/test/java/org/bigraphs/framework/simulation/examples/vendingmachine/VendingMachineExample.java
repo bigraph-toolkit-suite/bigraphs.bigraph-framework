@@ -59,8 +59,6 @@ import java.util.stream.StreamSupport;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
-import static java.util.stream.Collectors.groupingBy;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Example test case demonstrating the vending machine bigraph model.
@@ -86,222 +84,24 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         new File(TARGET_DUMP_PATH + "second/").mkdir();
     }
 
-    @Test
-    @Disabled
-    void test_single_rule() throws Exception {
-        PureBigraph agent = agent(2, 2, 1);
-        printMetaModel(agent);
-        eb(agent, "agent", true);
-
-        ReactionRule<PureBigraph> insertCoinRR = insertCoin();
-        eb(insertCoinRR.getRedex(), "insertCoinL");
-        eb(insertCoinRR.getReactum(), "insertCoinR");
-
-        ReactionRule<PureBigraph> insertCoinRR2 = new ParametricReactionRule<>(insertCoinRR.getReactum(), insertCoinRR.getReactum());
-
-
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
-        reactiveSystem.setAgent(agent);
-        reactiveSystem.addReactionRule(insertCoinRR);
-
-        PureBigraph validReaction = null;
-        PureBigraph validReaction2 = null;
-        PureBigraph param = null;
-        PureBigraph newAgent = null;
-        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<BigraphMatch<PureBigraph>> match2 = matcher.match(agent, insertCoinRR);
-        Iterator<BigraphMatch<PureBigraph>> iterator2 = match2.iterator();
-        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-        if (iterator2.hasNext()) {
-            PureBigraphParametricMatch match = (PureBigraphParametricMatch) iterator2.next();
-            Match jLibMatchResult = match.getJLibMatchResult();
-            PureBigraph context = decoder.decode(jLibMatchResult.getContext(), sig());
-            PureBigraph redex = decoder.decode(jLibMatchResult.getRedex(), sig());
-            PureBigraph redexImage = decoder.decode(jLibMatchResult.getRedexImage(), sig());
-            param = decoder.decode(jLibMatchResult.getParam(), sig());
-
-            eb(context, "context");
-            eb(redex, "redex");
-            eb(redex, "redexImage");
-            eb(param, "param");
-
-            validReaction = ops(redex).compose(param).getOuterBigraph();
-            eb(validReaction, "validReaction");
-
-            PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
-            b.makeGround();
-            eb(b.create(), "redex0");
-
-
-            newAgent = reactiveSystem.buildParametricReaction(agent, match, insertCoinRR);
-            eb(newAgent, "newAgent");
-        }
-        assert validReaction != null;
-        assert newAgent != null;
-        assert param != null;
-
-        MatchIterable<BigraphMatch<PureBigraph>> match3 = matcher.match(newAgent, insertCoinRR2);
-        Iterator<BigraphMatch<PureBigraph>> iterator3 = match3.iterator();
-        if (iterator3.hasNext()) {
-            PureBigraphParametricMatch match = (PureBigraphParametricMatch) iterator3.next();
-            Match jLibMatchResult = match.getJLibMatchResult();
-            PureBigraph context = decoder.decode(jLibMatchResult.getContext(), sig());
-            PureBigraph redex = decoder.decode(jLibMatchResult.getRedex(), sig());
-            PureBigraph redexImage = decoder.decode(jLibMatchResult.getRedexImage(), sig());
-            param = decoder.decode(jLibMatchResult.getParam(), sig());
-
-            eb(context, "context2");
-            eb(redex, "redex2");
-            eb(param, "param2");
-
-            validReaction2 = ops(redex).compose(param).getOuterBigraph();
-            eb(validReaction2, "validReaction2");
-
-            PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
-            b.makeGround();
-            eb(b.create(), "redex3");
-
-        }
-
-        IEqualityHelperFactory helperFactory = new DefaultEqualityHelperFactory() {
-            @Override
-            public org.eclipse.emf.compare.utils.IEqualityHelper createEqualityHelper() {
-                final LoadingCache<EObject, URI> cache = EqualityHelper.createDefaultCache(getCacheBuilder());
-                return new EqualityHelper(cache) {
-                    @Override
-                    public boolean matchingValues(Object object1, Object object2) {
-//                        if (object1 instanceof MyDataType && object2 instanceof MyDataType) {
-//                            // custom code
-//                        }
-                        return super.matchingValues(object1, object2);
-                    }
-                };
-            }
-        };
-
-        BigraphFileModelManagement.Store.exportAsInstanceModel(validReaction, new FileOutputStream(TARGET_DUMP_PATH + "first/model.xmi"));
-        BigraphFileModelManagement.Store.exportAsInstanceModel(validReaction2, new FileOutputStream(TARGET_DUMP_PATH + "second/model.xmi"));
-        // Compare state where match could not be applied and the state where it could be applied
-        URI uri1 = URI.createFileURI(TARGET_DUMP_PATH + "first/model.xmi");
-        URI uri2 = URI.createFileURI(TARGET_DUMP_PATH + "second/model.xmi");
-
-        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-
-        ResourceSet resourceSet1 = new ResourceSetImpl();
-        ResourceSet resourceSet2 = new ResourceSetImpl();
-
-//        resourceSet1.createResource(uri1);
-//        resourceSet2.createResource(uri2);
-        resourceSet1.getResource(uri1, true); //.getContents().add(agent.getInstanceModel());
-        resourceSet2.getResource(uri2, true); //.getContents().add(validReaction.getInstanceModel());
-
-        IEObjectMatcher matcherEObject = DefaultMatchEngine.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
-//        IEObjectMatcher matcherEObject = DefaultMatchEngine.createDefaultEObjectMatcher(UseIdentifiers.WHEN_AVAILABLE);
-        IComparisonScope scope = new DefaultComparisonScope(resourceSet2, resourceSet1, null);
-        IComparisonFactory comparisonFactory = new DefaultComparisonFactory(helperFactory);
-        IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl(matcherEObject, comparisonFactory);
-//        matchEngineFactory.setRanking(10);
-
-        IMatchEngine.Factory.Registry standaloneInstance = MatchEngineFactoryRegistryImpl.createStandaloneInstance();
-        standaloneInstance.add(matchEngineFactory);
-//        IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
-//        matchEngineRegistry.add(matchEngineFactory);
-
-
-//        Comparison comparison = EMFCompare.builder().build().compare(scope);
-        Comparison comparison = EMFCompare.builder()
-                .setMatchEngineFactoryRegistry(standaloneInstance)
-                .build().compare(scope);
-
-
-        Map<String, List<org.eclipse.emf.compare.Match>> bfs = bfs(comparison.getMatches().get(0));
-        System.out.println(bfs);
-        String nodeLabel = "Coin";
-        System.out.println(bfs.get(nodeLabel).get(0).eContainer());
-        System.out.println(bfs.get(nodeLabel).get(1).eContainer());
-        System.out.println("");
-
-        if (bfs.get(nodeLabel).get(0).getLeft() != null && bfs.get(nodeLabel).get(1).getRight() != null) {
-            // left is the current state, and right is the previous state
-            String parentNow = bfs.get(nodeLabel).get(0).getLeft().eContainer().eClass().getName();
-            String parentPrev = bfs.get(nodeLabel).get(1).getRight().eContainer().eClass().getName();
-            System.out.println(parentNow + " // " + parentPrev);
-            if (parentNow != parentPrev) {
-                StringBuilder sb = new StringBuilder("");
-                sb.append("In a tree structure, a node with label '").append(parentPrev).append("' has one child node with label '").append(nodeLabel).append("'.");
-                sb.append("\r\n");
-                sb.append("In a tree structure, a node with label '").append(parentNow).append("' has one child node with label '").append(nodeLabel).append("'.");
-                System.out.println(sb.toString());
-            }
-        }
-
-
-//        IComparisonScope scope = new DefaultComparisonScope(resourceSet1, resourceSet2, (Notifier)null); //EMFCompare.createDefaultScope(resourceSet1, resourceSet2);
-//        Comparison comparison = comparator.compare(scope);
-//        System.out.println(comparison);
-//        List<Diff> differences = comparison.getDifferences();
-
-//        Predicate<? super Diff> predicate = and(fromSide(DifferenceSource.LEFT), not(hasConflict(ConflictKind.REAL, ConflictKind.PSEUDO)));
-// Filter out the differences that do not satisfy the predicate
-//        Iterable<Diff> nonConflictingDifferencesFromLeft = filter(comparison.getDifferences(), predicate);
-//        Iterator<Diff> iterator = nonConflictingDifferencesFromLeft.iterator();
-//        while (iterator.hasNext()) {
-//            Diff next = iterator.next();
-//            System.out.println(next);
-//        }
+    private DynamicSignature sig() {
+        DynamicSignatureBuilder sb = pureSignatureBuilder();
+        DynamicSignature sig = sb
+                .add("Coin", 0)
+                .add("VM", 0)
+                .add("Button1", 0)
+                .add("Button2", 0)
+                .add("Pressed", 0)
+                .add("Coffee", 0)
+                .add("Container", 0)
+                .add("Tea", 0)
+                .add("PHD", 0)
+                .add("Wallet", 0)
+                .add("Tresor", 0)
+                .create();
+        return sig;
     }
 
-    public static Map<String, List<org.eclipse.emf.compare.Match>> bfs(org.eclipse.emf.compare.Match match) {
-        // Create a queue for BFS
-        Queue<org.eclipse.emf.compare.Match> queue = new LinkedList<>();
-        Map<String, List<org.eclipse.emf.compare.Match>> map = new HashMap<>();
-
-        List<org.eclipse.emf.compare.Match> significant = new ArrayList<>();
-
-        // Mark the start node as visited and enqueue it
-        Set<org.eclipse.emf.compare.Match> visited = new HashSet<>();
-        visited.add(match);
-        queue.offer(match);
-
-        while (!queue.isEmpty()) {
-            // Dequeue a vertex from queue and print it
-            org.eclipse.emf.compare.Match vertex = queue.poll();
-            System.out.print(vertex + " ");
-
-            // Get all adjacent vertices of the dequeued vertex
-            List<org.eclipse.emf.compare.Match> neighbors = StreamSupport.stream(
-                    match.getAllSubmatches().spliterator(), false
-            ).collect(Collectors.toList());
-
-
-            // If an adjacent vertex has not been visited, mark it as visited and enqueue it
-            for (org.eclipse.emf.compare.Match neighbor : neighbors) {
-                if (!visited.contains(neighbor)) {
-                    visited.add(neighbor);
-                    if (neighbor.getLeft() == null || neighbor.getRight() == null) {
-                        if (!neighbor.getAllSubmatches().iterator().hasNext() &&
-                                !neighbor.getDifferences().iterator().hasNext()) {
-                            if (neighbor.getLeft() != null) {
-                                String label = (String) neighbor.getLeft().eClass().getName();
-                                map.putIfAbsent(label, new ArrayList<>());
-                                map.get(label).add(neighbor);
-                            }
-                            if (neighbor.getRight() != null) {
-                                String label = (String) neighbor.getRight().eClass().getName();
-                                map.putIfAbsent(label, new ArrayList<>());
-                                map.get(label).add(neighbor);
-                            }
-                            significant.add(neighbor);
-                        }
-                    }
-                    queue.offer(neighbor);
-                }
-            }
-        }
-        return map;
-    }
-
-    //TODO: Example path predicate: if rule(1) is executed 2-times coffee was served 2-times, vice versa for tea
     @Test
     void simulate() throws Exception {
 
@@ -614,21 +414,219 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         return rr;
     }
 
-    private DynamicSignature sig() {
-        DynamicSignatureBuilder sb = pureSignatureBuilder();
-        DynamicSignature sig = sb
-                .add("Coin", 0)
-                .add("VM", 0)
-                .add("Button1", 0)
-                .add("Button2", 0)
-                .add("Pressed", 0)
-                .add("Coffee", 0)
-                .add("Container", 0)
-                .add("Tea", 0)
-                .add("PHD", 0)
-                .add("Wallet", 0)
-                .add("Tresor", 0)
-                .create();
-        return sig;
+
+    // "Backlog"
+
+    @Test
+    @Disabled
+    void test_single_rule() throws Exception {
+        PureBigraph agent = agent(2, 2, 1);
+        printMetaModel(agent);
+        eb(agent, "agent", true);
+
+        ReactionRule<PureBigraph> insertCoinRR = insertCoin();
+        eb(insertCoinRR.getRedex(), "insertCoinL");
+        eb(insertCoinRR.getReactum(), "insertCoinR");
+
+        ReactionRule<PureBigraph> insertCoinRR2 = new ParametricReactionRule<>(insertCoinRR.getReactum(), insertCoinRR.getReactum());
+
+
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
+        reactiveSystem.setAgent(agent);
+        reactiveSystem.addReactionRule(insertCoinRR);
+
+        PureBigraph validReaction = null;
+        PureBigraph validReaction2 = null;
+        PureBigraph param = null;
+        PureBigraph newAgent = null;
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+        MatchIterable<BigraphMatch<PureBigraph>> match2 = matcher.match(agent, insertCoinRR);
+        Iterator<BigraphMatch<PureBigraph>> iterator2 = match2.iterator();
+        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+        if (iterator2.hasNext()) {
+            PureBigraphParametricMatch match = (PureBigraphParametricMatch) iterator2.next();
+            Match jLibMatchResult = match.getJLibMatchResult();
+            PureBigraph context = decoder.decode(jLibMatchResult.getContext(), sig());
+            PureBigraph redex = decoder.decode(jLibMatchResult.getRedex(), sig());
+            PureBigraph redexImage = decoder.decode(jLibMatchResult.getRedexImage(), sig());
+            param = decoder.decode(jLibMatchResult.getParam(), sig());
+
+            eb(context, "context");
+            eb(redex, "redex");
+            eb(redex, "redexImage");
+            eb(param, "param");
+
+            validReaction = ops(redex).compose(param).getOuterBigraph();
+            eb(validReaction, "validReaction");
+
+            PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
+            b.makeGround();
+            eb(b.create(), "redex0");
+
+
+            newAgent = reactiveSystem.buildParametricReaction(agent, match, insertCoinRR);
+            eb(newAgent, "newAgent");
+        }
+        assert validReaction != null;
+        assert newAgent != null;
+        assert param != null;
+
+        MatchIterable<BigraphMatch<PureBigraph>> match3 = matcher.match(newAgent, insertCoinRR2);
+        Iterator<BigraphMatch<PureBigraph>> iterator3 = match3.iterator();
+        if (iterator3.hasNext()) {
+            PureBigraphParametricMatch match = (PureBigraphParametricMatch) iterator3.next();
+            Match jLibMatchResult = match.getJLibMatchResult();
+            PureBigraph context = decoder.decode(jLibMatchResult.getContext(), sig());
+            PureBigraph redex = decoder.decode(jLibMatchResult.getRedex(), sig());
+            PureBigraph redexImage = decoder.decode(jLibMatchResult.getRedexImage(), sig());
+            param = decoder.decode(jLibMatchResult.getParam(), sig());
+
+            eb(context, "context2");
+            eb(redex, "redex2");
+            eb(param, "param2");
+
+            validReaction2 = ops(redex).compose(param).getOuterBigraph();
+            eb(validReaction2, "validReaction2");
+
+            PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
+            b.makeGround();
+            eb(b.create(), "redex3");
+
+        }
+
+        IEqualityHelperFactory helperFactory = new DefaultEqualityHelperFactory() {
+            @Override
+            public org.eclipse.emf.compare.utils.IEqualityHelper createEqualityHelper() {
+                final LoadingCache<EObject, URI> cache = EqualityHelper.createDefaultCache(getCacheBuilder());
+                return new EqualityHelper(cache) {
+                    @Override
+                    public boolean matchingValues(Object object1, Object object2) {
+//                        if (object1 instanceof MyDataType && object2 instanceof MyDataType) {
+//                            // custom code
+//                        }
+                        return super.matchingValues(object1, object2);
+                    }
+                };
+            }
+        };
+
+        BigraphFileModelManagement.Store.exportAsInstanceModel(validReaction, new FileOutputStream(TARGET_DUMP_PATH + "first/model.xmi"));
+        BigraphFileModelManagement.Store.exportAsInstanceModel(validReaction2, new FileOutputStream(TARGET_DUMP_PATH + "second/model.xmi"));
+        // Compare state where match could not be applied and the state where it could be applied
+        URI uri1 = URI.createFileURI(TARGET_DUMP_PATH + "first/model.xmi");
+        URI uri2 = URI.createFileURI(TARGET_DUMP_PATH + "second/model.xmi");
+
+        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+
+        ResourceSet resourceSet1 = new ResourceSetImpl();
+        ResourceSet resourceSet2 = new ResourceSetImpl();
+
+        resourceSet1.getResource(uri1, true);
+        resourceSet2.getResource(uri2, true);
+
+        IEObjectMatcher matcherEObject = DefaultMatchEngine.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
+//        IEObjectMatcher matcherEObject = DefaultMatchEngine.createDefaultEObjectMatcher(UseIdentifiers.WHEN_AVAILABLE);
+        IComparisonScope scope = new DefaultComparisonScope(resourceSet2, resourceSet1, null);
+        IComparisonFactory comparisonFactory = new DefaultComparisonFactory(helperFactory);
+        IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl(matcherEObject, comparisonFactory);
+//        matchEngineFactory.setRanking(10);
+
+        IMatchEngine.Factory.Registry standaloneInstance = MatchEngineFactoryRegistryImpl.createStandaloneInstance();
+        standaloneInstance.add(matchEngineFactory);
+//        IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
+//        matchEngineRegistry.add(matchEngineFactory);
+
+
+//        Comparison comparison = EMFCompare.builder().build().compare(scope);
+        Comparison comparison = EMFCompare.builder()
+                .setMatchEngineFactoryRegistry(standaloneInstance)
+                .build().compare(scope);
+
+
+        Map<String, List<org.eclipse.emf.compare.Match>> bfs = bfs(comparison.getMatches().get(0));
+        System.out.println(bfs);
+        String nodeLabel = "Coin";
+        System.out.println(bfs.get(nodeLabel).get(0).eContainer());
+        System.out.println(bfs.get(nodeLabel).get(1).eContainer());
+        System.out.println("");
+
+        if (bfs.get(nodeLabel).get(0).getLeft() != null && bfs.get(nodeLabel).get(1).getRight() != null) {
+            // left is the current state, and right is the previous state
+            String parentNow = bfs.get(nodeLabel).get(0).getLeft().eContainer().eClass().getName();
+            String parentPrev = bfs.get(nodeLabel).get(1).getRight().eContainer().eClass().getName();
+            System.out.println(parentNow + " // " + parentPrev);
+            if (parentNow != parentPrev) {
+                StringBuilder sb = new StringBuilder("");
+                sb.append("In a tree structure, a node with label '").append(parentPrev).append("' has one child node with label '").append(nodeLabel).append("'.");
+                sb.append("\r\n");
+                sb.append("In a tree structure, a node with label '").append(parentNow).append("' has one child node with label '").append(nodeLabel).append("'.");
+                System.out.println(sb.toString());
+            }
+        }
+
+
+//        IComparisonScope scope = new DefaultComparisonScope(resourceSet1, resourceSet2, (Notifier)null); //EMFCompare.createDefaultScope(resourceSet1, resourceSet2);
+//        Comparison comparison = comparator.compare(scope);
+//        System.out.println(comparison);
+//        List<Diff> differences = comparison.getDifferences();
+
+//        Predicate<? super Diff> predicate = and(fromSide(DifferenceSource.LEFT), not(hasConflict(ConflictKind.REAL, ConflictKind.PSEUDO)));
+// Filter out the differences that do not satisfy the predicate
+//        Iterable<Diff> nonConflictingDifferencesFromLeft = filter(comparison.getDifferences(), predicate);
+//        Iterator<Diff> iterator = nonConflictingDifferencesFromLeft.iterator();
+//        while (iterator.hasNext()) {
+//            Diff next = iterator.next();
+//            System.out.println(next);
+//        }
+    }
+
+    public static Map<String, List<org.eclipse.emf.compare.Match>> bfs(org.eclipse.emf.compare.Match match) {
+        // Create a queue for BFS
+        Queue<org.eclipse.emf.compare.Match> queue = new LinkedList<>();
+        Map<String, List<org.eclipse.emf.compare.Match>> map = new HashMap<>();
+
+        List<org.eclipse.emf.compare.Match> significant = new ArrayList<>();
+
+        // Mark the start node as visited and enqueue it
+        Set<org.eclipse.emf.compare.Match> visited = new HashSet<>();
+        visited.add(match);
+        queue.offer(match);
+
+        while (!queue.isEmpty()) {
+            // Dequeue a vertex from queue and print it
+            org.eclipse.emf.compare.Match vertex = queue.poll();
+            System.out.print(vertex + " ");
+
+            // Get all adjacent vertices of the dequeued vertex
+            List<org.eclipse.emf.compare.Match> neighbors = StreamSupport.stream(
+                    match.getAllSubmatches().spliterator(), false
+            ).collect(Collectors.toList());
+
+
+            // If an adjacent vertex has not been visited, mark it as visited and enqueue it
+            for (org.eclipse.emf.compare.Match neighbor : neighbors) {
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    if (neighbor.getLeft() == null || neighbor.getRight() == null) {
+                        if (!neighbor.getAllSubmatches().iterator().hasNext() &&
+                                !neighbor.getDifferences().iterator().hasNext()) {
+                            if (neighbor.getLeft() != null) {
+                                String label = (String) neighbor.getLeft().eClass().getName();
+                                map.putIfAbsent(label, new ArrayList<>());
+                                map.get(label).add(neighbor);
+                            }
+                            if (neighbor.getRight() != null) {
+                                String label = (String) neighbor.getRight().eClass().getName();
+                                map.putIfAbsent(label, new ArrayList<>());
+                                map.get(label).add(neighbor);
+                            }
+                            significant.add(neighbor);
+                        }
+                    }
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        return map;
     }
 }

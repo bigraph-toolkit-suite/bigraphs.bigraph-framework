@@ -1,6 +1,7 @@
 package org.bigraphs.framework.visualization;
 
 import com.google.common.graph.Traverser;
+import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.graphstream.graph.Graph;
@@ -11,9 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static org.bigraphs.framework.core.utils.BigraphUtil.getUniqueIdOfBigraphEntity;
 
-public class GraphStreamTest implements BigraphUnitTestSupport {
+public class GraphStreamTest {
     static final String DUMP_PATH = "src/test/resources/dump/graphstream/random-graphs";
 
     @BeforeEach
@@ -90,5 +89,27 @@ public class GraphStreamTest implements BigraphUnitTestSupport {
         }
     }
 
+    void eb(Bigraph<?> bigraph, String name, String basePath) {
+        eb(bigraph, name, basePath, true);
+    }
+
+    void eb(Bigraph<?> bigraph, String name, String basePath, boolean asTree) {
+        try {
+            BigraphGraphvizExporter.toPNG(bigraph, asTree, new File(basePath + name + ".png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    Supplier<String> createNameSupplier(final String prefix) {
+        return new Supplier<>() {
+            private int id = 0;
+
+            @Override
+            public String get() {
+                return prefix + id++;
+            }
+        };
+    }
 
 }

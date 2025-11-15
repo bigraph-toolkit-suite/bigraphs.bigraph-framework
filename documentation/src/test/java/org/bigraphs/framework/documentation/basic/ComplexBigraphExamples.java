@@ -65,12 +65,12 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
     void building_and_combining_hierarchies() throws InvalidConnectionException, TypeNotExistsException, IOException {
         DynamicSignature signature = //createExampleSignature();
                 BigraphFactory.pureSignatureBuilder()
-                        .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                        .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                        .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                        .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                        .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                        .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                        .add("Building", 0)
+                        .add("Room", 1)
+                        .add("User", 1)
+                        .add("Laptop", 2)
+                        .add("Printer", 1)
+                        .add("Job", 1)
                         .create();
 
         PureBigraphBuilder<DynamicSignature> builder =
@@ -102,13 +102,13 @@ public class ComplexBigraphExamples extends BaseDocumentationGeneratorSupport {
     private DynamicSignature createExampleSignature() {
         DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
         signatureBuilder
-                .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign();
+                .add("Building", 2)
+                .add("Laptop", 2)
+                .add("Printer", 2)
+                .add("User", 1)
+                .add("Room", 1)
+                .add("Spool", 1)
+                .add("Job", 0);
 
         return signatureBuilder.create();
     }

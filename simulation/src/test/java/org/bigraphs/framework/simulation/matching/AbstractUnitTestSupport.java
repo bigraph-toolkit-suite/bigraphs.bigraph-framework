@@ -1,101 +1,65 @@
 package org.bigraphs.framework.simulation.matching;
 
 import com.google.common.base.Stopwatch;
+import it.uniud.mads.jlibbig.core.std.Match;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
 import org.bigraphs.framework.core.Bigraph;
-import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.simulation.matching.pure.PureBigraphParametricMatch;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.bigraphs.framework.core.factory.BigraphFactory.ops;
+/**
+ * @author Dominik Grzelak
+ */
+public interface AbstractUnitTestSupport {
 
-public class AbstractUnitTestSupport {
-    void exportGraph(Bigraph<?> big, String path) {
-        try {
-            BigraphGraphvizExporter.toPNG((PureBigraph) big,
-                    true,
-                    new File(path)
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next, String path) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
-        PureBigraph context = (PureBigraph) next.getContext();
-        PureBigraph redex = (PureBigraph) next.getRedex();
-        Bigraph contextIdentity = next.getContextIdentity();
-        Bigraph<DynamicSignature> identityForParams = next.getRedexIdentity();
-        if (contextIdentity != null) {
-            PureBigraph contextComposed = (PureBigraph) ops(context).parallelProduct(contextIdentity).getOuterBigraph();
-//            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
-//                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
-            BigraphGraphvizExporter.toPNG(contextComposed,
-                    true,
-                    new File(path + "contextComposed.png")
-            );
-        }
-
+    default void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next0, String path, int ix) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
+        PureBigraphParametricMatch next = (PureBigraphParametricMatch) next0;
+        Match result = next.getJLibMatchResult();
+        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+        PureBigraph context = decoder.decode(result.getContext());
+        PureBigraph redex = next.getRedex();
+        Bigraph redexImage = decoder.decode(result.getRedexImage());
+        PureBigraph redexId = decoder.decode(result.getRedexId());
 
         //This takes a lot if time!
-        System.out.println("Create png's");
+        System.out.println("Creating PNGs ...");
         Stopwatch timer = Stopwatch.createStarted();
         try {
             if (context != null)
                 BigraphGraphvizExporter.toPNG(context,
                         true,
-                        new File(path + "context.png")
+                        new File(path + "context-" + ix + ".png")
                 );
-//            System.out.println(convert);
             if (agent != null)
                 BigraphGraphvizExporter.toPNG(agent,
                         true,
-                        new File(path + "agent.png")
+                        new File(path + "agent-" + ix + ".png")
                 );
             if (redex != null)
                 BigraphGraphvizExporter.toPNG(redex,
                         true,
-                        new File(path + "redex.png")
+                        new File(path + "redex-" + ix + ".png")
                 );
-            if (contextIdentity != null)
-                BigraphGraphvizExporter.toPNG(contextIdentity,
+            if (redexImage != null)
+                BigraphGraphvizExporter.toPNG(redexImage,
                         true,
-                        new File(path + "identityForContext.png")
+                        new File(path + "redexImage-" + ix + ".png")
                 );
-            if (identityForParams != null)
-                BigraphGraphvizExporter.toPNG(identityForParams,
+            if (redexId != null)
+                BigraphGraphvizExporter.toPNG(redexId,
                         true,
-                        new File(path + "identityForParams.png")
+                        new File(path + "redexId-" + ix + ".png")
                 );
-
-//            BigraphComposite bigraphComposite = factory
-//                    .asBigraphOperator(identityForParams).parallelProduct(redex); //.compose();
-//            GraphvizConverter.toPNG(bigraphComposite.getOuterBigraph(),
-//                    true,
-//                    new File(path + "redexImage.png")
-//            );
-
-            AtomicInteger cnt = new AtomicInteger(0);
-//            next.getParameters().forEach(x -> {
-////                try {
-////                    BigraphGraphvizExporter.toPNG((PureBigraph) x,
-////                            true,
-////                            new File(path + "param_" + cnt.incrementAndGet() + ".png")
-////                    );
-////                } catch (IOException e) {
-////                    e.printStackTrace();
-////                }
-//
-//            });
             long elapsed = timer.stop().elapsed(TimeUnit.MILLISECONDS);
-            System.out.println("Create png's took (millisecs) " + elapsed);
+            System.out.println("Creating PNGs took (ms) " + elapsed);
         } catch (IOException e) {
             e.printStackTrace();
         }

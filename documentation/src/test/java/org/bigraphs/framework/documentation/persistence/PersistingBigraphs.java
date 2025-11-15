@@ -57,9 +57,9 @@ public class PersistingBigraphs extends BaseDocumentationGeneratorSupport {
 
     public void code_sample_one() throws IOException {
         DynamicSignature signature = pureSignatureBuilder()
-                .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("Laptop")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
+                .add("Building", 2)
+                .add("Laptop", 1)
+                .add("Printer", 2)
                 .create();
 
         createOrGetBigraphMetaModel(signature, EMetaModelData.builder()

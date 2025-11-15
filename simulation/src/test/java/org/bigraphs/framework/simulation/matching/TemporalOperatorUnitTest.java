@@ -22,21 +22,23 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions.transitionOpts;
 
-public class TemporalOperatorUnitTest extends AbstractUnitTestSupport {
+public class TemporalOperatorUnitTest implements AbstractUnitTestSupport {
 
     @Test
     void somewhereModality_test_00() throws ReactiveSystemException, BigraphSimulationException, InvalidReactionRuleException {
         // Create Pred.
         PureBigraph agent = createAgent();
         ReactionRule<PureBigraph> add = addItemRR();
-        SubBigraphMatchPredicate<PureBigraph> predicate = SubBigraphMatchPredicate.<PureBigraph>create(createPredicate());
+        SubBigraphMatchPredicate<PureBigraph> predicate = SubBigraphMatchPredicate.create(createPredicate());
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.setAgent(agent);
         reactiveSystem.addReactionRule(add);
         reactiveSystem.addPredicate(predicate);
         SomewhereModalityImpl somewhereModality = new SomewhereModalityImpl(predicate);
 
-        ModelCheckingOptions modOpts = ModelCheckingOptions.create().and(transitionOpts().setMaximumTransitions(10).create());
+        ModelCheckingOptions modOpts = ModelCheckingOptions.create()
+                .and(transitionOpts().setMaximumTransitions(10).create());
+
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
@@ -90,11 +92,9 @@ public class TemporalOperatorUnitTest extends AbstractUnitTestSupport {
     }
 
     private static DynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .newControl().identifier(StringTypedName.of("Container")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("Item")).arity(FiniteOrdinal.ofInteger(0)).assign()
-        ;
-        return defaultBuilder.create();
+        return pureSignatureBuilder()
+                .add("Container", 0)
+                .add("Item", 0)
+                .create();
     }
 }

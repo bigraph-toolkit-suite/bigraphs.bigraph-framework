@@ -68,7 +68,6 @@ public interface BigraphCanonicalFormSupport {
                 sb.replace(sb.length() - 1, sb.length(), "");
                 return sb.append('#').toString();
             });
-//    }
 
     static Supplier<String> createNameSupplier(final String prefix) {
         return new Supplier<>() {

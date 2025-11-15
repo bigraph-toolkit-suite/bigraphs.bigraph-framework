@@ -26,7 +26,20 @@ import java.io.IOException;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class ReactionRuleCreationUnitTest {
+
+    private DynamicSignature createSignature() {
+        return pureSignatureBuilder()
+                .add("Person", 2)
+                .add("Room", 2)
+                .add("User", 2)
+                .add("Computer", 2)
+                .create()
+                ;
+    }
 
     @Test
     void name() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException {
@@ -34,8 +47,7 @@ public class ReactionRuleCreationUnitTest {
                 .add("Room", 0)
                 .add("Computer", 1)
                 .add("Job", 0)
-                .create()
-                ;
+                .create();
         // Redex builder
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         // Reactum builder
@@ -88,19 +100,4 @@ public class ReactionRuleCreationUnitTest {
         AbstractReactionRule.ReactiveSystemBoundReactionRule<PureBigraph> rrBounded = pureBigraphParametricReactionRule.withReactiveSystem(reactiveSystem);
         Assertions.assertTrue(rrBounded.isRedexSimple());
     }
-
-
-    private DynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(2)).assign()
-                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(2)).assign()
-        ;
-
-        return defaultBuilder.create();
-    }
-
-
 }

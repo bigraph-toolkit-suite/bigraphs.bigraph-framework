@@ -14,8 +14,21 @@ import org.junit.jupiter.api.Test;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class RuleCompositionTest implements BigraphUnitTestSupport {
     private final static String DUMP = "src/test/resources/dump/rulecomposition/";
+
+    private DynamicSignature sig() {
+        return pureSignatureBuilder()
+                .add("A", 1)
+                .add("B", 1)
+                .add("C", 1)
+                .add("D", 1)
+                .create()
+                ;
+    }
 
     @Test
     void test_rule_parallelProduct_01() throws InvalidReactionRuleException, IncompatibleInterfaceException {
@@ -36,7 +49,7 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
         assert product.getLabel().equals("R1_PP_R2");
 
         System.out.println(product.getTrackingMap());
-        product.getInstantationMap().getMappings().forEach((k,v) -> {
+        product.getInstantationMap().getMappings().forEach((k, v) -> {
             System.out.println(k.getValue() + " --> " + v.getValue());
         });
     }
@@ -100,16 +113,4 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
         rr.withInstantiationMap(iMap);
         return rr;
     }
-
-    private DynamicSignature sig() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("A", 1)
-                .add("B", 1)
-                .add("C", 1)
-                .add("D", 1)
-        ;
-        return defaultBuilder.create();
-    }
-
 }

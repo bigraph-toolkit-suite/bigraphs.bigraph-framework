@@ -129,7 +129,6 @@ public abstract class BaseDocumentationGeneratorSupport {
                 generateCodeBlockOutput(codeBlocks, n);
             }
         }
-//                super.visit(n, arg);
     }
 
     private class StatementVisitor extends VoidVisitorAdapter<Node> {
@@ -142,11 +141,7 @@ public abstract class BaseDocumentationGeneratorSupport {
                 currentPosition = positionStack.poll();
                 codeBlocks.add(new CodeBlock(new ArrayList<>()));
             }
-//            if (declarator.getBegin().get().line > currentPosition.a.line &&
-//                    declarator.getBegin().get().line < currentPosition.b.line) {
-//            System.out.println("vardeck:\t" + declarator.getExpression().toString());
             codeBlocks.get(codeBlocks.size() - 1).addLine(declarator.getExpression().toString());
-//            }
         }
     }
 

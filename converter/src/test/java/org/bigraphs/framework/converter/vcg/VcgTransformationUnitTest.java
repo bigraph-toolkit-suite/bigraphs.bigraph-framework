@@ -19,6 +19,9 @@ import java.io.IOException;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class VcgTransformationUnitTest {
     private static final String DUMP_TARGET = "src/test/resources/dump/";
 
@@ -69,8 +72,6 @@ public class VcgTransformationUnitTest {
                 .down().child(signature.getControlByName("Job")).child(signature.getControlByName("User")).linkOuter(jeff2)
                 .up().up();
 
-//        builder.closeAllInnerNames();
-//        builder.makeGround();
         return builder.create();
     }
 
@@ -86,15 +87,6 @@ public class VcgTransformationUnitTest {
                 .add("Job", 0)
                 .add("A", 1)
                 .add("B", 1)
-//                .newControl().identifier(StringTypedName.of("Printer")).arity(FiniteOrdinal.ofInteger(2)).assign()
-//                .newControl().identifier(StringTypedName.of("Building")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("Spool")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("Job")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("A")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("B")).arity(FiniteOrdinal.ofInteger(1)).assign();
         ;
         return (S) defaultBuilder.create();
     }

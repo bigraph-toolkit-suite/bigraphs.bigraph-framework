@@ -1,8 +1,6 @@
 package org.bigraphs.framework.converter.bigrapher;
 
 import org.bigraphs.framework.converter.PureReactiveSystemStub;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
@@ -107,10 +105,10 @@ public class TraceabilityExample {
     private DynamicSignature createSignature() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
-                .newControl().identifier(StringTypedName.of("Person")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Room")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("User")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Computer")).arity(FiniteOrdinal.ofInteger(1)).assign()
+                .add("Person", 1)
+                .add("Room", 1)
+                .add("User", 1)
+                .add("Computer", 1)
         ;
 
         return defaultBuilder.create();
