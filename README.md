@@ -33,6 +33,7 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
     - Interactive visualization via GraphStream
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
     - Bigraph matching and rewriting via [jLibBig](https://bigraphs.github.io/jlibbig/)
+    - Dedicated subhypergraph matching on link graphs (query-data matching)
     - Generation of a labeled transition system (LTS)
     - Simulation and Model Checking (BFS, Random)
     - Predicate checking
@@ -49,8 +50,8 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
 **Requirements**
 - Java >=17 (JDK)
 - Maven / Gradle
-- Graphviz for the visualization module
-  - Ubuntu 20.04/22.04: `sudo apt install graphviz`
+- Graphviz for the `bigraph-visualization` module
+  - Ubuntu: `sudo apt install graphviz`
 
 ## Getting Started
 
@@ -150,6 +151,28 @@ composite.juxtapose(F);
 composite.juxtapose(F).parallelProduct(H);
 ```
 
+### A User-Friendly API for the Bigraph Ecore Metamodel (BEM)
+
+- Internally, bigraphs are described by a metamodel based on Ecore.
+  The project can be found in this [GitHub repository](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel).
+- To create concrete bigraphs, a signature must be provided.
+  To do so, this metamodel is extended when creating a new bigraphical signature which is then called "metamodel over a signature" of an abstract bigraph (described by the Ecore model).
+  We say that the signature is mapped to the metamodel over a signature.
+  From that, multiple instance models can be created where the instance bigraph relates to the signature _S_, thus, corresponds to the metamodel over the signature _S_.
+- Extending the metamodel with a signature by hand is time-consuming
+  especially when many models are created. The framework allows to create
+  bigraphs dynamically at runtime by letting the user providing a description
+  of the signature. The metamodel over a signature is kept in memory and
+  instances can be created from it. As a result, the bigraph metamodel must
+  not be touched manually. Both the metamodel over a signature and the
+  instance model can be stored on the filesystem.
+- That very metamodel serves only as a data model for the *Bigraph Framework*
+  which provides additional functionality and a user-friendly API for the
+  creation and simulation of bigraphical reactive systems. Furthermore, we
+  achieve Separation of concerns: The metamodel itself is implementation-agnostic.
+  The Bigraph Framework adds specific behavior superimposed upon this meta
+  model. Meaning, the implementation-specific details are kept out from the metamodel.
+
 ## Project Configuration
 
 > See also <a href="#Building-the-Framework-from-Source">Building from Source</a> if you want to build the source by yourself and host them in your Maven local repository.
@@ -226,57 +249,6 @@ Depending on your project setup, you may need to include the following libraries
 ```
 
 The example above shows how to use log4j2 in your project as the underlying logging framework.
-
-## Module Details
-
-A brief description of each module's purpose is given below.
-
-### bigraph-core
-
-- Provides builders, factories and interfaces to create concrete bigraphs and elementary bigraphs.
-- Concrete Bigraphs and their metamodel (with the signature only) can be written/loaded to/from the file system.
-
-### bigraph-simulation
-
-- Simulate bigraphs by creating bigraphical reactive systems, reaction rules and agents.
-- Check a system according to some specification by defining various types of predicates.
-
-### bigraph-visualization
-
-- Provides simple means to export bigraphs and transition systems as graphic files.
-- Currently, DOT is used in combination with GraphViz. Bigraphs can be exported as `*.png` and `*.jpg`.
-
-**Requirements**
-
-In order to use the functionality of the visualization module, the following tools must be installed on the machine:
-- Graphviz: `apt install -y graphviz`
-
-### bigraph-converter
-
-- Provides several ways to convert bigraphs into other representations.
-- For example, bigraphs to GraphML format, BigraphER's specification language or BigMC's term language.
-
-### A User-Friendly API for the Bigraph Ecore Metamodel (BEM)
-
-- Internally, bigraphs are described by a metamodel based on Ecore.
-  The project can be found in this [GitHub repository](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel).
-- To create concrete bigraphs, a signature must be provided.
-  To do so, this metamodel is extended when creating a new bigraphical signature which is then called "metamodel over a signature" of an abstract bigraph (described by the Ecore model).
-  We say that the signature is mapped to the metamodel over a signature.
-  From that, multiple instance models can be created where the instance bigraph relates to the signature _S_, thus, corresponds to the metamodel over the signature _S_.
-- Extending the metamodel with a signature by hand is time-consuming
-  especially when many models are created. The framework allows to create
-  bigraphs dynamically at runtime by letting the user providing a description
-  of the signature. The metamodel over a signature is kept in memory and
-  instances can be created from it. As a result, the bigraph metamodel must
-  not be touched manually. Both the metamodel over a signature and the
-  instance model can be stored on the filesystem.
-- That very metamodel serves only as a data model for the *Bigraph Framework*
-  which provides additional functionality and a user-friendly API for the
-  creation and simulation of bigraphical reactive systems. Furthermore, we
-  achieve Separation of concerns: The metamodel itself is implementation-agnostic.
-  The Bigraph Framework adds specific behavior superimposed upon this meta
-  model. Meaning, the implementation-specific details are kept out from the metamodel.
 
 ## Development
 
@@ -379,5 +351,5 @@ a Java library for bigraphical reactive systems, which is licensed under the **G
 
 In full compliance with LGPL-2.1:
 - The jLibBig code is not obfuscated or renamed.
-- You may replace or modify jLibBig using the standard Maven build process.
+- You may  modify jLibBig or replace it using the standard Maven build process.
 - Modifications are documented in: [`NOTICE-jlibbig.txt`](./etc/libs/jlibbig-0.0.4/NOTICE-jlibbig.txt).
