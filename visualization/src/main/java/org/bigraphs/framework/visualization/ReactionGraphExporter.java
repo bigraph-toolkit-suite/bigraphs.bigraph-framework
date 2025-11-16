@@ -17,8 +17,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-//TODO a dot exporter for reaction graphs? https://github.com/bigmc/bigmc/blob/master/src/graph.cpp next to JGraphT
-
 /**
  * A graphics exporter for reaction graphs.
  *

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class LinkGraphMatchingTests implements org.bigraphs.testing.BigraphUnitTestSupport, BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
 
-    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/bpmtest/framework/";
+    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/lgm/";
 
     public LinkGraphMatchingTests() {
     }
@@ -51,6 +51,7 @@ public class LinkGraphMatchingTests implements org.bigraphs.testing.BigraphUnitT
         return defaultBuilder.create();
     }
 
+    // Use Page-Up/Page-Down Buttons and Arrow-Keys to navigate in the GUI
     @Test
     void query_data_matching() throws Exception {
         // Create Data Graph
