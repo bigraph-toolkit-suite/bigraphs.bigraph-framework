@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Bigraph Toolkit Suite Developers
+ * Copyright (c) 2021-2025 Bigraph Toolkit Suite Developers
  * Main Developer: Dominik Grzelak
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
