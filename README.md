@@ -48,10 +48,11 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
     - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 **Requirements**
+
 - Java >=17 (JDK)
 - Maven / Gradle
 - Graphviz for the `bigraph-visualization` module
-  - Ubuntu: `sudo apt install graphviz`
+    - Ubuntu: `sudo apt install graphviz`
 
 ## Getting Started
 
@@ -69,11 +70,7 @@ DynamicSignature signature = pureSignatureBuilder()
                 // Straightforward:
                 .add("A", 0)
                 .add("C", 1)
-                // More verbose:
-                .newControl()
-                  .identifier(StringTypedName.of("User"))
-                  .arity(FiniteOrdinal.ofInteger(1))
-                  .status(ControlStatus.ATOMIC).assign()
+                .add("User", 1, ControlStatus.ATOMIC)
                 .create();
 
 // Create two bigraphs
@@ -175,6 +172,8 @@ composite.juxtapose(F).parallelProduct(H);
 
 ## Project Configuration
 
+> All parts of Bigraph Framework are available from the [Central Repository](https://central.sonatype.com/).
+
 > See also <a href="#Building-the-Framework-from-Source">Building from Source</a> if you want to build the source by yourself and host them in your Maven local repository.
 
 ### Maven
@@ -252,7 +251,7 @@ The example above shows how to use log4j2 in your project as the underlying logg
 
 ## Development
 
-### Build Configuration
+### Requirements
 
 It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://maven.apache.org/tools/wrapper/) or the regular `mvn` command.
 
@@ -261,6 +260,7 @@ It is not necessary to build from source to use *Bigraph Framework* but if you w
 The recommendation here is to build it with the regular `mvn` command.
 
 On Debian systems you can install it by issuing the following command:
+
 ```shell
 $ sudo apt install maven
 ```
@@ -272,6 +272,7 @@ See [Installation](https://maven.apache.org/install.html) for other options.
 **Initialize**
 
 The following command has to be run once:
+
 ```shell
 $ mvn initialize
 ```
@@ -283,6 +284,7 @@ These are required for the development.
 **Build/Install**
 
 One of the following commands must be executed from the root directory of this project:
+
 ```bash
 # Default
 $ mvn clean install -DskipTests
@@ -294,8 +296,6 @@ $ mvn clean install -DskipTests -PfatJar
 After the command successfully finishes, you can now use _Bigraph Framework_ in other Java projects.
 All modules of _Bigraph Framework_ have been installed in the local Maven repository.
 Therefore, see [Maven configuration](#maven) on how to include the individual _Bigraph Framework_ dependencies.
-
-> **Note:** All parts of Bigraph Framework are also deployed to the [Maven Central Repository](https://central.sonatype.com/).
 
 ### Building the Documentation: User Manual
 
@@ -318,39 +318,36 @@ Then, open the browser at `http://localhost:3000/software/bigraph-framework/`.
 The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system
 (see [Development-and-Deployment.md](etc/Development-and-Deployment.md)).
 
-### Further Development and Deployment Instructions
+### Deployment
 
-See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more issues regarding the development and deployment of _Bigraph Framework_.
+To deploy Bigraph Framework to the [Central Repository](https://central.sonatype.com/):
 
-To deploy Bigraph Framework to the [Maven Central Repository](https://central.sonatype.com/):
 ```bash
 $ mvn clean deploy -DskipTests -P release,central
 ```
 
+See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details concerning the
+development and deployment of _Bigraph Framework_.
+
 ## License
 
-**Bigraph Framework** is Open Source software released under the Apache 2.0 license.
+**Bigraph Framework** is Open Source software released under the [Apache 2.0 license](LICENSE).
 
-```text
-Copyright 2021-present Bigraph Toolkit Suite Developers.
+You should have received a copy of the Apache 2.0 License along with this program. If not, see https://www.apache.org/licenses/LICENSE-2.0.html.
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+Copyright (c) 2019-2025 Bigraph Toolkit Suite Developers (Main Developer: Dominik Grzelak)
+ 
+### Third Party Licenses
 
- http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-```
+This report lists all third-party dependencies of the
+project: [documentation/documentation/v2-docusaurus/static/third-party-licenses-report/third-party-report.html](documentation/documentation/v2-docusaurus/static/third-party-licenses-report/third-party-report.html)
 
 The simulation module of **Bigraph Framework** includes and shades [jLibBig](https://github.com/bigraphs/jlibbig),
-a Java library for bigraphical reactive systems, which is licensed under the **GNU Lesser General Public License, version 2.1 only (LGPL-2.1-only)**.
+a Java library for bigraphical reactive systems, which is licensed under the **GNU Lesser General Public License,
+version 2.1 only (LGPL-2.1-only)**.
 
 In full compliance with LGPL-2.1:
 - The jLibBig code is not obfuscated or renamed.
-- You may  modify jLibBig or replace it using the standard Maven build process.
+- You may modify jLibBig or replace it using the standard Maven build process.
 - Modifications are documented in: [`NOTICE-jlibbig.txt`](./etc/libs/jlibbig-0.0.4/NOTICE-jlibbig.txt).
+
