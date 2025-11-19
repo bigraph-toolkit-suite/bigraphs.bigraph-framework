@@ -240,6 +240,49 @@
                 <!--                        </execution>-->
                 <!--                    </executions>-->
                 <!--                </plugin>-->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.7.0</version>
+                    <configuration>
+                        <outputDirectory>${project.basedir}/documentation/v2-docusaurus/static/license</outputDirectory>
+                        <outputFileName>index</outputFileName>
+                        <licenseMerges>
+                            <licenseMerge>Apache Software License, Version 2.0|The Apache Software License, Version
+                                2.0|Apache License, Version 2.0|Apache Public License 2.0|Apache License Version 2.0|The
+                                Apache Software License, version 2.0|Apache License version 2.0|Apache Software License,
+                                version 2.0|Apache-2.0|Apache 2
+                            </licenseMerge>
+                            <licenseMerge>Apache Software License, Version 2.0|Apache 2.0|Apache2.0|Apache License
+                                2.0|Apache Software License - Version 2.0|The Apache License, Version 2.0
+                            </licenseMerge>
+                            <licenseMerge>The MIT License (MIT)|The MIT License|MIT License|MIT license|MIT
+                            </licenseMerge>
+                            <licenseMerge>Eclipse Public License - Version 2.0|EPL 2.0|EPL-2.0|Eclipse Public License - v 2.0</licenseMerge>
+                            <licenseMerge>Eclipse Distribution License - v 1.0|EDL 1.0</licenseMerge>
+                            <licenseMerge>GPL2 w/ CPE|GNU General Public License, version 2 (GPL2), with the classpath
+                                exception
+                            </licenseMerge>
+                            <licenseMerge>BSD License 2.0|New BSD License</licenseMerge>
+                            <licenseMerge>BSD 3-Clause|BSD License 3.0|The BSD 3-Clause License|BSD-3-Clause
+                            </licenseMerge>
+                        </licenseMerges>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>aggregate-add-third-party</id>
+                            <goals>
+                                <goal>aggregate-add-third-party</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>aggregate-third-party-report</id>
+                            <goals>
+                                <goal>aggregate-third-party-report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -755,6 +798,10 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -788,7 +835,7 @@
                                     <additionalJOptions>--allow-script-in-comments</additionalJOptions>
                                     <!-- all, none, html-->
                                     <doclint>${doclint}</doclint>
-<!--                                    <destDir>./</destDir>-->
+                                    <!--                                    <destDir>./</destDir>-->
                                     <author>true</author>
                                     <bottom>Copyright &#169; 2021-present. Dominik Grzelak, Software Technology Group,
                                         Technische Universität Dresden. All rights reserved.

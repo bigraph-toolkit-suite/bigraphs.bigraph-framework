@@ -81,6 +81,11 @@ const config = {
                         position: 'left'
                     },
                     {
+                        to: 'https://www.bigraphs.org/software/bigraph-framework/license/aggregate-third-party-report.html',
+                        label: 'Licenses',
+                        position: 'left'
+                    },
+                    {
                         href: 'https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework',
                         label: 'GitHub',
                         position: 'right',

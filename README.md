@@ -307,6 +307,7 @@ at `documentation/v2-docusaurus/`:
 
 ```shell
 $ mvn clean package -DskipTests
+$ mvn license:aggregate-third-party-report
 $ cd ./documentation/v2-docusaurus/
 $ nvm use 20.18.1
 $ npm run start

@@ -82,31 +82,42 @@ The output is exported to `documentation/v2-docusaurus/build/`.
 
 #### Auto-generated Code Samples
 
-- Some of the code samples used in the documentation are automatically derived from the test cases and merged into the documentation
-- The module `documentation` is in charge of that
+- Some of the code samples used in the documentation are automatically derived from the test cases and merged into the documentation for which the module `documentation` is in charge
 - Execute the following Maven goal (from the root of this project) to just create the code samples: 
-  - ```shell 
-    mvn exec:java -f documentation/pom.xml
-    ```
 
-### Build the whole documentation
+```shell 
+$ mvn exec:java -f documentation/pom.xml
+```
+
+#### License Report
+
+Generate license report, which is included in the documentation from the root of this project:
+
+```shell
+$ mvn license:aggregate-third-party-report
+```
+
+
+### Summary: How to Build the Whole Documentation
 
 Execute from the root of this project the following commands:
 ```shell
-mvn clean install -DskipTests
-mvn package -P distribute -DskipTests                  # creation and aggregation of JavaDocs 
-nvm install 20.18.1                                        # install node version 20.18.1 if not already installed
-nvm use 20.18.1                                            # switch to this node version (needed for docusaurus)
-npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
-mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
+$ mvn clean install -DskipTests
+$ mvn package -P distribute -DskipTests                 # creation and aggregation of JavaDocs 
+$ mvn license:aggregate-third-party-report              # Generate license report
+$ nvm install 20.18.1                                   # install node version 20.18.1 if not already installed
+$ nvm use 20.18.1                                       # switch to this node version (needed for docusaurus)
+$ npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
+$ mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
 ```
 
 The generated user manual is available from `documentation/v2-docusaurus/build/`.
 Use `npm run serve` inside the folder to start a webserver for reviewing the website.
 
 The generated Java documentation of all modules is available from `target/site/apidocs/`.
-This aggregated API (i.e., the merged result of all submodules) will be copied to `documentation/v2-docusaurus/static/apidocs`.
+This aggregated API (i.e., the merged result of all submodules) will be copied to `documentation/v2-docusaurus/static/apidocs/`.
 
+The license report is located under: `documentation/v2-docusaurus/static/third-party-licenses-report/`.
 ## Deployment
 
 This section discusses the deployment process.
