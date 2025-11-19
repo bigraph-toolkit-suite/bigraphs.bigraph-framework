@@ -12,12 +12,28 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Dominik Grzelak
  */
 public class SubHypergraphIsoSearch {
+
+    /**
+     * Structure for an embedding.
+     * Maps a query node to a host/data node.
+     */
+    public static class Embedding extends HashMap<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>> {
+
+        public Embedding() {
+        }
+
+        public Embedding(Map<? extends BigraphEntity.NodeEntity<?>, ? extends BigraphEntity.NodeEntity<?>> m) {
+            super(m);
+        }
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private final Bigraph<?> redex;
     private final Bigraph<?> agent;
 
@@ -108,11 +124,10 @@ public class SubHypergraphIsoSearch {
 
     private float freq(Bigraph<?> agent, BigraphEntity.NodeEntity<Control<?, ?>> redexNode) {
         String label = ihsFilter.getLabel(redexNode);
-        float sameLabelInAgent = agent.getNodes().stream().filter(x -> x.getControl().getNamedType().stringValue().equals(label)).count() * 1.0f;
-        return sameLabelInAgent;
+        return agent.getNodes().stream().filter(x -> x.getControl().getNamedType().stringValue().equals(label)).count() * 1.0f;
     }
 
-    private boolean candidateGen(BigraphEntity.NodeEntity<Control<?, ?>> u_s, BigraphEntity.NodeEntity<Control<?, ?>> v_s) {
+    private boolean candidateGen(BigraphEntity.NodeEntity<?> u_s, BigraphEntity.NodeEntity<?> v_s) {
         if (agent.getPortCount(v_s) > 0 && redex.getPortCount(u_s) > 0) {
             if (ihsFilter.condition1(u_s, v_s) &&
                     ihsFilter.condition2(u_s, v_s) &&
@@ -170,12 +185,12 @@ public class SubHypergraphIsoSearch {
 
     private boolean allCandidateNodesHaveValues(final MutableMap<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> candidates) {
         for (List<BigraphEntity.NodeEntity<?>> each : candidates.values()) {
-            if (each == null || each.size() == 0) return false;
+            if (each == null || each.isEmpty()) return false;
         }
         return true;
     }
 
-    private void recursiveSearch3(BigraphEntity.NodeEntity u_s, LinkedList<BigraphEntity.NodeEntity<?>> cands, int index, Embedding emb) {
+    private void recursiveSearch3(BigraphEntity.NodeEntity<?> u_s, LinkedList<BigraphEntity.NodeEntity<?>> cands, int index, Embedding emb) {
         if (index > cands.size()) return;
         if (emb.size() == candidates.size() && allEmbeddingsNonNull(emb)) {
             int singleMatchCnt = 0;
@@ -184,8 +199,8 @@ public class SubHypergraphIsoSearch {
                 List<BigraphEntity.NodeEntity<?>> incidentNodesRedex = getIncidentNodesOf(next.getKey(), redex);
                 List<BigraphEntity.NodeEntity<?>> incidentNodesAgent = getIncidentNodesOf(next.getValue(), agent);
 
-                List<BigraphEntity.NodeEntity<?>> collect = incidentNodesAgent.stream().filter(emb::containsValue).collect(Collectors.toList());
-                List<? extends BigraphEntity.NodeEntity<?>> collect1 = emb.entrySet().stream().filter(e -> collect.stream().anyMatch(x -> e.getValue().equals(x))).map(Map.Entry::getKey).collect(Collectors.toList());
+                List<BigraphEntity.NodeEntity<?>> collect = incidentNodesAgent.stream().filter(emb::containsValue).toList();
+                List<? extends BigraphEntity.NodeEntity<?>> collect1 = emb.entrySet().stream().filter(e -> collect.stream().anyMatch(x -> e.getValue().equals(x))).map(Map.Entry::getKey).toList();
                 if (collect1.size() == incidentNodesRedex.size()) {
                     singleMatchCnt++;
                 }
@@ -215,7 +230,7 @@ public class SubHypergraphIsoSearch {
         for (BigraphEntity.Link x : incidentHyperedges) {
             Collection<BigraphEntity<?>> pointsFromLink = bigraph.getPointsFromLink(x);
             for (BigraphEntity<?> p : pointsFromLink) {
-                if (BigraphEntityType.isPort((BigraphEntity) p)) {
+                if (BigraphEntityType.isPort(p)) {
                     BigraphEntity.NodeEntity<Control<?, ?>> nodeOfPort = bigraph.getNodeOfPort((BigraphEntity.Port) p);
                     if (!nodeOfPort.equals(node) && !collector.contains(nodeOfPort)) {
                         collector.add(nodeOfPort);
@@ -228,15 +243,5 @@ public class SubHypergraphIsoSearch {
 
     public MutableMap<BigraphEntity.NodeEntity<?>, List<BigraphEntity.NodeEntity<?>>> getCandidates() {
         return candidates;
-    }
-
-    public static class Embedding extends HashMap<BigraphEntity.NodeEntity<?>, BigraphEntity.NodeEntity<?>> {
-
-        public Embedding() {
-        }
-
-        public Embedding(Map<? extends BigraphEntity.NodeEntity<?>, ? extends BigraphEntity.NodeEntity<?>> m) {
-            super(m);
-        }
     }
 }
