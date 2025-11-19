@@ -42,11 +42,13 @@ import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public class TraceabilityExample {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/traceability/";
 

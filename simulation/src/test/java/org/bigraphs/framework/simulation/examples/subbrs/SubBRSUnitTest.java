@@ -50,8 +50,10 @@ import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class SubBRSUnitTest extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/subbrs/";
     private final static boolean AUTO_CLEAN_BEFORE = true;

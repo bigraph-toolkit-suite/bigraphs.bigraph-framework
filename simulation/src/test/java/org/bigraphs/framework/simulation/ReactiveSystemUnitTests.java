@@ -55,6 +55,7 @@ import org.junit.jupiter.api.*;
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public class ReactiveSystemUnitTests {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/basic/";

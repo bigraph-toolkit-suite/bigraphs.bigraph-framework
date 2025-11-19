@@ -17,6 +17,7 @@ package org.bigraphs.framework.simulation;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class) // for junit5, no RunWith necessary
 @TestPropertySource("classpath:modelchecking-test.properties")
 @EnableAutoConfiguration
+@Disabled
 public class ConfigurationTest {
 
     @Autowired

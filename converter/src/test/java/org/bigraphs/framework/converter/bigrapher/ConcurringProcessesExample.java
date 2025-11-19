@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Test;
 public class ConcurringProcessesExample {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/processes/";
-//    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {

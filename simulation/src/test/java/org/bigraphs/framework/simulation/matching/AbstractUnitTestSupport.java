@@ -27,10 +27,12 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.simulation.matching.pure.PureBigraphParametricMatch;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public interface AbstractUnitTestSupport {
 
     default void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next0, String path, int ix) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {

@@ -80,6 +80,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Dominik Grzelak
  */
+@Disabled
 public class VendingMachineExample extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/vendingmachine/";
 

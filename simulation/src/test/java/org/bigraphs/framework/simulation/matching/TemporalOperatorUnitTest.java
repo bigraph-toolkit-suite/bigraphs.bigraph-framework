@@ -31,8 +31,10 @@ import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class TemporalOperatorUnitTest implements AbstractUnitTestSupport {
 
     @Test

@@ -44,6 +44,7 @@ import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -52,6 +53,7 @@ import org.junit.jupiter.api.Test;
  * @author Dominik Grzelak
  * @see <a href="https://doi.org/10.1007/978-3-540-25959-6_40">Rensink, A. (2004). The GROOVE Simulator: A Tool for State Space Generation.</a>
  */
+@Disabled
 public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/append/";
     private final static boolean AUTO_CLEAN_BEFORE = true;

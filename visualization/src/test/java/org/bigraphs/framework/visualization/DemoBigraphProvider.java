@@ -20,7 +20,9 @@ import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled
 public class DemoBigraphProvider {
 
     public PureBigraph getRandomBigraphMultipleRoots(int root, int nodes) {

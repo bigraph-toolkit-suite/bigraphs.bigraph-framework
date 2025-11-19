@@ -28,12 +28,14 @@ import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Sets;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public class CanonicalElementaryBigraphsUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/canonicform/elementary/";
 

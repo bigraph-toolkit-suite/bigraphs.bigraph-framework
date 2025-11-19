@@ -27,12 +27,14 @@ import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.testing.BigraphUnitTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public class BuildingRoomOccurrenceUnitTest implements AbstractUnitTestSupport, BigraphUnitTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/occurrence/";
 

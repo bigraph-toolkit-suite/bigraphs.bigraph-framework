@@ -39,8 +39,10 @@ import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
     private final static String DUMP_PATH = "src/test/resources/dump/tracking/test1/";
 

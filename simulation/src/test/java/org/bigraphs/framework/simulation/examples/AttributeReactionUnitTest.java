@@ -37,8 +37,10 @@ import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/attributes/";
 

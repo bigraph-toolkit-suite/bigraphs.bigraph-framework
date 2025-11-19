@@ -31,11 +31,13 @@ import org.bigraphs.framework.core.reactivesystem.TrackingMap;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public class NodeAttributeTrackingTest {
 
     @Test

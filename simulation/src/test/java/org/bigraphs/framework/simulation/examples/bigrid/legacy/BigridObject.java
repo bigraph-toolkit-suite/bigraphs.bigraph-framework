@@ -35,8 +35,10 @@ import org.bigraphs.framework.core.utils.BigraphUtil;
 import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.eclipse.collections.impl.factory.Maps;
+import org.junit.jupiter.api.Disabled;
 
 @Deprecated
+@Disabled
 public class BigridObject {
     String basePath = "/home/dominik/git/BigraphFramework/simulation/src/test/resources/dump/bigrid/circular/";
 

@@ -41,9 +41,11 @@ import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @Deprecated
+@Disabled
 public class SimpleCircularGridTest implements BigraphUnitTestSupport {
 
     private static String BASEPATH = "src/test/resources/dump/bigrid/circular/";

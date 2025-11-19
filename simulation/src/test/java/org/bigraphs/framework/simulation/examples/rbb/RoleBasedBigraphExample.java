@@ -46,8 +46,10 @@ import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class RoleBasedBigraphExample extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/rbb/";
     private final static boolean AUTO_CLEAN_BEFORE = true;

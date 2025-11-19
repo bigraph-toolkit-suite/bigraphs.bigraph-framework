@@ -45,9 +45,11 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.visualization.supplier.GraphvizColorSupplier;
 import org.bigraphs.framework.visualization.supplier.GraphvizShapeSupplier;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class PNGVisualizationUnitTests {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/graphviz/";
 

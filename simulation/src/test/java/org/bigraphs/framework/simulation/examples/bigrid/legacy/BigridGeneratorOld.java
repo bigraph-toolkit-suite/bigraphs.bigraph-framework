@@ -38,6 +38,7 @@ import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.utils.BigraphUtil;
 import org.eclipse.collections.impl.factory.Maps;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * THIS CLASS IS RETAINED FOR LEGACY PURPOSES.
@@ -54,6 +55,7 @@ import org.eclipse.collections.impl.factory.Maps;
  * @author Dominik Grzelak
  */
 @Deprecated
+@Disabled
 public class BigridGeneratorOld {
 
     //    private int n = 2, m = 2;

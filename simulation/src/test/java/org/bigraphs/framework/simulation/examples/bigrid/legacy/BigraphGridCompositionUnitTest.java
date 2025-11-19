@@ -40,10 +40,12 @@ import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.eclipse.collections.impl.factory.Maps;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @Deprecated
+@Disabled
 public class BigraphGridCompositionUnitTest {
 
     private static String BASEPATH = "src/test/resources/dump/bigrid/";

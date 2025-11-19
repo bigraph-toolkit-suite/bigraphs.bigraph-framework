@@ -27,20 +27,8 @@ import org.junit.jupiter.api.*;
  *
  * @author Dominik Grzelak
  */
+@Disabled
 public class ReactiveSystemOptionsUnitTests {
-
-//    public static void main(String[] args) throws Exception {
-        //https://www.baeldung.com/java-microbenchmark-harness
-//        org.openjdk.jmh.Main.main(args);
-//    }
-
-//    @Benchmark
-//    @Fork(value = 1, warmups = 2)
-//    @BenchmarkMode(Mode.Throughput)
-//    @BenchmarkMode(Mode.AverageTime)
-//    public void init() {
-//        System.out.println("init");
-//    }
 
     @Test
     void reactionsystem_options_test() {

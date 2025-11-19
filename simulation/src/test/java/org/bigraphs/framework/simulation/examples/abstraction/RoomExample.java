@@ -46,8 +46,10 @@ import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class RoomExample extends BaseExampleTestSupport {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/room-example/";

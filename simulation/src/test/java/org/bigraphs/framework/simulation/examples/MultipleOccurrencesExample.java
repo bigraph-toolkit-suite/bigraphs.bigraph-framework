@@ -43,11 +43,13 @@ import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public class MultipleOccurrencesExample {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/multiple/";

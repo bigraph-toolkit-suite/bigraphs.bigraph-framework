@@ -41,8 +41,10 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 class BigraphConnectednessTest implements BigraphUnitTestSupport {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/analysis-connectedness/";

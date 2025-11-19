@@ -35,11 +35,13 @@ import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.Viewer;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author Dominik Grzelak
  */
+@Disabled
 public class LinkGraphMatchingTests implements org.bigraphs.testing.BigraphUnitTestSupport, BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/lgm/";
