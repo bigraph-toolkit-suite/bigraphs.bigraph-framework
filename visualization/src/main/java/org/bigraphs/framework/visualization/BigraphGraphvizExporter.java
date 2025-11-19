@@ -1,9 +1,32 @@
+/*
+ * Copyright (c) 2019-2025 Bigraph Toolkit Suite Developers
+ * Main Developer: Dominik Grzelak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.bigraphs.framework.visualization;
+
+import static guru.nidi.graphviz.attribute.Rank.RankDir.BOTTOM_TO_TOP;
+import static guru.nidi.graphviz.model.Factory.*;
 
 import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.Signature;
@@ -12,16 +35,6 @@ import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.framework.visualization.auxiliary.GraphvizProcess;
 import org.bigraphs.framework.visualization.supplier.GraphvizColorSupplier;
 import org.bigraphs.framework.visualization.supplier.GraphvizShapeSupplier;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import static guru.nidi.graphviz.attribute.Rank.RankDir.BOTTOM_TO_TOP;
-import static guru.nidi.graphviz.model.Factory.*;
 
 /**
  * This class visualizes a bigraph by means of GraphViz.

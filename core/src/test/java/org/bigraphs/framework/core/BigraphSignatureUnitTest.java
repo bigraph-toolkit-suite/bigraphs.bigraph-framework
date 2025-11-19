@@ -1,5 +1,25 @@
+/*
+ * Copyright (c) 2019-2025 Bigraph Toolkit Suite Developers
+ * Main Developer: Dominik Grzelak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.bigraphs.framework.core;
 
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.createOrGetSignature;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Map;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
 import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
@@ -7,15 +27,15 @@ import org.bigraphs.framework.core.exceptions.SignatureNotConsistentException;
 import org.bigraphs.framework.core.exceptions.builder.ControlNotExistsException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.factory.BigraphFactory;
-import org.bigraphs.framework.core.impl.pure.KindBigraphBuilder;
-import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.KindSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
-import org.bigraphs.framework.core.impl.signature.KindSignatureBuilder;
 import org.bigraphs.framework.core.impl.elementary.DiscreteIon;
 import org.bigraphs.framework.core.impl.elementary.Linkings;
+import org.bigraphs.framework.core.impl.pure.KindBigraphBuilder;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.impl.signature.KindSignature;
+import org.bigraphs.framework.core.impl.signature.KindSignatureBuilder;
 import org.bigraphs.framework.core.utils.BigraphUtil;
 import org.bigraphs.framework.core.utils.emf.EMFUtils;
 import org.bigraphs.model.signatureBaseModel.BControlStatus;
@@ -25,13 +45,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.junit.jupiter.api.*;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Map;
-
-import static org.bigraphs.framework.core.factory.BigraphFactory.*;
-import static org.bigraphs.framework.core.factory.BigraphFactory.createOrGetSignature;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BigraphSignatureUnitTest {

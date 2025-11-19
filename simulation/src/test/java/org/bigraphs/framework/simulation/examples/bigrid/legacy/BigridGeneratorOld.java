@@ -1,20 +1,20 @@
+/*
+ * Copyright (c) 2021-2025 Bigraph Toolkit Suite Developers
+ * Main Developer: Dominik Grzelak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.bigraphs.framework.simulation.examples.bigrid.legacy;
 
-import org.bigraphs.framework.core.Bigraph;
-import org.bigraphs.framework.core.datatypes.NamedType;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
-import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
-import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
-import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
-import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
-import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.elementary.Linkings;
-import org.bigraphs.framework.core.impl.elementary.Placings;
-import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.core.utils.BigraphUtil;
-import org.eclipse.collections.impl.factory.Maps;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 
 import java.util.Map;
 import java.util.Objects;
@@ -23,8 +23,21 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.datatypes.NamedType;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
+import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
+import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.elementary.Linkings;
+import org.bigraphs.framework.core.impl.elementary.Placings;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
+import org.bigraphs.framework.core.utils.BigraphUtil;
+import org.eclipse.collections.impl.factory.Maps;
 
 /**
  * THIS CLASS IS RETAINED FOR LEGACY PURPOSES.

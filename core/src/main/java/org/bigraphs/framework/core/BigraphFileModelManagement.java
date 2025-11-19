@@ -1,11 +1,34 @@
+/*
+ * Copyright (c) 2022-2025 Bigraph Toolkit Suite Developers
+ * Main Developer: Dominik Grzelak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.bigraphs.framework.core;
 
+import static org.bigraphs.framework.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
+import static org.bigraphs.framework.core.BigraphMetaModelConstants.SIGNATURE_BASE_MODEL;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.utils.emf.EMFUtils;
 import org.bigraphs.model.bigraphBaseModel.BigraphBaseModelFactory;
 import org.bigraphs.model.bigraphBaseModel.BigraphBaseModelPackage;
-import org.bigraphs.model.signatureBaseModel.SignatureBaseModelFactory;
-import org.bigraphs.model.signatureBaseModel.SignatureBaseModelPackage;
 import org.eclipse.collections.api.factory.Maps;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -21,18 +44,6 @@ import org.eclipse.emf.ecore.util.BasicExtendedMetaData;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMLResource;
-
-import java.io.*;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import static org.bigraphs.framework.core.BigraphMetaModelConstants.BIGRAPH_BASE_MODEL;
-import static org.bigraphs.framework.core.BigraphMetaModelConstants.SIGNATURE_BASE_MODEL;
 
 /**
  * File-based utility for managing Ecore/XMI bigraph models.

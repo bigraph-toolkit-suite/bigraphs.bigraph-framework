@@ -241,6 +241,33 @@
                 <!--                    </executions>-->
                 <!--                </plugin>-->
                 <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <java>
+                            <includes>
+                                <include>src/main/java/**/*.java</include>
+                                <include>src/test/java/**/*.java</include>
+                            </includes>
+                            <importOrder/>
+                            <removeUnusedImports/>
+                            <licenseHeader>
+                                <file>${project.basedir}/../license-header</file>
+                            </licenseHeader>
+                        </java>
+                        <setLicenseHeaderYearsFromGitHistory>true</setLicenseHeaderYearsFromGitHistory>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>compile</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <version>2.7.0</version>
@@ -258,7 +285,9 @@
                             </licenseMerge>
                             <licenseMerge>The MIT License (MIT)|The MIT License|MIT License|MIT license|MIT
                             </licenseMerge>
-                            <licenseMerge>Eclipse Public License - Version 2.0|EPL 2.0|EPL-2.0|Eclipse Public License - v 2.0</licenseMerge>
+                            <licenseMerge>Eclipse Public License - Version 2.0|EPL 2.0|EPL-2.0|Eclipse Public License -
+                                v 2.0
+                            </licenseMerge>
                             <licenseMerge>Eclipse Distribution License - v 1.0|EDL 1.0</licenseMerge>
                             <licenseMerge>GPL2 w/ CPE|GNU General Public License, version 2 (GPL2), with the classpath
                                 exception
@@ -448,6 +477,13 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -797,10 +833,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>

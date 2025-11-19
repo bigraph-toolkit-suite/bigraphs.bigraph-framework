@@ -1,19 +1,20 @@
+/*
+ * Copyright (c) 2019-2025 Bigraph Toolkit Suite Developers
+ * Main Developer: Dominik Grzelak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.bigraphs.framework.simulation.encoding;
 
-import org.bigraphs.framework.core.BigraphEntityType;
-import org.bigraphs.framework.core.ControlStatus;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
-import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DynamicControl;
-import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.utils.BigraphUtil;
-import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.api.map.MutableMap;
-import org.eclipse.collections.api.map.sorted.MutableSortedMap;
-import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.collections.impl.factory.Maps;
-import org.eclipse.collections.impl.map.sorted.mutable.TreeSortedMap;
+import static org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm.PREFIX_BARREN;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -21,9 +22,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm.PREFIX_BARREN;
-import static java.util.stream.Collectors.groupingBy;
+import org.bigraphs.framework.core.BigraphEntityType;
+import org.bigraphs.framework.core.ControlStatus;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.signature.DynamicControl;
+import org.bigraphs.framework.core.utils.BigraphUtil;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.api.map.sorted.MutableSortedMap;
+import org.eclipse.collections.impl.factory.Lists;
+import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.collections.impl.map.sorted.mutable.TreeSortedMap;
 
 /**
  * The concrete strategy to compute the canonical string of a pure bigraph ({@link PureBigraph}).

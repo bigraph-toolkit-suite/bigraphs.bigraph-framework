@@ -111,6 +111,12 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- License Header -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <configuration><skip>false</skip></configuration>
+            </plugin>
             <!-- DEPLOY -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

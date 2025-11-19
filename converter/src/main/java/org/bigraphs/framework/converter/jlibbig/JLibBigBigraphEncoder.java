@@ -1,6 +1,27 @@
+/*
+ * Copyright (c) 2021-2025 Bigraph Toolkit Suite Developers
+ * Main Developer: Dominik Grzelak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.bigraphs.framework.converter.jlibbig;
 
 import com.google.common.graph.Traverser;
+import it.uniud.mads.jlibbig.core.attachedProperties.PropertyTarget;
+import it.uniud.mads.jlibbig.core.attachedProperties.SimpleProperty;
+import it.uniud.mads.jlibbig.core.std.*;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.bigraphs.framework.converter.BigraphObjectEncoder;
 import org.bigraphs.framework.core.BigraphEntityType;
 import org.bigraphs.framework.core.ControlStatus;
@@ -8,20 +29,12 @@ import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import it.uniud.mads.jlibbig.core.attachedProperties.PropertyTarget;
-import it.uniud.mads.jlibbig.core.attachedProperties.SimpleProperty;
-import it.uniud.mads.jlibbig.core.std.*;
 import org.eclipse.collections.api.bimap.MutableBiMap;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.sorted.MutableSortedSet;
 import org.eclipse.collections.impl.factory.BiMaps;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.SortedSets;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads.jlibbig.core.std.Bigraph, PureBigraph> {
 

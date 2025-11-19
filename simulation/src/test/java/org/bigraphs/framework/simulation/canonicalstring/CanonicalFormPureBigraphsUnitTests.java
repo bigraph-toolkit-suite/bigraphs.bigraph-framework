@@ -1,29 +1,24 @@
+/*
+ * Copyright (c) 2019-2025 Bigraph Toolkit Suite Developers
+ * Main Developer: Dominik Grzelak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.bigraphs.framework.simulation.canonicalstring;
 
-import com.google.common.collect.Lists;
-import org.bigraphs.framework.core.*;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
-import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
-import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
-import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
-import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
-import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
-import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
-import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
-import org.bigraphs.framework.core.impl.BigraphEntity;
-import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
-import org.bigraphs.framework.core.impl.pure.PureBigraph;
-import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
-import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
-import org.bigraphs.framework.simulation.examples.BaseExampleTestSupport;
-import org.bigraphs.framework.simulation.examples.RouteFinding;
-import org.bigraphs.framework.simulation.modelchecking.predicates.BigraphIsoPredicate;
-import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.*;
+import static org.bigraphs.framework.core.factory.BigraphFactory.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,10 +30,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static org.bigraphs.framework.core.factory.BigraphFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import org.apache.commons.io.FileUtils;
+import org.bigraphs.framework.core.*;
+import org.bigraphs.framework.core.alg.generators.PureBigraphGenerator;
+import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.datatypes.StringTypedName;
+import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
+import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
+import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
+import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
+import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
+import org.bigraphs.framework.core.impl.BigraphEntity;
+import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.impl.signature.DynamicSignature;
+import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
+import org.bigraphs.framework.simulation.examples.BaseExampleTestSupport;
+import org.bigraphs.framework.simulation.examples.RouteFinding;
+import org.bigraphs.framework.simulation.modelchecking.predicates.BigraphIsoPredicate;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
+import org.junit.jupiter.api.*;
 
 /**
  * @author Dominik Grzelak
