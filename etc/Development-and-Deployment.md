@@ -117,7 +117,7 @@ Use `npm run serve` inside the folder to start a webserver for reviewing the web
 The generated Java documentation of all modules is available from `target/site/apidocs/`.
 This aggregated API (i.e., the merged result of all submodules) will be copied to `documentation/v2-docusaurus/static/apidocs/`.
 
-The license report is located under: `documentation/v2-docusaurus/static/third-party-licenses-report/`.
+The license report is located under: `documentation/v2-docusaurus/static/license/`.
 ## Deployment
 
 This section discusses the deployment process.

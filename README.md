@@ -340,7 +340,7 @@ Copyright (c) 2019-2025 Bigraph Toolkit Suite Developers (Main Developer: Domini
 ### Third Party Licenses
 
 This report lists all third-party dependencies of the
-project: [documentation/documentation/v2-docusaurus/static/third-party-licenses-report/third-party-report.html](documentation/documentation/v2-docusaurus/static/third-party-licenses-report/third-party-report.html)
+project: [documentation/v2-docusaurus/static/license/aggregate-third-party-report.html](documentation/v2-docusaurus/static/license/aggregate-third-party-report.html)
 
 The simulation module of **Bigraph Framework** includes and shades [jLibBig](https://github.com/bigraphs/jlibbig),
 a Java library for bigraphical reactive systems, which is licensed under the **GNU Lesser General Public License,
