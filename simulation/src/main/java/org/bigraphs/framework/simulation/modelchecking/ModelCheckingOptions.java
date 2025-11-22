@@ -108,8 +108,9 @@ public class ModelCheckingOptions {
      *
      * @param flag flag to enable or disable parallel rule matching
      */
-    public void setParallelRuleMatching(boolean flag) {
+    public ModelCheckingOptions setParallelRuleMatching(boolean flag) {
         this.parallelRuleMatching = flag;
+        return this;
     }
 
     /**

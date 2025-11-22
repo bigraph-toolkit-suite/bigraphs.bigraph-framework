@@ -77,6 +77,18 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         carArrivedAtTarget = true;
     }
 
+    public static DynamicSignature sig() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+        defaultBuilder
+                .add("Car", 1)
+                .add("Fuel", 0)
+                .add("Place", 1)
+                .add("Road", 1)
+                .add("Target", 1)
+        ;
+        return defaultBuilder.create();
+    }
+
     @Test
     void simulate() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         SubBigraphMatchPredicate<PureBigraph> predicate = createPredicate();
@@ -106,25 +118,6 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         System.out.println(encoder.encode(reactionRule.getReactum()));
 
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
-        ModelCheckingOptions opts = ModelCheckingOptions.create();
-        opts
-                .doMeasureTime(true)
-                .setReactionGraphWithCycles(false)
-                .and(transitionOpts()
-                        .setMaximumTransitions(150)
-                        .setMaximumTime(60)
-                        .allowReducibleClasses(false)
-                        .create()
-                )
-                .and(ModelCheckingOptions.exportOpts()
-                        .setReactionGraphFile(new File(completePath.toUri()))
-                        .setPrintCanonicalStateLabel(false)
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.XMI, ModelCheckingOptions.ExportOptions.Format.PNG))
-//                        .disableAllFormats()
-                        .create()
-                )
-        ;
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.addReactionRule(reactionRule);
@@ -133,15 +126,39 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
-                opts);
+                opts(completePath));
         modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
         assertTrue(Files.exists(completePath));
         assertTrue(carArrivedAtTarget);
     }
 
+    private ModelCheckingOptions opts(Path completePath) {
+        ModelCheckingOptions opts = ModelCheckingOptions.create();
+        opts
+                .doMeasureTime(true)
+                .setReactionGraphWithCycles(true)
+                .setParallelRuleMatching(false)
+                .and(transitionOpts()
+                        .setMaximumTransitions(150)
+                        .setMaximumTime(60)
+                        .allowReducibleClasses(false)
+                        .create()
+                )
+                .and(ModelCheckingOptions.exportOpts()
+                                .setReactionGraphFile(new File(completePath.toUri()))
+                                .setPrintCanonicalStateLabel(false)
+                                .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                                .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.XMI, ModelCheckingOptions.ExportOptions.Format.PNG))
+//                        .disableAllFormats()
+                                .create()
+                )
+        ;
+        return opts;
+    }
+
     private PureBigraph createMap(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
         BigraphEntity.OuterName p0 = builder.createOuter("p0");
         BigraphEntity.OuterName p1 = builder.createOuter("p1");
@@ -169,7 +186,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
     }
 
     private PureBigraph createMapSimple(int fuelLevel) throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
         BigraphEntity.OuterName p0 = builder.createOuter("p0");
         BigraphEntity.OuterName p1 = builder.createOuter("p1");
@@ -194,8 +211,8 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
      * react r1 = Left.S | Right.S -> Left | Right;
      */
     public static ReactionRule<PureBigraph> createReactionRule() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(sig());
 
         BigraphEntity.OuterName fromD = builder.createOuter("fromD");
         BigraphEntity.OuterName fromS = builder.createOuter("fromS");
@@ -239,7 +256,7 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
     }
 
     private SubBigraphMatchPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
         BigraphEntity.OuterName from = builder.createOuter("from");
 
@@ -249,17 +266,5 @@ public class RouteFinding implements BigraphModelChecker.ReactiveSystemListener<
                 .down().site().child("Target", "target").child("Car", "target").down().site();
         PureBigraph bigraph = builder.create();
         return SubBigraphMatchPredicate.create(bigraph);
-    }
-
-    public static DynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("Car", 1)
-                .add("Fuel", 0)
-                .add("Place", 1)
-                .add("Road", 1)
-                .add("Target", 1)
-        ;
-        return defaultBuilder.create();
     }
 }

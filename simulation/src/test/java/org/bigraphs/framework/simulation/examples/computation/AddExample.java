@@ -17,21 +17,12 @@ package org.bigraphs.framework.simulation.examples.computation;
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.google.common.base.Stopwatch;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.io.FileUtils;
-import org.bigraphs.framework.core.Bigraph;
-import org.bigraphs.framework.core.ElementaryBigraph;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.exceptions.*;
 import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
-import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
-import org.bigraphs.framework.core.factory.BigraphFactory;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
@@ -42,6 +33,7 @@ import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.examples.BaseExampleTestSupport;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
+import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.BeforeAll;
@@ -75,10 +67,25 @@ public class AddExample extends BaseExampleTestSupport {
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
     }
 
+    private static DynamicSignature sig() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+        defaultBuilder
+                .add("Plus", 0)
+                .add("Sum", 0)
+                .add("S", 0)
+                .add("Z", 0)
+                .add("Left", 0)
+                .add("Right", 0)
+        ;
+        return defaultBuilder.create();
+    }
+
     @Test
-    void simulate() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, IncompatibleInterfaceException {
+    void simulate() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
         int a = 3, b = 3;
+
         AddExpr reactiveSystem = new AddExpr(a, b);
+
         eb(reactiveSystem.agent_a, "agent");
         eb(reactiveSystem.reactionRule_1.getRedex(), "r1-redex");
         eb(reactiveSystem.reactionRule_1.getReactum(), "r1-reactum");
@@ -87,9 +94,12 @@ public class AddExample extends BaseExampleTestSupport {
 
         PureBigraph result = reactiveSystem.execute();
 
-        long s = result.getNodes().stream().filter(x -> x.getControl().getNamedType().stringValue().equals("S"))
+        // Check the result
+        long s = result.getNodes().stream()
+                .filter(x -> x.getControl().getNamedType().stringValue().equals("S"))
                 .count();
         assertEquals(a + b, s);
+
         BigraphGraphvizExporter.toPNG(result,
                 true,
                 new File(TARGET_DUMP_PATH + "result.png")
@@ -116,15 +126,13 @@ public class AddExample extends BaseExampleTestSupport {
             PureBigraph agentTmp = getAgent();
             int cnt = 0;
             while (true) {
-                MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agentTmp, getReactionRulesMap().get("r0"));
+                MatchIterable<BigraphMatch<PureBigraph>> match = ((PureBigraphMatcher) matcher).matchFirst(agentTmp, getReactionRulesMap().get("r0"));
                 Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
                 if (!iterator.hasNext()) {
                     break;
                 }
                 while (iterator.hasNext()) {
                     BigraphMatch<PureBigraph> next = iterator.next();
-//                    createGraphvizOutput(getAgent(), next, TARGET_DUMP_PATH + "/");
-//                    System.out.println("NEXT: " + next);
                     agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r0"));
                     BigraphGraphvizExporter.toPNG(agentTmp,
                             true,
@@ -138,27 +146,24 @@ public class AddExample extends BaseExampleTestSupport {
             Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
             if (iterator.hasNext()) {
                 BigraphMatch<PureBigraph> next = iterator.next();
-//                createGraphvizOutput(getAgent(), next, TARGET_DUMP_PATH + "/");
                 System.out.println("NEXT: " + next);
                 agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r1"));
                 BigraphGraphvizExporter.toPNG(agentTmp,
                         true,
                         new File(TARGET_DUMP_PATH + cnt + "_agent_reacted.png")
                 );
-                cnt++;
             }
             return agentTmp; // the result
         }
     }
-
 
     /**
      * big numberLeft = Left.S.S.S.S.S.S.Z;
      * big numberRight = Right.S.S.S.S.Z;
      * big start = Plus . (numberLeft | numberRight);
      */
-    public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException, InvalidArityOfControlException, LinkTypeNotExistsException {
-        DynamicSignature signature = createExampleSignature();
+    public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException {
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy leftNode =
@@ -182,7 +187,6 @@ public class AddExample extends BaseExampleTestSupport {
                 .down()
                 .child(leftNode)
                 .child(rightNode)
-//                .child(s.top())
         ;
         builder.makeGround();
         return builder.create();
@@ -192,7 +196,7 @@ public class AddExample extends BaseExampleTestSupport {
      * react r1 = Left.S | Right.S -> Left | Right;
      */
     public static ReactionRule<PureBigraph> createReactionRule_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DynamicSignature signature = createExampleSignature();
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
@@ -208,15 +212,11 @@ public class AddExample extends BaseExampleTestSupport {
         ;
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
-//        InstantiationMap instantiationMap = InstantiationMap.create(2);
-//        instantiationMap.map(0, 0);
-//        instantiationMap.map(1, 0);
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum); //instantiationMap
-        return rr;
+        return new ParametricReactionRule<>(redex, reactum);
     }
 
     public static ReactionRule<PureBigraph> createReactionRule_2() throws ControlIsAtomicException, InvalidReactionRuleException {
-        DynamicSignature signature = createExampleSignature();
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
@@ -231,85 +231,5 @@ public class AddExample extends BaseExampleTestSupport {
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
         return new ParametricReactionRule<>(redex, reactum);
-    }
-
-    static void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next, String path) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
-        PureBigraph context = (PureBigraph) next.getContext();
-        PureBigraph redex = (PureBigraph) next.getRedex();
-        Bigraph contextIdentity = next.getContextIdentity();
-        ElementaryBigraph<DynamicSignature> identityForParams = next.getRedexIdentity();
-        PureBigraph contextComposed = (PureBigraph) BigraphFactory.ops(context).parallelProduct(contextIdentity).getOuterBigraph();
-//            BigraphModelFileStore.exportAsInstanceModel(contextComposed, "contextComposed",
-//                    new FileOutputStream("src/test/resources/graphviz/contextComposed.xmi"));
-        BigraphGraphvizExporter.toPNG(contextComposed,
-                true,
-                new File(path + "contextComposed.png")
-        );
-
-        Stopwatch timer = Stopwatch.createStarted();
-        try {
-            String convert = BigraphGraphvizExporter.toPNG(context,
-                    true,
-                    new File(path + "context.png")
-            );
-//            System.out.println(convert);
-            BigraphGraphvizExporter.toPNG(agent,
-                    true,
-                    new File(path + "agent.png")
-            );
-            BigraphGraphvizExporter.toPNG(redex,
-                    true,
-                    new File(path + "redex.png")
-            );
-            BigraphGraphvizExporter.toPNG(contextIdentity,
-                    true,
-                    new File(path + "identityForContext.png")
-            );
-            BigraphGraphvizExporter.toPNG(identityForParams,
-                    true,
-                    new File(path + "identityForParams.png")
-            );
-
-//            BigraphComposite bigraphComposite = factory
-//                    .asBigraphOperator(identityForParams).parallelProduct(redex); //.compose();
-//            GraphvizConverter.toPNG(bigraphComposite.getOuterBigraph(),
-//                    true,
-//                    new File(path + "redexImage.png")
-//            );
-
-            AtomicInteger cnt = new AtomicInteger(0);
-            next.getParameters().forEach(x -> {
-                try {
-                    BigraphGraphvizExporter.toPNG((PureBigraph) x,
-                            true,
-                            new File(path + "param_" + cnt.incrementAndGet() + ".png")
-                    );
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            });
-            long elapsed = timer.stop().elapsed(TimeUnit.MILLISECONDS);
-            System.out.println("Create png's took (millisecs) " + elapsed);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private static DynamicSignature createExampleSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .newControl().identifier(StringTypedName.of("Plus")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("Sum")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("S")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("Z")).arity(FiniteOrdinal.ofInteger(0)).assign()
-//                .newControl().identifier(StringTypedName.of("True")).arity(FiniteOrdinal.ofInteger(1)).assign()
-//                .newControl().identifier(StringTypedName.of("False")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("Left")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("Right")).arity(FiniteOrdinal.ofInteger(0)).assign()
-        ;
-
-        return defaultBuilder.create();
     }
 }

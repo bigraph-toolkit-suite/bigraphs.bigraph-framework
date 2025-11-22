@@ -40,7 +40,6 @@ import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
@@ -99,8 +98,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
     }
 
     private DynamicSignature sig() {
-        DynamicSignatureBuilder sb = pureSignatureBuilder();
-        DynamicSignature sig = sb
+        return pureSignatureBuilder()
                 .add("Coin", 0)
                 .add("VM", 0)
                 .add("Button1", 0)
@@ -113,7 +111,6 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
                 .add("Wallet", 0)
                 .add("Tresor", 0)
                 .create();
-        return sig;
     }
 
     @Test
@@ -171,12 +168,10 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
-                BigraphModelChecker.SimulationStrategy.Type.DFS,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
                 opts());
         modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
-//        assertTrue(Files.exists(completePath));
-//        assertTrue(carArrivedAtTarget);
     }
 
     private ModelCheckingOptions opts() {
@@ -190,10 +185,13 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
                         .create()
                 )
                 .doMeasureTime(true)
+                .setParallelRuleMatching(false)
+                .setReactionGraphWithCycles(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
                 )
         ;
@@ -202,12 +200,12 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
 
     @Override
     public void onPredicateMatched(PureBigraph currentAgent, ReactiveSystemPredicate<PureBigraph> predicate) {
-        System.out.println("pred matched");
+        System.out.println("Predicated matched: " + predicate.getLabel());
     }
 
     @Override
     public void onAllPredicateMatched(PureBigraph currentAgent, String label) {
-        System.out.println("all matched");
+        System.out.println("All Predicate matched: " + label);
     }
 
     private SubBigraphMatchPredicate<PureBigraph> teaContainerIsEmpty() throws InvalidConnectionException, TypeNotExistsException {
@@ -326,7 +324,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         ;
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("pushBtn1");
         return rr;
     }
 
@@ -355,7 +353,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         ;
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("pushBtn2");
         return rr;
     }
 
@@ -394,7 +392,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         ;
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("giveCoffee");
         return rr;
     }
 
@@ -423,13 +421,14 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         ;
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
+        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("giveTea");
         ((ParametricReactionRule) rr).withPriority(0);
         return rr;
     }
 
-
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // "Backlog"
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Test
     @Disabled

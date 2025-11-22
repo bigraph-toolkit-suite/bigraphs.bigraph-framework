@@ -39,6 +39,16 @@ public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
     }
 
     @Override
+    public PureBigraphMatchingEngine instantiateEngine() {
+        return new PureBigraphMatchingEngine(this.agent, this.rule);
+    }
+
+    public <M extends BigraphMatch<PureBigraph>> MatchIterable<M> matchAll(PureBigraph agent, ReactionRule<PureBigraph> rule) {
+        return matchAll(agent, rule);
+    }
+
+    @Override
+    @Deprecated // Use matchAll instead of match(); or use matchFirst() (constrained variant)
     public <M extends BigraphMatch<PureBigraph>> MatchIterable<M> match(PureBigraph agent, ReactionRule<PureBigraph> rule) {
                 super.agent = agent;
         super.rule = rule;
@@ -47,32 +57,32 @@ public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
 
         Stopwatch timer0 = logger.isDebugEnabled() ? Stopwatch.createStarted() : null;
         MatchIterable<PureBigraphParametricMatch> bigraphMatches = new MatchIterable<>(new PureMatchIteratorImpl(matchingEngine));
-        if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled() && timer0 != null) {
             long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
-            logger.debug("Complete Matching Time: {} (ms)", (elapsed0 / 1e+6f));
+            log(elapsed0);
         }
         return (MatchIterable<M>) bigraphMatches;
     }
 
-//    @SuppressWarnings("unchecked")
-//    public MatchIterable<PureBigraphParametricMatch> match(PureBigraph agent, ReactionRule<PureBigraph> rule) {
-//        super.agent = agent;
-//        super.rule = rule;
-//        super.redex = rule.getRedex();
-//        PureBigraphMatchingEngine matchingEngine = instantiateEngine();
-//
-//        Stopwatch timer0 = logger.isDebugEnabled() ? Stopwatch.createStarted() : null;
-//        MatchIterable<PureBigraphParametricMatch> bigraphMatches = new MatchIterable<>(new PureMatchIteratorImpl(matchingEngine));
-//        if (logger.isDebugEnabled()) {
-//            long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
-//            logger.debug("Complete Matching Time: {} (ms)", (elapsed0 / 1e+6f));
-//        }
-//        return bigraphMatches;
-//    }
+    public <M extends BigraphMatch<?>> MatchIterable<M> matchFirst(PureBigraph agent, ReactionRule<PureBigraph> rule) {
+        super.agent = agent;
+        super.rule = rule;
+        super.redex = rule.getRedex();
+        PureBigraphMatchingEngine matchingEngine = instantiateEngine();
 
-    @Override
-    public PureBigraphMatchingEngine instantiateEngine() {
-        return new PureBigraphMatchingEngine(this.agent, this.rule);
+        Stopwatch timer0 = logger.isDebugEnabled() ? Stopwatch.createStarted() : null;
+        MatchIterable<PureBigraphParametricMatch> bigraphMatches = new MatchIterable<>(new PureMatchIteratorImpl.FirstMatchOnly(matchingEngine));
+        if (logger.isDebugEnabled() && timer0 != null) {
+            long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
+            log(elapsed0);
+        }
+        return (MatchIterable<M>) bigraphMatches;
     }
+
+    private void log(long elapsed0) {
+        logger.debug("Complete Matching Time: {} (ms)", (elapsed0 / 1e+6f));
+    }
+
+
 
 }

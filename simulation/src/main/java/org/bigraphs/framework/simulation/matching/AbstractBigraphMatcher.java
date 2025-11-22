@@ -66,7 +66,7 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
     public abstract <M extends BigraphMatch<B>> MatchIterable<M> match(B agent, ReactionRule<B> rule);
 
     /**
-     * Provide the matching engine for the specific bigraph type implemented by the sub class
+     * Provide the matching engine for the specific bigraph type implemented by the subclass
      *
      * @return concrete bigraph matching engine
      */
@@ -89,7 +89,4 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
     public B getRedex() {
         return redex;
     }
-
-    //TODO: let user override a matchConstraints(...) method here
-    // a minimal LTS can then not be possible under some circumstances when no RPO and IPO exist
 }

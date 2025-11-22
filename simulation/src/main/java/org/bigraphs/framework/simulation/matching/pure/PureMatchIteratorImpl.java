@@ -30,17 +30,23 @@ import org.eclipse.collections.impl.factory.Lists;
  * @author Dominik Grzelak
  */
 public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatch> {
-    private int cursor = 0;
-    private MutableList<PureBigraphParametricMatch> matches = Lists.mutable.empty();
 
-    private PureBigraphMatchingEngine matchingEngine;
+    protected int cursor = 0;
+    protected MutableList<PureBigraphParametricMatch> matches = Lists.mutable.empty();
+    protected PureBigraphMatchingEngine matchingEngine;
 
     PureMatchIteratorImpl(PureBigraphMatchingEngine matchingEngine) {
         this.matchingEngine = matchingEngine;
         this.findMatches();
     }
 
-    private void findMatches() {
+    /**
+     * The behavior of {@code findMatches} may vary if a subclass overrides
+     * this method to provide custom matching logic.
+     * <p>
+     * This can be done to provide simple constraints or filters for the matches.
+     */
+    protected void findMatches() {
         this.matchingEngine.beginMatch();
         if (this.matchingEngine.hasMatched()) {
             this.matchingEngine.createMatchResult();
@@ -60,5 +66,31 @@ public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatc
             throw new NoSuchElementException();
         }
         return matches.get(cursor++);
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constrained Matcher
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * A Simple Constrained Matcher Implementation
+     *
+     * @author Dominik Grzelak
+     */
+    public static class FirstMatchOnly extends PureMatchIteratorImpl {
+
+        FirstMatchOnly(PureBigraphMatchingEngine matchingEngine) {
+            super(matchingEngine);
+        }
+
+        @Override
+        protected void findMatches() {
+            this.matchingEngine.beginMatch();
+            if (this.matchingEngine.hasMatched()) {
+                this.matchingEngine.createSingleMatchResult();
+            }
+            this.matches = Lists.mutable.ofAll(this.matchingEngine.getMatches());
+
+        }
     }
 }

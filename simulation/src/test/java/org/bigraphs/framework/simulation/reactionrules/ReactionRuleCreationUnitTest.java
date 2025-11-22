@@ -17,7 +17,6 @@ package org.bigraphs.framework.simulation.reactionrules;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
-import java.io.File;
 import java.io.IOException;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
@@ -31,7 +30,6 @@ import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
-import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -86,8 +84,8 @@ public class ReactionRuleCreationUnitTest {
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
-        BigraphGraphvizExporter.toPNG(rr.getRedex(), true, new File("redex.png"));
-        BigraphGraphvizExporter.toPNG(rr.getReactum(), true, new File("reactum.png"));
+//        BigraphGraphvizExporter.toPNG(rr.getRedex(), true, new File("redex.png"));
+//        BigraphGraphvizExporter.toPNG(rr.getReactum(), true, new File("reactum.png"));
     }
 
     @Test

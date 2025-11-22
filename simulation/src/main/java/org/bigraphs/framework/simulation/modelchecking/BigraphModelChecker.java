@@ -47,13 +47,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A bigraph model checker that allows to simulate a BRS by reaction rules. A reactive system, the strategy and
- * options must be provided.
+ * A model checker for Bigraphical Reactive Systems (BRS) that simulates state-space
+ * evolution by repeatedly applying reaction rules. A reactive system, an exploration
+ * strategy, and model checking options must be provided.
  * <p>
- * The model checker allows to react on live predicate matches in the course of the simulation by <i>listeners</i>.
- * They can also be evaluated later by getting the reaction graph/system.
+ * The model checker can operate with different traversal strategies (e.g., BFS, DFS,
+ * first-match variants, random exploration), enabling exhaustive analysis or guided
+ * simulations depending on the chosen configuration.
+ * <p>
+ * During simulation, the model checker emits state-space events through
+ * {@link ReactiveSystemListener} instances (inner class of this class). Listeners notify the user when predicates are
+ * evaluated, reaction rules applied or when lifecycle events are emitted.
+ * <p>
+ * After execution, the reaction graph (transition system, {@link ReactionGraph}) can be retrieved for inspection or further analysis.
+ * For example, it can be exported via {@link ReactionGraphExporter} or {@link org.bigraphs.framework.converter.dot.DOTReactionGraphExporter}.
  *
- * @author Dominik Grzelak
+ * @param <B> the concrete bigraph type used by the reactive system
+ * @see DFSFirstMatchStrategy
+ * @see BFSFirstMatchStrategy
+ * @see BreadthFirstStrategy
+ * @see DepthFirstStrategy
+ * @see RandomAgentModelCheckingStrategy
+ * @see org.bigraphs.framework.converter.dot.DOTReactionGraphExporter
+ * @see ReactionGraphExporter
  */
 public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<?>>> {
 
@@ -76,20 +92,17 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     public static class SimulationStrategy {
 
         public enum Type {
-            BFS, DFS, RANDOM;
+            BFS, DFS, BFS_FIRST_MATCH, DFS_FIRST_MATCH, RANDOM;
         }
 
         public static <B extends Bigraph<? extends Signature<?>>> Class<? extends ModelCheckingStrategy> getSimulationStrategyClass(Type type) {
-            switch (type) {
-                case BFS:
-                    return BreadthFirstStrategy.class;
-                case DFS:
-                    return DepthFirstStrategy.class;
-                case RANDOM: //This is like simulation
-                    return RandomAgentModelCheckingStrategy.class;
-                default:
-                    return BreadthFirstStrategy.class;
-            }
+            return switch (type) {
+                case DFS -> DepthFirstStrategy.class;
+                case BFS_FIRST_MATCH -> BFSFirstMatchStrategy.class;
+                case DFS_FIRST_MATCH -> DFSFirstMatchStrategy.class;
+                case RANDOM -> RandomAgentModelCheckingStrategy.class;
+                default -> BreadthFirstStrategy.class;
+            };
         }
     }
 
@@ -101,16 +114,54 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
             implements BigraphModelChecker.ReactiveSystemListener<B> {
     }
 
-
+    /**
+     * Creates a BigraphModelChecker using Breadth-First Search (BFS) as default exploration strategy.
+     * <p>
+     * BFS ensures a level-by-level expansion of the reactive system and is typically preferred for exhaustive model checking
+     * where completeness and shortest-path properties are desired.
+     *
+     * @param reactiveSystem the reactive system to be explored
+     * @param options        configuration settings controlling model checking behavior
+     */
     public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, ModelCheckingOptions options) {
         this(reactiveSystem, SimulationStrategy.Type.BFS, options);
     }
 
+    /**
+     * Creates a BigraphModelChecker using the specified exploration strategy.
+     * <p>
+     * This constructor allows selecting between different model checking strategies,
+     * such as BFS, DFS, first-match variants, or randomized exploration.
+     * The choice of strategy influences how the state space is traversed:
+     * <ul>
+     *   <li><b>BFS</b>: Exhaustive, level-order traversal.</li>
+     *   <li><b>DFS</b>: Deep-path exploration, useful for long execution traces.</li>
+     *   <li><b>BFS_FIRST_MATCH / DFS_FIRST_MATCH</b>: Deterministic path exploration
+     *       using only the first available successor in natural match order.</li>
+     *   <li><b>RANDOM</b>: Stochastic exploration for sampling-based analysis.</li>
+     * </ul>
+     * </p>
+     *
+     * @param reactiveSystem         the reactive system to be explored
+     * @param simulationStrategyType the traversal strategy to be used
+     * @param options                configuration settings controlling model checking behavior
+     */
     public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationStrategy.Type simulationStrategyType, ModelCheckingOptions options) {
         this(reactiveSystem, simulationStrategyType, options, null);
         onAttachListener(this);
     }
 
+    /**
+     * Creates a BigraphModelChecker with a specified exploration strategy and an optional listener.
+     * <p>
+     * The listener can be used for advanced use cases where one
+     * needs to observe state-space exploration events (e.g., rule triggered, or predicate matched).
+     *
+     * @param reactiveSystem         the reactive system to be explored
+     * @param simulationStrategyType the traversal strategy to be used
+     * @param options                configuration settings controlling model checking behavior
+     * @param listener               optional listener for reactive system events (may be {@code null})
+     */
     public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, SimulationStrategy.Type simulationStrategyType, ModelCheckingOptions options,
                                ReactiveSystemListener<B> listener) {
         Optional.ofNullable(listener).map(this::setReactiveSystemListener).orElseGet(() -> setReactiveSystemListener((ReactiveSystemListener<B>) EMPTY_LISTENER));
@@ -119,13 +170,8 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
 
         this.reactiveSystem = reactiveSystem;
         this.reactionGraph = new ReactionGraph<>();
-//        this.matcher = AbstractBigraphMatcher.create(this.genericType);
 
         this.options = options;
-//        ModelCheckingOptions.TransitionOptions opts = options.get(ModelCheckingOptions.Options.TRANSITION);
-//        if (opts.allowReducibleClasses()) {
-//            this.canonicalForm = BigraphCanonicalForm.createInstance();
-//        }
 
         this.simulationStrategyType = simulationStrategyType;
         try {
@@ -135,6 +181,8 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
             throw new RuntimeException(e);
         }
     }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public BigraphCanonicalForm acquireCanonicalForm() {
         BigraphCanonicalForm inst;
@@ -196,9 +244,8 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     /**
      * Asynchronously start the simulation based on the provided reactive system and options.
      *
-     * @throws BigraphSimulationException if agent is {@code null} or the simulation strategy was not selected
      */
-    public Future<ReactionGraph<B>> executeAsync() throws BigraphSimulationException, ReactiveSystemException {
+    public Future<ReactionGraph<B>> executeAsync() throws ReactiveSystemException {
         assertReactionSystemValid();
         return executorService.submit(() -> {
             doWork();
@@ -219,7 +266,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     /**
      * Performs some checks if the reactive system is valid.
      *
-     * @throws BigraphSimulationException if the system is not valid
+     * @throws ReactiveSystemException if the system is not valid
      */
     protected void assertReactionSystemValid() throws ReactiveSystemException {
         if ((reactiveSystem.getAgent()) == null) {
@@ -286,7 +333,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
                     }
 
                     if (opts.isXMIEnabled()) {
-                        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) bigraph, new FileOutputStream(
+                        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph<?>) bigraph, new FileOutputStream(
                                 Paths.get(opts.getOutputStatesFolder().toString(), label) + ".xmi"));
                         logger.debug("Exporting state as xmi {}", label);
                     }
@@ -357,6 +404,10 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         return this;
     }
 
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Reactive System Listener for State-Space Events
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public interface ReactiveSystemListener<B extends Bigraph<? extends Signature<?>>> {
 
         default void onReactiveSystemStarted() {
@@ -388,7 +439,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
          * is not called.
          *
          * @param currentAgent the agent
-         * @param label
+         * @param label        the label of the predicate that matched
          */
         default void onAllPredicateMatched(B currentAgent, String label) {
         }

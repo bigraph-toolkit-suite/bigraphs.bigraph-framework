@@ -38,6 +38,12 @@ import org.slf4j.LoggerFactory;
  * Provides some useful method to keep subclasses simple.
  *
  * @author Dominik Grzelak
+ * @see BreadthFirstStrategy
+ * @see DepthFirstStrategy
+ * @see RandomAgentModelCheckingStrategy
+ * @see BFSFirstMatchStrategy
+ * @see DFSFirstMatchStrategy
+ *
  */
 public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends Signature<?>>> implements ModelCheckingStrategy<B> {
     protected Logger logger = LoggerFactory.getLogger(ModelCheckingStrategySupport.class);
@@ -133,7 +139,7 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
                     .limit(modelChecker.getReactiveSystem().getReactionRules().size())
                     .peek(rule -> getListener().onCheckingReactionRule(rule))
                     .flatMap(rule -> {
-                        MatchIterable<BigraphMatch<B>> matches = modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, rule));
+                        MatchIterable<BigraphMatch<B>> matches = getBigraphMatches(rule, theAgent);
                         for (BigraphMatch<B> match : matches) {
                             occurrenceCounter++;
                             B reaction = (theAgent.getSites().isEmpty() || match.getParameters().isEmpty())
@@ -170,6 +176,25 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
         logger.debug("Total States: {}", iterationCounter.get());
         logger.debug("Total Transitions: {}", modelChecker.getReactionGraph().getGraph().edgeSet().size());
         logger.debug("Total Occurrences: {}", getOccurrenceCount());
+    }
+
+    /**
+     * Retrieves all matches of the given reaction rule for the provided agent bigraph.
+     * <p>
+     * Subclasses may override this method to introduce additional filtering,
+     * pruning strategies, or domain-specific constraints on the match set
+     * (e.g., restricting matches by attributes, spatial bounds, or metadata).
+     * <p>
+     * By default, this method delegates to the underlying
+     * {@link org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher}.
+     *
+     * @param rule     the reaction rule whose redex will be matched against the agent
+     * @param theAgent the agent (host) bigraph in which matches should be searched
+     * @return an iterable collection of all matches found for the given rule on the agent;
+     * never {@code null}, but may be empty if no matches exist. Depends on {@link org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher}.
+     */
+    protected MatchIterable<BigraphMatch<B>> getBigraphMatches(ReactionRule<B> rule, B theAgent) {
+        return modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, rule));
     }
 
     protected void evaluatePredicates(B agent, String canonical, String root) {
@@ -241,8 +266,6 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
 
         /**
          * This stores the rewritten bigraph for reference
-         *
-         * @return
          */
         public B getBigraph() {
             return bigraph;
@@ -254,8 +277,6 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
 
         /**
          * The canonical encoding of the agent for this match result
-         *
-         * @return
          */
         public String getCanonicalString() {
             return canonicalStringOfResult;

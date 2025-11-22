@@ -5,7 +5,7 @@
 
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>framework-parent</artifactId>
-    <version>2.3.3</version>
+    <version>2.3.4</version>
     <packaging>pom</packaging>
     <name>Bigraph Parent Project</name>
     <description>
@@ -277,7 +277,7 @@
                             <licenseMerge>Apache Software License, Version 2.0|The Apache Software License, Version
                                 2.0|Apache License, Version 2.0|Apache Public License 2.0|Apache License Version 2.0|The
                                 Apache Software License, version 2.0|Apache License version 2.0|Apache Software License,
-                                version 2.0|Apache-2.0|Apache 2
+                                version 2.0|Apache-2.0|Apache 2|The Apache Software License, Version 2.0
                             </licenseMerge>
                             <licenseMerge>Apache Software License, Version 2.0|Apache 2.0|Apache2.0|Apache License
                                 2.0|Apache Software License - Version 2.0|The Apache License, Version 2.0

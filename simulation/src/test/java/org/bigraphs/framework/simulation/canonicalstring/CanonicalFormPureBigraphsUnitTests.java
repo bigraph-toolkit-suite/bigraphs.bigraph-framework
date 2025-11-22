@@ -64,8 +64,6 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         super(TARGET_DUMP_PATH, true);
     }
 
-//    private PureBigraphFactory factory = pure();
-
     @BeforeAll
     static void setUp() throws IOException {
         File dump = new File(TARGET_DUMP_PATH);
@@ -115,44 +113,22 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         Bigraph<DynamicSignature> outerBigraph2 = ops(big3).compose(bigraph2).getOuterBigraph();
         String outerBigraphSE2 = instance.bfcs(outerBigraph2);
         System.out.println(outerBigraphSE2);
-//        Placings<DefaultDynamicSignature> placings = factory.createPlacings(sig);
-//        Placings<DefaultDynamicSignature>.Join join = placings.join();
-//        Bigraph<DefaultDynamicSignature> compA = ops(join).nesting(bigraphA).getOuterBigraph();
-//        Bigraph<DefaultDynamicSignature> comp2 = ops(join).nesting(bigraph2).getOuterBigraph();
-////        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) compA, System.out);
-////        BigraphFileModelManagement.exportAsInstanceModel((EcoreBigraph) comp2, System.out);
-//
-//        String bfcsCompA = instance.bfcs(compA);
-//        String bfcsComp2 = instance.bfcs(comp2);
-//        System.out.println(bfcsCompA);
-//        System.out.println(bfcsComp2);
     }
 
     @Test
     void car_example() throws IOException {
-//        file:///home/dominik/git/BigraphFramework/simulation/src/test/resources/dump/cars/framework/states/a_9.xmi
-//        file:///home/dominik/git/BigraphFramework/simulation/src/test/resources/dump/cars/framework/states/a_17.xmi
-
         //same: 9-17-21
         //same: 5-11
         String metaModelFile = TARGET_DUMP_PATH + "../../bigraphs/cars/meta-model.ecore";
         String instanceModelFile_9 = TARGET_DUMP_PATH + "../../bigraphs/cars/a_9.xmi";
         String instanceModelFile_17 = TARGET_DUMP_PATH + "../../bigraphs/cars/a_17.xmi";
-        DynamicSignature carMapSignature = RouteFinding.createSignature();
+        DynamicSignature carMapSignature = RouteFinding.sig();
 
         PureBigraphBuilder<DynamicSignature> builder_9 = PureBigraphBuilder.create(carMapSignature, metaModelFile, instanceModelFile_9);
         PureBigraphBuilder<DynamicSignature> builder_17 = PureBigraphBuilder.create(carMapSignature, metaModelFile, instanceModelFile_17);
 
         PureBigraph bigraph_9 = builder_9.create();
         PureBigraph bigraph_17 = builder_17.create();
-//                BigraphGraphvizExporter.toPNG(bigraph_9,
-//                true,
-//                new File(TARGET_DUMP_PATH + "../../bigraphs/cars/b9.png")
-//        );
-//                BigraphGraphvizExporter.toPNG(bigraph_17,
-//                true,
-//                new File(TARGET_DUMP_PATH + "../../bigraphs/cars/b17.png")
-//        );
 
         assertEquals(bigraph_9.getAllPlaces().size(), bigraph_17.getAllPlaces().size());
         BigraphCanonicalForm instance = BigraphCanonicalForm.createInstance();
@@ -162,8 +138,6 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         System.out.println(bfcs_9);
         System.out.println(bfcs_17);
         assertEquals(bfcs_9, bfcs_17);
-
-//        new PureBigraphBuilder<DefaultDynamicSignature>()
     }
 
     @Test
@@ -234,7 +208,6 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         DynamicSignature signature = createAlphabeticSignature();
         PureBigraphBuilder<DynamicSignature> b1 = pureBuilder(signature);
         BigraphEntity.InnerName e0 = b1.createInner("e0");
-//        BigraphEntity.OuterName y1 = b1.createOuterName("y1");
 
         b1.root().child("B")
                 .down()
