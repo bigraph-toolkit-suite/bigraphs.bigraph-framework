@@ -81,16 +81,16 @@ The framework is developed around a [metamodel-first approach](https://github.co
     - Graphical export via GraphViz/DOT, PNG, Visualization of Compiler Graphs (VCG) format via yComp
     - Interactive visualization via GraphStream
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
-    - Bigraph matching and rewriting via jLibBig
-    - Dedicated subhypergraph matching on link graphs (query-data matching)
+    - Bigraph matching and rewriting via [jLibBig](https://bigraphs.github.io/jlibbig/) with tracking support
+    - Dedicated subhypergraph matching on link graphs only (query-data matching)
+    - Simulation and Model Checking (BFS, DFS, Random, MatchAll, MatchFirst)
     - Generation of a labeled transition system (LTS)
-    - Simulation and Model Checking (BFS, Random)
-    - Predicate checking
+    - Predicate checking and logical connectors
     - Specify order of reaction rules via priorities
     - Tracking rules (trace node identities across reactions)
     - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
 - Model Importer/Exporter
-    - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
+    - Export a bigraph/LTS to common graph formats, e.g., DOT, GraphML, GXL, VCG
     - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
 - Attributed Bigraphs
     - Add arbitrary attributes to nodes

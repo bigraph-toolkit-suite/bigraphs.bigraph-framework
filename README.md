@@ -1,8 +1,10 @@
+[![HiRSE Code Promo Badge](https://img.shields.io/badge/Promo-8db427?style=plastic&label=HiRSE&labelColor=005aa0&link=https%3A%2F%2Fgo.fzj.de%2FCodePromo)](https://go.fzj.de/CodePromo)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/org.bigraphs.framework/framework-parent)](https://central.sonatype.com/search?q=org.bigraphs.framework)
+
 <img src="etc/assets/bigraph-framework-logo.png" style="zoom:67%;" />
 
 > Latest Version: **2.3.4**
-
-[![HiRSE Code Promo Badge](https://img.shields.io/badge/Promo-8db427?style=plastic&label=HiRSE&labelColor=005aa0&link=https%3A%2F%2Fgo.fzj.de%2FCodePromo)](https://go.fzj.de/CodePromo)
 
 - User Manual: https://bigraphs.org/software/bigraph-framework/docs/
 
@@ -32,16 +34,16 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
     - Graphical export via GraphViz/DOT, PNG, Visualization of Compiler Graphs (VCG) format via yComp
     - Interactive visualization via GraphStream
 - Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
-    - Bigraph matching and rewriting via [jLibBig](https://bigraphs.github.io/jlibbig/)
-    - Dedicated subhypergraph matching on link graphs (query-data matching)
+    - Bigraph matching and rewriting via [jLibBig](https://bigraphs.github.io/jlibbig/) with tracking support
+    - Dedicated subhypergraph matching on link graphs only (query-data matching)
+    - Simulation and Model Checking (BFS, DFS, Random, MatchAll, MatchFirst)
     - Generation of a labeled transition system (LTS)
-    - Simulation and Model Checking (BFS, Random)
-    - Predicate checking
+    - Predicate checking and logical connectors
     - Specify order of reaction rules via priorities
     - Tracking rules (trace node identities across reactions)
     - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
 - Model Importer/Exporter
-    - Export a bigraph to common graph formats, e.g., DOT, GraphML, GXL, VCG
+    - Export a bigraph/LTS to common graph formats, e.g., DOT, GraphML, GXL, VCG
     - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
 - Attributed Bigraphs
     - Add arbitrary attributes to nodes
@@ -49,7 +51,7 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
 
 **Requirements**
 
-- Java >=17 (JDK)
+- Java >=21 (JDK)
 - Maven / Gradle
 - Graphviz for the `bigraph-visualization` module
     - Ubuntu: `sudo apt install graphviz`
