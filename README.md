@@ -46,7 +46,7 @@ The high-level Java API eases the programming of bigraphical systems for real-wo
     - Export a bigraph/LTS to common graph formats, e.g., DOT, GraphML, GXL, VCG
     - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
 - Attributed Bigraphs
-    - Add arbitrary attributes to nodes
+    - Add arbitrary attributes to nodes and links (edges and outer names)
     - Attributes are preserved when doing rewriting (this requires tracking maps)
 
 **Requirements**

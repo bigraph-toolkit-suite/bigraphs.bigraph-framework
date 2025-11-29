@@ -188,8 +188,6 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
         }
     }
 
-    //TODO CHECK: return a list because of eta instantiation.
-    // or define second method: one like here and one that considers eta (to be used in BreadthFirstStrategy)
     @Override
     public PureBigraph buildParametricReaction(final PureBigraph agent, final BigraphMatch<PureBigraph> match, final ReactionRule<PureBigraph> rule) {
         try {

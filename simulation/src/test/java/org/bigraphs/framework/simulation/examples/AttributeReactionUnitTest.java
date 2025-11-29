@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
+import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -51,16 +52,17 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
         new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
+
     @Test
-    void attribute_preservation_reaction() throws InvalidReactionRuleException {
+    void attribute_preservation_reaction() throws InvalidReactionRuleException, InvalidConnectionException {
         DynamicSignature sig = pureSignatureBuilder()
-                .add("Place", 0)
+                .add("Place", 1)
                 .add("Token", 0)
                 .create();
         PureBigraphBuilder<DynamicSignature> b = pureBuilder(sig);
         PureBigraph bigraph = b.root()
-                .child("Place").down().child("Token").up()
-                .child("Place")
+                .child("Place", "y").down().child("Token").up()
+                .child("Place", "y")
                 .create();
         eb(bigraph, TARGET_DUMP_PATH + "s_0");
         BigraphEntity.NodeEntity<DynamicControl> v1 = bigraph.getNodes().stream()
@@ -70,12 +72,18 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
         v1.setAttributes(attributes);
         System.out.println(attributes);
 
+        BigraphEntity.Link e0 = bigraph.getAllLinks().stream()
+                .filter(x -> x.getName().equals("y")).findAny().get();
+        Map<String, Object> attributesEdge = e0.getAttributes();
+        attributesEdge.put("edgeCondition", "velocity > 0 [km/h]");
+        e0.setAttributes(attributesEdge);
+
         PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig);
         PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig);
-        bRedex.root().child("Place").down().child("Token").up()
-                .child("Place");
-        bReactum.root().child("Place")
-                .child("Place").down().child("Token").up();
+        bRedex.root().child("Place", "y").down().child("Token").up()
+                .child("Place", "y");
+        bReactum.root().child("Place", "y")
+                .child("Place", "y").down().child("Token").up();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bRedex.create(), bReactum.create())
                 .withLabel("swapRule");
         // important for tracing nodes through reactions, thus, to correctly preserve attributes
@@ -83,6 +91,7 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
         eta.put("v0", "v0");
         eta.put("v1", "v2");
         eta.put("v2", "v1");
+        eta.addLinkNames("y");
         // assign the tracking map to the rule
         rr.withTrackingMap(eta);
         eb(rr.getRedex(), TARGET_DUMP_PATH + "rr_LHS");
@@ -104,6 +113,10 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
             Map<String, Object> attr = result.getNodes().stream()
                     .filter(x -> x.getName().equals("v1")).findAny().get().getAttributes();
             System.out.println(attr);
+
+            Map<String, Object> attr2 = result.getAllLinks().stream()
+                    .filter(x -> x.getName().equals("y")).findAny().get().getAttributes();
+            System.out.println(attr2);
         }
 
 

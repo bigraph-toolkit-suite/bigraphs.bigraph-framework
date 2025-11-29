@@ -62,7 +62,7 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     /**
      * Checks if a parametric redex is <i>simple</i>. A parametric redex is simple if:
      * <ul>
-     * <li>open: every link is open</li>
+     * <li>open: every link is open (edges, outer names)</li>
      * <li>guarding: no site has a root as parent</li>
      * <li>inner-injective: no two sites are siblings</li>
      * </ul>
@@ -74,10 +74,6 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
      * @throws RedexIsNotSimpleException if the redex is not simple
      */
     public void assertParametricRedexIsSimple(ReactionRule<B> reactionRule) throws RedexIsNotSimpleException {
-        //"openness": all links are interfaces (edges, and outer names)
-        //TODO must not be severe constraint, as we can internally model edges as outer names (in the matching as currently done)
-//        boolean isOpen = redex.getInnerNames().size() == 0 && redex.getEdges().size() == 0;
-
         if (!reactionRule.isRedexSimple()) {
             throw new RedexIsNotSimpleException();
         }
@@ -121,6 +117,8 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
 
     protected void copyAttributes(B sourceBigraph, B targetBigraph) {
         MutableMap<String, Map<String, Object>> S = Maps.mutable.empty();
+
+        // First: Handle all Nodes
         // Iterate through all nodes and store in a map S: nodeId |-> Attributes
         sourceBigraph.getNodes().forEach(n -> {
             if (!n.getAttributes().isEmpty()) {
@@ -132,6 +130,19 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
             Optional<BigraphEntity.NodeEntity<Control<?, ?>>> first = targetBigraph.getNodes().stream().filter(n -> n.getName().equals(nodeId)).findFirst();
             first.ifPresent(controlNodeEntity -> controlNodeEntity.setAttributes(S.get(nodeId)));
         });
+
+        // Second: Handle all Links
+        S.clear();
+        sourceBigraph.getAllLinks().forEach(n -> {
+            if (!n.getAttributes().isEmpty()) {
+                S.put(n.getName(), n.getAttributes());
+            }
+        });
+        S.keySet().forEach(elemId -> {
+            Optional<BigraphEntity.Link> first = targetBigraph.getAllLinks().stream().filter(lnk -> lnk.getName().equals(elemId)).findFirst();
+            first.ifPresent(lnk -> lnk.setAttributes(S.get(elemId)));
+        });
+
     }
 
     @Override
@@ -198,7 +209,6 @@ public abstract class AbstractSimpleReactiveSystem<B extends Bigraph<? extends S
     }
 
     public synchronized AbstractSimpleReactiveSystem<B> setAgent(B initialAgent) {
-//        assertAgentIsGround(initialAgent);
         this.initialAgent = initialAgent;
         return this;
     }

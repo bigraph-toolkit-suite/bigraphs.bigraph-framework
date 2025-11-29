@@ -73,7 +73,6 @@ public class BigraphEntity<C extends Control> {
         return control;
     }
 
-
     public BigraphEntityType getType() {
         return type;
     }
@@ -112,7 +111,6 @@ public class BigraphEntity<C extends Control> {
             return tClass.getDeclaredConstructor(EObject.class).newInstance(param);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
                  InvocationTargetException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -138,7 +136,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                toString = new StringBuilder(getName()).append(":").append("InnerName").toString();
+                toString = getName() + ":" + "InnerName";
             }
             return toString;
         }
@@ -156,6 +154,26 @@ public class BigraphEntity<C extends Control> {
             return String.valueOf(name);
         }
 
+        public Map<String, Object> getAttributes() {
+            EStructuralFeature attrFeature = getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES);
+            List<Map.Entry<String, Object>> list = (List<Map.Entry<String, Object>>) getInstance().eGet(attrFeature, true);
+            return list.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+
+        public void setAttributes(Map<String, Object> attributes) {
+            EStructuralFeature attrFeature = getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES);
+            List<EObject> collect = attributes.entrySet().stream().map(x -> {
+                EClass entityClass = (EClass) getInstance().eClass().getEPackage().getEClassifier(BigraphMetaModelConstants.CLASS_ESTRING2EJAVAOBJECT_MAP);
+                EObject eMapEntry = getInstance().eClass().getEPackage().getEFactoryInstance().create(entityClass);
+                EAttribute keyAttr = EMFUtils.findAttribute(eMapEntry.eClass(), BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES_KEY);
+                EAttribute valueAttr = EMFUtils.findAttribute(eMapEntry.eClass(), BigraphMetaModelConstants.REFERENCE_BNODE_ATTRIBUTES_VALUE);
+                eMapEntry.eSet(keyAttr, x.getKey());
+                eMapEntry.eSet(valueAttr, x.getValue());
+                return eMapEntry;
+            }).collect(Collectors.toList());
+            getInstance().eSet(attrFeature, collect);
+        }
+
     }
 
     public static class OuterName extends Link {
@@ -168,7 +186,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                toString = new StringBuilder(getName()).append(":").append("OuterName").toString();
+                toString = getName() + ":" + "OuterName";
             }
             return toString;
         }
@@ -184,7 +202,7 @@ public class BigraphEntity<C extends Control> {
         @Override
         public String toString() {
             if (Objects.isNull(toString)) {
-                toString = new StringBuilder(getName()).append(":").append("Edge").toString();
+                toString = getName() + ":" + "Edge";
             }
             return toString;
         }
