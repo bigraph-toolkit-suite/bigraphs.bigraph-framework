@@ -44,7 +44,7 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
     }
 
     @Test
-    void test_rule_parallelProduct_01() throws InvalidReactionRuleException, IncompatibleInterfaceException {
+    void test_rule_parallel_product_01() throws InvalidReactionRuleException, IncompatibleInterfaceException {
 
         ReactionRule<PureBigraph> rr01 = createRR_01();
         eb(rr01.getRedex(), DUMP + "rr01_LHS");
@@ -56,6 +56,30 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
 
         ReactionRuleComposer<ParametricReactionRule<Bigraph<?>>> rComp = new ReactionRuleComposer<>();
         ParametricReactionRule<Bigraph<?>> product = rComp.parallelProduct(rr01, rr02);
+        eb(product.getRedex(), DUMP + "product_LHS");
+        eb(product.getReactum(), DUMP + "product_RHS");
+        System.out.println("Product label = " + product.getLabel());
+        assert product.getLabel().equals("R1_PP_R2");
+
+        System.out.println(product.getTrackingMap());
+        product.getInstantationMap().getMappings().forEach((k, v) -> {
+            System.out.println(k.getValue() + " --> " + v.getValue());
+        });
+    }
+
+    @Test
+    void test_rule_merge_product_01() throws InvalidReactionRuleException, IncompatibleInterfaceException {
+
+        ReactionRule<PureBigraph> rr01 = createRR_01();
+        eb(rr01.getRedex(), DUMP + "rr01_LHS");
+        eb(rr01.getReactum(), DUMP + "rr01_RHS");
+
+        ReactionRule<PureBigraph> rr02 = createRR_02();
+        eb(rr02.getRedex(), DUMP + "rr02_LHS");
+        eb(rr02.getReactum(), DUMP + "rr02_RHS");
+
+        ReactionRuleComposer<ParametricReactionRule<Bigraph<?>>> rComp = new ReactionRuleComposer<>();
+        ParametricReactionRule<Bigraph<?>> product = rComp.mergeProduct(rr01, rr02);
         eb(product.getRedex(), DUMP + "product_LHS");
         eb(product.getReactum(), DUMP + "product_RHS");
         System.out.println("Product label = " + product.getLabel());
