@@ -13,19 +13,30 @@ import getting_started_guide_3 from '!!raw-loader!../assets/basics/getting_start
 
 Discover what **Bigraph Framework** is all about and learn the core concepts behind it.
 
+<details style={{ background: 'transparent' }}>
+    <summary><strong>What are Bigraphs?</strong></summary>
+    Bigraphs are a theory and metamodel for global ubiquitous systems,
+    mobile computing, context-aware systems and the Internet of Things (IoT), or in general: for reactive systems.
+    It is grounded on category theory and regarded as a unifying framework for many process calculi, including the ambient calculus, action calculi, Petri nets,
+    the Calculus of Communicating Systems (CCS) and π-calculus.
+    The theory provides an algebra and a graph rewriting mechanism to describe, study and analyze the dynamic behavior of reactive systems.
+</details>
+
 ## Creating a Bigraph
 
-At the moment, Bigraph Framework supports only _pure bigraphs_.
+At the moment, Bigraph Framework supports only _pure attributed bigraphs_.
 
 ### Signature
 
 To construct a bigraph, the first step is to define a **signature**.
-The signature specifies the **syntax** of the bigraph and determines which **types** (i.e., _controls_) can be used in subsequent modeling steps.
+The signature specifies the **syntax** of the bigraph and determines which **types** (i.e., _controls_ in bigraph-jargon) can be used in subsequent modeling steps.
 
 A signature is created via a _signature builder_, which is obtained from a _pure factory_.
 All operations that follow are performed through this factory within the current _execution context_.
 
 The entry point is the factory method `BigraphFactory.pureSignatureBuilder()`.
+
+<CodeBlock className="language-java">{getting_started_guide_0}</CodeBlock>
 
 :::tip
 Note that all examples use a static import of the `BigraphFactory` class' operations:
@@ -35,8 +46,6 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 This makes access to its operations more convenient.
 :::
 
-<CodeBlock className="language-java">{getting_started_guide_0}</CodeBlock>
-
 As described above, a **signature** specifies the syntax of the bigraph to be created.
 In the example below, the resulting signature contains two controls:
 
@@ -44,7 +53,8 @@ In the example below, the resulting signature contains two controls:
 - **Computer** with an *arity* of `2`
 
 The **arity** defines how many *connections* a control can have.
-The semantic interpretation of “connection” is left abstract here—it may represent, for example, an **Ethernet link**, a **logical association**, or any other type of relationship between elements.
+The semantic interpretation of "connection" is left abstract here.
+It may represent, for example, an **Ethernet link**, a **logical association**, or any other type of relationship between elements.
 
 :::info
 A more verbose form for creating controls is the following:

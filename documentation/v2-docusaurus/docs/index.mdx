@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 <center>
     <p>
         This manual provides a complete guide to the Bigraph Framework. <br/>
-        <i>Last Updated: 2025-11-22</i>
+        <i>Last Updated: 2026-01-09</i>
     </p>
 </center>
 
@@ -64,53 +64,57 @@ Since version 1.0.0 of Bigraph Framework: The new groupID and base package name 
 
 ## What is Bigraph Framework?
 
-**Bigraph Framework** is a software framework
-written in Java for the creation and simulation of bigraphs and bigraphical reactive systems
-to expedite the experimental evaluation of the bigraph theory in real-world applications.
+Bigraph Framework is a Java framework designed for developers and researchers for building, simulating, and analyzing reactive systems (e.g., cyber-physical, context-aware, agent-based, or distributed systems, IoT environments, ...).
 
-The goal of this framework is to facilitate the implementation of reactive systems, including context-aware, agent-based systems or cyber-physical systems.
+It lets you model dynamic systems with both structure (who is inside what) and connectivity (who is connected and interacting to whom), and then simulate, visualize, and verify how those systems evolve over time.
+
+Under the hood, the framework is based on Milner’s theory of Bigraphical Reactive Systems (BRS).
+
 The high level API eases the programming of bigraphical systems for various applications.
 The framework is developed around a [metamodel-first approach](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel), when working with bigraphical structures.
 
 ### Features
 
-- Modelling and Storage
-    - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
-    - Read and write instance models and metamodels of a bigraph from and to the file system
-- Visualization
-    - Graphical export via GraphViz/DOT, PNG, Visualization of Compiler Graphs (VCG) format via yComp
-    - Interactive visualization via GraphStream
-- Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
-    - Bigraph matching and rewriting via [jLibBig](https://bigraphs.github.io/jlibbig/) with tracking support
-    - Dedicated subhypergraph matching on link graphs only (query-data matching)
-    - Simulation and Model Checking (BFS, DFS, Random, MatchAll, MatchFirst)
-    - Generation of a labeled transition system (LTS)
-    - Predicate checking and logical connectors
-    - Specify order of reaction rules via priorities
-    - Tracking rules (trace node identities across reactions)
-    - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
-- Model Importer/Exporter
-    - Export a bigraph/LTS to common graph formats, e.g., DOT, GraphML, GXL, VCG
-    - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
-- Attributed Bigraphs
-    - Add arbitrary attributes to nodes and links (edges and outer names)
-    - Attributes are preserved when doing rewriting (this requires tracking maps)
+**Bigraph Modeling and Persistence**
+- Create and manipulate bigraphs dynamically at **design time and runtime** using the **Bigraph Ecore Metamodel (BEM)**
+([bigraphs.bigraph-ecore-metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel))
+- Load and store both **bigraph metamodels** and **instance models** in standard file formats (Ecore/XMI)
 
-### What are Bigraphs?
+**Visualization and Inspection**
+- Export bigraphs and transition systems to standard graph formats:
+**GraphViz (DOT), PNG, VCG (yComp)**
+- Interactive, programmatic visualization via **GraphStream** for exploring structures
 
-**Bigraphs** are an emerging theory and metamodel for global ubiquitous systems,
-mobile computing, context-aware systems and the Internet of Things (IoT), or in general: for reactive systems.
-It is grounded on category theory and regarded as a unifying framework for many process calculi, including the ambient calculus, action calculi, Petri nets,
-the Calculus of Communicating Systems (CCS) and π-calculus.
-The theory provides an algebra and a graph rewriting mechanism to describe, study and analyze the dynamic behavior of reactive systems.
+**Bigraphical Reactive Systems (BRS)**
 
-## Usage and Development Requirements
+Model and analyze system dynamics using **reaction rules** and **graph rewriting**:
 
-- Java >=21
-- Maven v3.8.7 or Gradle
+- Pattern matching and rewriting powered by **jLibBig**, with full **node and link tracking**
+- Specialized **link-graph (hypergraph) matching**
+- Multiple **simulation and model-checking strategies**:
+    - Breadth-first search (BFS)
+    - Depth-first search (DFS)
+    - Random exploration
+    - Match-all / Match-first
+- Automatic construction of **Labeled Transition Systems (LTS)**
+- **State predicates and logical connectors** for property checking
+- **Rule priorities** to control nondeterminism and execution order
+- **Tracking rules** to preserve identity of entities across reactions
+- **Conditional rules** for guarded rewriting
+
+**Import, Export, and Tool Interoperability**
+- Export bigraphs and LTSs to standard graph formats: **DOT, GraphML, GXL, VCG**
+- Interoperate with other bigraph tools: **BigMC, BigraphER, BigRed, jLibBig**, and others
+
+**Attributed Bigraphs**
+- Attach **arbitrary attributes** to:
+    - Nodes
+    - Links (edges and outer names)
+- Attributes are **preserved during rewriting**, enabling data-rich CPS and agent-based models
+(via tracking maps)
 
 
-## Use / Install / Dependency Settings
+## Use / Install / Dependencies
 
 Bigraph Framework is online available as Maven/Gradle dependency.
 
@@ -120,18 +124,21 @@ Artifacts are deployed to the _Central Repository_.
 To build the source by yourself, follow the [README.md](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md) inside the code repository.
 :::
 
-### Quick Start: Starter Project Template
+**Usage and Development Requirements:**
 
-To get started using Bigraph Framework right away, download the Maven-based Project Skeleton
+- Java >=21
+- Maven v3.8.7 or Gradle
+
+### Quick Start: Project Template
+
+To get started using Bigraph Framework right away, download the Maven/Gradle-based Project Template
 
 - [Starter Project Template using Bigraph Framework](https://www.bigraphs.org/software/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip)
 - See <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>here</a> for the latest version on GitHub
 
 The README contained therein, describes how to compile and start an application.
 
-Alternatively, follow the step-by-step project setup as described in the following.
-
-### Package Dependencies
+### Project Dependencies
 
 Depending on the build management tool you are using, one of the following
 configuration for Maven or Gradle is necessary.
@@ -161,37 +168,6 @@ import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
         Refer to the <a href={"https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/README.md"}>README.md</a> in Bigraph Framework's code repository on how to build the framework from source.
     </TabItem>
 </Tabs>
-
-[//]: # (### Repository Setup for SNAPSHOT Releases)
-
-[//]: # ()
-[//]: # (No additional configuration is necessary to resolve the dependencies above!)
-
-[//]: # ()
-[//]: # (However, if you want SNAPSHOT releases, the following custom repository must be added as well.)
-
-[//]: # (The configuration for Maven and Gradle is provided below.)
-
-[//]: # ()
-[//]: # (<Tabs>)
-
-[//]: # (    <TabItem value="maven" label="Maven" default>)
-
-[//]: # (        The following Maven repository entry must be added to the <code>repositories</code> element of a <code>pom.xml</code> of a Maven-based Java project:)
-
-[//]: # (        <pre>{myConstClass2.MAVEN_REP_CODE}</pre>)
-
-[//]: # (    </TabItem>)
-
-[//]: # (    <TabItem value="gradle" label="Gradle">)
-
-[//]: # (        For Gradle, add this to the project's build gradle file:)
-
-[//]: # (        <pre>{myConstClass2.GRADLE_REP_CODE}</pre>)
-
-[//]: # (    </TabItem>)
-
-[//]: # (</Tabs>)
 
 ### Logging Configuration
 

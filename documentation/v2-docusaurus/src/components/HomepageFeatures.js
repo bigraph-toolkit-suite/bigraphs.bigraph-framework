@@ -8,7 +8,7 @@ const FeatureList = [
         Svg: require('../../static/img/icon-bigraph-creation.png').default,
         description: (
             <>
-                Easily create and manipulate bigraph models at both design-time and run-time. Compose smaller bigraphs into complex structures to model sophisticated systems with ease. Models adhere to the Ecore metamodeling standard.
+                Easily create and manipulate bigraph models at both design-time and run-time. Compose smaller bigraphs into larger structures. Models adhere to the Ecore metamodeling standard.
             </>
         ),
     },
@@ -26,7 +26,7 @@ const FeatureList = [
         Svg: require('../../static/img/icon-bigraph-interop.png').default,
         description: (
             <>
-                Seamless integration: Export your bigraph models and bigraphical reactive systems in multiple formats, including Ecore/XMI, GraphML, DOT, GXL, BigraphER, BigMC, and BigRed.
+                Export bigraph models and bigraphical reactive systems in multiple formats, including Ecore/XMI, GraphML, DOT, GXL, BigraphER, BigMC, and BigRed.
             </>
         ),
     },
@@ -35,7 +35,7 @@ const FeatureList = [
         Svg: require('../../static/img/icon-bigraph-vizu.png').default,
         description: (
             <>
-                Visualize your bigraphs in different styles and formats for documentation, presentations, and further analysis.
+                Visualize bigraphs in different styles and formats for documentation, presentations, and further analysis.
                 Interactive visualization enables dynamic exploration of bigraphs in real time.
             </>
         ),

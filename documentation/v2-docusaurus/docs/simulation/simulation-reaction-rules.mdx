@@ -105,8 +105,9 @@ It can be created using the factory method:
 ## Conditional Reaction Rules
 
 Rules provide expressive means to define pre-conditions so that a rule can actually be fired.
-Additionally, the post-conditions, i.e., the result is easily specified using the right-hand side of the rule (i.e., the redex).
-This can be done using the redex only, or via so-called Conditional Rules ([`org.bigraphs.framework.core.reactivesystem.ConditionalParametricRuleDecorator`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ConditionalParametricRuleDecorator.html)).
+Additionally, the post-conditions, i.e., the result is easily specified using the right-hand side of the rule (i.e., the reactum).
+
+Another variant provide so-called Conditional Rules ([`org.bigraphs.framework.core.reactivesystem.ConditionalParametricRuleDecorator`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ConditionalParametricRuleDecorator.html)).
 
 A conditional rule can also evaluate [attributes](../advanced/attributed-bigraphs) in the course of a reaction, which allows also to include external, global data.
 

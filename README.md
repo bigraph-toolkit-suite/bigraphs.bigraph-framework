@@ -14,47 +14,54 @@
 
 # Bigraph Framework
 
-**What is Bigraph Framework?**
+Bigraph Framework is a Java framework designed for developers and researchers for building, simulating, and analyzing reactive systems (e.g., cyber-physical, context-aware, agent-based, or distributed systems, IoT environments, ...).
 
-Bigraph Framework is a framework
-written in Java for the creation and simulation of bigraphs
-to foster the experimental evaluation of the bigraph theory in
-real-world applications.
+It lets you model dynamic systems with both structure (who is inside what) and connectivity (who is connected and interacting to whom), and then simulate, visualize, and verify how those systems evolve over time.
 
-The goal of this framework is to facilitate the implementation of context-aware, agent-based systems, and reactive systems in general.
-It provides means for model-driven software development based on the bigraph theory.
-The high-level Java API eases the programming of bigraphical systems for real-world application.
+Under the hood, the framework is based on Milner’s theory of Bigraphical Reactive Systems (BRS).
 
-**Features**
+### Features
 
-- Modelling and Storage
-    - Dynamic creation of bigraphs at design time and runtime based on the [Bigraph Ecore Metamodel (BEM)](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel)
-    - Read and write instance models and metamodels of a bigraph from and to the file system
-- Visualization
-    - Graphical export via GraphViz/DOT, PNG, Visualization of Compiler Graphs (VCG) format via yComp
-    - Interactive visualization via GraphStream
-- Bigraphical Reactive Systems (BRS): Simulate the evolution of bigraphs by reaction rules
-    - Bigraph matching and rewriting via [jLibBig](https://bigraphs.github.io/jlibbig/) with tracking support
-    - Dedicated subhypergraph matching on link graphs only (query-data matching)
-    - Simulation and Model Checking (BFS, DFS, Random, MatchAll, MatchFirst)
-    - Generation of a labeled transition system (LTS)
-    - Predicate checking and logical connectors
-    - Specify order of reaction rules via priorities
-    - Tracking rules (trace node identities across reactions)
-    - Conditional rules (not yet integrated in model checking procedure but available for custom usage)
-- Model Importer/Exporter
-    - Export a bigraph/LTS to common graph formats, e.g., DOT, GraphML, GXL, VCG
-    - Export to formats of other bigraph tools: BigMC, BigraphER, BigRed, jLibBig, ...
-- Attributed Bigraphs
-    - Add arbitrary attributes to nodes and links (edges and outer names)
-    - Attributes are preserved when doing rewriting (this requires tracking maps)
+**Bigraph Modeling and Persistence**
+- Create and manipulate bigraphs dynamically at **design time and runtime** using the **Bigraph Ecore Metamodel (BEM)**  
+  ([bigraphs.bigraph-ecore-metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel))
+- Load and store both **bigraph metamodels** and **instance models** in standard file formats (Ecore/XMI)
 
-**Requirements**
+**Visualization and Inspection**
+- Export bigraphs and transition systems to standard graph formats:
+  **GraphViz (DOT), PNG, VCG (yComp)**
+- Interactive, programmatic visualization via **GraphStream** for exploring structures
 
-- Java >=21 (JDK)
-- Maven / Gradle
-- Graphviz for the `bigraph-visualization` module
-    - Ubuntu: `sudo apt install graphviz`
+**Bigraphical Reactive Systems (BRS)**
+
+Model and analyze system dynamics using **reaction rules** and **graph rewriting**:
+
+- Pattern matching and rewriting powered by **jLibBig**, with full **node and link tracking**
+- Specialized **link-graph (hypergraph) matching**
+- Multiple **simulation and model-checking strategies**:
+  - Breadth-first search (BFS)
+  - Depth-first search (DFS)
+  - Random exploration
+  - Match-all / Match-first
+- Automatic construction of **Labeled Transition Systems (LTS)**
+- **State predicates and logical connectors** for property checking
+- **Rule priorities** to control nondeterminism and execution order
+- **Tracking rules** to preserve identity of entities across reactions
+- **Conditional rules** for guarded rewriting
+
+**Import, Export, and Tool Interoperability**
+- Export bigraphs and LTSs to standard graph formats:
+  **DOT, GraphML, GXL, VCG**
+- Interoperate with other bigraph tools:
+  **BigMC, BigraphER, BigRed, jLibBig**, and others
+
+**Attributed Bigraphs**
+- Attach **arbitrary attributes** to:
+  - Nodes
+  - Links (edges and outer names)
+- Attributes are **preserved during rewriting**, enabling data-rich CPS and agent-based models  
+  (via tracking maps)
+
 
 ## Getting Started
 
@@ -178,34 +185,42 @@ composite.juxtapose(F).parallelProduct(H);
 
 > See also <a href="#Building-the-Framework-from-Source">Building from Source</a> if you want to build the source by yourself and host them in your Maven local repository.
 
+### Requirements
+
+- Java >=21 (JDK)
+- Maven / Gradle
+- Graphviz for the `bigraph-visualization` module
+  - Ubuntu: `sudo apt install graphviz`
+
 ### Maven
 
 ```xml
 <dependencies>
-  <!-- the core module -->
+  
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-core</artifactId>
     <version>2.3.4</version>
   </dependency>
-  <!-- the rewriting module -->
+  
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-simulation</artifactId>
     <version>2.3.4</version>
   </dependency>
-  <!-- the visualization module -->
+
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-visualization</artifactId>
     <version>2.3.4</version>
   </dependency>
-  <!-- the converter module -->
+
   <dependency>
     <groupId>org.bigraphs.framework</groupId>
     <artifactId>bigraph-converter</artifactId>
     <version>2.3.4</version>
   </dependency>
+
 </dependencies>
 ```
 
@@ -253,25 +268,15 @@ The example above shows how to use log4j2 in your project as the underlying logg
 
 ## Development
 
-### Requirements
+### Building the Framework from Source
+
+#### Requirements
 
 It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://maven.apache.org/tools/wrapper/) or the regular `mvn` command.
 
 > **Note:** The required version of Maven is >= 3.8.3 and Java JDK >=17.
 
-The recommendation here is to build it with the regular `mvn` command.
-
-On Debian systems you can install it by issuing the following command:
-
-```shell
-$ sudo apt install maven
-```
-
-See [Installation](https://maven.apache.org/install.html) for other options.
-
-### Building the Framework from Source
-
-**Initialize**
+#### Initialize
 
 The following command has to be run once:
 
@@ -283,23 +288,28 @@ These are required for the development.
 
 > When using IntelliJ IDEA, make sure to "Sync All Maven Projects" again to resolve any project errors that may appear due to missing dependencies on first startup.
 
-**Build/Install**
+#### Local Installation
 
-One of the following commands must be executed from the root directory of this project:
+Execute the following command from the root directory of this project:
 
-```bash
-# Default
+```shell
 $ mvn clean install -DskipTests
+```
 
-# To create a "fat jar" for each module, run:
+All modules of *Bigraph Framework* have been installed in the local Maven repository.
+
+After the command successfully finishes, you can now use *Bigraph Framework* in other Java projects.
+
+**Build Standalone Jar**
+
+If you prefer to generate standalone JARs for each module (including all dependencies), use the fatJar profile:
+```shell
 $ mvn clean install -DskipTests -PfatJar
 ```
 
-After the command successfully finishes, you can now use _Bigraph Framework_ in other Java projects.
-All modules of _Bigraph Framework_ have been installed in the local Maven repository.
-Therefore, see [Maven configuration](#maven) on how to include the individual _Bigraph Framework_ dependencies.
+This produces shaded ("fat") JAR files in each module's `target/` directory.
 
-### Building the Documentation: User Manual
+### Building the Documentation
 
 See [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details.
 

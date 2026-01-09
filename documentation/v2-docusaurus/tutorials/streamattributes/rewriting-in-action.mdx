@@ -69,8 +69,7 @@ The helper method `decompose()` uses a context-extraction rule (`getDroneContext
 |Before|After|
 |------|-----|
 |![before-cdo](../assets/ros2cdo/cdo-before.png)|![after-cdo](../assets/ros2cdo/cdo-after.png)|
-|![after-terminal](../assets/ros2cdo/terminal-before.png)|![after-terminal](../assets/ros2cdo/terminal-after.png)|
-
+|![before-terminal](../assets/ros2cdo/terminal-after.png)|![after-terminal](../assets/ros2cdo/terminal-before.png)|
 
 
 ## Executing the Test
@@ -102,9 +101,6 @@ $ ros2 topic pub /echo std_msgs/Int16 "{data: 2000}"
 ````
 
 
-
-
-
 ## Summary
 
 You have now:
@@ -112,16 +108,3 @@ You have now:
 - Connected ROS2 to your Java bigraph application and streamed data into bigraph node attributes.
 - Persisted a split bigraph using [Spring Data CDO](https://github.com/bigraph-toolkit-suite/spring-data-cdo), modifying only the relevant parts over time.
 - Implemented a **conditional bigraph reaction rule** that inspects attributes, and used the simulation API to match and rewrite the model incrementally.
-
-**Note**
-
-If the websocket server is not running or the application cannot connect, you will instead see an error such as:
-```shell
-[rosbridge_websocket-1] [INFO] [1763100529.046125905] [rosbridge_websocket]: Client connected. 1 clients total.
-[rosbridge_websocket-1] [INFO] [1763100529.070165211] [rosbridge_websocket]: [Client 429a644c-0ce9-4882-b68a-89695f101b0e] Subscribed to /echo
-```
-
-If the websocket server is not running or the application cannot reach it, you will see an error similar to:
-```shell
-[ERROR]: Could not create WebSocket: Connection failed.
-```
