@@ -92,16 +92,16 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
     public static class SimulationStrategy {
 
         public enum Type {
-            BFS, DFS, BFS_FIRST_MATCH, DFS_FIRST_MATCH, RANDOM;
+            BFS, BFS_FIRST_MATCH, DFS, DFS_FIRST_MATCH, RANDOM, CUSTOM;
         }
 
         public static <B extends Bigraph<? extends Signature<?>>> Class<? extends ModelCheckingStrategy> getSimulationStrategyClass(Type type) {
             return switch (type) {
-                case DFS -> DepthFirstStrategy.class;
+                case BFS -> BreadthFirstStrategy.class;
                 case BFS_FIRST_MATCH -> BFSFirstMatchStrategy.class;
+                case DFS -> DepthFirstStrategy.class;
                 case DFS_FIRST_MATCH -> DFSFirstMatchStrategy.class;
-                case RANDOM -> RandomAgentModelCheckingStrategy.class;
-                default -> BreadthFirstStrategy.class;
+                default -> RandomAgentModelCheckingStrategy.class;
             };
         }
     }
@@ -125,6 +125,11 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
      */
     public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, ModelCheckingOptions options) {
         this(reactiveSystem, SimulationStrategy.Type.BFS, options);
+    }
+
+    public BigraphModelChecker(ReactiveSystem<B> reactiveSystem, ModelCheckingStrategy<B> modelCheckingStrategy, ModelCheckingOptions options) {
+        this(reactiveSystem, SimulationStrategy.Type.CUSTOM, options);
+        this.modelCheckingStrategy = modelCheckingStrategy;
     }
 
     /**
@@ -174,11 +179,13 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         this.options = options;
 
         this.simulationStrategyType = simulationStrategyType;
-        try {
-            this.modelCheckingStrategy = createStrategy(this.simulationStrategyType);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-                 InstantiationException e) {
-            throw new RuntimeException(e);
+        if (this.simulationStrategyType != SimulationStrategy.Type.CUSTOM) {
+            try {
+                this.modelCheckingStrategy = createStrategy(this.simulationStrategyType);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                     InstantiationException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
