@@ -4,8 +4,6 @@
 
 <img src="etc/assets/bigraph-framework-logo.png" style="zoom:67%;" />
 
-> Latest Version: **2.3.4**
-
 - User Manual: https://bigraphs.org/software/bigraph-framework/docs/
 
 - JavaDoc: https://bigraphs.org/software/bigraph-framework/apidocs/
@@ -179,11 +177,11 @@ composite.juxtapose(F).parallelProduct(H);
   The Bigraph Framework adds specific behavior superimposed upon this meta
   model. Meaning, the implementation-specific details are kept out from the metamodel.
 
-## Project Configuration
+## Installation & Setup
 
 > All parts of Bigraph Framework are available from the [Central Repository](https://central.sonatype.com/).
 
-> See also <a href="#Building-the-Framework-from-Source">Building from Source</a> if you want to build the source by yourself and host them in your Maven local repository.
+> See also [Building from Source](etc/Development-and-Deployment.md#building-the-framework-from-source) if you want to build the source by yourself and host them in your Maven local repository.
 
 ### Requirements
 
@@ -237,10 +235,19 @@ compile "org.bigraphs.framework:bigraph-converter:2.3.4"
 
 This framework employs SLF4J as a facade for the log4j logging framework.
 
-Depending on your project setup, you may need to include the following libraries in your `pom.xml` :
+Depending on your project setup, you may need to include the following libraries in your `pom.xml`/`build.gradle`.
 
+For a bare Maven/Gradle project:
 ```xml
-<!-- For Spring -->
+<dependency>
+<groupId>org.slf4j</groupId>
+<artifactId>slf4j-log4j12</artifactId>
+<version>1.7.30</version>
+</dependency>
+```
+
+For Spring-based Projects:
+```xml
 <dependency>
   <groupId>org.springframework.boot</groupId>
   <artifactId>spring-boot-starter</artifactId>
@@ -255,88 +262,12 @@ Depending on your project setup, you may need to include the following libraries
 <groupId>org.springframework.boot</groupId>
 <artifactId>spring-boot-starter-log4j2</artifactId>
 </dependency>
-
-        <!-- For a bare Maven project -->
-<dependency>
-<groupId>org.slf4j</groupId>
-<artifactId>slf4j-log4j12</artifactId>
-<version>1.7.30</version>
-</dependency>
 ```
 
 The example above shows how to use log4j2 in your project as the underlying logging framework.
 
-## Development
 
-### Building the Framework from Source
-
-#### Requirements
-
-It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://maven.apache.org/tools/wrapper/) or the regular `mvn` command.
-
-> **Note:** The required version of Maven is >= 3.8.3 and Java JDK >=17.
-
-#### Initialize
-
-The following command has to be run once:
-
-```shell
-$ mvn initialize
-```
-It installs some dependencies located in the `./etc/libs/` folder of this project in your local Maven repository, which is usually located at `~/.m2/`.
-These are required for the development.
-
-> When using IntelliJ IDEA, make sure to "Sync All Maven Projects" again to resolve any project errors that may appear due to missing dependencies on first startup.
-
-#### Local Installation
-
-Execute the following command from the root directory of this project:
-
-```shell
-$ mvn clean install -DskipTests
-```
-
-All modules of *Bigraph Framework* have been installed in the local Maven repository.
-
-After the command successfully finishes, you can now use *Bigraph Framework* in other Java projects.
-
-**Build Standalone Jar**
-
-If you prefer to generate standalone JARs for each module (including all dependencies), use the fatJar profile:
-```shell
-$ mvn clean install -DskipTests -PfatJar
-```
-
-This produces shaded ("fat") JAR files in each module's `target/` directory.
-
-### Building the Documentation
-
-See [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details.
-
-Building the documentation builds also the project without running tests.
-After running the commands as described below from the root of this project, the generated user manual will be available
-at `documentation/v2-docusaurus/`:
-
-```shell
-$ mvn clean package -DskipTests
-$ mvn license:aggregate-third-party-report
-$ cd ./documentation/v2-docusaurus/
-$ nvm use 20.18.1
-$ npm run start
-```
-
-Then, open the browser at `http://localhost:3000/software/bigraph-framework/`.
-
-The manual is generated using [docusaurus](https://docusaurus.io/), which must be installed on the system
-(see [Development-and-Deployment.md](etc/Development-and-Deployment.md)).
-
-### Deployment
-
-To deploy Bigraph Framework to the [Central Repository](https://central.sonatype.com/):
-
-```bash
-$ mvn clean deploy -DskipTests -P release,central
-```
+## Development and Deployment
 
 See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details concerning the
 development and deployment of _Bigraph Framework_.

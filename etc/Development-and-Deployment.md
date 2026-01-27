@@ -31,6 +31,48 @@ At the same time, the project is logically organized.
 
 Use this to identify dependency conflicts or to identify dependencies with vulnerabilities (having a CVSS score >= 8).
 
+## Building the Framework from Source
+
+#### Requirements
+
+It is not necessary to build from source to use *Bigraph Framework* but if you want to try out the latest version, the project can be easily built with the [maven wrapper](https://maven.apache.org/tools/wrapper/) or the regular `mvn` command.
+
+> **Note:** The required version of Maven is >= 3.8.3 and Java JDK >=17.
+
+#### Initialize
+
+The following command has to be run once:
+
+```shell
+$ mvn initialize
+```
+It installs some dependencies located in the `./etc/libs/` folder of this project in your local Maven repository, which is usually located at `~/.m2/`.
+These are required for the development.
+
+> When using IntelliJ IDEA, make sure to "Sync All Maven Projects" again to resolve any project errors that may appear due to missing dependencies on first startup.
+
+#### Local Installation
+
+Execute the following command from the root directory of this project:
+
+```shell
+$ mvn clean install -DskipTests
+```
+
+All modules of *Bigraph Framework* have been installed in the local Maven repository.
+
+After the command successfully finishes, you can now use *Bigraph Framework* in other Java projects.
+
+**Build Standalone Jar**
+
+If you prefer to generate standalone JARs for each module (including all dependencies), use the fatJar profile:
+```shell
+$ mvn clean install -DskipTests -PfatJar
+```
+
+This produces shaded ("fat") JAR files in each module's `target/` directory.
+
+
 ## Documentation
 
 This section explains how to view, edit and build the user manual and the Javadoc API.
@@ -109,28 +151,26 @@ $ nvm install 20.18.1                                   # install node version 2
 $ nvm use 20.18.1                                       # switch to this node version (needed for docusaurus)
 $ npm --prefix ./documentation/v2-docusaurus/ install   # install npm dependencies first
 $ mvn -f documentation/pom.xml install -Pdistribute     # code sample generation and building the static site
+$ npm run start
 ```
 
 The generated user manual is available from `documentation/v2-docusaurus/build/`.
+
 Use `npm run serve` inside the folder to start a webserver for reviewing the website.
 
 The generated Java documentation of all modules is available from `target/site/apidocs/`.
 This aggregated API (i.e., the merged result of all submodules) will be copied to `documentation/v2-docusaurus/static/apidocs/`.
 
 The license report is located under: `documentation/v2-docusaurus/static/license/`.
+
+Documentation, including the Javadocs API, is generated and pushed to an external GitHub repository into the *gh-pages* branch.
+Currently, it is the following repository: https://github.com/st-tu-dresden/bigraphs.org
+ 
 ## Deployment
 
 This section discusses the deployment process.
 
-- The basic workflow looks like this:
-  * Tests are executed on all branches.
-  * The deployment process is executed after every merge into master or when a version tag is created.
-  * Documentation, including the Javadocs API, is generated and pushed to an external GitHub repository into the *gh-pages* branch
-    * Currently, it is the following repository: https://github.com/st-tu-dresden/bigraphs.org
-
-### Framework
-
-#### TLDR
+### TLDR
 - Local installation of the framework modules: `mvn clean install`
 - Deployment of the framework to the Central Repository: 
   - `mvn clean deploy -P release,central`
@@ -139,12 +179,18 @@ This section discusses the deployment process.
 Note: When `SNAPSHOT` prefix is present in the version name, a Snapshot Deployment is performed.
 Otherwise, a Release Deployment is performed and the artifacts must be released manually after review (see [here](https://central.sonatype.org/publish/publish-portal-maven/)).
 
-#### Authentication
+### General Steps
+
+- Generate GPG key pair (remember passphrase)
+- Distribute Public Key to key server (e.g., keys.openpgp.org)
+- Follow https://central.sonatype.org/publish/publish-portal-guide/ for deployment instructions
+
+### Authentication
 
 The Sonatype account details (username + password) for the deployment must be provided to the
 Maven Sonatype Plugin, which is specified in the project's `pom.xml` file (parent pom).
 
-#### Requirements
+### GPG
 
 The Maven GPG plugin is used to sign the components for the deployment.
 It relies on the gpg command being installed:
@@ -157,32 +203,4 @@ In `settings.xml` should be a `<profile/>` and `<server/>` configuration both wi
 
 More information can be found [here](https://central.sonatype.org/publish/requirements/gpg/).
 
-Listing keys: `gpg --list-keys --keyid-format short`
-
-The `pom.xml` must also conform to the minimal requirements containing all relevant tags as required by Sonatype.
-
-#### General Steps
-
-- Generate GPG key pair (remember passphrase)
-- Distribute Public Key to key server (e.g., keys.openpgp.org)
-  - More information can be found [here](https://central.sonatype.org/publish/requirements/gpg/).
-- Follow https://central.sonatype.org/publish/publish-portal-snapshots/ for deployment instructions
-
-### Documentation (User Manual + Javadoc API)
-
-- The whole documentation is pushed to GitHub to be served via GitHub Pages.
-
-- The following script builds and pushes the documentation to the remote repository:
-```shell
-mvn ... # build the whole documentation as described before
-cd ./documentation/v2-docusaurus/build/ && git init
-touch CNAME && echo "www.bigraphs.org" > CNAME
-git add . && git commit -m "updated documentation"
-git remote add gh git@github.com:bigraph-toolkit-suite/bigraphs.bigraph-framework.git
-git push --force gh main:gh-pages
-```
-
-- The site contents are stored at
-https://git-st.inf.tu-dresden.de/bigraphs/website/bigraph-website
-together with bash scripts for generating the documentation and automatic
-deployment of the website to GitHub
+To list keys on the host: `gpg --list-keys --keyid-format short`
