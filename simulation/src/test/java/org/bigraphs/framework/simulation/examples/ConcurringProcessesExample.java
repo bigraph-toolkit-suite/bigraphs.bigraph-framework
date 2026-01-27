@@ -48,6 +48,22 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
+ * The concurring processes example demonstrates how to simulate concurrent processes interacting with resources
+ * using bigraphs and reaction rules.
+ * It demonstrates how to set up a model checking environment, define reaction rules, and execute a model checking process
+ * to create the transition system (reaction graph), showcasing the lifecycle
+ * phases of resource registration, process working, and resource deregistration.
+ * <p>
+ * Key Methods:
+ * <ul>
+ * <li>{@link #setUp()}: Initializes the necessary directories and cleans up any existing data before the simulation.</li>
+ * <li>{@link #sig()}: Creates a dynamic signature for the bigraph model representing the simulation entities.</li>
+ * <li>{@link #simulate()}: Executes the main simulation, involving setting up the agent, defining reaction rules, running the model checker, and analyzing the resulting reaction graph for state paths (traces).</li>
+ * <li>{@link #createAgent()}: Constructs the initial agent state for the simulation.</li>
+ * <li>{@link #createAgentRegistered()} and {@link #createAgentWorking()}: Generate specific states of the agent under different phases of the simulation lifecycle.</li>
+ * <li>{@link #createRule_ResourceRegistrationPhase()} and {@link #createRule_ResourceDeregistrationPhase()}: Define the rules for the phases involving resource management.</li>
+ * </ul>
+ *
  * @author Dominik Grzelak
  */
 @Disabled
