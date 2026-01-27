@@ -21,14 +21,12 @@ import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptio
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
 import org.apache.commons.io.FileUtils;
-import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
-import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
 import org.bigraphs.framework.core.ControlStatus;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
+import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
@@ -39,14 +37,17 @@ import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
-import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
+import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatchPredicate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @Disabled
-public class FruitBasketExampleTest {
+public class FruitBasketExampleTest implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/fruitbasket/";
+    long startTime = System.currentTimeMillis();
+    long finishTime = System.currentTimeMillis();
+    boolean allFruitsInBasket = false;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -56,33 +57,70 @@ public class FruitBasketExampleTest {
         new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
 
+    @Override
+    public void onAllPredicateMatched(PureBigraph currentAgent, String label) {
+        System.out.println("All Fruits Are In The Basket");
+        System.out.println(label);
+        finishTime = System.currentTimeMillis();
+        System.out.println("Time elapsed: " + (finishTime - startTime) + " ms");
+        allFruitsInBasket = true;
+    }
+
+    @Override
+    public void onPredicateMatched(PureBigraph currentAgent, ReactiveSystemPredicate<PureBigraph> predicate) {
+        System.out.println("All Fruits Are In The Basket");
+        System.out.println(predicate.getLabel());
+        finishTime = System.currentTimeMillis();
+        System.out.println("Time elapsed: " + (finishTime - startTime) + " ms");
+        allFruitsInBasket = true;
+    }
+
     @Test
-    void simulate() throws InvalidConnectionException, IOException, InvalidReactionRuleException, ReactiveSystemException, BigraphSimulationException {
-        DynamicSignature sig = createSignature();
-        PureBigraph agent = createAgent();
-        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
-        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-        agent = decoder.decode(encoder.encode(agent), sig);
-        BigraphGraphvizExporter.toPNG(agent, true, new File(TARGET_DUMP_PATH + "agent.png"));
+    void simulate() throws InvalidConnectionException, IOException, InvalidReactionRuleException, ReactiveSystemException, BigraphSimulationException, TypeNotExistsException {
+//        DynamicSignature sig = createSignature();
+//        PureBigraph agent = createAgent();
+//        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+//        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+//        agent = decoder.decode(encoder.encode(agent), sig);
+//        BigraphGraphvizExporter.toPNG(agent, true, new File(TARGET_DUMP_PATH + "agent.png"));
+
+        SubBigraphMatchPredicate<PureBigraph> predicate1 = createPredicate_1();
+        SubBigraphMatchPredicate<PureBigraph> predicate2 = createPredicate_2();
+        SubBigraphMatchPredicate<PureBigraph> predicate3 = createPredicate_3();
+//        BigraphGraphvizExporter.toPNG(predicate1.getBigraphToMatch(),
+//                true,
+//                new File(TARGET_DUMP_PATH + "predicate1.png")
+//        );
+//        BigraphGraphvizExporter.toPNG(predicate2.getBigraphToMatch(),
+//                true,
+//                new File(TARGET_DUMP_PATH + "predicate2.png")
+//        );
+//        BigraphGraphvizExporter.toPNG(predicate3.getBigraphToMatch(),
+//                true,
+//                new File(TARGET_DUMP_PATH + "predicate3.png")
+//        );
 
         ParametricReactionRule<PureBigraph> rr1 = createRR1();
-        BigraphGraphvizExporter.toPNG(rr1.getRedex(), true, new File(TARGET_DUMP_PATH + "rr1_LHS.png"));
-        BigraphGraphvizExporter.toPNG(rr1.getReactum(), true, new File(TARGET_DUMP_PATH + "rr1_RHS.png"));
+//        BigraphGraphvizExporter.toPNG(rr1.getRedex(), true, new File(TARGET_DUMP_PATH + "rr1_LHS.png"));
+//        BigraphGraphvizExporter.toPNG(rr1.getReactum(), true, new File(TARGET_DUMP_PATH + "rr1_RHS.png"));
 
         ParametricReactionRule<PureBigraph> rr2 = createRR2();
-        BigraphGraphvizExporter.toPNG(rr2.getRedex(), true, new File(TARGET_DUMP_PATH + "rr2_LHS.png"));
-        BigraphGraphvizExporter.toPNG(rr2.getReactum(), true, new File(TARGET_DUMP_PATH + "rr2_RHS.png"));
+//        BigraphGraphvizExporter.toPNG(rr2.getRedex(), true, new File(TARGET_DUMP_PATH + "rr2_LHS.png"));
+//        BigraphGraphvizExporter.toPNG(rr2.getReactum(), true, new File(TARGET_DUMP_PATH + "rr2_RHS.png"));
 
         ParametricReactionRule<PureBigraph> rr3 = createRR3();
-        BigraphGraphvizExporter.toPNG(rr3.getRedex(), true, new File(TARGET_DUMP_PATH + "rr3_LHS.png"));
-        BigraphGraphvizExporter.toPNG(rr3.getReactum(), true, new File(TARGET_DUMP_PATH + "rr3_RHS.png"));
+//        BigraphGraphvizExporter.toPNG(rr3.getRedex(), true, new File(TARGET_DUMP_PATH + "rr3_LHS.png"));
+//        BigraphGraphvizExporter.toPNG(rr3.getReactum(), true, new File(TARGET_DUMP_PATH + "rr3_RHS.png"));
 
         ParametricReactionRule<PureBigraph> rr4 = createRR4();
-        BigraphGraphvizExporter.toPNG(rr4.getRedex(), true, new File(TARGET_DUMP_PATH + "rr4_LHS.png"));
-        BigraphGraphvizExporter.toPNG(rr4.getReactum(), true, new File(TARGET_DUMP_PATH + "rr4_RHS.png"));
+//        BigraphGraphvizExporter.toPNG(rr4.getRedex(), true, new File(TARGET_DUMP_PATH + "rr4_LHS.png"));
+//        BigraphGraphvizExporter.toPNG(rr4.getReactum(), true, new File(TARGET_DUMP_PATH + "rr4_RHS.png"));
 
         PureReactiveSystem rs = new PureReactiveSystem();
         rs.setAgent(createAgent());
+        rs.addPredicate(predicate1);
+        rs.addPredicate(predicate2);
+        rs.addPredicate(predicate3);
         rs.addReactionRule(createRR1());
         rs.addReactionRule(createRR2());
         rs.addReactionRule(createRR3());
@@ -102,15 +140,16 @@ public class FruitBasketExampleTest {
                         .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph.png").toFile())
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(Paths.get(TARGET_DUMP_PATH, "states/").toFile())
-                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
+//                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
                         .create()
                 )
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 rs,
-                BigraphModelChecker.SimulationStrategy.Type.BFS,
+                BigraphModelChecker.SimulationStrategy.Type.DFS,
                 opts);
+        modelChecker.setReactiveSystemListener(this);
         modelChecker.execute();
 
 //        ParametricReactionRule<PureBigraph> rr11 = createRR1();
@@ -247,6 +286,36 @@ public class FruitBasketExampleTest {
         PureBigraph reactum = b2.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("rr4");
         return rr;
+    }
+
+    private SubBigraphMatchPredicate<PureBigraph> createPredicate_1() throws InvalidConnectionException, TypeNotExistsException {
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+
+        builder.root()
+                .child("Basket")
+                .down().site().child("Fruit").child("Fruit").child("Fruit");
+        PureBigraph bigraph = builder.create();
+        return SubBigraphMatchPredicate.create(bigraph);
+    }
+
+    private SubBigraphMatchPredicate<PureBigraph> createPredicate_2() throws InvalidConnectionException, TypeNotExistsException {
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+
+        builder.root()
+                .child("Basket")
+                .down().site().child("Fruit", "f").child("Fruit").child("Fruit");
+        PureBigraph bigraph = builder.create();
+        return SubBigraphMatchPredicate.create(bigraph);
+    }
+
+    private SubBigraphMatchPredicate<PureBigraph> createPredicate_3() throws InvalidConnectionException, TypeNotExistsException {
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+
+        builder.root()
+                .child("Basket")
+                .down().site().child("Fruit", "f").child("Fruit", "f").child("Fruit");
+        PureBigraph bigraph = builder.create();
+        return SubBigraphMatchPredicate.create(bigraph);
     }
 
     //every state a self-loop
