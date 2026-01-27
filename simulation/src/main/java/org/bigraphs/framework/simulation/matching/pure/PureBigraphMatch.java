@@ -30,7 +30,7 @@ import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
  * @author Dominik Grzelak
  * @see AbstractSimpleReactiveSystem
  */
-public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
+public class PureBigraphMatch implements BigraphMatch<PureBigraph> {
 
     private PureBigraph context;
     private PureBigraph redex;
@@ -42,13 +42,13 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     private PureBigraph params;
     private final it.uniud.mads.jlibbig.core.std.Match jLibMatchResult;
 
-    public PureBigraphParametricMatch(it.uniud.mads.jlibbig.core.std.Match jLibMatchResult,
-                                      PureBigraph context,
-                                      PureBigraph redex,
-                                      PureBigraph redexImage,
-                                      Bigraph<DynamicSignature> redexIdentity,
-                                      PureBigraph paramWiring,
-                                      Collection<PureBigraph> parameters) {
+    public PureBigraphMatch(it.uniud.mads.jlibbig.core.std.Match jLibMatchResult,
+                            PureBigraph context,
+                            PureBigraph redex,
+                            PureBigraph redexImage,
+                            Bigraph<DynamicSignature> redexIdentity,
+                            PureBigraph paramWiring,
+                            Collection<PureBigraph> parameters) {
         // Everything is null exceptjLibMatchResult and redex because we have jLibBig bigraph objects
         // Until the bigraph is rewritten with the match result, they will be null.
         this.jLibMatchResult = jLibMatchResult;
@@ -63,12 +63,12 @@ public class PureBigraphParametricMatch implements BigraphMatch<PureBigraph> {
     }
 
     @Deprecated
-    public PureBigraphParametricMatch(PureBigraph context,
-                                      PureBigraph redex,
-                                      PureBigraph redexImage,
-                                      Collection<PureBigraph> parameters,
-                                      Bigraph<DynamicSignature> redexIdentity,
-                                      Bigraph<DynamicSignature> contextIdentity) {
+    public PureBigraphMatch(PureBigraph context,
+                            PureBigraph redex,
+                            PureBigraph redexImage,
+                            Collection<PureBigraph> parameters,
+                            Bigraph<DynamicSignature> redexIdentity,
+                            Bigraph<DynamicSignature> contextIdentity) {
         this.jLibMatchResult = null;
         this.parameters = parameters;
         this.context = context;

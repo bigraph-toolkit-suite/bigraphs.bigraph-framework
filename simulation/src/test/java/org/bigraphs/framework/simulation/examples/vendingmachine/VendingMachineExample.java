@@ -47,7 +47,7 @@ import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
 import org.bigraphs.framework.simulation.examples.BaseExampleTestSupport;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
-import org.bigraphs.framework.simulation.matching.pure.PureBigraphParametricMatch;
+import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatch;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
@@ -457,7 +457,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         Iterator<BigraphMatch<PureBigraph>> iterator2 = match2.iterator();
         JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
         if (iterator2.hasNext()) {
-            PureBigraphParametricMatch match = (PureBigraphParametricMatch) iterator2.next();
+            PureBigraphMatch match = (PureBigraphMatch) iterator2.next();
             Match jLibMatchResult = match.getJLibMatchResult();
             PureBigraph context = decoder.decode(jLibMatchResult.getContext(), sig());
             PureBigraph redex = decoder.decode(jLibMatchResult.getRedex(), sig());
@@ -487,7 +487,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         MatchIterable<BigraphMatch<PureBigraph>> match3 = matcher.match(newAgent, insertCoinRR2);
         Iterator<BigraphMatch<PureBigraph>> iterator3 = match3.iterator();
         if (iterator3.hasNext()) {
-            PureBigraphParametricMatch match = (PureBigraphParametricMatch) iterator3.next();
+            PureBigraphMatch match = (PureBigraphMatch) iterator3.next();
             Match jLibMatchResult = match.getJLibMatchResult();
             PureBigraph context = decoder.decode(jLibMatchResult.getContext(), sig());
             PureBigraph redex = decoder.decode(jLibMatchResult.getRedex(), sig());

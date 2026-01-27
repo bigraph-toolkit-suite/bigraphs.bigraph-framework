@@ -25,14 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A matcher for {@link PureBigraph}s.
- * <p>
- * Creates the correct matching engine and iterator to return the matches.
+ * PureBigraphMatcher is a concrete implementation of AbstractBigraphMatcher specialized for handling
+ * pure bigraphs. It is responsible for executing matching operations between a pure bigraph agent
+ * and a reaction rule. The matcher uses a PureBigraphMatchingEngine for processing the matches.
  *
  * @author Dominik Grzelak
  */
 public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
-    Logger logger = LoggerFactory.getLogger(PureBigraphMatcher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PureBigraphMatcher.class);
 
     public PureBigraphMatcher() {
         super();
@@ -43,36 +43,66 @@ public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
         return new PureBigraphMatchingEngine(this.agent, this.rule);
     }
 
+    /**
+     * Finds all matches of a specified reaction rule within a given pure bigraph.
+     *
+     * @param <M>   the type of the match.
+     * @param agent the pure bigraph in which to search for matches.
+     * @param rule  the reaction rule containing the redex to be matched against the agent.
+     * @return an iterable collection of matches of type M found in the given pure bigraph agent.
+     */
     public <M extends BigraphMatch<PureBigraph>> MatchIterable<M> matchAll(PureBigraph agent, ReactionRule<PureBigraph> rule) {
-        return matchAll(agent, rule);
+        return matchAllInternal(agent, rule, false);
     }
 
+    /**
+     * Use matchAll instead of match(); or use matchFirst() (constrained variant)
+     */
     @Override
-    @Deprecated // Use matchAll instead of match(); or use matchFirst() (constrained variant)
+    @Deprecated
     public <M extends BigraphMatch<PureBigraph>> MatchIterable<M> match(PureBigraph agent, ReactionRule<PureBigraph> rule) {
-                super.agent = agent;
-        super.rule = rule;
-        super.redex = rule.getRedex();
-        PureBigraphMatchingEngine matchingEngine = instantiateEngine();
-
-        Stopwatch timer0 = logger.isDebugEnabled() ? Stopwatch.createStarted() : null;
-        MatchIterable<PureBigraphParametricMatch> bigraphMatches = new MatchIterable<>(new PureMatchIteratorImpl(matchingEngine));
-        if (logger.isDebugEnabled() && timer0 != null) {
-            long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
-            log(elapsed0);
-        }
-        return (MatchIterable<M>) bigraphMatches;
+        return this.matchAll(agent, rule);
     }
 
+    /**
+     * Finds the first match of a specified reaction rule within a given pure bigraph.
+     *
+     * @param <M>   the type of the match.
+     * @param agent the pure bigraph in which to search for the first match.
+     * @param rule  the reaction rule containing the redex to be matched against the agent.
+     * @return an iterable collection containing the first match of type M found in the given pure bigraph agent.
+     */
     public <M extends BigraphMatch<?>> MatchIterable<M> matchFirst(PureBigraph agent, ReactionRule<PureBigraph> rule) {
+        return matchAllInternal(agent, rule, true);
+    }
+
+    /**
+     * Finds matches of a specific reaction rule within a provided pure bigraph, with an option to return only the first match.
+     *
+     * @param <M>       the type of the match that extends {@link BigraphMatch}.
+     * @param agent     the pure bigraph in which to search for matches.
+     * @param rule      the reaction rule containing the redex to be matched against the agent.
+     * @param firstOnly a boolean indicating whether only the first match should be returned (true) or all matches should be found (false).
+     * @return an iterable collection of matches of type M found in the given pure bigraph agent.
+     */
+    private <M extends BigraphMatch<?>> MatchIterable<M> matchAllInternal(
+            PureBigraph agent,
+            ReactionRule<PureBigraph> rule,
+            boolean firstOnly
+    ) {
         super.agent = agent;
         super.rule = rule;
         super.redex = rule.getRedex();
-        PureBigraphMatchingEngine matchingEngine = instantiateEngine();
 
-        Stopwatch timer0 = logger.isDebugEnabled() ? Stopwatch.createStarted() : null;
-        MatchIterable<PureBigraphParametricMatch> bigraphMatches = new MatchIterable<>(new PureMatchIteratorImpl.FirstMatchOnly(matchingEngine));
-        if (logger.isDebugEnabled() && timer0 != null) {
+        PureBigraphMatchingEngine matchingEngine = instantiateEngine();
+        Stopwatch timer0 = LOGGER.isDebugEnabled() ? Stopwatch.createStarted() : null;
+
+        MatchIterable<PureBigraphMatch> bigraphMatches =
+                new MatchIterable<>(firstOnly
+                        ? new PureMatchIteratorImpl.FirstMatchOnly(matchingEngine)
+                        : new PureMatchIteratorImpl(matchingEngine));
+
+        if (LOGGER.isDebugEnabled() && timer0 != null) {
             long elapsed0 = timer0.stop().elapsed(TimeUnit.NANOSECONDS);
             log(elapsed0);
         }
@@ -80,9 +110,6 @@ public class PureBigraphMatcher extends AbstractBigraphMatcher<PureBigraph> {
     }
 
     private void log(long elapsed0) {
-        logger.debug("Complete Matching Time: {} (ms)", (elapsed0 / 1e+6f));
+        LOGGER.debug("Complete Matching Time: {} (ms)", (elapsed0 / 1e+6f));
     }
-
-
-
 }

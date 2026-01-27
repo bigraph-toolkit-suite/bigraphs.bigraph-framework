@@ -38,7 +38,7 @@ import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.simulation.examples.BaseExampleTestSupport;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
-import org.bigraphs.framework.simulation.matching.pure.PureBigraphParametricMatch;
+import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatch;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
@@ -93,7 +93,7 @@ public class RoomExample extends BaseExampleTestSupport {
         system.setAgent(agent1);
         system.addReactionRule(abstractionRule1);
         while (iterator.hasNext()) {
-            PureBigraphParametricMatch next = (PureBigraphParametricMatch) iterator.next();
+            PureBigraphMatch next = (PureBigraphMatch) iterator.next();
             System.out.println("Match next=" + next);
             PureBigraph ctxDecoded = decoder.decode(next.getJLibMatchResult().getContext(), sig());
             PureBigraph redexImg = decoder.decode(next.getJLibMatchResult().getRedexImage(), sig());
@@ -134,7 +134,7 @@ public class RoomExample extends BaseExampleTestSupport {
 //        system.setAgent(agent2);
 //        system.addReactionRule(abstractionRule1);
         while (iterator.hasNext()) {
-            PureBigraphParametricMatch next = (PureBigraphParametricMatch) iterator.next();
+            PureBigraphMatch next = (PureBigraphMatch) iterator.next();
             System.out.println("Match next=" + next);
             PureBigraph ctxDecoded = decoder.decode(next.getJLibMatchResult().getContext(), sig());
             PureBigraph redexImg = decoder.decode(next.getJLibMatchResult().getRedexImage(), sig());

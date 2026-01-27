@@ -25,7 +25,7 @@ import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
-import org.bigraphs.framework.simulation.matching.pure.PureBigraphParametricMatch;
+import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatch;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Disabled;
 
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Disabled;
 public interface AbstractUnitTestSupport {
 
     default void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next0, String path, int ix) throws IncompatibleSignatureException, IncompatibleInterfaceException, IOException {
-        PureBigraphParametricMatch next = (PureBigraphParametricMatch) next0;
+        PureBigraphMatch next = (PureBigraphMatch) next0;
         Match result = next.getJLibMatchResult();
         JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
         PureBigraph context = decoder.decode(result.getContext());

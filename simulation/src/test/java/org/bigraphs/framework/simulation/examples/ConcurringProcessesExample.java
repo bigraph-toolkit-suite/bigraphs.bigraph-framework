@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
@@ -53,7 +54,6 @@ import org.junit.jupiter.api.Test;
 public class ConcurringProcessesExample {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/processes/";
-//    private static PureBigraphFactory factory = pure();
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -63,74 +63,19 @@ public class ConcurringProcessesExample {
         new File(TARGET_DUMP_PATH + "states/").mkdir();
     }
 
-    //    @Disabled
-    @Test
-    void simulate_single_step() throws IOException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
-//        int num = 2;
-//        String fileNameMeta = "/home/dominik/git/BigraphFramework/rewriting/src/test/resources/dump/processes/meta-model_" + num + ".ecore";
-//        String fileNameInstance = "/home/dominik/git/BigraphFramework/rewriting/src/test/resources/dump/processes/instance-model_" + num + ".xmi";
-//        EPackage metaModel = BigraphFileModelManagement.loadBigraphMetaModel(fileNameMeta);
-//        List<EObject> eObjects = BigraphFileModelManagement.loadBigraphInstanceModel(metaModel, fileNameInstance);
-//        assertEquals(1, eObjects.size());
-//        List<EObject> eObjects2 = BigraphFileModelManagement.loadBigraphInstanceModel(fileNameInstance);
-//        assertEquals(1, eObjects2.size());
-
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
-        builder.root()
-                .child("Process", "access2")
-                .child("Process", "access1").down().child("Working").up()
-                .child("Resource").down().child("Token", "access1").up()
+    private DynamicSignature sig() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+        defaultBuilder
+                .add("Process", 1)
+                .add("Token", 1)
+                .add("Working", 1)
+                .add("Resource", 1)
         ;
-        PureBigraph agent = createAgent();
-        PureBigraph agent2 = createAgentRegistered();
-        PureBigraph agent3 = createAgentWorking();
-        BigraphGraphvizExporter.toPNG(agent3,
-                true,
-                new File(TARGET_DUMP_PATH + "partial/agent")
-        );
-
-        ReactionRule<PureBigraph> rule_resourceRegistrationPhase = createRule_ResourceRegistrationPhase();
-        ReactionRule<PureBigraph> rule_processWorkingPhase = createRule_ProcessWorkingPhase();
-        ReactionRule<PureBigraph> rule_resourceDeregistrationPhase = createRule_ResourceDeregistrationPhase();
-        BigraphGraphvizExporter.toPNG(rule_processWorkingPhase.getRedex(),
-                true,
-                new File(TARGET_DUMP_PATH + "partial/redex")
-        );
-
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
-//        reactiveSystem.setAgent(agent);
-//        reactiveSystem.setAgent(agent2);
-        reactiveSystem.setAgent(agent3);
-//        reactiveSystem.addReactionRule(rule_resourceRegistrationPhase);
-        reactiveSystem.addReactionRule(rule_processWorkingPhase);
-//        reactiveSystem.addReactionRule(rule_resourceDeregistrationPhase);
-
-        ModelCheckingOptions opts = ModelCheckingOptions.create();
-        opts
-                .and(transitionOpts()
-                                .setMaximumTransitions(20)
-                                .setMaximumTime(30)
-//                        .allowReducibleClasses(true)
-                                .create()
-                )
-                .doMeasureTime(true)
-                .and(ModelCheckingOptions.exportOpts()
-                        .setReactionGraphFile(new File(TARGET_DUMP_PATH, "partial/transition_graph_agent-2"))
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "partial/states/"))
-                        .setPrintCanonicalStateLabel(true)
-                        .create()
-                )
-        ;
-
-        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
-                BigraphModelChecker.SimulationStrategy.Type.BFS,
-                opts);
-        modelChecker.execute();
-        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "partial/transition_graph_agent-2")));
+        return defaultBuilder.create();
     }
 
     @Test
-    void simulate_concurrent_processes() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
+    void simulate() throws InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         PureBigraph agent = createAgent();
         ReactionRule<PureBigraph> rule_resourceRegistrationPhase = createRule_ResourceRegistrationPhase();
         ReactionRule<PureBigraph> rule_processWorkingPhase = createRule_ProcessWorkingPhase();
@@ -178,24 +123,22 @@ public class ConcurringProcessesExample {
                 .doMeasureTime(true)
                 .setReactionGraphWithCycles(true)
                 .and(transitionOpts()
-                                .setMaximumTransitions(20)
-                                .setMaximumTime(60)
-                                .allowReducibleClasses(true) // use symmetries to make the transition graph smaller?
-//                        .allowReducibleClasses(false) // for simulation but not used
-                                .create()
+                        .setMaximumTransitions(20)
+                        .setMaximumTime(60)
+                        .allowReducibleClasses(true) // use symmetries to make the transition graph smaller?
+                        .create()
                 )
                 .and(ModelCheckingOptions.exportOpts()
-                                .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
-                                .setPrintCanonicalStateLabel(true)
-                                .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                                .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
-                                .create()
+                        .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
+                        .setPrintCanonicalStateLabel(true)
+                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
+                        .create()
                 )
         ;
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
-//                BigraphModelChecker.SimulationStrategy.Type.SIMULATION,
                 opts);
         modelChecker.execute();
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
@@ -212,7 +155,7 @@ public class ConcurringProcessesExample {
     }
 
     PureBigraph createAgent() throws InvalidConnectionException {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
         builder.root()
                 .child("Process", "access1")
@@ -230,7 +173,7 @@ public class ConcurringProcessesExample {
     }
 
     PureBigraph createAgentRegistered() throws InvalidConnectionException {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
         builder.root()
                 .child("Process", "access2")
@@ -241,7 +184,7 @@ public class ConcurringProcessesExample {
     }
 
     PureBigraph createAgentWorking() throws InvalidConnectionException {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
         builder.root()
                 .child("Process", "access2")
                 .child("Process", "access1").down().child("Working").up()
@@ -251,8 +194,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ResourceRegistrationPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(sig());
 
         builderRedex.root().child("Process", "access");
         builderRedex.root().child("Resource").down().child("Token");
@@ -280,8 +223,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ResourceDeregistrationPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(sig());
 
         builderRedex.root().child("Process", "access").down().child("Working").top();
         builderRedex.root().child("Resource").down().child("Token", "access");
@@ -296,8 +239,8 @@ public class ConcurringProcessesExample {
     }
 
     ReactionRule<PureBigraph> createRule_ProcessWorkingPhase() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(sig());
 
         builderRedex.root().child("Process", "access");
         builderRedex.root().child("Resource").down().child("Token", "access");
@@ -309,16 +252,5 @@ public class ConcurringProcessesExample {
         PureBigraph reactum = builderReactum.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
         return rr;
-    }
-
-    private DynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("Process", 1)
-                .add("Token", 1)
-                .add("Working", 1)
-                .add("Resource", 1)
-        ;
-        return defaultBuilder.create();
     }
 }

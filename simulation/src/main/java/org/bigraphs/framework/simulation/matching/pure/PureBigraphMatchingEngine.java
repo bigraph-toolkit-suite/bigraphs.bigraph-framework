@@ -35,37 +35,37 @@ import org.slf4j.LoggerFactory;
  */
 public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements BigraphMatchingEngine<PureBigraph> {
 
-    private final Logger logger = LoggerFactory.getLogger(PureBigraphMatchingEngine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PureBigraphMatchingEngine.class);
 
     private Stopwatch matchingTimer;
 
-    boolean hasMatched = false;
-    private final MutableList<PureBigraphParametricMatch> matches = Lists.mutable.empty();
+    protected boolean hasMatched = false;
+    protected final MutableList<PureBigraphMatch> matches = Lists.mutable.empty();
 
-    ReactionRule<PureBigraph> reactionRule;
+    protected ReactionRule<PureBigraph> reactionRule;
 
-    private final JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
-    // private final JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-    it.uniud.mads.jlibbig.core.std.Bigraph jLibAgent;
-    it.uniud.mads.jlibbig.core.std.Bigraph jLibRedex;
+    protected final JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
+
+    protected it.uniud.mads.jlibbig.core.std.Bigraph jLibAgent;
+    protected it.uniud.mads.jlibbig.core.std.Bigraph jLibRedex;
+
     // Matcher matcher = new Matcher();
-    AgentMatcher agentMatcher = new AgentMatcher();
-    Iterable<? extends AgentMatch> jLibMatchIterator;
+    protected AgentMatcher agentMatcher = new AgentMatcher();
+    protected Iterable<? extends AgentMatch> jLibMatchIterator;
 
-    PureBigraphMatchingEngine(PureBigraph agent, ReactionRule<PureBigraph> reactionRule) {
+    protected PureBigraphMatchingEngine(PureBigraph agent, ReactionRule<PureBigraph> reactionRule) {
+        Stopwatch timer = LOGGER.isDebugEnabled() ? Stopwatch.createStarted() : null;
+
         this.reactionRule = reactionRule;
-        //signature, ground agent
-        Stopwatch timer = logger.isDebugEnabled() ? Stopwatch.createStarted() : null;
-
         this.jLibAgent = encoder.encode(agent);
         this.jLibRedex = encoder.encode(reactionRule.getRedex(), jLibAgent.getSignature());
 
-        if (logger.isDebugEnabled() && Objects.nonNull(timer))
-            logger.debug("Initialization time: {} (ms)", (timer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+        if (LOGGER.isDebugEnabled() && Objects.nonNull(timer))
+            LOGGER.debug("Initialization time: {} (ms)", (timer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
     }
 
     @Override
-    public List<PureBigraphParametricMatch> getMatches() {
+    public List<PureBigraphMatch> getMatches() {
         return matches;
     }
 
@@ -81,23 +81,14 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
     /**
      * Computes all matches
      * <p>
-     * First, structural matching, afterwards link matching
+     * First, structural matching, afterward link matching
      */
-    public void beginMatch() {
-        if (logger.isDebugEnabled()) {
+    protected void beginMatch() {
+        if (LOGGER.isDebugEnabled()) {
             matchingTimer = Stopwatch.createStarted();
         }
 
-        org.bigraphs.framework.core.reactivesystem.InstantiationMap instantationMap = reactionRule.getInstantationMap();
-        int[] imArray = new int[instantationMap.getMappings().size()];
-        for (int i = 0; i < imArray.length; i++) {
-            imArray[i] = instantationMap.get(i).getValue();
-        }
-
-        it.uniud.mads.jlibbig.core.std.InstantiationMap eta = new InstantiationMap(
-                reactionRule.getRedex().getSites().size(),
-                imArray
-        );
+        it.uniud.mads.jlibbig.core.std.InstantiationMap eta = PureReactiveSystem.constructEta(reactionRule);
         int prms[] = new int[eta.getPlaceDomain()];
         boolean[] neededParam = new boolean[reactionRule.getRedex().getSites().size()];
         for (int i = 0; i < eta.getPlaceDomain(); i++) {
@@ -110,41 +101,41 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
 
         hasMatched = true;
 
-        logger.debug("Matches found?: {}", hasMatched());
+        LOGGER.debug("Matches found?: {}", hasMatched());
     }
 
     /**
      * This methods builds the actual bigraphs determined by the matching algorithm (see {@link #beginMatch()}).
      */
-    public void createMatchResult() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Matching took: {} (ms)", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+    protected void createMatchResult() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Matching took: {} (ms)", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
             matchingTimer.reset().start();
         }
         try {
             for (Iterator<? extends AgentMatch> it = jLibMatchIterator.iterator(); it.hasNext(); ) {
                 AgentMatch each = it.next();
-                PureBigraphParametricMatch matchResult = getPureBigraphParametricMatch(each);
+                PureBigraphMatch matchResult = convert(each);
                 this.matches.add(matchResult);
             }
         } catch (AssertionError error) {
             error.printStackTrace();
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Time to build the match result: {} ms", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Time to build the match result: {} ms", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
         }
     }
 
-    public void createSingleMatchResult() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Matching took: {} (ms)", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+    protected void createSingleMatchResult() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Matching took: {} (ms)", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
             matchingTimer.reset().start();
         }
         try {
             for (Iterator<? extends AgentMatch> it = jLibMatchIterator.iterator(); it.hasNext(); ) {
                 AgentMatch each = it.next();
-                PureBigraphParametricMatch matchResult = getPureBigraphParametricMatch(each);
+                PureBigraphMatch matchResult = convert(each);
                 this.matches.add(matchResult);
                 break;
             }
@@ -152,19 +143,19 @@ public class PureBigraphMatchingEngine extends BigraphMatchingSupport implements
             error.printStackTrace();
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Time to build the match result: {} ms", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Time to build the match result: {} ms", (matchingTimer.stop().elapsed(TimeUnit.NANOSECONDS) / 1e+6f));
         }
     }
 
-    private PureBigraphParametricMatch getPureBigraphParametricMatch(AgentMatch each) {
+    private PureBigraphMatch convert(AgentMatch each) {
         PureBigraph redex = reactionRule.getRedex();
         PureBigraph context = null;
         PureBigraph redexImage = null;
         PureBigraph redexIdentity = null;
         Collection<PureBigraph> params = new LinkedList<>();
         PureBigraph paramWiring = null; //decoder.decode(each.getParamWiring());
-        return new PureBigraphParametricMatch(
+        return new PureBigraphMatch(
                 each,
                 context,
                 redex,

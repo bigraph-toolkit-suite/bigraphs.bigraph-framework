@@ -22,33 +22,27 @@ import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatcher;
 
+
 /**
- * This class is responsible for executing bigraph matching. A bigraph matcher consists of a bigraph
- * matching engine. A concrete matcher with the corresponding matching engine w.r.t. to the bigraph type. The correct one,
- * is created using the factory method {@link AbstractBigraphMatcher#create(Class)} by supplying the bigraph type as class.
+ * Abstract class for matching bigraphs against reaction rules. This class provides
+ * the basic structure for implementing specific bigraph matchers by extending its
+ * functionality. Subclasses are required to provide implementations for custom matching
+ * logic and driven by a dedicated matching engine {@link #instantiateEngine()} w.r.t. to the bigraph type.
+ * <p>
+ * The correct one, is created using the factory method {@link AbstractBigraphMatcher#create(Class)} by supplying the bigraph type as class.
  * <p>
  * The matcher needs an agent and redex to perform bigraph matching.
- * <p>
- * Matches are then returned via an iterator for easier access of the results The instances of the matches are of type
- * {@link BigraphMatch}.
- * The matching engine/iterator can later also access/override a so-called "custom constraint matching method"
- * (not yet implemented) to additionally specify some user-defined constraints (e.g., match attributes).
- * <p>
- * With other words: This class works like a factory to return the matches as iterables of class {@link BigraphMatch}.
  *
- * @param <B> type of the bigraph
+ * @param <B> the type of bigraph which extends from Bigraph with a specific signature
  * @author Dominik Grzelak
  */
 public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signature<?>>> {
     protected B agent;
     protected B redex;
     protected ReactionRule<B> rule;
-//    private Class<B> matcherClassType;
 
-    //    @SuppressWarnings("unchecked")
     protected AbstractBigraphMatcher() {
-//        this.matcherClassType = ((Class<B>) ((ParameterizedType) getClass()
-//                .getGenericSuperclass()).getActualTypeArguments()[0]);
+
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +50,8 @@ public abstract class AbstractBigraphMatcher<B extends Bigraph<? extends Signatu
         if (bigraphClass == PureBigraph.class) {
             try {
                 return (AbstractBigraphMatcher<B>) Class.forName(PureBigraphMatcher.class.getCanonicalName()).getConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException |
+                     InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
         }

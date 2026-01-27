@@ -20,8 +20,11 @@ import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 
 /**
- * Interface for implementing a matching algorithm for a concrete bigraph kind (e.g., pure bigraphs).
+ * An interface representing a matching engine for bigraphs. This engine
+ * is responsible for finding matches of a specific bigraph type (e.g., pure bigraphs, bigraphs with sharing, ...).
  *
+ * @param <B> the type of bigraph that extends the generic Bigraph with a
+ *            specific {@link Signature}.
  * @author Dominik Grzelak
  */
 public interface BigraphMatchingEngine<B extends Bigraph<? extends Signature<?>>> {

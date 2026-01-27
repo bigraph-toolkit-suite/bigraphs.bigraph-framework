@@ -29,10 +29,10 @@ import org.eclipse.collections.impl.factory.Lists;
  *
  * @author Dominik Grzelak
  */
-public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatch> {
+public class PureMatchIteratorImpl implements Iterator<PureBigraphMatch> {
 
     protected int cursor = 0;
-    protected MutableList<PureBigraphParametricMatch> matches = Lists.mutable.empty();
+    protected MutableList<PureBigraphMatch> matches = Lists.mutable.empty();
     protected PureBigraphMatchingEngine matchingEngine;
 
     PureMatchIteratorImpl(PureBigraphMatchingEngine matchingEngine) {
@@ -61,7 +61,7 @@ public class PureMatchIteratorImpl implements Iterator<PureBigraphParametricMatc
     }
 
     @Override
-    public PureBigraphParametricMatch next() {
+    public PureBigraphMatch next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
