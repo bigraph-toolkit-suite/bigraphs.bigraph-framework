@@ -54,6 +54,10 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
     protected JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
     protected JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
 
+    public ModelCheckingStrategySupport() {
+
+    }
+
     public ModelCheckingStrategySupport(BigraphModelChecker<B> modelChecker) {
         this.modelChecker = modelChecker;
     }
@@ -122,6 +126,7 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
 
         while (!worklist.isEmpty() && iterationCounter.get() < transitionOptions.getMaximumTransitions()) {
             B theAgent = removeNext(worklist);
+            if (theAgent == null) break;
             String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(theAgent);
             Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
 

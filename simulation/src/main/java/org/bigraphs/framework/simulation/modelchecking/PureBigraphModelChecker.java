@@ -34,6 +34,10 @@ public class PureBigraphModelChecker extends BigraphModelChecker<PureBigraph> {
         super(reactiveSystem, options);
     }
 
+    public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, ModelCheckingStrategy<PureBigraph> modelCheckingStrategy, ModelCheckingOptions options) {
+        super(reactiveSystem, modelCheckingStrategy, options);
+    }
+
     public PureBigraphModelChecker(ReactiveSystem<PureBigraph> reactiveSystem, SimulationStrategy.Type simulationStrategyType, ModelCheckingOptions options, ReactiveSystemListener<PureBigraph> listener) {
         super(reactiveSystem, simulationStrategyType, options, listener);
     }
