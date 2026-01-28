@@ -75,18 +75,6 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         return this;
     }
 
-    /**
-     * Weisfeiler–Lehman (or other) kernel over the encoded graphs.
-     * Return a non-negative similarity value.
-     */
-    protected double wlKernel(B graphA, B graphB) {
-        throw new UnsupportedOperationException("wlKernel(graphA, graphB) not implemented");
-    }
-
-    /**
-     * We don't rely on the framework worklist being the *only* storage:
-     * we keep super.worklist + FIFO internally. Still return something non-null to satisfy the superclass.
-     */
     @Override
     protected Collection<B> createWorklist() {
         return new ConcurrentLinkedDeque<>();
@@ -94,7 +82,7 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
 
     /**
      * Called when the framework wants the next state to expand.
-     * We pick from worklist using either fairness FIFO or SA Boltzmann sampling.
+     * State is picked from worklist using either fairness FIFO or SA Boltzmann sampling.
      */
     @Override
     protected B removeNext(Collection<B> worklist) {
@@ -141,9 +129,29 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         }
     }
 
-    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Core SA machinery
-    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * A bigraph kernel (e.g., Weisfeiler–Lehman) over the encoded graphs.
+     * Return a non-negative similarity value.
+     */
+    protected double graphKernel(B graphA, B graphB) {
+        throw new UnsupportedOperationException("wlKernel(graphA, graphB) not implemented");
+    }
+
+    /**
+     * Normalized bigraph kernel for two bigraphs.
+     * <p>
+     * The specific kernel specified in {@link #graphKernel(Bigraph, Bigraph)} must be implemented via subclassing.
+     *
+     * @param s left bigraph
+     * @param g right bigraph
+     */
+    protected double kTilde(B s, B g) {
+        double ksg = graphKernel((s), (g));
+        double kss = graphKernel((s), (s));
+        double kgg = graphKernel((g), (g));
+        double denom = Math.sqrt(Math.max(1e-12, kss * kgg));
+        return ksg / denom;
+    }
 
     private B popExistingInOpenFiFo(Collection<B> worklist) {
         while (!fifoQueue.isEmpty()) {
@@ -199,22 +207,6 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
 
         energyCache.put(s, best);
         return best;
-    }
-
-    /**
-     * Normalized bigraph kernel for two bigraphs.
-     * <p>
-     * The specific kernel specified in {@link #wlKernel(Bigraph, Bigraph)} must be implemented via subclassing.
-     *
-     * @param s left bigraph
-     * @param g right bigraph
-     */
-    private double kTilde(B s, B g) {
-        double ksg = wlKernel((s), (g));
-        double kss = wlKernel((s), (s));
-        double kgg = wlKernel((g), (g));
-        double denom = Math.sqrt(Math.max(1e-12, kss * kgg));
-        return ksg / denom;
     }
 
     private static double clamp01(double x) {

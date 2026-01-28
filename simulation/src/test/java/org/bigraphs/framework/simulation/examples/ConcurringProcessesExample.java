@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 Bigraph Toolkit Suite Developers
+ * Copyright (c) 2019-2026 Bigraph Toolkit Suite Developers
  * Main Developer: Dominik Grzelak
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;

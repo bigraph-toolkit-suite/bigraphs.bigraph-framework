@@ -41,6 +41,7 @@ Model and analyze system dynamics using **reaction rules** and **graph rewriting
   - Depth-first search (DFS)
   - Random exploration
   - Match-all / Match-first
+  - Custom (Simulated Annealing, ...)
 - Automatic construction of **Labeled Transition Systems (LTS)**
 - **State predicates and logical connectors** for property checking
 - **Rule priorities** to control nondeterminism and execution order
@@ -177,7 +178,7 @@ composite.juxtapose(F).parallelProduct(H);
   The Bigraph Framework adds specific behavior superimposed upon this meta
   model. Meaning, the implementation-specific details are kept out from the metamodel.
 
-## Installation & Setup
+## Installation & Setup of the Java Framework
 
 > All parts of Bigraph Framework are available from the [Central Repository](https://central.sonatype.com/).
 
@@ -233,16 +234,31 @@ compile "org.bigraphs.framework:bigraph-converter:2.3.5"
 
 ### Logging
 
-This framework employs SLF4J as a facade for the log4j logging framework.
+Bigraph Framework employs SLF4J as a facade for the many logging frameworks.
 
 Depending on your project setup, you may need to include the following libraries in your `pom.xml`/`build.gradle`.
 
 For a bare Maven/Gradle project:
 ```xml
+<!-- For example, use log4j-->
 <dependency>
-<groupId>org.slf4j</groupId>
-<artifactId>slf4j-log4j12</artifactId>
-<version>1.7.30</version>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.30</version>
+</dependency>
+
+<!-- Or, use a no-operation (NOP) logger implementation -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-nop</artifactId>
+    <version>2.0.7</version>
+</dependency>
+
+<!-- or, for example, the reload4j implementation (fork of log4j) -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-reload4j</artifactId>
+    <version>2.0.9</version>
 </dependency>
 ```
 

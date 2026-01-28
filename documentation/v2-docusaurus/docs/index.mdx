@@ -18,7 +18,7 @@ import TabItem from '@theme/TabItem';
 
 
 - **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.3.5</span>
-- Previous Stable Versions: `2.3.4`, `2.3.3`, `2.3.2`, `2.3.1`
+- Previous Stable Versions: `2.3.4`, `2.3.3`, `2.3.2`
 
 :::info Migration `2.1.2` → `2.2.0`
 For refactor and upgrade instructions, please see the
@@ -98,6 +98,7 @@ Model and analyze system dynamics using **reaction rules** and **graph rewriting
     - Depth-first search (DFS)
     - Random exploration
     - Match-all / Match-first
+    - Custom (Simulated Annealing, ...)
 - Automatic construction of **Labeled Transition Systems (LTS)**
 - **State predicates and logical connectors** for property checking
 - **Rule priorities** to control nondeterminism and execution order
@@ -116,7 +117,7 @@ Model and analyze system dynamics using **reaction rules** and **graph rewriting
 (via tracking maps)
 
 
-## Use / Install / Dependencies
+## Usage and Installation
 
 Bigraph Framework is online available as Maven/Gradle dependency.
 
@@ -133,10 +134,10 @@ To build the source by yourself, follow the [README.md](https://github.com/bigra
 
 ### Quick Start: Project Template
 
-To get started using Bigraph Framework right away, download the Maven/Gradle-based Project Template
+To get started using Bigraph Framework right away, download the Maven/Gradle-based Project Template:
 
-- [Starter Project Template using Bigraph Framework](https://www.bigraphs.org/software/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip)
 - See <a href={`https://github.com/bigraph-toolkit-suite/Project-Skeleton-for-Bigraph-Framework`}>here</a> for the latest version on GitHub
+- [Starter Project Template using Bigraph Framework](https://www.bigraphs.org/software/bigraph-framework/download/Project-Skeleton-for-Bigraph-Framework.zip) (ZIP-Archive)
 
 The README contained therein, describes how to compile and start an application.
 
@@ -173,47 +174,50 @@ import * as myConstClass2 from "../src/components/BigraphRepositoryBlock";
 
 ### Logging Configuration
 
-Bigraph Framework employs SLF4J as a facade for the log4j logging framework.
+Bigraph Framework employs SLF4J as a facade for the many logging frameworks.
 
-Depending on your project setup, you may need to include the following libraries in your `pom.xml`:
+Depending on your project setup, you may need to include the following libraries in your `pom.xml`/`build.gradle`.
 
+For a bare Maven/Gradle project:
 ```xml
-<dependencies>
-    <!-- For any Maven project in general -->
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>2.0.9</version>
-    </dependency>
-    <!-- Use a no-operation (NOP) logger implementation -->
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-nop</artifactId>
-        <version>2.0.7</version>
-    </dependency>
-    <!-- or, for example, the reload4j implementation (fork of log4j) -->
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-reload4j</artifactId>
-        <version>2.0.9</version>
-    </dependency>
+<!-- For example, use log4j-->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.30</version>
+</dependency>
 
-    <!-- When used within a Spring project -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-        <exclusions>
-            <exclusion>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-logging</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-</dependencies>
+<!-- Or, use a no-operation (NOP) logger implementation -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-nop</artifactId>
+    <version>2.0.7</version>
+</dependency>
+
+<!-- or, for example, the reload4j implementation (fork of log4j) -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-reload4j</artifactId>
+    <version>2.0.9</version>
+</dependency>
+```
+
+For Spring-based Projects:
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-log4j2</artifactId>
+</dependency>
 ```
 
 Not including these dependencies will result in warnings.
