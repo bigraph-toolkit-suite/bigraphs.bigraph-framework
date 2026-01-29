@@ -32,11 +32,21 @@ import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.junit.jupiter.api.Test;
 
-//Example from: Christoph Luckeneder
+/**
+ * Example from: Christoph Luckeneder
+ *
+ * @author Dominik Grzelak
+ */
 public class RoomExample {
 
+    /**
+     * Save output of conversion to {@code model.big}.
+     * Command to simulate model with BigraphER:
+     * <p>
+     * bigrapher full -v -s ./states -t trans.svg -f svg,json -M 20 model1.big
+     */
     @Test
-    public void test() throws InvalidConnectionException, InvalidReactionRuleException, IncompatibleInterfaceException, IOException, TypeNotExistsException {
+    public void test_convert_1() throws InvalidConnectionException, InvalidReactionRuleException, IncompatibleInterfaceException, IOException, TypeNotExistsException {
         DynamicSignature signature = pureSignatureBuilder()
                 .newControl("Room", 1).assign()
                 .newControl("Door", 1).assign()
@@ -99,9 +109,14 @@ public class RoomExample {
 
     }
 
-    // bigrapher full -v -s ./states -t trans.svg -f svg,json -M 20 model2.big
+    /**
+     * Save output of conversion to {@code model.big}.
+     * Command to simulate model with BigraphER:
+     * <p>
+     * bigrapher full -v -s ./states -t trans.svg -f svg,json -M 20 model2.big
+     */
     @Test
-    void test_02() throws InvalidReactionRuleException, InvalidConnectionException {
+    void test_convert_2() throws InvalidReactionRuleException, InvalidConnectionException {
         DynamicSignature signature = pureSignatureBuilder()
                 .newControl("Room", 1).assign()
                 .newControl("Door", 1).assign()
@@ -151,9 +166,9 @@ public class RoomExample {
                 .child("Agent", "name").child("Door", "x").site().up()
                 .create();
 
-		InstantiationMap instMap = InstantiationMap.create(reactum.getSites().size())
-				.map(0, 0)
-				.map(1, 1);
+        InstantiationMap instMap = InstantiationMap.create(reactum.getSites().size())
+                .map(0, 0)
+                .map(1, 1);
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum, instMap).withLabel("rule1");
 
         reactiveSystem.addReactionRule(rr);

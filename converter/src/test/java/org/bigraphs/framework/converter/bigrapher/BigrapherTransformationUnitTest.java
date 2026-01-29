@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.bigraphs.framework.converter.PureReactiveSystemStub;
-import org.bigraphs.framework.core.Control;
-import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
@@ -31,7 +29,6 @@ import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.junit.jupiter.api.Test;
@@ -40,15 +37,29 @@ import org.junit.jupiter.api.Test;
  * @author Dominik Grzelak
  */
 public class BigrapherTransformationUnitTest {
-//    private static PureBigraphFactory factory = pure();
 
     private static final String DUMP_TARGET = "src/test/resources/dump/";
+
+    private static DynamicSignature sig() {
+        return pureSignatureBuilder()
+                .add("Printer", 2)
+                .add("Building", 0)
+                .add("User", 1)
+                .add("Room", 1)
+                .add("Spool", 1)
+                .add("Computer", 1)
+                .add("Job", 0)
+                .add("A", 1)
+                .add("B", 1)
+                .create()
+                ;
+    }
 
     /**
      * bigrapher full -d ./test -f svg -s states -M 10 -t trans.svg -v test.big
      */
     @Test
-    void name() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException {
+    void convert() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException {
         PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
 
         PureBigraph agent_a = createAgent_A();
@@ -56,8 +67,6 @@ public class BigrapherTransformationUnitTest {
 
         reactiveSystem.setAgent(agent_a);
         reactiveSystem.addReactionRule(rr_1);
-//        reactiveSystem.addPredicate(createPredicate());
-//        reactiveSystem.addPredicate(createPredicate());
 
         BigrapherTransformator prettyPrinter = new BigrapherTransformator();
         String s = prettyPrinter.toString(reactiveSystem);
@@ -68,8 +77,8 @@ public class BigrapherTransformationUnitTest {
         fout.close();
     }
 
-    public PureBigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
-        DynamicSignature signature = createExampleSignature();
+    private PureBigraph createAgent_A() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuter("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
@@ -98,8 +107,8 @@ public class BigrapherTransformationUnitTest {
         return builder.create();
     }
 
-    public ReactionRule<PureBigraph> createReactionRule_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DynamicSignature signature = createExampleSignature();
+    private ReactionRule<PureBigraph> createReactionRule_1() throws TypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         BigraphEntity.OuterName jeff1 = builder.createOuter("jeff1");
         BigraphEntity.OuterName jeff2 = builder.createOuter("jeff2");
@@ -119,40 +128,8 @@ public class BigrapherTransformationUnitTest {
                 .child(signature.getControlByName("Computer")).linkOuter(b1)
                 .down().child(signature.getControlByName("Job")).child(signature.getControlByName("User")).linkOuter(jeff2);
 
-//        builder.makeGround();
         PureBigraph redex = builder.create();
         ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, redex);
         return rr;
-    }
-
-//    public ReactiveSystemPredicate<PureBigraph> createPredicate() throws InvalidConnectionException, TypeNotExistsException {
-//        DefaultDynamicSignature signature = createExampleSignature();
-//        PureBigraphBuilder<DefaultDynamicSignature> builder = pureBuilder(signature);
-//
-//        BigraphEntity.OuterName door = builder.createOuterName("door");
-//        BigraphEntity.OuterName user = builder.createOuterName("name:jeff");
-//
-//        builder.root()
-//                .child("Room").linkToOuter(door)
-//                .down().site().child("User", user);
-//        PureBigraph bigraph = builder.createBigraph();
-//        return SubBigraphMatchPredicate.create(bigraph);
-//    }
-
-
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("Printer", 2)
-                .add("Building", 0)
-                .add("User", 1)
-                .add("Room", 1)
-                .add("Spool", 1)
-                .add("Computer", 1)
-                .add("Job", 0)
-                .add("A", 1)
-                .add("B", 1);
-
-        return (S) defaultBuilder.create();
     }
 }

@@ -31,6 +31,9 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class JLibBigDecoderUnitTests {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/jlibbig/";

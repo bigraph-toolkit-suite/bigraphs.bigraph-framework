@@ -19,7 +19,6 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBu
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
 import org.bigraphs.framework.converter.PureReactiveSystemStub;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
@@ -30,21 +29,29 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class TraceabilityExample {
+
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/traceability/";
 
-    @BeforeAll
-    static void setUp() throws IOException {
-        File dump = new File(TARGET_DUMP_PATH);
-        dump.mkdirs();
-        FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
+    private DynamicSignature sig() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+        defaultBuilder
+                .add("Person", 1)
+                .add("Room", 1)
+                .add("User", 1)
+                .add("Computer", 1)
+        ;
+
+        return defaultBuilder.create();
     }
 
     @Test
-    void test() throws InvalidConnectionException, IOException, InvalidReactionRuleException {
+    void convert() throws InvalidConnectionException, IOException, InvalidReactionRuleException {
         PureBigraph agent = createAgent();
         BigraphGraphvizExporter.toPNG(agent,
                 true,
@@ -80,8 +87,8 @@ public class TraceabilityExample {
         System.out.println(s);
     }
 
-    PureBigraph createAgent() throws InvalidConnectionException {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+    private PureBigraph createAgent() throws InvalidConnectionException {
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
         builder.root()
                 .child("Room").down().child("Computer", "link").up()
                 .child("Person")
@@ -89,9 +96,9 @@ public class TraceabilityExample {
         return builder.create();
     }
 
-    ReactionRule<PureBigraph> moveRoom() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
+    private ReactionRule<PureBigraph> moveRoom() throws InvalidConnectionException, InvalidReactionRuleException {
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(sig());
 
         builderRedex.root().child("Room").down().site().up().child("Person");
 
@@ -102,9 +109,9 @@ public class TraceabilityExample {
         return new ParametricReactionRule<>(redex, reactum);
     }
 
-    ReactionRule<PureBigraph> connectToComputer() throws InvalidConnectionException, InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
+    private ReactionRule<PureBigraph> connectToComputer() throws InvalidConnectionException, InvalidReactionRuleException {
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(sig());
 
         builderRedex.root().child("Room").down().child("Computer", "link").child("Person");
 
@@ -114,17 +121,4 @@ public class TraceabilityExample {
         PureBigraph reactum = builderReactum.create();
         return new ParametricReactionRule<>(redex, reactum);
     }
-
-    private DynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("Person", 1)
-                .add("Room", 1)
-                .add("User", 1)
-                .add("Computer", 1)
-        ;
-
-        return defaultBuilder.create();
-    }
-
 }

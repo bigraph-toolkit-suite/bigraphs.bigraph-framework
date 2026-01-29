@@ -25,6 +25,9 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class JLibBigReadWriteAttributesUnitTest {
 
     @Test

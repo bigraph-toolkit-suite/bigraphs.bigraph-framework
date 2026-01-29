@@ -19,6 +19,9 @@ import org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class PureReactiveSystemStub extends AbstractSimpleReactiveSystem<PureBigraph> {
     @Override
     public PureBigraph buildGroundReaction(PureBigraph agent, BigraphMatch<PureBigraph> match, ReactionRule<PureBigraph> rule) {

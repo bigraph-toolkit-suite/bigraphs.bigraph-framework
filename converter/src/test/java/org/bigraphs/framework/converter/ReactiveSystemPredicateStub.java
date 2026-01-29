@@ -19,6 +19,8 @@ import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
 
 /**
  * A simple stub for predicates to test the converter
+ *
+ * @author Dominik Grzelak
  */
 public class ReactiveSystemPredicateStub extends ReactiveSystemPredicate<PureBigraph> {
     PureBigraph bigraph;

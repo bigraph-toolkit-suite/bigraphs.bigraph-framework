@@ -19,30 +19,42 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBu
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.bigraphs.framework.core.Control;
-import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
-import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author Dominik Grzelak
  */
 public class VcgTransformationUnitTest {
+
     private static final String DUMP_TARGET = "src/test/resources/dump/";
+
+    private static DynamicSignature createExampleSignature() {
+        return pureSignatureBuilder()
+
+                .add("Printer", 2)
+                .add("Building", 0)
+                .add("User", 1)
+                .add("Room", 1)
+                .add("Spool", 1)
+                .add("Computer", 1)
+                .add("Job", 0)
+                .add("A", 1)
+                .add("B", 1)
+                .create();
+    }
 
     /**
      * ycomp ycomp-test.vcg
      */
     @Test
-    void name() throws InvalidConnectionException, TypeNotExistsException, InvalidReactionRuleException, IOException {
+    void convert() throws InvalidConnectionException, TypeNotExistsException, IOException {
         PureBigraph big = createBigraph();
 //        BigraphFileModelManagement.Store.exportAsInstanceModel(big, System.out);
 
@@ -55,7 +67,7 @@ public class VcgTransformationUnitTest {
         fout.close();
     }
 
-    public PureBigraph createBigraph() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
+    private PureBigraph createBigraph() throws ControlIsAtomicException, InvalidConnectionException, TypeNotExistsException {
         DynamicSignature signature = createExampleSignature();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         BigraphEntity.OuterName idleOuter = builder.createOuter("idle2");
@@ -86,21 +98,5 @@ public class VcgTransformationUnitTest {
                 .up().up();
 
         return builder.create();
-    }
-
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("Printer", 2)
-                .add("Building", 0)
-                .add("User", 1)
-                .add("Room", 1)
-                .add("Spool", 1)
-                .add("Computer", 1)
-                .add("Job", 0)
-                .add("A", 1)
-                .add("B", 1)
-        ;
-        return (S) defaultBuilder.create();
     }
 }

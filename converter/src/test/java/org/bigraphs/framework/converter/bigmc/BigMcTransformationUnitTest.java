@@ -20,16 +20,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.bigraphs.framework.converter.PureReactiveSystemStub;
-import org.bigraphs.framework.core.Control;
-import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
-import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
-import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.junit.jupiter.api.Test;
@@ -38,14 +33,27 @@ import org.junit.jupiter.api.Test;
  * @author Dominik Grzelak
  */
 public class BigMcTransformationUnitTest {
-//    private static PureBigraphFactory factory = pure();
+
     private static final String DUMP_TARGET = "src/test/resources/dump/";
+
+    private static DynamicSignature sig() {
+        return pureSignatureBuilder()
+                .add("Age", 0)
+                .add("S", 0)
+                .add("Z", 0)
+                .add("True", 1)
+                .add("False", 0)
+                .add("Left", 0)
+                .add("Right", 0)
+                .create()
+                ;
+    }
 
     /**
      * bigmc -p ./couting.bgm
      */
     @Test
-    void name() throws InvalidConnectionException, LinkTypeNotExistsException, InvalidReactionRuleException, IOException {
+    void convert() throws InvalidReactionRuleException, IOException {
         PureReactiveSystemStub reactiveSystem = new PureReactiveSystemStub();
 
         PureBigraph agent_a = createAgent_A(3, 4);
@@ -66,7 +74,7 @@ public class BigMcTransformationUnitTest {
     }
 
     public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException {
-        DynamicSignature signature = createExampleSignature();
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy leftNode =
@@ -89,14 +97,13 @@ public class BigMcTransformationUnitTest {
                 .down()
                 .child(leftNode)
                 .child(rightNode)
-//                .child(s.top())
         ;
         builder.makeGround();
         return builder.create();
     }
 
-    public static ReactionRule<PureBigraph> createReactionRule_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DynamicSignature signature = createExampleSignature();
+    public static ReactionRule<PureBigraph> createReactionRule_1() throws ControlIsAtomicException, InvalidReactionRuleException {
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
@@ -119,8 +126,8 @@ public class BigMcTransformationUnitTest {
     /**
      * react r2 = Left.Z | Right.S -> True;
      */
-    public static ReactionRule<PureBigraph> createReactionRule_2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DynamicSignature signature = createExampleSignature();
+    public static ReactionRule<PureBigraph> createReactionRule_2() throws ControlIsAtomicException, InvalidReactionRuleException {
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
@@ -130,21 +137,18 @@ public class BigMcTransformationUnitTest {
                 .child("Right").down().child("S").down().site()
         ;
         builder2.root()
-//                .site()
-//                .site()
                 .child("True").down().site()
         ;
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
-        return rr;
+        return new ParametricReactionRule<>(redex, reactum);
     }
 
     /**
      * react r3 = Left | Right.Z -> False;
      */
-    public static ReactionRule<PureBigraph> createReactionRule_3() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
-        DynamicSignature signature = createExampleSignature();
+    public static ReactionRule<PureBigraph> createReactionRule_3() throws ControlIsAtomicException, InvalidReactionRuleException {
+        DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
 
@@ -158,23 +162,6 @@ public class BigMcTransformationUnitTest {
         ;
         PureBigraph redex = builder.create();
         PureBigraph reactum = builder2.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
-        return rr;
-    }
-
-
-    private static <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("Age", 0)
-                .add("S", 0)
-                .add("Z", 0)
-                .add("True", 1)
-                .add("False", 0)
-                .add("Left", 0)
-                .add("Right", 0)
-        ;
-
-        return (S) defaultBuilder.create();
+        return new ParametricReactionRule<>(redex, reactum);
     }
 }

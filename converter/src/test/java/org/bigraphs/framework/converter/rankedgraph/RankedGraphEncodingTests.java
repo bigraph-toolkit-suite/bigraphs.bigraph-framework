@@ -31,15 +31,12 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import org.bigraphs.framework.core.AbstractRankedGraph;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
-import org.bigraphs.framework.core.Control;
-import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.visualization.BigraphRankedGraphExporter;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -48,30 +45,37 @@ import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.junit.jupiter.api.Test;
 
-// Place graph hierarchy is encoded as attribute "parent"
-// hierarchy is als reflected by the id of the nodes (to maintain the parent relationship)
-
-//DPO rule: attribute count muss übereinstimmen von agent und RR, dürfen nicht leer sein sonst segfault in GMTE
-//das gilt nur für nodes, bei edges ist es scheinbar egal
-
-//(siehe: http://homepages.laas.fr/khalil/GMTE/index.php?n=GMTE.Tutorials)
-//der redex in inv zone
 
 /**
+ * The place graph hierarchy is encoded via the {@code parent} attribute.
+ * The hierarchy is also reflected in the node identifiers in order to
+ * preserve parent–child relationships.
+ * <p>
+ * For DPO rules, the {@code count} attribute must match between the agent
+ * and the reaction rule. The attribute must not be empty; otherwise,
+ * GMTE may segfault. This restriction applies only to nodes—edges do not
+ * appear to be affected.
+ * <p>
+ * See: <a href="http://homepages.laas.fr/khalil/GMTE/index.php?n=GMTE.Tutorials">GMTE.Tutorials</a>
+ *
  * @author Dominik Grzelak
  */
 public class RankedGraphEncodingTests {
+
     private final static String TARGET_TEST_PATH = "src/test/resources/dump/rankedgraphs/";
-//    private PureBigraphFactory factory = pure();
+
+    private DynamicSignature sig() {
+        return pureSignatureBuilder()
+                .add("M", 2)
+                .add("K", 1)
+                .add("L", 2)
+                .create();
+    }
 
     @Test
-    void name2() throws TypeNotExistsException, InvalidConnectionException, IOException {
+    void convert_test_1() throws TypeNotExistsException, InvalidConnectionException, IOException {
         PureBigraph bigraph = createBigraphA();
-//        BigraphGraphvizExporter.toPNG(bigraph, true, new File("bigraph-example.png"));
         PureBigraphRankedGraphEncoding graphEncoding = new PureBigraphRankedGraphEncoding(bigraph);
-//        graphEncoding.encode();
-//        Graph<AbstractRankedGraph.LabeledNode, AbstractRankedGraph.LabeledEdge> graph = graphEncoding.getGraph();
-//        drawGraph(graphEncoding.getGraph());
         new BigraphRankedGraphExporter().toPNG(graphEncoding, new File(TARGET_TEST_PATH + "graph2.png"));
     }
 
@@ -156,7 +160,6 @@ public class RankedGraphEncodingTests {
         assertTrue(imgFile.exists());
     }
 
-
     public static void printAll(Document doc) {
         try {
             XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
@@ -181,10 +184,9 @@ public class RankedGraphEncodingTests {
         }
     }
 
-
     private PureBigraph createBigraphA() throws InvalidConnectionException, TypeNotExistsException, IOException {
         PureBigraphBuilder<DynamicSignature> builder;
-        DynamicSignature signature = createExampleSignature();
+        DynamicSignature signature = sig();
         builder = pureBuilder(signature);
 
         BigraphEntity.InnerName x0 = builder.createInner("x0");
@@ -203,16 +205,5 @@ public class RankedGraphEncodingTests {
         BigraphFileModelManagement.Store.exportAsInstanceModel(bigraph, new FileOutputStream(TARGET_TEST_PATH + "test_instance-model.xmi"));
 
         return bigraph;
-    }
-
-    private <C extends Control<?, ?>, S extends Signature<C>> S createExampleSignature() {
-        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
-        signatureBuilder
-                .add("M", 2)
-                .add("K", 1)
-                .add("L", 2)
-        ;
-
-        return (S) signatureBuilder.create();
     }
 }

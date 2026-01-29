@@ -35,16 +35,48 @@ import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 public class ReactionRuleInstantiationMapUnitTests {
 
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/bigrapher/";
 
-    // Example from: https://uog-bigraph.bitbucket.io/actors.html
-    // bigrapher full -v -s ./states -t trans.svg -f svg,json -M 20 test-actors.big
-    // bigrapher sim -v -s ./states -t trans.svg -f svg,json  actors.big
+    private static DynamicSignature sig() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+        defaultBuilder
+                .newControl("User", 1).assign()
+                .newControl("Room", 1).assign()
+                .newControl("Laptop", 1).assign()
+        ;
+        return defaultBuilder.create();
+    }
+
+    private static DynamicSignature sig2() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+        defaultBuilder
+                .newControl("A", 1).assign()
+                .newControl("A'", 1).assign()
+                .newControl("Mail", 0).assign()
+                .newControl("M", 2).status(ControlStatus.ATOMIC).assign()
+                .newControl("Snd", 0).assign()
+                .newControl("Ready", 0).assign()
+                .newControl("New", 0).assign()
+                .newControl("Fun", 0).assign()
+        ;
+        return defaultBuilder.create();
+    }
+
+    /**
+     * Example from: https://uog-bigraph.bitbucket.io/actors.html
+     * <p>
+     * bigrapher full -v -s ./states -t trans.svg -f svg,json -M 20 test-actors.big
+     * <p>
+     * bigrapher sim -v -s ./states -t trans.svg -f svg,json  actors.big
+     */
     @Test
-    void instantiation_rule_test() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
-        DynamicSignature sig = createSignature2();
+    void convert_instantiation_rule_test() throws InvalidConnectionException, TypeNotExistsException, IOException, InvalidReactionRuleException {
+        DynamicSignature sig = sig2();
         createOrGetBigraphMetaModel(sig);
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig);
 
@@ -137,10 +169,12 @@ public class ReactionRuleInstantiationMapUnitTests {
         transformator.toOutputStream(rs, new FileOutputStream(TARGET_DUMP_PATH + "test-actors.big"));
     }
 
-    // bigrapher full -v -s ./states -t trans.svg -f svg,json -M 3 test1.big
+    /**
+     * bigrapher full -v -s ./states -t trans.svg -f svg,json -M 3 test1.big
+     */
     @Test
-    void closed_link_test() throws InvalidConnectionException, InvalidReactionRuleException, IOException {
-        DynamicSignature sig = createSignature();
+    void convert_closed_link_test() throws InvalidConnectionException, InvalidReactionRuleException, IOException {
+        DynamicSignature sig = sig();
         createOrGetBigraphMetaModel(sig);
 
         // Create agent
@@ -192,30 +226,5 @@ public class ReactionRuleInstantiationMapUnitTests {
         BigrapherTransformator transformator = new BigrapherTransformator();
         transformator.toOutputStream(rs, System.out);
         transformator.toOutputStream(rs, new FileOutputStream(TARGET_DUMP_PATH + "test1.big"));
-    }
-
-    private static DynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .newControl("User", 1).assign()
-                .newControl("Room", 1).assign()
-                .newControl("Laptop", 1).assign()
-        ;
-        return defaultBuilder.create();
-    }
-
-    private static DynamicSignature createSignature2() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .newControl("A", 1).assign()
-                .newControl("A'", 1).assign()
-                .newControl("Mail", 0).assign()
-                .newControl("M", 2).status(ControlStatus.ATOMIC).assign()
-                .newControl("Snd", 0).assign()
-                .newControl("Ready", 0).assign()
-                .newControl("New", 0).assign()
-                .newControl("Fun", 0).assign()
-        ;
-        return defaultBuilder.create();
     }
 }

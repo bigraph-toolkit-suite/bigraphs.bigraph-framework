@@ -14,11 +14,8 @@
  */
 package org.bigraphs.framework.converter.gxl;
 
-//import GCF.GXLConverterAPI;
-
 import GCF.GXLConverterAPI;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +37,7 @@ public class ReadGXLUnitTest {
     }
 
     @Test
-    void read() throws MalformedURLException {
+    void name() {
         // create the GXLObject
         GXLConverterAPI.createGXL(new GXLGXLAPIImpl());
         // set the URL where the default implementation 1 is located
@@ -56,11 +53,9 @@ public class ReadGXLUnitTest {
         // stream is System.out
         GXLOutputAPI.createOutputFile(TARGET_DUMP_PATH + "Demo.xml");
 
-//        File f = new File("/home/dominik/git/BigraphFramework/visualization/gxldemo.xml");
-//        Path path = Paths.get("/home/dominik/git/BigraphFramework/visualization/gxldemo.xml");
         URI resourceFilePath = getResourceFileURI("test-1.xmi");
-        Path path = Paths.get("/home/dominik/git/BigraphFramework/visualization/test-1.xmi");
-        path = Paths.get(resourceFilePath);
+        Path path = Paths.get(resourceFilePath);
+
         GCF.GXLConverterAPI.parse(path.toAbsolutePath().toString());
 
         GXLOutputAPI.closeOutputFile();

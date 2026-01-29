@@ -40,11 +40,36 @@ import org.junit.jupiter.api.Test;
  * @author Dominik Grzelak
  */
 public class Bigraph2GraphMLUnitTest {
+
     private static final String DUMP_TARGET = "src/test/resources/dump/";
+
+    private static DynamicSignature sigABC() {
+        DynamicSignatureBuilder defaultBuilder = BigraphFactory.pureSignatureBuilder();
+        defaultBuilder
+                .add("A", 4)
+                .add("B", 3)
+                .add("C", 2)
+                .add("D", 1)
+                .add("E", 0)
+        ;
+        return defaultBuilder.create();
+    }
+
+    private static DynamicSignature sigRobotZone() {
+        return pureSignatureBuilder()
+                .newControl("Robot", 1).assign()
+                .newControl("Gripper", 1).assign()
+                .newControl("Object", 1).assign()
+                .newControl("Ownership", 1).assign()
+                .newControl("Zone1", 0).assign()
+                .newControl("Zone2", 0).assign()
+                .newControl("Zone3", 0).assign()
+                .create();
+    }
 
     @Test
     void bigraph_2_graphml_test_01() {
-        DynamicSignature signature = createSignature();
+        DynamicSignature signature = sigABC();
         PureBigraph generate = BigraphFactory.pureRandomBuilder(signature).generate(1, 10, 0.5f, 1f, 1f);
 
         PureBigraph2GraphMLPrettyPrinter graphMLPrettyPrinter = new PureBigraph2GraphMLPrettyPrinter();
@@ -89,7 +114,7 @@ public class Bigraph2GraphMLUnitTest {
     }
 
     private PureBigraph robotZoneBigraph() throws InvalidConnectionException {
-        PureBigraphBuilder<DynamicSignature> b = pureBuilder(createRobotZoneSignature());
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(sigRobotZone());
         PureBigraphBuilder<DynamicSignature>.Hierarchy zone1 = b.hierarchy("Zone1");
         PureBigraphBuilder<DynamicSignature>.Hierarchy zone2 = b.hierarchy("Zone2");
         zone1.child("Robot", "rId").down().child("Gripper", "canGrip");
@@ -97,29 +122,5 @@ public class Bigraph2GraphMLUnitTest {
         b.root()
                 .child(zone1).top().child(zone2).top();
         return b.create();
-    }
-
-    private static DynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = BigraphFactory.pureSignatureBuilder();
-        defaultBuilder
-                .add("A", 4)
-                .add("B", 3)
-                .add("C", 2)
-                .add("D", 1)
-                .add("E", 0)
-        ;
-        return defaultBuilder.create();
-    }
-
-    private DynamicSignature createRobotZoneSignature() {
-        return pureSignatureBuilder()
-                .newControl("Robot", 1).assign()
-                .newControl("Gripper", 1).assign()
-                .newControl("Object", 1).assign()
-                .newControl("Ownership", 1).assign()
-                .newControl("Zone1", 0).assign()
-                .newControl("Zone2", 0).assign()
-                .newControl("Zone3", 0).assign()
-                .create();
     }
 }
