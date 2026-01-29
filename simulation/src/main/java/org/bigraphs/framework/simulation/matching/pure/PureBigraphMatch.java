@@ -49,7 +49,7 @@ public class PureBigraphMatch implements BigraphMatch<PureBigraph> {
                             Bigraph<DynamicSignature> redexIdentity,
                             PureBigraph paramWiring,
                             Collection<PureBigraph> parameters) {
-        // Everything is null exceptjLibMatchResult and redex because we have jLibBig bigraph objects
+        // Everything is null except jLibMatchResult and redex because we have jLibBig bigraph objects
         // Until the bigraph is rewritten with the match result, they will be null.
         this.jLibMatchResult = jLibMatchResult;
         this.contextIdentity = null;
@@ -60,22 +60,6 @@ public class PureBigraphMatch implements BigraphMatch<PureBigraph> {
         this.paramWiring = paramWiring;
         this.parameters = parameters;
         this.params = null;
-    }
-
-    @Deprecated
-    public PureBigraphMatch(PureBigraph context,
-                            PureBigraph redex,
-                            PureBigraph redexImage,
-                            Collection<PureBigraph> parameters,
-                            Bigraph<DynamicSignature> redexIdentity,
-                            Bigraph<DynamicSignature> contextIdentity) {
-        this.jLibMatchResult = null;
-        this.parameters = parameters;
-        this.context = context;
-        this.redexImage = redexImage;
-        this.redexIdentity = redexIdentity;
-        this.redex = redex;
-        this.contextIdentity = contextIdentity;
     }
 
     public Match getJLibMatchResult() {
