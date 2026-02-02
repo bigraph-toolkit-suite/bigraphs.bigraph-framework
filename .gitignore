@@ -1,4 +1,8 @@
 TODO
+core/src/test/resources/dump
+simulation/src/test/resources/dump
+converter/src/test/resources/dump
+visualization/src/test/resources/dump
 
 # Created by https://www.toptal.com/developers/gitignore/api/maven,gradle,windows,linux,macos,intellij+all,java,docusaurus
 # Edit at https://www.toptal.com/developers/gitignore?templates=maven,gradle,windows,linux,macos,intellij+all,java,docusaurus

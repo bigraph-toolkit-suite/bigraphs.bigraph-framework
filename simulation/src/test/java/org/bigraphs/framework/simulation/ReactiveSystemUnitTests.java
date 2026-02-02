@@ -119,15 +119,15 @@ public class ReactiveSystemUnitTests {
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();
         reactiveSystem.setAgent(agent);
-        ReactionRule<PureBigraph> rr = createReactionRule_AddJob();
-        ReactionRule<PureBigraph> rrsame = createReactionRule_AddJob();
-        ReactionRule<PureBigraph> rrSelf = createReactionRule_A_SelfApply();
-        ReactionRule<PureBigraph> rr2 = createReactionRule_AddOneJob();
+        ReactionRule<PureBigraph> rr1 = createReactionRule_AddJob();
+        ReactionRule<PureBigraph> rr1_1 = createReactionRule_AddJob();
+        ReactionRule<PureBigraph> rr2 = createReactionRule_A_SelfApply();
+        ReactionRule<PureBigraph> rr3 = createReactionRule_AddOneJob();
 
-        reactiveSystem.addReactionRule(rr);
-        reactiveSystem.addReactionRule(rrSelf);
+        reactiveSystem.addReactionRule(rr1);
+        reactiveSystem.addReactionRule(rr1_1);
         reactiveSystem.addReactionRule(rr2);
-        reactiveSystem.addReactionRule(rrsame);
+        reactiveSystem.addReactionRule(rr3);
         assertTrue(reactiveSystem.isSimple());
 
         Path completePath = Paths.get(DUMP_PATH, "transition_graph.png");
@@ -141,7 +141,6 @@ public class ReactiveSystemUnitTests {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-//                        .setPrintCanonicalStateLabel(true)
                                 .setPrintCanonicalStateLabel(false)
                                 .setReactionGraphFile(new File(completePath.toUri()))
                                 .setOutputStatesFolder(new File(DUMP_PATH + "states/"))
@@ -201,6 +200,7 @@ public class ReactiveSystemUnitTests {
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setPrintCanonicalStateLabel(true)
+                        .setOutputStatesFolder(new File(DUMP_PATH + "states/"))
                         .setReactionGraphFile(Paths.get(DUMP_PATH, "transition_graph_random.png").toFile())
                         .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
