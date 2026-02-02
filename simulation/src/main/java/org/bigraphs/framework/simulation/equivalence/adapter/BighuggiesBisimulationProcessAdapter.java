@@ -15,11 +15,9 @@
 package org.bigraphs.framework.simulation.equivalence.adapter;
 
 import bighuggies.bisimulation.se705.bisimulation.lts.Process;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.reactivesystem.ReactionGraph;

@@ -15,7 +15,6 @@
 package org.bigraphs.framework.simulation.equivalence.adapter;
 
 import java.io.ByteArrayInputStream;
-
 import org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem;
 
 /**

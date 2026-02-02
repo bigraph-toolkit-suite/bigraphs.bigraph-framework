@@ -15,19 +15,8 @@
 package org.bigraphs.framework.simulation.modelchecking;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
-
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
-import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
-import org.bigraphs.framework.core.reactivesystem.ReactionRule;
-import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
-import org.bigraphs.framework.simulation.matching.MatchIterable;
-import org.bigraphs.framework.simulation.modelchecking.reactions.AbstractReactionRuleSupplier;
-import org.bigraphs.framework.simulation.modelchecking.reactions.InOrderReactionRuleSupplier;
-import org.bigraphs.framework.simulation.modelchecking.reactions.RandomAgentMatchSupplier;
-import org.eclipse.collections.api.factory.Lists;
-import org.eclipse.collections.api.list.MutableList;
 
 /**
  * Random state-space traversal.

@@ -16,7 +16,6 @@ package org.bigraphs.framework.simulation.matching;
 
 import java.util.Collections;
 import java.util.Iterator;
-
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
