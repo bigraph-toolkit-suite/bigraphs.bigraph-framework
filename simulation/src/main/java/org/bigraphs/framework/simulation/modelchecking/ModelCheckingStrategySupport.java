@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
 import org.bigraphs.framework.core.Bigraph;
@@ -54,8 +55,11 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
     protected JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
     protected JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
 
-    public ModelCheckingStrategySupport() {
+    protected BigraphFilter<B> worklistFilter = BigraphFilter.noop();
 
+    protected boolean isRunning = true;
+
+    public ModelCheckingStrategySupport() {
     }
 
     public ModelCheckingStrategySupport(BigraphModelChecker<B> modelChecker) {
@@ -124,15 +128,25 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
         visitedStates.add(rootBfcs);
         resetOccurrenceCounter();
 
-        while (!worklist.isEmpty() && iterationCounter.get() < transitionOptions.getMaximumTransitions()) {
-            B theAgent = removeNext(worklist);
-            if (theAgent == null) break;
+        while (
+                isRunning &&
+                        !worklist.isEmpty() &&
+                        iterationCounter.get() < transitionOptions.getMaximumTransitions()
+        ) {
+            B theAgent = worklistFilter.apply(removeNext(worklist));
+            if (theAgent == null) continue;
+
+            // String encoding for hashing and iso check
             String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(theAgent);
+
+            // Predicate checking (unchanged)
+            evaluatePredicates(theAgent, bfcfOfW, rootBfcs);
+
             Queue<MatchResult<B>> reactionResults = new ConcurrentLinkedQueue<>();
 
+            // Reaction Rules
 //            AbstractReactionRuleSupplier<B> inOrder = AbstractReactionRuleSupplier.createInOrder(modelChecker.getReactiveSystem().getReactionRules());
             Stream<ReactionRule<B>> rrStream; // = Stream.generate(inOrder);
-
             // Sort by priority
             List<ReactionRule<B>> sortedRules = new ArrayList<>(modelChecker.getReactiveSystem().getReactionRules());
             sortedRules.sort(Comparator.comparingLong(HasPriority::getPriority));
@@ -173,9 +187,6 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
                             modelChecker.getReactionGraph().addEdge(theAgent, bfcfOfW, matchResult.getBigraph(), bfcf, matchResult, ruleLabel);
                         }
                     });
-
-            // Predicate checking (unchanged)
-            evaluatePredicates(theAgent, bfcfOfW, rootBfcs);
         }
 
         logger.debug("Total States: {}", iterationCounter.get());
@@ -200,6 +211,15 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
      */
     protected MatchIterable<BigraphMatch<B>> getBigraphMatches(ReactionRule<B> rule, B theAgent) {
         return modelChecker.watch(() -> modelChecker.getMatcher().match(theAgent, rule));
+    }
+
+    /**
+     * Defaults to {@link BigraphFilter#noop()} unless a subclass overrides this to add logic.
+     *
+     * @param filter the filter to apply
+     */
+    public void setFilter(BigraphFilter<B> filter) {
+        this.worklistFilter = Objects.requireNonNullElse(filter, BigraphFilter.noop());
     }
 
     protected void evaluatePredicates(B agent, String canonical, String root) {

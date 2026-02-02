@@ -89,8 +89,8 @@ public class FruitBasketBisimTest {
         ReactionGraph<PureBigraph> transitionSystem2 = simulate(rs2);
 
 
-        BehavioralEquivalenceMixin<ReactionGraph<PureBigraph>> mixin = new StrongBisimulationMixinImpl<>();
-        mixin.attachToObject(transitionSystem1);
+        BehavioralEquivalenceMixin<ReactionGraph<PureBigraph>> mixin = new BisimulationMixinImpl<>();
+        mixin.attachToTransitionSystem(transitionSystem1);
         boolean equivalentTo = mixin.isEquivalentTo(transitionSystem2);
         System.out.println(equivalentTo);
 //        assert equivalentTo;

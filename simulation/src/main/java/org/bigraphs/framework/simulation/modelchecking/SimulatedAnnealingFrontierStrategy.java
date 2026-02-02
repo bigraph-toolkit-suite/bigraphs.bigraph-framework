@@ -27,35 +27,41 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         extends ModelCheckingStrategySupport<B> {
 
     protected double energyEps = 1e-12; // energy tolerance for acceptation (stop criteria)
-    private volatile boolean stop = false;
+    protected volatile boolean internalStop = false;
 
     /**
      * Fairness: every fairnessK expansions, do one FIFO expansion.
      */
-    private final int fairnessK;
+    protected final int fairnessK;
 
     /**
      * Cool temperature after {@code n} iterations of an epoch before starting a new epoch.
      */
-    private final int epochSize;
+    protected final int epochSize;
 
     /**
      * Goal prototype states
      */
-    private final List<B> goalExemplars;
+    protected final List<B> goalExemplars;
 
-    // Frontier as "fairness" queue
-    private final Deque<B> fifoQueue = new ConcurrentLinkedDeque<>();
+    /**
+     * Frontier as fairness queue
+     */
+    protected final Deque<B> fifoQueue = new ConcurrentLinkedDeque<>();
 
-    // Caches
-    private final Map<B, Double> energyCache = new LinkedHashMap<>();
+    /**
+     * Caches
+     */
+    protected final Map<B, Double> energyCache = new LinkedHashMap<>();
 
-    // SA state
-    private double temperature;
-    private int iterationInEpoch = 0;
-    private int currentEpoch = 0;
+    /**
+     * State variables of the SA algorithms
+     */
+    protected double temperature;
+    protected int iterationInEpoch = 0;
+    protected int currentEpoch = 0;
     public int maxEpoch = 100;
-    private int fairnessCounter = 0;
+    protected int fairnessCounter = 0;
 
     public SimulatedAnnealingFrontierStrategy(
             List<B> goalExemplars,
@@ -86,10 +92,13 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
      */
     @Override
     protected B removeNext(Collection<B> worklist) {
-        if (stop || worklist.isEmpty()) return null;
+        if (internalStop || worklist.isEmpty()) {
+            isRunning = false;
+            return null;
+        }
         if (currentEpoch >= maxEpoch) return null;
 
-        final B chosen;
+        B chosen;
         if (fairnessK > 0 && fairnessCounter >= fairnessK) {
             chosen = popExistingInOpenFiFo(worklist);
             fairnessCounter = 0;
@@ -97,12 +106,16 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
             chosen = boltzmannPick(worklist, temperature);
         }
 
-        if (chosen == null) return null;
+        // Repeat
+        if (chosen == null) {
+            return removeNext(worklist);
+        }
 
         // STOP when best energy reached
-        if (energy(chosen) <= energyEps) {
-            stop = true;
-            return chosen; // or return "null" if: to stop BEFORE expanding it
+        double e = energy(chosen);
+        if (e <= energyEps) {
+            stopProcedure(chosen);
+            return chosen; //chosen; // or return "null" if: to stop BEFORE expanding it
         }
 
         worklist.remove(chosen);
@@ -113,10 +126,15 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
 
         if (epochSize > 0 && iterationInEpoch % epochSize == 0) {
             currentEpoch++;
-            temperature = cool_geometric(temperature, currentEpoch);
+            temperature = cool_log(temperature, currentEpoch);
+//            System.out.println("temperature = " + temperature);
         }
 
         return chosen;
+    }
+
+    protected void stopProcedure(B chosen) {
+        internalStop = true;
     }
 
     @Override
@@ -134,7 +152,7 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
      * Return a non-negative similarity value.
      */
     protected double graphKernel(B graphA, B graphB) {
-        throw new UnsupportedOperationException("wlKernel(graphA, graphB) not implemented");
+        throw new UnsupportedOperationException("Method graphKernel(graphA, graphB) not implemented! Override this method to provide the kernel.");
     }
 
     /**
@@ -153,17 +171,17 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         return ksg / denom;
     }
 
-    private B popExistingInOpenFiFo(Collection<B> worklist) {
+    protected B popExistingInOpenFiFo(Collection<B> worklist) {
         while (!fifoQueue.isEmpty()) {
             B s = fifoQueue.removeFirst();
             if (worklist.contains(s)) return s;
         }
-        // If FIFO is empty/outdated, fall back to SA pick.
+        // If FIFO is empty, fall back to SA pick.
         return boltzmannPick(worklist, temperature);
     }
 
-    private B boltzmannPick(Collection<B> worklist, double t) {
-        // Guard: if T is tiny, behave greedily (lowest energy).
+    protected B boltzmannPick(Collection<B> worklist, double t) {
+        // Guard: if T is tiny, behave greedily (lowest energy)
         if (t <= 1e-12) {
             return worklist.stream()
                     .min(Comparator.comparingDouble(this::energy))
@@ -181,7 +199,11 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         }
 
         // Sample cumulative
-        double u = ThreadLocalRandom.current().nextDouble(0.0, sum);
+        double u = 0;
+        try {
+            u = ThreadLocalRandom.current().nextDouble(0.0, sum);
+        } catch (IllegalArgumentException ignored) {
+        }
         double cum = 0.0;
         for (B s : worklist) {
             cum += w.get(s);
@@ -192,7 +214,7 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         return worklist.iterator().next();
     }
 
-    private double energy(B s) {
+    protected double energy(B s) {
 //        String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(s);
         Double cached = energyCache.get(s); //bfcfOfW);
         if (cached != null) return cached;
@@ -209,7 +231,7 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         return best;
     }
 
-    private static double clamp01(double x) {
+    protected static double clamp01(double x) {
         if (x < 0.0) return 0.0;
         return Math.min(x, 1.0);
     }

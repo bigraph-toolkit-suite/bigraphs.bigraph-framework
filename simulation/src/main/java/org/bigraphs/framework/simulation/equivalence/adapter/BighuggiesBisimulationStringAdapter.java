@@ -15,6 +15,7 @@
 package org.bigraphs.framework.simulation.equivalence.adapter;
 
 import java.io.ByteArrayInputStream;
+
 import org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem;
 
 /**
@@ -27,11 +28,11 @@ import org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem;
  * {@link org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem}
  * in Bigraph Framework via this adapter class.
  * <p>
- * An AST is converted to a String representation of a Process that is parsed by "bighuggies" to create a Process.
+ * An AST is converted to a String representation of a {@code Process} that is parsed by "bighuggies" to create a Process.
  * So this is less efficient than the {@link BighuggiesBisimulationProcessAdapter}.
  *
  * @author Dominik Grzelak
- * @see "https://github.com/bighuggies/bisimulation"
+ * @see <a href="https://github.com/bighuggies/bisimulation">https://github.com/bighuggies/bisimulation</a>
  */
 public class BighuggiesBisimulationStringAdapter<AST extends AbstractTransitionSystem<?, ?>> {
     AST system;
@@ -40,21 +41,28 @@ public class BighuggiesBisimulationStringAdapter<AST extends AbstractTransitionS
         this.system = transitionSystem;
     }
 
+
     /**
-     * "Applies" the adapter. The AST is translated to a String first, which represents the process specification as
-     * used in bighuggies.
-     * <p>
-     * An input stream is delivered containing the string.
+     * Converts an AbstractTransitionSystem to a ByteArrayInputStream. This method is intended to
+     * translate the adapted AbstractTransitionSystem into a process specification suitable for use
+     * with the "bighuggies:bisimulation" library.
      *
-     * @return process specification as input stream
+     * @return a ByteArrayInputStream containing the {@code Process} specification derived from the
+     * AbstractTransitionSystem.
      */
-    public ByteArrayInputStream apply() {
+    public ByteArrayInputStream asInputStream() {
         throw new RuntimeException("Not implemented yet!");
-//        StringBuilder sb = new StringBuilder("1,a:2\n" +
-//                "1,b:3\n" +
-//                "2,a:3\n" +
-//                "!");
-//        //
-//        return new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Converts an AbstractTransitionSystem into a String representation. This method provides
+     * a String that represents the transition system in a format suitable for use with the
+     * "bighuggies:bisimulation" library.
+     *
+     * @return a String representation of the AbstractTransitionSystem intended for parsing by
+     * the "bighuggies" library to create a {@code Process} object.
+     */
+    public String asString() {
+        throw new RuntimeException("Not implemented yet!");
     }
 }

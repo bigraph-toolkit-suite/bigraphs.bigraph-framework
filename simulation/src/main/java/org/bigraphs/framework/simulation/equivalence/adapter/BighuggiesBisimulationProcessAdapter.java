@@ -15,30 +15,30 @@
 package org.bigraphs.framework.simulation.equivalence.adapter;
 
 import bighuggies.bisimulation.se705.bisimulation.lts.Process;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.reactivesystem.ReactionGraph;
 import org.jgrapht.Graph;
 
+
 /**
- * An adapter for {@link org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem} objects in
- * Bigraph Framework for the external Java library "bighuggies:bisimulation"
+ * The "bighuggies:bisimulation" library computes bisimilarity for two LTSs.
+ * <p>
+ * This class presents an adapter for {@link org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem} objects in
+ * Bigraph Framework that integrates the external Java library "bighuggies:bisimulation"
  * (shaded in the Simulation Module dependency).
  * <p>
- * "bighuggies:bisimulation" computes bisimilarity for two LTSs.
- * This functionality is made available to objects of type
- * {@link org.bigraphs.framework.core.reactivesystem.AbstractTransitionSystem}
- * in Bigraph Framework via this adapter class.
- * <p>
- * An AST is converted to a Process object of the external Java library "bighuggies".
+ * A transition system is converted into a {@code Process} object of the "bighuggies" library.
  *
- * @param <AST> type of the transition system in Bigraph Framework (type of {@link ReactionGraph})
- * @param <B> bigraph type of the AST states
+ * @param <AST> transition system type in Bigraph Framework (type of {@link ReactionGraph})
+ * @param <B>   bigraph type of the transition system states
  * @author Dominik Grzelak
- * @see "for https://github.com/bighuggies/bisimulation"
+ * @see <a href="https://github.com/bighuggies/bisimulation">https://github.com/bighuggies/bisimulation</a>
  */
 public class BighuggiesBisimulationProcessAdapter<B extends Bigraph<? extends Signature<?>>, AST extends ReactionGraph<B>> extends Process {
     AST transitionSystem;
@@ -80,12 +80,5 @@ public class BighuggiesBisimulationProcessAdapter<B extends Bigraph<? extends Si
                 addTransition(s1_lbl, action_lbl, s2_lbl);
             });
         });
-
-// bighuggies code:
-//        p.addState(prefix + line[0].trim());
-//        p.addState(prefix + line[2].trim());
-//        p.addAction(line[1].trim());
-//        p.addTransition(prefix + line[0].trim(), line[1].trim(), prefix + line[2].trim());
-
     }
 }
