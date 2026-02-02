@@ -58,14 +58,14 @@ import org.junit.jupiter.api.*;
 @Disabled
 public class ReactiveSystemUnitTests {
 
-    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/basic/";
+    private final static String DUMP_PATH = "src/test/resources/dump/basic/";
 
     @BeforeAll
     static void setUp() throws IOException {
-        File dump = new File(TARGET_DUMP_PATH);
+        File dump = new File(DUMP_PATH);
         dump.mkdirs();
-        FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
-        new File(TARGET_DUMP_PATH + "states/").mkdir();
+        FileUtils.cleanDirectory(new File(DUMP_PATH));
+        new File(DUMP_PATH + "states/").mkdir();
     }
 
     @Test
@@ -76,7 +76,7 @@ public class ReactiveSystemUnitTests {
         ReactionRule<PureBigraph> rr = createReactionRuleForA2();
         reactiveSystem.addReactionRule(rr);
 
-        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph_ABB.png");
+        Path completePath = Paths.get(DUMP_PATH, "transition_graph_ABB.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
@@ -89,7 +89,7 @@ public class ReactiveSystemUnitTests {
                 .and(ModelCheckingOptions.exportOpts()
                         .setPrintCanonicalStateLabel(true)
                         .setReactionGraphFile(new File(completePath.toUri()))
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setOutputStatesFolder(new File(DUMP_PATH + "states/"))
                         .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
                 )
@@ -98,7 +98,7 @@ public class ReactiveSystemUnitTests {
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS, opts);
         modelChecker.execute();
-        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph_ABB.png")));
+        assertTrue(Files.exists(Paths.get(DUMP_PATH, "transition_graph_ABB.png")));
 
         Set<ReactionGraph.LabeledNode> labeledNodes = modelChecker.getReactionGraph().getGraph().vertexSet();
         assertEquals(2, labeledNodes.size());
@@ -130,7 +130,7 @@ public class ReactiveSystemUnitTests {
         reactiveSystem.addReactionRule(rrsame);
         assertTrue(reactiveSystem.isSimple());
 
-        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
+        Path completePath = Paths.get(DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
@@ -144,7 +144,7 @@ public class ReactiveSystemUnitTests {
 //                        .setPrintCanonicalStateLabel(true)
                                 .setPrintCanonicalStateLabel(false)
                                 .setReactionGraphFile(new File(completePath.toUri()))
-                                .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                                .setOutputStatesFolder(new File(DUMP_PATH + "states/"))
                                 .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                                 .create()
                 )
@@ -160,7 +160,7 @@ public class ReactiveSystemUnitTests {
                 opts
         );
         modelChecker.execute();
-        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
+        assertTrue(Files.exists(Paths.get(DUMP_PATH, "transition_graph.png")));
 
         ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
         List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
@@ -201,7 +201,7 @@ public class ReactiveSystemUnitTests {
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
                         .setPrintCanonicalStateLabel(true)
-                        .setReactionGraphFile(Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png").toFile())
+                        .setReactionGraphFile(Paths.get(DUMP_PATH, "transition_graph_random.png").toFile())
                         .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
                 )
@@ -211,7 +211,7 @@ public class ReactiveSystemUnitTests {
                 BigraphModelChecker.SimulationStrategy.Type.RANDOM,
                 opts);
         modelChecker.execute();
-        assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph_random.png")));
+        assertTrue(Files.exists(Paths.get(DUMP_PATH, "transition_graph_random.png")));
     }
 
     @Nested
