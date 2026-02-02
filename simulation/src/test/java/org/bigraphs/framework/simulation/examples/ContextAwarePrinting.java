@@ -106,13 +106,13 @@ public class ContextAwarePrinting extends BaseExampleTestSupport {
         ParametricReactionRule<PureBigraph> rrCollectDev = collectDevices_Rule(dynamicSignature);
 //        BigraphFileModelManagement.exportAsInstanceModel(bigraph, System.out);
 
-        eb(agent, "plato_tree");
-        eb(rr0.getRedex(), "rr0-redex");
-        eb(rr0.getReactum(), "rr0-reactum");
-        eb(rr1.getRedex(), "rr1-redex");
-        eb(rr1.getReactum(), "rr1-reactum");
-        eb(rrCollectDev.getReactum(), "rr2-redex");
-        eb(rrCollectDev.getReactum(), "rr2-reactum");
+        toPNG(agent, "plato_tree", TARGET_DUMP_PATH);
+        toPNG(rr0.getRedex(), "rr0-redex", TARGET_DUMP_PATH);
+        toPNG(rr0.getReactum(), "rr0-reactum", TARGET_DUMP_PATH);
+        toPNG(rr1.getRedex(), "rr1-redex", TARGET_DUMP_PATH);
+        toPNG(rr1.getReactum(), "rr1-reactum", TARGET_DUMP_PATH);
+        toPNG(rrCollectDev.getReactum(), "rr2-redex", TARGET_DUMP_PATH);
+        toPNG(rrCollectDev.getReactum(), "rr2-reactum", TARGET_DUMP_PATH);
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.setAgent(agent);

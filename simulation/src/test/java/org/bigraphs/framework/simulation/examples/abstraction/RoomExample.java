@@ -75,14 +75,14 @@ public class RoomExample extends BaseExampleTestSupport {
     @Test
     void room_001() throws Exception {
         PureBigraph agent0 = agent0();
-        eb(agent0, "agent0", true);
+        toPNG(agent0, "agent0", TARGET_DUMP_PATH, true);
 
         PureBigraph agent1 = agent1();
-        eb(agent1, "agent1", true);
+        toPNG(agent1, "agent1", TARGET_DUMP_PATH, true);
 
         ParametricReactionRule<PureBigraph> abstractionRule1 = alphaUserGroup();
-        eb(abstractionRule1.getRedex(), "a1_lhs", true);
-        eb(abstractionRule1.getReactum(), "a1_rhs", true);
+        toPNG(abstractionRule1.getRedex(), "a1_lhs", TARGET_DUMP_PATH, true);
+        toPNG(abstractionRule1.getReactum(), "a1_rhs", TARGET_DUMP_PATH, true);
 //
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
         MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent1, abstractionRule1);
@@ -100,11 +100,11 @@ public class RoomExample extends BaseExampleTestSupport {
             PureBigraph redexId = decoder.decode(next.getJLibMatchResult().getRedexId(), sig());
             PureBigraph redex = decoder.decode(next.getJLibMatchResult().getRedex(), sig());
             PureBigraph param = decoder.decode(next.getJLibMatchResult().getParam(), sig());
-            eb(ctxDecoded, "context_"+ cnt);
-            eb(redexImg, "rdxImage_"+ cnt);
-            eb(redexId, "redexId_"+ cnt);
-            eb(redex, "redex_"+ cnt);
-            eb(param, "param_"+ cnt);
+            toPNG(ctxDecoded, "context_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(redexImg, "rdxImage_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(redexId, "redexId_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(redex, "redex_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(param, "param_"+ cnt, TARGET_DUMP_PATH);
             cnt++;
         }
 
@@ -118,12 +118,12 @@ public class RoomExample extends BaseExampleTestSupport {
 
     @Test
     void room_002() throws Exception {
-        PureBigraph agent2 = loadBigraphFromFS("/home/dominik/git/BigraphFramework/simulation/src/test/resources/dump/room-example/states/state-4.png.xmi");
-        eb(agent2, "agent2");
+        PureBigraph agent2 = loadBigraphFromFS("./src/test/resources/dump/room-example/states/state-4.png.xmi");
+        toPNG(agent2, "agent2", TARGET_DUMP_PATH);
 
         ParametricReactionRule<PureBigraph> abstractionRule1 = alphaPCGroup();
-        eb(abstractionRule1.getRedex(), "2a1_lhs", true);
-        eb(abstractionRule1.getReactum(), "2a1_rhs", true);
+        toPNG(abstractionRule1.getRedex(), "2a1_lhs", TARGET_DUMP_PATH, true);
+        toPNG(abstractionRule1.getReactum(), "2a1_rhs", TARGET_DUMP_PATH, true);
 //
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
         MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent2, abstractionRule1);
@@ -141,11 +141,11 @@ public class RoomExample extends BaseExampleTestSupport {
             PureBigraph redexId = decoder.decode(next.getJLibMatchResult().getRedexId(), sig());
             PureBigraph redex = decoder.decode(next.getJLibMatchResult().getRedex(), sig());
             PureBigraph param = decoder.decode(next.getJLibMatchResult().getParam(), sig());
-            eb(ctxDecoded, "2context_"+ cnt);
-            eb(redexImg, "2rdxImage_"+ cnt);
-            eb(redexId, "2redexId_"+ cnt);
-            eb(redex, "2redex_"+ cnt);
-            eb(param, "2param_"+ cnt);
+            toPNG(ctxDecoded, "2context_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(redexImg, "2rdxImage_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(redexId, "2redexId_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(redex, "2redex_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(param, "2param_"+ cnt, TARGET_DUMP_PATH);
             cnt++;
         }
 

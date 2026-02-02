@@ -22,21 +22,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.bigraphs.framework.converter.bigrapher.BigrapherTransformator;
 import org.bigraphs.framework.converter.dot.DOTReactionGraphExporter;
 import org.bigraphs.framework.core.BigraphFileModelManagement;
-import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
-import org.bigraphs.framework.core.datatypes.StringTypedName;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.reactivesystem.analysis.ReactionGraphAnalysis;
 import org.bigraphs.framework.simulation.encoding.BigraphCanonicalForm;
+import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
+import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
@@ -48,7 +52,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Implementation of the concurrent append problem in bigraphs, adapted from the GROOVE paper by Rensink.
+ * Bigraph implementation of the concurrent append problem, adapted from Rensink's GROOVE paper.
  *
  * @author Dominik Grzelak
  * @see <a href="https://doi.org/10.1007/978-3-540-25959-6_40">Rensink, A. (2004). The GROOVE Simulator: A Tool for State Space Generation.</a>
@@ -72,37 +76,26 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         }
     }
 
-    private PureBigraph loadBigraphFromFS(String path) throws IOException {
-        EPackage metaModel = createOrGetBigraphMetaModel(createSignature());
-        List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(metaModel,
-                path);
-
-        PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(createSignature(), metaModel, eObjects.get(0));
-        PureBigraph bigraph = b.create();
-        return bigraph;
-    }
-
-    @Test
-    void simulate_single_step() throws Exception {
-        PureBigraph a4 = loadBigraphFromFS("/home/dominik/git/BigraphFramework/simulation/src/test/resources/bigraphs/append/v2/a:6.xmi");
-        eb(a4, "loaded_6");
-        PureBigraph a6 = loadBigraphFromFS("/home/dominik/git/BigraphFramework/simulation/src/test/resources/bigraphs/append/v2/a:8.xmi");
-        eb(a6, "loaded_8");
-
-        String bfcs4 = BigraphCanonicalForm.createInstance().bfcs(a4);
-        System.out.println(bfcs4);
-        String bfcs6 = BigraphCanonicalForm.createInstance().bfcs(a6);
-        System.out.println(bfcs6);
-//        ReactionRule<PureBigraph> nextRR = nextRR();
-//
-//        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-//
-//        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(bigraph, nextRR);
-//        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
-//        while (iterator.hasNext()) {
-//            BigraphMatch<?> next = iterator.next();
-//            System.out.println("OK:" + next);
-//        }
+    private DynamicSignature sig() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+        defaultBuilder
+                .add("append", 1) // as much as we have "callers" (processes)
+                .add("Root", 0)
+                .add("list", 0)
+                .add("this", 0) // as much as we have "callers" (processes)
+                .add("thisRef", 1)
+                .add("Node", 0)
+                .add("void", 0)
+                .add("val", 0)
+                .add("i1", 0)
+                .add("i2", 0)
+                .add("i3", 0)
+                .add("i4", 0)
+                .add("i5", 0)
+                .add("i6", 0)
+                .add("next", 0)
+        ;
+        return defaultBuilder.create();
     }
 
     @Test
@@ -112,19 +105,22 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ReactionRule<PureBigraph> nextRR = nextRR();
         ReactionRule<PureBigraph> append = appendRR();
         ReactionRule<PureBigraph> returnRR = returnRR();
+
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.setAgent(agent);
         reactiveSystem.addReactionRule(nextRR);
         reactiveSystem.addReactionRule(append);
         reactiveSystem.addReactionRule(returnRR);
 
-        ModelCheckingOptions modOpts = setUpSimOpts();
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
-                modOpts);
+                setUpSimOpts());
+
         long start = System.nanoTime();
+
         modelChecker.execute();
+
         long diff = System.nanoTime() - start;
         System.out.println(diff);
 
@@ -132,18 +128,18 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         System.out.println("Edges: " + modelChecker.getReactionGraph().getGraph().edgeSet().size());
         System.out.println("Vertices: " + modelChecker.getReactionGraph().getGraph().vertexSet().size());
 
+        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
+        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        System.out.println("Number of solutions: " + pathsToLeaves.size());
+
         DOTReactionGraphExporter exporter = new DOTReactionGraphExporter();
         String dotFile = exporter.toString(modelChecker.getReactionGraph());
         System.out.println(dotFile);
         exporter.toOutputStream(modelChecker.getReactionGraph(), new FileOutputStream(TARGET_DUMP_PATH + "reaction_graph.dot"));
-
-//        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
-//        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
-//        System.out.println(pathsToLeaves.size());
     }
 
     @Test
-    void exportBigrapher() throws Exception {
+    void export_to_bigrapher_specification() throws Exception {
         PureBigraph agent = createAgent(); //specify the number of processes here
         ReactionRule<PureBigraph> nextRR = nextRR();
         ReactionRule<PureBigraph> append = appendRR();
@@ -157,6 +153,28 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         BigrapherTransformator encoder = new BigrapherTransformator();
         String export = encoder.toString(reactiveSystem);
         System.out.println(export);
+    }
+
+    @Test
+    void simulate_single_step() throws Exception {
+        PureBigraph a = loadBigraphFromFS("./src/test/resources/bigraphs/append/a_1.xmi");
+        toPNG(a, "loaded_1", TARGET_DUMP_PATH);
+        PureBigraph b = loadBigraphFromFS("./src/test/resources/bigraphs/append/a_2.xmi");
+        toPNG(b, "loaded_2", TARGET_DUMP_PATH);
+
+        String bfcs4 = BigraphCanonicalForm.createInstance().bfcs(a);
+        System.out.println(bfcs4);
+        String bfcs6 = BigraphCanonicalForm.createInstance().bfcs(b);
+        System.out.println(bfcs6);
+
+        ReactionRule<PureBigraph> nextRR = nextRR();
+        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
+        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(a, nextRR);
+        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
+        while (iterator.hasNext()) {
+            BigraphMatch<?> next = iterator.next();
+            System.out.println("OK: " + next);
+        }
     }
 
     private ModelCheckingOptions setUpSimOpts() {
@@ -173,7 +191,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 .and(ModelCheckingOptions.exportOpts()
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
-                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                         .create()
                 )
@@ -182,7 +200,7 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
     }
 
     PureBigraph createAgent() throws Exception {
-        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
         BigraphEntity.InnerName tmpA1 = builder.createInner("tmpA1");
         BigraphEntity.InnerName tmpA2 = builder.createInner("tmpA2");
@@ -190,22 +208,17 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy appendcontrol1 = builder.hierarchy("append");
         appendcontrol1
-//                .linkToOuter(caller1)
                 .linkInner(tmpA1).child("val").down().child("i5").top();
 
         PureBigraphBuilder<DynamicSignature>.Hierarchy appendcontrol2 = builder.hierarchy("append");
         appendcontrol2
-//                .linkToOuter(caller2)
                 .linkInner(tmpA2).child("val").down().child("i4").top();
 
 //        PureBigraphBuilder<DefaultDynamicSignature>.Hierarchy appendcontrol3 = builder.hierarchy("append");
 //        appendcontrol3
-////                .linkToOuter(caller3)
 //                .linkToInner(tmpA3).child("val").down().child("i6").top();
 
-        PureBigraphBuilder<DynamicSignature>.Hierarchy rootCell = builder.hierarchy("Root")
-//                .linkToOuter(caller1).linkToOuter(caller2)
-                ;
+        PureBigraphBuilder<DynamicSignature>.Hierarchy rootCell = builder.hierarchy("Root");
         rootCell
                 .child("list").down().child("Node")
                 .down().child("this").down()
@@ -215,10 +228,10 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
                 .up()
                 .child("val").down().child("i1").up()
                 .child("next").down().child("Node").down().child("this")
-//                .down().child("thisRef").child("thisRef").up()
+
                 .child("val").down().child("i2").up()
                 .child("next").down().child("Node").down().child("this")
-//                .down().addChild("thisRef").addChild("thisRef").up()
+
                 .child("val").down().child("i3").up()
                 .top();
 
@@ -230,25 +243,23 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         builder.closeInner();
         PureBigraph bigraph = builder.create();
+
 //        BigraphFileModelManagement.exportAsInstanceModel(bigraph, System.out);
-        eb(bigraph, "agent");
+        toPNG(bigraph, "agent", TARGET_DUMP_PATH);
+
         return bigraph;
     }
 
     ReactionRule<PureBigraph> nextRR() throws Exception {
-        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(sig());
 
         BigraphEntity.InnerName tmp0 = builderRedex.createInner("tmp");
-//        BigraphEntity.OuterName anyRef = builderRedex.createOuterName("anyRef");
-//        BigraphEntity.OuterName openRef = builderRedex.createOuterName("openRef");
+
         builderRedex.root()
                 .child("this")
                 .down().site().child("thisRef").linkInner(tmp0).up()
-//                .site()
-//                .addChild("val").down().site().top()
                 .child("next").down().child("Node").down().site().child("this").down()
-//                .addChild("thisRef")
                 .site().up()
                 .top()
         ;
@@ -259,14 +270,10 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         builderRedex.closeInner();
 
-//        BigraphEntity.OuterName anyRef2 = builderReactum.createOuterName("anyRef");
-//        BigraphEntity.OuterName openRef2 = builderReactum.createOuterName("openRef");
         BigraphEntity.InnerName tmp21 = builderReactum.createInner("tmp1");
         BigraphEntity.InnerName tmp22 = builderReactum.createInner("tmp2");
         builderReactum.root()
                 .child("this").down().site().child("thisRef").linkInner(tmp22).up()
-//                .addChild("val").down().site().top()
-//                .site()
                 .child("next").down().child("Node").down().site()
                 .child("this").down().child("thisRef").linkInner(tmp21)
                 .site()
@@ -274,8 +281,6 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderReactum.root()
-//                .addChild("append", "caller").linkToInner(tmp22)
-//                .down().addChild("appendcontrol", "caller").linkToInner(tmp21)
                 .child("append").linkInner(tmp22)
                 .down().child("append").linkInner(tmp21)
                 .down()
@@ -286,27 +291,19 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 
         PureBigraph redex = builderRedex.create();
         PureBigraph reactum = builderReactum.create();
-        eb(redex, "next_1");
-        eb(reactum, "next_2");
 
-//        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
-//        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-//        Bigraph encodedRedex = encoder.encode(redex);
-//        Bigraph encodedReactum = encoder.encode(reactum, encodedRedex.getSignature());
-//        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedReactum, 0, 1, 2, 3, 4);
+        toPNG(redex, "next_1", TARGET_DUMP_PATH);
+        toPNG(reactum, "next_2", TARGET_DUMP_PATH);
 
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("next");
-        return rr;
+        return new ParametricReactionRule<>(redex, reactum).withLabel("next");
     }
 
     // create a new cell with the value
     // Only append a new value when last cell is reached, ie, without a next control
     ReactionRule<PureBigraph> appendRR() throws Exception {
-        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(sig());
 
-//        BigraphEntity.OuterName thisRefAny = builderRedex.createOuterName("thisRefAny");
-//        BigraphEntity.OuterName thisRefA1 = builderRedex.createOuterName("thisRefA1");
         BigraphEntity.InnerName tmp = builderRedex.createInner("tmp");
         builderRedex.root()
                 .child("Node")
@@ -316,51 +313,35 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderRedex.root()
-//                .addChild("appendcontrol", "caller").linkToInner(tmp).down()
                 .child("append").linkInner(tmp).down()
                 .child("val").down().site().up()
 
         ;
         builderRedex.closeInner();
 
-//        BigraphEntity.OuterName thisRefRAny = builderReactum.createOuterName("thisRefAny");
-//        BigraphEntity.OuterName thisRefRA1 = builderReactum.createOuterName("thisRefA1");
-//        BigraphEntity.InnerName tmp1 = builderReactum.createInnerName("tmp");
         builderReactum.root()
                 .child("Node")
                 .down()
-                .child("this").down().site().up() //.addChild("thisRef")
+                .child("this").down().site().up()
                 .child("val").down().site().up()
                 .child("next").down().child("Node").down().child("this").child("val").down().site().top();
         //
         builderReactum.root()
-//                .addChild("void", "caller")
                 .child("void")
         ;
 
         PureBigraph redex = builderRedex.create();
         PureBigraph reactum = builderReactum.create();
-        eb(redex, "append_1");
-        eb(reactum, "append_2");
 
-//        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
-//        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-//        Bigraph encodedRedex = encoder.encode(redex);
-//        Bigraph encodedReactum = encoder.encode(reactum, encodedRedex.getSignature());
-//        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedReactum, 0, 1, 2);
+        toPNG(redex, "append_1", TARGET_DUMP_PATH);
+        toPNG(reactum, "append_2", TARGET_DUMP_PATH);
 
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("append");
-        return rr;
-    }
-
-    //if values are the same...
-    ReactionRule<PureBigraph> stopRR() throws Exception {
-        return null;
+        return new ParametricReactionRule<>(redex, reactum).withLabel("append");
     }
 
     ReactionRule<PureBigraph> returnRR() throws Exception {
-        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(createSignature());
-        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(createSignature());
+        PureBigraphBuilder<DynamicSignature> builderRedex = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> builderReactum = pureBuilder(sig());
 
         BigraphEntity.InnerName tmp1 = builderRedex.createInner("tmp");
         builderRedex.root()
@@ -368,7 +349,6 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         ;
         //
         builderRedex.root()
-//                .addChild("append", "caller").linkToInner(tmp1).down().addChild("void", "caller")
                 .child("append").linkInner(tmp1).down().child("void")
 
         ;
@@ -376,11 +356,9 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
 
 
         builderReactum.root()
-//                .addChild("thisRef")
         ;
-        //
+
         builderReactum.root()
-//                .addChild("void", "caller")
                 .child("void")
         ;
         builderReactum.closeInner();
@@ -389,38 +367,19 @@ public class ConcurrentAppendProblem extends BaseExampleTestSupport {
         PureBigraph reactum = builderReactum.create();
 
 
-        eb(redex, "return_1");
-        eb(reactum, "return_2");
-//        JLibBigBigraphEncoder encoder = new JLibBigBigraphEncoder();
-//        Bigraph encodedRedex = encoder.encode(redex);
-//        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-//        PureBigraph decode = decoder.decode(encodedRedex, redex.getSignature());
-//        eb(decode, "return_decoded_1");
-//        RewritingRule rewritingRule = new RewritingRule(encodedRedex, encodedRedex, 0, 1, 2);
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum).withLabel("return");
-        return rr;
+        toPNG(redex, "return_1", TARGET_DUMP_PATH);
+        toPNG(reactum, "return_2", TARGET_DUMP_PATH);
+
+        return new ParametricReactionRule<>(redex, reactum).withLabel("return");
     }
 
-    private DynamicSignature createSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-//                .addControl("appendcontrol", 1)
-                .add("append", 1)
-                .newControl().identifier(StringTypedName.of("Root")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
-                .newControl().identifier(StringTypedName.of("list")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("this")).arity(FiniteOrdinal.ofInteger(0)).assign() // as much as we callers have
-                .newControl().identifier(StringTypedName.of("thisRef")).arity(FiniteOrdinal.ofInteger(1)).assign()
-                .newControl().identifier(StringTypedName.of("Node")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("void")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("val")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("i1")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("i2")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("i3")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("i4")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("i5")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("i6")).arity(FiniteOrdinal.ofInteger(0)).assign()
-                .newControl().identifier(StringTypedName.of("next")).arity(FiniteOrdinal.ofInteger(0)).assign()
-        ;
-        return defaultBuilder.create();
+    private PureBigraph loadBigraphFromFS(String path) throws IOException {
+        EPackage metaModel = createOrGetBigraphMetaModel(sig());
+        List<EObject> eObjects = BigraphFileModelManagement.Load.bigraphInstanceModel(metaModel,
+                path);
+
+        PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), metaModel, eObjects.get(0));
+        PureBigraph bigraph = b.create();
+        return bigraph;
     }
 }

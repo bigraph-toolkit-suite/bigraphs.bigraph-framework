@@ -118,41 +118,41 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
 
         PureBigraph agent = agent(2, 2, 2);
         printMetaModel(agent);
-        eb(agent, "agent", false);
+        toPNG(agent, "agent", TARGET_DUMP_PATH, false);
         ReactionRule<PureBigraph> insertCoinRR = insertCoin();
-        eb(insertCoinRR.getRedex(), "insertCoinL");
-        eb(insertCoinRR.getReactum(), "insertCoinR");
+        toPNG(insertCoinRR.getRedex(), "insertCoinL", TARGET_DUMP_PATH);
+        toPNG(insertCoinRR.getReactum(), "insertCoinR", TARGET_DUMP_PATH);
 //        print(insertCoinRR.getRedex());
 //        print(insertCoinRR.getReactum());
 
         ReactionRule<PureBigraph> pushBtn1 = pushButton1();
-        eb(pushBtn1.getRedex(), "pushBtn1L");
-        eb(pushBtn1.getReactum(), "pushBtn1R");
+        toPNG(pushBtn1.getRedex(), "pushBtn1L", TARGET_DUMP_PATH);
+        toPNG(pushBtn1.getReactum(), "pushBtn1R", TARGET_DUMP_PATH);
 //        print(pushBtn1.getRedex());
 //        print(pushBtn1.getReactum());
         ReactionRule<PureBigraph> pushBtn2 = pushButton2();
-        eb(pushBtn2.getRedex(), "pushBtn2L");
-        eb(pushBtn2.getReactum(), "pushBtn2R");
+        toPNG(pushBtn2.getRedex(), "pushBtn2L", TARGET_DUMP_PATH);
+        toPNG(pushBtn2.getReactum(), "pushBtn2R", TARGET_DUMP_PATH);
 //        print(pushBtn2.getRedex());
 //        print(pushBtn2.getReactum());
 
         ReactionRule<PureBigraph> giveCoffee = giveCoffee();
-        eb(giveCoffee.getRedex(), "giveCoffeeL");
-        eb(giveCoffee.getReactum(), "giveCoffeeR");
+        toPNG(giveCoffee.getRedex(), "giveCoffeeL", TARGET_DUMP_PATH);
+        toPNG(giveCoffee.getReactum(), "giveCoffeeR", TARGET_DUMP_PATH);
 //        print(giveCoffee.getRedex());
 //        print(giveCoffee.getReactum());
 
         ReactionRule<PureBigraph> giveTea = giveTea();
-        eb(giveTea.getRedex(), "giveTeaL");
-        eb(giveTea.getReactum(), "giveTeaR");
+        toPNG(giveTea.getRedex(), "giveTeaL", TARGET_DUMP_PATH);
+        toPNG(giveTea.getReactum(), "giveTeaR", TARGET_DUMP_PATH);
 //        print(giveTea.getRedex());
 //        print(giveTea.getReactum());
 
         SubBigraphMatchPredicate<PureBigraph> teaEmpty = teaContainerIsEmpty();
-        eb(teaEmpty.getBigraph(), "teaEmpty");
+        toPNG(teaEmpty.getBigraph(), "teaEmpty", TARGET_DUMP_PATH);
         print(teaEmpty.getBigraph());
         SubBigraphMatchPredicate<PureBigraph> coffeeEmpty = coffeeContainerIsEmpty();
-        eb(coffeeEmpty.getBigraph(), "coffeeEmpty");
+        toPNG(coffeeEmpty.getBigraph(), "coffeeEmpty", TARGET_DUMP_PATH);
         print(coffeeEmpty.getBigraph());
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
@@ -435,11 +435,11 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
     void test_single_rule() throws Exception {
         PureBigraph agent = agent(2, 2, 1);
         printMetaModel(agent);
-        eb(agent, "agent", true);
+        toPNG(agent, "agent", TARGET_DUMP_PATH, true);
 
         ReactionRule<PureBigraph> insertCoinRR = insertCoin();
-        eb(insertCoinRR.getRedex(), "insertCoinL");
-        eb(insertCoinRR.getReactum(), "insertCoinR");
+        toPNG(insertCoinRR.getRedex(), "insertCoinL", TARGET_DUMP_PATH);
+        toPNG(insertCoinRR.getReactum(), "insertCoinR", TARGET_DUMP_PATH);
 
         ReactionRule<PureBigraph> insertCoinRR2 = new ParametricReactionRule<>(insertCoinRR.getReactum(), insertCoinRR.getReactum());
 
@@ -464,21 +464,21 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
             PureBigraph redexImage = decoder.decode(jLibMatchResult.getRedexImage(), sig());
             param = decoder.decode(jLibMatchResult.getParam(), sig());
 
-            eb(context, "context");
-            eb(redex, "redex");
-            eb(redex, "redexImage");
-            eb(param, "param");
+            toPNG(context, "context", TARGET_DUMP_PATH);
+            toPNG(redex, "redex", TARGET_DUMP_PATH);
+            toPNG(redex, "redexImage", TARGET_DUMP_PATH);
+            toPNG(param, "param", TARGET_DUMP_PATH);
 
             validReaction = ops(redex).compose(param).getOuterBigraph();
-            eb(validReaction, "validReaction");
+            toPNG(validReaction, "validReaction", TARGET_DUMP_PATH);
 
             PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
             b.makeGround();
-            eb(b.create(), "redex0");
+            toPNG(b.create(), "redex0", TARGET_DUMP_PATH);
 
 
             newAgent = reactiveSystem.buildParametricReaction(agent, match, insertCoinRR);
-            eb(newAgent, "newAgent");
+            toPNG(newAgent, "newAgent", TARGET_DUMP_PATH);
         }
         assert validReaction != null;
         assert newAgent != null;
@@ -494,16 +494,16 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
             PureBigraph redexImage = decoder.decode(jLibMatchResult.getRedexImage(), sig());
             param = decoder.decode(jLibMatchResult.getParam(), sig());
 
-            eb(context, "context2");
-            eb(redex, "redex2");
-            eb(param, "param2");
+            toPNG(context, "context2", TARGET_DUMP_PATH);
+            toPNG(redex, "redex2", TARGET_DUMP_PATH);
+            toPNG(param, "param2", TARGET_DUMP_PATH);
 
             validReaction2 = ops(redex).compose(param).getOuterBigraph();
-            eb(validReaction2, "validReaction2");
+            toPNG(validReaction2, "validReaction2", TARGET_DUMP_PATH);
 
             PureBigraphBuilder<DynamicSignature> b = PureBigraphBuilder.create(sig(), redex.getMetaModel(), redex.getInstanceModel());
             b.makeGround();
-            eb(b.create(), "redex3");
+            toPNG(b.create(), "redex3", TARGET_DUMP_PATH);
 
         }
 

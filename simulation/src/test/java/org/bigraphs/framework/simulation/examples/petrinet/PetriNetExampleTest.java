@@ -35,12 +35,12 @@ import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.core.reactivesystem.TrackingMap;
-import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
 import org.bigraphs.framework.simulation.exceptions.BigraphSimulationException;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
+import org.bigraphs.testing.BigraphUnitTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -63,9 +63,9 @@ public class PetriNetExampleTest implements BigraphUnitTestSupport {
         PureBigraph agent = petriNet(sig);
         ReactionRule<PureBigraph> rule1 = petriNetFireRule(sig);
 
-        eb(agent, TARGET_DUMP_PATH + "agent");
-        eb(rule1.getRedex(), TARGET_DUMP_PATH + "rule1_LHS");
-        eb(rule1.getReactum(), TARGET_DUMP_PATH + "rule1_RHS");
+        toPNG(agent, "agent", TARGET_DUMP_PATH);
+        toPNG(rule1.getRedex(), "rule1_LHS", TARGET_DUMP_PATH);
+        toPNG(rule1.getReactum(), "rule1_RHS", TARGET_DUMP_PATH);
 
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
@@ -82,7 +82,7 @@ public class PetriNetExampleTest implements BigraphUnitTestSupport {
                                 .setReactionGraphFile(new File(completePath.toUri()))
                                 .setPrintCanonicalStateLabel(false)
                                 .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
-                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.XMI, ModelCheckingOptions.ExportOptions.Format.PNG))
+                                .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.XMI, ModelCheckingOptions.ExportOptions.Format.PNG))
 //                        .disableAllFormats()
                                 .create()
                 )
@@ -106,9 +106,9 @@ public class PetriNetExampleTest implements BigraphUnitTestSupport {
         PureBigraph agent = petriNet_withOuterNames(sig);
         ReactionRule<PureBigraph> rule1 = petriNetFireRule_withOuterNames(sig);
 
-        eb(agent, TARGET_DUMP_PATH + "agent");
-        eb(rule1.getRedex(), TARGET_DUMP_PATH + "rule1_LHS");
-        eb(rule1.getReactum(), TARGET_DUMP_PATH + "rule1_RHS");
+        toPNG(agent, "agent", TARGET_DUMP_PATH);
+        toPNG(rule1.getRedex(), "rule1_LHS", TARGET_DUMP_PATH);
+        toPNG(rule1.getReactum(), "rule1_RHS", TARGET_DUMP_PATH);
 
         Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();

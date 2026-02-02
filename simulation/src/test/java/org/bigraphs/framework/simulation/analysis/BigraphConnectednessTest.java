@@ -39,7 +39,7 @@ import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
-import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
+import org.bigraphs.testing.BigraphUnitTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
     @Test
     void bigraph_getConnectedComponentBigraphs_test() throws InvalidConnectionException {
         PureBigraph bigraph = createFruitAgent();
-        eb(bigraph, TARGET_DUMP_PATH + "fruitAgent");
+        toPNG(bigraph, "fruitAgent", TARGET_DUMP_PATH);
 
         PureBigraphDecomposerImpl decomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
         decomposer.decompose(bigraph);
@@ -74,7 +74,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
         List<PureBigraph> components = decomposer.getConnectedComponents();
         AtomicInteger cnt = new AtomicInteger(0);
         components.forEach(c -> {
-            eb(c, TARGET_DUMP_PATH + "component_" + cnt.getAndIncrement());
+            toPNG(c, "component_" + cnt.getAndIncrement(), TARGET_DUMP_PATH);
         });
         System.out.println(components);
     }
@@ -89,7 +89,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
         PureBigraph generate = new PureBigraphGenerator(randomSignature)
                 .setLinkStrategy(linkStrategy)
                 .generate(numOfTrees, numOfNodes, p);
-        eb(generate, TARGET_DUMP_PATH + "random-graph-1");
+        toPNG(generate, "random-graph-1", TARGET_DUMP_PATH);
 
         BigraphDecomposer<PureBigraph> pureBigraphBigraphDecomposer = BigraphDecomposer.create(BigraphDecomposer.DEFAULT_DECOMPOSITION_STRATEGY);
         pureBigraphBigraphDecomposer.decompose(generate);
@@ -114,7 +114,7 @@ class BigraphConnectednessTest implements BigraphUnitTestSupport {
         PureBigraph generate = new PureBigraphGenerator(randomSignature)
                 .setLinkStrategy(linkStrategy)
                 .generate(numOfTrees, numOfNodes, p);
-        eb(generate, TARGET_DUMP_PATH + "random-graph-2");
+        toPNG(generate, "random-graph-2", TARGET_DUMP_PATH);
 
 //        BigraphAnalysis a = new BigraphAnalysis();
 //        boolean b = a.linkGraphIsConnectedGraph(generate);

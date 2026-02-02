@@ -86,11 +86,11 @@ public class AddExample extends BaseExampleTestSupport {
 
         AddExpr reactiveSystem = new AddExpr(a, b);
 
-        eb(reactiveSystem.agent_a, "agent");
-        eb(reactiveSystem.reactionRule_1.getRedex(), "r1-redex");
-        eb(reactiveSystem.reactionRule_1.getReactum(), "r1-reactum");
-        eb(reactiveSystem.reactionRule_2.getRedex(), "r2-redex");
-        eb(reactiveSystem.reactionRule_2.getReactum(), "r2-reactum");
+        toPNG(reactiveSystem.agent_a, "agent", TARGET_DUMP_PATH);
+        toPNG(reactiveSystem.reactionRule_1.getRedex(), "r1-redex", TARGET_DUMP_PATH);
+        toPNG(reactiveSystem.reactionRule_1.getReactum(), "r1-reactum", TARGET_DUMP_PATH);
+        toPNG(reactiveSystem.reactionRule_2.getRedex(), "r2-redex", TARGET_DUMP_PATH);
+        toPNG(reactiveSystem.reactionRule_2.getReactum(), "r2-reactum", TARGET_DUMP_PATH);
 
         PureBigraph result = reactiveSystem.execute();
 

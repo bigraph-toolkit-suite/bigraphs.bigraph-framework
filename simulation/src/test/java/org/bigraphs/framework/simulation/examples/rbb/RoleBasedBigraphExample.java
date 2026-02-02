@@ -75,30 +75,30 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
         PureBigraph agent0 = createAgent();
 //        eb(agent0, "agent");
         PureBigraph agent = finalizeAgent(agent0);
-        eb(agent, "agent");
+        toPNG(agent, "agent", TARGET_DUMP_PATH);
 
         List<ReactionRule<PureBigraph>> incDec_Balance = increaseDecrease_Balance();
-        eb(incDec_Balance.get(0).getRedex(), "incBalanceLHS");
-        eb(incDec_Balance.get(0).getReactum(), "incBalanceRHS");
-        eb(incDec_Balance.get(1).getRedex(), "decBalanceLHS");
-        eb(incDec_Balance.get(1).getReactum(), "decBalanceRHS");
+        toPNG(incDec_Balance.get(0).getRedex(), "incBalanceLHS", TARGET_DUMP_PATH);
+        toPNG(incDec_Balance.get(0).getReactum(), "incBalanceRHS", TARGET_DUMP_PATH);
+        toPNG(incDec_Balance.get(1).getRedex(), "decBalanceLHS", TARGET_DUMP_PATH);
+        toPNG(incDec_Balance.get(1).getReactum(), "decBalanceRHS", TARGET_DUMP_PATH);
 
         ReactionRule<PureBigraph> bindSourceRole = bindSourceRole(false);
         ReactionRule<PureBigraph> bindTargetRole = bindTargetRole(false);
         ReactionRule<PureBigraph> fixedbindSourceRole = bindSourceRole(true);
         ReactionRule<PureBigraph> fixedbindTargetRole = bindTargetRole(true);
-        eb(bindSourceRole.getRedex(), "bindSourceLHS");
-        eb(bindSourceRole.getReactum(), "bindSourceRHS");
-        eb(bindTargetRole.getRedex(), "bindTargetLHS");
-        eb(bindTargetRole.getReactum(), "bindTargetRHS");
-        eb(fixedbindSourceRole.getRedex(), "fixedbindSourceLHS");
-        eb(fixedbindSourceRole.getReactum(), "fixedbindSourceRHS");
-        eb(fixedbindTargetRole.getRedex(), "fixedbindTargetLHS");
-        eb(fixedbindTargetRole.getReactum(), "fixedbindTargetRHS");
+        toPNG(bindSourceRole.getRedex(), "bindSourceLHS", TARGET_DUMP_PATH);
+        toPNG(bindSourceRole.getReactum(), "bindSourceRHS", TARGET_DUMP_PATH);
+        toPNG(bindTargetRole.getRedex(), "bindTargetLHS", TARGET_DUMP_PATH);
+        toPNG(bindTargetRole.getReactum(), "bindTargetRHS", TARGET_DUMP_PATH);
+        toPNG(fixedbindSourceRole.getRedex(), "fixedbindSourceLHS", TARGET_DUMP_PATH);
+        toPNG(fixedbindSourceRole.getReactum(), "fixedbindSourceRHS", TARGET_DUMP_PATH);
+        toPNG(fixedbindTargetRole.getRedex(), "fixedbindTargetLHS", TARGET_DUMP_PATH);
+        toPNG(fixedbindTargetRole.getReactum(), "fixedbindTargetRHS", TARGET_DUMP_PATH);
 
         ReactionRule<PureBigraph> transaction = transaction();
-        eb(transaction.getRedex(), "transactionLHS");
-        eb(transaction.getReactum(), "transactionRHS");
+        toPNG(transaction.getRedex(), "transactionLHS", TARGET_DUMP_PATH);
+        toPNG(transaction.getReactum(), "transactionRHS", TARGET_DUMP_PATH);
 
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.setAgent(agent);

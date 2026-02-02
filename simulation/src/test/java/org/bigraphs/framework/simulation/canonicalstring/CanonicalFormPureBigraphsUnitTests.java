@@ -179,7 +179,7 @@ public class CanonicalFormPureBigraphsUnitTests extends BaseExampleTestSupport {
         PureBigraph bigraph_b = createBigraph_b();
         PureBigraph bigraph_c = createBigraph_c();
         PureBigraph bigraph_d = createBigraph_d();
-        eb(bigraph_c, "bigraph_c");
+        toPNG(bigraph_c, "bigraph_c", TARGET_DUMP_PATH);
 
 
         String bfcs0 = BigraphCanonicalForm.createInstance().bfcs(bigraph_a);

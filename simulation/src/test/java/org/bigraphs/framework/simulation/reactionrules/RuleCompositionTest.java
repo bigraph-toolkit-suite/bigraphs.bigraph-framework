@@ -24,7 +24,7 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.reactivesystem.*;
-import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
+import org.bigraphs.testing.BigraphUnitTestSupport;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -47,17 +47,17 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
     void test_rule_parallel_product_01() throws InvalidReactionRuleException, IncompatibleInterfaceException {
 
         ReactionRule<PureBigraph> rr01 = createRR_01();
-        eb(rr01.getRedex(), DUMP + "rr01_LHS");
-        eb(rr01.getReactum(), DUMP + "rr01_RHS");
+        toPNG(rr01.getRedex(),  "rr01_LHS", DUMP);
+        toPNG(rr01.getReactum(),  "rr01_RHS", DUMP);
 
         ReactionRule<PureBigraph> rr02 = createRR_02();
-        eb(rr02.getRedex(), DUMP + "rr02_LHS");
-        eb(rr02.getReactum(), DUMP + "rr02_RHS");
+        toPNG(rr02.getRedex(),  "rr02_LHS", DUMP);
+        toPNG(rr02.getReactum(),  "rr02_RHS", DUMP);
 
         ReactionRuleComposer<ParametricReactionRule<Bigraph<?>>> rComp = new ReactionRuleComposer<>();
         ParametricReactionRule<Bigraph<?>> product = rComp.parallelProduct(rr01, rr02);
-        eb(product.getRedex(), DUMP + "product_LHS");
-        eb(product.getReactum(), DUMP + "product_RHS");
+        toPNG(product.getRedex(),  "product_LHS", DUMP);
+        toPNG(product.getReactum(),  "product_RHS", DUMP);
         System.out.println("Product label = " + product.getLabel());
         assert product.getLabel().equals("R1_PP_R2");
 
@@ -71,17 +71,17 @@ public class RuleCompositionTest implements BigraphUnitTestSupport {
     void test_rule_merge_product_01() throws InvalidReactionRuleException, IncompatibleInterfaceException {
 
         ReactionRule<PureBigraph> rr01 = createRR_01();
-        eb(rr01.getRedex(), DUMP + "rr01_LHS");
-        eb(rr01.getReactum(), DUMP + "rr01_RHS");
+        toPNG(rr01.getRedex(),  "rr01_LHS", DUMP);
+        toPNG(rr01.getReactum(),  "rr01_RHS", DUMP);
 
         ReactionRule<PureBigraph> rr02 = createRR_02();
-        eb(rr02.getRedex(), DUMP + "rr02_LHS");
-        eb(rr02.getReactum(), DUMP + "rr02_RHS");
+        toPNG(rr02.getRedex(),  "rr02_LHS", DUMP);
+        toPNG(rr02.getReactum(),  "rr02_RHS", DUMP);
 
         ReactionRuleComposer<ParametricReactionRule<Bigraph<?>>> rComp = new ReactionRuleComposer<>();
         ParametricReactionRule<Bigraph<?>> product = rComp.mergeProduct(rr01, rr02);
-        eb(product.getRedex(), DUMP + "product_LHS");
-        eb(product.getReactum(), DUMP + "product_RHS");
+        toPNG(product.getRedex(), "product_LHS", DUMP);
+        toPNG(product.getReactum(), "product_RHS", DUMP);
         System.out.println("Product label = " + product.getLabel());
         assert product.getLabel().equals("R1_PP_R2");
 

@@ -33,10 +33,10 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.TrackingMap;
-import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
+import org.bigraphs.testing.BigraphUnitTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
                 .child("Place", "y").down().child("Token").up()
                 .child("Place", "y")
                 .create();
-        eb(bigraph, TARGET_DUMP_PATH + "s_0");
+        toPNG(bigraph, "s_0", TARGET_DUMP_PATH);
         BigraphEntity.NodeEntity<DynamicControl> v1 = bigraph.getNodes().stream()
                 .filter(x -> x.getName().equals("v1")).findAny().get();
         Map<String, Object> attributes = v1.getAttributes();
@@ -94,8 +94,8 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
         eta.addLinkNames("y");
         // assign the tracking map to the rule
         rr.withTrackingMap(eta);
-        eb(rr.getRedex(), TARGET_DUMP_PATH + "rr_LHS");
-        eb(rr.getReactum(), TARGET_DUMP_PATH + "rr_RHS");
+        toPNG(rr.getRedex(), "rr_LHS", TARGET_DUMP_PATH);
+        toPNG(rr.getReactum(), "rr_RHS", TARGET_DUMP_PATH);
 
         // build a reactive system
         PureReactiveSystem rs = new PureReactiveSystem();
@@ -108,7 +108,7 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
         while (iterator.hasNext()) {
             BigraphMatch<PureBigraph> next = iterator.next();
             PureBigraph result = rs.buildParametricReaction(bigraph, next, rr);
-            eb(result, TARGET_DUMP_PATH + "s_" + transition);
+            toPNG(result, "s_" + transition, TARGET_DUMP_PATH);
             transition++;
             Map<String, Object> attr = result.getNodes().stream()
                     .filter(x -> x.getName().equals("v1")).findAny().get().getAttributes();

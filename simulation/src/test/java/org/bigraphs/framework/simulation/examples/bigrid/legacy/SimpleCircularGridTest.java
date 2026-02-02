@@ -35,12 +35,12 @@ import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
-import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
 import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
+import org.bigraphs.testing.BigraphUnitTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +63,7 @@ public class SimpleCircularGridTest implements BigraphUnitTestSupport {
         BigridObject bigridObj = new BigridObject(sig, numOfCols, numOfRows);
         createOrGetBigraphMetaModel(bigridObj.getSignature());
 //        BigraphGraphvizExporter.toPNG(bigridObj.getBigraph(), false, new File(BASEPATH + "circular-grid.png"));
-        eb(bigridObj.getBigraph(), BASEPATH + "circular-grid");
+        toPNG(bigridObj.getBigraph(), "circular-grid", BASEPATH);
         print(bigridObj.getBigraph());
 //        printMetaModel(bigridObj.getBigraph());
 
@@ -71,9 +71,9 @@ public class SimpleCircularGridTest implements BigraphUnitTestSupport {
         Bigraph contextSource = bigridObj.prepareSourceNodeAt(0, "turtle1", "T", true);
         Bigraph bot1 = bigridObj.prepareItemAtNode(0, bigridObj.getSignature().getControlByName("bot"), "turtle1", true);
         Bigraph sourceInstance = ops(contextSource).nesting(bot1).getOuterBigraph();
-        eb(sourceInstance, BASEPATH + "sourceInstance");
+        toPNG(sourceInstance, "sourceInstance", BASEPATH);
         Bigraph contextTarget = bigridObj.prepareTargetNodeAt(9, "turtle1", "F", false);
-        eb(contextTarget, BASEPATH + "contextTarget");
+        toPNG(contextTarget, "contextTarget", BASEPATH);
 
         List<Integer> blockedIndices = new ArrayList<>();
         blockedIndices.add(0);
@@ -85,17 +85,16 @@ public class SimpleCircularGridTest implements BigraphUnitTestSupport {
                 rest = ops(rest).nesting(t1).getOuterBigraph();
             }
         }
-        eb(rest, BASEPATH + "rest");
-
+        toPNG(rest, "rest", BASEPATH);
 
 
         Bigraph outerBigraph = ops(rest).nesting(sourceInstance).nesting(contextTarget).getOuterBigraph();
-        eb(outerBigraph, BASEPATH + "outerBigraph");
+        toPNG(outerBigraph, "outerBigraph", BASEPATH);
         PureBigraph agent = bigridObj.makeAgentCompatible(bigridObj.getBigraph(), outerBigraph);
-        eb(agent, BASEPATH + "agent-final");
+        toPNG(agent, "agent-final", BASEPATH);
         print(agent);
         ReactiveSystemPredicate<PureBigraph> predTargetReached = bigridObj.targetReached();
-        eb(predTargetReached.getBigraph(), BASEPATH + "predTargetReached");
+        toPNG(predTargetReached.getBigraph(), "predTargetReached", BASEPATH);
 //  BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) bigridObj.getBigraph(), System.out);
 
 // ClockwiseMovement
@@ -161,11 +160,11 @@ public class SimpleCircularGridTest implements BigraphUnitTestSupport {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(10)
+                                .setMaximumTransitions(10)
 //                        .setMaximumTime(10)
 //                        .allowReducibleClasses(false)
-                        .allowReducibleClasses(false)
-                        .create()
+                                .allowReducibleClasses(false)
+                                .create()
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
@@ -189,15 +188,6 @@ public class SimpleCircularGridTest implements BigraphUnitTestSupport {
                 .newControl("target", 1).status(ControlStatus.ACTIVE).assign()
                 .newControl("dirClockWise", 0).status(ControlStatus.ATOMIC).assign()
                 .newControl("dirAntiClockWise", 0).status(ControlStatus.ATOMIC).assign()
-//                .newControl("TopLeftCorner", 4).assign()
-////                .newControl("TopEdge", 4).assign()
-//                .newControl("TopRightCorner", 4).assign()
-////                .newControl("LeftEdge", 4).assign()
-////                .newControl("Center", 4).assign()
-////                .newControl("RightEdge", 4).assign()
-//                .newControl("BottomLeftCorner", 4).assign()
-////                .newControl("BottomEdge", 4).assign()
-//                .newControl("BottomRightCorner", 4).assign()
                 .create();
     }
 }

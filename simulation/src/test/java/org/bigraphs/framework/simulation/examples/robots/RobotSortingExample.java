@@ -64,23 +64,23 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
 
         PureBigraph agent = agent();
         printMetaModel(agent);
-        eb(agent, "agent", false);
+        toPNG(agent, "agent", TARGET_DUMP_PATH, false);
 
         ReactionRule<PureBigraph> reserveRR = reserve();
-        eb(reserveRR.getRedex(), "reserveL");
-        eb(reserveRR.getReactum(), "reserveR");
+        toPNG(reserveRR.getRedex(), "reserveL", TARGET_DUMP_PATH);
+        toPNG(reserveRR.getReactum(), "reserveR", TARGET_DUMP_PATH);
         ReactionRule<PureBigraph> pickRR = pick();
-        eb(pickRR.getRedex(), "pickL");
-        eb(pickRR.getReactum(), "pickR");
+        toPNG(pickRR.getRedex(), "pickL", TARGET_DUMP_PATH);
+        toPNG(pickRR.getReactum(), "pickR", TARGET_DUMP_PATH);
         ReactionRule<PureBigraph> reserveBinRR = reserveBin();
-        eb(reserveBinRR.getRedex(), "reserveBinL");
-        eb(reserveBinRR.getReactum(), "reserveBinR");
+        toPNG(reserveBinRR.getRedex(), "reserveBinL", TARGET_DUMP_PATH);
+        toPNG(reserveBinRR.getReactum(), "reserveBinR", TARGET_DUMP_PATH);
         ReactionRule<PureBigraph> placeItemInBinRR = placeItemInBin();
-        eb(placeItemInBinRR.getRedex(), "placeItemInBinL");
-        eb(placeItemInBinRR.getReactum(), "placeItemInBinR");
+        toPNG(placeItemInBinRR.getRedex(), "placeItemInBinL", TARGET_DUMP_PATH);
+        toPNG(placeItemInBinRR.getReactum(), "placeItemInBinR", TARGET_DUMP_PATH);
         ReactionRule<PureBigraph> releaseBinLockRR = releaseBinLock();
-        eb(releaseBinLockRR.getRedex(), "releaseBinLockL");
-        eb(releaseBinLockRR.getReactum(), "releaseBinLockR");
+        toPNG(releaseBinLockRR.getRedex(), "releaseBinLockL", TARGET_DUMP_PATH);
+        toPNG(releaseBinLockRR.getReactum(), "releaseBinLockR", TARGET_DUMP_PATH);
 
 //        print(insertCoinRR.getRedex());
 //        print(insertCoinRR.getReactum());

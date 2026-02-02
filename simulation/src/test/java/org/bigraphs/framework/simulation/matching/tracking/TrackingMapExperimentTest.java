@@ -34,11 +34,11 @@ import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.TrackingMap;
-import org.bigraphs.framework.simulation.BigraphUnitTestSupport;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
+import org.bigraphs.testing.BigraphUnitTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -56,13 +56,13 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
         ParametricReactionRule<PureBigraph> rr2 = switchRule2().withLabel("r1");
         AbstractReactionRule<PureBigraph> rr3 = addSetUnderEmpty().withLabel("r2");
 
-        eb(agent, DUMP_PATH + "agent");
-        eb(rr.getRedex(), DUMP_PATH + "switch1LHS");
-        eb(rr.getReactum(), DUMP_PATH + "switch1RHS");
-        eb(rr2.getRedex(), DUMP_PATH + "switch2LHS");
-        eb(rr2.getReactum(), DUMP_PATH + "switch2RHS");
-        eb(rr3.getRedex(), DUMP_PATH + "emptyAddSetLHS");
-        eb(rr3.getReactum(), DUMP_PATH + "emptyAddSetRHS");
+        toPNG(agent,  "agent", DUMP_PATH);
+        toPNG(rr.getRedex(),  "switch1LHS", DUMP_PATH);
+        toPNG(rr.getReactum(),  "switch1RHS", DUMP_PATH);
+        toPNG(rr2.getRedex(),  "switch2LHS", DUMP_PATH);
+        toPNG(rr2.getReactum(),  "switch2RHS", DUMP_PATH);
+        toPNG(rr3.getRedex(),  "emptyAddSetLHS", DUMP_PATH);
+        toPNG(rr3.getReactum(),  "emptyAddSetRHS", DUMP_PATH);
 
         simpleBRS.setAgent(agent);
 //        simpleBRS.addReactionRule(rr); // test switching
@@ -97,7 +97,7 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
                 while (iterator.hasNext()) {
                     BigraphMatch<PureBigraph> next = iterator.next();
                     agentTmp = buildParametricReaction(currentAgent, next, getReactionRulesMap().get("r" + ruleIx));
-                    TrackingMapExperimentTest.this.eb(agentTmp, DUMP_PATH + "agent-" + ixCnt);
+                    TrackingMapExperimentTest.this.toPNG(agentTmp, "agent-" + ixCnt, DUMP_PATH);
                     ixCnt++;
                 }
 
