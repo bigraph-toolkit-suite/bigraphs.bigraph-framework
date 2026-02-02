@@ -14,8 +14,11 @@
  */
 package org.bigraphs.framework.simulation.matching;
 
+import java.util.Collections;
 import java.util.Iterator;
+
 import org.bigraphs.framework.core.Bigraph;
+import org.bigraphs.framework.core.Signature;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 
 /**
@@ -24,17 +27,13 @@ import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
  * @param <T> type of the bigraph within a {@link BigraphMatch} "container" holding the match result
  * @author Dominik Grzelak
  */
-public class MatchIterable<T extends BigraphMatch<? extends Bigraph<?>>> implements Iterable<T> {
+public record MatchIterable<T extends BigraphMatch<? extends Bigraph<?>>>(Iterator<T> iterator) implements Iterable<T> {
 
-    private final Iterator<T> iterator;
-
-    public MatchIterable(Iterator<T> iterator) {
-        this.iterator = iterator;
+    public static <B extends Bigraph<? extends Signature<?>>> MatchIterable<BigraphMatch<B>> emptyMatches() {
+        return new MatchIterable<>(Collections.emptyIterator());
     }
 
-    @Override
-    public Iterator<T> iterator() {
-        return iterator;
+    public static <B extends Bigraph<? extends Signature<?>>> MatchIterable<BigraphMatch<B>> singletonMatches(BigraphMatch<B> match) {
+        return new MatchIterable<>(Collections.singleton(match).iterator());
     }
-
 }
