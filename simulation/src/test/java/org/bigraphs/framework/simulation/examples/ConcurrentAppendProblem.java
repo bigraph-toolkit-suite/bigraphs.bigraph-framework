@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.bigraphs.framework.converter.bigrapher.BigrapherTransformator;
 import org.bigraphs.framework.converter.dot.DOTReactionGraphExporter;
