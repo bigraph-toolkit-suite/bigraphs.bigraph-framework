@@ -1,29 +1,47 @@
-node.link {
-    text-size: 12px;
-    fill-color: green;
+graph {
+    padding: 60px;
+    fill-color: white;
 }
-
-node.innername {
-    text-size: 12px;
-    fill-color: green;
+node {
+    size: 10px;
+    fill-color: yellow;
+    text-style: bold;
+    text-color: rgba(0,0,0,120);
+    text-size: 11px;
+    text-alignment: above;
+    text-background-mode: rounded-box;
+    text-background-color: rgba(255,255,255,200);
+    text-padding: 2px, 3px;
+    text-offset: 0px, -10px;
 }
-
-node.control {
-    text-size: 12px;
-    fill-color: red;
+node.root, node.control {
+    text-color: black;
+    text-size: 14px;
+    text-background-color: rgba(255,255,255,230);
 }
-
 node.root {
-    fill-color: blue;
-    text-size: 12px;
+    fill-color: #1f77b4;
 }
-
+node.link {
+    fill-color: #2ca02c;
+}
+node.innername {
+    fill-color: #2ca02c;
+}
+node.control {
+    fill-color: #d62728;
+}
 node.site {
-    fill-color: gray;
-    text-size: 12px;
+    fill-color: #1f1f7f;
 }
-
+edge {
+    size: 2px;
+    fill-color: #343434;
+    shape: cubic-curve;
+    arrow-shape: arrow;
+    arrow-size: 6px, 4px;
+}
 edge.hyperedge {
-    fill-color: green;
-    stroke-width: 3px;
+    fill-color: #2ca02c;
+    size: 3px;
 }
