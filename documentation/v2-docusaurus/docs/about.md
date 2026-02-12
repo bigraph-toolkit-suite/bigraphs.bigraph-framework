@@ -4,7 +4,7 @@ title: About
 sidebar_position: 8
 ---
 
-**Bigraph Framework** was mainly developed by Dominik Grzelak at the Technische Universität Dresden.
+_Bigraph Framework_ was mainly developed by Dominik Grzelak at the Technische Universität Dresden.
 
 The framework could not have been developed without the following bigraph tools:
 - [BigraphER](https://bitbucket.org/uog-bigraph/bigraph-tools/)
@@ -14,7 +14,7 @@ In addition to these tools, this framework has also benefited from the valuable 
 
 ## License
 
-**Bigraph Framework** is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.txt).
+_Bigraph Framework_ is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.txt).
 
 ```text
    Copyright 2019-2025 Bigraph Toolkit Suite Developers.

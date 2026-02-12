@@ -45,7 +45,7 @@ attributes.put("data", 1309);
 v2.setAttributes(attributes);
 ```
 
-## EMF's API: Low-level Access
+## EMF API: Low-level Access
 
 This section demonstrates the usage of the EMF API of the generated model classes of the BEM specification.
 

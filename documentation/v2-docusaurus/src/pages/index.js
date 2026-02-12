@@ -66,9 +66,9 @@ function FeatureCalloutTitle() {
             className="text--center padding-horiz--md"
             style={{paddingTop: '2em'}}>
             <h2>Features</h2>
-            <div>
-                This framework provides 4 central building blocks.
-            </div>
+            {/*<div>*/}
+            {/*    This framework provides 4 central building blocks.*/}
+            {/*</div>*/}
         </div>
     );
 }
