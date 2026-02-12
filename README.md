@@ -21,45 +21,44 @@ Under the hood, the framework is based on Milner’s theory of Bigraphical React
 ### Features
 
 **Bigraph Modeling and Persistence**
-- Create and manipulate bigraphs dynamically at **design time and runtime** using the **Bigraph Ecore Metamodel (BEM)**  
+- Create and manipulate bigraphs dynamically at design time and runtime using the _Bigraph Ecore Metamodel (BEM)_  
   ([bigraphs.bigraph-ecore-metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel))
-- Load and store both **bigraph metamodels** and **instance models** in standard file formats (Ecore/XMI)
+- Load and store both _bigraph metamodels_ and _instance models_ in standard file formats (Ecore/XMI)
 
 **Visualization and Inspection**
 - Export bigraphs and transition systems to standard graph formats:
-  **GraphViz (DOT), PNG, VCG (yComp)**
-- Interactive, programmatic visualization via **GraphStream** for exploring structures
+  _GraphViz (DOT), PNG, VCG (yComp)_
+- Interactive, programmatic visualization via GraphStream for exploring structures
 
 **Bigraphical Reactive Systems (BRS)**
 
-Model and analyze system dynamics using **reaction rules** and **graph rewriting**:
+Model and analyze system dynamics using _rules_ and _graph rewriting_:
 
-- Pattern matching and rewriting powered by **jLibBig**, with full **node and link tracking**
-- Specialized **link-graph (hypergraph) matching**
-- Multiple **simulation and model-checking strategies**:
+- Multiple _simulation and model-checking strategies_:
   - Breadth-first search (BFS)
   - Depth-first search (DFS)
-  - Random exploration
+  - Random state exploration
   - Match-all / Match-first
-  - Custom (Simulated Annealing, ...)
-- Automatic construction of **Labeled Transition Systems (LTS)**
-- **State predicates and logical connectors** for property checking
-- **Rule priorities** to control nondeterminism and execution order
-- **Tracking rules** to preserve identity of entities across reactions
-- **Conditional rules** for guarded rewriting
+  - Simulated Annealing
+  - Custom
+- Automatic construction of _Labeled Transition Systems (LTS)_
+- _State predicates and logical connectors_ for property checking
+- Rules
+  - _Rule priorities_ to control nondeterminism and execution order
+  - _Tracking rules_ to preserve identity of entities across reactions
+  - _Conditional rules_ for guarded rewriting
+- Pattern matching and rewriting powered by _jLibBig_
+- Dedicated _link-graph (hypergraph) matching_
 
 **Import, Export, and Tool Interoperability**
 - Export bigraphs and LTSs to standard graph formats:
-  **DOT, GraphML, GXL, VCG**
+  _DOT, GraphML, GXL, VCG_
 - Interoperate with other bigraph tools:
-  **BigMC, BigraphER, BigRed, jLibBig**, and others
+  _BigMC, BigraphER, BigRed, jLibBig_, and others
 
 **Attributed Bigraphs**
-- Attach **arbitrary attributes** to:
-  - Nodes
-  - Links (edges and outer names)
-- Attributes are **preserved during rewriting**, enabling data-rich CPS and agent-based models  
-  (via tracking maps)
+- Attach _arbitrary attributes_ to: nodes and links (edges and outer names)
+- Attributes are _preserved during rewriting_, enabling data-rich models (via tracking maps)
 
 
 ## Getting Started
@@ -155,28 +154,6 @@ BigraphComposite<DynamicSignature> result = composite.compose(F);
 composite.juxtapose(F);
 composite.juxtapose(F).parallelProduct(H);
 ```
-
-### A User-Friendly API for the Bigraph Ecore Metamodel (BEM)
-
-- Internally, bigraphs are described by a metamodel based on Ecore.
-  The project can be found in this [GitHub repository](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel).
-- To create concrete bigraphs, a signature must be provided.
-  To do so, this metamodel is extended when creating a new bigraphical signature which is then called "metamodel over a signature" of an abstract bigraph (described by the Ecore model).
-  We say that the signature is mapped to the metamodel over a signature.
-  From that, multiple instance models can be created where the instance bigraph relates to the signature _S_, thus, corresponds to the metamodel over the signature _S_.
-- Extending the metamodel with a signature by hand is time-consuming
-  especially when many models are created. The framework allows to create
-  bigraphs dynamically at runtime by letting the user providing a description
-  of the signature. The metamodel over a signature is kept in memory and
-  instances can be created from it. As a result, the bigraph metamodel must
-  not be touched manually. Both the metamodel over a signature and the
-  instance model can be stored on the filesystem.
-- That very metamodel serves only as a data model for the *Bigraph Framework*
-  which provides additional functionality and a user-friendly API for the
-  creation and simulation of bigraphical reactive systems. Furthermore, we
-  achieve Separation of concerns: The metamodel itself is implementation-agnostic.
-  The Bigraph Framework adds specific behavior superimposed upon this meta
-  model. Meaning, the implementation-specific details are kept out from the metamodel.
 
 ## Installation & Setup of the Java Framework
 
@@ -282,15 +259,36 @@ For Spring-based Projects:
 
 The example above shows how to use log4j2 in your project as the underlying logging framework.
 
-
 ## Development and Deployment
 
 See the document [etc/Development-and-Deployment.md](./etc/Development-and-Deployment.md) for more details concerning the
 development and deployment of _Bigraph Framework_.
 
+## A User-Friendly API for the Bigraph Ecore Metamodel (BEM)
+
+- Internally, bigraphs are described by a metamodel based on Ecore.
+  The project can be found in this [GitHub repository](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel).
+- To create concrete bigraphs, a signature must be provided.
+  To do so, this metamodel is extended when creating a new bigraphical signature which is then called "metamodel over a signature" of an abstract bigraph (described by the Ecore model).
+  We say that the signature is mapped to the metamodel over a signature.
+  From that, multiple instance models can be created where the instance bigraph relates to the signature _S_, thus, corresponds to the metamodel over the signature _S_.
+- Extending the metamodel with a signature by hand is time-consuming
+  especially when many models are created. The framework allows to create
+  bigraphs dynamically at runtime by letting the user providing a description
+  of the signature. The metamodel over a signature is kept in memory and
+  instances can be created from it. As a result, the bigraph metamodel must
+  not be touched manually. Both the metamodel over a signature and the
+  instance model can be stored on the filesystem.
+- That very metamodel serves only as a data model for the *Bigraph Framework*
+  which provides additional functionality and a user-friendly API for the
+  creation and simulation of bigraphical reactive systems. Furthermore, we
+  achieve Separation of concerns: The metamodel itself is implementation-agnostic.
+  The Bigraph Framework adds specific behavior superimposed upon this meta
+  model. Meaning, the implementation-specific details are kept out from the metamodel.
+
 ## License
 
-**Bigraph Framework** is Open Source software released under the [Apache 2.0 license](LICENSE).
+_Bigraph Framework_ is Open Source software released under the [Apache 2.0 license](LICENSE).
 
 You should have received a copy of the Apache 2.0 License along with this program. If not, see https://www.apache.org/licenses/LICENSE-2.0.html.
 
@@ -301,9 +299,9 @@ Copyright (c) 2019-2025 Bigraph Toolkit Suite Developers (Main Developer: Domini
 This report lists all third-party dependencies of the
 project: [documentation/v2-docusaurus/static/license/aggregate-third-party-report.html](documentation/v2-docusaurus/static/license/aggregate-third-party-report.html)
 
-The simulation module of **Bigraph Framework** includes and shades [jLibBig](https://github.com/bigraphs/jlibbig),
-a Java library for bigraphical reactive systems, which is licensed under the **GNU Lesser General Public License,
-version 2.1 only (LGPL-2.1-only)**.
+The simulation module of _Bigraph Framework_ includes and shades [jLibBig](https://github.com/bigraphs/jlibbig),
+a Java library for bigraphical reactive systems, which is licensed under the _GNU Lesser General Public License,
+version 2.1 only (LGPL-2.1-only)_.
 
 In full compliance with LGPL-2.1:
 - The jLibBig code is not obfuscated or renamed.

@@ -78,43 +78,44 @@ The framework is developed around a [metamodel-first approach](https://github.co
 ### Features
 
 **Bigraph Modeling and Persistence**
-- Create and manipulate bigraphs dynamically at **design time and runtime** using the **Bigraph Ecore Metamodel (BEM)**
+- Create and manipulate bigraphs dynamically at design time and runtime using the _Bigraph Ecore Metamodel (BEM)_
 ([bigraphs.bigraph-ecore-metamodel](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel))
-- Load and store both **bigraph metamodels** and **instance models** in standard file formats (Ecore/XMI)
+- Load and store both _bigraph metamodels_ and _instance models_ in standard file formats (Ecore/XMI)
 
 **Visualization and Inspection**
 - Export bigraphs and transition systems to standard graph formats:
-**GraphViz (DOT), PNG, VCG (yComp)**
-- Interactive, programmatic visualization via **GraphStream** for exploring structures
+_GraphViz (DOT), PNG, VCG (yComp)_
+- Interactive, programmatic visualization via GraphStream for exploring structures
 
 **Bigraphical Reactive Systems (BRS)**
 
-Model and analyze system dynamics using **reaction rules** and **graph rewriting**:
+Model and analyze system dynamics using _rules_ and _graph rewriting_:
 
-- Pattern matching and rewriting powered by **jLibBig**, with full **node and link tracking**
-- Specialized **link-graph (hypergraph) matching**
-- Multiple **simulation and model-checking strategies**:
-    - Breadth-first search (BFS)
-    - Depth-first search (DFS)
-    - Random exploration
-    - Match-all / Match-first
-    - Custom (Simulated Annealing, ...)
-- Automatic construction of **Labeled Transition Systems (LTS)**
-- **State predicates and logical connectors** for property checking
-- **Rule priorities** to control nondeterminism and execution order
-- **Tracking rules** to preserve identity of entities across reactions
-- **Conditional rules** for guarded rewriting
+- Multiple _simulation and model-checking strategies_:
+- Breadth-first search (BFS)
+- Depth-first search (DFS)
+- Random state exploration
+- Match-all / Match-first
+- Simulated Annealing
+- Custom
+- Automatic construction of _Labeled Transition Systems (LTS)_
+- _State predicates and logical connectors_ for property checking
+- Rules
+- _Rule priorities_ to control nondeterminism and execution order
+- _Tracking rules_ to preserve identity of entities across reactions
+- _Conditional rules_ for guarded rewriting
+- Pattern matching and rewriting powered by _jLibBig_
+- Dedicated _link-graph (hypergraph) matching_
 
 **Import, Export, and Tool Interoperability**
-- Export bigraphs and LTSs to standard graph formats: **DOT, GraphML, GXL, VCG**
-- Interoperate with other bigraph tools: **BigMC, BigraphER, BigRed, jLibBig**, and others
+- Export bigraphs and LTSs to standard graph formats:
+_DOT, GraphML, GXL, VCG_
+- Interoperate with other bigraph tools:
+_BigMC, BigraphER, BigRed, jLibBig_, and others
 
 **Attributed Bigraphs**
-- Attach **arbitrary attributes** to:
-    - Nodes
-    - Links (edges and outer names)
-- Attributes are **preserved during rewriting**, enabling data-rich CPS and agent-based models
-(via tracking maps)
+- Attach _arbitrary attributes_ to: nodes and links (edges and outer names)
+- Attributes are _preserved during rewriting_, enabling data-rich models (via tracking maps)
 
 
 ## Usage and Installation
