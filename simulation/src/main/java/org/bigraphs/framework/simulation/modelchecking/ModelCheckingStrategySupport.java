@@ -65,11 +65,11 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
         this.modelChecker = modelChecker;
     }
 
-    protected abstract Collection<B> createWorklist();
+    public abstract Collection<B> createWorklist();
 
-    protected abstract B removeNext(Collection<B> worklist);
+    public abstract B removeNext(Collection<B> worklist);
 
-    protected abstract void addToWorklist(Collection<B> worklist, B bigraph);
+    public abstract void addToWorklist(Collection<B> worklist, B bigraph);
 
     protected void resetOccurrenceCounter() {
         occurrenceCounter = 0;

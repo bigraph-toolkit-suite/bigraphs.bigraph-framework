@@ -32,17 +32,17 @@ public class DepthFirstStrategy<B extends Bigraph<? extends Signature<?>>> exten
     }
 
     @Override
-    protected Collection<B> createWorklist() {
+    public Collection<B> createWorklist() {
         return new ConcurrentLinkedDeque<>();
     }
 
     @Override
-    protected B removeNext(Collection<B> worklist) {
+    public B removeNext(Collection<B> worklist) {
         return ((Deque<B>) worklist).removeLast(); // LIFO
     }
 
     @Override
-    protected void addToWorklist(Collection<B> worklist, B bigraph) {
+    public void addToWorklist(Collection<B> worklist, B bigraph) {
         ((Deque<B>) worklist).addLast(bigraph);
     }
 }

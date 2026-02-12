@@ -21,10 +21,78 @@ import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.Signature;
 
 /**
- * @author Dominik Grzelak
+ * This class is an abstraction of a model checking strategy
+ * based on the Simulated Annealing algorithm.
+ * <p>
+ * This strategy is implemented using a cooling schedule, which helps in controlling the temperature
+ * of the annealing process. The temperature influences the probability of moving to a state of lower
+ * quality, allowing the algorithm to potentially escape local optima in the search space.
+ * <p>
+ * When computing state (bigraph) similarity via a kernel, the normalized kernel will be computed by this strategy afterward ({@link #kTilde(Bigraph, Bigraph)}.
+ * <p>
+ * The class is designed to be extended and requires subclasses to provide implementations for some
+ * specific methods such as:
+ * <ul>
+ *     <li>{@link #graphKernel(Bigraph, Bigraph)}: Calculation of a graph kernel for computing similarity between two bigraphs</li>
+ *     <li>{@link CoolingSchedules}: Default implementations are provided such as linear, geometric and logarithmic cooling.</li>
+ * </ul>
+ *
+ * @param <B> the type of bigraph elements processed by this strategy
  */
 public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? extends Signature<?>>>
         extends ModelCheckingStrategySupport<B> {
+
+    /**
+     * Functional interface representing a cooling schedule used in simulated annealing processes.
+     * It provides a method to calculate the next temperature based on the current temperature
+     * and the current epoch or iteration.
+     */
+    @FunctionalInterface
+    public interface CoolingSchedule {
+
+        /**
+         * @param currentT current temperature
+         * @param epoch    current epoch
+         */
+        double cool(double currentT, int epoch);
+    }
+
+    /**
+     * The class includes three static methods that return implementations of the CoolingSchedule
+     * interface.
+     * These strategies define how the temperature is decreased over time, which influences the
+     * algorithm's ability to explore the solution space.
+     */
+    static final class CoolingSchedules {
+
+        /**
+         * Geometric cooling schedule: T <- alpha * T
+         */
+        static CoolingSchedule geometric(double alpha) {
+            return (t, e) -> Math.max(1e-12, alpha * t);
+        }
+
+        /**
+         * Linear cooling schedule: T <- T - beta
+         *
+         * @param beta e.g., beta = 0.01
+         */
+        static CoolingSchedule linear(double beta) {
+            return (t, e) -> Math.max(0.0, t - beta);
+        }
+
+        /**
+         * Logarithmic cooling schedule: T <- T / log(epoch + 1)
+         */
+        static CoolingSchedule log() {
+            return (t, e) -> t / Math.log(e + 1.0);
+        }
+    }
+
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private CoolingSchedule cooling = CoolingSchedules.log();
 
     protected double energyEps = 1e-12; // energy tolerance for acceptation (stop criteria)
     protected volatile boolean internalStop = false;
@@ -63,6 +131,8 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
     public int maxEpoch = 100;
     protected int fairnessCounter = 0;
 
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public SimulatedAnnealingFrontierStrategy(
             List<B> goalExemplars,
             double initialTemperature,
@@ -76,13 +146,19 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         this.fairnessK = fairnessK;
     }
 
+
+    public SimulatedAnnealingFrontierStrategy<B> withCooling(CoolingSchedule c) {
+        this.cooling = Objects.requireNonNull(c);
+        return this;
+    }
+
     public SimulatedAnnealingFrontierStrategy<B> withModelChecker(BigraphModelChecker<B> modelChecker) {
         this.modelChecker = modelChecker;
         return this;
     }
 
     @Override
-    protected Collection<B> createWorklist() {
+    public Collection<B> createWorklist() {
         return new ConcurrentLinkedDeque<>();
     }
 
@@ -91,7 +167,7 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
      * State is picked from worklist using either fairness FIFO or SA Boltzmann sampling.
      */
     @Override
-    protected B removeNext(Collection<B> worklist) {
+    public B removeNext(Collection<B> worklist) {
         if (internalStop || worklist.isEmpty()) {
             isRunning = false;
             return null;
@@ -111,11 +187,11 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
             return removeNext(worklist);
         }
 
-        // STOP when best energy reached
+        // Stop when best energy reached
         double e = energy(chosen);
         if (e <= energyEps) {
             stopProcedure(chosen);
-            return chosen; //chosen; // or return "null" if: to stop BEFORE expanding it
+            return chosen; // or return "null" to stop BEFORE expanding it
         }
 
         worklist.remove(chosen);
@@ -126,7 +202,7 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
 
         if (epochSize > 0 && iterationInEpoch % epochSize == 0) {
             currentEpoch++;
-            temperature = cool_log(temperature, currentEpoch);
+            temperature = cooling.cool(temperature, currentEpoch);
 //            System.out.println("temperature = " + temperature);
         }
 
@@ -138,11 +214,9 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
     }
 
     @Override
-    protected void addToWorklist(Collection<B> worklist, B bigraph) {
-        // Mirror pseudocode: add to OPEN and FIFO only once
+    public void addToWorklist(Collection<B> worklist, B bigraph) {
         if (worklist.add(bigraph)) {
             fifoQueue.addLast(bigraph);
-            // optional early cache
             energy(bigraph);
         }
     }
@@ -215,7 +289,7 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
     }
 
     protected double energy(B s) {
-//        String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(s);
+        // String bfcfOfW = modelChecker.acquireCanonicalForm().bfcs(s);
         Double cached = energyCache.get(s); //bfcfOfW);
         if (cached != null) return cached;
 
@@ -231,25 +305,8 @@ public abstract class SimulatedAnnealingFrontierStrategy<B extends Bigraph<? ext
         return best;
     }
 
-    protected static double clamp01(double x) {
+    private static double clamp01(double x) {
         if (x < 0.0) return 0.0;
         return Math.min(x, 1.0);
-    }
-
-    /**
-     * Geometric cooling schedule: T <- alpha * T
-     */
-    protected double cool_geometric(double currentT, int epoch) {
-        double alpha = 0.95;
-        return Math.max(1e-12, alpha * currentT);
-    }
-
-    protected double cool_linear(double t, int epoch) {
-        double beta = 0.01;
-        return Math.max(0, t - beta);
-    }
-
-    protected double cool_log(double t0, int epoch) {
-        return t0 / Math.log(epoch + 1.0);
     }
 }

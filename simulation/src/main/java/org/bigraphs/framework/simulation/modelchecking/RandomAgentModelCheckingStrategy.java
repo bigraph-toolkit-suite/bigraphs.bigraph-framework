@@ -34,12 +34,12 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
     }
 
     @Override
-    protected Collection<B> createWorklist() {
+    public Collection<B> createWorklist() {
         return new ArrayList<>();
     }
 
     @Override
-    protected B removeNext(Collection<B> worklist) {
+    public B removeNext(Collection<B> worklist) {
         Collections.shuffle((List<?>) worklist, rnd);
         B agent = ((List<B>) worklist).getFirst();
         worklist.clear();
@@ -47,7 +47,7 @@ public class RandomAgentModelCheckingStrategy<B extends Bigraph<? extends Signat
     }
 
     @Override
-    protected void addToWorklist(Collection<B> worklist, B bigraph) {
+    public void addToWorklist(Collection<B> worklist, B bigraph) {
         worklist.add(bigraph);
     }
 }

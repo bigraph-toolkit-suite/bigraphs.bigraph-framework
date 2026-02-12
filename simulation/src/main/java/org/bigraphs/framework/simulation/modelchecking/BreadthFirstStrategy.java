@@ -34,17 +34,17 @@ public class BreadthFirstStrategy<B extends Bigraph<? extends Signature<?>>> ext
     }
 
     @Override
-    protected Collection<B> createWorklist() {
+    public Collection<B> createWorklist() {
         return new ConcurrentLinkedDeque<>();
     }
 
     @Override
-    protected B removeNext(Collection<B> worklist) {
+    public B removeNext(Collection<B> worklist) {
         return ((Deque<B>) worklist).removeFirst(); // FIFO
     }
 
     @Override
-    protected void addToWorklist(Collection<B> worklist, B bigraph) {
+    public void addToWorklist(Collection<B> worklist, B bigraph) {
         ((Deque<B>) worklist).addLast(bigraph);
     }
 }
