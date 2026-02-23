@@ -8,6 +8,7 @@ sidebar_position: 1
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+const url = "https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel";
 
 <center>
     <p>
@@ -20,11 +21,6 @@ import TabItem from '@theme/TabItem';
 - **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.4.0</span>
 - Previous Stable Versions: `2.3.6`, `2.3.5`, `2.3.4`
 
-:::info Migration `2.1.2` → `2.2.0`
-For refactor and upgrade instructions, please see the
-[**GitHub Releases Changelog**](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/releases/tag/v2.2.0).
-:::
-
 <details style={{ background: 'transparent' }}>
     <summary><strong>Version Compatibility</strong></summary>
 
@@ -33,33 +29,38 @@ This table specifies the metamodel standards supported by the Bigraph Framework.
 <table border="0">
         <tr>
             <th>Bigraph Framework</th>
-            <th>Bigraph Ecore Metamodel</th>
+            <th><a href={url}>Bigraph Ecore Metamodel</a></th>
         </tr>
         <tr>
-            <td>1.0.0</td>
-            <td>1.6.0</td>
-        </tr>
-        <tr>
-            <td>1.1.0</td>
-            <td>1.6.1</td>
-        </tr>
-        <tr>
-            <td>2.2.1, 2.2.0, 2.1.2, 2.1.1, <br/>2.1.0, 2.0.2, 2.0.1</td>
-            <td>2.0.1, 1.6.1</td>
-        </tr>
-        <tr>
-            <td>2.3.4, 2.3.3, 2.3.2, 2.3.1, 2.3.0</td>
-            <td>2.0.2</td>
+            <td>2.4.0</td>
+            <td>2.0.4</td>
         </tr>
         <tr>
             <td>2.3.6, 2.3.5</td>
             <td>2.0.3</td>
         </tr>
         <tr>
-            <td>2.4.0</td>
-            <td>2.0.4</td>
+            <td>2.3.4, 2.3.3, 2.3.2, 2.3.1, 2.3.0</td>
+            <td>2.0.2</td>
+        </tr>
+        <tr>
+            <td>2.2.1, 2.2.0, 2.1.2, 2.1.1, <br/>2.1.0, 2.0.2, 2.0.1</td>
+            <td>2.0.1, 1.6.1</td>
+        </tr>
+        <tr>
+            <td>1.1.0</td>
+            <td>1.6.1</td>
+        </tr>
+        <tr>
+            <td>1.0.0</td>
+            <td>1.6.0</td>
         </tr>
 </table>
+
+:::info Migration `2.1.2` → `2.2.0`
+For refactor and upgrade instructions, please see the
+[**GitHub Releases Changelog**](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/releases/tag/v2.2.0).
+:::
 
 :::info Info
 Since version 1.0.0 of Bigraph Framework: The new groupID and base package name `org.bigraphs.*` is used instead of the former one
