@@ -91,26 +91,22 @@
         <doclint>none</doclint>
         <project.usermanual.outputDirectory>../documentation/v2-docusaurus/static/apidocs
         </project.usermanual.outputDirectory>
-        <!-- Versions -->
-        <bigraph.metamodel.version>2.0.3</bigraph.metamodel.version>
-        <emf.ecore.version>2.40.0</emf.ecore.version>
+        <!-- Eclipse Ecore -->
+        <bigraph.metamodel.version>2.0.4</bigraph.metamodel.version>
+        <emf.ecore.version>2.41.0</emf.ecore.version>
         <emf.ecore.xmi.version>2.39.0</emf.ecore.xmi.version>
-        <emf.common.version>2.43.0</emf.common.version>
+        <emf.common.version>2.44.0</emf.common.version>
         <emf.codegen.version>2.27.0</emf.codegen.version>
-        <!-- Should match with the version in Spring Data CDO + Bigraph Ecore Metamodel -->
-        <emf.cdo.version>4.20.0-SNAPSHOT</emf.cdo.version><!--4.20.0.v20221124-1637-->
-        <!-- Should match with the version in Spring Data CDO + Bigraph Ecore Metamodel -->
-        <emf.cdo.common.version>4.20.0-SNAPSHOT</emf.cdo.common.version><!--4.20.0.v20221106-0628-->
-        <!-- Should match with the version in Spring Data CDO -->
         <eclipse.core.runtime.version>3.34.0</eclipse.core.runtime.version>
         <eclipse.collections.version>11.1.0</eclipse.collections.version>
+        <!-- Other -->
+        <spring.boot.version>3.2.10</spring.boot.version>
+        <junit.version>5.10.5</junit.version>
+        <log4j.version>2.0.17</log4j.version>
         <guava.version>33.4.8-jre</guava.version>
         <jgrapht.version>1.5.2</jgrapht.version>
-        <junit.version>5.6.2</junit.version>
-        <log4j.version>1.7.30</log4j.version>
         <graphviz.version>0.18.1</graphviz.version>
         <graphstream.version>2.0</graphstream.version>
-        <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
     </properties>
 
     <build>
@@ -452,10 +448,10 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${project.basedir}/etc/libs/org.eclipse.emf.compare_3.5.3.201911051515.jar</file>
+                            <file>etc/libs/emf-compare/org.eclipse.emf.compare_3.5.3.202505141345.jar</file>
                             <groupId>org.eclipse.emf.compare</groupId>
                             <artifactId>org.eclipse.emf.compare</artifactId>
-                            <version>3.5.3.201911051515</version>
+                            <version>3.5.3.202505141345</version>
                             <generatePom>true</generatePom>
                             <packaging>jar</packaging>
                         </configuration>
@@ -577,13 +573,13 @@
             <dependency>
                 <groupId>org.eclipse.emf.compare</groupId>
                 <artifactId>org.eclipse.emf.compare</artifactId>
-                <version>3.5.3.201911051515</version>
+                <version>3.5.3.202505141345</version>
                 <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.expressions</artifactId>
-                <version>3.5.100</version>
+                <version>3.9.500</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.emf</groupId>
@@ -635,22 +631,6 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-configuration-processor</artifactId>
-                <version>${spring.boot.version}</version>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>5.2.7.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-autoconfigure</artifactId>
-                <version>${spring.boot.version}</version>
             </dependency>
             <!-- Other -->
             <dependency>
@@ -754,19 +734,13 @@
             <dependency>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.9.0</version>
             </dependency>
             <!-- Test -->
             <dependency>
                 <groupId>org.bigraphs.testing</groupId>
                 <artifactId>bigraphs-testing</artifactId>
                 <version>0.2.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring.boot.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

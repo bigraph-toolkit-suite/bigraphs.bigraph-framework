@@ -1,0 +1,3 @@
+https://github.com/eclipse-emf-compare/emf-compare
+
+The latest version of EMF Compare can be installed from https://download.eclipse.org/modeling/emf/compare/updates/releases/latest/

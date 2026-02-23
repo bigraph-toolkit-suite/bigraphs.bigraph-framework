@@ -115,7 +115,9 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <configuration><skip>false</skip></configuration>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
             </plugin>
             <!-- DEPLOY -->
             <plugin>
@@ -131,6 +133,24 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.bigraphs.framework</groupId>
+            <artifactId>bigraph-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.json</groupId>
+                    <artifactId>json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.bigraphs.framework</groupId>
+            <artifactId>bigraph-converter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bigraphs.framework</groupId>
+            <artifactId>bigraph-visualization</artifactId>
+        </dependency>
+        <dependency>
             <groupId>it.uniud.mads.jlibbig</groupId>
             <artifactId>jlibbig</artifactId>
         </dependency>
@@ -142,23 +162,6 @@
             <groupId>org.choco-solver</groupId>
             <artifactId>choco-solver</artifactId>
             <version>4.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20190722</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bigraphs.framework</groupId>
-            <artifactId>bigraph-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.bigraphs.framework</groupId>
-            <artifactId>bigraph-converter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.bigraphs.framework</groupId>
-            <artifactId>bigraph-visualization</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
@@ -193,39 +196,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- Testing -->
         <!--        <dependency>-->
@@ -247,20 +222,8 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.jayway.jsonpath</groupId>
-                    <artifactId>json-path</artifactId>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
