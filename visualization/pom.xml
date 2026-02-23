@@ -111,6 +111,11 @@
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
         </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-reload4j</artifactId>
+        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

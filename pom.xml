@@ -102,7 +102,6 @@
         <!-- Other -->
         <spring.boot.version>3.2.10</spring.boot.version>
         <junit.version>5.10.5</junit.version>
-        <log4j.version>2.0.17</log4j.version>
         <guava.version>33.4.8-jre</guava.version>
         <jgrapht.version>1.5.2</jgrapht.version>
         <graphviz.version>0.18.1</graphviz.version>
@@ -484,14 +483,7 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
+        <!-- Deployment -->
         <dependency>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
@@ -723,18 +715,19 @@
                 <scope>provided</scope> <!-- will not be exported -->
                 <optional>true</optional>
             </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
-                <scope>provided</scope> <!-- will not be exported -->
-                <optional>true</optional>
-            </dependency>
             <!-- Deployment -->
             <dependency>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
                 <version>0.9.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-reload4j</artifactId>
+                <version>2.0.17</version>
+                <scope>provided</scope>
+                <optional>true</optional>
             </dependency>
             <!-- Test -->
             <dependency>

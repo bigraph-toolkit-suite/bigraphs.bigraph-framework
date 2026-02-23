@@ -56,13 +56,13 @@
             </plugin>
             <!-- /SKIP -->
             <!-- OWASP -->
-<!--            <plugin>-->
-<!--                <groupId>org.owasp</groupId>-->
-<!--                <artifactId>dependency-check-maven</artifactId>-->
-<!--                <configuration>-->
-<!--                    <skip>${skip.security.check}</skip>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.owasp</groupId>-->
+            <!--                <artifactId>dependency-check-maven</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <skip>${skip.security.check}</skip>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
             <!-- SHADE -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -97,7 +97,9 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <configuration><skip>false</skip></configuration>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
             </plugin>
             <!-- DEPLOY -->
             <plugin>
@@ -137,10 +139,6 @@
             <artifactId>lpg.runtime.java</artifactId>
             <version>2.0.17.v201004271640</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.platform</groupId>-->
-        <!--            <artifactId>org.eclipse.equinox.common</artifactId>-->
-        <!--        </dependency>-->
         <!-- Excluded from codegen and provided here-->
         <dependency>
             <groupId>org.eclipse.platform</groupId>
@@ -203,6 +201,11 @@
         <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>checker-qual</artifactId>
+        </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-reload4j</artifactId>
         </dependency>
         <!-- Test -->
         <dependency>
