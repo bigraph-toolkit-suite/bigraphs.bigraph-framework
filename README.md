@@ -217,29 +217,27 @@ Depending on your project setup, you may need to include the following libraries
 
 For a bare Maven/Gradle project:
 ```xml
-<!-- For example, use log4j-->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-log4j12</artifactId>
-    <version>1.7.30</version>
-</dependency>
-
-<!-- Or, use a no-operation (NOP) logger implementation -->
+<!-- For example, use a no-operation (NOP) logger implementation -->
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-nop</artifactId>
-    <version>2.0.7</version>
+    <version>2.0.17</version>
 </dependency>
 
 <!-- or, for example, the reload4j implementation (fork of log4j) -->
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-reload4j</artifactId>
-    <version>2.0.9</version>
+    <version>2.0.17</version>
 </dependency>
 ```
 
 For Spring-based Projects:
+
+Spring Boot uses Logback (`ch.qos.logback.classic`) as its default logging framework.
+That is, Spring Boot's `spring-boot-starter`, `spring-boot-starter-web`, etc. pull in Logback by default via `spring-boot-starter-logging` dependency.
+If you want to change to another framework you must exclude `spring-boot-starter-logging`.
+For example, to use Log4j2's SLF4J provider:
 ```xml
 <dependency>
   <groupId>org.springframework.boot</groupId>
@@ -252,12 +250,10 @@ For Spring-based Projects:
   </exclusions>
 </dependency>
 <dependency>
-<groupId>org.springframework.boot</groupId>
-<artifactId>spring-boot-starter-log4j2</artifactId>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-log4j2</artifactId>
 </dependency>
 ```
-
-The example above shows how to use log4j2 in your project as the underlying logging framework.
 
 ## Development and Deployment
 

@@ -12,13 +12,13 @@ import TabItem from '@theme/TabItem';
 <center>
     <p>
         This manual provides a complete guide to the Bigraph Framework. <br/>
-        <i>Last Updated: 2026-02-12</i>
+        <i>Last Updated: 2026-02-23</i>
     </p>
 </center>
 
 
-- **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.3.6</span>
-- Previous Stable Versions: `2.3.5`, `2.3.4`, `2.3.3`
+- **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.4.0</span>
+- Previous Stable Versions: `2.3.6`, `2.3.5`, `2.3.4`
 
 :::info Migration `2.1.2` → `2.2.0`
 For refactor and upgrade instructions, please see the
@@ -55,9 +55,13 @@ This table specifies the metamodel standards supported by the Bigraph Framework.
             <td>2.3.6, 2.3.5</td>
             <td>2.0.3</td>
         </tr>
+        <tr>
+            <td>2.4.0</td>
+            <td>2.0.4</td>
+        </tr>
 </table>
 
-:::caution Caution
+:::info Info
 Since version 1.0.0 of Bigraph Framework: The new groupID and base package name `org.bigraphs.*` is used instead of the former one
 `de.tudresden.inf.st.bigraphs.*`.
 :::
@@ -190,29 +194,27 @@ Depending on your project setup, you may need to include the following libraries
 
 For a bare Maven/Gradle project:
 ```xml
-<!-- For example, use log4j-->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-log4j12</artifactId>
-    <version>1.7.30</version>
-</dependency>
-
-<!-- Or, use a no-operation (NOP) logger implementation -->
+<!-- For example, use a no-operation (NOP) logger implementation -->
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-nop</artifactId>
-    <version>2.0.7</version>
+    <version>2.0.17</version>
 </dependency>
 
 <!-- or, for example, the reload4j implementation (fork of log4j) -->
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-reload4j</artifactId>
-    <version>2.0.9</version>
+    <version>2.0.17</version>
 </dependency>
 ```
 
 For Spring-based Projects:
+
+Spring Boot uses Logback (`ch.qos.logback.classic`) as its default logging framework.
+That is, Spring Boot's `spring-boot-starter`, `spring-boot-starter-web`, etc. pull in Logback by default via `spring-boot-starter-logging` dependency.
+If you want to change to another framework you must exclude `spring-boot-starter-logging`.
+For example, to use Log4j2's SLF4J provider:
 ```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -229,6 +231,3 @@ For Spring-based Projects:
     <artifactId>spring-boot-starter-log4j2</artifactId>
 </dependency>
 ```
-
-Not including these dependencies will result in warnings.
-The example above shows how to use a NOP logger or a reload4j as the underlying logging framework in your project.
