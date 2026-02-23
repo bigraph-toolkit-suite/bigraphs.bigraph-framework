@@ -93,13 +93,13 @@ public class GXLConnector extends Object {
     private Method printDataMethod;               // Method printData() of the GXLAttrAPIImpl
     private Method printDataMethod2;              // Method printData() of the GXLUntypedStandardValueContainerAPI
 
-    private Class[] SingleStringClassArray = {(new String()).getClass()};
+    private Class[] SingleStringClassArray = {String.class};
     // needed to invoke the method printData()
-    private Class[] DoubleStringClassArray = {(new String()).getClass(), (new String()).getClass()};
+    private Class[] DoubleStringClassArray = {String.class, String.class};
     // defines a class array with 2 strings (needed to set Attributes)
-    private Class[] TripleStringClassArray = {(new String()).getClass(), (new String()).getClass(), (new String()).getClass()};
+    private Class[] TripleStringClassArray = {String.class, String.class, String.class};
     // defines a class array with 3 strings
-    private Class[] SingleIntClassArray = {(new Integer(0)).getClass()};
+    private Class[] SingleIntClassArray = {(Integer.valueOf(0)).getClass()};
     // needed to invoke the method setCurrentDepth()
 
     private java.util.Hashtable createMethods = new java.util.Hashtable(); // a hashtable for all create<nodeName>() methods
@@ -138,95 +138,95 @@ public class GXLConnector extends Object {
                 GXLStandardClass = cl.loadClass(packageName + ".GXLStandardAPI");
 
                 setAttrValMethod = GXLStandardClass.getMethod("setAttributeValue", DoubleStringClassArray);
-                closeMethod = GXLStandardClass.getMethod("close", null);
+                closeMethod = GXLStandardClass.getMethod("close", (Class<?>) null);
 
                 GXLGXLClass = cl.loadClass(packageName + ".GXLGXLAPIImpl");
 
-                createMethods.put("graph2", GXLGXLClass.getMethod("createGraph", null));
-                closeMethods.put("graph2", GXLGXLClass.getMethod("closeGraph", null));
+                createMethods.put("graph2", GXLGXLClass.getMethod("createGraph", (Class<?>) null));
+                closeMethods.put("graph2", GXLGXLClass.getMethod("closeGraph", (Class<?>) null));
                 createMethods.put("cPI", GXLGXLClass.getMethod("createProcessingInstruction", DoubleStringClassArray));
                 createMethods.put("cDocDec", GXLGXLClass.getMethod("createDoctypeDecl", TripleStringClassArray));
-                createMethods.put("gxl", GXLGXLClass.getMethod("createGXL", null));
+                createMethods.put("gxl", GXLGXLClass.getMethod("createGXL", (Class<?>) null));
 
 
                 GXLTypedClass = cl.loadClass(packageName + ".GXLTypedAndAttributedAPI");
 
-                createMethods.put("type", GXLTypedClass.getMethod("createType", null));
-                closeMethods.put("type", GXLTypedClass.getMethod("closeType", null));
+                createMethods.put("type", GXLTypedClass.getMethod("createType", (Class<?>) null));
+                closeMethods.put("type", GXLTypedClass.getMethod("closeType", (Class<?>) null));
 
                 GXLAttributedClass = cl.loadClass(packageName + ".GXLAttributedAPI");
 
 
-                createMethods.put("attr", GXLAttributedClass.getMethod("createAttr", null));
-                closeMethods.put("attr", GXLAttributedClass.getMethod("closeAttr", null));
+                createMethods.put("attr", GXLAttributedClass.getMethod("createAttr", (Class<?>) null));
+                closeMethods.put("attr", GXLAttributedClass.getMethod("closeAttr", (Class<?>) null));
 
                 GXLGraphContClass = cl.loadClass(packageName + ".GXLGraphContainerAPI");
 
-                createMethods.put("graph", GXLGraphContClass.getMethod("createGraph", null));
-                closeMethods.put("graph", GXLGraphContClass.getMethod("closeGraph", null));
+                createMethods.put("graph", GXLGraphContClass.getMethod("createGraph", (Class<?>) null));
+                closeMethods.put("graph", GXLGraphContClass.getMethod("closeGraph", (Class<?>) null));
 
                 GXLGraphClass = cl.loadClass(packageName + ".GXLGraphAPIImpl");
 
-                createMethods.put("node", GXLGraphClass.getMethod("createNode", null));
-                closeMethods.put("node", GXLGraphClass.getMethod("closeNode", null));
-                createMethods.put("edge", GXLGraphClass.getMethod("createEdge", null));
-                closeMethods.put("edge", GXLGraphClass.getMethod("closeEdge", null));
-                createMethods.put("rel", GXLGraphClass.getMethod("createRel", null));
-                closeMethods.put("rel", GXLGraphClass.getMethod("closeRel", null));
+                createMethods.put("node", GXLGraphClass.getMethod("createNode", (Class<?>) null));
+                closeMethods.put("node", GXLGraphClass.getMethod("closeNode", (Class<?>) null));
+                createMethods.put("edge", GXLGraphClass.getMethod("createEdge", (Class<?>) null));
+                closeMethods.put("edge", GXLGraphClass.getMethod("closeEdge", (Class<?>) null));
+                createMethods.put("rel", GXLGraphClass.getMethod("createRel", (Class<?>) null));
+                closeMethods.put("rel", GXLGraphClass.getMethod("closeRel", (Class<?>) null));
 
 
                 GXLRelClass = cl.loadClass(packageName + ".GXLRelAPIImpl");
 
-                createMethods.put("relend", GXLRelClass.getMethod("createRelend", null));
-                closeMethods.put("relend", GXLRelClass.getMethod("closeRelend", null));
+                createMethods.put("relend", GXLRelClass.getMethod("createRelend", (Class<?>) null));
+                closeMethods.put("relend", GXLRelClass.getMethod("closeRelend", (Class<?>) null));
 
                 GXLAttrAPIImplClass = cl.loadClass(packageName + ".GXLAttrAPIImpl");
 
-                createMethods.put("locator", GXLAttrAPIImplClass.getMethod("createLocator", null));
-                createMethods.put("enum", GXLAttrAPIImplClass.getMethod("createEnum", null));
-                createMethods.put("seq", GXLAttrAPIImplClass.getMethod("createSeq", null));
-                createMethods.put("set", GXLAttrAPIImplClass.getMethod("createSet", null));
-                createMethods.put("bag", GXLAttrAPIImplClass.getMethod("createBag", null));
-                createMethods.put("tup", GXLAttrAPIImplClass.getMethod("createTup", null));
-                createMethods.put("int", GXLAttrAPIImplClass.getMethod("createInt", null));
-                createMethods.put("bool", GXLAttrAPIImplClass.getMethod("createBool", null));
-                createMethods.put("string", GXLAttrAPIImplClass.getMethod("createString", null));
-                createMethods.put("float", GXLAttrAPIImplClass.getMethod("createFloat", null));
-                closeMethods.put("locator", GXLAttrAPIImplClass.getMethod("closeLocator", null));
-                closeMethods.put("enum", GXLAttrAPIImplClass.getMethod("closeEnum", null));
-                closeMethods.put("seq", GXLAttrAPIImplClass.getMethod("closeSeq", null));
-                closeMethods.put("set", GXLAttrAPIImplClass.getMethod("closeSet", null));
-                closeMethods.put("bag", GXLAttrAPIImplClass.getMethod("closeBag", null));
-                closeMethods.put("tup", GXLAttrAPIImplClass.getMethod("closeTup", null));
-                closeMethods.put("int", GXLAttrAPIImplClass.getMethod("closeInt", null));
-                closeMethods.put("bool", GXLAttrAPIImplClass.getMethod("closeBool", null));
-                closeMethods.put("string", GXLAttrAPIImplClass.getMethod("closeString", null));
-                closeMethods.put("float", GXLAttrAPIImplClass.getMethod("closeFloat", null));
+                createMethods.put("locator", GXLAttrAPIImplClass.getMethod("createLocator", (Class<?>) null));
+                createMethods.put("enum", GXLAttrAPIImplClass.getMethod("createEnum", (Class<?>) null));
+                createMethods.put("seq", GXLAttrAPIImplClass.getMethod("createSeq", (Class<?>) null));
+                createMethods.put("set", GXLAttrAPIImplClass.getMethod("createSet", (Class<?>) null));
+                createMethods.put("bag", GXLAttrAPIImplClass.getMethod("createBag", (Class<?>) null));
+                createMethods.put("tup", GXLAttrAPIImplClass.getMethod("createTup", (Class<?>) null));
+                createMethods.put("int", GXLAttrAPIImplClass.getMethod("createInt", (Class<?>) null));
+                createMethods.put("bool", GXLAttrAPIImplClass.getMethod("createBool", (Class<?>) null));
+                createMethods.put("string", GXLAttrAPIImplClass.getMethod("createString", (Class<?>) null));
+                createMethods.put("float", GXLAttrAPIImplClass.getMethod("createFloat", (Class<?>) null));
+                closeMethods.put("locator", GXLAttrAPIImplClass.getMethod("closeLocator", (Class<?>) null));
+                closeMethods.put("enum", GXLAttrAPIImplClass.getMethod("closeEnum", (Class<?>) null));
+                closeMethods.put("seq", GXLAttrAPIImplClass.getMethod("closeSeq", (Class<?>) null));
+                closeMethods.put("set", GXLAttrAPIImplClass.getMethod("closeSet", (Class<?>) null));
+                closeMethods.put("bag", GXLAttrAPIImplClass.getMethod("closeBag", (Class<?>) null));
+                closeMethods.put("tup", GXLAttrAPIImplClass.getMethod("closeTup", (Class<?>) null));
+                closeMethods.put("int", GXLAttrAPIImplClass.getMethod("closeInt", (Class<?>) null));
+                closeMethods.put("bool", GXLAttrAPIImplClass.getMethod("closeBool", (Class<?>) null));
+                closeMethods.put("string", GXLAttrAPIImplClass.getMethod("closeString", (Class<?>) null));
+                closeMethods.put("float", GXLAttrAPIImplClass.getMethod("closeFloat", (Class<?>) null));
 
                 printDataMethod = GXLAttrAPIImplClass.getMethod("printData", SingleStringClassArray);
 
                 GXLUntypedValueContainerClass = cl.loadClass(packageName + ".GXLUntypedStandardValueContainerAPI");
 
-                createMethods.put("locator2", GXLUntypedValueContainerClass.getMethod("createLocator", null));
-                createMethods.put("enum2", GXLUntypedValueContainerClass.getMethod("createEnum", null));
-                createMethods.put("seq2", GXLUntypedValueContainerClass.getMethod("createSeq", null));
-                createMethods.put("set2", GXLUntypedValueContainerClass.getMethod("createSet", null));
-                createMethods.put("bag2", GXLUntypedValueContainerClass.getMethod("createBag", null));
-                createMethods.put("tup2", GXLUntypedValueContainerClass.getMethod("createTup", null));
-                createMethods.put("int2", GXLUntypedValueContainerClass.getMethod("createInt", null));
-                createMethods.put("bool2", GXLUntypedValueContainerClass.getMethod("createBool", null));
-                createMethods.put("string2", GXLUntypedValueContainerClass.getMethod("createString", null));
-                createMethods.put("float2", GXLUntypedValueContainerClass.getMethod("createFloat", null));
-                closeMethods.put("locator2", GXLUntypedValueContainerClass.getMethod("closeLocator", null));
-                closeMethods.put("enum2", GXLUntypedValueContainerClass.getMethod("closeEnum", null));
-                closeMethods.put("seq2", GXLUntypedValueContainerClass.getMethod("closeSeq", null));
-                closeMethods.put("set2", GXLUntypedValueContainerClass.getMethod("closeSet", null));
-                closeMethods.put("bag2", GXLUntypedValueContainerClass.getMethod("closeBag", null));
-                closeMethods.put("tup2", GXLUntypedValueContainerClass.getMethod("closeTup", null));
-                closeMethods.put("int2", GXLUntypedValueContainerClass.getMethod("closeInt", null));
-                closeMethods.put("bool2", GXLUntypedValueContainerClass.getMethod("closeBool", null));
-                closeMethods.put("string2", GXLUntypedValueContainerClass.getMethod("closeString", null));
-                closeMethods.put("float2", GXLUntypedValueContainerClass.getMethod("closeFloat", null));
+                createMethods.put("locator2", GXLUntypedValueContainerClass.getMethod("createLocator", (Class<?>) null));
+                createMethods.put("enum2", GXLUntypedValueContainerClass.getMethod("createEnum", (Class<?>) null));
+                createMethods.put("seq2", GXLUntypedValueContainerClass.getMethod("createSeq", (Class<?>) null));
+                createMethods.put("set2", GXLUntypedValueContainerClass.getMethod("createSet", (Class<?>) null));
+                createMethods.put("bag2", GXLUntypedValueContainerClass.getMethod("createBag", (Class<?>) null));
+                createMethods.put("tup2", GXLUntypedValueContainerClass.getMethod("createTup", (Class<?>) null));
+                createMethods.put("int2", GXLUntypedValueContainerClass.getMethod("createInt", (Class<?>) null));
+                createMethods.put("bool2", GXLUntypedValueContainerClass.getMethod("createBool", (Class<?>) null));
+                createMethods.put("string2", GXLUntypedValueContainerClass.getMethod("createString", (Class<?>) null));
+                createMethods.put("float2", GXLUntypedValueContainerClass.getMethod("createFloat", (Class<?>) null));
+                closeMethods.put("locator2", GXLUntypedValueContainerClass.getMethod("closeLocator", (Class<?>) null));
+                closeMethods.put("enum2", GXLUntypedValueContainerClass.getMethod("closeEnum", (Class<?>) null));
+                closeMethods.put("seq2", GXLUntypedValueContainerClass.getMethod("closeSeq", (Class<?>) null));
+                closeMethods.put("set2", GXLUntypedValueContainerClass.getMethod("closeSet", (Class<?>) null));
+                closeMethods.put("bag2", GXLUntypedValueContainerClass.getMethod("closeBag", (Class<?>) null));
+                closeMethods.put("tup2", GXLUntypedValueContainerClass.getMethod("closeTup", (Class<?>) null));
+                closeMethods.put("int2", GXLUntypedValueContainerClass.getMethod("closeInt", (Class<?>) null));
+                closeMethods.put("bool2", GXLUntypedValueContainerClass.getMethod("closeBool", (Class<?>) null));
+                closeMethods.put("string2", GXLUntypedValueContainerClass.getMethod("closeString", (Class<?>) null));
+                closeMethods.put("float2", GXLUntypedValueContainerClass.getMethod("closeFloat", (Class<?>) null));
                 printDataMethod2 = GXLUntypedValueContainerClass.getMethod("printData", SingleStringClassArray);
             } // try
             catch (ClassNotFoundException cnfe) {
@@ -264,9 +264,9 @@ public class GXLConnector extends Object {
         parentNodeStack.add(currentDepth, parentNode);
         currentDepth += 1;
         // set the currentDepth in the GXLOutputAPI
-        Object[] args = {new Integer(currentDepth)};
+        Object[] args = {currentDepth};
         try {
-            setCurrDepthMethod.invoke(null, new Object[]{new Integer(currentDepth)});
+            setCurrDepthMethod.invoke(null, new Object[]{currentDepth});
         } catch (Exception e) {
             printError(3, "create");
         }
@@ -327,7 +327,7 @@ public class GXLConnector extends Object {
         // call the close() method of the current GXL construct
         try {
             parentNode = parentNodeStack.pop();
-            closeMethod.invoke(parentNode, null);
+            closeMethod.invoke(parentNode, (Object) null);
         } catch (java.lang.reflect.InvocationTargetException ite) {
             printError(7, "close");
         } catch (java.lang.IllegalAccessException iae) {
@@ -350,7 +350,7 @@ public class GXLConnector extends Object {
             // decrease the current depth and invoke the setCurrentDepth() method of the GXLOutputAPI
             currentDepth -= 1;
             try {
-                setCurrDepthMethod.invoke(null, new Object[]{new Integer(currentDepth)});
+                setCurrDepthMethod.invoke(null, new Object[]{currentDepth});
             } catch (Exception e) {
                 printError(8, "close");
             }

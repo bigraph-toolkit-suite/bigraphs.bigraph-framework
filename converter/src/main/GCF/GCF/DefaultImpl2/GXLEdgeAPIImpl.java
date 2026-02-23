@@ -71,7 +71,7 @@ public class GXLEdgeAPIImpl extends GXLGraphContainerAPI {
         if (name.equals("id")) id=value;
         else if (name.equals("from")) from=value;
              else if (name.equals("to")) to=value;
-                  else if (name.equals ("isdirected")) isdirected = value.toLowerCase().equals("true") ? new Boolean(true) : new Boolean(false);
+                  else if (name.equals ("isdirected")) isdirected = value.equalsIgnoreCase("true");
                        else if (name.equals ("fromorder")) fromorder=value;    
                             else if (name.equals ("toorder")) toorder=value;
     }

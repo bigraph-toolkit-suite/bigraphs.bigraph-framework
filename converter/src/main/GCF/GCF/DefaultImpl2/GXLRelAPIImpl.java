@@ -79,7 +79,7 @@ public class GXLRelAPIImpl extends GXLGraphContainerAPI {
     public void setAttributeValue(String attributeName, String value) {
         String name=attributeName.toLowerCase();
         if (name.equals("id")) id=value;
-        else if (name.equals("isdirected")) isdirected=value.toLowerCase().equals("true") ? new Boolean(true) : new Boolean(false);
+        else if (name.equals("isdirected")) isdirected= value.equalsIgnoreCase("true");
     }
         
     /**

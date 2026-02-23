@@ -351,15 +351,15 @@ public class XmlParser {
 
     static {
         attributeTypeHash = new Hashtable();
-        attributeTypeHash.put("CDATA", new Integer(ATTRIBUTE_CDATA));
-        attributeTypeHash.put("ID", new Integer(ATTRIBUTE_ID));
-        attributeTypeHash.put("IDREF", new Integer(ATTRIBUTE_IDREF));
-        attributeTypeHash.put("IDREFS", new Integer(ATTRIBUTE_IDREFS));
-        attributeTypeHash.put("ENTITY", new Integer(ATTRIBUTE_ENTITY));
-        attributeTypeHash.put("ENTITIES", new Integer(ATTRIBUTE_ENTITIES));
-        attributeTypeHash.put("NMTOKEN", new Integer(ATTRIBUTE_NMTOKEN));
-        attributeTypeHash.put("NMTOKENS", new Integer(ATTRIBUTE_NMTOKENS));
-        attributeTypeHash.put("NOTATION", new Integer(ATTRIBUTE_NOTATION));
+        attributeTypeHash.put("CDATA", Integer.valueOf(ATTRIBUTE_CDATA));
+        attributeTypeHash.put("ID", Integer.valueOf(ATTRIBUTE_ID));
+        attributeTypeHash.put("IDREF", Integer.valueOf(ATTRIBUTE_IDREF));
+        attributeTypeHash.put("IDREFS", Integer.valueOf(ATTRIBUTE_IDREFS));
+        attributeTypeHash.put("ENTITY", Integer.valueOf(ATTRIBUTE_ENTITY));
+        attributeTypeHash.put("ENTITIES", Integer.valueOf(ATTRIBUTE_ENTITIES));
+        attributeTypeHash.put("NMTOKEN", Integer.valueOf(ATTRIBUTE_NMTOKEN));
+        attributeTypeHash.put("NMTOKENS", Integer.valueOf(ATTRIBUTE_NMTOKENS));
+        attributeTypeHash.put("NOTATION", Integer.valueOf(ATTRIBUTE_NOTATION));
     }
 
 
@@ -488,7 +488,7 @@ public class XmlParser {
      */
     void error(String message, char textFound, String textExpected)
             throws java.lang.Exception {
-        error(message, new Character(textFound).toString(), textExpected);
+        error(message, Character.valueOf(textFound).toString(), textExpected);
     }
 
 
@@ -591,8 +591,6 @@ public class XmlParser {
      * DTD (if present) has been parsed.
      * <p>We do not look for the XML declaration here, because it is
      * handled by pushURL().
-     *
-     * @see pushURL
      */
     void parseProlog()
             throws java.lang.Exception {
@@ -1569,7 +1567,7 @@ public class XmlParser {
                     case 'f':
                     case 'F':
                         value *= 16;
-                        value += Integer.parseInt(new Character(c).toString(), 16);
+                        value += Integer.parseInt(Character.valueOf(c).toString(), 16);
                         break;
                     case ';':
                         break loop1;
@@ -1594,7 +1592,7 @@ public class XmlParser {
                     case '8':
                     case '9':
                         value *= 10;
-                        value += Integer.parseInt(new Character(c).toString(), 10);
+                        value += Integer.parseInt(Character.valueOf(c).toString(), 10);
                         break;
                     case ';':
                         break loop2;
@@ -1617,7 +1615,7 @@ public class XmlParser {
         } else {
             // too big for surrogate
             error("character reference " + value + " is too large for UTF-16",
-                    new Integer(value).toString(), null);
+                    Integer.valueOf(value).toString(), null);
         }
     }
 
@@ -2093,7 +2091,7 @@ public class XmlParser {
             }
         } catch (EOFException e) {
             error("end of input while looking for delimiter (started on line "
-                    + startLine + ')', null, new Character(delim).toString());
+                    + startLine + ')', null, Character.valueOf(delim).toString());
         }
 
         // Normalise whitespace if necessary.
@@ -2242,7 +2240,6 @@ public class XmlParser {
     /**
      * Convert the data buffer to a string.
      *
-     * @param internFlag true if the contents should be interned.
      * @see #intern(char[], int, int)
      */
     String dataBufferToString() {
@@ -2301,7 +2298,7 @@ public class XmlParser {
         char c = readCh();
 
         if (c != delim) {
-            error("expected character", c, new Character(delim).toString());
+            error("expected character", c, Character.valueOf(delim).toString());
         }
     }
 
@@ -2512,7 +2509,7 @@ public class XmlParser {
         // Make a new one if necessary.
         if (element == null) {
             element = new Object[3];
-            element[0] = new Integer(CONTENT_UNDECLARED);
+            element[0] = Integer.valueOf(CONTENT_UNDECLARED);
             element[1] = null;
             element[2] = null;
         } else if (contentType != CONTENT_UNDECLARED &&
@@ -2523,7 +2520,7 @@ public class XmlParser {
 
         // Insert the content type, if any.
         if (contentType != CONTENT_UNDECLARED) {
-            element[0] = new Integer(contentType);
+            element[0] = Integer.valueOf(contentType);
         }
 
         // Insert the content model, if any.
@@ -2720,9 +2717,9 @@ public class XmlParser {
             return;
         } else {
             attribute = new Object[5];
-            attribute[0] = new Integer(type);
+            attribute[0] = Integer.valueOf(type);
             attribute[1] = value;
-            attribute[2] = new Integer(valueType);
+            attribute[2] = Integer.valueOf(valueType);
             attribute[3] = enumeration;
             attribute[4] = null;
             attlist.put(name.intern(), attribute);
@@ -2852,7 +2849,6 @@ public class XmlParser {
     /**
      * Get the notation name associated with an NDATA entity.
      *
-     * @param ename The NDATA entity name.
      * @return The associated notation name, or null if the
      * entity was not declared, or if it is not an
      * NDATA entity.
@@ -2903,7 +2899,7 @@ public class XmlParser {
 
         if (entityInfo.get(eName) == null) {
             entity = new Object[5];
-            entity[0] = new Integer(eClass);
+            entity[0] = Integer.valueOf(eClass);
             entity[1] = pubid;
             entity[2] = sysid;
             entity[3] = value;
@@ -3033,7 +3029,6 @@ public class XmlParser {
      *
      * @return The next character from the current input source.
      * @see #unread(char)
-     * @see #unread(String)
      * @see #readDataChunk
      * @see #readBuffer
      * @see #line
@@ -3109,8 +3104,6 @@ public class XmlParser {
      *
      * @param c The character to push back.
      * @see #readCh
-     * @see #unread(String)
-     * @see #unread(char[])
      * @see #readBuffer
      */
     void unread(char c)
@@ -3123,7 +3116,7 @@ public class XmlParser {
         if (readBufferPos > 0) {
             readBuffer[--readBufferPos] = c;
         } else {
-            pushString(null, new Character(c).toString());
+            pushString(null, Character.valueOf(c).toString());
         }
     }
 
@@ -3135,7 +3128,6 @@ public class XmlParser {
      *
      * @see #readCh
      * @see #unread(char)
-     * @see #unread(String)
      * @see #readBuffer
      * @see #pushString
      */
@@ -3165,7 +3157,6 @@ public class XmlParser {
      * request an encoding explicitly, and it should also look at the
      * headers with an HTTP connection.
      *
-     * @param url The java.net.URL object for the entity.
      * @see XmlHandler#resolveEntity
      * @see #pushString
      * @see #sourceType
@@ -3516,17 +3507,17 @@ public class XmlParser {
 
         // Set up a snapshot of the current
         // input source.
-        input[0] = new Integer(sourceType);
+        input[0] = Integer.valueOf(sourceType);
         input[1] = externalEntity;
         input[2] = readBuffer;
-        input[3] = new Integer(readBufferPos);
-        input[4] = new Integer(readBufferLength);
-        input[5] = new Integer(line);
-        input[6] = new Integer(encoding);
-        input[7] = new Integer(readBufferOverflow);
+        input[3] = Integer.valueOf(readBufferPos);
+        input[4] = Integer.valueOf(readBufferLength);
+        input[5] = Integer.valueOf(line);
+        input[6] = Integer.valueOf(encoding);
+        input[7] = Integer.valueOf(readBufferOverflow);
         input[8] = is;
-        input[9] = new Integer(currentByteCount);
-        input[10] = new Integer(column);
+        input[9] = Integer.valueOf(currentByteCount);
+        input[10] = Integer.valueOf(column);
         input[11] = reader;
 
         // Push it onto the stack.
@@ -3702,7 +3693,6 @@ public class XmlParser {
      * for every character.
      *
      * @param delim The string delimiter
-     * @see #tryRead(String, boolean)
      * @see #readCh
      */
     void parseUntil(String delim)
@@ -3729,7 +3719,6 @@ public class XmlParser {
      * for every character.
      *
      * @param delim The string delimiter
-     * @see #tryRead(String, boolean)
      * @see #readCh
      */
     void skipUntil(String delim)
@@ -3790,8 +3779,6 @@ public class XmlParser {
      * @see #filterCR
      * @see #copyUtf8ReadBuffer
      * @see #copyIso8859_1ReadBuffer
-     * @see #copyUcs_2ReadBuffer
-     * @see #copyUcs_4ReadBuffer
      */
     void readDataChunk()
             throws java.lang.Exception {
