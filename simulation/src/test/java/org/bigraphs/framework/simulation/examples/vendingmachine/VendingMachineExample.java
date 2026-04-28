@@ -217,7 +217,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
                 .child("Coffee").site()
         ;
         PureBigraph bigraph = builder.create();
-        return SubBigraphMatchPredicate.create(bigraph);
+        return SubBigraphMatchPredicate.create(bigraph).withLabel("teaEmpty");
     }
 
     private SubBigraphMatchPredicate<PureBigraph> coffeeContainerIsEmpty() throws InvalidConnectionException, TypeNotExistsException {
@@ -230,7 +230,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
                 .child("Tea").site()
         ;
         PureBigraph bigraph = builder.create();
-        return SubBigraphMatchPredicate.create(bigraph);
+        return SubBigraphMatchPredicate.create(bigraph).withLabel("coffeeEmpty");
     }
 
     private PureBigraph agent(int numOfCoffee, int numOfTea, int numOfCoinsPhd) throws Exception {

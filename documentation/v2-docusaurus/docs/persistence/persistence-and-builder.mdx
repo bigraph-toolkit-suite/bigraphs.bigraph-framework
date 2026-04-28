@@ -27,7 +27,7 @@ For a more sophisticated persistence solution, we refer the reader to [Eclipse C
 
 ## Complete Example
 
-This example shows how to store a bigraph and its signature to the filesystem, and how to load them again.
+[This example](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/core/src/test/java/org/bigraphs/framework/core/StorageUnitTest.java) shows how to store a bigraph and its signature to the filesystem, and how to load them again.
 
 First, we create a signature and a bigraph for testing:
 ```java
@@ -75,7 +75,7 @@ public void save_and_load_signature_model() throws IOException {
             "sigMetaModel.ecore",
             "sigModel.xmi"
     );
-    DynamicSignature sigLoaded = createOrGetSignature(eObjectsSig.get(0));
+    DynamicSignature sigLoaded = createOrGetSignature(eObjectsSig.getFirst());
 
     // (3) Compare
     System.out.println(sigOriginal);
@@ -111,7 +111,7 @@ public void save_and_load_bigraph_model() throws IOException {
     );
 
     // (6) Bigraph instance model loaded
-    PureBigraph bigraphLoaded = BigraphUtil.toBigraph(ePackage, eObjects.get(0), sig());
+    PureBigraph bigraphLoaded = BigraphUtil.toBigraph(ePackage, eObjects.getFirst(), sig());
 
     // (7) Compare the original and the loaded bigraphLoaded
     bigOriginal.getNodes().forEach(System.out::println);

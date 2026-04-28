@@ -91,6 +91,16 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         return PureBigraphBuilder.create(signature, metaModel, (EObject) null);
     }
 
+    /**
+     * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform to the
+     *                                                builders signature type {@code S}
+     */
+    protected PureBigraphBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
+        this.signature = signature;
+        this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
+        this.bigraphicalSignatureAsTypeGraph(metaModelData);
+    }
+
     protected PureBigraphBuilder(S signature) throws BigraphMetaModelLoadingFailedException {
         this(signature, new EMetaModelData.MetaModelDataBuilder()
                 .setNsPrefix("bigraphBaseModel")
@@ -106,16 +116,6 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     @SuppressWarnings("unchecked")
     protected PureBigraphBuilder(EObject signatureMetaModel) {
         this((S) getSignatureFromMetaModel(signatureMetaModel));
-    }
-
-    /**
-     * @throws BigraphMetaModelLoadingFailedException If the provided signature metamodel does not conform the the
-     *                                                builders signature type {@code S}
-     */
-    protected PureBigraphBuilder(S signature, EMetaModelData metaModelData) throws BigraphMetaModelLoadingFailedException {
-        this.signature = signature;
-        this.vertexNameSupplier = createNameSupplier(DEFAULT_VERTEX_PREFIX);
-        this.bigraphicalSignatureAsTypeGraph(metaModelData);
     }
 
     /**

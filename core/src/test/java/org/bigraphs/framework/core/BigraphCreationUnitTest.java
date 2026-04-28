@@ -72,12 +72,12 @@ public class BigraphCreationUnitTest {
                 .connectByEdge("K", "L")
                 .create();
 
-        builder.root().child("K").linkInner("tmp").child("L").linkInner("tmp").create();builder.closeInner();
-
         DiscreteIon<DynamicSignature> K_x = pureDiscreteIon(sig, "K", "x");
         DiscreteIon<DynamicSignature> L_x = pureDiscreteIon(sig, "L", "x");
         Linkings<DynamicSignature>.Closure x = pureLinkings(sig).closure("x");
         BigraphComposite<DynamicSignature> G = ops(x).compose(ops(K_x).merge(L_x));
+        BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) bigraph, System.out);
+        System.out.println("----");
         BigraphFileModelManagement.Store.exportAsInstanceModel((EcoreBigraph) G.getOuterBigraph(), System.out);
     }
 
