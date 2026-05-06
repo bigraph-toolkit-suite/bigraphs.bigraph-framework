@@ -12,6 +12,11 @@ To answer questions like *“does this wiring pattern occur inside a larger syst
 This is known as the subhypergraph isomorphism problem, which generalises subgraph isomorphism.
 For bigraphs, this can be referred to as link graph matching.
 
+:::note
+The dedicated link graph matching discussed on this page should not be confused with the conventional notion of bigraph matching (i.e., a form of subgraph matching).
+See also the algorithmic notes in [Performing the Subhypergraph Matching](#performing-the-subhypergraph-matching).
+:::
+
 In the Bigraph Framework the class [`SubHypergraphIsoSearch`](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework/blob/main/simulation/src/main/java/org/bigraphs/framework/simulation/matching/pure/SubHypergraphIsoSearch.java) performs this search.
 Given a query and a data link graph, it enumerates all _embeddings_.
 Embeddings are _mappings_ of query nodes and hyperedges into the data link graph that preserve adjacency and edge incidence.

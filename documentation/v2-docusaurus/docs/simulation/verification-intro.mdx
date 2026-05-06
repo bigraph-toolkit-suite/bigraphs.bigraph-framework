@@ -1,7 +1,7 @@
 ---
 id: verification-intro
-title: Verification
-sidebar_position: 5
+title: Verification by Model Checking
+sidebar_position: 3
 ---
 
 In software engineering,
@@ -12,8 +12,8 @@ formal verification provides rigorous guarantees about a program's behavior
 by proving specific properties against a formal specification.
 
 In this process,
-a program (formulated as bigraphical reactive system) is checked against a set of correctness properties.
-A program is considered correct if its implementation conforms to the given specification.
+a program or a system (formulated as bigraphical reactive system) is checked against a set of correctness properties.
+A program or a system is considered correct if its implementation conforms to the given specification.
 This method is particularly valuable for developing safe and reliable software,
 as it can identify errors that might be missed by conventional techniques like unit testing.
 
@@ -68,13 +68,12 @@ The model checking procedure implemented in Bigraph Framework is especially suit
 
 This topic is covered in [Bigraphical Predicates](simulation-predicates).
 
-## Simulation types
+## State-Space Exploration Strategies
 
-The frameworks builds the reaction graph in the course of the simulation.
-Only the canonical form of an agent is stored in the graph to reduce the
-number of admissable states in order to minimize the state-space explosion problem.
+The framework builds the reaction graph in the course of model checking or simulation.
+Only the canonical form of a bigraphical state is stored in the reaction graph to minimize the state-space explosion problem.
 
-### Breadth-first Simulation
+### Breadth-first Traversal
 
 The algorithm described in [\[1\]](#ref1) is implemented.
 
