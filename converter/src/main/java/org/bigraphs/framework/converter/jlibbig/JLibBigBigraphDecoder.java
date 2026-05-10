@@ -111,6 +111,9 @@ public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, 
         // Iterate through edges
 
         for (Edge eachEdge : bigraph.getEdges()) {
+            if (eachEdge.getPoints().size() <= 1) {
+                continue;
+            }
             BigraphEntity.Edge correspondingEdge = newEdges.get(eachEdge.getEditable().getName());
             if (correspondingEdge == null) {
                 correspondingEdge = (BigraphEntity.Edge) builder.createNewEdge(eachEdge.getEditable().getName());

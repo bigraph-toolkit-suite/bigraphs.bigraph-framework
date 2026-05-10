@@ -180,6 +180,8 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
                             if (BigraphEntityType.isNode(x)) {
                                 Node node = builder.addNode(((BigraphEntity.NodeEntity) x).getControl().getNamedType().stringValue(), (Parent) jParent);
 //                                System.out.println(((BigraphEntity.NodeEntity<?>) x).getAttributes());
+                                String originalNodeName = ((BigraphEntity.NodeEntity<?>) x).getName();
+                                
                                 if (node instanceof PropertyTarget) {
                                     if (((BigraphEntity.NodeEntity<?>) x).getAttributes() != null) {
                                         for (Map.Entry<String, Object> each : ((BigraphEntity.NodeEntity<?>) x).getAttributes().entrySet()) {
@@ -199,8 +201,20 @@ public class JLibBigBigraphEncoder implements BigraphObjectEncoder<it.uniud.mads
                                         }
 
                                     }
+                                    
+                                    // Always store the original node name as _id property so it can be restored after transformation
+                                    // This ensures node names are preserved across JLibBig transformations
+                                    if (!((BigraphEntity.NodeEntity<?>) x).getAttributes().containsKey("_id")) {
+                                        try {
+                                            SimpleProperty<String> idProperty = new SimpleProperty<>("_id", true, Collections.emptyList());
+                                            idProperty.set(originalNodeName);
+                                            node.attachProperty(idProperty);
+                                        } catch (IllegalArgumentException e) {
+                                            // Property might already exist, ignore
+                                        }
+                                    }
                                 }
-                                node.getEditable().setName(((BigraphEntity.NodeEntity<?>) x).getName());
+                                node.getEditable().setName(originalNodeName);
                                 jlib2bbigraphNodes.putIfAbsent(node, x);
                                 jLibBigNodes.put(node.getEditable().getName(), node);
                             } else if (BigraphEntityType.isSite(x)) {

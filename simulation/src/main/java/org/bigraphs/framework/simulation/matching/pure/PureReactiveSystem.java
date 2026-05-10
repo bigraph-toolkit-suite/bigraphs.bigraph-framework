@@ -21,7 +21,10 @@ import it.uniud.mads.jlibbig.core.util.NameGenerator;
 import java.util.*;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
+import org.bigraphs.framework.converter.jlibbig.JLibBigPostProcess;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
+import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
+import org.bigraphs.framework.core.impl.pure.PureBigraphMutable;
 import org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
@@ -181,6 +184,8 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             Bigraph result = bb.makeBigraph(true);
             PureBigraph decodedResult = decoder.decode(result, agent.getSignature());
             copyAttributes(agent, decodedResult);
+            PureBigraphMutable mutable = PureBigraphBuilder.create(agent.getSignature(), decodedResult.getMetaModel(), decodedResult.getInstanceModel()).createMutable();
+            JLibBigPostProcess.postProcess(agent, mutable);
             return decodedResult;
         } catch (Exception e) {
             logger.error(e.toString());
