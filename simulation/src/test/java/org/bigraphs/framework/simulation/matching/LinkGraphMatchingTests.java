@@ -73,10 +73,10 @@ public class LinkGraphMatchingTests implements org.bigraphs.testing.BigraphUnitT
         PureBigraph dataLinkGraph = createDataLinkGraph();
 
         // Create Query
-        PureBigraph queryLinkGraph = createQueryLinkGraph_1();
+//        PureBigraph queryLinkGraph = createQueryLinkGraph_1();
 //        PureBigraph queryLinkGraph = createQueryLinkGraph_2();
 //        PureBigraph queryLinkGraph = createQueryLinkGraph_3();
-//        PureBigraph queryLinkGraph = createQueryLinkGraph_4();
+        PureBigraph queryLinkGraph = createQueryLinkGraph_4();
 
         // Debug: Export Query and Data Bigraph
         toPNG(queryLinkGraph, "query", TARGET_DUMP_PATH);

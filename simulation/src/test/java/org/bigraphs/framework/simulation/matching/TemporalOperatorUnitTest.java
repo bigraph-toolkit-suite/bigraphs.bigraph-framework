@@ -34,8 +34,18 @@ import org.bigraphs.framework.simulation.modelchecking.predicates.SubBigraphMatc
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 @Disabled
-public class TemporalOperatorUnitTest implements AbstractUnitTestSupport {
+public class TemporalOperatorUnitTest {
+
+    private DynamicSignature sig() {
+        return pureSignatureBuilder()
+                .add("Container", 0)
+                .add("Item", 0)
+                .create();
+    }
 
     @Test
     void somewhereModality_test_00() throws ReactiveSystemException, BigraphSimulationException, InvalidReactionRuleException {
@@ -64,21 +74,21 @@ public class TemporalOperatorUnitTest implements AbstractUnitTestSupport {
     }
 
     private PureBigraph createPredicate() {
-        return pureBuilder(createSignature()).root()
+        return pureBuilder(sig()).root()
                 .child("Container").down()
                 .child("Item").child("Item").child("Item").create();
     }
 
     private ReactionRule<PureBigraph> addItemRR() throws InvalidReactionRuleException {
-        PureBigraph redex = pureBuilder(createSignature())
+        PureBigraph redex = pureBuilder(sig())
                 .root().child("Container").down().site().create();
-        PureBigraph reactum = pureBuilder(createSignature())
+        PureBigraph reactum = pureBuilder(sig())
                 .root().child("Container").down().child("Item").site().create();
         return new ParametricReactionRule<>(redex, reactum);
     }
 
     private PureBigraph createAgent() {
-        return pureBuilder(createSignature())
+        return pureBuilder(sig())
                 .root()
                 .child("Container").create();
     }
@@ -102,12 +112,5 @@ public class TemporalOperatorUnitTest implements AbstractUnitTestSupport {
                 this.predicateMatched = true;
             }
         }
-    }
-
-    private static DynamicSignature createSignature() {
-        return pureSignatureBuilder()
-                .add("Container", 0)
-                .add("Item", 0)
-                .create();
     }
 }

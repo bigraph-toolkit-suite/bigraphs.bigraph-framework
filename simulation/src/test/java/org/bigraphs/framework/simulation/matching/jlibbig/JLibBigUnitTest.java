@@ -30,10 +30,6 @@ public class JLibBigUnitTest {
     void test_01() {
         Signature signature = new Signature(createControls());
         BigraphBuilder builder = new BigraphBuilder(signature);
-
-//        OuterName door = builder.addOuterName("a");
-//        InnerName doorLink = builder.addInnerName("a", door);
-//        builder.closeInnerName(doorLink);
         
         Root root = builder.addRoot();
         Node building = builder.addNode("B", root);
@@ -54,32 +50,31 @@ public class JLibBigUnitTest {
         Iterable<? extends Match> match = m.match(agent, transmitRule.getRedex());
         Iterator<? extends Match> iterator = match.iterator();
         while (iterator.hasNext()) {
+
             Match next = iterator.next();
-// * Given two bigraphs F and G (over the same signature), a match of F in G is a
-// * triple <C,R,P> such that their composition C;R;P yields G as for
-// * {@link it.uniud.mads.jlibbig.core.Match}.
-// Furthermore, the redex R is the
-// * juxtaposition of F and a suitable identity; these are called the redex image
-// * and the redex id respectively.
+            System.out.println(next.toString());
             Bigraph context = next.getContext();
             Bigraph redexId = next.getRedexId();
             Bigraph redexImage = next.getRedexImage();
             Bigraph juxtapose = Bigraph.juxtapose(redexImage, redexId);
-            System.out.println(redexId.toString());
-            System.out.println(redexImage.toString());
-            System.out.println(juxtapose.toString());
-            System.out.println(redex.toString());
-            System.out.println(context.toString());
+            System.out.println("RedexId = ");
+            System.out.println(redexId);
+            System.out.println("RedexImage = ");
+            System.out.println(redexImage);
+            System.out.println("Juxtaposed = ");
+            System.out.println(juxtapose);
+            System.out.println("Context  = ");
+            System.out.println(context);
         }
 
-        // rewrite ergebnis
+        // Rewrite Result
         int cnt = 0;
         for (Bigraph big : transmitRule.apply(m, agent)) {
-//            RuleApplication ruleApplication = new RuleApplication(big, transmitRule);
-//            System.out.println(ruleApplication.getBig().toString());
+            System.out.println("\r\nCounter = " + cnt);
+            System.out.println(big.toString());
             cnt++;
         }
-        System.out.println("Rewriting Cnt: " + cnt);
+        System.out.println("\r\nTotal Rewrite Count = " + cnt);
 
     }
 
@@ -90,7 +85,7 @@ public class JLibBigUnitTest {
         builder.addSite(builder.addNode("R", root));
         builder.addSite(builder.addNode("R", root));
         Bigraph redex = builder.makeBigraph();
-        System.out.printf("Redex: %s\n", redex.toString());
+        System.out.printf("Redex = %s\n", redex.toString());
         return redex;
     }
 
@@ -103,7 +98,7 @@ public class JLibBigUnitTest {
         builder.addSite(builder.addNode("R", root));
         builder.addSite(builder.addNode("R", root));
         Bigraph redex = builder.makeBigraph();
-        System.out.printf("Redex: %s\n", redex.toString());
+        System.out.printf("Reactum = %s\n", redex.toString());
         return redex;
     }
 

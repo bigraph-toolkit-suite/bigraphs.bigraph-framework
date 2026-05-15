@@ -17,7 +17,6 @@ package org.bigraphs.framework.simulation.matching.tracking;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
-import java.util.Iterator;
 import java.util.Map;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
@@ -51,10 +50,12 @@ public class NodeAttributeTrackingTest {
                 .child("Place").down().child("Token").up()
                 .child("Place")
                 .create();
-// Get the node
+
+        // Get the node
         BigraphEntity.NodeEntity<DynamicControl> v1 = bigraph.getNodes().stream()
                 .filter(x -> x.getName().equals("v1")).findAny().get();
-// Assign the attribute
+
+        // Assign the attribute
         Map<String, Object> attributes = v1.getAttributes();
         attributes.put("ip", "192.168.0.1");
         v1.setAttributes(attributes);
@@ -68,23 +69,23 @@ public class NodeAttributeTrackingTest {
                 .child("Place").down().child("Token").up();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(bRedex.create(), bReactum.create())
                 .withLabel("swapRule");
-// Important for tracing nodes through reactions, thus, to correctly preserve attributes
+
+        // Important for tracing nodes through reactions, thus, to correctly preserve attributes
         TrackingMap eta = new TrackingMap();
         eta.put("v0", "v0");
         eta.put("v1", "v2");
         eta.put("v2", "v1");
-// Assign the tracking map to the rule
+
+        // Assign the tracking map to the rule
         rr.withTrackingMap(eta);
 
-// Build a reactive system
+        // Build a reactive system
         PureReactiveSystem rs = new PureReactiveSystem();
         rs.setAgent(bigraph);
         rs.addReactionRule(rr);
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
         MatchIterable<PureBigraphMatch> match = (MatchIterable<PureBigraphMatch>) matcher.match(bigraph, rr);
-        Iterator<PureBigraphMatch> iterator = match.iterator();
-        while (iterator.hasNext()) {
-            PureBigraphMatch next = iterator.next();
+        for (PureBigraphMatch next : match) {
             PureBigraph result = rs.buildParametricReaction(bigraph, next, rr);
             Map<String, Object> attr = result.getNodes().stream()
                     .filter(x -> x.getName().equals("v1")).findAny().get().getAttributes();

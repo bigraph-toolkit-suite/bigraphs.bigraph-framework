@@ -22,8 +22,10 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
+import org.bigraphs.framework.core.exceptions.ReactiveSystemException;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
@@ -34,49 +36,81 @@ import org.bigraphs.framework.core.reactivesystem.AbstractReactionRule;
 import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.TrackingMap;
+import org.bigraphs.framework.simulation.exceptions.BigraphSimulationException;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatch;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
+import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
 import org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptions;
+import org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker;
 import org.bigraphs.testing.BigraphUnitTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 @Disabled
 public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
     private final static String DUMP_PATH = "src/test/resources/dump/tracking/test1/";
 
+    private DynamicSignature sig() {
+        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
+        defaultBuilder
+                .add("True", 0)
+                .add("False", 0)
+                .add("Set", 0)
+                .add("Empty", 0)
+                .add("Box", 0)
+        ;
+        return defaultBuilder.create();
+    }
+
     @Test
-    void test() throws InvalidReactionRuleException {
+    void test_switching() throws InvalidReactionRuleException, ReactiveSystemException, BigraphSimulationException {
         SimpleBRS simpleBRS = new SimpleBRS();
         PureBigraph agent = agent();
+
         //Read attributes
         System.out.println(agent.getNodes().get(0).getAttributes());
+
         ParametricReactionRule<PureBigraph> rr = switchRule1().withLabel("r0");
         ParametricReactionRule<PureBigraph> rr2 = switchRule2().withLabel("r1");
-        AbstractReactionRule<PureBigraph> rr3 = addSetUnderEmpty().withLabel("r2");
 
-        toPNG(agent,  "agent", DUMP_PATH);
-        toPNG(rr.getRedex(),  "switch1LHS", DUMP_PATH);
-        toPNG(rr.getReactum(),  "switch1RHS", DUMP_PATH);
-        toPNG(rr2.getRedex(),  "switch2LHS", DUMP_PATH);
-        toPNG(rr2.getReactum(),  "switch2RHS", DUMP_PATH);
-        toPNG(rr3.getRedex(),  "emptyAddSetLHS", DUMP_PATH);
-        toPNG(rr3.getReactum(),  "emptyAddSetRHS", DUMP_PATH);
+
+        toPNG(agent, "agent", DUMP_PATH);
+        toPNG(rr.getRedex(), "switch1LHS", DUMP_PATH);
+        toPNG(rr.getReactum(), "switch1RHS", DUMP_PATH);
+        toPNG(rr2.getRedex(), "switch2LHS", DUMP_PATH);
+        toPNG(rr2.getReactum(), "switch2RHS", DUMP_PATH);
 
         simpleBRS.setAgent(agent);
-//        simpleBRS.addReactionRule(rr); // test switching
+        simpleBRS.addReactionRule(rr); // test switching
         simpleBRS.addReactionRule(rr2); // test switching
-//        simpleBRS.addReactionRule(rr3); // test addition
 
         simpleBRS.execute();
+    }
 
-//        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
-//                simpleBRS,
-//                BigraphModelChecker.SimulationStrategy.Type.BFS,
-//                opts());
-//        modelChecker.execute();
+    @Test
+    void test_addition() throws InvalidReactionRuleException, ReactiveSystemException, BigraphSimulationException {
+        SimpleBRS simpleBRS = new SimpleBRS();
+        PureBigraph agent = agent();
+
+        AbstractReactionRule<PureBigraph> rr3 = addSetUnderEmpty().withLabel("r2");
+
+        toPNG(agent, "agent", DUMP_PATH);
+        toPNG(rr3.getRedex(), "emptyAddSetLHS", DUMP_PATH);
+        toPNG(rr3.getReactum(), "emptyAddSetRHS", DUMP_PATH);
+
+        simpleBRS.setAgent(agent);
+        simpleBRS.addReactionRule(rr3); // test addition
+
+        PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
+                simpleBRS,
+                BigraphModelChecker.SimulationStrategy.Type.BFS,
+                opts());
+        modelChecker.execute();
     }
 
     public class SimpleBRS extends PureReactiveSystem {
@@ -87,8 +121,8 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
             int ruleExecCounter = 2;
             int ixCnt = 0;
             while (ruleExecCounter > 0) {
-//                int ruleIx = ruleExecCounter % 2 == 0 ? 1 : 0;
-                int ruleIx = 1;
+                int ruleIx = ruleExecCounter % 2 == 0 ? 1 : 0;
+
                 MatchIterable<PureBigraphMatch> match = (MatchIterable<PureBigraphMatch>) matcher.match(currentAgent, getReactionRulesMap().get("r" + ruleIx));
                 Iterator<PureBigraphMatch> iterator = match.iterator();
                 if (!iterator.hasNext()) {
@@ -114,7 +148,7 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
-                        .setMaximumTransitions(60)
+                        .setMaximumTransitions(5)
                         .setMaximumTime(60)
                         .allowReducibleClasses(false)
                         .create()
@@ -123,6 +157,7 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
                 .and(ModelCheckingOptions.exportOpts()
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .setOutputStatesFolder(new File(DUMP_PATH + "states/"))
                         .create()
                 )
@@ -132,8 +167,8 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
 
     // switches true to false
     private ParametricReactionRule<PureBigraph> switchRule1() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(createTrueFalseSignature());
-        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(sig());
 
         bL.root()
                 .child("True").down().child("Set").top()
@@ -157,8 +192,8 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
 
     // switches false to true
     private ParametricReactionRule<PureBigraph> switchRule2() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(createTrueFalseSignature());
-        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(sig());
 
         bL.root()
                 .child("False").down().child("Set").top()
@@ -180,8 +215,8 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
 
     // a new node is added, previously unknown to the agent
     private ParametricReactionRule<PureBigraph> addSetUnderEmpty() throws InvalidReactionRuleException {
-        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(createTrueFalseSignature());
-        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> bL = pureBuilder(sig());
+        PureBigraphBuilder<DynamicSignature> bR = pureBuilder(sig());
 
         bL.root()
                 .child("Box").down().site().top()
@@ -197,11 +232,10 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
         return rr;
     }
 
-
     // agent that can switch between two internal states by placing a token either in the one or the other container node
     // The True or False control is activated, but not both
     private PureBigraph agent() {
-        PureBigraphBuilder<DynamicSignature> b = pureBuilder(createTrueFalseSignature());
+        PureBigraphBuilder<DynamicSignature> b = pureBuilder(sig());
         b.root()
                 .child("True")
                 .down().child("Empty").top()
@@ -210,43 +244,11 @@ public class TrackingMapExperimentTest implements BigraphUnitTestSupport {
                 .child("Set").child("Set").child("Set").top()
         ;
         PureBigraph big = b.create();
-        BigraphEntity.NodeEntity<DynamicControl> theNode = big.getNodes().get(0);
+        BigraphEntity.NodeEntity<DynamicControl> theNode = big.getNodes().getFirst();
         Map<String, Object> attributes = theNode.getAttributes();
         attributes.put("myKey", "myValue");
         theNode.setAttributes(attributes);
         System.out.println("Attributes set for node = " + theNode);
         return big;
-    }
-
-    private DynamicSignature createTrueFalseSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("True", 0)
-                .add("False", 0)
-                .add("Set", 0)
-                .add("Empty", 0)
-                .add("Box", 0)
-        ;
-        return defaultBuilder.create();
-    }
-
-    private DynamicSignature createAlphabetSignature() {
-        DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
-        defaultBuilder
-                .add("A", 5)
-                .add("B", 5)
-                .add("C", 5)
-                .add("D", 5)
-                .add("E", 5)
-                .add("F", 5)
-                .add("G", 5)
-                .add("H", 5)
-                .add("I", 5)
-                .add("J", 5)
-                .add("Q", 5)
-                .add("R", 5)
-        ;
-
-        return defaultBuilder.create();
     }
 }

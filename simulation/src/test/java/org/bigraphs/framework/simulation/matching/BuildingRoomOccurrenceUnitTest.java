@@ -17,15 +17,23 @@ package org.bigraphs.framework.simulation.matching;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureBuilder;
 import static org.bigraphs.framework.core.factory.BigraphFactory.pureSignatureBuilder;
 
+import com.google.common.base.Stopwatch;
+import it.uniud.mads.jlibbig.core.std.Match;
+import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
+import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
+import org.bigraphs.framework.core.reactivesystem.BigraphMatch;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatch;
+import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.bigraphs.testing.BigraphUnitTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +43,7 @@ import org.junit.jupiter.api.Test;
  * @author Dominik Grzelak
  */
 @Disabled
-public class BuildingRoomOccurrenceUnitTest implements AbstractUnitTestSupport, BigraphUnitTestSupport {
+public class BuildingRoomOccurrenceUnitTest implements BigraphUnitTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/occurrence/";
 
     private DynamicSignature sig() {
@@ -120,8 +128,7 @@ public class BuildingRoomOccurrenceUnitTest implements AbstractUnitTestSupport, 
                 .child("Building")
                 .down().child("Room").down().child("Room").down().child("User").up().up()
                 .child("Room").down().child("User");
-        PureBigraph bigraph = builder.create();
-        return bigraph;
+        return builder.create();
     }
 
     /**
@@ -157,5 +164,51 @@ public class BuildingRoomOccurrenceUnitTest implements AbstractUnitTestSupport, 
         builder.root().child("Room").down().site();
         PureBigraph bigraph = builder.create();
         return bigraph;
+    }
+
+    private void createGraphvizOutput(Bigraph<?> agent, BigraphMatch<?> next0, String path, int ix) {
+        PureBigraphMatch next = (PureBigraphMatch) next0;
+        Match result = next.getJLibMatchResult();
+        JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
+        PureBigraph context = decoder.decode(result.getContext());
+        PureBigraph redex = next.getRedex();
+        Bigraph redexImage = decoder.decode(result.getRedexImage());
+        PureBigraph redexId = decoder.decode(result.getRedexId());
+
+        //This takes a lot if time!
+        System.out.println("Creating PNGs ...");
+        Stopwatch timer = Stopwatch.createStarted();
+        try {
+            if (context != null)
+                BigraphGraphvizExporter.toPNG(context,
+                        true,
+                        new File(path + "context-" + ix + ".png")
+                );
+            if (agent != null)
+                BigraphGraphvizExporter.toPNG(agent,
+                        true,
+                        new File(path + "agent-" + ix + ".png")
+                );
+            if (redex != null)
+                BigraphGraphvizExporter.toPNG(redex,
+                        true,
+                        new File(path + "redex-" + ix + ".png")
+                );
+            if (redexImage != null)
+                BigraphGraphvizExporter.toPNG(redexImage,
+                        true,
+                        new File(path + "redexImage-" + ix + ".png")
+                );
+            if (redexId != null)
+                BigraphGraphvizExporter.toPNG(redexId,
+                        true,
+                        new File(path + "redexId-" + ix + ".png")
+                );
+            long elapsed = timer.stop().elapsed(TimeUnit.MILLISECONDS);
+            System.out.println("Creating PNGs took (ms) " + elapsed);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
