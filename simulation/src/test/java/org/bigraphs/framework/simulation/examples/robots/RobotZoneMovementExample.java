@@ -19,10 +19,12 @@ import static org.bigraphs.framework.simulation.modelchecking.ModelCheckingOptio
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.uniud.mads.jlibbig.core.std.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import org.apache.commons.io.FileUtils;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
 import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
