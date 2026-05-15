@@ -42,6 +42,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 @Disabled
 public class FruitBasketExampleTest implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/fruitbasket/";
@@ -154,7 +157,7 @@ public class FruitBasketExampleTest implements BigraphModelChecker.ReactiveSyste
 
 //        ParametricReactionRule<PureBigraph> rr11 = createRR1();
 //        AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-//        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.match(agent, rr11);
+//        MatchIterable<BigraphMatch<PureBigraph>> match = matcher.matchAll(agent, rr11);
 //        Iterator<BigraphMatch<PureBigraph>> iterator = match.iterator();
 //        while (iterator.hasNext()) {
 //            BigraphMatch<PureBigraph> next = iterator.next();

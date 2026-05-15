@@ -29,7 +29,6 @@ import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicControl;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.TrackingMap;
 import org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher;
@@ -41,6 +40,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 @Disabled
 public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/attributes/";
@@ -102,7 +104,7 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
         rs.setAgent(bigraph);
         rs.addReactionRule(rr);
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<PureBigraphMatch> match = (MatchIterable<PureBigraphMatch>) matcher.match(bigraph, rr);
+        MatchIterable<PureBigraphMatch> match = (MatchIterable<PureBigraphMatch>) matcher.matchAll(bigraph, rr);
         Iterator<PureBigraphMatch> iterator = match.iterator();
         int transition = 1;
         while (iterator.hasNext()) {
@@ -127,14 +129,5 @@ public class AttributeReactionUnitTest implements BigraphUnitTestSupport {
 //                modOpts);
 //        modelChecker.setReactiveSystemListener(somewhereModality);
 //        modelChecker.execute();
-    }
-
-    private static DynamicSignature createExampleSignature() {
-        DynamicSignatureBuilder signatureBuilder = pureSignatureBuilder();
-        signatureBuilder
-                .add("Place", 0)
-                .add("Token", 0)
-        ;
-        return signatureBuilder.create();
     }
 }

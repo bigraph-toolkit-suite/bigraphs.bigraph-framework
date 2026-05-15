@@ -16,6 +16,7 @@ package org.bigraphs.framework.simulation.examples.computation;
 
 import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +37,6 @@ import org.bigraphs.framework.simulation.matching.MatchIterable;
 import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatch;
 import org.bigraphs.framework.simulation.matching.pure.PureBigraphMatcher;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
-import org.bigraphs.framework.visualization.BigraphGraphvizExporter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ public class AddExample extends BaseExampleTestSupport {
         FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
     }
 
-    private static DynamicSignature sig() {
+    private DynamicSignature sig() {
         DynamicSignatureBuilder defaultBuilder = pureSignatureBuilder();
         defaultBuilder
                 .add("Plus", 0)
@@ -82,12 +82,12 @@ public class AddExample extends BaseExampleTestSupport {
     }
 
     @Test
-    void simulate() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException {
-        int a = 3, b = 3;
+    void simulate() throws LinkTypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, InterruptedException {
+        int a = 13, b = 23;
 
         AddExpr reactiveSystem = new AddExpr(a, b);
 
-        toPNG(reactiveSystem.agent_a, "agent", TARGET_DUMP_PATH);
+        toPNG(reactiveSystem.initState, "agent", TARGET_DUMP_PATH);
         toPNG(reactiveSystem.reactionRule_1.getRedex(), "r1-redex", TARGET_DUMP_PATH);
         toPNG(reactiveSystem.reactionRule_1.getReactum(), "r1-reactum", TARGET_DUMP_PATH);
         toPNG(reactiveSystem.reactionRule_2.getRedex(), "r2-redex", TARGET_DUMP_PATH);
@@ -99,60 +99,54 @@ public class AddExample extends BaseExampleTestSupport {
         long s = result.getNodes().stream()
                 .filter(x -> x.getControl().getNamedType().stringValue().equals("S"))
                 .count();
+        assertFalse(result.getNodes().stream().anyMatch(x -> x.getControl().getNamedType().stringValue().equals("Left") || x.getControl().getNamedType().stringValue().equals("Right")));
         assertEquals(a + b, s);
 
-        BigraphGraphvizExporter.toPNG(result,
-                true,
-                new File(TARGET_DUMP_PATH + "result.png")
-        );
+        toPNG(result, "result", TARGET_DUMP_PATH);
     }
 
-    public static class AddExpr extends PureReactiveSystem {
-        PureBigraph agent_a;
+    public class AddExpr extends PureReactiveSystem {
+        PureBigraph initState;
         ReactionRule<PureBigraph> reactionRule_1;
         ReactionRule<PureBigraph> reactionRule_2;
 
         public AddExpr(int a, int b) throws LinkTypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, IOException {
-            agent_a = createAgent_A(a, b);
-            setAgent(agent_a);
+            initState = createInitialState(a, b);
+            setAgent(initState);
             reactionRule_1 = createReactionRule_1();
             reactionRule_2 = createReactionRule_2();
             addReactionRule(reactionRule_1);
             addReactionRule(reactionRule_2);
         }
 
-        public PureBigraph execute() throws IOException {
+        public PureBigraph execute() throws IOException, InterruptedException {
             PureBigraphMatcher matcher = (PureBigraphMatcher) AbstractBigraphMatcher.create(PureBigraph.class);
 
             PureBigraph agentTmp = getAgent();
+            ReactionRule<PureBigraph> r0 = getReactionRulesMap().get("r0");
             int cnt = 0;
             while (true) {
-                MatchIterable<PureBigraphMatch> match = matcher.matchFirst(agentTmp, getReactionRulesMap().get("r0"));
+                MatchIterable<PureBigraphMatch> match = matcher.matchAll(agentTmp, r0);
                 Iterator<PureBigraphMatch> iterator = match.iterator();
                 if (!iterator.hasNext()) {
                     break;
                 }
                 while (iterator.hasNext()) {
                     BigraphMatch<PureBigraph> next = iterator.next();
-                    agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r0"));
-                    BigraphGraphvizExporter.toPNG(agentTmp,
-                            true,
-                            new File(TARGET_DUMP_PATH + cnt + "_agent_reacted.png")
-                    );
+                    agentTmp = buildParametricReaction(agentTmp, next, r0);
+                    toPNG(agentTmp, cnt + "_agent_reacted", TARGET_DUMP_PATH);
                     cnt++;
                 }
             }
 
-            MatchIterable<PureBigraphMatch> match = matcher.match(agentTmp, getReactionRulesMap().get("r1"));
+            ReactionRule<PureBigraph> r1 = getReactionRulesMap().get("r1");
+            MatchIterable<PureBigraphMatch> match = matcher.matchAll(agentTmp, r1);
             Iterator<PureBigraphMatch> iterator = match.iterator();
             if (iterator.hasNext()) {
                 PureBigraphMatch next = iterator.next();
                 System.out.println("NEXT: " + next);
-                agentTmp = buildParametricReaction(agentTmp, next, getReactionRulesMap().get("r1"));
-                BigraphGraphvizExporter.toPNG(agentTmp,
-                        true,
-                        new File(TARGET_DUMP_PATH + cnt + "_agent_reacted.png")
-                );
+                agentTmp = buildParametricReaction(agentTmp, next, r1);
+                toPNG(agentTmp, cnt + "_agent_reacted", TARGET_DUMP_PATH);
             }
             return agentTmp; // the result
         }
@@ -163,7 +157,7 @@ public class AddExample extends BaseExampleTestSupport {
      * big numberRight = Right.S.S.S.S.Z;
      * big start = Plus . (numberLeft | numberRight);
      */
-    public static PureBigraph createAgent_A(final int left, final int right) throws ControlIsAtomicException {
+    private PureBigraph createInitialState(final int left, final int right) throws ControlIsAtomicException {
         DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
 
@@ -196,7 +190,7 @@ public class AddExample extends BaseExampleTestSupport {
     /**
      * react r1 = Left.S | Right.S -> Left | Right;
      */
-    public static ReactionRule<PureBigraph> createReactionRule_1() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    private ReactionRule<PureBigraph> createReactionRule_1() throws ControlIsAtomicException, InvalidReactionRuleException {
         DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
@@ -216,7 +210,7 @@ public class AddExample extends BaseExampleTestSupport {
         return new ParametricReactionRule<>(redex, reactum);
     }
 
-    public static ReactionRule<PureBigraph> createReactionRule_2() throws ControlIsAtomicException, InvalidReactionRuleException {
+    private ReactionRule<PureBigraph> createReactionRule_2() throws ControlIsAtomicException, InvalidReactionRuleException {
         DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);

@@ -30,7 +30,6 @@ import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
 import org.bigraphs.framework.core.impl.pure.PureBigraphBuilder;
 import org.bigraphs.framework.core.impl.signature.DynamicSignature;
-import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactiveSystemPredicate;
@@ -43,50 +42,48 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 @Disabled
-public class RobotSortingExample extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
-    private final static String TARGET_DUMP_PATH = "src/test/resources/dump/robots/sortings/";
+public class BinSortingRobotsExample extends BaseExampleTestSupport implements BigraphModelChecker.ReactiveSystemListener<PureBigraph> {
+    private final static String DUMP_PATH = "src/test/resources/dump/robots/sortings/";
 
-    public RobotSortingExample() {
-        super(TARGET_DUMP_PATH, true);
+    public BinSortingRobotsExample() {
+        super(DUMP_PATH, true);
     }
 
     @BeforeAll
     static void setUp() throws IOException {
-        File dump = new File(TARGET_DUMP_PATH);
+        File dump = new File(DUMP_PATH);
         dump.mkdirs();
-        FileUtils.cleanDirectory(new File(TARGET_DUMP_PATH));
-        new File(TARGET_DUMP_PATH + "states/").mkdir();
+        FileUtils.cleanDirectory(new File(DUMP_PATH));
+        new File(DUMP_PATH + "states/").mkdir();
+    }
+
+    private DynamicSignature sig() {
+        return pureSignatureBuilder()
+                .add("Robot", 0)
+                .add("Gripper", 1)
+                .add("Table", 0)
+                .add("Item", 0)
+                .add("Bin", 0)
+                .add("ref", 0)
+                .add("Lock", 1, ControlStatus.ATOMIC)
+                .create();
     }
 
     @Test
     void simulate() throws Exception {
+        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
 
         PureBigraph agent = agent();
-        printMetaModel(agent);
-        toPNG(agent, "agent", TARGET_DUMP_PATH, false);
-
         ReactionRule<PureBigraph> reserveRR = reserve();
-        toPNG(reserveRR.getRedex(), "reserveL", TARGET_DUMP_PATH);
-        toPNG(reserveRR.getReactum(), "reserveR", TARGET_DUMP_PATH);
         ReactionRule<PureBigraph> pickRR = pick();
-        toPNG(pickRR.getRedex(), "pickL", TARGET_DUMP_PATH);
-        toPNG(pickRR.getReactum(), "pickR", TARGET_DUMP_PATH);
         ReactionRule<PureBigraph> reserveBinRR = reserveBin();
-        toPNG(reserveBinRR.getRedex(), "reserveBinL", TARGET_DUMP_PATH);
-        toPNG(reserveBinRR.getReactum(), "reserveBinR", TARGET_DUMP_PATH);
         ReactionRule<PureBigraph> placeItemInBinRR = placeItemInBin();
-        toPNG(placeItemInBinRR.getRedex(), "placeItemInBinL", TARGET_DUMP_PATH);
-        toPNG(placeItemInBinRR.getReactum(), "placeItemInBinR", TARGET_DUMP_PATH);
         ReactionRule<PureBigraph> releaseBinLockRR = releaseBinLock();
-        toPNG(releaseBinLockRR.getRedex(), "releaseBinLockL", TARGET_DUMP_PATH);
-        toPNG(releaseBinLockRR.getReactum(), "releaseBinLockR", TARGET_DUMP_PATH);
 
-//        print(insertCoinRR.getRedex());
-//        print(insertCoinRR.getReactum());
-
-
-        PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         reactiveSystem.setAgent(agent);
         reactiveSystem.addReactionRule(reserveRR);
         reactiveSystem.addReactionRule(pickRR);
@@ -94,6 +91,21 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
         reactiveSystem.addReactionRule(placeItemInBinRR);
         reactiveSystem.addReactionRule(releaseBinLockRR);
 
+        // Export Data for Debugging
+        printMetaModel(agent);
+        toPNG(agent, "agent", DUMP_PATH, false);
+        toPNG(reserveRR.getRedex(), "reserveL", DUMP_PATH);
+        toPNG(reserveRR.getReactum(), "reserveR", DUMP_PATH);
+        toPNG(pickRR.getRedex(), "pickL", DUMP_PATH);
+        toPNG(pickRR.getReactum(), "pickR", DUMP_PATH);
+        toPNG(reserveBinRR.getRedex(), "reserveBinL", DUMP_PATH);
+        toPNG(reserveBinRR.getReactum(), "reserveBinR", DUMP_PATH);
+        toPNG(placeItemInBinRR.getRedex(), "placeItemInBinL", DUMP_PATH);
+        toPNG(placeItemInBinRR.getReactum(), "placeItemInBinR", DUMP_PATH);
+        toPNG(releaseBinLockRR.getRedex(), "releaseBinLockL", DUMP_PATH);
+        toPNG(releaseBinLockRR.getReactum(), "releaseBinLockR", DUMP_PATH);
+
+        // Create the model checker
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
@@ -104,11 +116,11 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
         DOTReactionGraphExporter exporter = new DOTReactionGraphExporter();
         String dotFile = exporter.toString(modelChecker.getReactionGraph());
         System.out.println(dotFile);
-        exporter.toOutputStream(modelChecker.getReactionGraph(), new FileOutputStream(TARGET_DUMP_PATH + "reaction_graph.dot"));
+        exporter.toOutputStream(modelChecker.getReactionGraph(), new FileOutputStream(DUMP_PATH + "reaction_graph.dot"));
     }
 
     private ModelCheckingOptions opts() {
-        Path completePath = Paths.get(TARGET_DUMP_PATH, "transition_graph.png");
+        Path completePath = Paths.get(DUMP_PATH, "transition_graph.png");
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
@@ -122,26 +134,12 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
                 .and(ModelCheckingOptions.exportOpts()
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
-                        .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setOutputStatesFolder(new File(DUMP_PATH + "states/"))
                         .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
                 )
         ;
         return opts;
-    }
-
-    private DynamicSignature sig() {
-        DynamicSignatureBuilder sb = pureSignatureBuilder();
-        DynamicSignature sig = sb
-                .add("Robot", 0)
-                .add("Gripper", 1)
-                .add("Table", 0)
-                .add("Item", 0)
-                .add("Bin", 0)
-                .add("ref", 0)
-                .add("Lock", 1, ControlStatus.ATOMIC)
-                .create();
-        return sig;
     }
 
     private PureBigraph agent() throws InvalidConnectionException {
@@ -209,8 +207,7 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
 
         PureBigraph redex = bRed.create();
         PureBigraph reactum = bRec.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
-        return rr;
+        return new ParametricReactionRule<>(redex, reactum);
     }
 
     private ReactionRule<PureBigraph> reserveBin() throws Exception {
@@ -298,8 +295,7 @@ public class RobotSortingExample extends BaseExampleTestSupport implements Bigra
 
         PureBigraph redex = bRed.create();
         PureBigraph reactum = bRec.create();
-        ReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);
-        return rr;
+        return new ParametricReactionRule<>(redex, reactum);
     }
 
     @Override
