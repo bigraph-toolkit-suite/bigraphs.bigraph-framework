@@ -48,6 +48,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 @Disabled
 public class RoomExample extends BaseExampleTestSupport {
 
@@ -68,8 +71,21 @@ public class RoomExample extends BaseExampleTestSupport {
         }
     }
 
-
-
+    private DynamicSignature sig() {
+        DynamicSignature signature = pureSignatureBuilder()
+                .newControl("Room", 1).assign()
+                .newControl("Door", 2).assign()
+                .newControl("Unlocked", 0).status(ControlStatus.ATOMIC).assign()
+                .newControl("PC", 2).assign()
+                .newControl("MPC", 1).assign()
+                .newControl("Spool", 1).assign()
+                .newControl("Printer", 2).assign()
+                .newControl("User", 1).assign()
+                .newControl("UserGroup", 1).assign()
+                .newControl("PCGroup", 2).assign()
+                .create();
+        return signature;
+    }
 
     @Test
     void room_001() throws Exception {
@@ -84,7 +100,7 @@ public class RoomExample extends BaseExampleTestSupport {
         toPNG(abstractionRule1.getReactum(), "a1_rhs", TARGET_DUMP_PATH, true);
 //
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<PureBigraphMatch> match = (MatchIterable<PureBigraphMatch>) matcher.match(agent1, abstractionRule1);
+        MatchIterable<PureBigraphMatch> match = (MatchIterable<PureBigraphMatch>) matcher.matchAll(agent1, abstractionRule1);
         Iterator<PureBigraphMatch> iterator = match.iterator();
         int cnt = 0;
         final JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
@@ -98,16 +114,12 @@ public class RoomExample extends BaseExampleTestSupport {
             PureBigraph redexImg = decoder.decode(next.getJLibMatchResult().getRedexImage(), sig());
             PureBigraph redexId = decoder.decode(next.getJLibMatchResult().getRedexId(), sig());
             PureBigraph redex = decoder.decode(next.getJLibMatchResult().getRedex(), sig());
-            PureBigraph param = decoder.decode(next.getJLibMatchResult().getParam(), sig());
-            toPNG(ctxDecoded, "context_"+ cnt, TARGET_DUMP_PATH);
-            toPNG(redexImg, "rdxImage_"+ cnt, TARGET_DUMP_PATH);
-            toPNG(redexId, "redexId_"+ cnt, TARGET_DUMP_PATH);
-            toPNG(redex, "redex_"+ cnt, TARGET_DUMP_PATH);
-            toPNG(param, "param_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(ctxDecoded, "context_" + cnt, TARGET_DUMP_PATH);
+            toPNG(redexImg, "rdxImage_" + cnt, TARGET_DUMP_PATH);
+            toPNG(redexId, "redexId_" + cnt, TARGET_DUMP_PATH);
+            toPNG(redex, "redex_" + cnt, TARGET_DUMP_PATH);
             cnt++;
         }
-
-
 
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(system,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
@@ -117,7 +129,7 @@ public class RoomExample extends BaseExampleTestSupport {
 
     @Test
     void room_002() throws Exception {
-        PureBigraph agent2 = loadBigraphFromFS("./src/test/resources/dump/room-example/states/state-4.png.xmi");
+        PureBigraph agent2 = loadBigraphFromFS("./src/test/resources/dump/room-example/states/a_3.xmi");
         toPNG(agent2, "agent2", TARGET_DUMP_PATH);
 
         ParametricReactionRule<PureBigraph> abstractionRule1 = alphaPCGroup();
@@ -125,13 +137,10 @@ public class RoomExample extends BaseExampleTestSupport {
         toPNG(abstractionRule1.getReactum(), "2a1_rhs", TARGET_DUMP_PATH, true);
 //
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<PureBigraphMatch> match = (MatchIterable<PureBigraphMatch>) matcher.match(agent2, abstractionRule1);
+        MatchIterable<PureBigraphMatch> match = (MatchIterable<PureBigraphMatch>) matcher.matchAll(agent2, abstractionRule1);
         Iterator<PureBigraphMatch> iterator = match.iterator();
         int cnt = 0;
         final JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
-//        PureReactiveSystem system = new PureReactiveSystem();
-//        system.setAgent(agent2);
-//        system.addReactionRule(abstractionRule1);
         while (iterator.hasNext()) {
             PureBigraphMatch next = iterator.next();
             System.out.println("Match next=" + next);
@@ -139,15 +148,12 @@ public class RoomExample extends BaseExampleTestSupport {
             PureBigraph redexImg = decoder.decode(next.getJLibMatchResult().getRedexImage(), sig());
             PureBigraph redexId = decoder.decode(next.getJLibMatchResult().getRedexId(), sig());
             PureBigraph redex = decoder.decode(next.getJLibMatchResult().getRedex(), sig());
-            PureBigraph param = decoder.decode(next.getJLibMatchResult().getParam(), sig());
-            toPNG(ctxDecoded, "2context_"+ cnt, TARGET_DUMP_PATH);
-            toPNG(redexImg, "2rdxImage_"+ cnt, TARGET_DUMP_PATH);
-            toPNG(redexId, "2redexId_"+ cnt, TARGET_DUMP_PATH);
-            toPNG(redex, "2redex_"+ cnt, TARGET_DUMP_PATH);
-            toPNG(param, "2param_"+ cnt, TARGET_DUMP_PATH);
+            toPNG(ctxDecoded, "2context_" + cnt, TARGET_DUMP_PATH);
+            toPNG(redexImg, "2rdxImage_" + cnt, TARGET_DUMP_PATH);
+            toPNG(redexId, "2redexId_" + cnt, TARGET_DUMP_PATH);
+            toPNG(redex, "2redex_" + cnt, TARGET_DUMP_PATH);
             cnt++;
         }
-
 
         PureReactiveSystem system = new PureReactiveSystem();
         system.setAgent(agent2);
@@ -168,7 +174,7 @@ public class RoomExample extends BaseExampleTestSupport {
         return bigraph;
     }
 
-    public ModelCheckingOptions opts() {
+    private ModelCheckingOptions opts() {
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
                 .and(transitionOpts()
@@ -182,6 +188,7 @@ public class RoomExample extends BaseExampleTestSupport {
                                 .setReactionGraphFile(new File(TARGET_DUMP_PATH, "transition_graph.png"))
                                 .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
                                 .setPrintCanonicalStateLabel(true)
+                                .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG, ModelCheckingOptions.ExportOptions.Format.XMI))
 //                                .setPrintCanonicalStateLabel(false)
                                 .create()
                 )
@@ -190,7 +197,7 @@ public class RoomExample extends BaseExampleTestSupport {
     }
 
     // With open links only
-    public PureBigraph agent1() throws Exception {
+    private PureBigraph agent1() throws Exception {
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
         BigraphEntity.OuterName tmpDoor1 = builder.createOuter("Door1");
@@ -219,7 +226,7 @@ public class RoomExample extends BaseExampleTestSupport {
     }
 
     // With closed links only
-    public PureBigraph agent0() throws Exception {
+    private PureBigraph agent0() throws Exception {
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(sig());
 
         BigraphEntity.InnerName tmpSpPr = builder.createInner("tmpSpPr");
@@ -245,7 +252,7 @@ public class RoomExample extends BaseExampleTestSupport {
     }
 
     // Abstraction rule 1
-    public ParametricReactionRule<PureBigraph> alphaUserGroup() throws InvalidReactionRuleException, InvalidConnectionException, LinkTypeNotExistsException {
+    private ParametricReactionRule<PureBigraph> alphaUserGroup() throws InvalidReactionRuleException, InvalidConnectionException, LinkTypeNotExistsException {
         PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig());
         PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig());
 
@@ -274,7 +281,7 @@ public class RoomExample extends BaseExampleTestSupport {
         return new ParametricReactionRule<>(redex, reactum, instMap).withLabel("abstractUser");
     }
 
-    public ParametricReactionRule<PureBigraph> alphaPCGroup() throws Exception {
+    private ParametricReactionRule<PureBigraph> alphaPCGroup() throws Exception {
         PureBigraphBuilder<DynamicSignature> bRedex = pureBuilder(sig());
         PureBigraphBuilder<DynamicSignature> bReactum = pureBuilder(sig());
 
@@ -301,21 +308,5 @@ public class RoomExample extends BaseExampleTestSupport {
         PureBigraph reactum = bReactum.create();
         ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum, InstantiationMap.create(1));
         return rr;
-    }
-
-    public static DynamicSignature sig() {
-        DynamicSignature signature = pureSignatureBuilder()
-                .newControl("Room", 1).assign()
-                .newControl("Door", 2).assign()
-                .newControl("Unlocked", 0).status(ControlStatus.ATOMIC).assign()
-                .newControl("PC", 2).assign()
-                .newControl("MPC", 1).assign()
-                .newControl("Spool", 1).assign()
-                .newControl("Printer", 2).assign()
-                .newControl("User", 1).assign()
-                .newControl("UserGroup", 1).assign()
-                .newControl("PCGroup", 2).assign()
-                .create();
-        return signature;
     }
 }

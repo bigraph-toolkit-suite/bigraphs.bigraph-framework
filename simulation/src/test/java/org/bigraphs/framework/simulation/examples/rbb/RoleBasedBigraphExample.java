@@ -40,6 +40,7 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.bigraphs.framework.core.reactivesystem.ParametricReactionRule;
 import org.bigraphs.framework.core.reactivesystem.ReactionRule;
+import org.bigraphs.framework.core.reactivesystem.analysis.ReactionGraphAnalysis;
 import org.bigraphs.framework.simulation.examples.BaseExampleTestSupport;
 import org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem;
 import org.bigraphs.framework.simulation.modelchecking.BigraphModelChecker;
@@ -49,6 +50,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Dominik Grzelak
+ */
 @Disabled
 public class RoleBasedBigraphExample extends BaseExampleTestSupport {
     private final static String TARGET_DUMP_PATH = "src/test/resources/dump/rbb/";
@@ -73,7 +77,7 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
     @Test
     void test() throws Exception {
         PureBigraph agent0 = createAgent();
-//        eb(agent0, "agent");
+
         PureBigraph agent = finalizeAgent(agent0);
         toPNG(agent, "agent", TARGET_DUMP_PATH);
 
@@ -109,21 +113,19 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
         reactiveSystem.addReactionRule(fixedbindSourceRole);
         reactiveSystem.addReactionRule(fixedbindTargetRole);
 
-        ModelCheckingOptions modOpts = opts();
         PureBigraphModelChecker modelChecker = new PureBigraphModelChecker(
                 reactiveSystem,
                 BigraphModelChecker.SimulationStrategy.Type.BFS,
-                modOpts);
-//        modelChecker.setReactiveSystemListener(this);
+                opts());
+
         modelChecker.execute();
 
-        //states=51, transitions=80
         System.out.println("Edges: " + modelChecker.getReactionGraph().getGraph().edgeSet().size());
         System.out.println("Vertices: " + modelChecker.getReactionGraph().getGraph().vertexSet().size());
-//
-//        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
-//        List<ReactionGraphAnalysis.PathList<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
-//        System.out.println(pathsToLeaves.size());
+
+        ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
+        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        System.out.println(pathsToLeaves.size());
     }
 
     private static PureBigraph finalizeAgent(PureBigraph bigraph) throws IncompatibleSignatureException, IncompatibleInterfaceException {
@@ -148,8 +150,7 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
         PureBigraph bigraph = builder.create();
 
 
-        PureBigraph decoded = makeIdleEdges(bigraph);
-        return decoded;
+        return makeIdleEdges(bigraph);
     }
 
     private ReactionRule<PureBigraph> bindSourceRole(boolean withFix) throws Exception {
@@ -279,6 +280,7 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setPrintCanonicalStateLabel(false)
                         .setOutputStatesFolder(new File(TARGET_DUMP_PATH + "states/"))
+                        .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))
                         .create()
                 )
         ;

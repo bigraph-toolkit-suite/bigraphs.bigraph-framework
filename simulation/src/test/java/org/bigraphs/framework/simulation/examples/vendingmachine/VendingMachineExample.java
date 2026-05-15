@@ -34,7 +34,6 @@ import org.bigraphs.framework.core.BigraphFileModelManagement;
 import org.bigraphs.framework.core.exceptions.ControlIsAtomicException;
 import org.bigraphs.framework.core.exceptions.InvalidConnectionException;
 import org.bigraphs.framework.core.exceptions.InvalidReactionRuleException;
-import org.bigraphs.framework.core.exceptions.builder.LinkTypeNotExistsException;
 import org.bigraphs.framework.core.exceptions.builder.TypeNotExistsException;
 import org.bigraphs.framework.core.impl.elementary.Placings;
 import org.bigraphs.framework.core.impl.pure.PureBigraph;
@@ -276,7 +275,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
     /**
      * Insert is only possible if no button was pressed
      */
-    public ReactionRule<PureBigraph> insertCoin() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public ReactionRule<PureBigraph> insertCoin() throws ControlIsAtomicException, InvalidReactionRuleException {
         DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
@@ -331,7 +330,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
      * phd must be present; a VM cannot press a button itself.
      * for tea.
      */
-    public ReactionRule<PureBigraph> pushButton2() throws LinkTypeNotExistsException, InvalidConnectionException, ControlIsAtomicException, InvalidReactionRuleException {
+    public ReactionRule<PureBigraph> pushButton2() throws ControlIsAtomicException, InvalidReactionRuleException {
         DynamicSignature signature = sig();
         PureBigraphBuilder<DynamicSignature> builder = pureBuilder(signature);
         PureBigraphBuilder<DynamicSignature> builder2 = pureBuilder(signature);
@@ -452,7 +451,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         PureBigraph param = null;
         PureBigraph newAgent = null;
         AbstractBigraphMatcher<PureBigraph> matcher = AbstractBigraphMatcher.create(PureBigraph.class);
-        MatchIterable<PureBigraphMatch> match2 = (MatchIterable<PureBigraphMatch>) matcher.match(agent, insertCoinRR);
+        MatchIterable<PureBigraphMatch> match2 = (MatchIterable<PureBigraphMatch>) matcher.matchAll(agent, insertCoinRR);
         Iterator<PureBigraphMatch> iterator2 = match2.iterator();
         JLibBigBigraphDecoder decoder = new JLibBigBigraphDecoder();
         if (iterator2.hasNext()) {
@@ -483,7 +482,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
         assert newAgent != null;
         assert param != null;
 
-        MatchIterable<PureBigraphMatch> match3 = (MatchIterable<PureBigraphMatch>) matcher.match(newAgent, insertCoinRR2);
+        MatchIterable<PureBigraphMatch> match3 = (MatchIterable<PureBigraphMatch>) matcher.matchAll(newAgent, insertCoinRR2);
         Iterator<PureBigraphMatch> iterator3 = match3.iterator();
         if (iterator3.hasNext()) {
             PureBigraphMatch match = iterator3.next();
@@ -555,7 +554,7 @@ public class VendingMachineExample extends BaseExampleTestSupport implements Big
                 .build().compare(scope);
 
 
-        Map<String, List<org.eclipse.emf.compare.Match>> bfs = bfs(comparison.getMatches().get(0));
+        Map<String, List<org.eclipse.emf.compare.Match>> bfs = bfs(comparison.getMatches().getFirst());
         System.out.println(bfs);
         String nodeLabel = "Coin";
         System.out.println(bfs.get(nodeLabel).get(0).eContainer());
