@@ -46,31 +46,20 @@ public class PureMatchIteratorImpl extends AbstractBigraphMatchIterator<PureBigr
         this.matches = Lists.mutable.ofAll(this.matchingEngine.getMatches());
     }
 
-//    @Override
-//    public boolean hasNext() {
-//        if (matches.isEmpty()) return false;
-//        return cursor != matches.size();
-//    }
-
-//    @Override
-//    public PureBigraphMatch next() {
-//        return super.next();
-//    }
-
     public static class FirstMatchOnly extends AbstractBigraphMatchIterator.FirstMatchOnly<PureBigraph> {
 
         public FirstMatchOnly(PureBigraphMatchingEngine matchingEngine) {
             super(matchingEngine);
+            this.findMatches();
         }
 
         @Override
         protected void findMatches() {
-            ((PureBigraphMatchingEngine)this.matchingEngine).beginMatch();
-            if (((PureBigraphMatchingEngine)this.matchingEngine).hasMatched()) {
-                ((PureBigraphMatchingEngine)this.matchingEngine).getSingleMatch();
+            ((PureBigraphMatchingEngine) this.matchingEngine).beginMatch();
+            if (((PureBigraphMatchingEngine) this.matchingEngine).hasMatched()) {
+                ((PureBigraphMatchingEngine) this.matchingEngine).getSingleMatch();
             }
             this.matches = Lists.mutable.ofAll(this.matchingEngine.getMatches());
-
         }
     }
 
