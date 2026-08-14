@@ -11,11 +11,6 @@ Maven modules make it easy to include a certain functionality as dependency in e
 specific needs.
 At the same time, the project is logically organized.
 
-### Git-Workflow
-
-- The Git workflow *Gitflow* as described [here](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) is applied for the development
-- Push tags only: `git push <remote> --tags`
-
 ### Versioning
 
 - [Semantic Versioning](https://semver.org/) is employed as a versioning scheme for all modules.
@@ -106,14 +101,13 @@ npx npm-check-updates
 
 #### Live Editing
 
-To view and edit the manual execute the following commands. 
-First, `cd` into the `documentation/v2-docusaurus/` folder:
+To view and edit the manual execute the following commands:
 
 ```shell
 nvm install 20.18.1
 nvm use 20.18.1
-npm --prefix ./documentation/v2-docusaurus/ install
 cd ./documentation/v2-docusaurus/
+npm install
 npx docusaurus start #or: npm run start
 ```
 

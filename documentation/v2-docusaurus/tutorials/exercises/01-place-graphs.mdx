@@ -1,0 +1,418 @@
+---
+id: place-graphs
+title: Place Graphs
+sidebar_label: "Place Graphs (Ex. 1–2)"
+sidebar_position: 2
+---
+
+Learn how *place graphs* represent hierarchical structure through nesting, siblings, and regions, and how *sites* abstract from unspecified or variable contents.
+
+## Exercise 1: Building and Composing Hierarchies
+
+### Background
+
+The *place graph*, which is a forest, describes the structural organization of entities, that is, nodes in the bigraph.
+It represents a hierarchy in which entities are located relative to one another through *nesting*, *sibling* relationships, and *regions* (roots of the forest).
+
+For example,
+
+```text
+Room.Adult
+```
+
+states that an `Adult` is located inside a `Room`.
+The dot "." is called the *nesting* operator.
+(This operator will be important again in Exercise 2 when working with *abstractions*.)
+
+Two entities under the same parent are *siblings*:
+
+```text
+Room.(Adult | Child)
+```
+
+Here, `Adult` and `Child` occupy the same `Room`.
+
+At the outermost level, a bigraph may contain one or more *regions*, which are the roots of the forest.
+This distinction becomes important when independently constructed bigraphs are combined.
+
+Two operations (namely products) are particularly useful:
+
+```text
+B₁ || B₂
+```
+
+keeps `B₁` and `B₂` as *distinct bigraphs in separate regions*, whereas
+
+```text
+B₁ | B₂
+```
+
+*merges* their contents into a common region.
+
+:::tip Parallel vs. Merge Product [[1]](#ref1)
+Use `||` when modelling distinct bigraphs, and `|` when combining bigraphs into the same region.
+:::
+
+### Problem
+
+Consider two rooms:
+
+- one room contains an `Adult`,
+- another room contains a `Child`.
+
+Start by modelling each room independently:
+
+```text
+Room.Adult
+```
+
+and
+
+```text
+Room.Child
+```
+
+<!--
+
+Now combine the two bigraphs in two different ways.
+
+First, represent the rooms as belonging to *two independent spatial regions*.
+
+Second, represent both rooms as part of *one common region*.
+
+The entities contained inside each room must remain unchanged.
+-->
+
+### Tasks
+
+1. Define the controls:
+   - `Room`
+   - `Adult`
+   - `Child`
+
+2. Construct the two independent place graphs:
+
+   ```text
+   Room.Adult
+   ```
+
+   and
+
+   ```text
+   Room.Child
+   ```
+
+3. Combine them using the *parallel product*:
+
+   ```text
+   Room.Adult || Room.Child
+   ```
+
+   and determine:
+   - How many regions does the resulting bigraph have?
+   - Are the two `Room` nodes siblings?
+
+5. Combine the same bigraphs using the *merge product*:
+
+   ```text
+   Room.Adult | Room.Child
+   ```
+
+   and determine:
+   - How many regions does this bigraph have?
+   - Which nodes are siblings?
+   - Which nesting relationships remain unchanged?
+
+8. Consider a larger building model. Decide which operation you would use when:
+   - Modelling two physically independent buildings,
+   - modelling two rooms belonging to the same floor, and
+   - explain the modelling difference between `|` and  `||`.
+
+---
+
+<!-- [Download Exercise Sheet (PDF)](https://) -->
+
+[Download Bigraph Framework Starter Project](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework-exercises)
+
+<details>
+<summary><strong>Show Java solution</strong></summary>
+
+#### Construct the individual bigraphs
+
+```java
+PureBigraph roomWithAdult = pureBuilder(signature)
+    .root()
+    .child("Room").down()
+        .child("Adult")
+    .create();
+```
+
+This represents:
+
+```text
+Room.Adult
+```
+
+The second room is constructed independently:
+
+```java
+PureBigraph roomWithChild = pureBuilder(signature)
+    .root()
+    .child("Room").down()
+        .child("Child")
+    .create();
+```
+
+representing:
+
+```text
+Room.Child
+```
+
+#### Parallel product
+
+Combine the two bigraphs using the parallel product:
+
+```java
+PureBigraph parallel = ops(roomWithAdult)
+    .parallelProduct(roomWithChild)
+    .getOuterBigraph();
+```
+
+Conceptually:
+
+```text
+Room.Adult || Room.Child
+```
+
+The resulting place graph contains *two regions*:
+
+```text
+r₀                    r₁
+│                     │
+└── Room              └── Room
+    └── Adult             └── Child
+```
+
+The two `Room` nodes are therefore *not siblings*. Each belongs to a different root.
+
+#### Merge product
+
+Now combine the same bigraphs using the merge product:
+
+```java
+PureBigraph merged = ops(roomWithAdult)
+    .merge(roomWithChild)
+    .getOuterBigraph();
+```
+
+Conceptually:
+
+```text
+Room.Adult | Room.Child
+```
+
+The result contains *one region*:
+
+```text
+r₀
+├── Room
+│   └── Adult
+│
+└── Room
+    └── Child
+```
+
+The two `Room` nodes are now *siblings*, because they share the same parent root.
+
+The internal nesting relationships remain unchanged:
+
+```text
+Adult < Room
+Child < Room
+```
+
+Only the relationship between the two independently constructed bigraphs has changed.
+
+#### Modelling Decision
+
+Use
+
+```text
+B₁ || B₂
+```
+
+when the two structures should remain spatially distinct.
+
+Use
+
+```text
+B₁ | B₂
+```
+
+when their contents should become part of the same region.
+
+For example:
+
+```text
+Building₁ || Building₂
+```
+
+can represent two independent buildings, whereas
+
+```text
+Room₁ | Room₂
+```
+
+can represent two rooms belonging to the same spatial region, such as a common floor.
+
+</details>
+
+---
+
+## Exercise 2: Sites for Abstraction
+
+### Background
+
+A *site* represents an unspecified part of a bigraph's place structure. It acts as a placeholder for zero or more entities that may be supplied later through composition or rewriting.
+
+This gives rise to an important modelling distinction.
+
+```text
+Room.1
+```
+
+states that the `Room` contains *no further structure* at this position.
+
+By contrast,
+
+```text
+Room.id
+```
+
+contains a *site* and therefore leaves the room's contents unspecified. The site may later represent zero or more entities.
+
+Although both models may initially appear to describe an empty room, they express different assumptions about the system.
+
+:::tip Sites as Structural Abstraction [[1]](#ref1)
+Use `1` when no children are possible, and `id` when zero or more children may be supplied by the surrounding context.
+:::
+
+### Problem
+
+Consider two rooms in a building.
+
+The first is a *sealed room* whose contents are fully known. No additional entities may occur inside it.
+
+The second is a *general-purpose room* whose current contents are intentionally left unspecified. Depending on the surrounding context, it may later contain people, furniture, devices, or other entities.
+
+Model both situations and compare their place structures.
+
+
+### Tasks
+
+1. Define all the necessary *controls* of the signature.
+
+2. Construct a bigraph representing:
+
+   ```text
+   Room.1
+   ```
+
+   Then, construct a second bigraph representing:
+
+   ```text
+   Room.id
+   ```
+
+   and explain why `Room.1` and `Room.id` are not equivalent, even if both currently appear empty.
+
+3. Consider the following possible room contents:
+
+   ```text
+   Adult
+   Child
+   Table
+   ```
+
+   Which room model would you choose if these contents are not yet known at modelling time?
+
+4. Build a place graph containing an `Adult`, a `Child`, and a `Table`. How can this place graph be nested into the empty `Room` place graph? Construct the resulting bigraph.
+
+---
+
+<!-- [Download Exercise Sheet (PDF)](https://) -->
+
+[Download Bigraph Framework Starter Project](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-framework-exercises)
+
+<details>
+<summary><strong>Show Java solution</strong></summary>
+
+#### Model `Room.1`
+
+```java
+PureBigraph roomOne = pureBuilder(signature)
+    .root()
+    .child("Room")
+    .create();
+```
+
+Conceptually:
+
+```text
+Room.1
+```
+
+Its place graph contains a `Room` without any nested site:
+
+```text
+r₀
+└── Room
+```
+
+The absence of a site makes the model structurally complete at this position.
+
+#### Model `Room.id`
+
+```java
+PureBigraph roomId = pureBuilder(signature)
+    .root()
+    .child("Room").down()
+        .site()
+    .create();
+```
+
+Conceptually:
+
+```text
+Room.id
+```
+
+Its place graph contains a site:
+
+```text
+r₀
+└── Room
+    └── □
+```
+
+The site abstracts from the concrete contents of the room. It marks a position at which additional place structure may later be inserted.
+
+The modelling distinction is therefore:
+
+```text
+Room.1  ≠  Room.id
+```
+
+Use `1` when the model should state that no children are possible at that position.
+
+Use `id` when the model should leave the contents open and allow zero or more entities to be supplied by the surrounding context.
+
+</details>
+
+---
+
+## References
+
+
+- \[1\] <a id="ref1"></a>B. Archibald, M. Calder, and M. Sevegnani. Practical Modelling with Bigraphs. Formal Aspects of Computing, 37(3), Article 20, pp. 1–36, 2025. DOI: [10.1145/3721142](https://doi.org/10.1145/3721142).

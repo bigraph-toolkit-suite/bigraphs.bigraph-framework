@@ -1,0 +1,9 @@
+{
+  "label": "Bigraph Modelling Exercises",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "title": "Bigraph Modelling Exercises",
+    "description": "Learn bigraph modelling through exercises, from basic place (forests) and link (hypergraph) structures to reaction rules."
+  }
+}

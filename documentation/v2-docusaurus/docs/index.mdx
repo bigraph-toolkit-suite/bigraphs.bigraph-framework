@@ -13,13 +13,12 @@ const url = "https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-met
 <center>
     <p>
         This manual provides a complete guide to the Bigraph Framework. <br/>
-        <i>Last Updated: 2026-06-26</i>
+        <i>Last Updated: 2026-08-12</i>
     </p>
 </center>
 
 
-- **Stable**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.4.2</span>
-- Previous Stable Versions: `2.4.1`, `2.4.0`, `2.3.6`
+- **Stable Version**: <span class="badge badge-secondary" style={{backgroundColor: '#19c37d'}}>2.4.4</span>
 
 <details style={{ background: 'transparent' }}>
     <summary><strong>Version Compatibility</strong></summary>
@@ -32,7 +31,7 @@ This table specifies the metamodel standards supported by the Bigraph Framework.
             <th><a href={url}>Bigraph Ecore Metamodel</a></th>
         </tr>
         <tr>
-            <td>2.4.2, 2.4.1, 2.4.0</td>
+            <td>2.4.4, 2.4.2, 2.4.1, 2.4.0</td>
             <td>2.0.4</td>
         </tr>
         <tr>
@@ -71,22 +70,18 @@ Since version 1.0.0 of Bigraph Framework: The new groupID and base package name 
 
 ## What is Bigraph Framework?
 
-Bigraph Framework is a Java framework designed for developers and researchers for building, simulating, and analyzing reactive systems (e.g., cyber-physical, context-aware, agent-based, or distributed systems, IoT environments, ...).
+Bigraph Framework is a Java framework designed for developers and researchers to model, simulate, and analyze reactive systems, including cyber-physical, context-aware, agent-based, distributed, IoT systems and other discrete-event systems.
 
-It lets you model dynamic systems with both structure (who is inside what) and connectivity (who is connected and interacting to whom), and then simulate, visualize, and verify how those systems evolve over time.
+You can model dynamic systems through both locality (who is inside what) and connectivity (who is connected to and interacting with whom), and then simulate, visualize, and verify how those systems evolve over time.
 
-Under the hood, the framework is based on Milner’s theory of Bigraphical Reactive Systems (BRS).
+Under the hood, the framework is based on Robin Milner’s theory of [Bigraphical Reactive Systems (BRS)](https://en.wikipedia.org/wiki/Bigraph).
 
-The high level API eases the programming of bigraphical systems for various applications.
-The framework is developed around a [metamodel-first approach](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel), when working with bigraphical structures.
+The high-level API simplifies the development of bigraphical systems for a wide range of applications.
+The framework follows a [metamodel-first approach](https://github.com/bigraph-toolkit-suite/bigraphs.bigraph-ecore-metamodel), providing a consistent format for creating, manipulating, and exchanging bigraphical models and applications.
 
 <details style={{ background: 'transparent' }}>
     <summary><strong>What are Bigraphs?</strong></summary>
-    Bigraphs are a theory and metamodel for global ubiquitous systems,
-    mobile computing, context-aware systems and the Internet of Things (IoT), or in general: for reactive systems.
-    It is grounded on category theory and regarded as a unifying framework for many process calculi, including the ambient calculus, action calculi, Petri nets,
-    the Calculus of Communicating Systems (CCS) and π-calculus.
-    The theory provides an algebra and a graph rewriting mechanism to describe, study and analyze the dynamic behavior of reactive systems.
+Bigraphs provide both a theory and a metamodel for reactive systems, including ubiquitous computing and mobile computing, context-aware systems and IoT environments. Based on category theory, they serve as a unified framework for a range of process calculi and related formalisms, including ambient calculus, action calculi, Petri nets, the calculus of communicating systems (CCS) and π-calculus. The theory combines an algebraic structure with graph transformations to model, study and analyse the dynamic behaviour of reactive systems.
 </details>
 
 ### Features

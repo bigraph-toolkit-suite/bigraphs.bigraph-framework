@@ -10,7 +10,8 @@ The framework could not have been developed without the following bigraph tools:
 - [BigraphER](https://bitbucket.org/uog-bigraph/bigraph-tools/)
 - [jLibBig](https://github.com/bigraphs/jlibbig)
 
-In addition to these tools, this framework has also benefited from the valuable support of colleagues, students, and external interested individuals. By testing the framework, and suggesting new features, they have helped improve and shape its development.
+In addition to these tools, this framework has also benefited from the valuable support of colleagues, students, and friends. 
+By testing the framework, and suggesting new features, they have helped improve and shape its development.
 
 ## License
 

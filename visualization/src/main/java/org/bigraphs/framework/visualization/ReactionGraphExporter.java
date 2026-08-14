@@ -17,6 +17,7 @@ package org.bigraphs.framework.visualization;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
+import com.mxgraph.util.mxRectangle;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -71,8 +72,26 @@ public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> im
 //        ((mxHierarchicalLayout) layout).setResizeParent(true);
         layout.execute(graphAdapter.getDefaultParent());
 
+        mxRectangle bounds = graphAdapter.getGraphBounds();
+
+        double maxWidth = 4000;
+        double maxHeight = 4000;
+
+        double scaleX = maxWidth / bounds.getWidth();
+        double scaleY = maxHeight / bounds.getHeight();
+
+        double scale = Math.min(1.0, Math.min(scaleX, scaleY));
+
         BufferedImage image =
-                mxCellRenderer.createBufferedImage(graphAdapter, null, 2, Color.WHITE, false, null);
+                mxCellRenderer.createBufferedImage(
+                        graphAdapter,
+                        null,
+                        scale,
+                        Color.WHITE,
+                        false,
+                        bounds
+                );
+
         try {
             if (!file.exists()) {
                 if (!file.createNewFile()) {

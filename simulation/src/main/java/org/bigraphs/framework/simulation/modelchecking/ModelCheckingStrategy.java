@@ -45,4 +45,6 @@ public interface ModelCheckingStrategy<B extends Bigraph<? extends Signature<?>>
     void setReactionRuleFilter(ReactionRuleFilter<B> filter);
 
     ReactionRuleFilter<B> getReactionRuleFilter();
+
+    void requestStop();
 }

@@ -295,6 +295,11 @@ public abstract class ModelCheckingStrategySupport<B extends Bigraph<? extends S
         }
     }
 
+    @Override
+    public void requestStop() {
+        isRunning = false;
+    }
+
     public static class MatchResult<B extends Bigraph<? extends Signature<?>>> implements BMatchResult<B> {
         private final ReactionRule<B> reactionRule;
         private final BigraphMatch<B> next;
