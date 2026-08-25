@@ -53,6 +53,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     MutableList<BigraphEntity.OuterName> idleOuterNames = Lists.mutable.empty();
     MutableList<BigraphEntity<?>> frontier = Lists.mutable.empty();
     MutableList<BigraphEntity<?>> next = Lists.mutable.empty();
+    /** Place-tree signatures used to break sibling ties without looking at instance link names. */
+    Map<BigraphEntity<?>, String> placeTreeSignatures = new IdentityHashMap<>();
     PureBigraph bigraph;
     Supplier<String> rewriteEdgeNameSupplier;
     Supplier<String> rewriteInnerNameSupplier;
@@ -73,6 +75,7 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         idleOuterNames.clear();
         frontier.clear();
         next.clear();
+        placeTreeSignatures.clear();
         bigraph = null;
         rewriteEdgeNameSupplier = BigraphCanonicalFormSupport.createNameSupplier("e");
         rewriteInnerNameSupplier = BigraphCanonicalFormSupport.createNameSupplier("x");
@@ -519,8 +522,8 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
     }
 
     Comparator<BigraphEntity<?>> compareByLinkGraphOrdering =
-            Comparator.comparing((entry) -> {
-                        if (BigraphEntityType.isNode(entry) && bigraph.getPortCount((BigraphEntity.NodeEntity) entry) > 0) {
+            Comparator.<BigraphEntity<?>, String>comparing((BigraphEntity<?> entry) -> {
+                        if (BigraphEntityType.isNode(entry) && bigraph.getPortCount((BigraphEntity.NodeEntity<?>) entry) > 0) {
                             List<Integer> collect = bigraph.getPorts(entry).stream().sorted()
                                     .map(bigraph::getLinkOfPoint)
                                     .filter(Objects::nonNull)
@@ -530,14 +533,11 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
                                     .map(x -> totalOrdering.indexOf(x))
                                     .filter(x -> x != -1)
                                     .sorted().collect(Collectors.toList());
-//                            System.out.println(collect);
-                            Integer reduce = collect.stream().reduce(0, Integer::sum);
-                            return reduce;
-//
+                            return collect.toString();
                         }
-                        return Integer.MIN_VALUE;
+                        return "";
                     }
-            );
+            ).thenComparing(this::structuralLinkSignature);
     Comparator<BigraphEntity<?>> compareControlByKey3 =
             Comparator.comparing((entry) -> {
                 Queue<BigraphEntity> queue = new ArrayDeque<>();
@@ -607,33 +607,92 @@ public class PureCanonicalForm extends BigraphCanonicalFormStrategy<PureBigraph>
         return bigraph.getPortCount((BigraphEntity.NodeEntity<DynamicControl>) entry);
     });
 
-    final Comparator<BigraphEntity<?>> compareLinkNames = Comparator.comparing(entry -> {
-        if (rewriteOpenLinks && !printNodeIdentifiers) return "";
-        String collect = bigraph.getPorts(entry).stream().sorted().map(x -> bigraph.getLinkOfPoint(x))
-                .map(x -> ((BigraphEntity.Link) x).getName())
-                .sorted()
-                .collect(Collectors.joining(""));
-        return collect;
-//        Integer a = bigraph.getPorts(entry).stream()
-//                .map(x -> bigraph.getPointsFromLink(x).size()).reduce(0, Integer::sum);
-//        return a;
-    });
+    /**
+     * Orders nodes by the place-structure of the nodes on the other end of each port,
+     * not by instance edge names. Two isomorphic doors that only differ in
+     * {@code E_48FE} vs {@code E_5431} therefore receive the same rank.
+     */
+    final Comparator<BigraphEntity<?>> compareLinkNames = Comparator.comparing(this::structuralLinkSignature);
 
     final Comparator<Map.Entry<BigraphEntity<?>, LinkedList<BigraphEntity<?>>>> compareChildrenLinkNames =
             Comparator.comparing((entry) -> {
-//                if (printNodeIdentifiers) {
                 String s1 = entry.getValue().stream()
                         .sorted(compareLinkNames)
                         .filter(BigraphEntityType::isNode)
-                        .map(x -> bigraph.getLinkOfPoint(x))
-                        .filter(Objects::nonNull)
-                        .map(BigraphEntity.Link::getName)
+                        .map(this::structuralLinkSignature)
                         .sorted()
                         .collect(Collectors.joining(""));
-//                            String o = entry.getKey().getControl().getNamedType().stringValue() + s1;
-                String o = label(entry.getKey()) + s1;
-                return o;
+                return label(entry.getKey()) + s1;
             });
+
+    /**
+     * Control-and-children fingerprint of a place, independent of node or edge names.
+     * Children are sorted so sibling order in the instance model does not matter.
+     */
+    String placeTreeSignature(BigraphEntity<?> node) {
+        if (node == null) {
+            return "";
+        }
+        String cached = placeTreeSignatures.get(node);
+        if (cached != null) {
+            return cached;
+        }
+        String signature = label(node) + "[" + bigraph.getChildrenOf(node).stream()
+                .map(this::placeTreeSignature)
+                .sorted()
+                .collect(Collectors.joining("")) + "]";
+        placeTreeSignatures.put(node, signature);
+        return signature;
+    }
+
+    /**
+     * Per-port description of who else sits on the same link, identified by
+     * {@link #placeTreeSignature} and the peer's port index.
+     */
+    String structuralLinkSignature(BigraphEntity<?> entry) {
+        if (!BigraphEntityType.isNode(entry) || printNodeIdentifiers) {
+            if (!BigraphEntityType.isNode(entry)) {
+                return "";
+            }
+            return bigraph.getPorts(entry).stream().sorted()
+                    .map(bigraph::getLinkOfPoint)
+                    .filter(Objects::nonNull)
+                    .map(BigraphEntity.Link::getName)
+                    .sorted()
+                    .collect(Collectors.joining(""));
+        }
+        return bigraph.getPorts(entry).stream().sorted()
+                .map(port -> {
+                    BigraphEntity.Link link = bigraph.getLinkOfPoint(port);
+                    if (link == null) {
+                        return "_";
+                    }
+                    return bigraph.getPointsFromLink(link).stream()
+                            .map(point -> describeLinkPeer(entry, point))
+                            .filter(s -> !s.isEmpty())
+                            .sorted()
+                            .collect(Collectors.joining(","));
+                })
+                .collect(Collectors.joining(";"));
+    }
+
+    private String describeLinkPeer(BigraphEntity<?> self, BigraphEntity<?> point) {
+        if (BigraphEntityType.isInnerName(point)) {
+            return printNodeIdentifiers
+                    ? "i:" + ((BigraphEntity.InnerName) point).getName()
+                    : "i";
+        }
+        if (!BigraphEntityType.isPort(point)) {
+            return "";
+        }
+        BigraphEntity.Port port = (BigraphEntity.Port) point;
+        BigraphEntity.NodeEntity<?> peer = bigraph.getNodeOfPort(port);
+        if (peer == null || peer == self) {
+            return "";
+        }
+        return placeTreeSignature(peer) + "@" + port.getIndex()
+                + "^" + placeTreeSignature(bigraph.getParent(peer));
+    }
 
 
 }
