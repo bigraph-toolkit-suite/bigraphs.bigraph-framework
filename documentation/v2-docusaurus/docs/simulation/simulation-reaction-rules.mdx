@@ -120,8 +120,13 @@ Normally, the identities get lost during the rewrite operation since the bigraph
 This map allows to reason about whether entities splitted, merged, got removed or added.
 
 A tracking map is defined for a specific reaction rule.
-This map relates nodes of the reactum to nodes of the redex.
+This map relates reactum names to redex names.
 The image of this map can also be the empty set.
+Keys are nodes unless they are classified as links (closed edges or outer names) via `addLinkNames` / `trackLink`.
+Link tracking is optional: an unlisted *rule* hyperedge keeps today's behaviour (a new name after the rewrite).
+A tracked link is identified by a unique reactum node/port (not by searching the composed graph for the old edge name, which jLib does not keep).
+If that handle is also incident to a context node, or the target name is already used by another handle, the name is left unchanged.
+Whenever a tracking map is present, leftover context and parameter hyperedges (including those that cross a site) are restored to their original agent names; otherwise jLib's `E_…` names leak into the canonical form and split isomorphic exploration states.
 
 ![tracking-rule](../assets/simulation/reaction-rule-tracking-map.png)
 *A reaction rule with a tracking map.*
@@ -137,6 +142,7 @@ map.put("v0", "v2");
 map.put("v1", "v1");
 map.put("v2", "v0");
 map.put("v3", "v3");
+map.trackLink("e0", "e0"); // optional: keep the matched agent's hyperedge name
 PureBigraph redex = ...;
 PureBigraph reactum = ...;
 ParametricReactionRule<PureBigraph> rr = new ParametricReactionRule<>(redex, reactum);

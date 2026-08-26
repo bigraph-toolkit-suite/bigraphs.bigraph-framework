@@ -17,7 +17,6 @@ package org.bigraphs.framework.simulation.matching.pure;
 import it.uniud.mads.jlibbig.core.Owner;
 import it.uniud.mads.jlibbig.core.attachedProperties.Property;
 import it.uniud.mads.jlibbig.core.std.*;
-import it.uniud.mads.jlibbig.core.util.NameGenerator;
 import java.util.*;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphDecoder;
 import org.bigraphs.framework.converter.jlibbig.JLibBigBigraphEncoder;
@@ -121,13 +120,8 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
             PureBigraph decodedRdxImg = decoder.decode(jLibMatchResult.getRedex());
             ((PureBigraphMatch) match).setRedexImage(decodedRdxImg);
 
-            // Collect the reactum nodes for later when we do the relabeling
-            // (they get lost after jLibBig composition)
-            List<String> reactumLabelNames = new ArrayList<>();
-            if (rule.getTrackingMap() != null && !rule.getTrackingMap().isEmpty()) {
-                reactumLabelNames.addAll(inreact.getNodes().stream().map(x -> x.getEditable().getName())
-                        .toList());
-            }
+            // Reactum names are lost after jLib compose; capture them first.
+            TrackingMapRelabeler trackingRelabeler = TrackingMapRelabeler.prepare(rule, inreact);
 
             bb.outerCompose(inreact, true);
 
@@ -137,46 +131,7 @@ public class PureReactiveSystem extends AbstractSimpleReactiveSystem<PureBigraph
 
             bb.outerCompose(jLibMatchResult.getContext(), true);
 
-            // Do relabeling only when we have tracking map. Relabeling allows tracing of nodes
-            // relabeling is done outside of jlibbig routine for SoC reasons
-            if (rule.getTrackingMap() != null && !rule.getTrackingMap().isEmpty()) {
-                List<Parent> collectCtxNodes = new ArrayList<>();
-                Deque<Parent> q = new ArrayDeque<>(bb.getRoots());
-                while (!q.isEmpty()) {
-                    Parent currentElem = q.poll();
-                    if (!collectCtxNodes.contains(currentElem) && currentElem.isNode()) {
-                        collectCtxNodes.add(currentElem);
-                        EditableNode editableNode = (EditableNode) currentElem.getEditable();
-                        if (jLibMatchResult.ctxEmbMappping.get(editableNode) == null) { // is rule node
-                            String originalReactumLabel = ((EditableNode) currentElem).getName();
-                            if (reactumLabelNames.contains(originalReactumLabel)) {
-                                String originalRedexLbl = rule.getTrackingMap().get(originalReactumLabel);
-                                if (originalRedexLbl != null && !originalRedexLbl.isEmpty()) {
-                                    // emb is only for redex <-> agent
-                                    Optional<Node> first = jLibMatchResult.emb_nodes.keySet().stream()
-                                            .filter(x -> x.isNode() && x.getEditable().getName().equals(originalRedexLbl))
-                                            .findFirst();
-                                    assert first.isPresent();
-                                    if (first.isPresent()) {
-                                        editableNode.setName(jLibMatchResult.emb_nodes.get(first.get()).getEditable().getName());
-                                    }
-                                } else { // else: its a new node, so we create a fresh label, which is different from all others
-                                    editableNode.setName("N_" + NameGenerator.DEFAULT.generate());
-                                }
-                            }
-                        } else { // is context node
-                            String name = ((EditableNode) jLibMatchResult.ctxEmbMappping.get(editableNode)).getName();
-                            editableNode.setName(name);
-                        }
-                    }
-                    // collect next nodes in the tree
-                    for (Child c : currentElem.getChildren()) {
-                        if (c.isNode()) {
-                            q.add((Parent) c);
-                        }
-                    }
-                }
-            }
+            trackingRelabeler.apply(bb, jLibMatchResult, agent);
 
             Bigraph result = bb.makeBigraph(true);
             PureBigraph decodedResult = decoder.decode(result, agent.getSignature());
