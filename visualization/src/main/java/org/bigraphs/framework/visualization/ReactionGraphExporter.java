@@ -40,6 +40,7 @@ public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> im
     private final Logger logger = LoggerFactory.getLogger(ReactionGraphExporter.class);
     ReactiveSystem<B> reactiveSystem;
     ReactionGraph<B> bReactionGraph;
+    boolean useSimpleStateLabel = true;
 
     /**
      * Constructor requires the BRS that is being model checking.
@@ -48,6 +49,11 @@ public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> im
      */
     public ReactionGraphExporter(ReactiveSystem<B> reactiveSystem) {
         this.reactiveSystem = reactiveSystem;
+    }
+
+    public ReactionGraphExporter(ReactiveSystem<B> reactiveSystem, boolean useSimpleStateLabel) {
+        this.reactiveSystem = reactiveSystem;
+        this.useSimpleStateLabel = useSimpleStateLabel;
     }
 
     /**
@@ -61,26 +67,27 @@ public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> im
      */
     @Override
     public void toPNG(ReactionGraph<B> bReactionGraph, File file) throws IOException {
-//        Graph g = bReactionGraph.getGraph();
-        mxReactionGraph graphAdapter = new mxReactionGraph(bReactionGraph, reactiveSystem);
+        mxReactionGraph graphAdapter = new mxReactionGraph(bReactionGraph, reactiveSystem, useSimpleStateLabel);
         graphAdapter.getStylesheet().putCellStyle("MATCHED", StyleConstants.predicateMatchedNodeStylesheet());
         graphAdapter.getStylesheet().putCellStyle("DEFAULT", StyleConstants.defaultNodeStylesheet());
         graphAdapter.getStylesheet().putCellStyle("DEFAULT_EDGE", StyleConstants.defaultEdgeStylesheet());
 //        mxIGraphLayout layout = new mxCompactTreeLayout(graphAdapter);
         mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter, SwingConstants.NORTH);
-//        ((mxHierarchicalLayout) layout).setFineTuning(true);
-//        ((mxHierarchicalLayout) layout).setResizeParent(true);
         layout.execute(graphAdapter.getDefaultParent());
 
         mxRectangle bounds = graphAdapter.getGraphBounds();
 
-        double maxWidth = 4000;
-        double maxHeight = 4000;
+        final double preferredScale = 2.0;
+        final double maxWidth = 4000.0;
+        final double maxHeight = 4000.0;
 
         double scaleX = maxWidth / bounds.getWidth();
         double scaleY = maxHeight / bounds.getHeight();
 
-        double scale = Math.min(1.0, Math.min(scaleX, scaleY));
+        double scale = Math.min(
+                preferredScale,
+                Math.min(scaleX, scaleY)
+        );
 
         BufferedImage image =
                 mxCellRenderer.createBufferedImage(
@@ -89,7 +96,7 @@ public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> im
                         scale,
                         Color.WHITE,
                         false,
-                        bounds
+                        null
                 );
 
         try {
@@ -104,7 +111,6 @@ public class ReactionGraphExporter<B extends Bigraph<? extends Signature<?>>> im
                 ImageIO.write(image, "PNG", file);
             }
         } catch (IOException e) {
-//            e.printStackTrace();
             logger.error(e.toString());
         }
     }

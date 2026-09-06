@@ -39,6 +39,7 @@ public class mxReactionGraph extends mxGraph implements GraphListener<ReactionGr
 
     private final ReactionGraph reactionGraph;
     private final ReactiveSystem reactiveSystem;
+    boolean useSimpleStateLabel;
 
     /**
      * The graph to be drawn. Has vertices "V" and edges "E".
@@ -70,31 +71,17 @@ public class mxReactionGraph extends mxGraph implements GraphListener<ReactionGr
     private HashMap<mxICell, ReactionGraph.LabeledEdge> cellToEdgeMap = new HashMap<>();
 
 
-//    /**
-//     * Constructs and draws a new ListenableGraph. If the graph changes through
-//     * as ListenableGraph, the JGraphXAdapter will automatically add/remove the
-//     * new edge/vertex as it implements the GraphListener interface. Throws a
-//     * IllegalArgumentException if the graph is null.
-//     *
-//     * @param graph casted to graph
-//     */
-//    public BigLayouter(ListenableGraph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> graph) {
-//        // call normal constructor with graph class
-//        this((Graph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge>) graph);
-//
-//        graph.addGraphListener(this);
-//    }
-
     /**
      * Constructs and draws a new mxGraph from a jGraphT graph. Changes on the
      * jgraphT graph will not edit this mxGraph any further; use the constructor
      * with the ListenableGraph parameter instead or use this graph as a normal
      * mxGraph. Throws an IllegalArgumentException if the parameter is null.
      */
-    public mxReactionGraph(ReactionGraph reactionGraph, ReactiveSystem reactiveSystem) {
+    public mxReactionGraph(ReactionGraph reactionGraph, ReactiveSystem reactiveSystem, boolean useSimpleStateLabel) {
         super();
         this.reactionGraph = reactionGraph;
         this.reactiveSystem = reactiveSystem;
+        this.useSimpleStateLabel = useSimpleStateLabel;
         Graph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> graph = reactionGraph.getGraph();
         if (graph instanceof ListenableGraph) {
             ((ListenableGraph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge>) graph).addGraphListener(this);
@@ -151,7 +138,7 @@ public class mxReactionGraph extends mxGraph implements GraphListener<ReactionGr
 
     @Override
     public void vertexAdded(GraphVertexChangeEvent<ReactionGraph.LabeledNode> e) {
-        addJGraphTVertex(e.getVertex());
+        addJGraphTVertex(e.getVertex(), useSimpleStateLabel);
     }
 
     @Override
@@ -212,17 +199,20 @@ public class mxReactionGraph extends mxGraph implements GraphListener<ReactionGr
      *
      * @param vertex vertex to be added to the graph
      */
-    private void addJGraphTVertex(ReactionGraph.LabeledNode vertex) {
+    private void addJGraphTVertex(ReactionGraph.LabeledNode vertex, boolean useSimpleLabel) {
         getModel().beginUpdate();
 
         try {
-            Optional<ReactionGraph.LabeledNode> labeledNodeByCanonicalForm = reactionGraph.getLabeledNodeByCanonicalForm(vertex.getCanonicalForm());
+//            Optional<ReactionGraph.LabeledNode> labeledNodeByCanonicalForm = reactionGraph.getLabeledNodeByCanonicalForm(vertex.getCanonicalForm());
             String style = "DEFAULT";
             String oldLabel = vertex.getLabel();
+            if(useSimpleLabel && vertex.getCanonicalForm() != null && !vertex.getCanonicalForm().isEmpty()) {
+                oldLabel = vertex.getCanonicalForm();
+            }
             // create a new JGraphX vertex at position 0
-            if (labeledNodeByCanonicalForm.isPresent()) {
-                Set<ReactiveSystemPredicate> o = (Set<ReactiveSystemPredicate>) reactionGraph.getPredicateMatches().get(labeledNodeByCanonicalForm.get());
-                if (Objects.nonNull(o) && o.size() > 0) {
+            {
+                Set<ReactiveSystemPredicate> o = (Set<ReactiveSystemPredicate>) reactionGraph.getPredicateMatches().get(vertex);
+                if (Objects.nonNull(o) && !o.isEmpty()) {
                     style = "MATCHED";
                     String predList = o.stream().map(x -> (String) reactiveSystem.getPredicateMap().inverse().get(x))
                             .collect(Collectors.joining(","));
@@ -287,7 +277,7 @@ public class mxReactionGraph extends mxGraph implements GraphListener<ReactionGr
      */
     private void insertJGraphT(Graph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> graph) {
         for (ReactionGraph.LabeledNode vertex : graph.vertexSet()) {
-            addJGraphTVertex(vertex);
+            addJGraphTVertex(vertex, useSimpleStateLabel);
         }
 
         for (ReactionGraph.LabeledEdge edge : graph.edgeSet()) {
