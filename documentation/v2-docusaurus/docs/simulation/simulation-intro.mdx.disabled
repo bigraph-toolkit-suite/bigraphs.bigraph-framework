@@ -1,0 +1,23 @@
+---
+id: simulation-intro
+title: Technical Overview
+sidebar_position: 2
+---
+
+
+
+
+
+[//]: # (The following sections provide a technical overview of BRS construction, the anatomy of reaction rules, and the main classes governing the evolution of bigraphs &#40;i.e., system states&#41;, before these topics are explained in greater detail in the subsequent sections.)
+
+[//]: # (:::tip Example)
+
+[//]: # (Refer to the [Usage Example]&#40;./usage-example-brs-simulation&#41;, which describes a complete procedure on how to practically use bigraph matching and rewriting in Bigraph Framework.)
+
+[//]: # ()
+[//]: # (An overview of the most important classes is also listed on this page in section [Changing Bigraphs over Time: Overview]&#40;#changing-bigraphs-over-time-overview&#41;.)
+
+[//]: # (:::)
+
+
+

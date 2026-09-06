@@ -11,7 +11,7 @@ import getting_started_guide_2 from '!!raw-loader!../assets/basics/getting_start
 import getting_started_guide_3 from '!!raw-loader!../assets/basics/getting_started_guide-3.java';
 
 
-Discover what **Bigraph Framework** is all about and learn the core concepts behind it.
+Discover what *Bigraph Framework* is all about and learn the core concepts behind it.
 
 ## Creating a Bigraph
 
@@ -19,8 +19,8 @@ At the moment, Bigraph Framework supports only _pure attributed bigraphs_.
 
 ### Signature
 
-To construct a bigraph, the first step is to define a **signature**.
-The signature specifies the **syntax** of the bigraph and determines which **types** (i.e., _controls_ in bigraph-jargon) can be used in subsequent modeling steps.
+To construct a bigraph, the first step is to define a *signature*.
+The signature specifies the *syntax* of the bigraph and determines which *types* (i.e., _controls_ in bigraph-jargon) can be used in subsequent modeling steps.
 
 A signature is created via a _signature builder_, which is obtained from a _pure factory_.
 All operations that follow are performed through this factory within the current _execution context_.
@@ -37,15 +37,15 @@ import static org.bigraphs.framework.core.factory.BigraphFactory.*;
 This makes access to its operations more convenient.
 :::
 
-As described above, a **signature** specifies the syntax of the bigraph to be created.
+As described above, a *signature* specifies the syntax of the bigraph to be created.
 In the example below, the resulting signature contains two controls:
 
-- **User** with an *arity* of `1`
-- **Computer** with an *arity* of `2`
+- `User` with an *arity* of `1`
+- `Computer` with an *arity* of `2`
 
-The **arity** defines how many *connections* a control can have.
+The *arity* defines how many *connections* a control can have.
 The semantic interpretation of "connection" is left abstract here.
-It may represent, for example, an **Ethernet link**, a **logical association**, or any other type of relationship between elements.
+It may represent, for example, an *Ethernet link*, a *logical association*, or any other type of relationship between elements.
 
 :::info
 A more verbose form for creating controls is the following:
@@ -60,15 +60,15 @@ Contrary, using `#newControl()` returns a control instance that can be used for 
 
 ### Bigraph Builder
 
-With a signature in place, we can now create a **pure bigraph builder** instance.
+With a signature in place, we can now create a *pure bigraph builder* instance.
 The builder provides the operations to construct a bigraph by adding child nodes and defining their connections.
 
-Since the **signature** specifies the available node types (i.e., the syntax of the bigraph), it must be supplied when invoking the factory method
+Since the *signature* specifies the available node types (i.e., the syntax of the bigraph), it must be supplied when invoking the factory method
 `BigraphFactory.pureBuilder(signature)`.
 
 <CodeBlock className="language-java">{getting_started_guide_1}</CodeBlock>
 
-The example demonstrates how to add two nodes (**User** and **Computer**) under the same root (repeated twice), and how to link them to a shared _outer name_ labeled **"login"**.
+The example demonstrates how to add two nodes (`User` and `Computer`) under the same root (repeated twice), and how to link them to a shared _outer name_ labeled *"login"*.
 The resulting bigraph is illustrated below.
 
 :::info
@@ -90,12 +90,12 @@ For details on how to render and export a bigraph as a graphics file, see the [V
 
 ## Elementary Bigraphs
 
-Next, we consider the construction of **elementary bigraphs**.
-These are the most basic forms of bigraphs and come in two categories: **Placings** and **Linkings**.
-They are **node-free**, meaning they do not contain any nodes.
+Next, we consider the construction of *elementary bigraphs*.
+These are the most basic forms of bigraphs and come in two categories: *Placings* and *Linkings*.
+They are *node-free*, meaning they do not contain any nodes.
 
 :::info
-Elementary bigraphs are fundamental building blocks in bigraph theory and form the basis for defining the **discrete normal form** of bigraphs.
+Elementary bigraphs are fundamental building blocks in bigraph theory and form the basis for defining the *discrete normal form* of bigraphs.
 :::
 
 Elementary bigraphs provide a convenient way to construct more complex structures.
@@ -112,19 +112,19 @@ For more details, see the project [Bigraph Ecore Metamodel (BEM)](https://github
 <!--with mathematical equality of bigraphs. This is also know as bigraph isomorphism problem.-->
 
 The following code example demonstrates how to construct a _merge<sub>n</sub>_
-(a placing where _n_ sites are located beneath a single root) and an **identity link graph**
+(a placing where _n_ sites are located beneath a single root) and an *identity link graph*
 (a link graph in which inner and outer interfaces are directly connected).
-In bigraph terminology, the latter can also be interpreted as a **bijective substitution**.
+In bigraph terminology, the latter can also be interpreted as a *bijective substitution*.
 
 <CodeBlock className="language-java">{getting_started_guide_2}</CodeBlock>
 
-The factory provides the method `#purePlacings()` to create a **placings builder**.
+The factory provides the method `#purePlacings()` to create a *placings builder*.
 With this builder, we can construct elementary placings such as a _merge_, _join_, or _barren_, among others.
 
 For example, passing the integer `2` as an argument creates a merge with two sites.
-In addition, we can create an **identity link graph** with the name `"login"`.
+In addition, we can create an *identity link graph* with the name `"login"`.
 
-The two resulting elementary bigraphs — **merge** and **identity** — are shown below.
+The two resulting elementary bigraphs, *merge* and *identity*, are shown below.
 
 
 <center>
@@ -137,7 +137,7 @@ The two resulting elementary bigraphs — **merge** and **identity** — are sho
 
 ## Composition of Bigraphs
 
-Bigraphs can be composed using dedicated **composition operators**.
+Bigraphs can be composed using dedicated *composition operators*.
 This enables modular modeling: sub-structures can be defined independently and later combined to form larger bigraphs.
 
 To equip a bigraph with these operators, it is passed to the static method
@@ -161,8 +161,8 @@ For a complete reference, see the [JavaDoc of the `BigraphComposite` interface](
 ![composed-bigraph](../assets/basics/composed.png)
 
 :::tip
-As shown, bigraphs can be constructed using an **operator-based approach** (composition and product).
-In addition, the bigraph builder supports the creation of **hierarchies**, which can later be combined into larger structures with ease.
+As shown, bigraphs can be constructed using an *operator-based approach* (composition and product).
+In addition, the bigraph builder supports the creation of *hierarchies*, which can later be combined into larger structures with ease.
 
 **Example:**
 ```java
@@ -179,5 +179,5 @@ Links between nodes across different hierarchies should be established via inner
 
 ## Conclusion
 
-In this page, we introduced the basic features of the **Bigraph Framework**:
+In this page, we introduced the basic features of the *Bigraph Framework*:
 how to define signatures, construct bigraphs, create elementary bigraphs, and compose them into larger structures.

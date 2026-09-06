@@ -400,7 +400,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         ModelCheckingOptions.ExportOptions opts = options.get(ModelCheckingOptions.Options.EXPORT);
         if (opts != null && opts.getReactionGraphFile() != null) {
             if (!reactionGraph.isEmpty()) {
-                ReactionGraphExporter<B> graphExporter = new ReactionGraphExporter<>(reactiveSystem);
+                ReactionGraphExporter<B> graphExporter = new ReactionGraphExporter<>(reactiveSystem, opts.getPrintCanonicalStateLabel());
                 graphExporter.toPNG(reactionGraph, opts.getReactionGraphFile());
             } else {
                 logger.debug("Trace is not exported because reaction graph is empty.");

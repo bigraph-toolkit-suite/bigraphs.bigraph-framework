@@ -1,10 +1,10 @@
 ---
 id: usage-example-brs-simulation
-title: Getting Started with BRSs
+title: Getting Started
 sidebar_position: 1
 ---
 
-This guide provides a complete walkthrough on how to simulate bigraphical reactive systems (BRS).
+This guide provides a complete walkthrough on how to create and execute bigraphical reactive systems (BRS).
 The following aspects are covered:
 - Specification of the signature
 - Specification of the initial state
@@ -20,7 +20,7 @@ This simple system description might sound simple but when more users and basket
 This type of problem involves concurrent behavior and dynamic allocation and arises from a category of complex problems in the field of computer science that are generally hard to solve.
 
 
-In the following, we are going to translate this scenario description into a BRS-based specification and simulate its behavior.
+In the following, we are going to translate this scenario description into a BRS-based specification and explore the full state-space.
 That allows us to observe the overall behavior of the system and also take snapshots of the states over time.
 
 ## The Signature
@@ -257,7 +257,14 @@ Thus, the idle outer name _f_ is still needed in the reactum.
 
 ## Bigraphical Reactive System Specification
 
-The agent and the rules are collected to form a reactive system:
+A _BRS_ acts as an executable system specification that combines the structural representation of a system with its dynamic evolution semantics.
+Conceptually, a BRS encapsulates:
+
+- the signature, defining the types and constraints,
+- the initial state, and
+- the reaction rules, specifying how the system may evolve over time.
+
+The agent and the rules are shown in the following.
 
 ### Declaration
 
@@ -275,11 +282,11 @@ assert rs.isSimple();
 ```
 
 ### Execution via Model Checking
-This specification can be executed by the model checker class [`org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/simulation/modelchecking/PureBigraphModelChecker.html), which basically performs an exhaustive breadth-first search on the initial state.
+This specification can be executed (i.e., verified or simulated) by the model checker class [`org.bigraphs.framework.simulation.modelchecking.PureBigraphModelChecker`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/simulation/modelchecking/PureBigraphModelChecker.html), which basically performs an exhaustive breadth-first search on the initial state.
 Correctness properties via [bigraphical predicates](simulation-predicates) can simply be omitted.
 
 :::info BRS Model Checking
-Refer to [Verification](verification-intro) to get to know more about how to use a BRS specification for model checking.
+Refer to [Model Checking](verification-intro) to get to know more about how to use a BRS specification for model checking.
 :::
 
 ```java
@@ -328,6 +335,10 @@ The transition system is a PNG graphic file and shows all possible states and ac
 
 *The system has three final states and five solutions. Each final state is the same: All `Fruit`s are in the `Basket`. However, how to reach this solution is different as can be seen by the different paths. The shortest path provides a solution where all `Fruit`s are placed into the `Basket` one-by-one without calling the release action in-between but only once before the final state. This solution is, however, *unfair* if multiple `User`s are involved.*
 
+:::info BRS Model Checking
+Refer to [Model Checking](./verification-intro) to get to know more about how to use a BRS specification for model checking.
+:::
+
 #### Reaction Graph Object
 Another way is by using the reaction graph instance of type `ReactionGraph` of the model checker object:
 ```java
@@ -343,7 +354,7 @@ Internally, the reaction graph manages an instance of `org.jgrapht.Graph` with `
 It is a simple directed graph (allowing multiple edges, allowing self loops).
 Both the `LabeledNode` and `LabeledEdge` class provide getter-methods that return string labels, which denote the name of the bigraph state and rule, respectively, added to the reactive system container.
 
-### Programmatic Execution
+### Programmatic Execution Example
 
 By acquiring a bigraph matcher instance, arbitrary rule execution logic can be implemented:
 ```java
@@ -363,3 +374,91 @@ while (iterator.hasNext()) {
 ```
 
 The rewrite functionality is provided by the concrete `org.bigraphs.framework.core.reactivesystem.ReactiveSystem` instance.
+
+### Matching and Rewriting API
+
+Having explained the essentials of BRSs until here, the _matching_ and _rewriting_ functionality from the following classes can be used to conveniently execute BRSs in arbitrary ways:
+
+**Matching**
+
+- [`org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/AbstractBigraphMatcher.html)
+- This abstract class defines a _matcher_ and needs a _host graph_ and _rule_ to perform bigraph matching.
+- A bigraph matcher consists of a bigraph matching engine w.r.t. to the bigraph type.
+- The correct one is automatically created using the factory method `#create(Class)` by supplying the bigraph class type.
+- Matches are returned via an iterator (the instances of the matches are of type [`BigraphMatch`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/BigraphMatch.html)).
+
+**Rewriting**
+- [`org.bigraphs.framework.core.reactivesystem.ReactiveSystem`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html)
+- This interface defines two methods for rewriting after a match was found:
+- [`ReactiveSystem#buildGroundReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildGroundReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
+- [`ReactiveSystem#buildParametricReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildParametricReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
+- Implementations of this interface:
+- Core Module: [`org.bigraphs.framework.core.reactivesystem.AbstractSimpleReactiveSystem`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/AbstractSimpleReactiveSystem.html) is an abstract base class for all reactive systems in Bigraph Framework.
+- Simulation Module: [`org.bigraphs.framework.simulation.matching.pure.PureReactiveSystem`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/pure/PureReactiveSystem.html) (extends `AbstractSimpleReactiveSystem`) is a concrete implementation of a reactive system for the class of pure bigraphs.
+
+## Formal Foundations of Reactions
+
+### Process Algebra
+
+In bigraphs, the dynamic behavior of a system under observation is rooted in process algebra (see [\[2\]](#ref2), [\[3\]](#ref3)) and represented by means of _reactions_ written ![reaction-relation-between-agents](../assets/simulation/eq/eqn-reaction-relation.svg), where ![reaction-relation-between-agents](../assets/simulation/eq/eqn-agent-vars.svg) denote the system states before and after the application of the reaction rule _R_.
+This _rewriting formalism_ induces an [observational semantics](https://en.wikipedia.org/wiki/Operational_semantics), where the meaning of a system is characterized by the observable transitions _between_ bigraphical states.
+Generally, a _state_ is a bigraphical snapshot of the system at a specific point in time.
+Such a state may represent the system at a level of abstraction and fidelity appropriate for the modelling or analysis task under consideration.
+
+Founded on the categorical semantics of bigraph theory (see [\[1\]](#ref1)), this reaction formalism together with the underlying bigraph structure enables the specification and execution of dynamic systems (e.g., simulation or formal verification) within a uniform mathematical framework.
+
+### Anatomy of Reaction Rules
+
+BRS introduce a time-varying notion to bigraphs through _reaction rules_.
+That is, reaction rules enable some kind of _simulation_ of _system states_, which internally is enabled by means of _graph rewriting_.
+The bigraph rewriting formalism allows to synthesize a (potentially infinite) labelled transition system (LTS).
+Each node of the LTS is a bigraph state.
+States are connected by edges called _transition relations_ labeled with the reaction rule that led to this state.
+The LTS can have cycles.
+
+To generate an LTS, reaction rules must be applied.
+A reaction rule comprises a _redex_ and _reactum_.
+That is, a rule consists of a left-hand side, and a right-hand side.
+The meaning of a rule is as follows:
+The redex specifies the pre-conditions and the reactum the post-conditions.
+If the redex could be found in some _host bigraph_, the matched part of the bigraph is replaced by the reactum.
+This is also called _graph rewriting_, which solves the subgraph matching problem.
+
+![bigraph-reaction-rule-example](../assets/simulation/bigraph-rule-example-1.png)
+*Example of a bigraphical reaction rule comprising a redex (left-hand side) and reactum (right-hand side), which both are bigraphs. The rule describes the movement of the smaller circle from one place to another place (larger circles).*
+
+[//]: # (See [here]&#40;&#41; for more details regarding rule strategies.)
+
+
+
+**Simulating a BRS works as follows:**
+Beginning with a _bigraph_ (i.e., the initial state of the BRS), a set of reaction rules is applied as long
+as a match can be found, or until some stopping criteria eventuates (such as time, number of states explored, any convergence criteria, etc.).
+Note that the _bigraph_ and the _reaction rules_ need to be defined over the same _signature_.
+
+
+:::info Non-Deterministic Rules
+Sometimes a rule can have multiple occurrences in a host graph.
+Thus, rules are often _non-deterministic_.
+:::
+
+:::tip Reaction Rules
+Refer to section [Reaction Rules](./simulation-reaction-rules), which explains bigraphical reaction rules in more detail.
+:::
+
+:::tip Rule Strategies
+Bigraphical reaction rules enable a form of the more general rule-based programming paradigm.
+Therefore, you can use advanced rule strategies to control the execution order of rules.
+:::
+
+
+
+
+
+## References
+
+- \[1\] <a id="ref1"></a>Milner, Robin: *The Space and Motion of Communicating Agents*. 1st ed. New York, NY, USA: Cambridge University Press, 2009. ISBN 978-0-521-73833-0.
+
+- \[2\] <a id="ref2"></a> Bergstra, J.A.; Ponse, A.; Smolka, S.A.: Handbook of Process Algebra. Amsterdam, North-Holland / Elsevier, 2001.
+
+- \[3\] <a id="ref3"></a> Fokkink W: Introduction to Process Algebra. Springer-Verlag, Berlin Heidelberg, 2000.

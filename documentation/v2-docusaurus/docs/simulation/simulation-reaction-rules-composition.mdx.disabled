@@ -2,6 +2,7 @@
 id: simulation-reaction-rules-composition
 title: Rule Operations
 sidebar_position: 5
+draft: true
 ---
 
 Very much like [Signature Operations](../basic/signatureops), reaction rules can be composed as well.
@@ -13,7 +14,7 @@ There are several variants for combining rules, each determined by the specific 
 
 Nesting and parallel product are analogous to composition and tensor product, respectively, but involve name sharing.
 
-## Composing Rules in Parallel
+## Parallel Product
 
 ### Create Reaction Rules
 

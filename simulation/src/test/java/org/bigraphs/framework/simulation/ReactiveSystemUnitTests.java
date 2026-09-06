@@ -177,7 +177,7 @@ public class ReactiveSystemUnitTests {
         assertTrue(Files.exists(Paths.get(DUMP_PATH, "transition_graph_random.png")));
     }
 
-    private @NonNull ModelCheckingOptions getOpts(String image, boolean flag) {
+    private @NonNull ModelCheckingOptions getOpts(String image, boolean stateLabelEncoding) {
         Path completePath = Paths.get(DUMP_PATH, image);
         ModelCheckingOptions opts = ModelCheckingOptions.create();
         opts
@@ -189,7 +189,7 @@ public class ReactiveSystemUnitTests {
                 )
                 .doMeasureTime(true)
                 .and(ModelCheckingOptions.exportOpts()
-                        .setPrintCanonicalStateLabel(flag)
+                        .setPrintCanonicalStateLabel(stateLabelEncoding)
                         .setReactionGraphFile(new File(completePath.toUri()))
                         .setOutputStatesFolder(new File(DUMP_PATH + "states/"))
                         .setFormatsEnabled(List.of(ModelCheckingOptions.ExportOptions.Format.PNG))

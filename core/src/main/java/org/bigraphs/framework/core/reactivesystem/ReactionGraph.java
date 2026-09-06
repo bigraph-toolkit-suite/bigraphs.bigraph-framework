@@ -39,7 +39,6 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
  */
 public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends AbstractTransitionSystem<B, BMatchResult<B>> implements Serializable {
 
-    //TODO better: instead of keeping to copies (ATS also maintains graph), just transform the native one to JGraphT's graph
     protected Graph<LabeledNode, LabeledEdge> graph; // this structure is also for rendering the graph via JGraphT
 
     private Map<LabeledNode, Set<ReactiveSystemPredicate<B>>> predicateMatches;
