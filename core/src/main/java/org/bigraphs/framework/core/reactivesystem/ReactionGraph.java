@@ -139,7 +139,7 @@ public class ReactionGraph<B extends Bigraph<? extends Signature<?>>> extends Ab
     }
 
     public boolean isEmpty() {
-        return !(Objects.nonNull(graph) && graph.vertexSet().size() != 0);
+        return !(Objects.nonNull(graph) && !graph.vertexSet().isEmpty());
     }
 
     private Graph<LabeledNode, LabeledEdge> buildEmptySimpleDirectedGraph() {

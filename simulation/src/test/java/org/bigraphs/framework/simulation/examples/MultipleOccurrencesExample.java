@@ -99,7 +99,7 @@ public class MultipleOccurrencesExample {
         modelChecker.execute();
 
         ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
-        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsToLeaves(modelChecker.getReactionGraph());
         Assertions.assertEquals(10, pathsToLeaves.size());
         pathsToLeaves.forEach(x -> {
             System.out.println("Path has length: " + x.getPath().size());

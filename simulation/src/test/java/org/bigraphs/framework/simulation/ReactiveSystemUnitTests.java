@@ -112,7 +112,7 @@ public class ReactiveSystemUnitTests {
 
     @Test
     @DisplayName("BFS simulation test")
-    void simulate_basic_bfs() throws TypeNotExistsException, InvalidConnectionException, IOException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
+    void simulate_basic_bfs() throws TypeNotExistsException, InvalidConnectionException, InvalidReactionRuleException, BigraphSimulationException, ReactiveSystemException {
         PureReactiveSystem reactiveSystem = new PureReactiveSystem();
         PureBigraph agent = (PureBigraph) createAgent_A();
         reactiveSystem.setAgent(agent);
@@ -141,7 +141,7 @@ public class ReactiveSystemUnitTests {
         assertTrue(Files.exists(Paths.get(DUMP_PATH, "transition_graph.png")));
 
         ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
-        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsToLeaves(modelChecker.getReactionGraph());
         Assertions.assertEquals(3, pathsToLeaves.size());
         pathsToLeaves.forEach(x -> {
             System.out.println("Path has length: " + x.getPath().size());

@@ -159,7 +159,7 @@ public class ConcurringProcessesExample {
         assertTrue(Files.exists(Paths.get(TARGET_DUMP_PATH, "transition_graph.png")));
 
         ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
-        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsToLeaves(modelChecker.getReactionGraph());
         Assertions.assertEquals(2, pathsToLeaves.size());
         pathsToLeaves.forEach(x -> {
             System.out.println("Path has length: " + x.getPath().size());

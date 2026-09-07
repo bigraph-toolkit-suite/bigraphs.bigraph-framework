@@ -122,7 +122,7 @@ public class CountingExample implements BigraphUnitTestSupport {
         modelChecker.execute();
 
         ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
-        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsToLeaves(modelChecker.getReactionGraph());
         pathsToLeaves.forEach(x -> {
             System.out.println("Path has length: " + x.getPath().size());
         });

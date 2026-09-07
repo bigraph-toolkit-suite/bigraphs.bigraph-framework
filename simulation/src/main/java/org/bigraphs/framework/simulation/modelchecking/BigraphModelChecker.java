@@ -256,6 +256,7 @@ public abstract class BigraphModelChecker<B extends Bigraph<? extends Signature<
         assertReactionSystemValid();
         return executorService.submit(() -> {
             doWork();
+            prepareOutput();
             return getReactionGraph();
         });
     }

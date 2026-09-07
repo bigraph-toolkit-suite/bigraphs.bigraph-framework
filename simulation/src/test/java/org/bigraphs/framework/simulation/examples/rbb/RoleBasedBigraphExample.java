@@ -124,7 +124,7 @@ public class RoleBasedBigraphExample extends BaseExampleTestSupport {
         System.out.println("Vertices: " + modelChecker.getReactionGraph().getGraph().vertexSet().size());
 
         ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
-        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsInGraphToLeaves(modelChecker.getReactionGraph());
+        List<ReactionGraphAnalysis.StateTrace<PureBigraph>> pathsToLeaves = analysis.findAllPathsToLeaves(modelChecker.getReactionGraph());
         System.out.println(pathsToLeaves.size());
     }
 
