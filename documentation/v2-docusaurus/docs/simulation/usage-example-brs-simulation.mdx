@@ -335,10 +335,6 @@ The transition system is a PNG graphic file and shows all possible states and ac
 
 *The system has three final states and five solutions. Each final state is the same: All `Fruit`s are in the `Basket`. However, how to reach this solution is different as can be seen by the different paths. The shortest path provides a solution where all `Fruit`s are placed into the `Basket` one-by-one without calling the release action in-between but only once before the final state. This solution is, however, *unfair* if multiple `User`s are involved.*
 
-:::info BRS Model Checking
-Refer to [Model Checking](./verification-intro) to get to know more about how to use a BRS specification for model checking.
-:::
-
 #### Reaction Graph Object
 Another way is by using the reaction graph instance of type `ReactionGraph` of the model checker object:
 ```java
@@ -354,7 +350,11 @@ Internally, the reaction graph manages an instance of `org.jgrapht.Graph` with `
 It is a simple directed graph (allowing multiple edges, allowing self loops).
 Both the `LabeledNode` and `LabeledEdge` class provide getter-methods that return string labels, which denote the name of the bigraph state and rule, respectively, added to the reactive system container.
 
-### Programmatic Execution Example
+### Programmatic Matching and Rewriting
+
+Having explained the essentials of BRSs until here, the _matching_ and _rewriting_ functionality from the following classes can be used to conveniently execute BRSs in arbitrary ways.
+
+#### Execution Example
 
 By acquiring a bigraph matcher instance, arbitrary rule execution logic can be implemented:
 ```java
@@ -375,11 +375,7 @@ while (iterator.hasNext()) {
 
 The rewrite functionality is provided by the concrete `org.bigraphs.framework.core.reactivesystem.ReactiveSystem` instance.
 
-### Matching and Rewriting API
-
-Having explained the essentials of BRSs until here, the _matching_ and _rewriting_ functionality from the following classes can be used to conveniently execute BRSs in arbitrary ways:
-
-**Matching**
+#### Matching API
 
 - [`org.bigraphs.framework.simulation.matching.AbstractBigraphMatcher`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/simulation/matching/AbstractBigraphMatcher.html)
 - This abstract class defines a _matcher_ and needs a _host graph_ and _rule_ to perform bigraph matching.
@@ -387,7 +383,8 @@ Having explained the essentials of BRSs until here, the _matching_ and _rewritin
 - The correct one is automatically created using the factory method `#create(Class)` by supplying the bigraph class type.
 - Matches are returned via an iterator (the instances of the matches are of type [`BigraphMatch`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/BigraphMatch.html)).
 
-**Rewriting**
+#### Rewriting API
+
 - [`org.bigraphs.framework.core.reactivesystem.ReactiveSystem`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html)
 - This interface defines two methods for rewriting after a match was found:
 - [`ReactiveSystem#buildGroundReaction(final B agent, final BigraphMatch<B> match, final ReactionRule<B> rule)`](https://bigraphs.org/software/bigraph-framework/apidocs/org/bigraphs/framework/core/reactivesystem/ReactiveSystem.html#buildGroundReaction(B,org.bigraphs.framework.core.reactivesystem.BigraphMatch,org.bigraphs.framework.core.reactivesystem.ReactionRule))
@@ -410,7 +407,7 @@ Founded on the categorical semantics of bigraph theory (see [\[1\]](#ref1)), thi
 ### Anatomy of Reaction Rules
 
 BRS introduce a time-varying notion to bigraphs through _reaction rules_.
-That is, reaction rules enable some kind of _simulation_ of _system states_, which internally is enabled by means of _graph rewriting_.
+That is, reaction rules enable some kind of _manipulation_ of _system states_, which internally is enabled by means of _graph rewriting_.
 The bigraph rewriting formalism allows to synthesize a (potentially infinite) labelled transition system (LTS).
 Each node of the LTS is a bigraph state.
 States are connected by edges called _transition relations_ labeled with the reaction rule that led to this state.

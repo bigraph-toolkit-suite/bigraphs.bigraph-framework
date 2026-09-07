@@ -160,6 +160,11 @@ import org.bigraphs.framework.core.reactivesystem.*;
 
 Future<ReactionGraph<PureBigraph>> reactionGraphFuture = modelChecker.executeAsync();
 ReactionGraph<PureBigraph> pureBigraphReactionGraph = reactionGraphFuture.get();
+
+// ...
+
+// Retrieve the result, waiting up to 5 seconds
+ReactionGraph<PureBigraph> reactionGraph = reactionGraphFuture.get(5, TimeUnit.SECONDS);
 ```
 
 The `executeAsync()` method does not block the execution and returns a `Future` object to fetch the result later.
@@ -247,26 +252,6 @@ DFS explores reachable states by following each path in depth rather than level 
 
 However, the order in which states are discovered differs from BFS, and the first path found to a state is not necessarily a shortest path.
 
-### Variations
-
-For example, if rule *r0* has n possible matches in state `a_0`, standard BFS or DFS may generate:
-
-<center>
-    <img
-        src={require('../assets/simulation/reaction-graph-multiple-occurences.png').default}
-        alt="Reaction graph where one rule produces multiple occurrences"
-        style={{width: '25%'}}
-    />
-</center>
-
-For breadth-first and depth-first exploration, the framework also provides the variants:
-
-- `BigraphModelChecker.SimulationStrategy.Type.BFS_FIRST_MATCH`
-- `BigraphModelChecker.SimulationStrategy.Type.DFS_FIRST_MATCH`
-
-Instead of expanding all matches of some rule, the model checker follows only the first match found for that rule application.
-This can substantially reduce branching in situations where one rule gives rise to many structurally similar successor states.
-
 ### Random Simulation
 
 Unlike exhaustive model-checking strategies, random simulation does not aim to discover every reachable state.
@@ -288,6 +273,27 @@ The two runs illustrate the non-deterministic nature of random simulation:
 These runs show that different random choices can lead to different execution paths (i.e., traces), even when starting from the same initial agent.
 
 As shown in the figures, all *successor states* at the current level are expanded *before* the simulator randomly selects the next state to continue from.
+
+### Variations
+
+For example, if rule *r0* has n possible matches in state `a_0`, standard BFS or DFS may generate:
+
+<center>
+    <img
+        src={require('../assets/simulation/reaction-graph-multiple-occurences.png').default}
+        alt="Reaction graph where one rule produces multiple occurrences"
+        style={{width: '25%'}}
+    />
+</center>
+
+For breadth-first and depth-first exploration, the framework also provides the variants:
+
+- `BigraphModelChecker.SimulationStrategy.Type.BFS_FIRST_MATCH`
+- `BigraphModelChecker.SimulationStrategy.Type.DFS_FIRST_MATCH`
+
+Instead of expanding all matches of some rule, the model checker follows only the first match found for that rule application.
+This can substantially reduce branching in situations where one rule gives rise to many structurally similar successor states.
+
 
 ## Configuring and Controlling Execution
 
@@ -413,7 +419,39 @@ For further processing or visualization, the reaction graph can be exported in d
 
 ### Inspecting the Reaction Graph
 
-Typical operations include traversing execution traces, and inspecting states and transitions.
+A `ReactionGraph` provides direct access to the generated transition system.
+Internally, it is represented by a JGraphT `Graph` whose vertices are `LabeledNode` instances and whose edges are `LabeledEdge` instances.
+For example, basic statistics can be obtained directly from the graph:
+
+```java
+ReactionGraph<PureBigraph> reactionGraph = modelChecker.getReactionGraph();
+
+Graph<ReactionGraph.LabeledNode, ReactionGraph.LabeledEdge> graph =
+        reactionGraph.getGraph();
+System.out.println("States: " + graph.vertexSet().size());
+System.out.println("Transitions: " + graph.edgeSet().size());
+```
+
+The underlying graph can also be traversed directly. For example, all transitions can be inspected together with their source and target states:
+
+```java
+for (ReactionGraph.LabeledEdge edge : graph.edgeSet()) {
+    ReactionGraph.LabeledNode source = graph.getEdgeSource(edge);
+    ReactionGraph.LabeledNode target = graph.getEdgeTarget(edge);
+
+    System.out.println(source + " -> " + target);
+}
+```
+
+To find all traces to terminal states:
+```java
+ReactionGraphAnalysis<PureBigraph> analysis = ReactionGraphAnalysis.createInstance();
+List<ReactionGraphAnalysis.StateTrace<PureBigraph>> traces = analysis.findAllPathsToLeaves(reactionGraph);
+traces.forEach(x -> {
+    System.out.println("Path has length: " + x.getPath().size());
+    System.out.println("\t" + x.getStateLabels().toString());
+});
+```
 
 ### Exporting Results
 
