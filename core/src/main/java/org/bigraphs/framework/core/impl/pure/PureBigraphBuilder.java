@@ -395,7 +395,10 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
                     nameVal = UUID.randomUUID().toString();
                 }
                 BigraphEntity.NodeEntity<? extends Control> node = BigraphEntity.createNode(each, signature.getControlByName(each.eClass().getName()));
-                availableNodes.put(nameVal, node);
+                // Node display names are not unique in general (e.g. two Room nodes both named "Room").
+                // The map must use a key unique per EObject so every loaded node is registered.
+                String mapKey = nameVal + "@" + System.identityHashCode(each);
+                availableNodes.put(mapKey, node);
             } else if (each.eClass().equals(availableEClasses.get(BigraphMetaModelConstants.CLASS_SITE))) {
                 BigraphEntity.SiteEntity siteEntity = BigraphEntity.create(each, BigraphEntity.SiteEntity.class);
                 availableSites.put(siteEntity.getIndex(), siteEntity);
