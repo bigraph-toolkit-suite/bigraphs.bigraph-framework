@@ -241,7 +241,7 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
             }
         }
         if (name >= 0) {
-            BigraphEntity newSite = builder.createNewSite(name);
+            BigraphEntity<? extends Control<?, ?>> newSite = builder.createNewSite(name);
             builder.availableSites().put(name, (BigraphEntity.SiteEntity) newSite);
             parentStack.push(newSite);
         }
@@ -250,8 +250,8 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
     @Override
     protected void processEndSite(EndElement endElement) {
         if (!parentStack.isEmpty()) {
-            BigraphEntity pop = parentStack.pop();
-            BigraphEntity peek = parentStack.peek();
+            BigraphEntity<? extends Control<?, ?>> pop = parentStack.pop();
+            BigraphEntity<? extends Control<?, ?>> peek = parentStack.peek();
             setParentOfNode(pop, peek);
         }
     }
@@ -267,7 +267,7 @@ public class DefaultBigraphXMLLoader extends BigraphXmlLoaderSupport implements 
                 Optional<BigraphEntity.Link> linkWithName = findLinkWithName(linkLabel, builder.availableOuterNames(), builder.availableEdges());
                 if (linkWithName.isPresent() && !parentStack.empty()) {
                     BigraphEntity peek = parentStack.peek();
-                    builder.connectToLinkUsingIndex((BigraphEntity.NodeEntity<Control>) peek,
+                    builder.connectToLinkUsingIndex((BigraphEntity.NodeEntity<? extends Control<?, ?>>) peek,
                             linkWithName.get(), portIndexCounter);
                 }
             }

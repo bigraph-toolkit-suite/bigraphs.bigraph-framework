@@ -29,6 +29,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.bigraphs.framework.core.Bigraph;
 import org.bigraphs.framework.core.BigraphMetaModelConstants;
+import org.bigraphs.framework.core.Control;
 import org.bigraphs.framework.core.impl.BigraphEntity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -41,7 +42,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
  */
 public abstract class BigraphXmlLoaderSupport implements BigRedXmlLoader {
 
-    protected Stack<BigraphEntity> parentStack = new Stack<>();
+    protected Stack<BigraphEntity<? extends Control<?, ?>>> parentStack = new Stack<>();
     protected String xmlFile;
     private XmlProcessorCallback callback = event -> {
     };

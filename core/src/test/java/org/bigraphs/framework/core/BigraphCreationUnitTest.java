@@ -85,7 +85,7 @@ public class BigraphCreationUnitTest {
     void mutableBuilder_connectLinkUsingPortIndex() {
         DynamicSignature signature = createExampleSignature();
         HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
-        HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
+        HashMap<String, BigraphEntity.NodeEntity<? extends Control<?, ?>>> newNodes = new LinkedHashMap<>();
         HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
         HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
         HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
@@ -98,7 +98,7 @@ public class BigraphCreationUnitTest {
         BigraphEntity<?> newRoot = builder.createNewRoot(0);
         newRoots.put(0, (BigraphEntity.RootEntity) newRoot);
         DynamicControl controlByName = signature.getControlByName("Printer");
-        BigraphEntity.NodeEntity newNode = (BigraphEntity.NodeEntity) builder.createNewNode(controlByName, "v0");
+        BigraphEntity.NodeEntity<? extends Control<?, ?>> newNode = (BigraphEntity.NodeEntity<? extends Control<?, ?>>) builder.createNewNode(controlByName, "v0");
         newNodes.put("v0", newNode);
         builder.setParentOfNode(newNode, newRoot);
         builder.connectToLinkUsingIndex(newNode, y1, 1);

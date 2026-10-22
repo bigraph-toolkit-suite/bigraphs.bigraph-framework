@@ -92,59 +92,54 @@ public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?
         return new MutableBuilder<>(signature, metaModelData);
     }
 
-    @Override
-    public EPackage getMetaModel() {
-        return metaModel;
-    }
-
-    public BigraphEntity createNewNode(Control<?, ?> control, String nodeIdentifier) {
+    public BigraphEntity<?> createNewNode(Control<?, ?> control, String nodeIdentifier) {
         EObject childNode = super.createNodeOfEClass(control.getNamedType().stringValue(), control, nodeIdentifier);
         return BigraphEntity.createNode(childNode, control);
     }
 
-    public BigraphEntity createNewSite(int index) {
+    public BigraphEntity<? extends Control<?,?>> createNewSite(int index) {
         EObject eObject = super.createSiteOfEClass(index);
         return BigraphEntity.create(eObject, BigraphEntity.SiteEntity.class);
     }
 
-    public BigraphEntity createNewRoot(int index) {
+    public BigraphEntity<?> createNewRoot(int index) {
         EObject eObject = super.createRootOfEClass(index);
         return BigraphEntity.create(eObject, BigraphEntity.RootEntity.class);
     }
 
-    public BigraphEntity createNewInnerName(String name) {
+    public BigraphEntity<?> createNewInnerName(String name) {
         EObject innerNameOfEClass = super.createInnerNameOfEClass(name);
         return BigraphEntity.create(innerNameOfEClass, BigraphEntity.InnerName.class);
     }
 
-    public BigraphEntity createNewOuterName(String name) {
+    public BigraphEntity<?> createNewOuterName(String name) {
         EObject outerNameOfEClass = super.createOuterNameOfEClass(name);
         return BigraphEntity.create(outerNameOfEClass, BigraphEntity.OuterName.class);
     }
 
-    public BigraphEntity createNewEdge(String name) {
+    public BigraphEntity<?> createNewEdge(String name) {
         EObject edgeOfEClass0 = super.createEdgeOfEClass0(name);
         return BigraphEntity.create(edgeOfEClass0, BigraphEntity.Edge.class);
     }
 
-    public BigraphEntity createNewPortWithIndex(final int index) {
+    public BigraphEntity<?> createNewPortWithIndex(final int index) {
         EObject portWithIndex = super.createPortWithIndex(index);
         return BigraphEntity.create(portWithIndex, BigraphEntity.Port.class);
     }
 
-    public void disconnectPort(BigraphEntity.NodeEntity node, int portIndex) {
+    public void disconnectPort(BigraphEntity.NodeEntity<?> node, int portIndex) {
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(
                 node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT)
         );
         bPorts.remove(portIndex);
     }
 
-    public void setParentOfNode(final BigraphEntity node, final BigraphEntity parent) {
+    public void setParentOfNode(final BigraphEntity<?> node, final BigraphEntity<?> parent) {
         EStructuralFeature prntRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PARENT);
         node.getInstance().eSet(prntRef, parent.getInstance());
     }
 
-    public boolean hasChildNodes(final BigraphEntity node) {
+    public boolean hasChildNodes(final BigraphEntity<?> node) {
         EStructuralFeature childRef = node.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
         List<EObject> o = (List<EObject>) node.getInstance().eGet(childRef);
         return o.size() > 0;
@@ -154,11 +149,11 @@ public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?
         super.linkInnerToOuter0(innerName, outerName);
     }
 
-    public void connectToLinkUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity theLink, int customPortIndex) {
+    public void connectToLinkUsingIndex(BigraphEntity.NodeEntity<? extends Control<?, ?>> node, BigraphEntity theLink, int customPortIndex) {
         super.connectToLinkUsingIndex(node, theLink, customPortIndex);
     }
 
-    public void connectToEdge(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge theLink) {
+    public void connectToEdge(BigraphEntity.NodeEntity<? extends Control<?, ?>> node, BigraphEntity.Edge theLink) {
         super.connectToEdge(node, theLink);
     }
 
@@ -177,7 +172,7 @@ public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?
         return super.availableEdges;
     }
 
-    public void connectNodeToOuterName(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.OuterName outerName) {
+    public void connectNodeToOuterName(BigraphEntity.NodeEntity<? extends Control<?, ?>> node1, BigraphEntity.OuterName outerName) {
         try {
             super.connectNodeToOuterName(node1, outerName);
         } catch (TypeNotExistsException | InvalidArityOfControlException e) {
@@ -191,7 +186,7 @@ public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?
      * @param node1
      * @param outerName
      */
-    public void connectNodeToOuterName2(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.OuterName outerName) {
+    public void connectNodeToOuterName2(BigraphEntity.NodeEntity<? extends Control<?, ?>> node1, BigraphEntity.OuterName outerName) {
         if (!isConnectedWithLink(node1, outerName.getInstance())) {
             // create a port
             EList<EObject> bPorts = (EList<EObject>) node1.getInstance().eGet(node1.getInstance().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT));
@@ -211,7 +206,7 @@ public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?
                                        S signature,
                                        Map<Integer, BigraphEntity.RootEntity> availableRoots,
                                        Map<Integer, BigraphEntity.SiteEntity> availableSites,
-                                       Map<String, BigraphEntity.NodeEntity> availableNodes,
+                                       Map<String, BigraphEntity.NodeEntity<? extends Control<?, ?>>> availableNodes,
                                        Map<String, BigraphEntity.InnerName> availableInnerNames,
                                        Map<String, BigraphEntity.OuterName> availableOuterNames,
                                        Map<String, BigraphEntity.Edge> availableEdges) {
@@ -241,7 +236,7 @@ public class MutableBuilder<S extends AbstractEcoreSignature<? extends Control<?
         return availableSites;
     }
 
-    public Map<String, BigraphEntity.NodeEntity> availableNodes() {
+    public Map<String, BigraphEntity.NodeEntity<? extends Control<?, ?>>> availableNodes() {
         return availableNodes;
     }
 

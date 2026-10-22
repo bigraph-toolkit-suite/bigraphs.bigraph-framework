@@ -40,16 +40,15 @@ import org.slf4j.LoggerFactory;
 public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
     private final Logger logger = LoggerFactory.getLogger(PureBigraphGenerator.class);
     DynamicSignature signature;
-    private HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
-    private HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
+    private final HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
+    private final HashMap<String, BigraphEntity.NodeEntity<? extends Control<?, ?>>> newNodes = new LinkedHashMap<>();
+    private final HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
+    private final HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
+    private final HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
+    private final HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
     private DistributedRandomNumberGenerator drng;
     private Supplier<String> edgeLblSupplier;
-    private MutableBuilder<AbstractEcoreSignature<? extends Control>> builder;
-    private int numOfLinkings;
+    private final MutableBuilder<AbstractEcoreSignature<? extends Control<?, ?>>> builder;
     private int cntE = 0, cntO = 0;
     private Set<BigraphEntity> nodesWithPositiveArity;
 
@@ -192,7 +191,7 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
                         .filter(x -> Objects.nonNull(x.getControl()) &&
                                 x.getControl().getArity().getValue().intValue() > 0)
                         .collect(Collectors.toSet());
-        numOfLinkings = (int) Math.floor((nodesWithPositiveArity.size() * p) / 2);
+        int numOfLinkings = (int) Math.floor((nodesWithPositiveArity.size() * p) / 2);
         logger.debug("Total number of links being created: {}", numOfLinkings);
         cntE = 0;
         cntO = 0;
@@ -240,20 +239,19 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
                 d = rnd.nextInt(collect.size());
             } while (!areNotEqual(a, b, c, d));
 
-            BigraphEntity.NodeEntity<Control> entity1 = (BigraphEntity.NodeEntity<Control>) collect.get(a);
-            BigraphEntity.NodeEntity<Control> entity2 = (BigraphEntity.NodeEntity<Control>) collect.get(b);
-            BigraphEntity.NodeEntity<Control> entity3 = (BigraphEntity.NodeEntity<Control>) collect.get(c);
-            BigraphEntity.NodeEntity<Control> entity4 = (BigraphEntity.NodeEntity<Control>) collect.get(d);
+            BigraphEntity.NodeEntity<? extends Control<?, ?>> entity1 = (BigraphEntity.NodeEntity<? extends Control<?, ?>>) collect.get(a);
+            BigraphEntity.NodeEntity<? extends Control<?, ?>> entity2 = (BigraphEntity.NodeEntity<? extends Control<?, ?>>) collect.get(b);
+            BigraphEntity.NodeEntity<? extends Control<?, ?>> entity3 = (BigraphEntity.NodeEntity<? extends Control<?, ?>>) collect.get(c);
+            BigraphEntity.NodeEntity<? extends Control<?, ?>> entity4 = (BigraphEntity.NodeEntity<? extends Control<?, ?>>) collect.get(d);
 
-            List<BigraphEntity.NodeEntity<Control>> entityList = Stream.of(entity1, entity2, entity3, entity4)
-//                    .sorted(Comparator.comparingInt(this::getPortCount))
+            List<BigraphEntity.NodeEntity<? extends Control<?, ?>>> entityList = Stream.of(entity1, entity2, entity3, entity4)
                     .sorted(Comparator.comparingInt(x -> x.getControl().getArity().getValue().intValue()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             boolean good = true;
             for (BigraphEntity each : entityList) {
                 try {
-                    builder.checkIfNodeIsConnectable((BigraphEntity.NodeEntity<Control>) each);
+                    builder.checkIfNodeIsConnectable((BigraphEntity.NodeEntity<? extends Control<?, ?>>) each);
                 } catch (Exception e) {
 //                    e.printStackTrace();
                     collect.remove(each);
@@ -352,8 +350,8 @@ public class PureBigraphGenerator extends RandomBigraphGeneratorSupport {
             int random = drng.getDistributedRandomNumber();
             //determines of outer names or edges should be constructed
 
-            BigraphEntity.NodeEntity<Control> a = (BigraphEntity.NodeEntity<Control>) collect.get(i1);
-            BigraphEntity.NodeEntity<Control> b = (BigraphEntity.NodeEntity<Control>) collect.get(i2);
+            BigraphEntity.NodeEntity<? extends Control<?, ?>> a = (BigraphEntity.NodeEntity<? extends Control<?, ?>>) collect.get(i1);
+            BigraphEntity.NodeEntity<? extends Control<?, ?>> b = (BigraphEntity.NodeEntity<? extends Control<?, ?>>) collect.get(i2);
             String edgeName = edgeLblSupplier.get();
             if (random == 1) {
                 BigraphEntity.OuterName newOuterName = (BigraphEntity.OuterName) builder.createNewOuterName(edgeName);

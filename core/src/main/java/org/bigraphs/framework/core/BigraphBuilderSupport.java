@@ -73,7 +73,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
                 return new InvalidModelResult(e);
             }
         }).toList();
-        if (results.size() == 0) {
+        if (results.isEmpty()) {
             return new ValidatorNotFound();
         }
         if (results.stream().noneMatch(x -> x.getClass().equals(ValidModelResult.class))) {
@@ -157,11 +157,6 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
         return eObject;
     }
 
-    //TODO: add method "fromFile/Model/": args are instance (EObject) and meta-model (EPackage)
-    // we need to reconstruct the internal object structure
-    // do also validation against the meta-model: EcoreSignature provides such information
-
-    //DTO?
     public class InstanceParameter {
         private EPackage modelPackage;
         private S signature;
@@ -170,7 +165,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
         private Set<BigraphEntity.InnerName> innerNames;
         private Set<BigraphEntity.OuterName> outerNames;
         private Set<BigraphEntity.Edge> edges;
-        private Set<BigraphEntity.NodeEntity> nodes;
+        private Set<BigraphEntity.NodeEntity<? extends Control<?, ?>>> nodes;
         private EObject bBigraphObject;
 
         public InstanceParameter(EPackage loadedEPackage,
@@ -178,7 +173,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
                                  S signature,
                                  Map<Integer, BigraphEntity.RootEntity> availableRoots,
                                  Map<Integer, BigraphEntity.SiteEntity> availableSites,
-                                 Map<String, BigraphEntity.NodeEntity> availableNodes,
+                                 Map<String, BigraphEntity.NodeEntity<? extends Control<?, ?>>> availableNodes,
                                  Map<String, BigraphEntity.InnerName> availableInnerNames,
                                  Map<String, BigraphEntity.OuterName> availableOuterNames,
                                  Map<String, BigraphEntity.Edge> availableEdges
@@ -201,7 +196,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
                                  S signature,
                                  Map<Integer, BigraphEntity.RootEntity> availableRoots,
                                  Map<Integer, BigraphEntity.SiteEntity> availableSites,
-                                 Map<String, BigraphEntity.NodeEntity> availableNodes,
+                                 Map<String, BigraphEntity.NodeEntity<? extends Control<?, ?>>> availableNodes,
                                  Map<String, BigraphEntity.InnerName> availableInnerNames,
                                  Map<String, BigraphEntity.OuterName> availableOuterNames,
                                  Map<String, BigraphEntity.Edge> availableEdges
@@ -242,7 +237,7 @@ public abstract class BigraphBuilderSupport<S extends Signature<? extends Contro
             return edges;
         }
 
-        public Set<BigraphEntity.NodeEntity> getNodes() {
+        public Set<BigraphEntity.NodeEntity<? extends Control<?, ?>>> getNodes() {
             return nodes;
         }
 

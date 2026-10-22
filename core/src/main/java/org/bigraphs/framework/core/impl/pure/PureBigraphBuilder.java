@@ -84,7 +84,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
     protected final Map<String, BigraphEntity.InnerName> availableInnerNames = new ConcurrentHashMap<>();
     protected final Map<Integer, BigraphEntity.RootEntity> availableRoots = new ConcurrentHashMap<>();
     protected final Map<Integer, BigraphEntity.SiteEntity> availableSites = new ConcurrentHashMap<>();
-    protected final Map<String, BigraphEntity.NodeEntity> availableNodes = new ConcurrentHashMap<>();
+    protected final Map<String, BigraphEntity.NodeEntity<? extends Control<?, ?>>> availableNodes = new ConcurrentHashMap<>();
 
     @Override
     public PureBigraphBuilder<S> spawn() {
@@ -415,11 +415,11 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param control the control of the parent for the new hierarchy
      * @return a new hierarchy for the current bigraph
      */
-    public Hierarchy hierarchy(Control control) {
+    public Hierarchy hierarchy(Control<?, ?> control) {
         EObject childNode = createNodeOfEClass(control.getNamedType().stringValue(), control); // new Hierarchy()
         BigraphEntity.NodeEntity newParentNode = BigraphEntity.createNode(childNode, control);
         Hierarchy hierarchy = new Hierarchy(newParentNode);
-        hierarchy.lastCreatedNode = (BigraphEntity.NodeEntity<Control>) newParentNode;
+        hierarchy.lastCreatedNode = (BigraphEntity.NodeEntity<Control<?,?>>) newParentNode;
         return hierarchy;
     }
 
@@ -433,17 +433,17 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      */
     public class Hierarchy implements NodeHierarchy<S> {
         final Hierarchy parentHierarchy;
-        final BigraphEntity<Control> parent;
+        final BigraphEntity<? extends Control<?, ?>> parent;
 
-        final Set<BigraphEntity<Control>> child = new LinkedHashSet<>();
-        BigraphEntity.NodeEntity<Control> lastCreatedNode;
+        final Set<BigraphEntity<? extends Control<?,?>>> child = new LinkedHashSet<>();
+        BigraphEntity.NodeEntity<? extends Control<?, ?>> lastCreatedNode;
 
 
-        private Hierarchy(BigraphEntity<Control> parent) {
+        private Hierarchy(BigraphEntity<? extends Control<?,?>> parent) {
             this(parent, null);
         }
 
-        private Hierarchy(BigraphEntity<Control> parent, Hierarchy parentHierarchy) {
+        private Hierarchy(BigraphEntity<? extends Control<?,?>> parent, Hierarchy parentHierarchy) {
             this.parentHierarchy = parentHierarchy;
             this.parent = parent;
         }
@@ -521,13 +521,13 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
 
         //this implies: added to a parent (see lastCreatedNode)
         @Override
-        public Hierarchy child(Control control) {
+        public Hierarchy child(Control<?, ?> control) {
             assertControlIsNonAtomic(getParent());
             if (!checkSameSignature(control)) {
                 logger.debug("Control {} couldn't be added because it isn't in the signature", control);
                 return this;
             }
-            final BigraphEntity.NodeEntity<Control> child = createChild(control);
+            final BigraphEntity.NodeEntity<? extends Control<?, ?>> child = createChild(control);
             addChildToParent(child);
             return this;
         }
@@ -588,7 +588,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @param entity
          * @return
          */
-        private Hierarchy withNewHierarchyOn(BigraphEntity.NodeEntity<Control> entity) {
+        private Hierarchy withNewHierarchyOn(BigraphEntity.NodeEntity<? extends Control<?, ?>> entity) {
             if (!child.contains(entity)) {
                 throw new RuntimeException("withNewHierarchyOn(*) isn't possible - a child must first be created");
             }
@@ -605,10 +605,10 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @param control the control
          * @return a freshly created object of control {@code control}
          */
-        private BigraphEntity.NodeEntity<Control> createChild(Control control) {
+        private BigraphEntity.NodeEntity<? extends Control<?,?>> createChild(Control<?,?> control) {
             EObject childNode = createNodeOfEClass(control.getNamedType().stringValue(), control);
-            BigraphEntity.NodeEntity<? extends Control> nodeEntity = BigraphEntity.createNode(childNode, control);
-            updateLastCreatedNode((BigraphEntity.NodeEntity<Control>) nodeEntity);
+            BigraphEntity.NodeEntity<? extends Control<?,?>> nodeEntity = BigraphEntity.createNode(childNode, control);
+            updateLastCreatedNode(nodeEntity);
             return getLastCreatedNode();
         }
 
@@ -646,8 +646,8 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @throws InvalidArityOfControlException if nodes cannot be connected because of the control's arity
          */
 //        @SafeVarargs
-        public final Hierarchy connectByEdge(final Control... controls) throws InvalidArityOfControlException {
-            List<BigraphEntity.NodeEntity<Control>> nodes = new ArrayList<>();
+        public final Hierarchy connectByEdge(final Control<?, ?>... controls) throws InvalidArityOfControlException {
+            List<BigraphEntity.NodeEntity<? extends Control<?, ?>>> nodes = new ArrayList<>();
             for (int i = 0, n = controls.length; i < n; i++) {
                 if (!checkSameSignature(controls[i])) return this; //TODO throw exception
             }
@@ -669,7 +669,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         }
 
         // To be used to call the enclosing class' methods for passing the nodes as arguments
-        public Collection<BigraphEntity<Control>> nodes() {
+        public Collection<BigraphEntity<? extends Control<?, ?>>> nodes() {
             return child;
         }
 
@@ -733,17 +733,17 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
          * @throws InvalidConnectionException link couldn't be established because of the control's arity
          * @throws LinkTypeNotExistsException the given inner name doesn't exist
          */
-        public void nodeWithInner(BigraphEntity.InnerName innerName, Control control) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
+        public void nodeWithInner(BigraphEntity.InnerName innerName, Control<?, ?> control) throws InvalidConnectionException, LinkTypeNotExistsException, ControlIsAtomicException {
             child(control);
             linkInner(innerName);
         }
 
 
-        public BigraphEntity.NodeEntity<Control> getLastCreatedNode() {
+        public BigraphEntity.NodeEntity<? extends Control<?, ?>> getLastCreatedNode() {
             return lastCreatedNode;
         }
 
-        private void updateLastCreatedNode(BigraphEntity.NodeEntity<Control> eObject) {
+        private void updateLastCreatedNode(BigraphEntity.NodeEntity<? extends Control<?, ?>> eObject) {
             lastCreatedNode = eObject;
         }
 
@@ -823,7 +823,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param edge the edge to use to connect the node
      * @see PureBigraphBuilder#isConnectedWithLink(BigraphEntity.NodeEntity, EObject)
      */
-    protected void connectToEdge(BigraphEntity.NodeEntity<Control> node, BigraphEntity.Edge edge) {
+    protected void connectToEdge(BigraphEntity.NodeEntity<? extends Control<?, ?>> node, BigraphEntity.Edge edge) {
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         int index = bPorts.size();
         //create port with index
@@ -839,7 +839,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         innerEObject.eSet(linkReference, edge.getInstance());
     }
 
-    protected void connectToLinkUsingIndex(BigraphEntity.NodeEntity<Control> node, BigraphEntity theLink, int customPortIndex) {
+    protected void connectToLinkUsingIndex(BigraphEntity.NodeEntity<? extends Control<?, ?>> node, BigraphEntity theLink, int customPortIndex) {
         EList<EObject> bPorts = (EList<EObject>) node.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         //create port with index
         EObject portObject = createPortWithIndex(customPortIndex);
@@ -848,13 +848,13 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         bPorts.add(portObject);
     }
 
-    protected BigraphEntity.Edge connectByEdge(final BigraphEntity.NodeEntity<Control>... nodes) throws InvalidArityOfControlException {
+    protected BigraphEntity.Edge connectByEdge(final BigraphEntity.NodeEntity<? extends Control<?, ?>>... nodes) throws InvalidArityOfControlException {
         //get arity and check number of connections
-        for (BigraphEntity.NodeEntity<Control> each : nodes) {
+        for (BigraphEntity.NodeEntity<? extends Control<?, ?>> each : nodes) {
             checkIfNodeIsConnectable(each);
         }
         BigraphEntity.Edge edge = createEdgeOfEClass();
-        for (BigraphEntity.NodeEntity<Control> each : nodes) {
+        for (BigraphEntity.NodeEntity<? extends Control<?, ?>> each : nodes) {
             connectToEdge(each, edge);
 
         }
@@ -908,7 +908,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @throws InvalidArityOfControlException if the control cannot connect anything (e.g., is atomic, or no open ports left)
      * @throws InvalidConnectionException     if the inner name is already connected to an outer name
      */
-    public void linkNodeToInner(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
+    public void linkNodeToInner(BigraphEntity.NodeEntity<? extends Control<?, ?>> node1, BigraphEntity.InnerName innerName) throws LinkTypeNotExistsException, InvalidConnectionException {
         //check if outername exists
         if (availableInnerNames.get(innerName.getName()) == null) {
             throw new InnerNameNotExistsException();
@@ -948,7 +948,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @throws InvalidArityOfControlException if the control cannot connect anything (e.g., is atomic, or no open ports left)
      * @throws InvalidConnectionException     if the inner name is already connected to an outer name
      */
-    public void linkNodeToInner(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.InnerName... innerNames) throws LinkTypeNotExistsException, InvalidConnectionException {
+    public void linkNodeToInner(BigraphEntity.NodeEntity<? extends Control<?, ?>> node1, BigraphEntity.InnerName... innerNames) throws LinkTypeNotExistsException, InvalidConnectionException {
         //check if outername exists
         if (innerNames.length == 0) return;
         checkIfNodeIsConnectable(node1);
@@ -1197,7 +1197,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param node the node to check
      * @throws InvalidArityOfControlException if control is atomic or the current connections exceed the control's arity
      */
-    public void checkIfNodeIsConnectable(BigraphEntity.NodeEntity<Control> node) throws InvalidArityOfControlException {
+    public void checkIfNodeIsConnectable(BigraphEntity.NodeEntity<? extends Control<?, ?>> node) throws InvalidArityOfControlException {
         EObject instance1 = node.getInstance();
         EList<EObject> bPorts1 = (EList<EObject>) instance1.eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         int numberOfConnections = bPorts1.size();
@@ -1217,7 +1217,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @throws LinkTypeNotExistsException     if the link is contained in the bigraph
      * @throws InvalidArityOfControlException if the node cannot connect links anymore
      */
-    protected void connectNodeToOuterName(BigraphEntity.NodeEntity<Control> node1, BigraphEntity.OuterName outerName) throws TypeNotExistsException, InvalidArityOfControlException {
+    protected void connectNodeToOuterName(BigraphEntity.NodeEntity<? extends Control<?, ?>> node1, BigraphEntity.OuterName outerName) throws TypeNotExistsException, InvalidArityOfControlException {
         assertOuterNameExists(outerName); // Check if outername exists
 
         if (!isConnectedWithLink(node1, outerName.getInstance())) {
@@ -1264,7 +1264,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
      * @param theLink the link
      * @return {@code true}, if the given place is connected with the link, otherwise {@code false}.
      */
-    protected boolean isConnectedWithLink(BigraphEntity.NodeEntity<Control> place, @Nullable EObject theLink) {
+    protected boolean isConnectedWithLink(BigraphEntity.NodeEntity<? extends Control<?, ?>> place, @Nullable EObject theLink) {
         if ((theLink) == null) return false;
         EList<EObject> bPorts = (EList<EObject>) place.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         for (EObject bPort : bPorts) {
@@ -1279,7 +1279,7 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         return false;
     }
 
-    private boolean areNodesConnected(BigraphEntity.NodeEntity<Control> place1, BigraphEntity.NodeEntity<Control> place2) {
+    private boolean areNodesConnected(BigraphEntity.NodeEntity<? extends Control<?, ?>> place1, BigraphEntity.NodeEntity<? extends Control<?, ?>> place2) {
         EClass eClassPort = availableEClasses.get(BigraphMetaModelConstants.CLASS_PORT);
         EList<EObject> bPorts = (EList<EObject>) place1.getInstance().eGet(availableReferences.get(BigraphMetaModelConstants.REFERENCE_PORT));
         for (EObject bPort : bPorts) {
@@ -1297,11 +1297,11 @@ public class PureBigraphBuilder<S extends AbstractEcoreSignature<? extends Contr
         return false;
     }
 
-    protected EObject createNodeOfEClass(final String name, @NonNull final Control control) {
+    protected EObject createNodeOfEClass(final String name, @NonNull final Control<?, ?> control) {
         return this.createNodeOfEClass(name, control, vertexNameSupplier.get());
     }
 
-    protected EObject createNodeOfEClass(final String name, @NonNull final Control control, String nodeIdentifier) {
+    protected EObject createNodeOfEClass(final String name, @NonNull final Control<?, ?> control, String nodeIdentifier) {
         EObject eObject = metaModel.getEFactoryInstance().create(availableEClasses.get(name));
         EAttribute name1 = EMFUtils.findAttribute(eObject.eClass(), BigraphMetaModelConstants.ATTRIBUTE_NAME);
         eObject.eSet(name1, nodeIdentifier);

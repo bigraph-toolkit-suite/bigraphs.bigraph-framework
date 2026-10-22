@@ -33,22 +33,22 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignatureBuilder;
 import org.eclipse.emf.ecore.EPackage;
 
 public class JLibBigBigraphDecoder implements BigraphObjectDecoder<PureBigraph, it.uniud.mads.jlibbig.core.std.Bigraph> {
-    private HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
-    private HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.NodeEntity> newNodes = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
-    private HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
+    private final HashMap<Integer, BigraphEntity.RootEntity> newRoots = new LinkedHashMap<>();
+    private final HashMap<Integer, BigraphEntity.SiteEntity> newSites = new LinkedHashMap<>();
+    private final HashMap<String, BigraphEntity.NodeEntity<? extends org.bigraphs.framework.core.Control<?, ?>>> newNodes = new LinkedHashMap<>();
+    private final HashMap<String, BigraphEntity.Edge> newEdges = new LinkedHashMap<>();
+    private final HashMap<String, BigraphEntity.OuterName> newOuterNames = new LinkedHashMap<>();
+    private final HashMap<String, BigraphEntity.InnerName> newInnerNames = new LinkedHashMap<>();
     private MutableBuilder<DynamicSignature> builder;
     private DynamicSignature signature;
     private it.uniud.mads.jlibbig.core.std.Bigraph jBigraph;
 
-    private Map<String, it.uniud.mads.jlibbig.core.std.OuterName> jLibBigOuterNames = new LinkedHashMap<>();
-    private Map<String, it.uniud.mads.jlibbig.core.std.InnerName> jLibBigInnerNames = new LinkedHashMap<>();
-    private Map<String, it.uniud.mads.jlibbig.core.std.Edge> jLibBigEdges = new LinkedHashMap<>();
-    private Map<Integer, it.uniud.mads.jlibbig.core.std.Root> jLibBigRegions = new LinkedHashMap<>(); //PlaceEntity
-    private Map<String, it.uniud.mads.jlibbig.core.std.Node> jLibBigNodes = new LinkedHashMap<>(); // PlaceEntity
-    private Map<Integer, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
+    private final Map<String, it.uniud.mads.jlibbig.core.std.OuterName> jLibBigOuterNames = new LinkedHashMap<>();
+    private final Map<String, it.uniud.mads.jlibbig.core.std.InnerName> jLibBigInnerNames = new LinkedHashMap<>();
+    private final Map<String, it.uniud.mads.jlibbig.core.std.Edge> jLibBigEdges = new LinkedHashMap<>();
+    private final Map<Integer, it.uniud.mads.jlibbig.core.std.Root> jLibBigRegions = new LinkedHashMap<>(); //PlaceEntity
+    private final Map<String, it.uniud.mads.jlibbig.core.std.Node> jLibBigNodes = new LinkedHashMap<>(); // PlaceEntity
+    private final Map<Integer, it.uniud.mads.jlibbig.core.std.Site> jLibBigSites = new LinkedHashMap<>(); // PlaceEntity
 
     public synchronized PureBigraph decode(it.uniud.mads.jlibbig.core.std.Bigraph bigraph, DynamicSignature signature) {
         this.jBigraph = bigraph;

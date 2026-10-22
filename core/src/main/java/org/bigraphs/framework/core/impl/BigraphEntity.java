@@ -116,7 +116,7 @@ public class BigraphEntity<C extends Control> {
     }
 
     @NonNull
-    public static NodeEntity<? extends Control> createNode(@NonNull EObject param, Control control) {
+    public static NodeEntity<? extends Control<?, ?>> createNode(@NonNull EObject param, Control<?, ?> control) {
         return new NodeEntity<>(param, control);
     }
 
@@ -208,7 +208,7 @@ public class BigraphEntity<C extends Control> {
         }
     }
 
-    public static class NodeEntity<C extends Control> extends BigraphEntity<C> implements Comparable<BigraphEntity.NodeEntity<C>> {
+    public static class NodeEntity<C extends Control<?, ?>> extends BigraphEntity<C> implements Comparable<BigraphEntity.NodeEntity<C>> {
         String toString = null;
 
         NodeEntity(@NonNull EObject instance, C control) {
