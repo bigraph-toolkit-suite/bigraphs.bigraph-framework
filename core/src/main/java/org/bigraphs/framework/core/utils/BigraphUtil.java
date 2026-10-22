@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.bigraphs.framework.core.*;
 import org.bigraphs.framework.core.datatypes.FiniteOrdinal;
+import org.bigraphs.framework.core.exceptions.BigraphMetaModelLoadingFailedException;
 import org.bigraphs.framework.core.exceptions.IncompatibleSignatureException;
 import org.bigraphs.framework.core.exceptions.SignatureNotConsistentException;
 import org.bigraphs.framework.core.exceptions.operations.IncompatibleInterfaceException;
@@ -37,6 +38,7 @@ import org.bigraphs.framework.core.reactivesystem.InstantiationMap;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * A collection of useful bigraph-related operations and queries.
@@ -53,7 +55,7 @@ public class BigraphUtil {
         }
     };
 
-    public static BinaryOperator<Bigraph<DynamicSignature>> ACCUMULATOR_MERGE_PRODUCT = new BinaryOperator<Bigraph<DynamicSignature>>() {
+    public static BinaryOperator<Bigraph<DynamicSignature>> ACCUMULATOR_MERGE_PRODUCT = new BinaryOperator<>() {
         @Override
         public Bigraph<DynamicSignature> apply(Bigraph<DynamicSignature> partial, Bigraph<DynamicSignature> element) {
             try {
@@ -100,24 +102,119 @@ public class BigraphUtil {
     }
 
     /**
-     * Converts an in-memory bigraph {@link EObject} (loaded from XMI) together with its signature
-     * into a mutable {@link PureBigraphMutable}.
+     * Converts an EMF instance model into a mutable bigraph.
+     *
+     * <p>This convenience overload creates an independent mutable bigraph by
+     * deep-copying the supplied instance model. This is equivalent to calling
+     * {@link #toMutable(EObject, DynamicSignature, boolean)} with
+     * {@code copyNotCopy = true}.</p>
      *
      * @param instanceModel the raw EMF instance model of the bigraph
-     * @param signature     the signature matching the instance model
-     * @return a mutable bigraph
+     * @param signature the signature matching the instance model
+     * @return a mutable bigraph backed by a deep copy of the supplied model
+     * @throws NullPointerException if either argument is {@code null}
      */
-    public static PureBigraphMutable toMutable(EObject instanceModel, DynamicSignature signature) {
+    public static PureBigraphMutable toMutable(
+            EObject instanceModel,
+            DynamicSignature signature) {
+
+        return toMutable(instanceModel, signature, true);
+    }
+
+    /**
+     * Converts an EMF bigraph instance model into a mutable bigraph object, optionally copying
+     * the model first.
+     *
+     * @param instanceModel the raw EMF instance model of the bigraph
+     * @param signature the signature matching the instance model
+     * @param copy {@code true} to deep-copy the instance model;
+     *                    {@code false} to reuse it
+     * @return a mutable bigraph
+     * @throws NullPointerException if either required argument is {@code null}
+     */
+    public static PureBigraphMutable toMutable(
+            EObject instanceModel,
+            DynamicSignature signature,
+            boolean copy) {
+
+        Objects.requireNonNull(instanceModel, "instanceModel cannot be null");
+        Objects.requireNonNull(signature, "signature cannot be null");
+
         EPackage metaModel = instanceModel.eClass().getEPackage();
-        PureBigraph immutable = toBigraph(metaModel, instanceModel, signature);
+        EObject model = copy ? EcoreUtil.copy(instanceModel) : instanceModel;
+
         return PureBigraphBuilder
-                .create(signature, immutable.getMetaModel(), immutable.getInstanceModel())
+                .create(signature, metaModel, model)
                 .createMutable();
+    }
+
+
+    /**
+     * Converts an existing bigraph into a mutable bigraph by deep-copying the source instance model.
+     *
+     * @param source the source bigraph
+     * @return a mutable bigraph backed by a deep copy of the source instance model
+     * @throws NullPointerException if {@code source} is {@code null}
+     * @throws BigraphMetaModelLoadingFailedException if mutable bigraph construction fails
+     */
+    public static PureBigraphMutable toMutable(PureBigraph source)
+            throws BigraphMetaModelLoadingFailedException {
+
+        return toMutable(source, true);
+    }
+
+    /**
+     * Converts an existing {@link PureBigraph} object into a mutable bigraph, optionally copying its instance model.
+     *
+     * @param source the source bigraph
+     * @param copy {@code true} to deep-copy the instance model; {@code false} to reuse it
+     * @return a mutable bigraph backed by either a deep copy or the source instance model
+     * @throws NullPointerException if {@code source} is {@code null}
+     * @throws BigraphMetaModelLoadingFailedException if mutable bigraph construction fails
+     */
+    public static PureBigraphMutable toMutable(PureBigraph source, boolean copy)
+            throws BigraphMetaModelLoadingFailedException {
+
+        Objects.requireNonNull(source, "source cannot be null");
+
+        EObject instanceCopy = source.getInstanceModel();
+        if(copy) {
+            instanceCopy = EcoreUtil.copy(source.getInstanceModel());
+        }
+        return PureBigraphBuilder
+                .create(
+                        source.getSignature(),
+                        source.getMetaModel(),
+                        instanceCopy)
+                .createMutable();
+    }
+
+    public static PureBigraph toImmutable(
+            PureBigraphMutable source)
+            throws BigraphMetaModelLoadingFailedException {
+
+        EObject instanceCopy =
+                EcoreUtil.copy(source.getInstanceModel());
+
+        return PureBigraphBuilder.create(
+                        source.getSignature(),
+                        source.getMetaModel(),
+                        instanceCopy)
+                .create();
+    }
+
+    /**
+     * Convenience overload: creates an empty {@link PureBigraphMutable} with an empty signature.
+     *
+     * @return a fresh, empty mutable bigraph
+     */
+    public static PureBigraphMutable createEmptyMutable() {
+        return createEmptyMutable(null);
     }
 
     /**
      * Creates an empty {@link PureBigraphMutable} with a single root and the given signature.
-     * If {@code signature} is {@code null} an empty signature is used.
+     * If {@code signature} is {@code null}, an empty signature is used.
      *
      * @param signature the signature to use, or {@code null} for an empty signature
      * @return a fresh, empty mutable bigraph
@@ -128,15 +225,6 @@ public class BigraphUtil {
         return PureBigraphBuilder
                 .create(sig, emptyImmutable.getMetaModel(), emptyImmutable.getInstanceModel())
                 .createMutable();
-    }
-
-    /**
-     * Convenience overload: creates an empty {@link PureBigraphMutable} with an empty signature.
-     *
-     * @return a fresh, empty mutable bigraph
-     */
-    public static PureBigraphMutable createEmptyMutable() {
-        return createEmptyMutable(null);
     }
 
     public static void setParentOfNode(final BigraphEntity<?> node, final BigraphEntity<?> parent) {
