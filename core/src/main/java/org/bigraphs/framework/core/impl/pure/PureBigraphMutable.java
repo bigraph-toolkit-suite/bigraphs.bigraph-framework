@@ -506,7 +506,7 @@ public class PureBigraphMutable extends PureBigraph {
         // 2. Add port to link's points (EMF)
         addPointToLinkEMF(link.getInstance(), port.getInstance());
         
-        // 3. No cache update needed (collections don't change)
+        // 3. The entity collections don't change; the link graph caches were invalidated by the EMF helpers
         
         // 4. Fire event
         fireLinkConnected(port, link);
@@ -631,7 +631,7 @@ public class PureBigraphMutable extends PureBigraph {
         // 3. Unset link reference in port (EMF)
         unsetLinkOfPortEMF(port.getInstance());
         
-        // 4. No cache update needed
+        // 4. The entity collections don't change; the link graph caches were invalidated by the EMF helpers
         
         // 5. Fire event
         fireLinkDisconnected(port, currentLink);
@@ -660,7 +660,7 @@ public class PureBigraphMutable extends PureBigraph {
         // 3. Unset link reference in inner name (EMF)
         unsetLinkOfPointEMF(innerName.getInstance());
         
-        // 4. No cache update needed
+        // 4. The entity collections don't change; the link graph caches were invalidated by the EMF helpers
         
         // 5. Fire event
         fireInnerNameUnlinked(innerName, currentLink);
@@ -917,6 +917,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void removeChildFromParentEMF(EObject parent, EObject child) {
+        invalidateLinkGraphCaches();
         EStructuralFeature childFeature = parent.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_CHILD);
         if (childFeature == null) {
             return;
@@ -946,6 +947,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void removeRootFromBigraphEMF(EObject root) {
+        invalidateLinkGraphCaches();
         EStructuralFeature rootsFeature = getInstanceModel().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BROOTS);
         if (rootsFeature != null) {
             EList<EObject> roots = (EList<EObject>) getInstanceModel().eGet(rootsFeature);
@@ -973,6 +975,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void removeEdgeFromBigraphEMF(EObject edge) {
+        invalidateLinkGraphCaches();
         EStructuralFeature edgesFeature = getInstanceModel().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BEDGES);
         if (edgesFeature != null) {
             EList<EObject> edges = (EList<EObject>) getInstanceModel().eGet(edgesFeature);
@@ -993,6 +996,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void addPortToNodeEMF(EObject node, EObject port) {
+        invalidateLinkGraphCaches();
         EStructuralFeature portsFeature = node.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_PORT);
         if (portsFeature != null) {
             @SuppressWarnings("unchecked")
@@ -1022,6 +1026,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void removeOuterNameFromBigraphEMF(EObject outerName) {
+        invalidateLinkGraphCaches();
         EStructuralFeature outerNamesFeature = getInstanceModel().eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BOUTERNAMES);
         if (outerNamesFeature != null) {
             EList<EObject> outerNames = (EList<EObject>) getInstanceModel().eGet(outerNamesFeature);
@@ -1030,6 +1035,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void setLinkOfPortEMF(EObject port, EObject link) {
+        invalidateLinkGraphCaches();
         EStructuralFeature linkFeature = port.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
         if (linkFeature != null) {
             port.eSet(linkFeature, link);
@@ -1037,6 +1043,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void unsetLinkOfPortEMF(EObject port) {
+        invalidateLinkGraphCaches();
         EStructuralFeature linkFeature = port.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
         if (linkFeature != null) {
             port.eUnset(linkFeature);
@@ -1044,6 +1051,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void unsetLinkOfPointEMF(EObject point) {
+        invalidateLinkGraphCaches();
         EStructuralFeature linkFeature = point.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
         if (linkFeature != null) {
             point.eUnset(linkFeature);
@@ -1051,6 +1059,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void setLinkOfPointEMF(EObject point, EObject link) {
+        invalidateLinkGraphCaches();
         EStructuralFeature linkFeature = point.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_LINK);
         if (linkFeature != null) {
             point.eSet(linkFeature, link);
@@ -1058,6 +1067,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void addPointToLinkEMF(EObject link, EObject point) {
+        invalidateLinkGraphCaches();
         EStructuralFeature pointsFeature = link.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
         if (pointsFeature != null) {
             EList<EObject> points = (EList<EObject>) link.eGet(pointsFeature);
@@ -1068,6 +1078,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void removePointFromLinkEMF(EObject link, EObject point) {
+        invalidateLinkGraphCaches();
         EStructuralFeature pointsFeature = link.eClass().getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_POINT);
         if (pointsFeature != null) {
             EList<EObject> points = (EList<EObject>) link.eGet(pointsFeature);
@@ -1242,6 +1253,7 @@ public class PureBigraphMutable extends PureBigraph {
     }
     
     private void removeInnerNameFromBigraphEMF(EObject innerName) {
+        invalidateLinkGraphCaches();
         EStructuralFeature innerNamesFeature = getInstanceModel().eClass()
             .getEStructuralFeature(BigraphMetaModelConstants.REFERENCE_BINNERNAMES);
         
