@@ -219,21 +219,17 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Control cannot be null");
         }
         
-        // 1. Create EMF instance
+        // Create EMF instance and add to parent in EMF
         EObject newNodeEObject = createNodeEObject(control, name);
-        
-        // 2. Add to parent in EMF
         addChildToParentEMF(parent.getInstance(), newNodeEObject);
-        
-        // 3. Wrap in BigraphEntity
         @SuppressWarnings("unchecked")
         BigraphEntity.NodeEntity<DynamicControl> newNode = 
             (BigraphEntity.NodeEntity<DynamicControl>) BigraphEntity.createNode(newNodeEObject, control);
         
-        // 4. Update cache
+        // Update cache
         mutableNodes.add(newNode);
         
-        // 5. Fire event
+        // Fire event
         fireNodeAdded(newNode, parent);
         
         return newNode;
@@ -254,16 +250,14 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Node not found in bigraph");
         }
         
-        // 1. Get parent
+        // Get parent and remove from EMF
         BigraphEntity<?> parent = getParent(node);
-        
-        // 2. Remove from EMF
         removeChildFromParentEMF(parent.getInstance(), node.getInstance());
         
-        // 3. Update cache
+        // Update cache
         mutableNodes.remove(node);
         
-        // 4. Fire event
+        // Fire event
         fireNodeRemoved(node, parent);
     }
     
@@ -282,18 +276,13 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Node and newParent cannot be null");
         }
         
-        // 1. Get old parent
+        // Get old parent and remove from old parent in EMF
         BigraphEntity<?> oldParent = getParent(node);
-        
-        // 2. Remove from old parent in EMF
         removeChildFromParentEMF(oldParent.getInstance(), node.getInstance());
         
-        // 3. Add to new parent in EMF
+        // Add to new parent in EMF
         addChildToParentEMF(newParent.getInstance(), node.getInstance());
-        
-        // 4. No cache update needed (node list doesn't change)
-        
-        // 5. Fire event
+
         fireNodeMoved(node, oldParent, newParent);
     }
     
@@ -315,20 +304,17 @@ public class PureBigraphMutable extends PureBigraph {
         // 1. Determine next site index
         int newIndex = mutableSites.size();
 
-        // 2. Create EMF instance
+        // Create EMF instance
         EObject siteEObject = createSiteEObject(newIndex);
 
-        // 3. Add to parent in EMF (child reference + parent back-reference)
+        // Add to parent in EMF
         addChildToParentEMF(parent.getInstance(), siteEObject);
-
-        // 4. Wrap in BigraphEntity
         BigraphEntity.SiteEntity newSite =
             BigraphEntity.create(siteEObject, BigraphEntity.SiteEntity.class);
 
-        // 5. Update cache
+        // Update cache
         mutableSites.add(newSite);
 
-        // 6. Fire event
         fireSiteAdded(newSite, parent);
 
         return newSite;
@@ -349,18 +335,16 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Site not found in bigraph");
         }
 
-        // 1. Get parent
         BigraphEntity<?> parent = getParent(site);
 
-        // 2. Remove from EMF
+        // Remove from EMF
         if (parent != null) {
             removeChildFromParentEMF(parent.getInstance(), site.getInstance());
         }
 
-        // 3. Update cache
+        // Update cache
         mutableSites.remove(site);
 
-        // 4. Fire event
         fireSiteRemoved(site, parent);
     }
 
@@ -370,10 +354,10 @@ public class PureBigraphMutable extends PureBigraph {
      * @return the newly created root entity
      */
     public BigraphEntity.RootEntity addRoot() {
-        // 1. Create EMF instance
+        // Create EMF instance
         EObject newRootEObject = createRootEObject();
         
-        // 2. Set the index attribute to the next available index
+        // Set the index attribute to the next available index
         // This is critical for XMI serialization - without it, the root will 
         // have index 0 which conflicts with existing roots on reload
         int newIndex = mutableRoots.size();
@@ -383,17 +367,17 @@ public class PureBigraphMutable extends PureBigraph {
             newRootEObject.eSet(indexAttr, newIndex);
         }
         
-        // 3. Add to bigraph instance model
+        // Add to bigraph instance model
         addRootToBigraphEMF(newRootEObject);
         
-        // 4. Wrap in BigraphEntity
+        // Wrap in BigraphEntity
         BigraphEntity.RootEntity newRoot = 
             BigraphEntity.create(newRootEObject, BigraphEntity.RootEntity.class);
         
-        // 5. Update cache
+        // Update cache
         mutableRoots.add(newRoot);
         
-        // 6. Fire event
+        // Fire event
         fireRootAdded(newRoot);
         
         return newRoot;
@@ -414,13 +398,13 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Root not found in bigraph");
         }
         
-        // 1. Remove from EMF
+        // Remove from EMF
         removeRootFromBigraphEMF(root.getInstance());
         
-        // 2. Update cache
+        // Update cache
         mutableRoots.remove(root);
         
-        // 3. Fire event
+        // Fire event
         fireRootRemoved(root);
     }
     
@@ -444,20 +428,17 @@ public class PureBigraphMutable extends PureBigraph {
      * @return the newly created edge entity
      */
     public BigraphEntity.Edge addEdge(String name) {
-        // 1. Create EMF instance with name
+        // Create EMF instance with name and add to bigraph instance model
         EObject newEdgeEObject = createEdgeEObject(name);
-        
-        // 2. Add to bigraph instance model
         addEdgeToBigraphEMF(newEdgeEObject);
-        
-        // 3. Wrap in BigraphEntity
+
         BigraphEntity.Edge newEdge = 
             BigraphEntity.create(newEdgeEObject, BigraphEntity.Edge.class);
         
-        // 4. Update cache
+        // Update cache
         mutableEdges.add(newEdge);
         
-        // 5. Fire event
+        // Fire event
         fireEdgeAdded(newEdge);
         
         return newEdge;
@@ -478,13 +459,13 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Edge not found in bigraph");
         }
         
-        // 1. Remove from EMF
+        // Remove from EMF
         removeEdgeFromBigraphEMF(edge.getInstance());
         
-        // 2. Update cache
+        // Update cache
         mutableEdges.remove(edge);
         
-        // 3. Fire event
+        // Fire event
         fireEdgeRemoved(edge);
     }
     
@@ -500,15 +481,13 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Port and link cannot be null");
         }
         
-        // 1. Set link reference in port (EMF)
+        // Set link reference in port (EMF)
         setLinkOfPortEMF(port.getInstance(), link.getInstance());
         
-        // 2. Add port to link's points (EMF)
+        // Add port to link's points (EMF)
         addPointToLinkEMF(link.getInstance(), port.getInstance());
         
-        // 3. The entity collections don't change; the link graph caches were invalidated by the EMF helpers
-        
-        // 4. Fire event
+        // Fire event
         fireLinkConnected(port, link);
     }
     
@@ -524,13 +503,13 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("InnerName and link cannot be null");
         }
         
-        // 1. Set link reference in inner name (EMF)
+        // Set link reference in inner name (EMF)
         setLinkOfPointEMF(innerName.getInstance(), link.getInstance());
         
-        // 2. Add inner name to link's points (EMF)
+        // Add inner name to link's points (EMF)
         addPointToLinkEMF(link.getInstance(), innerName.getInstance());
         
-        // 3. Fire event
+        // Fire event
         fireInnerNameLinked(innerName, link);
     }
     
@@ -559,7 +538,7 @@ public class PureBigraphMutable extends PureBigraph {
 
         List<BigraphEntity.Port> ports = getPorts(node);
 
-        // 1. Reuse first free (unlinked) port
+        // Reuse first free (unlinked) port
         for (BigraphEntity.Port p : ports) {
             if (getLinkOfPoint(p) == null) {
                 connectPortToLink(p, link);
@@ -567,7 +546,7 @@ public class PureBigraphMutable extends PureBigraph {
             }
         }
 
-        // 2. All existing ports are linked — try to add a new one (addPortToNode
+        // All existing ports are linked — try to add a new one (addPortToNode
         //    already enforces the arity limit and throws IllegalStateException).
         BigraphEntity.Port newPort = addPortToNode(node);
         connectPortToLink(newPort, link);
@@ -619,21 +598,19 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Port cannot be null");
         }
         
-        // 1. Get current link
+        // Get current link
         BigraphEntity.Link currentLink = getLinkOfPoint(port);
         if (currentLink == null) {
             return; // Already disconnected
         }
         
-        // 2. Remove port from link's points (EMF)
+        // Remove port from link's points (EMF)
         removePointFromLinkEMF(currentLink.getInstance(), port.getInstance());
         
-        // 3. Unset link reference in port (EMF)
+        // Unset link reference in port (EMF)
         unsetLinkOfPortEMF(port.getInstance());
         
-        // 4. The entity collections don't change; the link graph caches were invalidated by the EMF helpers
-        
-        // 5. Fire event
+        // Fire event
         fireLinkDisconnected(port, currentLink);
     }
     
@@ -648,21 +625,19 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("InnerName cannot be null");
         }
         
-        // 1. Get current link
+        // Get current link
         BigraphEntity.Link currentLink = getLinkOfPoint(innerName);
         if (currentLink == null) {
             return; // Already disconnected
         }
         
-        // 2. Remove inner name from link's points (EMF)
+        // Remove inner name from link's points (EMF)
         removePointFromLinkEMF(currentLink.getInstance(), innerName.getInstance());
         
-        // 3. Unset link reference in inner name (EMF)
+        // Unset link reference in inner name (EMF)
         unsetLinkOfPointEMF(innerName.getInstance());
         
-        // 4. The entity collections don't change; the link graph caches were invalidated by the EMF helpers
-        
-        // 5. Fire event
+        // Fire event
         fireInnerNameUnlinked(innerName, currentLink);
     }
 
@@ -742,20 +717,17 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
         
-        // 1. Create EMF instance
+        // Create EMF instance and add to bigraph instance model
         EObject newOuterNameEObject = createOuterNameEObject(name);
-        
-        // 2. Add to bigraph instance model
         addOuterNameToBigraphEMF(newOuterNameEObject);
-        
-        // 3. Wrap in BigraphEntity
+
         BigraphEntity.OuterName newOuterName = 
             BigraphEntity.create(newOuterNameEObject, BigraphEntity.OuterName.class);
         
-        // 4. Update cache
+        // Update cache
         mutableOuterNames.add(newOuterName);
         
-        // 5. Fire event
+        // Fire event
         fireOuterNameAdded(newOuterName);
         
         return newOuterName;
@@ -776,13 +748,13 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("OuterName not found in bigraph");
         }
         
-        // 1. Remove from EMF
+        // Remove from EMF
         removeOuterNameFromBigraphEMF(outerName.getInstance());
         
-        // 2. Update cache
+        // Update cache
         mutableOuterNames.remove(outerName);
         
-        // 3. Fire event
+        // Fire event
         fireOuterNameRemoved(outerName);
     }
     
@@ -798,20 +770,17 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
         
-        // 1. Create EMF instance
+        // Create EMF instance and add to bigraph instance model
         EObject newInnerNameEObject = createInnerNameEObject(name);
-        
-        // 2. Add to bigraph instance model
         addInnerNameToBigraphEMF(newInnerNameEObject);
-        
-        // 3. Wrap in BigraphEntity
+
         BigraphEntity.InnerName newInnerName = 
             BigraphEntity.create(newInnerNameEObject, BigraphEntity.InnerName.class);
         
-        // 4. Update cache
+        // Update cache
         mutableInnerNames.add(newInnerName);
         
-        // 5. Fire event
+        // Fire event
         fireInnerNameAdded(newInnerName);
         
         return newInnerName;
@@ -832,13 +801,13 @@ public class PureBigraphMutable extends PureBigraph {
             throw new IllegalArgumentException("InnerName not found in bigraph");
         }
         
-        // 1. Remove from EMF
+        // Remove from EMF
         removeInnerNameFromBigraphEMF(innerName.getInstance());
         
-        // 2. Update cache
+        // Update cache
         mutableInnerNames.remove(innerName);
         
-        // 3. Fire event
+        // Fire event
         fireInnerNameRemoved(innerName);
     }
     

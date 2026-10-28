@@ -27,8 +27,9 @@ import org.bigraphs.framework.core.impl.signature.DynamicSignature;
 import org.junit.jupiter.api.Test;
 
 /**
- * The encoder reads the link graph through {@code getPointsFromLink}. A port connected to an edge
- * after the edge was read must end up on the same jLibBig edge, not on an edge of its own.
+ * Encoder test for {@link PureBigraphMutable}. The encoder reads the link graph through {@code getPointsFromLink}.
+ * <p>
+ * A port connected to an edge after the edge was read must end up on the same jLibBig edge, not on an edge of its own.
  */
 public class JLibBigEncoderMutableLinkTest {
 
