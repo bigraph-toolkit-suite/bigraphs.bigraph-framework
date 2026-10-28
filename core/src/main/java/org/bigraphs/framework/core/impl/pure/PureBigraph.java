@@ -297,6 +297,11 @@ public class PureBigraph implements Bigraph<DynamicSignature>, EcoreBigraph<Dyna
         return ((EList<EObject>) instance.eGet(portRef)).size();
     }
 
+     protected void invalidateLinkGraphCaches() {
+        pointsOfLinkMap.clear();
+        portMap.clear();
+    }
+
     @Override
     public List<BigraphEntity<?>> getPointsFromLink(BigraphEntity.Link linkEntity) {
         if (pointsOfLinkMap.containsKey(linkEntity)) {
