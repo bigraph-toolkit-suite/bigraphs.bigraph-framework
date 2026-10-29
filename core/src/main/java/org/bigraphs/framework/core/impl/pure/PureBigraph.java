@@ -192,8 +192,8 @@ public class PureBigraph implements Bigraph<DynamicSignature>, EcoreBigraph<Dyna
     @Override
     public List<BigraphEntity<?>> getAllPlaces() {
         return Lists.fixedSize.<BigraphEntity<?>>ofAll((Iterable) getRoots())
-                .withAll(getNodes())
-                .withAll(getSites());
+                .withAll((Iterable<? extends BigraphEntity<?>>) (Iterable<?>) getNodes())
+                .withAll((Iterable<? extends BigraphEntity<?>>) (Iterable<?>) getSites());
     }
 
     @Override
