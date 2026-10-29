@@ -24,7 +24,9 @@ import org.json.JSONTokener;
 /**
  * Tracking map for reaction rules.
  * <p>
- * Allows to trace the identities of nodes across reactions.
+ * Relates reactum names to redex names so identities can be traced across reactions.
+ * Keys that are not in {@link #getLinks()} are nodes. Keys added via {@link #addLinkNames(String...)}
+ * or {@link #trackLink(String, String)} are closed edges or outer names.
  *
  * @author Dominik Grzelak
  */
@@ -35,6 +37,16 @@ public class TrackingMap extends HashMap<String, String> {
 
     public void addLinkNames(String... links) {
         this.links.addAll(Arrays.asList(links));
+    }
+
+    /**
+     * Track a reactum link (closed edge or outer name) as the image of a redex link.
+     * An empty {@code redexName} means the reactum link is new.
+     */
+    public TrackingMap trackLink(String reactumName, String redexName) {
+        put(reactumName, redexName == null ? "" : redexName);
+        addLinkNames(reactumName);
+        return this;
     }
 
     public boolean isLink(String link) {
